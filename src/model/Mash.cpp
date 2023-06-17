@@ -74,7 +74,7 @@ bool Mash::isEqualTo(NamedEntity const & other) const {
       this->m_tunTemp_c             == rhs.m_tunTemp_c             &&
       this->m_spargeTemp_c          == rhs.m_spargeTemp_c          &&
       this->m_ph                    == rhs.m_ph                    &&
-      this->m_tunWeight_kg          == rhs.m_tunWeight_kg          &&
+      this->m_mashTunWeight_kg          == rhs.m_mashTunWeight_kg          &&
       this->m_tunSpecificHeat_calGC == rhs.m_tunSpecificHeat_calGC
       // .:TBD:. Should we check MashSteps too?
    );
@@ -97,7 +97,7 @@ TypeLookup const Mash::typeLookup {
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::totalTime            , Mash::m_totalTime            ), // Calculated, not stored
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::tunSpecificHeat_calGC, Mash::m_tunSpecificHeat_calGC, Measurement::PhysicalQuantity::SpecificHeatCapacity),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::tunTemp_c            , Mash::m_tunTemp_c            , Measurement::PhysicalQuantity::Temperature         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::tunWeight_kg         , Mash::m_tunWeight_kg         , Measurement::PhysicalQuantity::Mass                ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::mashTunWeight_kg         , Mash::m_mashTunWeight_kg         , Measurement::PhysicalQuantity::Mass                ),
    },
    // Parent class lookup
    &NamedEntity::typeLookup
@@ -111,7 +111,7 @@ Mash::Mash(QString name) :
    m_tunTemp_c            {0.0 },
    m_spargeTemp_c         {0.0 },
    m_ph                   {0.0 },
-   m_tunWeight_kg         {0.0 },
+   m_mashTunWeight_kg         {0.0 },
    m_tunSpecificHeat_calGC{0.0 },
    m_equipAdjust          {true} {
    return;
@@ -125,7 +125,7 @@ Mash::Mash(NamedParameterBundle const & namedParameterBundle) :
    m_tunTemp_c            {namedParameterBundle.val<double >(PropertyNames::Mash::tunTemp_c            )},
    m_spargeTemp_c         {namedParameterBundle.val<double >(PropertyNames::Mash::spargeTemp_c         )},
    m_ph                   {namedParameterBundle.val<double >(PropertyNames::Mash::ph                   )},
-   m_tunWeight_kg         {namedParameterBundle.val<double >(PropertyNames::Mash::tunWeight_kg         )},
+   m_mashTunWeight_kg         {namedParameterBundle.val<double >(PropertyNames::Mash::mashTunWeight_kg         )},
    m_tunSpecificHeat_calGC{namedParameterBundle.val<double >(PropertyNames::Mash::tunSpecificHeat_calGC)},
    m_equipAdjust          {namedParameterBundle.val<bool   >(PropertyNames::Mash::equipAdjust          )} {
    return;
@@ -139,7 +139,7 @@ Mash::Mash(Mash const & other) :
    m_tunTemp_c            {other.m_tunTemp_c            },
    m_spargeTemp_c         {other.m_spargeTemp_c         },
    m_ph                   {other.m_ph                   },
-   m_tunWeight_kg         {other.m_tunWeight_kg         },
+   m_mashTunWeight_kg         {other.m_mashTunWeight_kg         },
    m_tunSpecificHeat_calGC{other.m_tunSpecificHeat_calGC},
    m_equipAdjust          {other.m_equipAdjust          } {
 
@@ -223,7 +223,7 @@ void Mash::setPh(double var) {
 }
 
 void Mash::setTunWeight_kg(double var) {
-   this->setAndNotify(PropertyNames::Mash::tunWeight_kg, this->m_tunWeight_kg, this->enforceMin(var, "tun weight"));
+   this->setAndNotify(PropertyNames::Mash::mashTunWeight_kg, this->m_mashTunWeight_kg, this->enforceMin(var, "tun weight"));
 }
 
 void Mash::setTunSpecificHeat_calGC(double var) {
@@ -289,7 +289,7 @@ double Mash::spargeTemp_c() const { return m_spargeTemp_c; }
 
 double Mash::ph() const { return m_ph; }
 
-double Mash::tunWeight_kg() const { return m_tunWeight_kg; }
+double Mash::mashTunWeight_kg() const { return m_mashTunWeight_kg; }
 
 double Mash::tunSpecificHeat_calGC() const { return m_tunSpecificHeat_calGC; }
 

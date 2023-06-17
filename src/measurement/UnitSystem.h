@@ -72,6 +72,12 @@ namespace Measurement {
        *           milliliters < liters                                        (in Metric/SI system)
        *        We only worry about units we actually use/permit, thus we don't, for example, care about where minims,
        *        fluid drams, gills etc fit in on the imperial / US customary volume scales, as we don't support them.
+       *
+       *        NOTE: The names of these enums don't have any significance beyond a relative ordering.  We usually start
+       *              with \c ExtraSmall and then use as many of the subsequent entries as necessary.
+       *
+       *        TODO: I feel this could be replaced with a \c uint8_t that holds the ordering in the \c UnitSystem
+       *              constructor.  Then we wouldn't need the pointless names like "ExtraSmall" and "Huge".
        */
       enum class RelativeScale {
          ExtraSmall = 0,
@@ -287,8 +293,11 @@ namespace Measurement {
       // As explained in measurement/Unit.h, our canonical unit system for specific heat capacity is calories per ...
       // rather than joules per ...
       extern UnitSystem const specificHeatCapacity_Calories;
-      extern UnitSystem const specificHeatCapacity_Joules;
+      extern UnitSystem const specificHeatCapacity_Joules  ;
+      extern UnitSystem const specificHeatCapacity_Btus    ;
 
+      extern UnitSystem const specificVolume_Metric     ;
+      extern UnitSystem const specificVolume_UsCustomary;
    }
 }
 

@@ -1130,7 +1130,13 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport) {
       }
 
       if (JsonRecordDefinition::FieldType::Array == fieldDefinition.type) {
-         // .:TODO:.
+         // .:TODO:. We probably need to wait until we get to Recipe for this to be worth implementing.
+         // Search for FieldType::Array in BeerJson.cpp...!
+         //
+         // As in JsonRecord::load(), the XPath of the array (eg "fermentables" or "hop_varieties") tells us which
+         // JsonRecordDefinition to use to write the contents of that array.
+//         this->jsonCoding.getJsonRecordDefinitionByName(fieldDefinition.xPath.asXPath_c_str())
+         Q_ASSERT(false);
          qCritical() << Q_FUNC_INFO << "NOT YET IMPLEMENTED";
          /*
          // Nested record fields are of two types.  JsonRecord::RecordSimple can be handled generically.

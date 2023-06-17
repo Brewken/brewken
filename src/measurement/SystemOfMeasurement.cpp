@@ -39,6 +39,7 @@ namespace {
       {Measurement::SystemOfMeasurement::MetricConcentration         , "MetricConcentration"         },
       {Measurement::SystemOfMeasurement::SpecificHeatCapacityCalories, "SpecificHeatCapacityCalories"},
       {Measurement::SystemOfMeasurement::SpecificHeatCapacityJoules  , "SpecificHeatCapacityJoules"  },
+      {Measurement::SystemOfMeasurement::SpecificHeatCapacityBtus    , "SpecificHeatCapacityBtus"    },
    };
 }
 
@@ -62,6 +63,7 @@ QString Measurement::getDisplayName(Measurement::SystemOfMeasurement const syste
       case Measurement::SystemOfMeasurement::MetricConcentration         : return QObject::tr("Metric Concentration"               );
       case Measurement::SystemOfMeasurement::SpecificHeatCapacityCalories: return QObject::tr("Specific Heat Capacity Calories per");
       case Measurement::SystemOfMeasurement::SpecificHeatCapacityJoules  : return QObject::tr("Specific Heat Capacity Joules per"  );
+      case Measurement::SystemOfMeasurement::SpecificHeatCapacityBtus    : return QObject::tr("Specific Heat Capacity Btus per"    );
       // In C++23, we'd add:
       // default: std::unreachable();
    }

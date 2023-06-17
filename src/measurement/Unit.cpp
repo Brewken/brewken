@@ -437,8 +437,8 @@ namespace Measurement::Units {
    Unit const imperial_ounces     {Measurement::UnitSystems::mass_Imperial,                       QObject::tr("oz"),       [](double x){return x*0.0283495231;},    [](double y){return y/0.0283495231;},    1.0,  &kilograms};
    // === Volume ===
    // Where possible, the multipliers for going to and from litres come from www.conversion-metric.org as it seems to offer the most decimal places on its conversion tables
-   Unit const liters              {Measurement::UnitSystems::volume_Metric,                       QObject::tr("L"),        [](double x){return x;},                    [](double y){return y;},                    1.0};
-   Unit const milliliters         {Measurement::UnitSystems::volume_Metric,                       QObject::tr("mL"),       [](double x){return x/1000.0;},             [](double y){return y*1000.0;},             1.0,  &liters};
+   Unit const liters              {Measurement::UnitSystems::volume_Metric     ,                  QObject::tr("L"),        [](double x){return x;},                    [](double y){return y;},                    1.0};
+   Unit const milliliters         {Measurement::UnitSystems::volume_Metric     ,                  QObject::tr("mL"),       [](double x){return x/1000.0;},             [](double y){return y*1000.0;},             1.0,  &liters};
    Unit const us_barrels          {Measurement::UnitSystems::volume_UsCustomary,                  QObject::tr("bbl"),      [](double x){return x*117.34777;},          [](double y){return y/117.34777;},          1.0,  &liters};
    Unit const us_gallons          {Measurement::UnitSystems::volume_UsCustomary,                  QObject::tr("gal"),      [](double x){return x*3.7854117840007;},    [](double y){return y/3.7854117840007;},    1.0,  &liters};
    Unit const us_quarts           {Measurement::UnitSystems::volume_UsCustomary,                  QObject::tr("qt"),       [](double x){return x*0.94635294599999;},   [](double y){return y/0.94635294599999;},   1.0,  &liters};
@@ -447,14 +447,14 @@ namespace Measurement::Units {
    Unit const us_fluidOunces      {Measurement::UnitSystems::volume_UsCustomary,                  QObject::tr("floz"),     [](double x){return x*0.029573529564112;},  [](double y){return y/0.029573529564112;},  1.0,  &liters};
    Unit const us_tablespoons      {Measurement::UnitSystems::volume_UsCustomary,                  QObject::tr("tbsp"),     [](double x){return x*0.014786764782056;},  [](double y){return y/0.014786764782056;},  1.0,  &liters};
    Unit const us_teaspoons        {Measurement::UnitSystems::volume_UsCustomary,                  QObject::tr("tsp"),      [](double x){return x*0.0049289215940186;}, [](double y){return y/0.0049289215940186;}, 1.0,  &liters};
-   Unit const imperial_barrels    {Measurement::UnitSystems::volume_Imperial,                     QObject::tr("bbl"),      [](double x){return x*163.659;},            [](double y){return y/163.659;},            1.0,  &liters};
-   Unit const imperial_gallons    {Measurement::UnitSystems::volume_Imperial,                     QObject::tr("gal"),      [](double x){return x*4.5460899999997;},    [](double y){return y/4.5460899999997;},    1.0,  &liters};
-   Unit const imperial_quarts     {Measurement::UnitSystems::volume_Imperial,                     QObject::tr("qt"),       [](double x){return x*1.1365225;},          [](double y){return y/1.1365225;},          1.0,  &liters};
-   Unit const imperial_pints      {Measurement::UnitSystems::volume_Imperial,                     QObject::tr("qt"),       [](double x){return x*0.56826125;},         [](double y){return y/0.56826125;},         1.0,  &liters};
-   Unit const imperial_cups       {Measurement::UnitSystems::volume_Imperial,                     QObject::tr("cup"),      [](double x){return x*0.284130625;},        [](double y){return y/0.284130625;},        0.25, &liters};
-   Unit const imperial_fluidOunces{Measurement::UnitSystems::volume_Imperial,                     QObject::tr("floz"),     [](double x){return x*0.028413075003383;},  [](double y){return y/0.028413075003383;},  1.0, &liters};
-   Unit const imperial_tablespoons{Measurement::UnitSystems::volume_Imperial,                     QObject::tr("tbsp"),     [](double x){return x*0.0177581714;},       [](double y){return y/0.0177581714;},       1.0,  &liters};
-   Unit const imperial_teaspoons  {Measurement::UnitSystems::volume_Imperial,                     QObject::tr("tsp"),      [](double x){return x*0.00591939047;},      [](double y){return y/0.00591939047;},      1.0,  &liters};
+   Unit const imperial_barrels    {Measurement::UnitSystems::volume_Imperial   ,                  QObject::tr("bbl"),      [](double x){return x*163.659;},            [](double y){return y/163.659;},            1.0,  &liters};
+   Unit const imperial_gallons    {Measurement::UnitSystems::volume_Imperial   ,                  QObject::tr("gal"),      [](double x){return x*4.5460899999997;},    [](double y){return y/4.5460899999997;},    1.0,  &liters};
+   Unit const imperial_quarts     {Measurement::UnitSystems::volume_Imperial   ,                  QObject::tr("qt"),       [](double x){return x*1.1365225;},          [](double y){return y/1.1365225;},          1.0,  &liters};
+   Unit const imperial_pints      {Measurement::UnitSystems::volume_Imperial   ,                  QObject::tr("qt"),       [](double x){return x*0.56826125;},         [](double y){return y/0.56826125;},         1.0,  &liters};
+   Unit const imperial_cups       {Measurement::UnitSystems::volume_Imperial   ,                  QObject::tr("cup"),      [](double x){return x*0.284130625;},        [](double y){return y/0.284130625;},        0.25, &liters};
+   Unit const imperial_fluidOunces{Measurement::UnitSystems::volume_Imperial   ,                  QObject::tr("floz"),     [](double x){return x*0.028413075003383;},  [](double y){return y/0.028413075003383;},  1.0, &liters};
+   Unit const imperial_tablespoons{Measurement::UnitSystems::volume_Imperial   ,                  QObject::tr("tbsp"),     [](double x){return x*0.0177581714;},       [](double y){return y/0.0177581714;},       1.0,  &liters};
+   Unit const imperial_teaspoons  {Measurement::UnitSystems::volume_Imperial   ,                  QObject::tr("tsp"),      [](double x){return x*0.00591939047;},      [](double y){return y/0.00591939047;},      1.0,  &liters};
    // === Time ===
    // Added weeks because BeerJSON has it
    Unit const minutes             {Measurement::UnitSystems::time_CoordinatedUniversalTime,       QObject::tr("min"),      [](double x){return x;},                 [](double y){return y;},                 1.0};
@@ -513,11 +513,21 @@ namespace Measurement::Units {
    Unit const partsPerBillion     {Measurement::UnitSystems::concentration_PartsPer,                  QObject::tr("ppb"),  [](double x){return x * 1000.0;},      [](double y){return y/1000.0;},         1.0,  &partsPerMillion};
    // == Viscosity ==
    // Yes, 1 centipoise = 1 millipascal-second.  See comment in measurement/Unit.h for more info
-   Unit const centipoise          {Measurement::UnitSystems::viscosity_Metric,                        QObject::tr("cP"),    [](double x){return x;},              [](double y){return y;},                1.0};
+   Unit const centipoise          {Measurement::UnitSystems::viscosity_Metric         ,               QObject::tr("cP"   ), [](double x){return x;},              [](double y){return y;},                1.0};
    Unit const millipascalSecond   {Measurement::UnitSystems::viscosity_MetricAlternate,               QObject::tr("mPa-s"), [](double x){return x;},              [](double y){return y;},                1.0,  &centipoise};
    // == Specific heat capacity ==
-   // See comment in measurement/Unith for why the non-metric units are the canonical ones
-   Unit const caloriesPerCelsiusPerGram{Measurement::UnitSystems::specificHeatCapacity_Calories,      QObject::tr("c/g·C" ), [](double x){return x;},             [](double y){return y;},                1.0};
-   Unit const joulesPerKelvinPerKg     {Measurement::UnitSystems::specificHeatCapacity_Joules  ,      QObject::tr("J/kg·K"), [](double x){return x / 4184.0;},    [](double y){return y * 4184.0;},       1.0, &caloriesPerCelsiusPerGram};
+   // See comment in measurement/Unit.h for why the non-metric units are the canonical ones
+   Unit const caloriesPerCelsiusPerGram{Measurement::UnitSystems::specificHeatCapacity_Calories,     QObject::tr("c/g·C"   ), [](double x){return x;},                    [](double y){return y;},                    1.0};
+   Unit const joulesPerKelvinPerKg     {Measurement::UnitSystems::specificHeatCapacity_Joules  ,     QObject::tr("J/kg·K"  ), [](double x){return x / 4184.0;},           [](double y){return y * 4184.0;},           1.0, &caloriesPerCelsiusPerGram};
+   Unit const btuPerFahrenheitPerPound {Measurement::UnitSystems::specificHeatCapacity_Btus    ,     QObject::tr("BTU/lb·F"), [](double x){return x;},                    [](double y){return y;},                    1.0, &caloriesPerCelsiusPerGram};
+   // == Specific Volume ==
+   Unit const litresPerKilogram     {Measurement::UnitSystems::specificVolume_Metric     ,           QObject::tr("L/kg"   ),  [](double x){return x;},                    [](double y){return y;},                    1.0};
+   Unit const litresPerGram         {Measurement::UnitSystems::specificVolume_Metric     ,           QObject::tr("L/g"    ),  [](double x){return x * 1000;},             [](double y){return y / 1000;},             1.0, &litresPerKilogram};
+   Unit const cubicMetersPerKilogram{Measurement::UnitSystems::specificVolume_Metric     ,           QObject::tr("m^3/kg" ),  [](double x){return x * 1000;},             [](double y){return y / 1000;},             1.0, &litresPerKilogram};
+   Unit const us_fluidOuncesPerOunce{Measurement::UnitSystems::specificVolume_UsCustomary,           QObject::tr("floz/oz"),  [](double x){return x * 66.7632356142;},    [](double y){return y / 66.7632356142;},    1.0, &litresPerKilogram};
+   Unit const us_gallonsPerPound    {Measurement::UnitSystems::specificVolume_UsCustomary,           QObject::tr("gal/lb" ),  [](double x){return x * 8.34540445177617;}, [](double y){return y / 8.34540445177617;}, 1.0, &litresPerKilogram};
+   Unit const us_quartsPerPound     {Measurement::UnitSystems::specificVolume_UsCustomary,           QObject::tr("qt/lb"  ),  [](double x){return x * 2.08635111294;},    [](double y){return y / 2.08635111294;},    1.0, &litresPerKilogram};
+   Unit const us_gallonsPerOunce    {Measurement::UnitSystems::specificVolume_UsCustomary,           QObject::tr("gal/oz" ),  [](double x){return x * 0.521587778236;},   [](double y){return y / 0.521587778236;},   1.0, &litresPerKilogram};
+   Unit const cubicFeetPerPound     {Measurement::UnitSystems::specificVolume_UsCustomary,           QObject::tr("ft^3/lb"),  [](double x){return x * 62.4279605755126;}, [](double y){return y / 62.4279605755126;}, 1.0, &litresPerKilogram};
 
 }

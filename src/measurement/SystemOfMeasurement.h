@@ -129,6 +129,7 @@ namespace Measurement {
       // Specific Heat Capacity
       SpecificHeatCapacityCalories,
       SpecificHeatCapacityJoules,
+      SpecificHeatCapacityBtus,
    };
 
 

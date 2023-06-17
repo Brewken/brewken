@@ -73,7 +73,7 @@ EquipmentEditor::EquipmentEditor(QWidget* parent, bool singleEquipEditor) :
    SMART_FIELD_INIT(EquipmentEditor, label_tunSpecificHeat, lineEdit_tunSpecificHeat, Equipment, PropertyNames::Equipment::tunSpecificHeat_calGC   );
    SMART_FIELD_INIT(EquipmentEditor, label_grainAbsorption, lineEdit_grainAbsorption, Equipment, PropertyNames::Equipment::grainAbsorption_LKg     );
    SMART_FIELD_INIT(EquipmentEditor, label_hopUtilization , lineEdit_hopUtilization , Equipment, PropertyNames::Equipment::hopUtilization_pct   , 0);
-   SMART_FIELD_INIT(EquipmentEditor, label_tunWeight      , lineEdit_tunWeight      , Equipment, PropertyNames::Equipment::tunWeight_kg            );
+   SMART_FIELD_INIT(EquipmentEditor, label_tunWeight      , lineEdit_tunWeight      , Equipment, PropertyNames::Equipment::mashTunWeight_kg        );
    SMART_FIELD_INIT(EquipmentEditor, label_name           , lineEdit_name           , Equipment, PropertyNames::NamedEntity::name                  );
    SMART_FIELD_INIT(EquipmentEditor, label_boilingPoint   , lineEdit_boilingPoint   , Equipment, PropertyNames::Equipment::boilingPoint_c       , 1);
    SMART_FIELD_INIT(EquipmentEditor, label_boilTime       , lineEdit_boilTime       , Equipment, PropertyNames::Equipment::boilTime_min            );
@@ -84,7 +84,7 @@ EquipmentEditor::EquipmentEditor(QWidget* parent, bool singleEquipEditor) :
    SMART_FIELD_INIT(EquipmentEditor, label_topUpKettle    , lineEdit_topUpKettle    , Equipment, PropertyNames::Equipment::topUpKettle_l           );
    SMART_FIELD_INIT(EquipmentEditor, label_topUpWater     , lineEdit_topUpWater     , Equipment, PropertyNames::Equipment::topUpWater_l            );
    SMART_FIELD_INIT(EquipmentEditor, label_trubChillerLoss, lineEdit_trubChillerLoss, Equipment, PropertyNames::Equipment::trubChillerLoss_l       );
-   SMART_FIELD_INIT(EquipmentEditor, label_tunVolume      , lineEdit_tunVolume      , Equipment, PropertyNames::Equipment::tunVolume_l             );
+   SMART_FIELD_INIT(EquipmentEditor, label_tunVolume      , lineEdit_tunVolume      , Equipment, PropertyNames::Equipment::mashTunVolume_l         );
 
    // Connect all the edit boxen
    connect(lineEdit_boilTime,         &SmartLineEdit::textModified,  this, &EquipmentEditor::updateCheckboxRecord     );
@@ -225,8 +225,8 @@ void EquipmentEditor::save() {
    this->obsEquip->setName                 (lineEdit_name           ->text() );
    this->obsEquip->setBoilSize_l           (lineEdit_boilSize       ->toCanonical().quantity() );
    this->obsEquip->setBatchSize_l          (lineEdit_batchSize      ->toCanonical().quantity() );
-   this->obsEquip->setTunVolume_l          (lineEdit_tunVolume      ->toCanonical().quantity() );
-   this->obsEquip->setTunWeight_kg         (lineEdit_tunWeight      ->toCanonical().quantity() );
+   this->obsEquip->setMashTunVolume_l      (lineEdit_tunVolume      ->toCanonical().quantity() );
+   this->obsEquip->setMashTunWeight_kg     (lineEdit_tunWeight      ->toCanonical().quantity() );
    this->obsEquip->setTunSpecificHeat_calGC(lineEdit_tunSpecificHeat->getNonOptValue<double>() );  // TODO Convert this to real units!
    this->obsEquip->setBoilTime_min         (lineEdit_boilTime       ->toCanonical().quantity());
    this->obsEquip->setEvapRate_lHr         (lineEdit_evaporationRate->toCanonical().quantity() );
@@ -320,8 +320,8 @@ void EquipmentEditor::showChanges() {
    this->checkBox_calcBoilVolume  ->blockSignals(false);
 
    this->lineEdit_batchSize       ->setAmount(this->obsEquip->batchSize_l          ());
-   this->lineEdit_tunVolume       ->setAmount(this->obsEquip->tunVolume_l          ());
-   this->lineEdit_tunWeight       ->setAmount(this->obsEquip->tunWeight_kg         ());
+   this->lineEdit_tunVolume       ->setAmount(this->obsEquip->mashTunVolume_l      ());
+   this->lineEdit_tunWeight       ->setAmount(this->obsEquip->mashTunWeight_kg     ());
    this->lineEdit_tunSpecificHeat ->setAmount(this->obsEquip->tunSpecificHeat_calGC());
    this->lineEdit_boilTime        ->setAmount(this->obsEquip->boilTime_min         ());
    this->lineEdit_evaporationRate ->setAmount(this->obsEquip->evapRate_lHr         ());

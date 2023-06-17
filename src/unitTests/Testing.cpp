@@ -389,7 +389,7 @@ void Testing::initTestCase() {
       this->equipFiveGalNoLoss->setName("5 gal No Loss");
       this->equipFiveGalNoLoss->setBoilSize_l(24.0);
       this->equipFiveGalNoLoss->setBatchSize_l(20.0);
-      this->equipFiveGalNoLoss->setTunVolume_l(40.0);
+      this->equipFiveGalNoLoss->setMashTunVolume_l(40.0);
       this->equipFiveGalNoLoss->setTopUpWater_l(0);
       this->equipFiveGalNoLoss->setTrubChillerLoss_l(0);
       this->equipFiveGalNoLoss->setEvapRate_lHr(4.0);

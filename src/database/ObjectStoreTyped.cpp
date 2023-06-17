@@ -81,8 +81,8 @@ namespace {
          {ObjectStore::FieldType::Double, "top_up_water"     , PropertyNames::Equipment::topUpWater_l         },
          {ObjectStore::FieldType::Double, "trub_chiller_loss", PropertyNames::Equipment::trubChillerLoss_l    },
          {ObjectStore::FieldType::Double, "tun_specific_heat", PropertyNames::Equipment::tunSpecificHeat_calGC},
-         {ObjectStore::FieldType::Double, "tun_volume"       , PropertyNames::Equipment::tunVolume_l          },
-         {ObjectStore::FieldType::Double, "tun_weight"       , PropertyNames::Equipment::tunWeight_kg         },
+         {ObjectStore::FieldType::Double, "tun_volume"       , PropertyNames::Equipment::mashTunVolume_l          },
+         {ObjectStore::FieldType::Double, "tun_weight"       , PropertyNames::Equipment::mashTunWeight_kg         },
       }
    };
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Equipment> {
@@ -283,7 +283,7 @@ namespace {
          {ObjectStore::FieldType::Double, "sparge_temp"      , PropertyNames::Mash::spargeTemp_c         },
          {ObjectStore::FieldType::Double, "tun_specific_heat", PropertyNames::Mash::tunSpecificHeat_calGC},
          {ObjectStore::FieldType::Double, "tun_temp"         , PropertyNames::Mash::tunTemp_c            },
-         {ObjectStore::FieldType::Double, "tun_weight"       , PropertyNames::Mash::tunWeight_kg         },
+         {ObjectStore::FieldType::Double, "tun_weight"       , PropertyNames::Mash::mashTunWeight_kg         },
       }
    };
    // Mashes don't have children, and the link with their MashSteps is stored in the MashStep (as between Recipe and BrewNotes)

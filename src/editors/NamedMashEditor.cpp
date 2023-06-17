@@ -65,7 +65,7 @@ NamedMashEditor::NamedMashEditor(QWidget* parent, MashStepEditor* editor, bool s
    SMART_FIELD_INIT(NamedMashEditor, label_spargeTemp, lineEdit_spargeTemp, Mash, PropertyNames::Mash::spargeTemp_c         , 1);
    SMART_FIELD_INIT(NamedMashEditor, label_spargePh  , lineEdit_spargePh  , Mash, PropertyNames::Mash::ph                   , 0);
    SMART_FIELD_INIT(NamedMashEditor, label_tunTemp   , lineEdit_tunTemp   , Mash, PropertyNames::Mash::tunTemp_c            , 1);
-   SMART_FIELD_INIT(NamedMashEditor, label_tunMass   , lineEdit_tunMass   , Mash, PropertyNames::Mash::tunWeight_kg            );
+   SMART_FIELD_INIT(NamedMashEditor, label_tunMass   , lineEdit_tunMass   , Mash, PropertyNames::Mash::mashTunWeight_kg            );
    SMART_FIELD_INIT(NamedMashEditor, label_tunSpHeat , lineEdit_tunSpHeat , Mash, PropertyNames::Mash::tunSpecificHeat_calGC, 1);
 
    connect(this->equipmentComboBox,         &QComboBox::currentTextChanged, this, &NamedMashEditor::fromEquipment   );
@@ -161,7 +161,7 @@ void NamedMashEditor::showChanges(QMetaProperty* prop) {
    if (updateAll || propName == PropertyNames::Mash::spargeTemp_c         ) {lineEdit_spargeTemp->setAmount   (mashObs->spargeTemp_c         ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Mash::ph                   ) {lineEdit_spargePh  ->setAmount   (mashObs->ph                   ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Mash::tunTemp_c            ) {lineEdit_tunTemp   ->setAmount   (mashObs->tunTemp_c            ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::tunWeight_kg         ) {lineEdit_tunMass   ->setAmount   (mashObs->tunWeight_kg         ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::mashTunWeight_kg         ) {lineEdit_tunMass   ->setAmount   (mashObs->mashTunWeight_kg         ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Mash::tunSpecificHeat_calGC) {lineEdit_tunSpHeat ->setAmount   (mashObs->tunSpecificHeat_calGC()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Mash::notes                ) {textEdit_notes     ->setPlainText(mashObs->notes                ()); if (!updateAll) { return; } }
 }
@@ -267,7 +267,7 @@ void NamedMashEditor::fromEquipment([[maybe_unused]] QString const & name) {
    }
    Equipment * selected = equipListModel->at(equipmentComboBox->currentIndex());
    if (selected) {
-      lineEdit_tunMass  ->setAmount(selected->tunWeight_kg         ());
+      lineEdit_tunMass  ->setAmount(selected->mashTunWeight_kg         ());
       lineEdit_tunSpHeat->setAmount(selected->tunSpecificHeat_calGC());
    }
    return;

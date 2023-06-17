@@ -36,7 +36,7 @@ MashEditor::MashEditor(QWidget* parent) : QDialog(parent), mashObs(nullptr) {
    SMART_FIELD_INIT(MashEditor, label_spargeTemp, lineEdit_spargeTemp, Mash, PropertyNames::Mash::spargeTemp_c         , 1);
    SMART_FIELD_INIT(MashEditor, label_spargePh  , lineEdit_spargePh  , Mash, PropertyNames::Mash::ph                   , 0);
    SMART_FIELD_INIT(MashEditor, label_tunTemp   , lineEdit_tunTemp   , Mash, PropertyNames::Mash::tunTemp_c            , 1);
-   SMART_FIELD_INIT(MashEditor, label_tunMass   , lineEdit_tunMass   , Mash, PropertyNames::Mash::tunWeight_kg            );
+   SMART_FIELD_INIT(MashEditor, label_tunMass   , lineEdit_tunMass   , Mash, PropertyNames::Mash::mashTunWeight_kg            );
    SMART_FIELD_INIT(MashEditor, label_tunSpHeat , lineEdit_tunSpHeat , Mash, PropertyNames::Mash::tunSpecificHeat_calGC, 1);
 
    connect(pushButton_fromEquipment, &QAbstractButton::clicked, this, &MashEditor::fromEquipment);
@@ -92,7 +92,7 @@ void MashEditor::fromEquipment() {
       return;
    }
 
-   lineEdit_tunMass  ->setAmount(this->m_equip->tunWeight_kg         ());
+   lineEdit_tunMass  ->setAmount(this->m_equip->mashTunWeight_kg         ());
    lineEdit_tunSpHeat->setAmount(this->m_equip->tunSpecificHeat_calGC());
    return;
 }
@@ -121,11 +121,11 @@ void MashEditor::setRecipe(Recipe * recipe) {
 
    if (this->mashObs && this->m_equip) {
       // Only do this if we have to. Otherwise, it causes some unnecessary updates to the database.
-      if (this->mashObs->tunWeight_kg() != this->m_equip->tunWeight_kg()) {
+      if (this->mashObs->mashTunWeight_kg() != this->m_equip->mashTunWeight_kg()) {
          qDebug() <<
-            Q_FUNC_INFO << "Overwriting mash tunWeight_kg (" << this->mashObs->tunWeight_kg() << ") with equipment "
-            "tunWeight_kg (" << this->m_equip->tunWeight_kg() << ")";
-         this->mashObs->setTunWeight_kg(this->m_equip->tunWeight_kg());
+            Q_FUNC_INFO << "Overwriting mash mashTunWeight_kg (" << this->mashObs->mashTunWeight_kg() << ") with equipment "
+            "mashTunWeight_kg (" << this->m_equip->mashTunWeight_kg() << ")";
+         this->mashObs->setTunWeight_kg(this->m_equip->mashTunWeight_kg());
       }
       if (this->mashObs->tunSpecificHeat_calGC() != this->m_equip->tunSpecificHeat_calGC() ) {
          qDebug() <<
@@ -170,7 +170,7 @@ void MashEditor::showChanges(QMetaProperty* prop) {
    if (updateAll || propName == PropertyNames::Mash::spargeTemp_c          ) {this->lineEdit_spargeTemp->setAmount   (mashObs->spargeTemp_c         ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Mash::ph                    ) {this->lineEdit_spargePh  ->setAmount   (mashObs->ph                   ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Mash::tunTemp_c             ) {this->lineEdit_tunTemp   ->setAmount   (mashObs->tunTemp_c            ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::tunWeight_kg          ) {this->lineEdit_tunMass   ->setAmount   (mashObs->tunWeight_kg         ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::mashTunWeight_kg          ) {this->lineEdit_tunMass   ->setAmount   (mashObs->mashTunWeight_kg         ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Mash::tunSpecificHeat_calGC ) {this->lineEdit_tunSpHeat ->setAmount   (mashObs->tunSpecificHeat_calGC()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Mash::notes                 ) {this->textEdit_notes     ->setPlainText(mashObs->notes                ()); if (!updateAll) { return; } }
    return;

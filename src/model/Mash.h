@@ -48,7 +48,7 @@ AddPropertyName(totalMashWater_l     )
 AddPropertyName(totalTime            )
 AddPropertyName(tunSpecificHeat_calGC)
 AddPropertyName(tunTemp_c            )
-AddPropertyName(tunWeight_kg         )
+AddPropertyName(mashTunWeight_kg     )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -94,7 +94,7 @@ public:
    //! \brief The pH.
    Q_PROPERTY(double ph READ ph WRITE setPh  )
    //! \brief The mass of the tun in kg.
-   Q_PROPERTY(double tunWeight_kg READ tunWeight_kg WRITE setTunWeight_kg  )
+   Q_PROPERTY(double mashTunWeight_kg READ mashTunWeight_kg WRITE setTunWeight_kg  )
    //! \brief The tun's specific heat in kcal/(g*C).
    Q_PROPERTY(double tunSpecificHeat_calGC READ tunSpecificHeat_calGC WRITE setTunSpecificHeat_calGC  )
    //! \brief Whether to adjust strike temperatures to account for the tun.
@@ -132,7 +132,7 @@ public:
    double tunTemp_c() const;
    double spargeTemp_c() const;
    double ph() const;
-   double tunWeight_kg() const;
+   double mashTunWeight_kg() const;
    double tunSpecificHeat_calGC() const;
    bool equipAdjust() const;
 
@@ -188,7 +188,7 @@ private:
    double m_tunTemp_c;
    double m_spargeTemp_c;
    double m_ph;
-   double m_tunWeight_kg;
+   double m_mashTunWeight_kg;
    double m_tunSpecificHeat_calGC;
    bool m_equipAdjust;
 

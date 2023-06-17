@@ -171,6 +171,25 @@ namespace {
        {"mPa-s", &Measurement::Units::millipascalSecond}}
    };
 
+   JsonMeasureableUnitsMapping const BEER_JSON_SPECIFIC_HEAT_UNIT_MAPPER {
+      // SpecificHeatUnitType in measurable_units.json in BeerJSON schema
+      {{"Cal/(g C)" , &Measurement::Units::caloriesPerCelsiusPerGram},
+       {"J/(kg K)"  , &Measurement::Units::joulesPerKelvinPerKg     },
+       {"BTU/(lb F)", &Measurement::Units::btuPerFahrenheitPerPound }}
+   };
+
+   JsonMeasureableUnitsMapping const BEER_JSON_SPECIFIC_VOLUME_UNIT_MAPPER {
+      // SpecificVolumeUnitType in measurable_units.json in BeerJSON schema
+      {{"l/kg"   , &Measurement::Units::litresPerKilogram     },
+       {"l/g"    , &Measurement::Units::litresPerGram         },
+       {"m^3/kg" , &Measurement::Units::cubicMetersPerKilogram},
+       {"qt/lb"  , &Measurement::Units::us_quartsPerPound     },
+       {"gal/lb" , &Measurement::Units::us_gallonsPerPound    },
+       {"gal/oz" , &Measurement::Units::us_gallonsPerOunce    },
+       {"floz/oz", &Measurement::Units::us_fluidOuncesPerOunce},
+       {"ft^3/lb", &Measurement::Units::cubicFeetPerPound     }}
+   };
+
    // We only use specialisations of this template.  GCC doesn't mind not having a definition for the default cases (as
    // it's not used) but other compilers do.
    template<class NE> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION {
@@ -525,6 +544,10 @@ namespace {
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for equipments BeerJSON records TODO
+   //
+   // Yes, all the permutations below are technically allowed in BeerJSON.  I think this is a place where simplifying
+   // the schema won out over precision.  We simply ignore the field permutations that don't seem to make sense (eg
+   // grain_absorption_rate on Hot Liquor Tank)
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Equipment> {
       "equipments",              // JSON recordName
@@ -532,14 +555,71 @@ namespace {
       "Equipment",               // NamedEntity class name
       JsonRecordDefinition::create< JsonNamedEntityRecord< Equipment > >,
       {
-         //
-         // In theory, to access the "Mash Tun" entry in an "equipment_items" array, we just use JSONPath equipment_items[?(@.form=="Mash Tun")]
-         //
-
-         // Type                                                 XPath                                     Q_PROPERTY                               Enum/Unit Mapper
-///         {JsonRecordDefinition::FieldType::String,               "name",                                   PropertyNames::NamedEntity::name       },
-         {JsonRecordDefinition::FieldType::String,               "test/fish[face=\"squid\"]/weasel",                                   PropertyNames::NamedEntity::name       },
-///         {JsonRecordDefinition::FieldType::String,               "equipment_items"
+         // Type                                                 XPath                                                               Q_PROPERTY                                   Enum/Unit Mapper
+         {JsonRecordDefinition::FieldType::String              , "name"                                                            , PropertyNames::NamedEntity::name           },
+         {JsonRecordDefinition::FieldType::String              , "equipment_items[form=\"HLT\"]/type"                              , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"HLT\"]/maximum_volume"                    , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"HLT\"]/loss"                              , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"HLT\"]/grain_absorption_rate"             , BtString::NULL_STR                         , &BEER_JSON_SPECIFIC_VOLUME_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"HLT\"]/boil_rate_per_hour"                , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"HLT\"]/drain_rate_per_minute"             , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"HLT\"]/weight"                            , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"HLT\"]/specific_heat"                     , BtString::NULL_STR                         , &BEER_JSON_SPECIFIC_HEAT_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::String              , "equipment_items[form=\"HLT\"]/notes"                             , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::String              , "equipment_items[form=\"Mash Tun\"]/type"                         , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Mash Tun\"]/maximum_volume"               , PropertyNames::Equipment::mashTunVolume_l  },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Mash Tun\"]/loss"                         , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Mash Tun\"]/grain_absorption_rate"        , BtString::NULL_STR                         , &BEER_JSON_SPECIFIC_VOLUME_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Mash Tun\"]/boil_rate_per_hour"           , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Mash Tun\"]/drain_rate_per_minute"        , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Mash Tun\"]/weight"                       , PropertyNames::Equipment::mashTunWeight_kg },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Mash Tun\"]/specific_heat"                , BtString::NULL_STR                         , &BEER_JSON_SPECIFIC_HEAT_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::String              , "equipment_items[form=\"Mash Tun\"]/notes"                        , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::String              , "equipment_items[form=\"Lauter Tun\"]/type"                       , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Lauter Tun\"]/maximum_volume"             , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Lauter Tun\"]/loss"                       , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Lauter Tun\"]/grain_absorption_rate"      , BtString::NULL_STR                         , &BEER_JSON_SPECIFIC_VOLUME_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Lauter Tun\"]/boil_rate_per_hour"         , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Lauter Tun\"]/drain_rate_per_minute"      , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Lauter Tun\"]/weight"                     , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Lauter Tun\"]/specific_heat"              , BtString::NULL_STR                         , &BEER_JSON_SPECIFIC_HEAT_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::String              , "equipment_items[form=\"Lauter Tun\"]/notes"                      , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::String              , "equipment_items[form=\"Brew Kettle\"]/type"                      , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Brew Kettle\"]/maximum_volume"            , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Brew Kettle\"]/loss"                      , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Brew Kettle\"]/grain_absorption_rate"     , BtString::NULL_STR                         , &BEER_JSON_SPECIFIC_VOLUME_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Brew Kettle\"]/boil_rate_per_hour"        , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Brew Kettle\"]/drain_rate_per_minute"     , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Brew Kettle\"]/weight"                    , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Brew Kettle\"]/specific_heat"             , BtString::NULL_STR                         , &BEER_JSON_SPECIFIC_HEAT_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::String              , "equipment_items[form=\"Brew Kettle\"]/notes"                     , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::String              , "equipment_items[form=\"Fermenter\"]/type"                        , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Fermenter\"]/maximum_volume"              , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Fermenter\"]/loss"                        , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Fermenter\"]/grain_absorption_rate"       , BtString::NULL_STR                         , &BEER_JSON_SPECIFIC_VOLUME_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Fermenter\"]/boil_rate_per_hour"          , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Fermenter\"]/drain_rate_per_minute"       , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Fermenter\"]/weight"                      , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Fermenter\"]/specific_heat"               , BtString::NULL_STR                         , &BEER_JSON_SPECIFIC_HEAT_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::String              , "equipment_items[form=\"Fermenter\"]/notes"                       , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::String              , "equipment_items[form=\"Aging Vessel\"]/type"                     , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Aging Vessel\"]/maximum_volume"           , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Aging Vessel\"]/loss"                     , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Aging Vessel\"]/grain_absorption_rate"    , BtString::NULL_STR                         , &BEER_JSON_SPECIFIC_VOLUME_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Aging Vessel\"]/boil_rate_per_hour"       , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Aging Vessel\"]/drain_rate_per_minute"    , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Aging Vessel\"]/weight"                   , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Aging Vessel\"]/specific_heat"            , BtString::NULL_STR                         , &BEER_JSON_SPECIFIC_HEAT_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::String              , "equipment_items[form=\"Aging Vessel\"]/notes"                    , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::String              , "equipment_items[form=\"Packaging Vessel\"]/type"                 , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Packaging Vessel\"]/maximum_volume"       , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Packaging Vessel\"]/loss"                 , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Packaging Vessel\"]/grain_absorption_rate", BtString::NULL_STR                         , &BEER_JSON_SPECIFIC_VOLUME_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Packaging Vessel\"]/boil_rate_per_hour"   , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Packaging Vessel\"]/drain_rate_per_minute", BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Packaging Vessel\"]/weight"               , BtString::NULL_STR                         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "equipment_items[form=\"Packaging Vessel\"]/specific_heat"        , BtString::NULL_STR                         , &BEER_JSON_SPECIFIC_HEAT_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::String              , "equipment_items[form=\"Packaging Vessel\"]/notes"                , BtString::NULL_STR                         },
       }
    };
 

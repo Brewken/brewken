@@ -323,8 +323,29 @@ namespace Measurement {
       //       used "calories per Celsius per gram" rather than "joules per Celsius per kilogram", including for storing
       //       amounts in the DB.   Also the "calories" version is what is used by BeerJSON and BeerXML.
       //
+      // BeerJSON also offers us BTU / (lb × °F).  Note however, that, because a British Thermal Unit (BTU) is defined
+      // as "the amount of heat required to raise the temperature of one pound of water by one degree Fahrenheit", we
+      // have 1 BTU/lb·F = 1 c/g·C.
+      //
       extern Unit const caloriesPerCelsiusPerGram;
-      extern Unit const joulesPerKelvinPerKg;
+      extern Unit const joulesPerKelvinPerKg     ;
+      extern Unit const btuPerFahrenheitPerPound ;
+      // == Specific Volume ==
+      // Per https://en.wikipedia.org/wiki/Specific_volume, specific volume is the reciprocal of density; in other words
+      // it is "an intrinsic property of a substance, defined as the ratio of the substance's volume to its mass.  In
+      // brewing, it's typically used to measure mash thickness.  The standard unit of specific volume is cubic meters
+      // per kilogram (m³/kg), but there are various other metric combinations in widespread use.  We have historically
+      // used litres per kilogram as our canonical units, and I see no pressing reason to change that.
+      // We have a lot of units here because BeerJSON supports them all.  (I'm assuming the non-metric BeerJSON units
+      // are US Customary rather than Imperial because I think the imperial versions are getting a bit obscure.)
+      extern Unit const litresPerKilogram     ;
+      extern Unit const litresPerGram         ;
+      extern Unit const cubicMetersPerKilogram;
+      extern Unit const us_quartsPerPound     ;
+      extern Unit const us_gallonsPerPound    ;
+      extern Unit const us_gallonsPerOunce    ;
+      extern Unit const us_fluidOuncesPerOunce;
+      extern Unit const cubicFeetPerPound     ;
    }
 }
 

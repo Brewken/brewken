@@ -33,8 +33,8 @@ bool Equipment::isEqualTo(NamedEntity const & other) const {
    return (
       this->m_boilSize_l            == rhs.m_boilSize_l            &&
       this->m_batchSize_l           == rhs.m_batchSize_l           &&
-      this->m_tunVolume_l           == rhs.m_tunVolume_l           &&
-      this->m_tunWeight_kg          == rhs.m_tunWeight_kg          &&
+      this->m_mashTunVolume_l       == rhs.m_mashTunVolume_l           &&
+      this->m_mashTunWeight_kg          == rhs.m_mashTunWeight_kg          &&
       this->m_tunSpecificHeat_calGC == rhs.m_tunSpecificHeat_calGC &&
       this->m_topUpWater_l          == rhs.m_topUpWater_l          &&
       this->m_trubChillerLoss_l     == rhs.m_trubChillerLoss_l     &&
@@ -69,8 +69,8 @@ TypeLookup const Equipment::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::topUpWater_l         , Equipment::m_topUpWater_l         , Measurement::PhysicalQuantity::Volume              ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::trubChillerLoss_l    , Equipment::m_trubChillerLoss_l    , Measurement::PhysicalQuantity::Volume              ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::tunSpecificHeat_calGC, Equipment::m_tunSpecificHeat_calGC, Measurement::PhysicalQuantity::SpecificHeatCapacity),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::tunVolume_l          , Equipment::m_tunVolume_l          , Measurement::PhysicalQuantity::Volume              ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::tunWeight_kg         , Equipment::m_tunWeight_kg         , Measurement::PhysicalQuantity::Mass                ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::mashTunVolume_l      , Equipment::m_mashTunVolume_l          , Measurement::PhysicalQuantity::Volume              ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::mashTunWeight_kg         , Equipment::m_mashTunWeight_kg         , Measurement::PhysicalQuantity::Mass                ),
    },
    // Parent class lookup
    &NamedEntity::typeLookup
@@ -81,8 +81,8 @@ Equipment::Equipment(QString name) :
    NamedEntity            {name, true},
    m_boilSize_l           {22.927},
    m_batchSize_l          {18.927},
-   m_tunVolume_l          {0.0   },
-   m_tunWeight_kg         {0.0   },
+   m_mashTunVolume_l          {0.0   },
+   m_mashTunWeight_kg         {0.0   },
    m_tunSpecificHeat_calGC{0.0   },
    m_topUpWater_l         {0.0   },
    m_trubChillerLoss_l    {1.0   },
@@ -109,8 +109,8 @@ Equipment::Equipment(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity{namedParameterBundle},
    m_boilSize_l           {namedParameterBundle.val<double >(PropertyNames::Equipment::boilSize_l                )},
    m_batchSize_l          {namedParameterBundle.val<double >(PropertyNames::Equipment::batchSize_l               )},
-   m_tunVolume_l          {namedParameterBundle.val<double >(PropertyNames::Equipment::tunVolume_l               )},
-   m_tunWeight_kg         {namedParameterBundle.val<double >(PropertyNames::Equipment::tunWeight_kg              )},
+   m_mashTunVolume_l          {namedParameterBundle.val<double >(PropertyNames::Equipment::mashTunVolume_l               )},
+   m_mashTunWeight_kg         {namedParameterBundle.val<double >(PropertyNames::Equipment::mashTunWeight_kg              )},
    m_tunSpecificHeat_calGC{namedParameterBundle.val<double >(PropertyNames::Equipment::tunSpecificHeat_calGC     )},
    m_topUpWater_l         {namedParameterBundle.val<double >(PropertyNames::Equipment::topUpWater_l              )},
    m_trubChillerLoss_l    {namedParameterBundle.val<double >(PropertyNames::Equipment::trubChillerLoss_l         )},
@@ -131,8 +131,8 @@ Equipment::Equipment(Equipment const & other) :
    NamedEntity            {other                        },
    m_boilSize_l           {other.m_boilSize_l           },
    m_batchSize_l          {other.m_batchSize_l          },
-   m_tunVolume_l          {other.m_tunVolume_l          },
-   m_tunWeight_kg         {other.m_tunWeight_kg         },
+   m_mashTunVolume_l          {other.m_mashTunVolume_l          },
+   m_mashTunWeight_kg         {other.m_mashTunWeight_kg         },
    m_tunSpecificHeat_calGC{other.m_tunSpecificHeat_calGC},
    m_topUpWater_l         {other.m_topUpWater_l         },
    m_trubChillerLoss_l    {other.m_trubChillerLoss_l    },
@@ -157,8 +157,8 @@ QString Equipment::notes                () const { return m_notes               
 bool    Equipment::calcBoilVolume       () const { return m_calcBoilVolume       ; }
 double  Equipment::boilSize_l           () const { return m_boilSize_l           ; }
 double  Equipment::batchSize_l          () const { return m_batchSize_l          ; }
-double  Equipment::tunVolume_l          () const { return m_tunVolume_l          ; }
-double  Equipment::tunWeight_kg         () const { return m_tunWeight_kg         ; }
+double  Equipment::mashTunVolume_l          () const { return m_mashTunVolume_l          ; }
+double  Equipment::mashTunWeight_kg         () const { return m_mashTunWeight_kg         ; }
 double  Equipment::tunSpecificHeat_calGC() const { return m_tunSpecificHeat_calGC; }
 double  Equipment::topUpWater_l         () const { return m_topUpWater_l         ; }
 double  Equipment::trubChillerLoss_l    () const { return m_trubChillerLoss_l    ; }
@@ -190,15 +190,15 @@ void Equipment::setBatchSize_l(double const val) {
    }
 }
 
-void Equipment::setTunVolume_l(double const val) {
-   this->setAndNotify(PropertyNames::Equipment::tunVolume_l,
-                      this->m_tunVolume_l,
+void Equipment::setMashTunVolume_l(double const val) {
+   this->setAndNotify(PropertyNames::Equipment::mashTunVolume_l,
+                      this->m_mashTunVolume_l,
                       this->enforceMin(val, "tun volume"));
 }
 
-void Equipment::setTunWeight_kg(double const val) {
-   this->setAndNotify(PropertyNames::Equipment::tunWeight_kg,
-                      this->m_tunWeight_kg,
+void Equipment::setMashTunWeight_kg(double const val) {
+   this->setAndNotify(PropertyNames::Equipment::mashTunWeight_kg,
+                      this->m_mashTunWeight_kg,
                       this->enforceMin(val, "tun weight"));
 }
 

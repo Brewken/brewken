@@ -29,6 +29,7 @@ AddSettingName(unitSystem_density             )
 AddSettingName(unitSystem_diastaticPower      )
 AddSettingName(unitSystem_massConcentration   )
 AddSettingName(unitSystem_specificHeatCapacity)
+AddSettingName(unitSystem_specificVolume      )
 AddSettingName(unitSystem_temperature         )
 AddSettingName(unitSystem_time                )
 AddSettingName(unitSystem_viscosity           )
@@ -37,7 +38,7 @@ AddSettingName(unitSystem_volumeConcentration )
 AddSettingName(unitSystem_weight              )
 #undef AddSettingName
 
-std::array<Measurement::PhysicalQuantity, 14> const Measurement::allPhysicalQuantites{
+std::array<Measurement::PhysicalQuantity, 15> const Measurement::allPhysicalQuantites{
    Measurement::PhysicalQuantity::Mass                , // 1
    Measurement::PhysicalQuantity::Volume              , // 2
    Measurement::PhysicalQuantity::Time                , // 3
@@ -52,6 +53,7 @@ std::array<Measurement::PhysicalQuantity, 14> const Measurement::allPhysicalQuan
    Measurement::PhysicalQuantity::VolumeConcentration , // 12
    Measurement::PhysicalQuantity::Viscosity           , // 13
    Measurement::PhysicalQuantity::SpecificHeatCapacity, // 14
+   Measurement::PhysicalQuantity::SpecificVolume      , // 15
 };
 
 QString Measurement::getDisplayName(Measurement::PhysicalQuantity const physicalQuantity) {
@@ -76,6 +78,7 @@ QString Measurement::getDisplayName(Measurement::PhysicalQuantity const physical
       case Measurement::PhysicalQuantity::VolumeConcentration : return QObject::tr("Volume Concentration"  );
       case Measurement::PhysicalQuantity::Viscosity           : return QObject::tr("Viscosity"             );
       case Measurement::PhysicalQuantity::SpecificHeatCapacity: return QObject::tr("Specific Heat Capacity");
+      case Measurement::PhysicalQuantity::SpecificVolume      : return QObject::tr("Specific Volume"       );
       // In C++23, we'd add:
       // default: std::unreachable();
    }
@@ -106,6 +109,7 @@ BtStringConst const & Measurement::getSettingsName(PhysicalQuantity const physic
       case Measurement::PhysicalQuantity::VolumeConcentration : return unitSystem_volumeConcentration ;
       case Measurement::PhysicalQuantity::Viscosity           : return unitSystem_viscosity           ;
       case Measurement::PhysicalQuantity::SpecificHeatCapacity: return unitSystem_specificHeatCapacity;
+      case Measurement::PhysicalQuantity::SpecificVolume      : return unitSystem_specificVolume      ;
       // In C++23, we'd add:
       // default: std::unreachable();
    }

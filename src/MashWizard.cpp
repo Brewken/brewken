@@ -129,7 +129,7 @@ double MashWizard::calcDecoctionAmount( MashStep* step, Mash* mash, double water
    double grainDensity = PhysicalConstants::grainDensity_kgL;
 
    double stepTemp  = step->stepTemp_c();
-   double equipMass = (mash->equipAdjust()) ? mash->tunWeight_kg() : 0;
+   double equipMass = (mash->equipAdjust()) ? mash->mashTunWeight_kg() : 0;
    double c_e       = (mash->equipAdjust()) ? mash->tunSpecificHeat_calGC() : 0;
 
    double grHeat = grainMass * HeatCalculations::Cw_calGC;
@@ -227,7 +227,7 @@ void MashWizard::wizardry() {
    MC = HeatCalculations::Cgrain_calGC * grainMass;
 
    // I am specifically ignoring BeerXML's request to only do this if mash->getEquipAdjust() is set.
-   tw = MC/MCw * (tf-t1) + (mash->tunSpecificHeat_calGC()*mash->tunWeight_kg())/MCw * (tf-mash->tunTemp_c()) + tf;
+   tw = MC/MCw * (tf-t1) + (mash->tunSpecificHeat_calGC()*mash->mashTunWeight_kg())/MCw * (tf-mash->tunTemp_c()) + tf;
 
    // Can't have water above boiling.
    if( tw > boilingPoint_c ) {
@@ -244,7 +244,7 @@ void MashWizard::wizardry() {
    // Do rest of steps.
    // Add thermal mass of equipment to MC.
    // I am specifically ignoring BeerXML's request to only do this if mash->getEquipAdjust() is set.
-   MC += mash->tunSpecificHeat_calGC()*mash->tunWeight_kg();
+   MC += mash->tunSpecificHeat_calGC()*mash->mashTunWeight_kg();
 
    for (int i = 1; i < steps.size(); ++i) {
       mashStep = steps[i];
@@ -263,7 +263,7 @@ void MashWizard::wizardry() {
             m_w += steps[j]->infuseAmount_l();
          }
          m_g = grainMass;
-         m_e = (mash->equipAdjust()) ? mash->tunWeight_kg() : 0;
+         m_e = (mash->equipAdjust()) ? mash->mashTunWeight_kg() : 0;
 
          c_w = HeatCalculations::Cw_calGC;
          c_g = HeatCalculations::Cgrain_calGC;
@@ -347,7 +347,7 @@ void MashWizard::wizardry() {
       }
       MC = recObs->grainsInMash_kg() * HeatCalculations::Cgrain_calGC
            + absorption_LKg * recObs->grainsInMash_kg() * HeatCalculations::Cw_calGC
-           + mash->tunWeight_kg() * mash->tunSpecificHeat_calGC();
+           + mash->mashTunWeight_kg() * mash->tunSpecificHeat_calGC();
 
       massWater = spargeWater_l;
 

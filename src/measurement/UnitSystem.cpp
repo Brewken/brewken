@@ -405,11 +405,11 @@ namespace Measurement::UnitSystems {
                                        "volume_UsCustomary",
                                        Measurement::SystemOfMeasurement::UsCustomary,
                                        {{UnitSystem::RelativeScale::ExtraSmall, &Measurement::Units::us_teaspoons  },
-                                        {UnitSystem::RelativeScale::Small,      &Measurement::Units::us_tablespoons},
-                                        {UnitSystem::RelativeScale::Medium,     &Measurement::Units::us_cups       },
-                                        {UnitSystem::RelativeScale::Large,      &Measurement::Units::us_quarts     },
+                                        {UnitSystem::RelativeScale::Small     , &Measurement::Units::us_tablespoons},
+                                        {UnitSystem::RelativeScale::Medium    , &Measurement::Units::us_cups       },
+                                        {UnitSystem::RelativeScale::Large     , &Measurement::Units::us_quarts     },
                                         {UnitSystem::RelativeScale::ExtraLarge, &Measurement::Units::us_gallons    },
-                                        {UnitSystem::RelativeScale::Huge,       &Measurement::Units::us_barrels    }},
+                                        {UnitSystem::RelativeScale::Huge      , &Measurement::Units::us_barrels    }},
                                        &Measurement::Units::us_quarts};
 
    UnitSystem const volume_Imperial{PhysicalQuantity::Volume,
@@ -533,4 +533,26 @@ namespace Measurement::UnitSystems {
                                                 "specificHeatCapacity_Joules",
                                                 Measurement::SystemOfMeasurement::SpecificHeatCapacityJoules};
 
+   UnitSystem const specificHeatCapacity_Btus{PhysicalQuantity::SpecificHeatCapacity,
+                                              &Measurement::Units::btuPerFahrenheitPerPound,
+                                              "specificHeatCapacity_Btus",
+                                              Measurement::SystemOfMeasurement::SpecificHeatCapacityBtus};
+
+   UnitSystem const specificVolume_Metric{PhysicalQuantity::SpecificVolume,
+                                          &Measurement::Units::litresPerKilogram,
+                                          "specificVolume_Metric",
+                                          Measurement::SystemOfMeasurement::Metric,
+                                          {{UnitSystem::RelativeScale::ExtraSmall, &Measurement::Units::litresPerGram         },
+                                           {UnitSystem::RelativeScale::Small     , &Measurement::Units::cubicMetersPerKilogram},
+                                           {UnitSystem::RelativeScale::Medium    , &Measurement::Units::litresPerKilogram     }}};
+
+   UnitSystem const specificVolume_UsCustomary{PhysicalQuantity::SpecificVolume,
+                                               &Measurement::Units::us_quartsPerPound,
+                                               "specificVolume_UsCustomary",
+                                               Measurement::SystemOfMeasurement::UsCustomary,
+                                               {{UnitSystem::RelativeScale::ExtraSmall,  &Measurement::Units::us_fluidOuncesPerOunce},
+                                                {UnitSystem::RelativeScale::Small     ,  &Measurement::Units::cubicFeetPerPound     },
+                                                {UnitSystem::RelativeScale::Medium    ,  &Measurement::Units::us_gallonsPerPound    },
+                                                {UnitSystem::RelativeScale::Large     ,  &Measurement::Units::us_quartsPerPound     },
+                                                {UnitSystem::RelativeScale::ExtraLarge,  &Measurement::Units::us_gallonsPerOunce    }}};
 }

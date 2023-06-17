@@ -46,8 +46,8 @@ AddPropertyName(topUpKettle_l        )
 AddPropertyName(topUpWater_l         )
 AddPropertyName(trubChillerLoss_l    )
 AddPropertyName(tunSpecificHeat_calGC)
-AddPropertyName(tunVolume_l          )
-AddPropertyName(tunWeight_kg         )
+AddPropertyName(mashTunVolume_l      )
+AddPropertyName(mashTunWeight_kg     )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -100,13 +100,13 @@ public:
     *        This parameter can be used to calculate if a particular mash and grain profile will fit in the mash tun.
     *        It may also be used for thermal calculations in the case of a partially full mash tun.
     */
-   Q_PROPERTY(double tunVolume_l           READ tunVolume_l           WRITE setTunVolume_l           )
+   Q_PROPERTY(double mashTunVolume_l       READ mashTunVolume_l       WRITE setMashTunVolume_l           )
    /**
     * \brief The tun mass in kg.                  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
     *        Used primarily to calculate the thermal parameters of the mash tun – in conjunction with the volume and
     *        specific heat.
     */
-   Q_PROPERTY(double tunWeight_kg          READ tunWeight_kg          WRITE setTunWeight_kg          )
+   Q_PROPERTY(double mashTunWeight_kg      READ mashTunWeight_kg      WRITE setMashTunWeight_kg          )
    /**
     * \brief The mash tun specific heat in cal/(g*C)   ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
     *        This is usually a function of the material the mash tun is made of.  Typical ranges are 0.1-0.25 for metal
@@ -177,8 +177,8 @@ public:
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    double  boilSize_l           () const;
    double  batchSize_l          () const;
-   double  tunVolume_l          () const;
-   double  tunWeight_kg         () const;
+   double  mashTunVolume_l      () const;
+   double  mashTunWeight_kg     () const;
    double  tunSpecificHeat_calGC() const;
    double  topUpWater_l         () const;
    double  trubChillerLoss_l    () const;
@@ -196,8 +196,8 @@ public:
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setBoilSize_l           (double  const   val);
    void setBatchSize_l          (double  const   val);
-   void setTunVolume_l          (double  const   val);
-   void setTunWeight_kg         (double  const   val);
+   void setMashTunVolume_l      (double  const   val);
+   void setMashTunWeight_kg     (double  const   val);
    void setTunSpecificHeat_calGC(double  const   val);
    void setTopUpWater_l         (double  const   val);
    void setTrubChillerLoss_l    (double  const   val);
@@ -226,8 +226,8 @@ protected:
 private:
    double  m_boilSize_l           ;
    double  m_batchSize_l          ;
-   double  m_tunVolume_l          ;
-   double  m_tunWeight_kg         ;
+   double  m_mashTunVolume_l          ;
+   double  m_mashTunWeight_kg         ;
    double  m_tunSpecificHeat_calGC;
    double  m_topUpWater_l         ;
    double  m_trubChillerLoss_l    ;

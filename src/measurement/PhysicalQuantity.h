@@ -138,6 +138,8 @@ namespace Measurement {
       Viscosity,
       // Specific heat capacity -- see https://en.wikipedia.org/wiki/Specific_heat_capacity
       SpecificHeatCapacity,
+      // Specific volume (= the reciprocal of density) -- see https://en.wikipedia.org/wiki/Specific_volume
+      SpecificVolume,
       // .:TBD:. Should we add Energy for PropertyNames::Recipe::calories (in which case, should canonical measure be
       //         Joules)?
    };
@@ -151,7 +153,7 @@ namespace Measurement {
     *        (https://en.cppreference.com/w/cpp/experimental/reflect) gets incorporated into C++, this will ultimately
     *        be unnecessary.
     */
-   extern std::array<Measurement::PhysicalQuantity, 14> const allPhysicalQuantites;
+   extern std::array<Measurement::PhysicalQuantity, 15> const allPhysicalQuantites;
 
    /**
     * \brief Return the name of a \c PhysicalQuantity suitable either for display to the user or logging

@@ -129,7 +129,7 @@ bool MashDesigner::nextStep(int step) {
 
       if (!this->prevStep) {
          // If the last step is null, we need to add the influence of the tun.
-         this->MC += this->mash->tunSpecificHeat_calGC() * this->mash->tunWeight_kg();
+         this->MC += this->mash->tunSpecificHeat_calGC() * this->mash->mashTunWeight_kg();
       }
    }
 
@@ -228,9 +228,9 @@ double MashDesigner::maxAmt_l() {
 
    // However much more we can fit in the tun.
    if (!isSparge()) {
-      amt = equip->tunVolume_l() - mashVolume_l();
+      amt = equip->mashTunVolume_l() - mashVolume_l();
    } else {
-      amt = equip->tunVolume_l() - grainVolume_l();
+      amt = equip->mashTunVolume_l() - grainVolume_l();
    }
 
    return std::min(amt, recObs->targetTotalMashVol_l() - addedWater_l);
@@ -249,7 +249,7 @@ double MashDesigner::volFromTemp_l(double temp_c) {
    // Initial temp is the last step's temp if the last step exists, otherwise the grain temp.
    double t1 = (!this->prevStep) ? mash->grainTemp_c() : this->prevStep->stepTemp_c();
    double mt = mash->tunSpecificHeat_calGC();
-   double ct = mash->tunWeight_kg();
+   double ct = mash->mashTunWeight_kg();
 
    double mw = 1/(HeatCalculations::Cw_calGC * (tw - tf)) *
       (MC * (tf - t1) + ((!this->prevStep) ? mt * ct * (tf - this->mash->tunTemp_c()) : 0));
@@ -290,11 +290,11 @@ double MashDesigner::tempFromVolume_c(double vol_l) {
       t1 = (!this->prevStep) ? this->mash->grainTemp_c() : this->prevStep->stepTemp_c() - 10;
    }
    double mt = this->mash->tunSpecificHeat_calGC();
-   double ct = this->mash->tunWeight_kg();
+   double ct = this->mash->mashTunWeight_kg();
 
    double batchMC = grain_kg * HeatCalculations::Cgrain_calGC
                     + absorption_LKg * grain_kg * HeatCalculations::Cw_calGC
-                    + this->mash->tunWeight_kg() * this->mash->tunSpecificHeat_calGC();
+                    + this->mash->mashTunWeight_kg() * this->mash->tunSpecificHeat_calGC();
 
    double tw = 1 / (mw * cw) * (
       (this->isSparge() ? batchMC : MC) * (tf - t1) + (!this->prevStep ? mt * ct * (tf - this->mash->tunTemp_c()) : 0)
@@ -355,7 +355,7 @@ bool MashDesigner::initializeMash() {
 
    // Order matters. Don't do this until every that could return false has
    this->mash->setTunSpecificHeat_calGC(this->equip->tunSpecificHeat_calGC());
-   this->mash->setTunWeight_kg(this->equip->tunWeight_kg());
+   this->mash->setTunWeight_kg(this->equip->mashTunWeight_kg());
    this->mash->setTunTemp_c(Measurement::qStringToSI(dialogText, Measurement::PhysicalQuantity::Temperature).quantity());
 
    this->curStep = 0;
@@ -366,7 +366,7 @@ bool MashDesigner::initializeMash() {
    this->MC = recObs->grainsInMash_kg() * HeatCalculations::Cgrain_calGC;
    this->grain_kg = recObs->grainsInMash_kg();
 
-   this->label_tunVol->setText(Measurement::displayAmount(Measurement::Amount{equip->tunVolume_l(), Measurement::Units::liters}));
+   this->label_tunVol->setText(Measurement::displayAmount(Measurement::Amount{equip->mashTunVolume_l(), Measurement::Units::liters}));
    this->label_wortMax->setText(Measurement::displayAmount(Measurement::Amount{recObs->targetCollectedWortVol_l(), Measurement::Units::liters}));
 
    this->updateMinAmt();
@@ -401,7 +401,7 @@ void MashDesigner::updateFullness() {
       vol_l = grainVolume_l() + selectedAmount_l();
    }
 
-   double ratio = vol_l / equip->tunVolume_l();
+   double ratio = vol_l / equip->mashTunVolume_l();
    if (ratio < 0) {
      ratio = 0;
    } else if (ratio > 1) {

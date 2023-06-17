@@ -1645,7 +1645,7 @@ void MainWindow::droppedRecipeEquipment(Equipment *kit) {
    // Keep the mash tun weight and specific heat up to date.
    Mash * m = recipeObs->mash();
    if (m) {
-      new SimpleUndoableUpdate(*m, TYPE_INFO(Mash, tunWeight_kg         ), kit->tunWeight_kg()         , tr("Change Tun Weight")       , equipmentUpdate);
+      new SimpleUndoableUpdate(*m, TYPE_INFO(Mash, mashTunWeight_kg         ), kit->mashTunWeight_kg()         , tr("Change Tun Weight")       , equipmentUpdate);
       new SimpleUndoableUpdate(*m, TYPE_INFO(Mash, tunSpecificHeat_calGC), kit->tunSpecificHeat_calGC(), tr("Change Tun Specific Heat"), equipmentUpdate);
    }
 
