@@ -129,7 +129,7 @@ bool MashDesigner::nextStep(int step) {
 
       if (!this->prevStep) {
          // If the last step is null, we need to add the influence of the tun.
-         this->MC += this->mash->tunSpecificHeat_calGC() * this->mash->mashTunWeight_kg();
+         this->MC += this->mash->mashTunSpecificHeat_calGC() * this->mash->mashTunWeight_kg();
       }
    }
 
@@ -248,7 +248,7 @@ double MashDesigner::volFromTemp_l(double temp_c) {
    double tf = stepTemp_c();
    // Initial temp is the last step's temp if the last step exists, otherwise the grain temp.
    double t1 = (!this->prevStep) ? mash->grainTemp_c() : this->prevStep->stepTemp_c();
-   double mt = mash->tunSpecificHeat_calGC();
+   double mt = mash->mashTunSpecificHeat_calGC();
    double ct = mash->mashTunWeight_kg();
 
    double mw = 1/(HeatCalculations::Cw_calGC * (tw - tf)) *
@@ -270,7 +270,7 @@ double MashDesigner::tempFromVolume_c(double vol_l) {
 
    double absorption_LKg;
    if (this->equip) {
-      absorption_LKg = this->equip->grainAbsorption_LKg();
+      absorption_LKg = this->equip->mashTunGrainAbsorption_LKg();
    } else {
       absorption_LKg = PhysicalConstants::grainAbsorption_Lkg;
    }
@@ -289,12 +289,12 @@ double MashDesigner::tempFromVolume_c(double vol_l) {
    if (isSparge()) {
       t1 = (!this->prevStep) ? this->mash->grainTemp_c() : this->prevStep->stepTemp_c() - 10;
    }
-   double mt = this->mash->tunSpecificHeat_calGC();
+   double mt = this->mash->mashTunSpecificHeat_calGC();
    double ct = this->mash->mashTunWeight_kg();
 
    double batchMC = grain_kg * HeatCalculations::Cgrain_calGC
                     + absorption_LKg * grain_kg * HeatCalculations::Cw_calGC
-                    + this->mash->mashTunWeight_kg() * this->mash->tunSpecificHeat_calGC();
+                    + this->mash->mashTunWeight_kg() * this->mash->mashTunSpecificHeat_calGC();
 
    double tw = 1 / (mw * cw) * (
       (this->isSparge() ? batchMC : MC) * (tf - t1) + (!this->prevStep ? mt * ct * (tf - this->mash->tunTemp_c()) : 0)
@@ -354,7 +354,7 @@ bool MashDesigner::initializeMash() {
    }
 
    // Order matters. Don't do this until every that could return false has
-   this->mash->setTunSpecificHeat_calGC(this->equip->tunSpecificHeat_calGC());
+   this->mash->setMashTunSpecificHeat_calGC(this->equip->mashTunSpecificHeat_calGC());
    this->mash->setTunWeight_kg(this->equip->mashTunWeight_kg());
    this->mash->setTunTemp_c(Measurement::qStringToSI(dialogText, Measurement::PhysicalQuantity::Temperature).quantity());
 
@@ -430,7 +430,7 @@ double MashDesigner::waterFromMash_l() {
 
    double absorption_lKg;
    if (equip) {
-      absorption_lKg = equip->grainAbsorption_LKg();
+      absorption_lKg = equip->mashTunGrainAbsorption_LKg();
    } else {
       absorption_lKg = PhysicalConstants::grainAbsorption_Lkg;
    }

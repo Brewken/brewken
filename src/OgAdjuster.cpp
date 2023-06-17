@@ -79,7 +79,7 @@ void OgAdjuster::calculate() {
    }
 
    Equipment* equip = recObs->equipment();
-   double evapRate_lHr = equip->evapRate_lHr();
+   double evapRate_lHr = equip->kettleEvaporationPerHour_l();
 
    // Calculate missing input parameters.
    double sg_20C = 0.0;

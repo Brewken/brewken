@@ -392,12 +392,12 @@ void Testing::initTestCase() {
       this->equipFiveGalNoLoss->setMashTunVolume_l(40.0);
       this->equipFiveGalNoLoss->setTopUpWater_l(0);
       this->equipFiveGalNoLoss->setTrubChillerLoss_l(0);
-      this->equipFiveGalNoLoss->setEvapRate_lHr(4.0);
+      this->equipFiveGalNoLoss->setKettleEvaporationPerHour_l(4.0);
       this->equipFiveGalNoLoss->setBoilTime_min(60);
       this->equipFiveGalNoLoss->setLauterDeadspace_l(0);
       this->equipFiveGalNoLoss->setTopUpKettle_l(0);
       this->equipFiveGalNoLoss->setHopUtilization_pct(100);
-      this->equipFiveGalNoLoss->setGrainAbsorption_LKg(1.0);
+      this->equipFiveGalNoLoss->setMashTunGrainAbsorption_LKg(1.0);
       this->equipFiveGalNoLoss->setBoilingPoint_c(100);
 
       // Cascade pellets at 4% AA
@@ -456,7 +456,7 @@ void Testing::recipeCalcTest_allGrain() {
    singleConversion_sparge->setType(MashStep::Type::Infusion);
    singleConversion_sparge->setInfuseAmount_l(
       rec->boilSize_l()
-      + equipFiveGalNoLoss->grainAbsorption_LKg() * grain_kg // Grain absorption
+      + equipFiveGalNoLoss->mashTunGrainAbsorption_LKg() * grain_kg // Grain absorption
       - conversion_l // Water we already added
    );
    singleConversion->addMashStep(singleConversion_sparge);
@@ -539,10 +539,10 @@ void Testing::postBoilLossOgTest() {
    recLoss->setEfficiency_pct(70.0);
 
    double mashWaterNoLoss_l = recNoLoss->boilSize_l()
-      + equipFiveGalNoLoss->grainAbsorption_LKg() * grain_kg
+      + equipFiveGalNoLoss->mashTunGrainAbsorption_LKg() * grain_kg
    ;
    double mashWaterLoss_l = recLoss->boilSize_l()
-      + eLoss->grainAbsorption_LKg() * grain_kg
+      + eLoss->mashTunGrainAbsorption_LKg() * grain_kg
    ;
 
    // Add equipment

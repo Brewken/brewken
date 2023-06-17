@@ -75,7 +75,7 @@ bool Mash::isEqualTo(NamedEntity const & other) const {
       this->m_spargeTemp_c          == rhs.m_spargeTemp_c          &&
       this->m_ph                    == rhs.m_ph                    &&
       this->m_mashTunWeight_kg          == rhs.m_mashTunWeight_kg          &&
-      this->m_tunSpecificHeat_calGC == rhs.m_tunSpecificHeat_calGC
+      this->m_mashTunSpecificHeat_calGC == rhs.m_mashTunSpecificHeat_calGC
       // .:TBD:. Should we check MashSteps too?
    );
 }
@@ -95,7 +95,7 @@ TypeLookup const Mash::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::spargeTemp_c         , Mash::m_spargeTemp_c         , Measurement::PhysicalQuantity::Temperature         ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::totalMashWater_l     , Mash::m_totalMashWater_l     ), // Calculated, not stored
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::totalTime            , Mash::m_totalTime            ), // Calculated, not stored
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::tunSpecificHeat_calGC, Mash::m_tunSpecificHeat_calGC, Measurement::PhysicalQuantity::SpecificHeatCapacity),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::mashTunSpecificHeat_calGC, Mash::m_mashTunSpecificHeat_calGC, Measurement::PhysicalQuantity::SpecificHeatCapacity),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::tunTemp_c            , Mash::m_tunTemp_c            , Measurement::PhysicalQuantity::Temperature         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::mashTunWeight_kg         , Mash::m_mashTunWeight_kg         , Measurement::PhysicalQuantity::Mass                ),
    },
@@ -112,7 +112,7 @@ Mash::Mash(QString name) :
    m_spargeTemp_c         {0.0 },
    m_ph                   {0.0 },
    m_mashTunWeight_kg         {0.0 },
-   m_tunSpecificHeat_calGC{0.0 },
+   m_mashTunSpecificHeat_calGC{0.0 },
    m_equipAdjust          {true} {
    return;
 }
@@ -126,7 +126,7 @@ Mash::Mash(NamedParameterBundle const & namedParameterBundle) :
    m_spargeTemp_c         {namedParameterBundle.val<double >(PropertyNames::Mash::spargeTemp_c         )},
    m_ph                   {namedParameterBundle.val<double >(PropertyNames::Mash::ph                   )},
    m_mashTunWeight_kg         {namedParameterBundle.val<double >(PropertyNames::Mash::mashTunWeight_kg         )},
-   m_tunSpecificHeat_calGC{namedParameterBundle.val<double >(PropertyNames::Mash::tunSpecificHeat_calGC)},
+   m_mashTunSpecificHeat_calGC{namedParameterBundle.val<double >(PropertyNames::Mash::mashTunSpecificHeat_calGC)},
    m_equipAdjust          {namedParameterBundle.val<bool   >(PropertyNames::Mash::equipAdjust          )} {
    return;
 }
@@ -140,7 +140,7 @@ Mash::Mash(Mash const & other) :
    m_spargeTemp_c         {other.m_spargeTemp_c         },
    m_ph                   {other.m_ph                   },
    m_mashTunWeight_kg         {other.m_mashTunWeight_kg         },
-   m_tunSpecificHeat_calGC{other.m_tunSpecificHeat_calGC},
+   m_mashTunSpecificHeat_calGC{other.m_mashTunSpecificHeat_calGC},
    m_equipAdjust          {other.m_equipAdjust          } {
 
    // Deep copy of MashSteps
@@ -226,8 +226,8 @@ void Mash::setTunWeight_kg(double var) {
    this->setAndNotify(PropertyNames::Mash::mashTunWeight_kg, this->m_mashTunWeight_kg, this->enforceMin(var, "tun weight"));
 }
 
-void Mash::setTunSpecificHeat_calGC(double var) {
-   this->setAndNotify(PropertyNames::Mash::tunSpecificHeat_calGC, this->m_tunSpecificHeat_calGC, this->enforceMin(var, "specific heat"));
+void Mash::setMashTunSpecificHeat_calGC(double var) {
+   this->setAndNotify(PropertyNames::Mash::mashTunSpecificHeat_calGC, this->m_mashTunSpecificHeat_calGC, this->enforceMin(var, "specific heat"));
 }
 
 void Mash::swapMashSteps(MashStep & ms1, MashStep & ms2) {
@@ -291,7 +291,7 @@ double Mash::ph() const { return m_ph; }
 
 double Mash::mashTunWeight_kg() const { return m_mashTunWeight_kg; }
 
-double Mash::tunSpecificHeat_calGC() const { return m_tunSpecificHeat_calGC; }
+double Mash::mashTunSpecificHeat_calGC() const { return m_mashTunSpecificHeat_calGC; }
 
 bool Mash::equipAdjust() const { return m_equipAdjust; }
 

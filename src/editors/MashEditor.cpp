@@ -37,7 +37,7 @@ MashEditor::MashEditor(QWidget* parent) : QDialog(parent), mashObs(nullptr) {
    SMART_FIELD_INIT(MashEditor, label_spargePh  , lineEdit_spargePh  , Mash, PropertyNames::Mash::ph                   , 0);
    SMART_FIELD_INIT(MashEditor, label_tunTemp   , lineEdit_tunTemp   , Mash, PropertyNames::Mash::tunTemp_c            , 1);
    SMART_FIELD_INIT(MashEditor, label_tunMass   , lineEdit_tunMass   , Mash, PropertyNames::Mash::mashTunWeight_kg            );
-   SMART_FIELD_INIT(MashEditor, label_tunSpHeat , lineEdit_tunSpHeat , Mash, PropertyNames::Mash::tunSpecificHeat_calGC, 1);
+   SMART_FIELD_INIT(MashEditor, label_tunSpHeat , lineEdit_tunSpHeat , Mash, PropertyNames::Mash::mashTunSpecificHeat_calGC, 1);
 
    connect(pushButton_fromEquipment, &QAbstractButton::clicked, this, &MashEditor::fromEquipment);
    connect(this,                     &QDialog::accepted,        this, &MashEditor::saveAndClose );
@@ -72,7 +72,7 @@ void MashEditor::saveAndClose() {
    this->mashObs->setPh                   (this->lineEdit_spargePh  ->toCanonical().quantity());
    this->mashObs->setTunTemp_c            (this->lineEdit_tunTemp   ->toCanonical().quantity());
    this->mashObs->setTunWeight_kg         (this->lineEdit_tunMass   ->toCanonical().quantity());
-   this->mashObs->setTunSpecificHeat_calGC(this->lineEdit_tunSpHeat ->toCanonical().quantity());
+   this->mashObs->setMashTunSpecificHeat_calGC(this->lineEdit_tunSpHeat ->toCanonical().quantity());
    this->mashObs->setNotes                (this->textEdit_notes     ->toPlainText()           );
 
    if (isNew) {
@@ -93,7 +93,7 @@ void MashEditor::fromEquipment() {
    }
 
    lineEdit_tunMass  ->setAmount(this->m_equip->mashTunWeight_kg         ());
-   lineEdit_tunSpHeat->setAmount(this->m_equip->tunSpecificHeat_calGC());
+   lineEdit_tunSpHeat->setAmount(this->m_equip->mashTunSpecificHeat_calGC());
    return;
 }
 
@@ -127,11 +127,11 @@ void MashEditor::setRecipe(Recipe * recipe) {
             "mashTunWeight_kg (" << this->m_equip->mashTunWeight_kg() << ")";
          this->mashObs->setTunWeight_kg(this->m_equip->mashTunWeight_kg());
       }
-      if (this->mashObs->tunSpecificHeat_calGC() != this->m_equip->tunSpecificHeat_calGC() ) {
+      if (this->mashObs->mashTunSpecificHeat_calGC() != this->m_equip->mashTunSpecificHeat_calGC() ) {
          qDebug() <<
-            Q_FUNC_INFO << "Overwriting mash tunSpecificHeat_calGC (" << this->mashObs->tunSpecificHeat_calGC() << ") "
-            "with equipment tunSpecificHeat_calGC (" << this->m_equip->tunSpecificHeat_calGC() << ")";
-         this->mashObs->setTunSpecificHeat_calGC(this->m_equip->tunSpecificHeat_calGC());
+            Q_FUNC_INFO << "Overwriting mash mashTunSpecificHeat_calGC (" << this->mashObs->mashTunSpecificHeat_calGC() << ") "
+            "with equipment mashTunSpecificHeat_calGC (" << this->m_equip->mashTunSpecificHeat_calGC() << ")";
+         this->mashObs->setMashTunSpecificHeat_calGC(this->m_equip->mashTunSpecificHeat_calGC());
       }
    }
    return;
@@ -171,7 +171,7 @@ void MashEditor::showChanges(QMetaProperty* prop) {
    if (updateAll || propName == PropertyNames::Mash::ph                    ) {this->lineEdit_spargePh  ->setAmount   (mashObs->ph                   ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Mash::tunTemp_c             ) {this->lineEdit_tunTemp   ->setAmount   (mashObs->tunTemp_c            ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Mash::mashTunWeight_kg          ) {this->lineEdit_tunMass   ->setAmount   (mashObs->mashTunWeight_kg         ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::tunSpecificHeat_calGC ) {this->lineEdit_tunSpHeat ->setAmount   (mashObs->tunSpecificHeat_calGC()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::mashTunSpecificHeat_calGC ) {this->lineEdit_tunSpHeat ->setAmount   (mashObs->mashTunSpecificHeat_calGC()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Mash::notes                 ) {this->textEdit_notes     ->setPlainText(mashObs->notes                ()); if (!updateAll) { return; } }
    return;
 }

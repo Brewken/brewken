@@ -656,6 +656,17 @@ namespace {
          {QString("ALTER TABLE style ADD COLUMN appearance         %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE style ADD COLUMN mouthfeel          %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE style ADD COLUMN overall_impression %1").arg(db.getDbNativeTypeName<QString>())},
+         //
+         // Style: Extended and additional fields for BeerJSON.  This includes changing a lot of column names as
+         // BeerJSON essentially has a record per vessel ("HLT", "Mash Tun", etc)
+         //
+         {QString("ALTER TABLE equipment RENAME COLUMN notes             TO kettle_notes                 ")},
+         {QString("ALTER TABLE equipment RENAME COLUMN real_evap_rate    TO kettle_evaporation_per_hour_l")},
+
+         {QString("ALTER TABLE equipment RENAME COLUMN tun_specific_heat TO mash_tun_specific_heat       ")},
+         {QString("ALTER TABLE equipment RENAME COLUMN tun_volume        TO mash_tun_volume              ")},
+         {QString("ALTER TABLE equipment RENAME COLUMN tun_weight        TO mash_tun_weight              ")},
+         {QString("ALTER TABLE equipment RENAME COLUMN absorption        TO mash_tun_grain_absorption_lkg")},
 
       };
       return executeSqlQueries(q, migrationQueries);

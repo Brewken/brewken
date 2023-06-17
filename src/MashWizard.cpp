@@ -130,7 +130,7 @@ double MashWizard::calcDecoctionAmount( MashStep* step, Mash* mash, double water
 
    double stepTemp  = step->stepTemp_c();
    double equipMass = (mash->equipAdjust()) ? mash->mashTunWeight_kg() : 0;
-   double c_e       = (mash->equipAdjust()) ? mash->tunSpecificHeat_calGC() : 0;
+   double c_e       = (mash->equipAdjust()) ? mash->mashTunSpecificHeat_calGC() : 0;
 
    double grHeat = grainMass * HeatCalculations::Cw_calGC;
    double waHeat = waterMass * HeatCalculations::Cgrain_calGC;
@@ -169,7 +169,7 @@ void MashWizard::wizardry() {
 
    // If we have an equipment, utilize the custom absorption and boiling temp.
    if( recObs->equipment() != nullptr ) {
-      absorption_LKg = recObs->equipment()->grainAbsorption_LKg();
+      absorption_LKg = recObs->equipment()->mashTunGrainAbsorption_LKg();
       boilingPoint_c = recObs->equipment()->boilingPoint_c();
       lauterDeadspace = recObs->equipment()->lauterDeadspace_l();
    }
@@ -227,7 +227,7 @@ void MashWizard::wizardry() {
    MC = HeatCalculations::Cgrain_calGC * grainMass;
 
    // I am specifically ignoring BeerXML's request to only do this if mash->getEquipAdjust() is set.
-   tw = MC/MCw * (tf-t1) + (mash->tunSpecificHeat_calGC()*mash->mashTunWeight_kg())/MCw * (tf-mash->tunTemp_c()) + tf;
+   tw = MC/MCw * (tf-t1) + (mash->mashTunSpecificHeat_calGC()*mash->mashTunWeight_kg())/MCw * (tf-mash->tunTemp_c()) + tf;
 
    // Can't have water above boiling.
    if( tw > boilingPoint_c ) {
@@ -244,7 +244,7 @@ void MashWizard::wizardry() {
    // Do rest of steps.
    // Add thermal mass of equipment to MC.
    // I am specifically ignoring BeerXML's request to only do this if mash->getEquipAdjust() is set.
-   MC += mash->tunSpecificHeat_calGC()*mash->mashTunWeight_kg();
+   MC += mash->mashTunSpecificHeat_calGC()*mash->mashTunWeight_kg();
 
    for (int i = 1; i < steps.size(); ++i) {
       mashStep = steps[i];
@@ -267,7 +267,7 @@ void MashWizard::wizardry() {
 
          c_w = HeatCalculations::Cw_calGC;
          c_g = HeatCalculations::Cgrain_calGC;
-         c_e = (mash->equipAdjust()) ? mash->tunSpecificHeat_calGC() : 0;
+         c_e = (mash->equipAdjust()) ? mash->mashTunSpecificHeat_calGC() : 0;
 
          // r is the ratio of water and grain to take out for decoction.
          r = ((m_w*c_w + m_g*c_g + m_e*c_e)*(tf-t1)) / ((m_w*c_w + m_g*c_g)*(boilingPoint_c-tf) + (m_w*c_w + m_g*c_g)*(tf-t1));
@@ -347,7 +347,7 @@ void MashWizard::wizardry() {
       }
       MC = recObs->grainsInMash_kg() * HeatCalculations::Cgrain_calGC
            + absorption_LKg * recObs->grainsInMash_kg() * HeatCalculations::Cw_calGC
-           + mash->mashTunWeight_kg() * mash->tunSpecificHeat_calGC();
+           + mash->mashTunWeight_kg() * mash->mashTunSpecificHeat_calGC();
 
       massWater = spargeWater_l;
 

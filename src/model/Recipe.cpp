@@ -2196,7 +2196,7 @@ void Recipe::recalcVolumeEstimates() {
    } else {
       waterAdded_l = mash()->totalMashWater_l();
       if (equipment() != nullptr) {
-         absorption_lKg = equipment()->grainAbsorption_LKg();
+         absorption_lKg = equipment()->mashTunGrainAbsorption_LKg();
       } else {
          absorption_lKg = PhysicalConstants::grainAbsorption_Lkg;
       }
@@ -2851,7 +2851,7 @@ double Recipe::targetTotalMashVol_l() {
    double absorption_lKg;
 
    if (equipment()) {
-      absorption_lKg = equipment()->grainAbsorption_LKg();
+      absorption_lKg = equipment()->mashTunGrainAbsorption_LKg();
    } else {
       absorption_lKg = PhysicalConstants::grainAbsorption_Lkg;
    }

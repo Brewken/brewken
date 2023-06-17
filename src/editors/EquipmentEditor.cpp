@@ -70,8 +70,8 @@ EquipmentEditor::EquipmentEditor(QWidget* parent, bool singleEquipEditor) :
 
    obsEquip = nullptr;
 
-   SMART_FIELD_INIT(EquipmentEditor, label_tunSpecificHeat, lineEdit_tunSpecificHeat, Equipment, PropertyNames::Equipment::tunSpecificHeat_calGC   );
-   SMART_FIELD_INIT(EquipmentEditor, label_grainAbsorption, lineEdit_grainAbsorption, Equipment, PropertyNames::Equipment::grainAbsorption_LKg     );
+   SMART_FIELD_INIT(EquipmentEditor, label_tunSpecificHeat, lineEdit_tunSpecificHeat, Equipment, PropertyNames::Equipment::mashTunSpecificHeat_calGC );
+   SMART_FIELD_INIT(EquipmentEditor, label_grainAbsorption, lineEdit_grainAbsorption, Equipment, PropertyNames::Equipment::mashTunGrainAbsorption_LKg);
    SMART_FIELD_INIT(EquipmentEditor, label_hopUtilization , lineEdit_hopUtilization , Equipment, PropertyNames::Equipment::hopUtilization_pct   , 0);
    SMART_FIELD_INIT(EquipmentEditor, label_tunWeight      , lineEdit_tunWeight      , Equipment, PropertyNames::Equipment::mashTunWeight_kg        );
    SMART_FIELD_INIT(EquipmentEditor, label_name           , lineEdit_name           , Equipment, PropertyNames::NamedEntity::name                  );
@@ -79,7 +79,7 @@ EquipmentEditor::EquipmentEditor(QWidget* parent, bool singleEquipEditor) :
    SMART_FIELD_INIT(EquipmentEditor, label_boilTime       , lineEdit_boilTime       , Equipment, PropertyNames::Equipment::boilTime_min            );
    SMART_FIELD_INIT(EquipmentEditor, label_batchSize      , lineEdit_batchSize      , Equipment, PropertyNames::Equipment::batchSize_l             );
    SMART_FIELD_INIT(EquipmentEditor, label_boilSize       , lineEdit_boilSize       , Equipment, PropertyNames::Equipment::boilSize_l              );
-   SMART_FIELD_INIT(EquipmentEditor, label_evaporationRate, lineEdit_evaporationRate, Equipment, PropertyNames::Equipment::evapRate_lHr            );
+   SMART_FIELD_INIT(EquipmentEditor, label_evaporationRate, lineEdit_evaporationRate, Equipment, PropertyNames::Equipment::kettleEvaporationPerHour_l);
    SMART_FIELD_INIT(EquipmentEditor, label_lauterDeadspace, lineEdit_lauterDeadspace, Equipment, PropertyNames::Equipment::lauterDeadspace_l       );
    SMART_FIELD_INIT(EquipmentEditor, label_topUpKettle    , lineEdit_topUpKettle    , Equipment, PropertyNames::Equipment::topUpKettle_l           );
    SMART_FIELD_INIT(EquipmentEditor, label_topUpWater     , lineEdit_topUpWater     , Equipment, PropertyNames::Equipment::topUpWater_l            );
@@ -225,19 +225,19 @@ void EquipmentEditor::save() {
    this->obsEquip->setName                 (lineEdit_name           ->text() );
    this->obsEquip->setBoilSize_l           (lineEdit_boilSize       ->toCanonical().quantity() );
    this->obsEquip->setBatchSize_l          (lineEdit_batchSize      ->toCanonical().quantity() );
-   this->obsEquip->setMashTunVolume_l      (lineEdit_tunVolume      ->toCanonical().quantity() );
-   this->obsEquip->setMashTunWeight_kg     (lineEdit_tunWeight      ->toCanonical().quantity() );
-   this->obsEquip->setTunSpecificHeat_calGC(lineEdit_tunSpecificHeat->getNonOptValue<double>() );  // TODO Convert this to real units!
+   this->obsEquip->setMashTunVolume_l      (lineEdit_tunVolume      ->toCanonical().quantity() ); // TODO field name
+   this->obsEquip->setMashTunWeight_kg     (lineEdit_tunWeight      ->toCanonical().quantity() ); // TODO field name
+   this->obsEquip->setMashTunSpecificHeat_calGC(lineEdit_tunSpecificHeat->getNonOptValue<double>() );  // TODO Convert this to real units!
    this->obsEquip->setBoilTime_min         (lineEdit_boilTime       ->toCanonical().quantity());
-   this->obsEquip->setEvapRate_lHr         (lineEdit_evaporationRate->toCanonical().quantity() );
+   this->obsEquip->setKettleEvaporationPerHour_l         (lineEdit_evaporationRate->toCanonical().quantity() );
    this->obsEquip->setTopUpKettle_l        (lineEdit_topUpKettle    ->toCanonical().quantity() );
    this->obsEquip->setTopUpWater_l         (lineEdit_topUpWater     ->toCanonical().quantity() );
    this->obsEquip->setTrubChillerLoss_l    (lineEdit_trubChillerLoss->toCanonical().quantity() );
    this->obsEquip->setLauterDeadspace_l    (lineEdit_lauterDeadspace->toCanonical().quantity() );
-   this->obsEquip->setGrainAbsorption_LKg  (ga_LKg );
+   this->obsEquip->setMashTunGrainAbsorption_LKg  (ga_LKg );// TODO field name
    this->obsEquip->setBoilingPoint_c       (lineEdit_boilingPoint   ->toCanonical().quantity() );
    this->obsEquip->setHopUtilization_pct   (lineEdit_hopUtilization ->getNonOptValue<double>() );
-   this->obsEquip->setNotes                (textEdit_notes          ->toPlainText());
+   this->obsEquip->setKettleNotes          (textEdit_notes          ->toPlainText()); // TODO textEdit_notes -> textEdit_kettleNotes
    this->obsEquip->setCalcBoilVolume       (checkBox_calcBoilVolume ->checkState() == Qt::Checked);
 
    if (this->obsEquip->key() < 0) {
@@ -322,16 +322,16 @@ void EquipmentEditor::showChanges() {
    this->lineEdit_batchSize       ->setAmount(this->obsEquip->batchSize_l          ());
    this->lineEdit_tunVolume       ->setAmount(this->obsEquip->mashTunVolume_l      ());
    this->lineEdit_tunWeight       ->setAmount(this->obsEquip->mashTunWeight_kg     ());
-   this->lineEdit_tunSpecificHeat ->setAmount(this->obsEquip->tunSpecificHeat_calGC());
+   this->lineEdit_tunSpecificHeat ->setAmount(this->obsEquip->mashTunSpecificHeat_calGC());
    this->lineEdit_boilTime        ->setAmount(this->obsEquip->boilTime_min         ());
-   this->lineEdit_evaporationRate ->setAmount(this->obsEquip->evapRate_lHr         ());
+   this->lineEdit_evaporationRate ->setAmount(this->obsEquip->kettleEvaporationPerHour_l());
    this->lineEdit_topUpKettle     ->setAmount(this->obsEquip->topUpKettle_l        ());
    this->lineEdit_topUpWater      ->setAmount(this->obsEquip->topUpWater_l         ());
    this->lineEdit_trubChillerLoss ->setAmount(this->obsEquip->trubChillerLoss_l    ());
    this->lineEdit_lauterDeadspace ->setAmount(this->obsEquip->lauterDeadspace_l    ());
-   this->textEdit_notes           ->setText  (this->obsEquip->notes                ());
+   this->textEdit_notes           ->setText  (this->obsEquip->kettleNotes      ());
 
-   double gaCustomUnits = this->obsEquip->grainAbsorption_LKg() * volumeUnit->fromCanonical(1.0) * weightUnit->toCanonical(1.0).quantity();
+   double gaCustomUnits = this->obsEquip->mashTunGrainAbsorption_LKg() * volumeUnit->fromCanonical(1.0) * weightUnit->toCanonical(1.0).quantity();
    this->lineEdit_grainAbsorption ->setAmount(gaCustomUnits);
 
    this->lineEdit_boilingPoint    ->setAmount(this->obsEquip->boilingPoint_c    ());

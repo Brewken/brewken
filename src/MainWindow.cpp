@@ -1646,7 +1646,7 @@ void MainWindow::droppedRecipeEquipment(Equipment *kit) {
    Mash * m = recipeObs->mash();
    if (m) {
       new SimpleUndoableUpdate(*m, TYPE_INFO(Mash, mashTunWeight_kg         ), kit->mashTunWeight_kg()         , tr("Change Tun Weight")       , equipmentUpdate);
-      new SimpleUndoableUpdate(*m, TYPE_INFO(Mash, tunSpecificHeat_calGC), kit->tunSpecificHeat_calGC(), tr("Change Tun Specific Heat"), equipmentUpdate);
+      new SimpleUndoableUpdate(*m, TYPE_INFO(Mash, mashTunSpecificHeat_calGC), kit->mashTunSpecificHeat_calGC(), tr("Change Tun Specific Heat"), equipmentUpdate);
    }
 
    if (QMessageBox::question(this,
@@ -1659,7 +1659,7 @@ void MainWindow::droppedRecipeEquipment(Equipment *kit) {
       // parent the owner, responsible for invoking, deleting, etc.  Technically the descriptions of these subcommands
       // won't ever be seen by the user, but there's no harm in setting them.
       // (The previous call here to this->pimpl->m_mashEditor->setRecipe() was a roundabout way of calling setTunWeight_kg() and
-      // setTunSpecificHeat_calGC() on the mash.)
+      // setMashTunSpecificHeat_calGC() on the mash.)
       new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, batchSize_l ), kit->batchSize_l() , tr("Change Batch Size"), equipmentUpdate);
       new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, boilSize_l  ), kit->boilSize_l()  , tr("Change Boil Size") , equipmentUpdate);
       new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, boilTime_min), kit->boilTime_min(), tr("Change Boil Time") , equipmentUpdate);

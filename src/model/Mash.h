@@ -46,7 +46,7 @@ AddPropertyName(ph                   )
 AddPropertyName(spargeTemp_c         )
 AddPropertyName(totalMashWater_l     )
 AddPropertyName(totalTime            )
-AddPropertyName(tunSpecificHeat_calGC)
+AddPropertyName(mashTunSpecificHeat_calGC)
 AddPropertyName(tunTemp_c            )
 AddPropertyName(mashTunWeight_kg     )
 #undef AddPropertyName
@@ -96,7 +96,7 @@ public:
    //! \brief The mass of the tun in kg.
    Q_PROPERTY(double mashTunWeight_kg READ mashTunWeight_kg WRITE setTunWeight_kg  )
    //! \brief The tun's specific heat in kcal/(g*C).
-   Q_PROPERTY(double tunSpecificHeat_calGC READ tunSpecificHeat_calGC WRITE setTunSpecificHeat_calGC  )
+   Q_PROPERTY(double mashTunSpecificHeat_calGC READ mashTunSpecificHeat_calGC WRITE setMashTunSpecificHeat_calGC  )
    //! \brief Whether to adjust strike temperatures to account for the tun.
    Q_PROPERTY(bool equipAdjust READ equipAdjust WRITE setEquipAdjust  )
    //! \brief The total water that went into the mash in liters. Calculated.
@@ -122,7 +122,7 @@ public:
    void setSpargeTemp_c( double var );
    void setPh( double var );
    void setTunWeight_kg( double var );
-   void setTunSpecificHeat_calGC( double var );
+   void setMashTunSpecificHeat_calGC( double var );
    void setEquipAdjust( bool var );
 
    // Getters
@@ -133,7 +133,7 @@ public:
    double spargeTemp_c() const;
    double ph() const;
    double mashTunWeight_kg() const;
-   double tunSpecificHeat_calGC() const;
+   double mashTunSpecificHeat_calGC() const;
    bool equipAdjust() const;
 
    // Calculated getters
@@ -189,7 +189,7 @@ private:
    double m_spargeTemp_c;
    double m_ph;
    double m_mashTunWeight_kg;
-   double m_tunSpecificHeat_calGC;
+   double m_mashTunSpecificHeat_calGC;
    bool m_equipAdjust;
 
 };
