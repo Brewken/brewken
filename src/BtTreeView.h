@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtTreeView.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * BtTreeView.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -25,7 +25,7 @@
 #include <QMouseEvent>
 
 #include "BtTreeItem.h"
-#include "BtTreeFilterProxyModel.h"
+#include "sortFilterProxyModels/BtTreeFilterProxyModel.h"
 
 // Forward declarations.
 class BtTreeModel;
@@ -40,7 +40,7 @@ class Style;
 class Water;
 
 /*!
- * \class BtTreeItem
+ * \class BtTreeView
  *
  * \brief View class for BtTreeModel.
  */

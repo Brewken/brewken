@@ -129,12 +129,12 @@ public:
     *
     *        See comments in widgets/SmartField.h for why we have the enable_if_t here
     */
-   template<typename E, typename = std::enable_if_t<is_not_optional<E>::value> >
+   template<typename E, typename = std::enable_if_t<is_non_optional<E>::value> >
    QString operator[](E const enumValue) const {
       return this->enumToString(enumValue);
    }
 
-   template<typename E, typename = std::enable_if_t<is_not_optional<E>::value> >
+   template<typename E, typename = std::enable_if_t<is_non_optional<E>::value> >
    QString operator[](std::optional<E> const optionalEnumValue) const {
       return optionalEnumValue ? this->enumToString(*optionalEnumValue) : "";
    }

@@ -40,7 +40,7 @@
  *                     QDialog   |    /
  *                           \   |   /
  *                            \  |  /
- *                          HopEditor
+ *                           HopEditor
  *
  *        Besides inheriting from \c QDialog, the derived class (eg \c HopEditor in the example above) needs to
  *        implement the following trivial slots:
@@ -117,6 +117,8 @@ public:
 
    /**
     * \brief Create a new Hop, Fermentable, etc.
+    *
+    *        This is also called from \c BtTreeView::newNamedEntity.
     */
    void newEditItem(QString folder = "") {
       QString name = QInputDialog::getText(this->m_derived,

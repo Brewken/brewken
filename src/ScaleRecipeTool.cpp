@@ -68,7 +68,7 @@ void ScaleRecipeTool::scale(Equipment* equip, double newEff) {
 
    // Calculate volume ratio
    double currentBatchSize_l = recObs->batchSize_l();
-   double newBatchSize_l = equip->batchSize_l();
+   double newBatchSize_l = equip->fermenterBatchSize_l();
    double volRatio = newBatchSize_l / currentBatchSize_l;
 
    // Calculate efficiency ratio
@@ -77,9 +77,9 @@ void ScaleRecipeTool::scale(Equipment* equip, double newEff) {
 
    this->recObs->setEquipment(equip);
    this->recObs->setBatchSize_l(newBatchSize_l);
-   this->recObs->setBoilSize_l(equip->boilSize_l());
+   this->recObs->setBoilSize_l(equip->kettleBoilSize_l());
    this->recObs->setEfficiency_pct(newEff);
-   this->recObs->setBoilTime_min(equip->boilTime_min());
+   this->recObs->setBoilTime_min(equip->boilTime_min().value_or(Equipment::default_boilTime_min));
 
    for (auto ferm : this->recObs->fermentables()) {
       // We assume volumes and masses get scaled the same way

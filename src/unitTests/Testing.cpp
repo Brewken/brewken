@@ -387,14 +387,14 @@ void Testing::initTestCase() {
       // 5 gallon equipment
       this->equipFiveGalNoLoss = std::make_shared<Equipment>();
       this->equipFiveGalNoLoss->setName("5 gal No Loss");
-      this->equipFiveGalNoLoss->setBoilSize_l(24.0);
-      this->equipFiveGalNoLoss->setBatchSize_l(20.0);
+      this->equipFiveGalNoLoss->setKettleBoilSize_l(24.0);
+      this->equipFiveGalNoLoss->setFermenterBatchSize_l(20.0);
       this->equipFiveGalNoLoss->setMashTunVolume_l(40.0);
       this->equipFiveGalNoLoss->setTopUpWater_l(0);
-      this->equipFiveGalNoLoss->setTrubChillerLoss_l(0);
+      this->equipFiveGalNoLoss->setKettleTrubChillerLoss_l(0);
       this->equipFiveGalNoLoss->setKettleEvaporationPerHour_l(4.0);
       this->equipFiveGalNoLoss->setBoilTime_min(60);
-      this->equipFiveGalNoLoss->setLauterDeadspace_l(0);
+      this->equipFiveGalNoLoss->setLauterDeadspaceLoss_l(0);
       this->equipFiveGalNoLoss->setTopUpKettle_l(0);
       this->equipFiveGalNoLoss->setHopUtilization_pct(100);
       this->equipFiveGalNoLoss->setMashTunGrainAbsorption_LKg(1.0);
@@ -437,8 +437,8 @@ void Testing::recipeCalcTest_allGrain() {
    auto rec = std::make_shared<Recipe>("TestRecipe");
 
    // Basic recipe parameters
-   rec->setBatchSize_l(equipFiveGalNoLoss->batchSize_l());
-   rec->setBoilSize_l(equipFiveGalNoLoss->boilSize_l());
+   rec->setBatchSize_l(equipFiveGalNoLoss->fermenterBatchSize_l());
+   rec->setBoilSize_l(equipFiveGalNoLoss->kettleBoilSize_l());
    rec->setEfficiency_pct(70.0);
 
    // Single conversion, single sparge
@@ -456,7 +456,7 @@ void Testing::recipeCalcTest_allGrain() {
    singleConversion_sparge->setType(MashStep::Type::Infusion);
    singleConversion_sparge->setInfuseAmount_l(
       rec->boilSize_l()
-      + equipFiveGalNoLoss->mashTunGrainAbsorption_LKg() * grain_kg // Grain absorption
+      + equipFiveGalNoLoss->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg) * grain_kg // Grain absorption
       - conversion_l // Water we already added
    );
    singleConversion->addMashStep(singleConversion_sparge);
@@ -526,23 +526,23 @@ void Testing::postBoilLossOgTest() {
    // Only difference between the recipes:
    // - 2 L of post-boil loss
    // - 2 L extra of boil size (to hit the same batch size)
-   eLoss->setTrubChillerLoss_l(2.0);
-   eLoss->setBoilSize_l(equipFiveGalNoLoss->boilSize_l() + eLoss->trubChillerLoss_l());
+   eLoss->setKettleTrubChillerLoss_l(2.0);
+   eLoss->setKettleBoilSize_l(equipFiveGalNoLoss->kettleBoilSize_l() + eLoss->kettleTrubChillerLoss_l());
 
    // Basic recipe parameters
-   recNoLoss->setBatchSize_l(equipFiveGalNoLoss->batchSize_l());
-   recNoLoss->setBoilSize_l(equipFiveGalNoLoss->boilSize_l());
+   recNoLoss->setBatchSize_l(equipFiveGalNoLoss->fermenterBatchSize_l());
+   recNoLoss->setBoilSize_l(equipFiveGalNoLoss->kettleBoilSize_l());
    recNoLoss->setEfficiency_pct(70.0);
 
-   recLoss->setBatchSize_l(eLoss->batchSize_l() - eLoss->trubChillerLoss_l()); // Adjust for trub losses
-   recLoss->setBoilSize_l(eLoss->boilSize_l() - eLoss->trubChillerLoss_l());
+   recLoss->setBatchSize_l(eLoss->fermenterBatchSize_l() - eLoss->kettleTrubChillerLoss_l()); // Adjust for trub losses
+   recLoss->setBoilSize_l(eLoss->kettleBoilSize_l() - eLoss->kettleTrubChillerLoss_l());
    recLoss->setEfficiency_pct(70.0);
 
    double mashWaterNoLoss_l = recNoLoss->boilSize_l()
-      + equipFiveGalNoLoss->mashTunGrainAbsorption_LKg() * grain_kg
+      + equipFiveGalNoLoss->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg) * grain_kg
    ;
    double mashWaterLoss_l = recLoss->boilSize_l()
-      + eLoss->mashTunGrainAbsorption_LKg() * grain_kg
+      + eLoss->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg) * grain_kg
    ;
 
    // Add equipment

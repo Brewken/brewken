@@ -125,13 +125,13 @@ void MashEditor::setRecipe(Recipe * recipe) {
          qDebug() <<
             Q_FUNC_INFO << "Overwriting mash mashTunWeight_kg (" << this->mashObs->mashTunWeight_kg() << ") with equipment "
             "mashTunWeight_kg (" << this->m_equip->mashTunWeight_kg() << ")";
-         this->mashObs->setTunWeight_kg(this->m_equip->mashTunWeight_kg());
+         this->mashObs->setTunWeight_kg(this->m_equip->mashTunWeight_kg().value_or(0.0)); // TBD: Maybe Mash::setTunWeight_kg should take an optional value
       }
       if (this->mashObs->mashTunSpecificHeat_calGC() != this->m_equip->mashTunSpecificHeat_calGC() ) {
          qDebug() <<
             Q_FUNC_INFO << "Overwriting mash mashTunSpecificHeat_calGC (" << this->mashObs->mashTunSpecificHeat_calGC() << ") "
             "with equipment mashTunSpecificHeat_calGC (" << this->m_equip->mashTunSpecificHeat_calGC() << ")";
-         this->mashObs->setMashTunSpecificHeat_calGC(this->m_equip->mashTunSpecificHeat_calGC());
+         this->mashObs->setMashTunSpecificHeat_calGC(this->m_equip->mashTunSpecificHeat_calGC().value_or(Equipment::default_mashTunSpecificHeat_calGC));
       }
    }
    return;

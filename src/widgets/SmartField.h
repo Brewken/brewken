@@ -226,14 +226,14 @@ public:
     *
     * \param amount is the amount to display
     */
-   template<typename T, typename = std::enable_if_t<is_not_optional<T>::value> > void setAmount(std::optional<T> amount);
+   template<typename T, typename = std::enable_if_t<is_non_optional<T>::value> > void setAmount(std::optional<T> amount);
 
    /**
     * \brief Set the amount for a non-optional numeric field
     *
     * \param amount is the amount to display
     */
-   template<typename T, typename = std::enable_if_t<is_not_optional<T>::value> > void setAmount(T amount);
+   template<typename T, typename = std::enable_if_t<is_non_optional<T>::value> > void setAmount(T amount);
 
    /**
     * \brief Normally, you set precision once when \c init is called via \c SMART_FIELD_INIT or similar.  However, if

@@ -73,7 +73,7 @@ QString BrewDayFormatter::buildTitleHtml(bool includeImage) {
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
            .arg(tr("Boil Time"))
            .arg(
-              recObs->equipment() ? Measurement::displayAmount(Measurement::Amount{recObs->equipment()->boilTime_min(),
+              recObs->equipment() ? Measurement::displayAmount(Measurement::Amount{recObs->equipment()->boilTime_min().value_or(Equipment::default_boilTime_min),
                                                                                    Measurement::Units::minutes}) : "unknown"
            )
            .arg(tr("Efficiency"))
@@ -135,7 +135,7 @@ QList<QStringList> BrewDayFormatter::buildTitleList() {
    // second row:  boil time and efficiency.
    row.append(tr("Boil Time"));
    row.append(
-      recObs->equipment() ? Measurement::displayAmount(Measurement::Amount{recObs->equipment()->boilTime_min(),
+      recObs->equipment() ? Measurement::displayAmount(Measurement::Amount{recObs->equipment()->boilTime_min().value_or(Equipment::default_boilTime_min),
                                                                            Measurement::Units::minutes}) : "unknown"
    );
    row.append(tr("Efficiency"));

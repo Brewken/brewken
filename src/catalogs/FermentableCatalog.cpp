@@ -19,7 +19,7 @@
  =====================================================================================================================*/
 #include "catalogs/FermentableCatalog.h"
 
-#include "FermentableSortFilterProxyModel.h"
+#include "sortFilterProxyModels/FermentableSortFilterProxyModel.h"
 
 // Insert the boiler-plate stuff that we cannot do in CatalogBase
 CATALOG_COMMON_CODE(Fermentable)

@@ -257,7 +257,7 @@ QVariant BtTreeItem::dataEquipment(int column) {
          }
       case EQUIPMENTBOILTIMECOL:
          if (kit) {
-            return QVariant(kit->boilTime_min());
+            return QVariant::fromValue(kit->boilTime_min());
          }
          break;
       default :

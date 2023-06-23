@@ -54,8 +54,8 @@
 template <typename T> struct is_optional : public std::false_type{};
 template <typename T> struct is_optional< std::optional<T> > : public std::true_type{};
 
-template <typename T> struct is_not_optional : public std::true_type{};
-template <typename T> struct is_not_optional< std::optional<T> > : public std::false_type{};
+template <typename T> struct is_non_optional : public std::true_type{};
+template <typename T> struct is_non_optional< std::optional<T> > : public std::false_type{};
 
 template <typename T> struct is_optional_enum : public std::false_type{};
 template <typename T> struct is_optional_enum< std::optional<T> > : public std::is_enum<T>{};

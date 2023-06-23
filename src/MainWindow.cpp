@@ -78,6 +78,11 @@
 #include "BtFolder.h"
 #include "BtHorizontalTabs.h"
 #include "BtTabWidget.h"
+#include "catalogs/FermentableCatalog.h"
+#include "catalogs/HopCatalog.h"
+#include "catalogs/MiscCatalog.h"
+#include "catalogs/StyleCatalog.h"
+#include "catalogs/YeastCatalog.h"
 #include "config.h"
 #include "ConverterTool.h"
 #include "database/Database.h"
@@ -93,24 +98,16 @@
 #include "editors/WaterEditor.h"
 #include "editors/YeastEditor.h"
 #include "EquipmentListModel.h"
-#include "FermentableSortFilterProxyModel.h"
 #include "HelpDialog.h"
-#include "HopSortFilterProxyModel.h"
 #include "Html.h"
 #include "HydrometerTool.h"
 #include "ImportExport.h"
-#include "catalogs/FermentableCatalog.h"
-#include "catalogs/HopCatalog.h"
-#include "catalogs/MiscCatalog.h"
-#include "catalogs/StyleCatalog.h"
-#include "catalogs/YeastCatalog.h"
 #include "InventoryFormatter.h"
 #include "MashDesigner.h"
 #include "MashListModel.h"
 #include "MashWizard.h"
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
-#include "MiscSortFilterProxyModel.h"
 #include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
@@ -128,9 +125,13 @@
 #include "RecipeFormatter.h"
 #include "RefractoDialog.h"
 #include "ScaleRecipeTool.h"
+#include "sortFilterProxyModels/FermentableSortFilterProxyModel.h"
+#include "sortFilterProxyModels/HopSortFilterProxyModel.h"
+#include "sortFilterProxyModels/MiscSortFilterProxyModel.h"
+#include "sortFilterProxyModels/StyleSortFilterProxyModel.h"
+#include "sortFilterProxyModels/YeastSortFilterProxyModel.h"
 #include "StrikeWaterDialog.h"
 #include "StyleListModel.h"
-#include "StyleSortFilterProxyModel.h"
 #include "tableModels/FermentableTableModel.h"
 #include "tableModels/HopTableModel.h"
 #include "tableModels/MashStepTableModel.h"
@@ -144,7 +145,6 @@
 #include "utils/OptionalHelpers.h"
 #include "WaterDialog.h"
 #include "WaterListModel.h"
-#include "YeastSortFilterProxyModel.h"
 
 namespace {
 
@@ -331,12 +331,14 @@ public:
     * \brief Create the dialogs, including the file dialogs
     *
     *        Most dialogs are initialized in here. That should include any initial configurations as well.
+    *
+    * TODO: We have 2× EquipmentEditor and 2× StyleEditor, a duplication we no longer need
     */
    void setupDialogs() {
       m_aboutDialog           = std::make_unique<AboutDialog          >(&m_self);
       m_helpDialog            = std::make_unique<HelpDialog           >(&m_self);
       m_equipEditor           = std::make_unique<EquipmentEditor      >(&m_self);
-      m_singleEquipEditor     = std::make_unique<EquipmentEditor      >(&m_self, true);
+      m_singleEquipEditor     = std::make_unique<EquipmentEditor      >(&m_self /*, true*/);
       m_fermCatalog           = std::make_unique<FermentableCatalog   >(&m_self);
       m_fermEditor            = std::make_unique<FermentableEditor    >(&m_self);
       m_hopCatalog            = std::make_unique<HopCatalog           >(&m_self);
@@ -1091,7 +1093,7 @@ void MainWindow::treeActivated(const QModelIndex &index) {
             {
                Equipment * kit = active->getItem<Equipment>(index);
                if ( kit ) {
-                  this->pimpl->m_singleEquipEditor->setEquipment(kit);
+                  this->pimpl->m_singleEquipEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(kit));
                   this->pimpl->m_singleEquipEditor->show();
                }
             }
@@ -1311,7 +1313,9 @@ void MainWindow::setRecipe(Recipe* recipe) {
    recipeExtrasWidget->setRecipe(recipe);
    this->pimpl->m_mashDesigner->setRecipe(recipe);
    equipmentButton->setRecipe(recipe);
-   this->pimpl->m_singleEquipEditor->setEquipment(recEquip);
+   if (recEquip) {
+      this->pimpl->m_singleEquipEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(recEquip));
+   }
    styleButton->setRecipe(recipe);
    if (recipe->style()) {
       this->pimpl->m_singleStyleEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(recipe->style()));
@@ -1420,7 +1424,7 @@ void MainWindow::changed(QMetaProperty prop, QVariant val) {
 
    if (propName == PropertyNames::Recipe::equipment) {
       this->recEquip = val.value<Equipment *>();
-      this->pimpl->m_singleEquipEditor->setEquipment(this->recEquip);
+      this->pimpl->m_singleEquipEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(this->recEquip));
    } else if (propName == PropertyNames::Recipe::style) {
       //recStyle = recipeObs->style();
       this->recStyle = val.value<Style*>();
@@ -1660,8 +1664,8 @@ void MainWindow::droppedRecipeEquipment(Equipment *kit) {
       // won't ever be seen by the user, but there's no harm in setting them.
       // (The previous call here to this->pimpl->m_mashEditor->setRecipe() was a roundabout way of calling setTunWeight_kg() and
       // setMashTunSpecificHeat_calGC() on the mash.)
-      new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, batchSize_l ), kit->batchSize_l() , tr("Change Batch Size"), equipmentUpdate);
-      new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, boilSize_l  ), kit->boilSize_l()  , tr("Change Boil Size") , equipmentUpdate);
+      new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, batchSize_l ), kit->fermenterBatchSize_l() , tr("Change Batch Size"), equipmentUpdate);
+      new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, boilSize_l  ), kit->kettleBoilSize_l()  , tr("Change Boil Size") , equipmentUpdate);
       new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, boilTime_min), kit->boilTime_min(), tr("Change Boil Time") , equipmentUpdate);
    }
 
@@ -2248,9 +2252,9 @@ void MainWindow::newRecipe()
       // I really want to do this before we've written the object to the
       // database
       if ( e ) {
-         newRec->setBatchSize_l( e->batchSize_l() );
-         newRec->setBoilSize_l( e->boilSize_l() );
-         newRec->setBoilTime_min( e->boilTime_min() );
+         newRec->setBatchSize_l( e->fermenterBatchSize_l() );
+         newRec->setBoilSize_l( e->kettleBoilSize_l() );
+         newRec->setBoilTime_min( e->boilTime_min().value_or(Equipment::default_boilTime_min) );
          newRec->setEquipment(e);
       }
    }
@@ -2818,13 +2822,12 @@ void MainWindow::setupContextMenu() {
 
    treeView_recipe->setupContextMenu(this, this);
    treeView_equip->setupContextMenu(this, this->pimpl->m_singleEquipEditor.get());
-
-   treeView_ferm ->setupContextMenu(this, this->pimpl->m_fermCatalog.get()      );
-   treeView_hops ->setupContextMenu(this, this->pimpl->m_hopCatalog.get()       );
-   treeView_misc ->setupContextMenu(this, this->pimpl->m_miscCatalog.get()      );
+   treeView_ferm ->setupContextMenu(this, this->pimpl->m_fermEditor       .get());
+   treeView_hops ->setupContextMenu(this, this->pimpl->m_hopEditor        .get());
+   treeView_misc ->setupContextMenu(this, this->pimpl->m_miscEditor       .get());
    treeView_style->setupContextMenu(this, this->pimpl->m_singleStyleEditor.get());
-   treeView_yeast->setupContextMenu(this, this->pimpl->m_yeastCatalog.get()     );
-   treeView_water->setupContextMenu(this, this->pimpl->m_waterEditor.get()      );
+   treeView_yeast->setupContextMenu(this, this->pimpl->m_yeastEditor      .get());
+   treeView_water->setupContextMenu(this, this->pimpl->m_waterEditor      .get());
 
    // TreeView for clicks, both double and right
    connect( treeView_recipe, &QAbstractItemView::doubleClicked, this, &MainWindow::treeActivated);
@@ -2991,7 +2994,7 @@ void MainWindow::showEquipmentEditor()
    }
    else
    {
-      this->pimpl->m_singleEquipEditor->setEquipment(recipeObs->equipment());
+      this->pimpl->m_singleEquipEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(recipeObs->equipment()));
       this->pimpl->m_singleEquipEditor->show();
    }
 }

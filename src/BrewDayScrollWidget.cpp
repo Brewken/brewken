@@ -54,7 +54,7 @@ namespace {
          return "unknown";
       }
 
-      return Measurement::displayAmount(Measurement::Amount{equipment->boilTime_min(), Measurement::Units::minutes});
+      return Measurement::displayAmount(Measurement::Amount{equipment->boilTime_min().value_or(Equipment::default_boilTime_min), Measurement::Units::minutes});
    }
 }
 

@@ -30,7 +30,6 @@
 #include <QMimeData>
 
 #include "BtFolder.h"
-#include "BtTreeFilterProxyModel.h"
 #include "BtTreeModel.h"
 #include "editors/EquipmentEditor.h"
 #include "editors/StyleEditor.h"
@@ -318,22 +317,22 @@ void BtTreeView::newNamedEntity() {
 
    switch (m_type) {
       case BtTreeModel::EQUIPMASK:
-         qobject_cast<EquipmentEditor *>(m_editor)->newEquipment(folder);
+         qobject_cast<EquipmentEditor *>(m_editor)->newEditItem(folder);
          break;
       case BtTreeModel::FERMENTMASK:
-         qobject_cast<FermentableCatalog *>(m_editor)->makeNew(folder);
+         qobject_cast<FermentableEditor *>(m_editor)->newEditItem(folder);
          break;
       case BtTreeModel::HOPMASK:
-         qobject_cast<HopCatalog *>(m_editor)->makeNew(folder);
+         qobject_cast<HopEditor *>(m_editor)->newEditItem(folder);
          break;
       case BtTreeModel::MISCMASK:
-         qobject_cast<MiscCatalog *>(m_editor)->makeNew(folder);
+         qobject_cast<MiscEditor *>(m_editor)->newEditItem(folder);
          break;
       case BtTreeModel::STYLEMASK:
          qobject_cast<StyleEditor *>(m_editor)->newEditItem(folder);
          break;
       case BtTreeModel::YEASTMASK:
-         qobject_cast<YeastCatalog *>(m_editor)->makeNew(folder);
+         qobject_cast<YeastEditor *>(m_editor)->newEditItem(folder);
          break;
       case BtTreeModel::WATERMASK:
          qobject_cast<WaterEditor *>(m_editor)->newWater(folder);

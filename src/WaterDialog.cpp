@@ -38,7 +38,7 @@
 #include "WaterButton.h"
 #include "editors/WaterEditor.h"
 #include "WaterListModel.h"
-#include "WaterSortFilterProxyModel.h"
+#include "sortFilterProxyModels/WaterSortFilterProxyModel.h"
 #include "widgets/SmartDigitWidget.h"
 
 

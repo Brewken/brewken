@@ -1,6 +1,6 @@
 /*======================================================================================================================
- * StyleSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
- *   • Matt Young <mfsy@yahoo.com>
+ * sortFilterProxyModels/YeastSortFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -14,27 +14,29 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "StyleSortFilterProxyModel.h"
+#ifndef SORTFILTERPROXYMODELS_YEASTSORTFILTERPROXYMODEL_H
+#define SORTFILTERPROXYMODELS_YEASTSORTFILTERPROXYMODEL_H
+#pragma once
 
-#include "StyleListModel.h"
-#include "model/Style.h"
+#include <QSortFilterProxyModel>
 
-StyleSortFilterProxyModel::StyleSortFilterProxyModel(QObject* parent)
-   : QSortFilterProxyModel(parent) {
-   return;
-}
+/*!
+ * \class YeastSortFilterProxyModel
+ *
+ * \brief Proxy model for sorting yeasts.
+ */
+class YeastSortFilterProxyModel : public QSortFilterProxyModel {
+   Q_OBJECT
 
-bool StyleSortFilterProxyModel::filterAcceptsRow(int source_row,
-                                                 [[maybe_unused]] QModelIndex const & source_parent) const {
-   StyleListModel* m = qobject_cast<StyleListModel*>(sourceModel());
-   if (!m) {
-      return true;
-   }
+public:
+   YeastSortFilterProxyModel(QObject *parent = 0, bool filt = true);
 
-   Style* s = m->at(source_row);
-   if (!s) {
-      return true;
-   }
+protected:
+   bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
+   bool filterAcceptsRow( int source_row, const QModelIndex &source_parent) const;
 
-   return s->display() && !s->deleted();
-}
+private:
+   bool filter;
+};
+
+#endif

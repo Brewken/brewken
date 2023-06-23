@@ -207,7 +207,7 @@ void BrewNote::populateNote(Recipe* parent) {
 
    auto equip = parent->equipment();
    if (equip) {
-      setBoilOff_l( equip->kettleEvaporationPerHour_l() * ( parent->boilTime_min()/60));
+      setBoilOff_l( equip->kettleEvaporationPerHour_l().value_or(Equipment::default_kettleEvaporationPerHour_l) * ( parent->boilTime_min()/60));
    }
 
    QHash<QString,double> sugars;

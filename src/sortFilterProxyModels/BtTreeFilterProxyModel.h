@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * StyleSortFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * sortFilterProxyModels/BtTreeFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2022:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -14,28 +15,32 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef STYLESORTFILTERPROXYMODEL_H
-#define STYLESORTFILTERPROXYMODEL_H
+#ifndef SORTFILTERPROXYMODELS_BTTREEFILTERPROXYMODEL_H
+#define SORTFILTERPROXYMODELS_BTTREEFILTERPROXYMODEL_H
 #pragma once
 
+#include <QModelIndex>
 #include <QSortFilterProxyModel>
 
+#include "BtTreeModel.h"
+
 /*!
- * \class StyleSortFilterProxyModel
+ * \class BtTreeFilterProxyModel
  *
- * \brief Proxy model for sorting/filtering Styles.
- * This should really be a base filter for all ingredient models that filters
- * based on the NamedEntity::display() field.
+ * \brief Proxy model for sorting Brewken trees.
  */
-class StyleSortFilterProxyModel : public QSortFilterProxyModel
-{
+class BtTreeFilterProxyModel : public QSortFilterProxyModel {
    Q_OBJECT
 
-   public:
-      StyleSortFilterProxyModel(QObject* parent = 0);
+public:
+   BtTreeFilterProxyModel(QObject *parent, BtTreeModel::TypeMasks mask);
 
-   protected:
-      bool filterAcceptsRow( int source_row, const QModelIndex &source_parent) const;
+protected:
+   bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
+   bool filterAcceptsRow( int source_row, const QModelIndex &source_parent) const;
+
+private:
+   BtTreeModel::TypeMasks treeMask;
 };
 
 #endif

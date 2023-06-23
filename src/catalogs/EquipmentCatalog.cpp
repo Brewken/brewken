@@ -1,8 +1,6 @@
 /*======================================================================================================================
- * BtTreeFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * catalogs/EquipmentCatalog.cpp is part of Brewken, and is copyright the following authors 2023:
  *   • Matt Young <mfsy@yahoo.com>
- *   • Mik Firestone <mikfire@gmail.com>
- *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -15,32 +13,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef BTTREEFILTERPROXYMODEL_H
-#define BTTREEFILTERPROXYMODEL_H
-#pragma once
+#include "catalogs/EquipmentCatalog.h"
 
-#include <QModelIndex>
-#include <QSortFilterProxyModel>
+#include "sortFilterProxyModels/EquipmentSortFilterProxyModel.h"
 
-#include "BtTreeModel.h"
-
-/*!
- * \class BtTreeFilterProxyModel
- *
- * \brief Proxy model for sorting Brewken trees.
- */
-class BtTreeFilterProxyModel : public QSortFilterProxyModel {
-   Q_OBJECT
-
-public:
-   BtTreeFilterProxyModel(QObject *parent, BtTreeModel::TypeMasks mask);
-
-protected:
-   bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
-   bool filterAcceptsRow( int source_row, const QModelIndex &source_parent) const;
-
-private:
-   BtTreeModel::TypeMasks treeMask;
-};
-
-#endif
+// Insert the boiler-plate stuff that we cannot do in CatalogBase
+CATALOG_COMMON_CODE(Equipment)

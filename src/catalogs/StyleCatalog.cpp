@@ -15,7 +15,7 @@
  =====================================================================================================================*/
 #include "catalogs/StyleCatalog.h"
 
-#include "StyleSortFilterProxyModel.h"
+#include "sortFilterProxyModels/StyleSortFilterProxyModel.h"
 
 // Insert the boiler-plate stuff that we cannot do in CatalogBase
 CATALOG_COMMON_CODE(Style)

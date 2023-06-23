@@ -55,10 +55,10 @@ set(filesToCompile_cpp
     ${repoDir}/src/BtSplashScreen.cpp
     ${repoDir}/src/BtTabWidget.cpp
     ${repoDir}/src/BtTextEdit.cpp
-    ${repoDir}/src/BtTreeFilterProxyModel.cpp
     ${repoDir}/src/BtTreeItem.cpp
     ${repoDir}/src/BtTreeModel.cpp
     ${repoDir}/src/BtTreeView.cpp
+    ${repoDir}/src/catalogs/EquipmentCatalog.cpp
     ${repoDir}/src/catalogs/FermentableCatalog.cpp
     ${repoDir}/src/catalogs/HopCatalog.cpp
     ${repoDir}/src/catalogs/MiscCatalog.cpp
@@ -83,10 +83,8 @@ set(filesToCompile_cpp
     ${repoDir}/src/editors/YeastEditor.cpp
     ${repoDir}/src/EquipmentButton.cpp
     ${repoDir}/src/EquipmentListModel.cpp
-    ${repoDir}/src/FermentableSortFilterProxyModel.cpp
     ${repoDir}/src/HeatCalculations.cpp
     ${repoDir}/src/HelpDialog.cpp
-    ${repoDir}/src/HopSortFilterProxyModel.cpp
     ${repoDir}/src/Html.cpp
     ${repoDir}/src/HydrometerTool.cpp
     ${repoDir}/src/IbuGuSlider.cpp
@@ -120,7 +118,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/measurement/SystemOfMeasurement.cpp
     ${repoDir}/src/measurement/Unit.cpp
     ${repoDir}/src/measurement/UnitSystem.cpp
-    ${repoDir}/src/MiscSortFilterProxyModel.cpp
     ${repoDir}/src/model/BrewNote.cpp
     ${repoDir}/src/model/Equipment.cpp
     ${repoDir}/src/model/Fermentable.cpp
@@ -152,13 +149,21 @@ set(filesToCompile_cpp
     ${repoDir}/src/RecipeFormatter.cpp
     ${repoDir}/src/RefractoDialog.cpp
     ${repoDir}/src/ScaleRecipeTool.cpp
+    ${repoDir}/src/sortFilterProxyModels/BtTreeFilterProxyModel.cpp
+    ${repoDir}/src/sortFilterProxyModels/EquipmentSortFilterProxyModel.cpp
+    ${repoDir}/src/sortFilterProxyModels/FermentableSortFilterProxyModel.cpp
+    ${repoDir}/src/sortFilterProxyModels/HopSortFilterProxyModel.cpp
+    ${repoDir}/src/sortFilterProxyModels/MiscSortFilterProxyModel.cpp
+    ${repoDir}/src/sortFilterProxyModels/StyleSortFilterProxyModel.cpp
+    ${repoDir}/src/sortFilterProxyModels/WaterSortFilterProxyModel.cpp
+    ${repoDir}/src/sortFilterProxyModels/YeastSortFilterProxyModel.cpp
     ${repoDir}/src/StrikeWaterDialog.cpp
     ${repoDir}/src/StyleButton.cpp
     ${repoDir}/src/StyleListModel.cpp
     ${repoDir}/src/StyleRangeWidget.cpp
-    ${repoDir}/src/StyleSortFilterProxyModel.cpp
     ${repoDir}/src/tableModels/BtTableModel.cpp
     ${repoDir}/src/tableModels/BtTableModelInventory.cpp
+    ${repoDir}/src/tableModels/EquipmentTableModel.cpp
     ${repoDir}/src/tableModels/FermentableTableModel.cpp
     ${repoDir}/src/tableModels/HopTableModel.cpp
     ${repoDir}/src/tableModels/MashStepTableModel.cpp
@@ -175,6 +180,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/utils/BtStringConst.cpp
     ${repoDir}/src/utils/BtStringStream.cpp
     ${repoDir}/src/utils/EnumStringMapping.cpp
+    ${repoDir}/src/utils/Fonts.cpp
     ${repoDir}/src/utils/ImportRecordCount.cpp
     ${repoDir}/src/utils/MetaTypes.cpp
     ${repoDir}/src/utils/OptionalHelpers.cpp
@@ -184,11 +190,12 @@ set(filesToCompile_cpp
     ${repoDir}/src/WaterButton.cpp
     ${repoDir}/src/WaterDialog.cpp
     ${repoDir}/src/WaterListModel.cpp
-    ${repoDir}/src/WaterSortFilterProxyModel.cpp
     ${repoDir}/src/widgets/Animator.cpp
     ${repoDir}/src/widgets/BtBoolComboBox.cpp
     ${repoDir}/src/widgets/BtComboBox.cpp
     ${repoDir}/src/widgets/CustomComboBox.cpp
+    ${repoDir}/src/widgets/InfoButton.cpp
+    ${repoDir}/src/widgets/InfoText.cpp
     ${repoDir}/src/widgets/MashComboBox.cpp
     ${repoDir}/src/widgets/SelectionControl.cpp
     ${repoDir}/src/widgets/SmartAmounts.cpp
@@ -208,5 +215,4 @@ set(filesToCompile_cpp
     ${repoDir}/src/xml/XmlMashStepRecord.cpp
     ${repoDir}/src/xml/XmlRecipeRecord.cpp
     ${repoDir}/src/xml/XmlRecord.cpp
-    ${repoDir}/src/YeastSortFilterProxyModel.cpp
 )

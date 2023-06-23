@@ -79,7 +79,7 @@ void OgAdjuster::calculate() {
    }
 
    Equipment* equip = recObs->equipment();
-   double evapRate_lHr = equip->kettleEvaporationPerHour_l();
+   double evapRate_lHr = equip->kettleEvaporationPerHour_l().value_or(Equipment::default_kettleEvaporationPerHour_l);
 
    // Calculate missing input parameters.
    double sg_20C = 0.0;
@@ -101,7 +101,7 @@ void OgAdjuster::calculate() {
 
    // Calculate OG w/o correction.
    double finalVolume_l = equip->wortEndOfBoil_l(wort_l);
-   double finalWater_kg = water_kg - equip->boilTime_min()/(double)60 * evapRate_lHr * Algorithms::getWaterDensity_kgL(20);
+   double finalWater_kg = water_kg - equip->boilTime_min().value_or(Equipment::default_boilTime_min)/(double)60 * evapRate_lHr * Algorithms::getWaterDensity_kgL(20);
    //std::cerr << "finalWater_kg = " << finalWater_kg << std::endl;
    //std::cerr << "boilTime = " << equip->getBoilTime_min() << std::endl;
    //std::cerr << "evapRate_lHr = " << evapRate_lHr << std::endl;

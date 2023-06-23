@@ -38,6 +38,7 @@
 
 #include <QDebug>
 #include <QDesktopServices>
+#include <QDirIterator>
 #include <QJsonObject>
 #include <QJsonParseError>
 #include <QMessageBox>
@@ -392,6 +393,13 @@ bool Application::initialize() {
 #if defined(Q_OS_MAC)
    qt_set_sequence_auto_mnemonic(true); // turns on Mac Keyboard shortcuts
 #endif
+
+   // Uncomment the following to list all the entries in our resource bundle.  This can be helpful at certain points in
+   // debugging, but is not normally needed.
+//   QDirIterator resource(":", QDirIterator::Subdirectories);
+//   while (resource.hasNext()) {
+//      qDebug() << "Resource:" << resource.next();
+//   }
 
    // Check if the database was successfully loaded before
    // loading the main window.

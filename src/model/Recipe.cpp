@@ -864,16 +864,16 @@ void Recipe::topOffIns() {
       return;
    }
 
-   double wortInBoil_l = wortFromMash_l() - e->lauterDeadspace_l();
+   double wortInBoil_l = wortFromMash_l() - e->lauterDeadspaceLoss_l();
    QString str = tr("You should now have %1 wort.")
                  .arg(Measurement::displayAmount(Measurement::Amount{wortInBoil_l, Measurement::Units::liters}));
-   if (e->topUpKettle_l() != 0.0) {
+   if (!e->topUpKettle_l() || *e->topUpKettle_l() == 0.0) {
       return;
    }
 
-   wortInBoil_l += e->topUpKettle_l();
+   wortInBoil_l += *e->topUpKettle_l();
    QString tmp = tr(" Add %1 water to the kettle, bringing pre-boil volume to %2.")
-                 .arg(Measurement::displayAmount(Measurement::Amount{e->topUpKettle_l(), Measurement::Units::liters}))
+                 .arg(Measurement::displayAmount(Measurement::Amount{*e->topUpKettle_l(), Measurement::Units::liters}))
                  .arg(Measurement::displayAmount(Measurement::Amount{wortInBoil_l, Measurement::Units::liters}));
 
    str += tmp;
@@ -999,21 +999,19 @@ void Recipe::postboilIns() {
       return;
    }
 
-   double wortInBoil_l = wortFromMash_l() - e->lauterDeadspace_l();
-   if (e->topUpKettle_l() != 0.0) {
-      wortInBoil_l += e->topUpKettle_l();
-   }
+   double wortInBoil_l = wortFromMash_l() - e->lauterDeadspaceLoss_l();
+   wortInBoil_l += e->topUpKettle_l().value_or(0.0);
 
    double wort_l = e->wortEndOfBoil_l(wortInBoil_l);
    QString str = tr("You should have %1 wort post-boil.")
                  .arg(Measurement::displayAmount(Measurement::Amount{wort_l, Measurement::Units::liters}));
    str += tr("\nYou anticipate losing %1 to trub and chiller loss.")
-          .arg(Measurement::displayAmount(Measurement::Amount{e->trubChillerLoss_l(), Measurement::Units::liters}));
-   wort_l -= e->trubChillerLoss_l();
+          .arg(Measurement::displayAmount(Measurement::Amount{e->kettleTrubChillerLoss_l(), Measurement::Units::liters}));
+   wort_l -= e->kettleTrubChillerLoss_l();
    if (e->topUpWater_l() > 0.0)
       str += tr("\nAdd %1 top up water into primary.")
-             .arg(Measurement::displayAmount(Measurement::Amount{e->topUpWater_l(), Measurement::Units::liters}));
-   wort_l += e->topUpWater_l();
+             .arg(Measurement::displayAmount(Measurement::Amount{e->topUpWater_l().value_or(Equipment::default_topUpWater_l), Measurement::Units::liters}));
+   wort_l += e->topUpWater_l().value_or(Equipment::default_topUpWater_l);
    str += tr("\nThe final volume in the primary is %1.")
           .arg(Measurement::displayAmount(Measurement::Amount{wort_l, Measurement::Units::liters}));
 
@@ -1092,7 +1090,7 @@ void Recipe::generateInstructions() {
 
    // Find boil time.
    if (equipment() != nullptr) {
-      timeRemaining = equipment()->boilTime_min();
+      timeRemaining = equipment()->boilTime_min().value_or(Equipment::default_boilTime_min);
    } else {
       timeRemaining =
          Measurement::qStringToSI(QInputDialog::getText(nullptr,
@@ -2040,7 +2038,7 @@ double Recipe::batchSizeNoLosses_l() {
    double ret = batchSize_l();
    Equipment * e = equipment();
    if (e) {
-      ret += e->trubChillerLoss_l();
+      ret += e->kettleTrubChillerLoss_l();
    }
 
    return ret;
@@ -2196,7 +2194,7 @@ void Recipe::recalcVolumeEstimates() {
    } else {
       waterAdded_l = mash()->totalMashWater_l();
       if (equipment() != nullptr) {
-         absorption_lKg = equipment()->mashTunGrainAbsorption_LKg();
+         absorption_lKg = equipment()->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg);
       } else {
          absorption_lKg = PhysicalConstants::grainAbsorption_Lkg;
       }
@@ -2207,7 +2205,7 @@ void Recipe::recalcVolumeEstimates() {
    // boilVolume_l ==============================
 
    if (equipment() != nullptr) {
-      tmp = tmp_wfm - equipment()->lauterDeadspace_l() + equipment()->topUpKettle_l();
+      tmp = tmp_wfm - equipment()->lauterDeadspaceLoss_l() + equipment()->topUpKettle_l().value_or(Equipment::default_topUpKettle_l);
    } else {
       tmp = tmp_wfm;
    }
@@ -2253,7 +2251,7 @@ void Recipe::recalcVolumeEstimates() {
    m_finalVolumeNoLosses_l = batchSizeNoLosses_l();
    if (equipment() != nullptr) {
       //_finalVolumeNoLosses_l = equipment()->wortEndOfBoil_l(tmp_bv) + equipment()->topUpWater_l();
-      tmp_fv = equipment()->wortEndOfBoil_l(tmp_bv) + equipment()->topUpWater_l() - equipment()->trubChillerLoss_l();
+      tmp_fv = equipment()->wortEndOfBoil_l(tmp_bv) + equipment()->topUpWater_l().value_or(Equipment::default_topUpWater_l) - equipment()->kettleTrubChillerLoss_l();
    } else {
       m_finalVolume_l = tmp_bv - 4.0; // This is just shooting in the dark. Can't do much without an equipment.
       //_finalVolumeNoLosses_l = _finalVolume_l;
@@ -2512,9 +2510,9 @@ void Recipe::recalcOgFg() {
    // We might lose some sugar in the form of Trub/Chiller loss and lauter deadspace.
    if (equipment() != nullptr) {
 
-      kettleWort_l = (m_wortFromMash_l - equipment()->lauterDeadspace_l()) + equipment()->topUpKettle_l();
+      kettleWort_l = (m_wortFromMash_l - equipment()->lauterDeadspaceLoss_l()) + equipment()->topUpKettle_l().value_or(Equipment::default_topUpKettle_l);
       postBoilWort_l = equipment()->wortEndOfBoil_l(kettleWort_l);
-      ratio = (postBoilWort_l - equipment()->trubChillerLoss_l()) / postBoilWort_l;
+      ratio = (postBoilWort_l - equipment()->kettleTrubChillerLoss_l()) / postBoilWort_l;
       if (ratio > 1.0) { // Usually happens when we don't have a mash yet.
          ratio = 1.0;
       } else if (ratio < 0.0) {
@@ -2632,8 +2630,8 @@ double Recipe::ibuFromHop(Hop const * hop) {
    // amount of break material that truly affects the IBUs.
 
    if (equip) {
-      hopUtilization = equip->hopUtilization_pct() / 100.0;
-      boilTime = static_cast<int>(equip->boilTime_min());
+      hopUtilization = equip->hopUtilization_pct().value_or(Equipment::default_hopUtilization_pct) / 100.0;
+      boilTime = static_cast<int>(equip->boilTime_min().value_or(Equipment::default_boilTime_min));
    }
 
    if (hop->use() == Hop::Use::Boil) {
@@ -2788,7 +2786,7 @@ void Recipe::acceptChangeToContainedObject(QMetaProperty prop, QVariant val) {
       if (equipment) {
          qDebug() << Q_FUNC_INFO << "Equipment #" << equipment->key() << "(ours=" << this->equipmentId << ")";
          Q_ASSERT(equipment->key() == this->equipmentId);
-         if (propName == *PropertyNames::Equipment::boilSize_l) {
+         if (propName == *PropertyNames::Equipment::kettleBoilSize_l) {
             Q_ASSERT(val.canConvert<double>());
             this->setBoilSize_l(val.value<double>());
          } else if (propName == PropertyNames::Equipment::boilTime_min) {
@@ -2840,7 +2838,7 @@ double Recipe::targetCollectedWortVol_l() {
    }
 
    if (equipment()) {
-      return boilSize_l() - equipment()->topUpKettle_l() - postMashAdditionVolume_l;
+      return boilSize_l() - equipment()->topUpKettle_l().value_or(Equipment::default_topUpKettle_l) - postMashAdditionVolume_l;
    } else {
       return boilSize_l() - postMashAdditionVolume_l;
    }
@@ -2851,7 +2849,7 @@ double Recipe::targetTotalMashVol_l() {
    double absorption_lKg;
 
    if (equipment()) {
-      absorption_lKg = equipment()->mashTunGrainAbsorption_LKg();
+      absorption_lKg = equipment()->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg);
    } else {
       absorption_lKg = PhysicalConstants::grainAbsorption_Lkg;
    }

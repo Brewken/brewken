@@ -321,11 +321,21 @@ namespace Measurement {
       //
       // NOTE: This is one instance where our "canonical" unit is NOT the metric one.  Historically, the code has always
       //       used "calories per Celsius per gram" rather than "joules per Celsius per kilogram", including for storing
-      //       amounts in the DB.   Also the "calories" version is what is used by BeerJSON and BeerXML.
+      //       amounts in the DB.   Also the "calories" version is what is used by BeerXML.
       //
       // BeerJSON also offers us BTU / (lb × °F).  Note however, that, because a British Thermal Unit (BTU) is defined
       // as "the amount of heat required to raise the temperature of one pound of water by one degree Fahrenheit", we
       // have 1 BTU/lb·F = 1 c/g·C.
+      //
+      // NOTE that you often see a couple of other terms used in brewing-related circles:
+      //
+      //   - "Heat Capacity" (see https://en.wikipedia.org/wiki/Heat_capacity) is different from Specific Heat Capacity.
+      //     For a given object (eg a brewing vessel), its Heat Capacity is obtained by multiplying its Mass by its
+      //     Specific Heat Capacity.
+      //
+      //   - "Specific Heat" is just an abbreviation for "Specific Heat Capacity".  We use it for variable names etc in
+      //     the interests of brevity, but we try always to use full "Specific Heat Capacity" for display strings to
+      //     avoid any ambiguity or confusion.
       //
       extern Unit const caloriesPerCelsiusPerGram;
       extern Unit const joulesPerKelvinPerKg     ;

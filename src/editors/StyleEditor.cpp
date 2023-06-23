@@ -25,7 +25,7 @@
 #include "measurement/Unit.h"
 #include "model/Style.h"
 #include "StyleListModel.h"
-#include "StyleSortFilterProxyModel.h"
+#include "sortFilterProxyModels/StyleSortFilterProxyModel.h"
 
 StyleEditor::StyleEditor(QWidget* parent) :
    QDialog{parent},

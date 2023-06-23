@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MiscSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * sortFilterProxyModels/MiscSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "MiscSortFilterProxyModel.h"
+#include "sortFilterProxyModels/MiscSortFilterProxyModel.h"
 
 #include <QAbstractItemModel>
 

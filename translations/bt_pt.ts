@@ -983,7 +983,7 @@ Log file may contain more details.</source>
     <name>EquipmentEditor</name>
     <message>
         <source>Grain absorption (%1/%2)</source>
-        <translation>Absorção de Grãos (%1 / %2)</translation>
+        <translation type="vanished">Absorção de Grãos (%1 / %2)</translation>
     </message>
     <message>
         <source>Tun Volume Warning</source>
@@ -995,11 +995,11 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Equipment name</source>
-        <translation>Nome do Equipamento</translation>
+        <translation type="vanished">Nome do Equipamento</translation>
     </message>
     <message>
         <source>Equipment name:</source>
-        <translation>Nome do Equipamento</translation>
+        <translation type="vanished">Nome do Equipamento</translation>
     </message>
     <message>
         <source>The tun volume you entered is 0. This may cause problems</source>
@@ -1171,6 +1171,25 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>This equipment profile may break Brewken&apos;s maths</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>EquipmentTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nome</translation>
+    </message>
+    <message>
+        <source>Mash Tun Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kettle Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermenter Volume</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1778,6 +1797,13 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>↷ Skipped </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>InfoButton</name>
+    <message>
+        <source>i</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3534,6 +3560,50 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Remove selected %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specific Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specific Heat Capacity Btus per</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BTU/lb·F</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>L/kg</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>L/g</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>m^3/kg</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>floz/oz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>gal/lb</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>qt/lb</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>gal/oz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ft^3/lb</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5367,7 +5437,7 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Losses</source>
-        <translation type="vanished">Perdas</translation>
+        <translation>Perdas</translation>
     </message>
     <message>
         <source>Kettle to fermenter</source>
@@ -5383,15 +5453,11 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Equipment</source>
-        <translation type="unfinished">Equipamento</translation>
+        <translation type="obsolete">Equipamento</translation>
     </message>
     <message>
         <source>Set as Default</source>
         <translation type="unfinished">Configurar como Padrão</translation>
-    </message>
-    <message>
-        <source>Main</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Pre-boil Volume</source>
@@ -5423,7 +5489,7 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Evaporation rate (per hr)</source>
-        <translation type="unfinished">Taxa de evaporação por hora</translation>
+        <translation type="obsolete">Taxa de evaporação por hora</translation>
     </message>
     <message>
         <source>Final top-up water</source>
@@ -5438,16 +5504,8 @@ O volume final do fermentador primário é %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Physics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Default Absorption</source>
         <translation type="unfinished">Absorção padrão</translation>
-    </message>
-    <message>
-        <source>Grain absorption (L/kg)</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Hop % Utilization</source>
@@ -5458,20 +5516,8 @@ O volume final do fermentador primário é %1.</translation>
         <translation type="unfinished">Ponto de Ebolição da Água</translation>
     </message>
     <message>
-        <source>Mash tun Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mash tun Weight</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Volume of mash tun</source>
         <translation type="unfinished">Volume da panela de mosturação</translation>
-    </message>
-    <message>
-        <source>Specific Heat (Cal/(g*C))</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Notes</source>
@@ -5487,6 +5533,150 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name to identify this equipment profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&quot;Optional&quot; vessels are, by default, not shown if their volume is set to 0.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hot Liquor Tank</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hot Liquor Tank Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="unfinished">Volume</translation>
+    </message>
+    <message>
+        <source>Evaporation Loss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Weight</source>
+        <translation type="unfinished">Peso</translation>
+    </message>
+    <message>
+        <source>Specific Heat Capacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HLT Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash Tun</source>
+        <translation type="unfinished">Panela de Mosturação</translation>
+    </message>
+    <message>
+        <source>Mash Tun Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other Mashing losses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mashing losses not included in grain absorption</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash Tun Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lauter Tun</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lauter Tun Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lauter Tun Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lauter Tun Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil Kettle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil Kettle Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Evaporation rate per hour</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil kettle weight</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil kettle outflow per minute</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Kettle Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermenter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermenter Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deadspace Losses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermenter Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aging Vessel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aging Vessel Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Packaging Vessel Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Packaging Vessel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Packaging Vessel Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use a different name for each equipment profile.  If you brew different batch sizes on the same equipment, you need a separate equipment profile for each batch size.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Grain absorption</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

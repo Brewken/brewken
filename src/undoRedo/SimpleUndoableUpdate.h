@@ -40,6 +40,9 @@
 class SimpleUndoableUpdate : public QUndoCommand {
 public:
    /*!
+    * \brief The template wrappers below around this constructor cover the cases where compiler doesn't know a priori
+    *        how to (correctly) convert the newValue argument to a \c QVariant.
+    *
     * \param updatee The entity (eg recipe) we are updating
     * \param propertyName Which property we are updating - needs to have been declared as a Q_PROPERTY in the class header file
     * \param newValue The new value to assign
@@ -72,6 +75,17 @@ public:
                         QUndoCommand * parent = nullptr) :
       SimpleUndoableUpdate(updatee, typeInfo, Optional::toOptInt(newValue), description, parent) {
       Q_ASSERT(typeInfo.isEnum());
+      Q_ASSERT(typeInfo.isOptional());
+      return;
+   }
+
+   template<IsOptionalOther T>
+   SimpleUndoableUpdate(NamedEntity & updatee,
+                        TypeInfo const & typeInfo,
+                        T newValue,
+                        QString const & description,
+                        QUndoCommand * parent = nullptr) :
+      SimpleUndoableUpdate(updatee, typeInfo, QVariant::fromValue<T>(newValue), description, parent) {
       Q_ASSERT(typeInfo.isOptional());
       return;
    }

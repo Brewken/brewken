@@ -169,9 +169,9 @@ void MashWizard::wizardry() {
 
    // If we have an equipment, utilize the custom absorption and boiling temp.
    if( recObs->equipment() != nullptr ) {
-      absorption_LKg = recObs->equipment()->mashTunGrainAbsorption_LKg();
+      absorption_LKg = recObs->equipment()->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg);
       boilingPoint_c = recObs->equipment()->boilingPoint_c();
-      lauterDeadspace = recObs->equipment()->lauterDeadspace_l();
+      lauterDeadspace = recObs->equipment()->lauterDeadspaceLoss_l();
    }
 
    auto steps = mash->mashSteps();

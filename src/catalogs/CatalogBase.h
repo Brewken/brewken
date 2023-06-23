@@ -322,11 +322,12 @@ public:
    }
 
    /**
-    * \brief Subclass should call this from its \c newItem slot.  This is also called directly, eg from
-    *        \c BtTreeView::newNamedEntity.
+    * \brief Subclass should call this from its \c newItem slot.
     *
     *        Note that the \c newItem slot doesn't take a parameter and always relies on the default folder
     *        parameter here, whereas direct callers can specify a folder.
+    *
+    * TODO: This duplicates EditorBase::newEditItem.  We should just call that instead.
     *
     * \param folder
     */

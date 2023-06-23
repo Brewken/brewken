@@ -306,7 +306,7 @@ public:
                      "<td class=\"value\">%2</td>")
             .arg(tr("Boil Time"))
             .arg(Measurement::displayAmount(Measurement::Amount{
-                                               rec->equipment() == nullptr ? 0.0 : rec->equipment()->boilTime_min(),
+                                               rec->equipment() == nullptr ? 0.0 : rec->equipment()->boilTime_min().value_or(Equipment::default_boilTime_min),
                                                Measurement::Units::minutes
                                             }));
       body += QString("<td align=\"right\" class=\"right\">%1</td>"
@@ -377,7 +377,7 @@ public:
       entry.append(tr("Boil Time"));
       value.append(
          QString("%1").arg(
-            Measurement::displayAmount(Measurement::Amount{rec->equipment() == nullptr ? 0.0 : rec->equipment()->boilTime_min(),
+            Measurement::displayAmount(Measurement::Amount{rec->equipment() == nullptr ? 0.0 : rec->equipment()->boilTime_min().value_or(Equipment::default_boilTime_min),
                                                            Measurement::Units::minutes})
          )
       );
@@ -1296,10 +1296,10 @@ QString RecipeFormatter::getToolTip(Equipment* kit) {
    // First row -- batchsize and boil time
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
            .arg(tr("Preboil"))
-           .arg(Measurement::displayAmount(Measurement::Amount{kit->boilSize_l(), Measurement::Units::liters}) );
+           .arg(Measurement::displayAmount(Measurement::Amount{kit->kettleBoilSize_l(), Measurement::Units::liters}) );
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
            .arg(tr("BoilTime"))
-           .arg(Measurement::displayAmount(Measurement::Amount{kit->boilTime_min(), Measurement::Units::minutes}) );
+           .arg(Measurement::displayAmount(Measurement::Amount{kit->boilTime_min().value_or(Equipment::default_boilTime_min), Measurement::Units::minutes}) );
 
    body += "</table></body></html>";
 

@@ -1,7 +1,6 @@
 /*======================================================================================================================
- * YeastSortFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2014:
- *   • Mik Firestone <mikfire@gmail.com>
- *   • Philip Greggory Lee <rocketman768@gmail.com>
+ * widgets/InfoButton.h is part of Brewken, and is copyright the following authors 2023:
+ *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -14,29 +13,45 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef YEASTSORTFILTERPROXYMODEL_H
-#define YEASTSORTFILTERPROXYMODEL_H
+#ifndef WIDGETS_INFOBUTTON_H
+#define WIDGETS_INFOBUTTON_H
 #pragma once
 
-#include <QSortFilterProxyModel>
+#include <QLabel>
+#include <QPushButton>
 
-/*!
- * \class YeastSortFilterProxyModel
+class InfoText;
+
+/**
+ * \class InfoButton
  *
- * \brief Proxy model for sorting yeasts.
+ * \brief A button that looks like 'ⓘ' that you can click to show more info about the field it is placed next to.
  */
-class YeastSortFilterProxyModel : public QSortFilterProxyModel {
+class InfoButton : public QPushButton {
    Q_OBJECT
-
 public:
-   YeastSortFilterProxyModel(QObject *parent = 0, bool filt = true);
+   explicit InfoButton(QWidget * parent = nullptr);
+   virtual ~InfoButton();
+
+   /**
+    * \brief This is called by our \c InfoText to link it to us.
+    */
+   void linkWith(InfoText * infoText);
+
+public slots:
+   /**
+    * \brief When the button is clicked, this is the function that ends up getting called.
+    */
+   void doClick();
 
 protected:
-   bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
-   bool filterAcceptsRow( int source_row, const QModelIndex &source_parent) const;
+   virtual void paintEvent(QPaintEvent * event) override;
+   virtual void resizeEvent(QResizeEvent * event)override;
 
 private:
-   bool filter;
+   int getCircleDiameter() const;
+
+   InfoText * m_infoText;
 };
 
 #endif

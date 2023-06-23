@@ -21,7 +21,7 @@
  =====================================================================================================================*/
 #include "catalogs/HopCatalog.h"
 
-#include "HopSortFilterProxyModel.h"
+#include "sortFilterProxyModels/HopSortFilterProxyModel.h"
 
 // Insert the boiler-plate stuff that we cannot do in CatalogBase
 CATALOG_COMMON_CODE(Hop)

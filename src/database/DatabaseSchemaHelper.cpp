@@ -657,16 +657,51 @@ namespace {
          {QString("ALTER TABLE style ADD COLUMN mouthfeel          %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE style ADD COLUMN overall_impression %1").arg(db.getDbNativeTypeName<QString>())},
          //
-         // Style: Extended and additional fields for BeerJSON.  This includes changing a lot of column names as
+         // Equipment: Extended and additional fields for BeerJSON.  This includes changing a lot of column names as
          // BeerJSON essentially has a record per vessel ("HLT", "Mash Tun", etc)
          //
          {QString("ALTER TABLE equipment RENAME COLUMN notes             TO kettle_notes                 ")},
          {QString("ALTER TABLE equipment RENAME COLUMN real_evap_rate    TO kettle_evaporation_per_hour_l")},
-
-         {QString("ALTER TABLE equipment RENAME COLUMN tun_specific_heat TO mash_tun_specific_heat       ")},
-         {QString("ALTER TABLE equipment RENAME COLUMN tun_volume        TO mash_tun_volume              ")},
-         {QString("ALTER TABLE equipment RENAME COLUMN tun_weight        TO mash_tun_weight              ")},
+         {QString("ALTER TABLE equipment RENAME COLUMN boil_size         TO kettle_boil_size_l           ")},
+         {QString("ALTER TABLE equipment RENAME COLUMN tun_specific_heat TO mash_tun_specific_heat_calgc ")},
+         {QString("ALTER TABLE equipment RENAME COLUMN tun_volume        TO mash_tun_volume_l            ")},
+         {QString("ALTER TABLE equipment RENAME COLUMN tun_weight        TO mash_tun_weight_kg           ")},
          {QString("ALTER TABLE equipment RENAME COLUMN absorption        TO mash_tun_grain_absorption_lkg")},
+         {QString("ALTER TABLE equipment RENAME COLUMN batch_size        TO fermenter_batch_size_l       ")},
+         {QString("ALTER TABLE equipment RENAME COLUMN trub_chiller_loss TO kettle_trub_chiller_loss_l   ")},
+         {QString("ALTER TABLE equipment RENAME COLUMN lauter_deadspace  TO lauter_deadspace_loss_l      ")},
+         {QString("ALTER TABLE equipment ADD COLUMN hlt_type                       %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE equipment ADD COLUMN mash_tun_type                  %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE equipment ADD COLUMN lauter_tun_type                %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE equipment ADD COLUMN kettle_type                    %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE equipment ADD COLUMN fermenter_type                 %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE equipment ADD COLUMN agingvessel_type               %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE equipment ADD COLUMN packaging_vessel_type          %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE equipment ADD COLUMN hlt_volume_l                   %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE equipment ADD COLUMN lauter_tun_volume_l            %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE equipment ADD COLUMN aging_vessel_volume_l          %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE equipment ADD COLUMN packaging_vessel_volume_l      %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE equipment ADD COLUMN hlt_loss_l                     %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE equipment ADD COLUMN mash_tun_loss_l                %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE equipment ADD COLUMN fermenter_loss_l               %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE equipment ADD COLUMN aging_vessel_loss_l            %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE equipment ADD COLUMN packaging_vessel_loss_l        %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE equipment ADD COLUMN kettle_outflow_per_minute_l    %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE equipment ADD COLUMN hlt_weight_kg                  %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE equipment ADD COLUMN lauter_tun_weight_kg           %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE equipment ADD COLUMN kettle_weight_kg               %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE equipment ADD COLUMN hlt_specific_heat_calgc        %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE equipment ADD COLUMN lauter_tun_specific_heat_calgc %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE equipment ADD COLUMN kettle_specific_heat_calgc     %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE equipment ADD COLUMN hlt_notes                      %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE equipment ADD COLUMN mash_tun_notes                 %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE equipment ADD COLUMN lauter_tun_notes               %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE equipment ADD COLUMN fermenter_notes                %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE equipment ADD COLUMN aging_vessel_notes             %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE equipment ADD COLUMN packaging_vessel_notes         %1").arg(db.getDbNativeTypeName<QString>())},
+
+
+
 
       };
       return executeSqlQueries(q, migrationQueries);

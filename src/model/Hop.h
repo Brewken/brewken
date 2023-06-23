@@ -214,7 +214,6 @@ public:
    Q_PROPERTY(double  myrcene_pct           READ myrcene_pct           WRITE setMyrcene_pct          )
 
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   // .:TODO JSON:. Some of these should be optional
    Q_PROPERTY(QString producer              READ producer              WRITE setProducer             )
    Q_PROPERTY(QString product_id            READ product_id            WRITE setProduct_id           )
    /**

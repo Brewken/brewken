@@ -75,7 +75,7 @@ public:
     *
     * \param value
     */
-   template<typename EE, typename = std::enable_if_t<is_not_optional<EE>::value> > void setValue(std::optional<EE> value) {
+   template<typename EE, typename = std::enable_if_t<is_non_optional<EE>::value> > void setValue(std::optional<EE> value) {
       Q_ASSERT(this->isOptional());
       if (!value) {
          this->setNull();
@@ -90,7 +90,7 @@ public:
     *
     * \param value
     */
-   template<typename EE, typename = std::enable_if_t<is_not_optional<EE>::value> > void setValue(EE value) {
+   template<typename EE, typename = std::enable_if_t<is_non_optional<EE>::value> > void setValue(EE value) {
       Q_ASSERT(!this->isOptional());
       this->setValue(static_cast<int>(value));
       return;

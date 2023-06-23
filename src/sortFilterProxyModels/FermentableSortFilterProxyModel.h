@@ -1,6 +1,7 @@
 /*======================================================================================================================
- * WaterSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * sortFilterProxyModels/FermentableSortFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2014:
  *   • Mik Firestone <mikfire@gmail.com>
+ *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -13,31 +14,33 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "WaterSortFilterProxyModel.h"
+#ifndef SORTFILTERPROXYMODELS_FERMENTABLESORTFILTERPROXYMODEL_H
+#define SORTFILTERPROXYMODELS_FERMENTABLESORTFILTERPROXYMODEL_H
+#pragma once
 
-#include <iostream>
+#include <QSortFilterProxyModel>
 
-#include "model/Yeast.h"
-#include "tableModels/WaterTableModel.h"
-
-WaterSortFilterProxyModel::WaterSortFilterProxyModel(QObject *parent, bool filt)
-: QSortFilterProxyModel(parent),
-  filter(filt)
+/*!
+ * \class FermentableSortFilterProxyModel
+ *
+ * \brief Proxy model for sorting Fermentables.
+ */
+class FermentableSortFilterProxyModel : public QSortFilterProxyModel
 {
-}
+   Q_OBJECT
 
-bool WaterSortFilterProxyModel::lessThan(const QModelIndex &left,
-                                         const QModelIndex &right) const
-{
-    QVariant leftWater = sourceModel()->data(left);
-    QVariant rightWater = sourceModel()->data(right);
+public:
+   FermentableSortFilterProxyModel(QObject *parent = 0, bool filt = true);
 
-    return leftWater.toString() < rightWater.toString();
-}
+protected:
+   bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
+   bool filterAcceptsRow( int source_row, const QModelIndex &source_parent) const;
 
-/*
-bool WaterSortFilterProxyModel::filterAcceptsRow( int source_row, const QModelIndex &source_parent) const
-{
-   return !filter;
-}
-*/
+private:
+   bool filter;
+
+   QString getName( const QModelIndex &index ) const;
+   double toDouble(QVariant side) const;
+};
+
+#endif

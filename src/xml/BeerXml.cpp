@@ -491,35 +491,65 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Equipment>{"EQUIPMENT"};
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Equipment> {
-      // Type                                  XPath                        Q_PROPERTY                                            Enum Mapper
-      {XmlRecord::FieldType::String          , "NAME"                     , PropertyNames::NamedEntity::name                    , nullptr},
-      {XmlRecord::FieldType::RequiredConstant, "VERSION"                  , VERSION1                                            , nullptr},
-      {XmlRecord::FieldType::Double          , "BOIL_SIZE"                , PropertyNames::Equipment::boilSize_l                , nullptr},
-      {XmlRecord::FieldType::Double          , "BATCH_SIZE"               , PropertyNames::Equipment::batchSize_l               , nullptr},
-      {XmlRecord::FieldType::Double          , "TUN_VOLUME"               , PropertyNames::Equipment::mashTunVolume_l           , nullptr},
-      {XmlRecord::FieldType::Double          , "TUN_WEIGHT"               , PropertyNames::Equipment::mashTunWeight_kg          , nullptr},
-      {XmlRecord::FieldType::Double          , "TUN_SPECIFIC_HEAT"        , PropertyNames::Equipment::mashTunSpecificHeat_calGC , nullptr},
-      {XmlRecord::FieldType::Double          , "TOP_UP_WATER"             , PropertyNames::Equipment::topUpWater_l              , nullptr},
-      {XmlRecord::FieldType::Double          , "TRUB_CHILLER_LOSS"        , PropertyNames::Equipment::trubChillerLoss_l         , nullptr},
-      {XmlRecord::FieldType::Double          , "EVAP_RATE"                , PropertyNames::Equipment::evapRate_pctHr            , nullptr},
-      {XmlRecord::FieldType::Double          , "BOIL_TIME"                , PropertyNames::Equipment::boilTime_min              , nullptr},
-      {XmlRecord::FieldType::Bool            , "CALC_BOIL_VOLUME"         , PropertyNames::Equipment::calcBoilVolume            , nullptr},
-      {XmlRecord::FieldType::Double          , "LAUTER_DEADSPACE"         , PropertyNames::Equipment::lauterDeadspace_l         , nullptr},
-      {XmlRecord::FieldType::Double          , "TOP_UP_KETTLE"            , PropertyNames::Equipment::topUpKettle_l             , nullptr},
-      {XmlRecord::FieldType::Double          , "HOP_UTILIZATION"          , PropertyNames::Equipment::hopUtilization_pct        , nullptr},
+      // Type                                  XPath                             Q_PROPERTY                                            Enum Mapper
+      {XmlRecord::FieldType::String          , "NAME"                          , PropertyNames::NamedEntity::name                    , nullptr},
+      {XmlRecord::FieldType::RequiredConstant, "VERSION"                       , VERSION1                                            , nullptr},
+      {XmlRecord::FieldType::Double          , "BOIL_SIZE"                     , PropertyNames::Equipment::kettleBoilSize_l          , nullptr},
+      {XmlRecord::FieldType::Double          , "BATCH_SIZE"                    , PropertyNames::Equipment::fermenterBatchSize_l      , nullptr},
+      {XmlRecord::FieldType::Double          , "TUN_VOLUME"                    , PropertyNames::Equipment::mashTunVolume_l           , nullptr},
+      {XmlRecord::FieldType::Double          , "TUN_WEIGHT"                    , PropertyNames::Equipment::mashTunWeight_kg          , nullptr},
+      {XmlRecord::FieldType::Double          , "TUN_SPECIFIC_HEAT"             , PropertyNames::Equipment::mashTunSpecificHeat_calGC , nullptr},
+      {XmlRecord::FieldType::Double          , "TOP_UP_WATER"                  , PropertyNames::Equipment::topUpWater_l              , nullptr},
+      {XmlRecord::FieldType::Double          , "TRUB_CHILLER_LOSS"             , PropertyNames::Equipment::kettleTrubChillerLoss_l         , nullptr},
+      {XmlRecord::FieldType::Double          , "EVAP_RATE"                     , PropertyNames::Equipment::evapRate_pctHr            , nullptr},
+      {XmlRecord::FieldType::Double          , "BOIL_TIME"                     , PropertyNames::Equipment::boilTime_min              , nullptr},
+      {XmlRecord::FieldType::Bool            , "CALC_BOIL_VOLUME"              , PropertyNames::Equipment::calcBoilVolume            , nullptr},
+      {XmlRecord::FieldType::Double          , "LAUTER_DEADSPACE"              , PropertyNames::Equipment::lauterDeadspaceLoss_l     , nullptr},
+      {XmlRecord::FieldType::Double          , "TOP_UP_KETTLE"                 , PropertyNames::Equipment::topUpKettle_l             , nullptr},
+      {XmlRecord::FieldType::Double          , "HOP_UTILIZATION"               , PropertyNames::Equipment::hopUtilization_pct        , nullptr},
       // See comment in model/Equipment.h for why NOTES maps to brewKettleNotes
-      {XmlRecord::FieldType::String          , "NOTES"                    , PropertyNames::Equipment::kettleNotes               , nullptr},
-      {XmlRecord::FieldType::String          , "DISPLAY_BOIL_SIZE"        , BtString::NULL_STR                                  , nullptr}, // Extension tag
-      {XmlRecord::FieldType::String          , "DISPLAY_BATCH_SIZE"       , BtString::NULL_STR                                  , nullptr}, // Extension tag
-      {XmlRecord::FieldType::String          , "DISPLAY_TUN_VOLUME"       , BtString::NULL_STR                                  , nullptr}, // Extension tag
-      {XmlRecord::FieldType::String          , "DISPLAY_TUN_WEIGHT"       , BtString::NULL_STR                                  , nullptr}, // Extension tag
-      {XmlRecord::FieldType::String          , "DISPLAY_TOP_UP_WATER"     , BtString::NULL_STR                                  , nullptr}, // Extension tag
-      {XmlRecord::FieldType::String          , "DISPLAY_TRUB_CHILLER_LOSS", BtString::NULL_STR                                  , nullptr}, // Extension tag
-      {XmlRecord::FieldType::String          , "DISPLAY_LAUTER_DEADSPACE" , BtString::NULL_STR                                  , nullptr}, // Extension tag
-      {XmlRecord::FieldType::String          , "DISPLAY_TOP_UP_KETTLE"    , BtString::NULL_STR                                  , nullptr}, // Extension tag
-      {XmlRecord::FieldType::Double          , "REAL_EVAP_RATE"           , PropertyNames::Equipment::kettleEvaporationPerHour_l, nullptr}, // Non-standard tag, not part of BeerXML 1.0 standard
-      {XmlRecord::FieldType::Double          , "ABSORPTION"               , PropertyNames::Equipment::mashTunGrainAbsorption_LKg, nullptr}, // Non-standard tag, not part of BeerXML 1.0 standard
-      {XmlRecord::FieldType::Double          , "BOILING_POINT"            , PropertyNames::Equipment::boilingPoint_c            , nullptr}, // Non-standard tag, not part of BeerXML 1.0 standard
+      {XmlRecord::FieldType::String          , "NOTES"                         , PropertyNames::Equipment::kettleNotes               , nullptr},
+      {XmlRecord::FieldType::String          , "DISPLAY_BOIL_SIZE"             , BtString::NULL_STR                                  , nullptr}, // Extension tag
+      {XmlRecord::FieldType::String          , "DISPLAY_BATCH_SIZE"            , BtString::NULL_STR                                  , nullptr}, // Extension tag
+      {XmlRecord::FieldType::String          , "DISPLAY_TUN_VOLUME"            , BtString::NULL_STR                                  , nullptr}, // Extension tag
+      {XmlRecord::FieldType::String          , "DISPLAY_TUN_WEIGHT"            , BtString::NULL_STR                                  , nullptr}, // Extension tag
+      {XmlRecord::FieldType::String          , "DISPLAY_TOP_UP_WATER"          , BtString::NULL_STR                                  , nullptr}, // Extension tag
+      {XmlRecord::FieldType::String          , "DISPLAY_TRUB_CHILLER_LOSS"     , BtString::NULL_STR                                  , nullptr}, // Extension tag
+      {XmlRecord::FieldType::String          , "DISPLAY_LAUTER_DEADSPACE"      , BtString::NULL_STR                                  , nullptr}, // Extension tag
+      {XmlRecord::FieldType::String          , "DISPLAY_TOP_UP_KETTLE"         , BtString::NULL_STR                                  , nullptr}, // Extension tag
+      {XmlRecord::FieldType::Double          , "REAL_EVAP_RATE"                , PropertyNames::Equipment::kettleEvaporationPerHour_l, nullptr}, // Non-standard tag, not part of BeerXML 1.0 standard
+      {XmlRecord::FieldType::Double          , "ABSORPTION"                    , PropertyNames::Equipment::mashTunGrainAbsorption_LKg, nullptr}, // Non-standard tag, not part of BeerXML 1.0 standard
+      {XmlRecord::FieldType::Double          , "BOILING_POINT"                 , PropertyNames::Equipment::boilingPoint_c            , nullptr}, // Non-standard tag, not part of BeerXML 1.0 standard
+      // ⮜⮜⮜ Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML ⮞⮞⮞
+      {XmlRecord::FieldType::String          , "HLT_TYPE"                      , PropertyNames::Equipment::hltType                    },
+      {XmlRecord::FieldType::String          , "MASH_TUN_TYPE"                 , PropertyNames::Equipment::mashTunType                },
+      {XmlRecord::FieldType::String          , "LAUTER_TUN_TYPE"               , PropertyNames::Equipment::lauterTunType              },
+      {XmlRecord::FieldType::String          , "KETTLE_TYPE"                   , PropertyNames::Equipment::kettleType                 },
+      {XmlRecord::FieldType::String          , "FERMENTER_TYPE"                , PropertyNames::Equipment::fermenterType              },
+      {XmlRecord::FieldType::String          , "AGINGVESSEL_TYPE"              , PropertyNames::Equipment::agingVesselType            },
+      {XmlRecord::FieldType::String          , "PACKAGING_VESSEL_TYPE"         , PropertyNames::Equipment::packagingVesselType        },
+      {XmlRecord::FieldType::Double          , "HLT_VOLUME_L"                  , PropertyNames::Equipment::hltVolume_l                },
+      {XmlRecord::FieldType::Double          , "LAUTER_TUN_VOLUME_L"           , PropertyNames::Equipment::lauterTunVolume_l          },
+      {XmlRecord::FieldType::Double          , "AGING_VESSEL_VOLUME_L"         , PropertyNames::Equipment::agingVesselVolume_l        },
+      {XmlRecord::FieldType::Double          , "PACKAGING_VESSEL_VOLUME_L"     , PropertyNames::Equipment::packagingVesselVolume_l    },
+      {XmlRecord::FieldType::Double          , "HLT_LOSS_L"                    , PropertyNames::Equipment::hltLoss_l                  },
+      {XmlRecord::FieldType::Double          , "MASH_TUN_LOSS_L"               , PropertyNames::Equipment::mashTunLoss_l              },
+      {XmlRecord::FieldType::Double          , "FERMENTER_LOSS_L"              , PropertyNames::Equipment::fermenterLoss_l            },
+      {XmlRecord::FieldType::Double          , "AGING_VESSEL_LOSS_L"           , PropertyNames::Equipment::agingVesselLoss_l          },
+      {XmlRecord::FieldType::Double          , "PACKAGING_VESSEL_LOSS_L"       , PropertyNames::Equipment::packagingVesselLoss_l      },
+      {XmlRecord::FieldType::Double          , "KETTLE_OUTFLOW_PER_MINUTE_L"   , PropertyNames::Equipment::kettleOutflowPerMinute_l   },
+      {XmlRecord::FieldType::Double          , "HLT_WEIGHT_KG"                 , PropertyNames::Equipment::hltWeight_kg               },
+      {XmlRecord::FieldType::Double          , "LAUTER_TUN_WEIGHT_KG"          , PropertyNames::Equipment::lauterTunWeight_kg         },
+      {XmlRecord::FieldType::Double          , "KETTLE_WEIGHT_KG"              , PropertyNames::Equipment::kettleWeight_kg            },
+      {XmlRecord::FieldType::Double          , "HLT_SPECIFIC_HEAT_CALGC"       , PropertyNames::Equipment::hltSpecificHeat_calGC      },
+      {XmlRecord::FieldType::Double          , "LAUTER_TUN_SPECIFIC_HEAT_CALGC", PropertyNames::Equipment::lauterTunSpecificHeat_calGC},
+      {XmlRecord::FieldType::Double          , "KETTLE_SPECIFIC_HEAT_CALGC"    , PropertyNames::Equipment::kettleSpecificHeat_calGC   },
+      {XmlRecord::FieldType::String          , "HLT_NOTES"                     , PropertyNames::Equipment::hltNotes                   },
+      {XmlRecord::FieldType::String          , "MASH_TUN_NOTES"                , PropertyNames::Equipment::mashTunNotes               },
+      {XmlRecord::FieldType::String          , "LAUTER_TUN_NOTES"              , PropertyNames::Equipment::lauterTunNotes             },
+      {XmlRecord::FieldType::String          , "FERMENTER_NOTES"               , PropertyNames::Equipment::fermenterNotes             },
+      {XmlRecord::FieldType::String          , "AGING_VESSEL_NOTES"            , PropertyNames::Equipment::agingVesselNotes           },
+      {XmlRecord::FieldType::String          , "PACKAGING_VESSEL_NOTES"        , PropertyNames::Equipment::packagingVesselNotes       },
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

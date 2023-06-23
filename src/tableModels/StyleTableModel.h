@@ -47,7 +47,7 @@ template <> struct TableModelTraits<StyleTableModel> {
 /*!
  * \class StyleTableModel
  *
- * \brief Table model for a list of miscs.
+ * \brief Table model for a list of styles.
  */
 class StyleTableModel : public BtTableModel, public TableModelBase<StyleTableModel, Style> {
    Q_OBJECT
@@ -59,7 +59,7 @@ class StyleTableModel : public BtTableModel, public TableModelBase<StyleTableMod
 /*!
  * \class StyleItemDelegate
  *
- * \brief Item delegate for misc tables.
+ * \brief Item delegate for style tables.
  * \sa StyleTableModel
  */
 class StyleItemDelegate : public QItemDelegate,

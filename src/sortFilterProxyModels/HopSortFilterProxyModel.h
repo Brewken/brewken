@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * MiscSortFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * sortFilterProxyModels/HopSortFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2023:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -14,28 +15,26 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef MISCSORTFILTERPROXYMODEL_H
-#define MISCSORTFILTERPROXYMODEL_H
+#ifndef SORTFILTERPROXYMODELS_HOPSORTFILTERPROXYMODEL_H
+#define SORTFILTERPROXYMODELS_HOPSORTFILTERPROXYMODEL_H
 #pragma once
 
 #include <QSortFilterProxyModel>
 
 /*!
- * \class MiscSortFilterProxyModel
+ * \class HopSortFilterProxyModel
  *
- * \brief Proxy model for sorting miscs.
+ * \brief Proxy model for sorting hops.
  */
-class MiscSortFilterProxyModel : public QSortFilterProxyModel
-{
+class HopSortFilterProxyModel : public QSortFilterProxyModel {
    Q_OBJECT
 
 public:
-   MiscSortFilterProxyModel(QObject *parent = 0, bool filt = true);
+   HopSortFilterProxyModel(QObject * parent = 0, bool filt = true);
 
 protected:
-
-   bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
-   bool filterAcceptsRow( int source_row, const QModelIndex &source_parent) const;
+   bool lessThan(QModelIndex const & left, QModelIndex const & right) const;
+   bool filterAcceptsRow(int source_row, QModelIndex const & source_parent) const;
 
 private:
    bool filter;

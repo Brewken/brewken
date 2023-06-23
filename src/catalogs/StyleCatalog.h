@@ -22,6 +22,7 @@
 
 #include "editors/StyleEditor.h"
 #include "model/Style.h"
+#include "sortFilterProxyModels/StyleSortFilterProxyModel.h"
 #include "tableModels/StyleTableModel.h"
 
 // This needs to be the last include.  (I know, I know...)
@@ -30,7 +31,7 @@
 /*!
  * \class StyleCatalog
  *
- * \brief View/controller class for showing/editing the list of yeasts in the database.
+ * \brief View/controller class for showing/editing the list of styles in the database.
  */
 class StyleCatalog : public QDialog, public CatalogBase<StyleCatalog,
                                                         Style,

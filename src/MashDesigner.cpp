@@ -270,7 +270,7 @@ double MashDesigner::tempFromVolume_c(double vol_l) {
 
    double absorption_LKg;
    if (this->equip) {
-      absorption_LKg = this->equip->mashTunGrainAbsorption_LKg();
+      absorption_LKg = this->equip->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg);
    } else {
       absorption_LKg = PhysicalConstants::grainAbsorption_Lkg;
    }
@@ -354,8 +354,8 @@ bool MashDesigner::initializeMash() {
    }
 
    // Order matters. Don't do this until every that could return false has
-   this->mash->setMashTunSpecificHeat_calGC(this->equip->mashTunSpecificHeat_calGC());
-   this->mash->setTunWeight_kg(this->equip->mashTunWeight_kg());
+   this->mash->setMashTunSpecificHeat_calGC(this->equip->mashTunSpecificHeat_calGC().value_or(Equipment::default_mashTunSpecificHeat_calGC));
+   this->mash->setTunWeight_kg(this->equip->mashTunWeight_kg().value_or(Equipment::default_mashTunWeight_kg)); // TBD: Maybe Mash::setTunWeight_kg should take an optional value
    this->mash->setTunTemp_c(Measurement::qStringToSI(dialogText, Measurement::PhysicalQuantity::Temperature).quantity());
 
    this->curStep = 0;
@@ -430,7 +430,7 @@ double MashDesigner::waterFromMash_l() {
 
    double absorption_lKg;
    if (equip) {
-      absorption_lKg = equip->mashTunGrainAbsorption_LKg();
+      absorption_lKg = equip->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg);
    } else {
       absorption_lKg = PhysicalConstants::grainAbsorption_Lkg;
    }
