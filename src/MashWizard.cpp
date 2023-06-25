@@ -171,7 +171,7 @@ void MashWizard::wizardry() {
    if( recObs->equipment() != nullptr ) {
       absorption_LKg = recObs->equipment()->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg);
       boilingPoint_c = recObs->equipment()->boilingPoint_c();
-      lauterDeadspace = recObs->equipment()->lauterDeadspaceLoss_l();
+      lauterDeadspace = recObs->equipment()->getLauteringDeadspaceLoss_l();
    }
 
    auto steps = mash->mashSteps();

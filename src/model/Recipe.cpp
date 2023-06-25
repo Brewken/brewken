@@ -864,7 +864,7 @@ void Recipe::topOffIns() {
       return;
    }
 
-   double wortInBoil_l = wortFromMash_l() - e->lauterDeadspaceLoss_l();
+   double wortInBoil_l = wortFromMash_l() - e->getLauteringDeadspaceLoss_l();
    QString str = tr("You should now have %1 wort.")
                  .arg(Measurement::displayAmount(Measurement::Amount{wortInBoil_l, Measurement::Units::liters}));
    if (!e->topUpKettle_l() || *e->topUpKettle_l() == 0.0) {
@@ -999,7 +999,7 @@ void Recipe::postboilIns() {
       return;
    }
 
-   double wortInBoil_l = wortFromMash_l() - e->lauterDeadspaceLoss_l();
+   double wortInBoil_l = wortFromMash_l() - e->getLauteringDeadspaceLoss_l();
    wortInBoil_l += e->topUpKettle_l().value_or(0.0);
 
    double wort_l = e->wortEndOfBoil_l(wortInBoil_l);
@@ -2205,7 +2205,7 @@ void Recipe::recalcVolumeEstimates() {
    // boilVolume_l ==============================
 
    if (equipment() != nullptr) {
-      tmp = tmp_wfm - equipment()->lauterDeadspaceLoss_l() + equipment()->topUpKettle_l().value_or(Equipment::default_topUpKettle_l);
+      tmp = tmp_wfm - equipment()->getLauteringDeadspaceLoss_l() + equipment()->topUpKettle_l().value_or(Equipment::default_topUpKettle_l);
    } else {
       tmp = tmp_wfm;
    }
@@ -2510,7 +2510,7 @@ void Recipe::recalcOgFg() {
    // We might lose some sugar in the form of Trub/Chiller loss and lauter deadspace.
    if (equipment() != nullptr) {
 
-      kettleWort_l = (m_wortFromMash_l - equipment()->lauterDeadspaceLoss_l()) + equipment()->topUpKettle_l().value_or(Equipment::default_topUpKettle_l);
+      kettleWort_l = (m_wortFromMash_l - equipment()->getLauteringDeadspaceLoss_l()) + equipment()->topUpKettle_l().value_or(Equipment::default_topUpKettle_l);
       postBoilWort_l = equipment()->wortEndOfBoil_l(kettleWort_l);
       ratio = (postBoilWort_l - equipment()->kettleTrubChillerLoss_l()) / postBoilWort_l;
       if (ratio > 1.0) { // Usually happens when we don't have a mash yet.

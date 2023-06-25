@@ -66,6 +66,7 @@
  *                                                    exists in the DB
  *          - \c void \c readFieldsFromEditItem -- (Re)read one or all fields from the object into the relevant GUI
  *                                                 field(s).
+ *
  */
 template<class NE, class Derived>
 class EditorBase {
@@ -139,6 +140,15 @@ public:
    }
 
    /**
+    * \brief Subclass should override this if it needs to validate the form before saving happens.
+    *
+    * \return \c true if validation succeeded, \c false if it did not (and save should therefore be aborted)
+    */
+   bool validateBeforeSave() {
+      return true;
+   }
+
+   /**
     * \brief Subclass should call this from its \c save slot
     */
    void doSave() {
@@ -146,6 +156,13 @@ public:
          this->m_derived->setVisible(false);
          return;
       }
+      // Note that we have to call this->m_derived->validateBeforeSave(), not just this->validateBeforeSave(), in order
+      // to allow the derived class to override validateBeforeSave().  But, because of the magic of the CRTP, there is
+      // no need to make validateBeforeSave() virtual.
+      if (!this->m_derived->validateBeforeSave()) {
+         return;
+      }
+
       this->m_derived->writeFieldsToEditItem();
       if (this->m_editItem->key() < 0) {
          ObjectStoreWrapper::insert(this->m_editItem);
@@ -200,7 +217,7 @@ protected:
  *        Note we have to be careful about comment formats in macro definitions
  */
 #define EDITOR_COMMON_DECL(NeName)                                                   \
-   /* This allows TableModelBase to call protected and private members of Derived */ \
+   /* This allows EditorBase to call protected and private members of Derived */     \
    friend class EditorBase<NeName##Editor, NeName>;                                  \
                                                                                      \
    public:                                                                           \

@@ -500,11 +500,11 @@ namespace {
       {XmlRecord::FieldType::Double          , "TUN_WEIGHT"                    , PropertyNames::Equipment::mashTunWeight_kg          , nullptr},
       {XmlRecord::FieldType::Double          , "TUN_SPECIFIC_HEAT"             , PropertyNames::Equipment::mashTunSpecificHeat_calGC , nullptr},
       {XmlRecord::FieldType::Double          , "TOP_UP_WATER"                  , PropertyNames::Equipment::topUpWater_l              , nullptr},
-      {XmlRecord::FieldType::Double          , "TRUB_CHILLER_LOSS"             , PropertyNames::Equipment::kettleTrubChillerLoss_l         , nullptr},
+      {XmlRecord::FieldType::Double          , "TRUB_CHILLER_LOSS"             , PropertyNames::Equipment::kettleTrubChillerLoss_l   , nullptr},
       {XmlRecord::FieldType::Double          , "EVAP_RATE"                     , PropertyNames::Equipment::evapRate_pctHr            , nullptr},
       {XmlRecord::FieldType::Double          , "BOIL_TIME"                     , PropertyNames::Equipment::boilTime_min              , nullptr},
       {XmlRecord::FieldType::Bool            , "CALC_BOIL_VOLUME"              , PropertyNames::Equipment::calcBoilVolume            , nullptr},
-      {XmlRecord::FieldType::Double          , "LAUTER_DEADSPACE"              , PropertyNames::Equipment::lauterDeadspaceLoss_l     , nullptr},
+      {XmlRecord::FieldType::Double          , "LAUTER_DEADSPACE"              , PropertyNames::Equipment::lauterTunDeadspaceLoss_l  , nullptr},
       {XmlRecord::FieldType::Double          , "TOP_UP_KETTLE"                 , PropertyNames::Equipment::topUpKettle_l             , nullptr},
       {XmlRecord::FieldType::Double          , "HOP_UTILIZATION"               , PropertyNames::Equipment::hopUtilization_pct        , nullptr},
       // See comment in model/Equipment.h for why NOTES maps to brewKettleNotes

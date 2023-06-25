@@ -224,6 +224,9 @@ public:
     *        `\c setAmount<std::optional<T>>(\c std::nullopt)` when we mean
     *        `\c setAmount<T>(\c std::optional<T>{std::nullopt})`.
     *
+    *        Note that, if you are explicitly providing std::nullopt as the parameter, you need to provide type
+    *        information, eg myField->setAmount<double>(std::nullopt);
+    *
     * \param amount is the amount to display
     */
    template<typename T, typename = std::enable_if_t<is_non_optional<T>::value> > void setAmount(std::optional<T> amount);

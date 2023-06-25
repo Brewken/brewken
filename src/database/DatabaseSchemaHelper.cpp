@@ -669,7 +669,7 @@ namespace {
          {QString("ALTER TABLE equipment RENAME COLUMN absorption        TO mash_tun_grain_absorption_lkg")},
          {QString("ALTER TABLE equipment RENAME COLUMN batch_size        TO fermenter_batch_size_l       ")},
          {QString("ALTER TABLE equipment RENAME COLUMN trub_chiller_loss TO kettle_trub_chiller_loss_l   ")},
-         {QString("ALTER TABLE equipment RENAME COLUMN lauter_deadspace  TO lauter_deadspace_loss_l      ")},
+         {QString("ALTER TABLE equipment RENAME COLUMN lauter_deadspace  TO lauter_tun_deadspace_loss_l  ")},
          {QString("ALTER TABLE equipment ADD COLUMN hlt_type                       %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE equipment ADD COLUMN mash_tun_type                  %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE equipment ADD COLUMN lauter_tun_type                %1").arg(db.getDbNativeTypeName<QString>())},

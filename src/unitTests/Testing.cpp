@@ -394,7 +394,7 @@ void Testing::initTestCase() {
       this->equipFiveGalNoLoss->setKettleTrubChillerLoss_l(0);
       this->equipFiveGalNoLoss->setKettleEvaporationPerHour_l(4.0);
       this->equipFiveGalNoLoss->setBoilTime_min(60);
-      this->equipFiveGalNoLoss->setLauterDeadspaceLoss_l(0);
+      this->equipFiveGalNoLoss->setMashTunLoss_l(0); // This is lautering deadspace loss as no separate lautering tun
       this->equipFiveGalNoLoss->setTopUpKettle_l(0);
       this->equipFiveGalNoLoss->setHopUtilization_pct(100);
       this->equipFiveGalNoLoss->setMashTunGrainAbsorption_LKg(1.0);

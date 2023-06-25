@@ -59,7 +59,7 @@ AddPropertyName(kettleOutflowPerMinute_l   )
 AddPropertyName(kettleSpecificHeat_calGC   )
 AddPropertyName(kettleType                 )
 AddPropertyName(kettleWeight_kg            )
-AddPropertyName(lauterDeadspaceLoss_l          )
+AddPropertyName(lauterTunDeadspaceLoss_l          )
 AddPropertyName(lauterTunNotes             )
 AddPropertyName(lauterTunSpecificHeat_calGC)
 AddPropertyName(lauterTunType              )
@@ -239,7 +239,7 @@ public:
     *
     *        In BeerJSON, this is the "loss" of Lauter Tun.
     */
-   Q_PROPERTY(double lauterDeadspaceLoss_l     READ lauterDeadspaceLoss_l     WRITE setLauterDeadspaceLoss_l     )
+   Q_PROPERTY(double lauterTunDeadspaceLoss_l     READ lauterTunDeadspaceLoss_l     WRITE setLauterTunDeadspaceLoss_l     )
    /**
     * \brief The kettle top up in liters.                                       ⮜⮜⮜ Optional in BeerXML.  Not supported in BeerJSON. ⮞⮞⮞
     *        Amount normally added to the boil kettle before the boil.
@@ -291,7 +291,7 @@ public:
 
    Q_PROPERTY(double                hltLoss_l                         READ hltLoss_l                         WRITE setHltLoss_l                        ) // Required in BeerJSON (when HLT record present)
    Q_PROPERTY(double                mashTunLoss_l                     READ mashTunLoss_l                     WRITE setMashTunLoss_l                    ) // Required in BeerJSON (when Mash Tun record present)
-   // lauterTunLoss_l -- see lauterDeadspaceLoss_l above
+   // lauterTunLoss_l -- see lauterTunDeadspaceLoss_l above
    // kettleLoss_l -- see kettleTrubChillerLoss_l above
    Q_PROPERTY(double                fermenterLoss_l                   READ fermenterLoss_l                   WRITE setFermenterLoss_l                  ) // Required in BeerJSON (when Fermenter record present)
    Q_PROPERTY(double                agingVesselLoss_l                 READ agingVesselLoss_l                 WRITE setAgingVesselLoss_l                ) // Required in BeerJSON (when Aging Vessel record present)
@@ -333,7 +333,7 @@ public:
    std::optional<double> kettleEvaporationPerHour_l () const;
    std::optional<double> boilTime_min               () const;
    bool                  calcBoilVolume             () const;
-   double                lauterDeadspaceLoss_l      () const;
+   double                lauterTunDeadspaceLoss_l      () const;
    std::optional<double> topUpKettle_l              () const;
    std::optional<double> hopUtilization_pct         () const;
    QString               kettleNotes                () const;
@@ -382,7 +382,7 @@ public:
    void setKettleEvaporationPerHour_l (std::optional<double> const   val);
    void setBoilTime_min               (std::optional<double> const   val);
    void setCalcBoilVolume             (bool                  const   val);
-   void setLauterDeadspaceLoss_l      (double                const   val);
+   void setLauterTunDeadspaceLoss_l      (double                const   val);
    void setTopUpKettle_l              (std::optional<double> const   val);
    void setHopUtilization_pct         (std::optional<double> const   val);
    void setKettleNotes                (QString               const & val);
@@ -419,6 +419,12 @@ public:
    void setAgingVesselNotes           (QString               const & val);
    void setPackagingVesselNotes       (QString               const & val);
 
+   /**
+    * \brief Gives the Lautering Deadspace Loss + any mash losses not related to grain absorption, without the caller
+    *        having to know whether a separate lauter tun is used.
+    */
+   double getLauteringDeadspaceLoss_l() const;
+
    //! \brief Calculate how much wort is left immediately at knockout.
    double wortEndOfBoil_l( double kettleWort_l ) const;
 
@@ -442,7 +448,7 @@ private:
    std::optional<double> m_kettleEvaporationPerHour_l;
    std::optional<double> m_boilTime_min              ;
    bool                  m_calcBoilVolume            ;
-   double                m_lauterDeadspaceLoss_l         ;
+   double                m_lauterTunDeadspaceLoss_l         ;
    std::optional<double> m_topUpKettle_l             ;
    std::optional<double> m_hopUtilization_pct        ;
    QString               m_kettleNotes               ;

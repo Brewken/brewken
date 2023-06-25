@@ -75,7 +75,7 @@ namespace {
          {ObjectStore::FieldType::Double, "evap_rate"                     , PropertyNames::Equipment::evapRate_pctHr             },
          {ObjectStore::FieldType::Double, "mash_tun_grain_absorption_lkg" , PropertyNames::Equipment::mashTunGrainAbsorption_LKg },
          {ObjectStore::FieldType::Double, "hop_utilization"               , PropertyNames::Equipment::hopUtilization_pct         },
-         {ObjectStore::FieldType::Double, "lauter_deadspace_loss_l"       , PropertyNames::Equipment::lauterDeadspaceLoss_l      },
+         {ObjectStore::FieldType::Double, "lauter_tun_deadspace_loss_l"   , PropertyNames::Equipment::lauterTunDeadspaceLoss_l   },
          {ObjectStore::FieldType::String, "kettle_notes"                  , PropertyNames::Equipment::kettleNotes                },
          {ObjectStore::FieldType::Double, "top_up_kettle"                 , PropertyNames::Equipment::topUpKettle_l              },
          {ObjectStore::FieldType::Double, "top_up_water"                  , PropertyNames::Equipment::topUpWater_l               },

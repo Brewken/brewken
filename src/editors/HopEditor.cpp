@@ -89,7 +89,7 @@ void HopEditor::writeFieldsToEditItem() {
 
    this->m_editItem->setType             (this->comboBox_hopType      ->getNonOptValue<Hop::Type>());
    this->m_editItem->setForm             (this->comboBox_hopForm      ->getNonOptValue<Hop::Form>());
-   this->m_editItem->setUse              (this->comboBox_hopUse       ->getNonOptValue<Hop::Use >());
+   this->m_editItem->setUse              (this->comboBox_hopUse       ->getOptValue   <Hop::Use >());
 
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    this->m_editItem->setProducer             (this->lineEdit_producer             ->text               ());

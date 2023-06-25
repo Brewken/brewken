@@ -44,6 +44,19 @@ class EquipmentEditor : public QDialog, public Ui::equipmentEditor, public Edito
    Q_OBJECT
 
    EDITOR_COMMON_DECL(Equipment)
+
+public slots:
+   void hideOrShowOptionalVessels();
+   void updateCalcBoilVolume();
+   void resetAbsorption();
+   void updateDefaultEquipment();
+
+public:
+   bool validateBeforeSave();
+
+private:
+   double calcBatchSize();
+
 };
 ///class EquipmentEditor : public QDialog, private Ui::equipmentEditor {
 ///   Q_OBJECT

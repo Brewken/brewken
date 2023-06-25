@@ -41,7 +41,7 @@ bool Equipment::isEqualTo(NamedEntity const & other) const {
       this->m_evapRate_pctHr             == rhs.m_evapRate_pctHr             &&
       this->m_kettleEvaporationPerHour_l == rhs.m_kettleEvaporationPerHour_l &&
       this->m_boilTime_min               == rhs.m_boilTime_min               &&
-      this->m_lauterDeadspaceLoss_l      == rhs.m_lauterDeadspaceLoss_l          &&
+      this->m_lauterTunDeadspaceLoss_l      == rhs.m_lauterTunDeadspaceLoss_l          &&
       this->m_topUpKettle_l              == rhs.m_topUpKettle_l              &&
       this->m_hopUtilization_pct         == rhs.m_hopUtilization_pct
    );
@@ -65,7 +65,7 @@ TypeLookup const Equipment::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::kettleEvaporationPerHour_l , Equipment::m_kettleEvaporationPerHour_l , Measurement::PhysicalQuantity::Volume              ), // The "per hour" bit is fixed, so we simplify
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::boilTime_min               , Equipment::m_boilTime_min               , Measurement::PhysicalQuantity::Time                ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::calcBoilVolume             , Equipment::m_calcBoilVolume             ,           NonPhysicalQuantity::Bool                ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::lauterDeadspaceLoss_l      , Equipment::m_lauterDeadspaceLoss_l      , Measurement::PhysicalQuantity::Volume              ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::lauterTunDeadspaceLoss_l      , Equipment::m_lauterTunDeadspaceLoss_l      , Measurement::PhysicalQuantity::Volume              ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::topUpKettle_l              , Equipment::m_topUpKettle_l              , Measurement::PhysicalQuantity::Volume              ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::hopUtilization_pct         , Equipment::m_hopUtilization_pct         ,           NonPhysicalQuantity::Percentage          ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::kettleNotes                , Equipment::m_kettleNotes                ,           NonPhysicalQuantity::String              ),
@@ -120,7 +120,7 @@ Equipment::Equipment(QString name) :
    m_kettleEvaporationPerHour_l {std::nullopt}, // Previously 4.0
    m_boilTime_min               {std::nullopt}, // Previously 60.0
    m_calcBoilVolume             {true        },
-   m_lauterDeadspaceLoss_l      {0.0         },
+   m_lauterTunDeadspaceLoss_l      {0.0         },
    m_topUpKettle_l              {std::nullopt},
    m_hopUtilization_pct         {std::nullopt}, // Previously 100.0
    m_kettleNotes                {""          },
@@ -178,7 +178,7 @@ Equipment::Equipment(NamedParameterBundle const & namedParameterBundle) :
    m_kettleEvaporationPerHour_l {namedParameterBundle.val<std::optional<double>>(PropertyNames::Equipment::kettleEvaporationPerHour_l , 4.0  )},
    m_boilTime_min               {namedParameterBundle.val<std::optional<double>>(PropertyNames::Equipment::boilTime_min               )},
    m_calcBoilVolume             {namedParameterBundle.val<bool                 >(PropertyNames::Equipment::calcBoilVolume             )},
-   m_lauterDeadspaceLoss_l      {namedParameterBundle.val<double               >(PropertyNames::Equipment::lauterDeadspaceLoss_l      )},
+   m_lauterTunDeadspaceLoss_l      {namedParameterBundle.val<double               >(PropertyNames::Equipment::lauterTunDeadspaceLoss_l      )},
    m_topUpKettle_l              {namedParameterBundle.val<std::optional<double>>(PropertyNames::Equipment::topUpKettle_l              )},
    m_hopUtilization_pct         {namedParameterBundle.val<std::optional<double>>(PropertyNames::Equipment::hopUtilization_pct         )},
    m_kettleNotes                {namedParameterBundle.val<QString              >(PropertyNames::Equipment::kettleNotes                )},
@@ -230,7 +230,7 @@ Equipment::Equipment(Equipment const & other) :
    m_kettleEvaporationPerHour_l {other.m_kettleEvaporationPerHour_l },
    m_boilTime_min               {other.m_boilTime_min               },
    m_calcBoilVolume             {other.m_calcBoilVolume             },
-   m_lauterDeadspaceLoss_l      {other.m_lauterDeadspaceLoss_l      },
+   m_lauterTunDeadspaceLoss_l      {other.m_lauterTunDeadspaceLoss_l      },
    m_topUpKettle_l              {other.m_topUpKettle_l              },
    m_hopUtilization_pct         {other.m_hopUtilization_pct         },
    m_kettleNotes                {other.m_kettleNotes                },
@@ -284,7 +284,7 @@ std::optional<double> Equipment::evapRate_pctHr             () const { return m_
 std::optional<double> Equipment::kettleEvaporationPerHour_l () const { return m_kettleEvaporationPerHour_l ; }
 std::optional<double> Equipment::boilTime_min               () const { return m_boilTime_min               ; }
 bool                  Equipment::calcBoilVolume             () const { return m_calcBoilVolume             ; }
-double                Equipment::lauterDeadspaceLoss_l      () const { return m_lauterDeadspaceLoss_l      ; }
+double                Equipment::lauterTunDeadspaceLoss_l      () const { return m_lauterTunDeadspaceLoss_l      ; }
 std::optional<double> Equipment::topUpKettle_l              () const { return m_topUpKettle_l              ; }
 std::optional<double> Equipment::hopUtilization_pct         () const { return m_hopUtilization_pct         ; }
 QString               Equipment::kettleNotes                () const { return m_kettleNotes                ; }
@@ -365,7 +365,7 @@ void Equipment::setKettleEvaporationPerHour_l(std::optional<double> const val) {
 
 void Equipment::setBoilTime_min               (std::optional<double> const   val) { if (this->setAndNotify(PropertyNames::Equipment::boilTime_min              , this->m_boilTime_min              , this->enforceMin(val, "boil time"))) {       doCalculations();    }    return; }
 void Equipment::setCalcBoilVolume             (bool                  const   val) {     this->setAndNotify(PropertyNames::Equipment::calcBoilVolume            , this->m_calcBoilVolume            , val);    if ( val ) {       doCalculations();    } }
-void Equipment::setLauterDeadspaceLoss_l      (double                const   val) {     this->setAndNotify(PropertyNames::Equipment::lauterDeadspaceLoss_l     , this->m_lauterDeadspaceLoss_l         , this->enforceMin(val, "deadspace")); }
+void Equipment::setLauterTunDeadspaceLoss_l      (double                const   val) {     this->setAndNotify(PropertyNames::Equipment::lauterTunDeadspaceLoss_l     , this->m_lauterTunDeadspaceLoss_l         , this->enforceMin(val, "deadspace")); }
 void Equipment::setTopUpKettle_l              (std::optional<double> const   val) {     this->setAndNotify(PropertyNames::Equipment::topUpKettle_l             , this->m_topUpKettle_l             , this->enforceMin(val, "top-up kettle")); }
 void Equipment::setHopUtilization_pct         (std::optional<double> const   val) {     this->setAndNotify(PropertyNames::Equipment::hopUtilization_pct        , this->m_hopUtilization_pct        , this->enforceMin(val, "hop utilization")); }
 void Equipment::setKettleNotes                (QString               const & val) {     this->setAndNotify(PropertyNames::Equipment::kettleNotes               , this->m_kettleNotes               , val); }
@@ -415,6 +415,10 @@ void Equipment::doCalculations() {
                        this->kettleTrubChillerLoss_l() +
                        (this->boilTime_min().value_or(Equipment::default_boilTime_min)/(double)60)*this->kettleEvaporationPerHour_l().value_or(Equipment::default_kettleEvaporationPerHour_l));
    return;
+}
+
+double Equipment::getLauteringDeadspaceLoss_l() const {
+   return this->m_mashTunLoss_l + (this->m_lauterTunVolume_l > 0 ? this->m_lauterTunDeadspaceLoss_l : 0.0);
 }
 
 double Equipment::wortEndOfBoil_l( double kettleWort_l ) const {
