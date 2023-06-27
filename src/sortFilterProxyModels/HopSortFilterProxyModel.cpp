@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * sortFilterProxyModels/HopSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * sortFilterProxyModels/HopSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors
+ * 2009-2023:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -20,84 +21,38 @@
  =====================================================================================================================*/
 #include "sortFilterProxyModels/HopSortFilterProxyModel.h"
 
-#include <iostream>
-
-#include "Localization.h"
 #include "measurement/Measurement.h"
-#include "measurement/Unit.h"
-#include "model/Hop.h"
-#include "tableModels/HopTableModel.h"
+#include "measurement/PhysicalQuantity.h"
 
-HopSortFilterProxyModel::HopSortFilterProxyModel(QObject *parent, bool filt) :
-   QSortFilterProxyModel(parent),
-   filter{filt} {
-   return;
-}
-
-bool HopSortFilterProxyModel::lessThan(QModelIndex const & left,
-                                       QModelIndex const & right) const {
-   QVariant leftHop = sourceModel()->data(left);
-   QVariant rightHop = sourceModel()->data(right);
-   // .:TODO:. Change this to use Hop::useDisplayNames
-   QStringList uses = QStringList() << "Dry Hop" << "Aroma" << "Boil" << "First Wort" << "Mash";
-
-   auto const columnIndex = static_cast<HopTableModel::ColumnIndex>(left.column());
+bool HopSortFilterProxyModel::isLessThan(HopTableModel::ColumnIndex const columnIndex,
+                                         QVariant const & leftItem,
+                                         QVariant const & rightItem) const {
    switch (columnIndex) {
-      case HopTableModel::ColumnIndex::Alpha:
-         {
-            double lAlpha = Localization::toDouble(leftHop.toString(), Q_FUNC_INFO);
-            double rAlpha = Localization::toDouble(rightHop.toString(), Q_FUNC_INFO);
-            return lAlpha < rAlpha;
-         }
-
-      case HopTableModel::ColumnIndex::Inventory:
-         if (Measurement::qStringToSI(leftHop.toString(), Measurement::PhysicalQuantity::Mass).quantity() == 0.0 &&
-            this->sortOrder() == Qt::AscendingOrder) {
-            return false;
-         }
-         return Measurement::qStringToSI(leftHop.toString(), Measurement::PhysicalQuantity::Mass) <
-                Measurement::qStringToSI(rightHop.toString(), Measurement::PhysicalQuantity::Mass);
-
-      case HopTableModel::ColumnIndex::Amount:
-         return Measurement::qStringToSI(leftHop.toString(), Measurement::PhysicalQuantity::Mass) <
-                Measurement::qStringToSI(rightHop.toString(), Measurement::PhysicalQuantity::Mass);
-
-      case HopTableModel::ColumnIndex::Time:
-         {
-            // Get the indexes of the Use column
-            QModelIndex lSibling =  left.sibling( left.row(), static_cast<int>(HopTableModel::ColumnIndex::Use));
-            QModelIndex rSibling = right.sibling(right.row(), static_cast<int>(HopTableModel::ColumnIndex::Use));
-            // We are talking to the model, so we get the strings associated with
-            // the names, not the Hop::Use enums. We need those translated into
-            // ints to make this work
-            int lUse = uses.indexOf( (sourceModel()->data(lSibling)).toString() );
-            int rUse = uses.indexOf( (sourceModel()->data(rSibling)).toString() );
-
-            if (lUse == rUse) {
-                  return Measurement::qStringToSI(leftHop.toString(), Measurement::PhysicalQuantity::Time) <
-                        Measurement::qStringToSI(rightHop.toString(), Measurement::PhysicalQuantity::Time);
-            }
-
-            return lUse < rUse;
-         }
-
       case HopTableModel::ColumnIndex::Name:
       case HopTableModel::ColumnIndex::Form:
       case HopTableModel::ColumnIndex::Use :
-         // Nothing to do for these cases
-         break;
+         return leftItem.toString() < rightItem.toString();
+
+      case HopTableModel::ColumnIndex::Alpha:
+         return Measurement::extractRawFromString<double>( leftItem.toString()) <
+                Measurement::extractRawFromString<double>(rightItem.toString());
+
+      case HopTableModel::ColumnIndex::Inventory:
+      case HopTableModel::ColumnIndex::Amount:
+         return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Mass) <
+                Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Mass);
+
+      case HopTableModel::ColumnIndex::Time:
+         return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Time) <
+                Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Time);
+
+      // No default case as we want the compiler to warn us if we missed one
    }
 
-   return leftHop.toString() < rightHop.toString();
+   // Should be unreachable
+   Q_ASSERT(false);
+   return true;
 }
 
-bool HopSortFilterProxyModel::filterAcceptsRow( int source_row, const QModelIndex &source_parent) const {
-   HopTableModel* model = qobject_cast<HopTableModel*>(sourceModel());
-   QModelIndex index = sourceModel()->index(source_row, 0, source_parent);
-
-   return !filter
-          ||
-           ( sourceModel()->data(index).toString().contains(filterRegExp())
-             && model->getRow(source_row)->display()
-           );
-}
+// Insert the boiler-plate stuff that we cannot do in SortFilterProxyModelBase
+SORT_FILTER_PROXY_MODEL_COMMON_CODE(Hop)

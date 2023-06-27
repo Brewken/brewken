@@ -93,8 +93,8 @@ Qt::ItemFlags EquipmentTableModel::flags(QModelIndex const & index) const {
 }
 
 bool EquipmentTableModel::setData(QModelIndex const & index,
-                             QVariant const & value,
-                             [[maybe_unused]] int role) {
+                                  QVariant const & value,
+                                  [[maybe_unused]] int role) {
    if (!this->isIndexOk(index)) {
       return false;
    }
@@ -112,8 +112,10 @@ bool EquipmentTableModel::setData(QModelIndex const & index,
       // No default case as we want the compiler to warn us if we missed one
    }
 
+//   emit dataChanged(index, index);
+
    // Should be unreachable
-   emit dataChanged(index, index);
+   Q_ASSERT(false);
    return true;
 }
 

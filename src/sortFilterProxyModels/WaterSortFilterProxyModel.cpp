@@ -1,5 +1,7 @@
 /*======================================================================================================================
- * sortFilterProxyModels/WaterSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2014:
+ * sortFilterProxyModels/WaterSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors
+ * 2009-2023:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -17,27 +19,36 @@
 
 #include <iostream>
 
-#include "model/Yeast.h"
-#include "tableModels/WaterTableModel.h"
+#include "measurement/Measurement.h"
+#include "measurement/PhysicalQuantity.h"
 
-WaterSortFilterProxyModel::WaterSortFilterProxyModel(QObject *parent, bool filt)
-: QSortFilterProxyModel(parent),
-  filter(filt)
-{
+bool WaterSortFilterProxyModel::isLessThan(WaterTableModel::ColumnIndex const columnIndex,
+                                           QVariant const & leftItem,
+                                           QVariant const & rightItem) const {
+   switch (columnIndex) {
+      case WaterTableModel::ColumnIndex::Name:
+         return leftItem.toString() < rightItem.toString();
+
+      case WaterTableModel::ColumnIndex::Amount:
+         return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Volume) <
+                Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Volume);
+
+      case WaterTableModel::ColumnIndex::Calcium    :
+      case WaterTableModel::ColumnIndex::Bicarbonate:
+      case WaterTableModel::ColumnIndex::Sulfate    :
+      case WaterTableModel::ColumnIndex::Chloride   :
+      case WaterTableModel::ColumnIndex::Sodium     :
+      case WaterTableModel::ColumnIndex::Magnesium  :
+         return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::VolumeConcentration) <
+                Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::VolumeConcentration);
+
+      // No default case as we want the compiler to warn us if we missed one
+   }
+
+   // Should be unreachable
+   Q_ASSERT(false);
+   return true;
 }
 
-bool WaterSortFilterProxyModel::lessThan(const QModelIndex &left,
-                                         const QModelIndex &right) const
-{
-    QVariant leftWater = sourceModel()->data(left);
-    QVariant rightWater = sourceModel()->data(right);
-
-    return leftWater.toString() < rightWater.toString();
-}
-
-/*
-bool WaterSortFilterProxyModel::filterAcceptsRow( int source_row, const QModelIndex &source_parent) const
-{
-   return !filter;
-}
-*/
+// Insert the boiler-plate stuff that we cannot do in SortFilterProxyModelBase
+SORT_FILTER_PROXY_MODEL_COMMON_CODE(Water)

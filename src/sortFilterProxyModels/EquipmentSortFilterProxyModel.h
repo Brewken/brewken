@@ -20,21 +20,20 @@
 
 #include <QSortFilterProxyModel>
 
+#include "sortFilterProxyModels/SortFilterProxyModelBase.h"
+#include "tableModels/EquipmentTableModel.h"
+
 /*!
  * \class EquipmentSortFilterProxyModel
  *
  * \brief Proxy model for sorting/filtering Equipments.
- * This should really be a base filter for all ingredient models that filters
- * based on the NamedEntity::display() field.
  */
-class EquipmentSortFilterProxyModel : public QSortFilterProxyModel {
+class EquipmentSortFilterProxyModel : public QSortFilterProxyModel,
+                                      public SortFilterProxyModelBase<EquipmentSortFilterProxyModel,
+                                                                      EquipmentTableModel> {
    Q_OBJECT
 
-   public:
-      EquipmentSortFilterProxyModel(QObject* parent = 0);
-
-   protected:
-      bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const;
+   SORT_FILTER_PROXY_MODEL_COMMON_DECL(Equipment)
 };
 
 #endif

@@ -21,7 +21,7 @@
 #include <QMessageBox>
 #include <QButtonGroup>
 
-#include "EquipmentListModel.h"
+#include "listModels/EquipmentListModel.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"

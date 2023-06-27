@@ -1,5 +1,7 @@
 /*======================================================================================================================
- * sortFilterProxyModels/WaterSortFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * sortFilterProxyModels/WaterSortFilterProxyModel.h is part of Brewken, and is copyright the following authors
+ * 2009-2023:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -20,24 +22,20 @@
 
 #include <QSortFilterProxyModel>
 
+#include "sortFilterProxyModels/SortFilterProxyModelBase.h"
+#include "tableModels/WaterTableModel.h"
+
 /*!
  * \class WaterSortFilterProxyModel
  *
  * \brief Proxy model for sorting water profiles.
  */
-class WaterSortFilterProxyModel : public QSortFilterProxyModel
-{
+class WaterSortFilterProxyModel : public QSortFilterProxyModel,
+                                  public SortFilterProxyModelBase<WaterSortFilterProxyModel,
+                                                                  WaterTableModel> {
    Q_OBJECT
 
-public:
-   WaterSortFilterProxyModel(QObject *parent = nullptr, bool filt = true);
-
-protected:
-   bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
-//   bool filterAcceptsRow( int source_row, const QModelIndex &source_parent) const;
-
-private:
-   bool filter;
+   SORT_FILTER_PROXY_MODEL_COMMON_DECL(Water)
 };
 
 #endif

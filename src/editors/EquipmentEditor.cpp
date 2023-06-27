@@ -32,7 +32,6 @@
 
 #include "BtHorizontalTabs.h"
 #include "database/ObjectStoreWrapper.h"
-#include "EquipmentListModel.h"
 #include "HeatCalculations.h"
 #include "Localization.h"
 #include "measurement/Measurement.h"
@@ -53,32 +52,8 @@ EquipmentEditor::EquipmentEditor(QWidget* parent/*, bool singleEquipEditor*/) :
    EditorBase<Equipment, EquipmentEditor>() {
    this->setupUi(this);
 
-///   if (singleEquipEditor) {
-///      //horizontalLayout_equipments->setVisible(false);
-///      for (int i = 0; i < horizontalLayout_equipments->count(); ++i) {
-///         QWidget* w = horizontalLayout_equipments->itemAt(i)->widget();
-///         if (w) {
-///            w->setVisible(false);
-///         }
-///      }
-///
-///   }
-
    this->tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);
 
-///   // Set grain absorption label based on units.
-///   Measurement::Unit const * weightUnit = nullptr;
-///   Measurement::Unit const * volumeUnit = nullptr;
-///   Measurement::getThicknessUnits(&volumeUnit, &weightUnit);
-///   label_mashTunGrainAbsorption->setText(tr("Grain absorption (%1/%2)").arg(volumeUnit->name).arg(weightUnit->name));
-
-///   equipmentListModel = new EquipmentListModel(equipmentComboBox);
-///   equipmentSortProxyModel = new NamedEntitySortProxyModel(equipmentListModel);
-///   equipmentComboBox->setModel(equipmentSortProxyModel);
-///
-///   obsEquip = nullptr;
-
-   // TODO: Reinstate handling of checkBox_defaultEquipment, pushButton_absorption
    SMART_FIELD_INIT(EquipmentEditor, label_name                    , lineEdit_name                    , Equipment, PropertyNames::NamedEntity::name                     );
    SMART_FIELD_INIT(EquipmentEditor, label_mashTunSpecificHeat     , lineEdit_mashTunSpecificHeat     , Equipment, PropertyNames::Equipment::mashTunSpecificHeat_calGC  );
    SMART_FIELD_INIT(EquipmentEditor, label_mashTunGrainAbsorption  , lineEdit_mashTunGrainAbsorption  , Equipment, PropertyNames::Equipment::mashTunGrainAbsorption_LKg );

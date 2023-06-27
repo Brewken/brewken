@@ -1,5 +1,7 @@
 /*======================================================================================================================
- * sortFilterProxyModels/StyleSortFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * sortFilterProxyModels/StyleSortFilterProxyModel.h is part of Brewken, and is copyright the following authors
+ * 2009-2023:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -20,22 +22,20 @@
 
 #include <QSortFilterProxyModel>
 
+#include "sortFilterProxyModels/SortFilterProxyModelBase.h"
+#include "tableModels/StyleTableModel.h"
+
 /*!
  * \class StyleSortFilterProxyModel
  *
  * \brief Proxy model for sorting/filtering Styles.
- * This should really be a base filter for all ingredient models that filters
- * based on the NamedEntity::display() field.
  */
-class StyleSortFilterProxyModel : public QSortFilterProxyModel
-{
+class StyleSortFilterProxyModel : public QSortFilterProxyModel,
+                                  public SortFilterProxyModelBase<StyleSortFilterProxyModel,
+                                                                  StyleTableModel> {
    Q_OBJECT
 
-   public:
-      StyleSortFilterProxyModel(QObject* parent = 0);
-
-   protected:
-      bool filterAcceptsRow( int source_row, const QModelIndex &source_parent) const;
+   SORT_FILTER_PROXY_MODEL_COMMON_DECL(Style)
 };
 
 #endif

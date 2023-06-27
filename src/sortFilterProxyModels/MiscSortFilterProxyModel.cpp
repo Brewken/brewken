@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * sortFilterProxyModels/MiscSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * sortFilterProxyModels/MiscSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors
+ * 2009-2023:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -19,61 +20,42 @@
  =====================================================================================================================*/
 #include "sortFilterProxyModels/MiscSortFilterProxyModel.h"
 
-#include <QAbstractItemModel>
-
 #include "measurement/Measurement.h"
 #include "measurement/PhysicalQuantity.h"
-#include "measurement/Unit.h"
-#include "model/Misc.h"
-#include "tableModels/MiscTableModel.h"
 
-MiscSortFilterProxyModel::MiscSortFilterProxyModel(QObject *parent, bool filt)
-: QSortFilterProxyModel(parent)
-{
-   filter = filt;
-}
-
-bool MiscSortFilterProxyModel::lessThan(const QModelIndex &left,
-                                        const QModelIndex &right) const {
-   QAbstractItemModel* source = sourceModel();
-   QVariant leftMisc, rightMisc;
-   if (source) {
-      leftMisc = source->data(left);
-      rightMisc = source->data(right);
-   }
-
-   auto const columnIndex = static_cast<MiscTableModel::ColumnIndex>(left.column());
+bool MiscSortFilterProxyModel::isLessThan(MiscTableModel::ColumnIndex const columnIndex,
+                                          QVariant const & leftItem,
+                                          QVariant const & rightItem) const {
    switch (columnIndex) {
+       case MiscTableModel::ColumnIndex::Name:
+       case MiscTableModel::ColumnIndex::Type:
+       case MiscTableModel::ColumnIndex::Use:
+       case MiscTableModel::ColumnIndex::IsWeight:
+         return leftItem.toString() < rightItem.toString();
+
        case MiscTableModel::ColumnIndex::Inventory:
-         if (Measurement::qStringToSI(leftMisc.toString(), Measurement::PhysicalQuantity::Mass).quantity() == 0.0 &&
+         if (Measurement::qStringToSI(leftItem.toString(), Measurement::PhysicalQuantity::Mass).quantity() == 0.0 &&
              this->sortOrder() == Qt::AscendingOrder) {
             return false;
          }
-         return (Measurement::qStringToSI(leftMisc.toString(), Measurement::PhysicalQuantity::Mass) <
-                 Measurement::qStringToSI(rightMisc.toString(), Measurement::PhysicalQuantity::Mass));
+         return (Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Mass) <
+                 Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Mass));
 
       case MiscTableModel::ColumnIndex::Amount:
-         return (Measurement::qStringToSI(leftMisc.toString(), Measurement::PhysicalQuantity::Mass) <
-                 Measurement::qStringToSI(rightMisc.toString(), Measurement::PhysicalQuantity::Mass));
+         return (Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Mass) <
+                 Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Mass));
 
       case MiscTableModel::ColumnIndex::Time:
-         return (Measurement::qStringToSI(leftMisc.toString(), Measurement::PhysicalQuantity::Time) <
-                 Measurement::qStringToSI(rightMisc.toString(), Measurement::PhysicalQuantity::Time));
+         return (Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Time) <
+                 Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Time));
 
-      default:
-         return leftMisc.toString() < rightMisc.toString();
+      // No default case as we want the compiler to warn us if we missed one
    }
+
+   // Should be unreachable
+   Q_ASSERT(false);
+   return true;
 }
 
-
-bool MiscSortFilterProxyModel::filterAcceptsRow( int source_row, const QModelIndex &source_parent) const
-{
-   MiscTableModel* model = qobject_cast<MiscTableModel*>(sourceModel());
-   QModelIndex index = sourceModel()->index(source_row, 0, source_parent);
-
-   return !filter
-          ||
-          (  sourceModel()->data(index).toString().contains(filterRegExp())
-             && model->getRow(source_row)->display()
-          );
-}
+// Insert the boiler-plate stuff that we cannot do in SortFilterProxyModelBase
+SORT_FILTER_PROXY_MODEL_COMMON_CODE(Misc)

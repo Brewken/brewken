@@ -1,5 +1,7 @@
 /*======================================================================================================================
- * sortFilterProxyModels/YeastSortFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * sortFilterProxyModels/YeastSortFilterProxyModel.h is part of Brewken, and is copyright the following authors
+ * 2009-2023:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -20,23 +22,20 @@
 
 #include <QSortFilterProxyModel>
 
+#include "sortFilterProxyModels/SortFilterProxyModelBase.h"
+#include "tableModels/YeastTableModel.h"
+
 /*!
  * \class YeastSortFilterProxyModel
  *
- * \brief Proxy model for sorting yeasts.
+ * \brief Proxy model for sorting/filtering Yeasts.
  */
-class YeastSortFilterProxyModel : public QSortFilterProxyModel {
+class YeastSortFilterProxyModel : public QSortFilterProxyModel,
+                                  public SortFilterProxyModelBase<YeastSortFilterProxyModel,
+                                                                  YeastTableModel> {
    Q_OBJECT
 
-public:
-   YeastSortFilterProxyModel(QObject *parent = 0, bool filt = true);
-
-protected:
-   bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
-   bool filterAcceptsRow( int source_row, const QModelIndex &source_parent) const;
-
-private:
-   bool filter;
+   SORT_FILTER_PROXY_MODEL_COMMON_DECL(Yeast)
 };
 
 #endif

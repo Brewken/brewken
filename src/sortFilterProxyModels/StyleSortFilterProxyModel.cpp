@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * sortFilterProxyModels/StyleSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * sortFilterProxyModels/StyleSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors
+ * 2009-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -16,25 +17,27 @@
  =====================================================================================================================*/
 #include "sortFilterProxyModels/StyleSortFilterProxyModel.h"
 
-#include "StyleListModel.h"
-#include "model/Style.h"
+#include "measurement/Measurement.h"
+#include "measurement/PhysicalQuantity.h"
 
-StyleSortFilterProxyModel::StyleSortFilterProxyModel(QObject* parent)
-   : QSortFilterProxyModel(parent) {
-   return;
-}
-
-bool StyleSortFilterProxyModel::filterAcceptsRow(int source_row,
-                                                 [[maybe_unused]] QModelIndex const & source_parent) const {
-   StyleListModel* m = qobject_cast<StyleListModel*>(sourceModel());
-   if (!m) {
-      return true;
+bool StyleSortFilterProxyModel::isLessThan(StyleTableModel::ColumnIndex const columnIndex,
+                                           QVariant const & leftItem,
+                                           QVariant const & rightItem) const {
+    switch (columnIndex) {
+       case StyleTableModel::ColumnIndex::Name          :
+       case StyleTableModel::ColumnIndex::Type          :
+       case StyleTableModel::ColumnIndex::Category      :
+       case StyleTableModel::ColumnIndex::CategoryNumber:
+       case StyleTableModel::ColumnIndex::StyleLetter   :
+       case StyleTableModel::ColumnIndex::StyleGuide    :
+         return leftItem.toString() < rightItem.toString();
+      // No default case as we want the compiler to warn us if we missed one
    }
 
-   Style* s = m->at(source_row);
-   if (!s) {
-      return true;
-   }
-
-   return s->display() && !s->deleted();
+   // Should be unreachable
+   Q_ASSERT(false);
+   return true;
 }
+
+// Insert the boiler-plate stuff that we cannot do in SortFilterProxyModelBase
+SORT_FILTER_PROXY_MODEL_COMMON_CODE(Style)

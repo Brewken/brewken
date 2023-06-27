@@ -82,7 +82,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/editors/WaterEditor.cpp
     ${repoDir}/src/editors/YeastEditor.cpp
     ${repoDir}/src/EquipmentButton.cpp
-    ${repoDir}/src/EquipmentListModel.cpp
     ${repoDir}/src/HeatCalculations.cpp
     ${repoDir}/src/HelpDialog.cpp
     ${repoDir}/src/Html.cpp
@@ -99,12 +98,15 @@ set(filesToCompile_cpp
     ${repoDir}/src/json/JsonSchema.cpp
     ${repoDir}/src/json/JsonUtils.cpp
     ${repoDir}/src/json/JsonXPath.cpp
+    ${repoDir}/src/listModels/EquipmentListModel.cpp
+    ${repoDir}/src/listModels/MashListModel.cpp
+    ${repoDir}/src/listModels/StyleListModel.cpp
+    ${repoDir}/src/listModels/WaterListModel.cpp
     ${repoDir}/src/Localization.cpp
     ${repoDir}/src/Logging.cpp
     ${repoDir}/src/MainWindow.cpp
     ${repoDir}/src/MashButton.cpp
     ${repoDir}/src/MashDesigner.cpp
-    ${repoDir}/src/MashListModel.cpp
     ${repoDir}/src/MashStepTableWidget.cpp
     ${repoDir}/src/MashWizard.cpp
     ${repoDir}/src/matrix.cpp
@@ -159,7 +161,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/sortFilterProxyModels/YeastSortFilterProxyModel.cpp
     ${repoDir}/src/StrikeWaterDialog.cpp
     ${repoDir}/src/StyleButton.cpp
-    ${repoDir}/src/StyleListModel.cpp
     ${repoDir}/src/StyleRangeWidget.cpp
     ${repoDir}/src/tableModels/BtTableModel.cpp
     ${repoDir}/src/tableModels/BtTableModelInventory.cpp
@@ -189,7 +190,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/utils/TypeLookup.cpp
     ${repoDir}/src/WaterButton.cpp
     ${repoDir}/src/WaterDialog.cpp
-    ${repoDir}/src/WaterListModel.cpp
     ${repoDir}/src/widgets/Animator.cpp
     ${repoDir}/src/widgets/BtBoolComboBox.cpp
     ${repoDir}/src/widgets/BtComboBox.cpp

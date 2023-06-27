@@ -26,9 +26,9 @@
 #include <QWidget>
 
 #include "ui_namedMashEditor.h"
-#include "MashListModel.h"
 #include "editors/MashStepEditor.h"
-#include "EquipmentListModel.h"
+#include "listModels/MashListModel.h"
+#include "listModels/EquipmentListModel.h"
 #include "NamedEntitySortProxyModel.h"
 #include "tableModels/MashStepTableModel.h"
 

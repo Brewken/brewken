@@ -24,7 +24,6 @@
 #include "database/ObjectStoreWrapper.h"
 #include "measurement/Unit.h"
 #include "model/Style.h"
-#include "StyleListModel.h"
 #include "sortFilterProxyModels/StyleSortFilterProxyModel.h"
 
 StyleEditor::StyleEditor(QWidget* parent) :

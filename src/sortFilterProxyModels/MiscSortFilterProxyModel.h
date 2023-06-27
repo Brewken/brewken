@@ -1,5 +1,7 @@
 /*======================================================================================================================
- * sortFilterProxyModels/MiscSortFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * sortFilterProxyModels/MiscSortFilterProxyModel.h is part of Brewken, and is copyright the following authors
+ * 2009-2023:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -20,25 +22,20 @@
 
 #include <QSortFilterProxyModel>
 
+#include "sortFilterProxyModels/SortFilterProxyModelBase.h"
+#include "tableModels/MiscTableModel.h"
+
 /*!
  * \class MiscSortFilterProxyModel
  *
- * \brief Proxy model for sorting miscs.
+ * \brief Proxy model for sorting/filtering miscs.
  */
-class MiscSortFilterProxyModel : public QSortFilterProxyModel
-{
+class MiscSortFilterProxyModel : public QSortFilterProxyModel,
+                                 public SortFilterProxyModelBase<MiscSortFilterProxyModel,
+                                                                 MiscTableModel> {
    Q_OBJECT
 
-public:
-   MiscSortFilterProxyModel(QObject *parent = 0, bool filt = true);
-
-protected:
-
-   bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
-   bool filterAcceptsRow( int source_row, const QModelIndex &source_parent) const;
-
-private:
-   bool filter;
+   SORT_FILTER_PROXY_MODEL_COMMON_DECL(Misc)
 };
 
 #endif

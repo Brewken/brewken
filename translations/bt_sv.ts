@@ -1165,6 +1165,50 @@ Log file may contain more details.</source>
         <source>This equipment profile may break Brewken&apos;s maths</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Numerical values on zero-sized &quot;optional&quot; vessels will be unset or zeroed when you save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The following values will be discarded:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hot liquor tank losses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hot liquor tank weight</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hot liquor tank specific heat capacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lauter tun losses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lauter tun weight</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lauter tun specific heat capacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Packaging vessel losses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aging vessel losses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Data Discard Warnings</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>EquipmentTableModel</name>
@@ -5446,7 +5490,7 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Lauter deadspace</source>
-        <translation>Lauter dödutrymme</translation>
+        <translation type="vanished">Lauter dödutrymme</translation>
     </message>
     <message>
         <source>equipmentEditor</source>
@@ -5470,7 +5514,7 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Batch Size</source>
-        <translation type="unfinished">Satsstorlek</translation>
+        <translation type="obsolete">Satsstorlek</translation>
     </message>
     <message>
         <source>Name</source>
@@ -5490,7 +5534,7 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Boil time</source>
-        <translation type="unfinished">Koktid</translation>
+        <translation type="obsolete">Koktid</translation>
     </message>
     <message>
         <source>Evaporation rate (per hr)</source>
@@ -5498,11 +5542,11 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Final top-up water</source>
-        <translation type="unfinished">Avslutande uppfyllning Vatten</translation>
+        <translation type="obsolete">Avslutande uppfyllning Vatten</translation>
     </message>
     <message>
         <source>Kettle top-up water</source>
-        <translation type="unfinished">Kittel uppfyllning vatten</translation>
+        <translation type="obsolete">Kittel uppfyllning vatten</translation>
     </message>
     <message>
         <source>Kettle to Fermenter Loss</source>
@@ -5542,10 +5586,6 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Name to identify this equipment profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&quot;Optional&quot; vessels are, by default, not shown if their volume is set to 0.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5625,14 +5665,6 @@ Primärens slutgiltiga volym är %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Boil kettle weight</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Boil kettle outflow per minute</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Brew Kettle Notes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5682,6 +5714,50 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Grain absorption</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optional Vessels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attributes of &quot;optional&quot; vessels will not be saved if their volumes are set to 0.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default boil time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default final top-up water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default Kettle top-up water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The default value is 100°C (212°F), but the actual value will vary with altitude.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is equal to the vessel&apos;s Heat Capacity divided by its weight.  Typical values are • Aluminum - 0.215 c/g·C  • Copper - 0.092 c/g·C  • Iron/Steel - 0.108 c/g·C  • Plastic - 0.359 c/g·C.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>How much water is permanently lost to each unit of weight of grain during mashing. The default value is 1.0875 liters per kilogram. This can fluctuate due to the fine-ness of your grind, humidity, brand, and other factors. Pressing the &quot;Default Absorption&quot; button will reset the value to this default.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If you do not have a separate lauter tun, then this should include the lautering deadspace.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Outflow per minute</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is also known as the batch size.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

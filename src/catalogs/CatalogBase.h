@@ -422,9 +422,6 @@ public:
  *
  *        Note that we cannot implement changeEvent in the base class (\c CatalogBase) because it needs access to
  *        \c QDialog::changeEvent, which is \c protected.
- *
- *        With a bit of name concatenation, we could also do the constructor and destructor for the derived class in
- *        this macro.  But, for the moment, I don't think it's worth the extra complexity.
  */
 #define CATALOG_COMMON_CODE(NeName) \
    NeName##Catalog::NeName##Catalog(MainWindow* parent) : \

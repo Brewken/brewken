@@ -1,5 +1,7 @@
 /*======================================================================================================================
- * sortFilterProxyModels/FermentableSortFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * sortFilterProxyModels/FermentableSortFilterProxyModel.h is part of Brewken, and is copyright the following authors
+ * 2009-2023:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -20,27 +22,21 @@
 
 #include <QSortFilterProxyModel>
 
+
+#include "sortFilterProxyModels/SortFilterProxyModelBase.h"
+#include "tableModels/FermentableTableModel.h"
+
 /*!
  * \class FermentableSortFilterProxyModel
  *
- * \brief Proxy model for sorting Fermentables.
+ * \brief Proxy model for sorting/filtering Fermentables.
  */
-class FermentableSortFilterProxyModel : public QSortFilterProxyModel
-{
+class FermentableSortFilterProxyModel : public QSortFilterProxyModel,
+                                        public SortFilterProxyModelBase<FermentableSortFilterProxyModel,
+                                                                        FermentableTableModel> {
    Q_OBJECT
 
-public:
-   FermentableSortFilterProxyModel(QObject *parent = 0, bool filt = true);
-
-protected:
-   bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
-   bool filterAcceptsRow( int source_row, const QModelIndex &source_parent) const;
-
-private:
-   bool filter;
-
-   QString getName( const QModelIndex &index ) const;
-   double toDouble(QVariant side) const;
+   SORT_FILTER_PROXY_MODEL_COMMON_DECL(Fermentable)
 };
 
 #endif

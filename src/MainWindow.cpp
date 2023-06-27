@@ -78,6 +78,7 @@
 #include "BtFolder.h"
 #include "BtHorizontalTabs.h"
 #include "BtTabWidget.h"
+#include "catalogs/EquipmentCatalog.h"
 #include "catalogs/FermentableCatalog.h"
 #include "catalogs/HopCatalog.h"
 #include "catalogs/MiscCatalog.h"
@@ -97,14 +98,16 @@
 #include "editors/StyleEditor.h"
 #include "editors/WaterEditor.h"
 #include "editors/YeastEditor.h"
-#include "EquipmentListModel.h"
 #include "HelpDialog.h"
 #include "Html.h"
 #include "HydrometerTool.h"
 #include "ImportExport.h"
 #include "InventoryFormatter.h"
+#include "listModels/EquipmentListModel.h"
+#include "listModels/MashListModel.h"
+#include "listModels/StyleListModel.h"
+#include "listModels/WaterListModel.h"
 #include "MashDesigner.h"
-#include "MashListModel.h"
 #include "MashWizard.h"
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
@@ -131,7 +134,6 @@
 #include "sortFilterProxyModels/StyleSortFilterProxyModel.h"
 #include "sortFilterProxyModels/YeastSortFilterProxyModel.h"
 #include "StrikeWaterDialog.h"
-#include "StyleListModel.h"
 #include "tableModels/FermentableTableModel.h"
 #include "tableModels/HopTableModel.h"
 #include "tableModels/MashStepTableModel.h"
@@ -144,7 +146,6 @@
 #include "utils/BtStringConst.h"
 #include "utils/OptionalHelpers.h"
 #include "WaterDialog.h"
-#include "WaterListModel.h"
 
 namespace {
 
@@ -331,14 +332,12 @@ public:
     * \brief Create the dialogs, including the file dialogs
     *
     *        Most dialogs are initialized in here. That should include any initial configurations as well.
-    *
-    * TODO: We have 2× EquipmentEditor and 2× StyleEditor, a duplication we no longer need
     */
    void setupDialogs() {
       m_aboutDialog           = std::make_unique<AboutDialog          >(&m_self);
       m_helpDialog            = std::make_unique<HelpDialog           >(&m_self);
+      m_equipCatalog          = std::make_unique<EquipmentCatalog     >(&m_self);
       m_equipEditor           = std::make_unique<EquipmentEditor      >(&m_self);
-      m_singleEquipEditor     = std::make_unique<EquipmentEditor      >(&m_self /*, true*/);
       m_fermCatalog           = std::make_unique<FermentableCatalog   >(&m_self);
       m_fermEditor            = std::make_unique<FermentableEditor    >(&m_self);
       m_hopCatalog            = std::make_unique<HopCatalog           >(&m_self);
@@ -348,8 +347,8 @@ public:
       m_mashWizard            = std::make_unique<MashWizard           >(&m_self);
       m_miscCatalog           = std::make_unique<MiscCatalog          >(&m_self);
       m_miscEditor            = std::make_unique<MiscEditor           >(&m_self);
+      m_styleCatalog          = std::make_unique<StyleCatalog         >(&m_self);
       m_styleEditor           = std::make_unique<StyleEditor          >(&m_self);
-      m_singleStyleEditor     = std::make_unique<StyleEditor          >(&m_self /*, true*/);
       m_yeastCatalog          = std::make_unique<YeastCatalog         >(&m_self);
       m_yeastEditor           = std::make_unique<YeastEditor          >(&m_self);
       m_optionDialog          = std::make_unique<OptionDialog         >(&m_self);
@@ -370,7 +369,6 @@ public:
       m_waterDialog           = std::make_unique<WaterDialog          >(&m_self);
       m_waterEditor           = std::make_unique<WaterEditor          >(&m_self);
       m_ancestorDialog        = std::make_unique<AncestorDialog       >(&m_self);
-      m_styleCatalog          = std::make_unique<StyleCatalog         >(&m_self);
 
       return;
    }
@@ -431,8 +429,8 @@ public:
    // All initialised in setupDialogs
    std::unique_ptr<AboutDialog          > m_aboutDialog          ;
    std::unique_ptr<HelpDialog           > m_helpDialog           ;
+   std::unique_ptr<EquipmentCatalog     > m_equipCatalog         ;
    std::unique_ptr<EquipmentEditor      > m_equipEditor          ;
-   std::unique_ptr<EquipmentEditor      > m_singleEquipEditor    ;
    std::unique_ptr<FermentableCatalog   > m_fermCatalog          ;
    std::unique_ptr<FermentableEditor    > m_fermEditor           ;
    std::unique_ptr<HopCatalog           > m_hopCatalog           ;
@@ -442,8 +440,8 @@ public:
    std::unique_ptr<MashWizard           > m_mashWizard           ;
    std::unique_ptr<MiscCatalog          > m_miscCatalog          ;
    std::unique_ptr<MiscEditor           > m_miscEditor           ;
+   std::unique_ptr<StyleCatalog         > m_styleCatalog         ;
    std::unique_ptr<StyleEditor          > m_styleEditor          ;
-   std::unique_ptr<StyleEditor          > m_singleStyleEditor    ;
    std::unique_ptr<YeastCatalog         > m_yeastCatalog         ;
    std::unique_ptr<YeastEditor          > m_yeastEditor          ;
    std::unique_ptr<OptionDialog         > m_optionDialog         ;
@@ -464,7 +462,6 @@ public:
    std::unique_ptr<WaterDialog          > m_waterDialog          ;
    std::unique_ptr<WaterEditor          > m_waterEditor          ;
    std::unique_ptr<AncestorDialog       > m_ancestorDialog       ;
-   std::unique_ptr<StyleCatalog         > m_styleCatalog         ;
 
    // all things lists should go here
    std::unique_ptr<EquipmentListModel> m_equipmentListModel;
@@ -905,7 +902,7 @@ void MainWindow::setupTriggers() {
    connect(actionUndo                      , &QAction::triggered, this                                      , &MainWindow::editUndo            ); // > Edit > Undo
    connect(actionRedo                      , &QAction::triggered, this                                      , &MainWindow::editRedo            ); // > Edit > Redo
    setUndoRedoEnable();
-   connect(actionEquipments                , &QAction::triggered, this->pimpl->m_equipEditor.get()          , &QWidget::show                   ); // > View > Equipments
+   connect(actionEquipments                , &QAction::triggered, this->pimpl->m_equipCatalog.get()         , &QWidget::show                   ); // > View > Equipments
    connect(actionMashs                     , &QAction::triggered, this->pimpl->m_namedMashEditor.get()      , &QWidget::show                   ); // > View > Mashs
    connect(actionStyles                    , &QAction::triggered, this->pimpl->m_styleCatalog.get()         , &QWidget::show                   ); // > View > Styles
    connect(actionFermentables              , &QAction::triggered, this->pimpl->m_fermCatalog.get()          , &QWidget::show                   ); // > View > Fermentables
@@ -1093,8 +1090,8 @@ void MainWindow::treeActivated(const QModelIndex &index) {
             {
                Equipment * kit = active->getItem<Equipment>(index);
                if ( kit ) {
-                  this->pimpl->m_singleEquipEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(kit));
-                  this->pimpl->m_singleEquipEditor->show();
+                  this->pimpl->m_equipEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(kit));
+                  this->pimpl->m_equipEditor->show();
                }
             }
             break;
@@ -1129,8 +1126,8 @@ void MainWindow::treeActivated(const QModelIndex &index) {
             {
                Style * style = active->getItem<Style>(index);
                if (style) {
-                  this->pimpl->m_singleStyleEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(style));
-                  this->pimpl->m_singleStyleEditor->show();
+                  this->pimpl->m_styleEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(style));
+                  this->pimpl->m_styleEditor->show();
                }
             }
             break;
@@ -1314,11 +1311,11 @@ void MainWindow::setRecipe(Recipe* recipe) {
    this->pimpl->m_mashDesigner->setRecipe(recipe);
    equipmentButton->setRecipe(recipe);
    if (recEquip) {
-      this->pimpl->m_singleEquipEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(recEquip));
+      this->pimpl->m_equipEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(recEquip));
    }
    styleButton->setRecipe(recipe);
    if (recipe->style()) {
-      this->pimpl->m_singleStyleEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(recipe->style()));
+      this->pimpl->m_styleEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(recipe->style()));
    }
 
    this->pimpl->m_mashEditor->setMash(recipeObs->mash());
@@ -1424,11 +1421,11 @@ void MainWindow::changed(QMetaProperty prop, QVariant val) {
 
    if (propName == PropertyNames::Recipe::equipment) {
       this->recEquip = val.value<Equipment *>();
-      this->pimpl->m_singleEquipEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(this->recEquip));
+      this->pimpl->m_equipEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(this->recEquip));
    } else if (propName == PropertyNames::Recipe::style) {
       //recStyle = recipeObs->style();
       this->recStyle = val.value<Style*>();
-      this->pimpl->m_singleStyleEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(this->recStyle));
+      this->pimpl->m_styleEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(this->recStyle));
    }
 
    this->showChanges(&prop);
@@ -2821,11 +2818,11 @@ void MainWindow::contextMenu(const QPoint &point)
 void MainWindow::setupContextMenu() {
 
    treeView_recipe->setupContextMenu(this, this);
-   treeView_equip->setupContextMenu(this, this->pimpl->m_singleEquipEditor.get());
+   treeView_equip->setupContextMenu(this, this->pimpl->m_equipEditor.get());
    treeView_ferm ->setupContextMenu(this, this->pimpl->m_fermEditor       .get());
    treeView_hops ->setupContextMenu(this, this->pimpl->m_hopEditor        .get());
    treeView_misc ->setupContextMenu(this, this->pimpl->m_miscEditor       .get());
-   treeView_style->setupContextMenu(this, this->pimpl->m_singleStyleEditor.get());
+   treeView_style->setupContextMenu(this, this->pimpl->m_styleEditor.get());
    treeView_yeast->setupContextMenu(this, this->pimpl->m_yeastEditor      .get());
    treeView_water->setupContextMenu(this, this->pimpl->m_waterEditor      .get());
 
@@ -2994,8 +2991,8 @@ void MainWindow::showEquipmentEditor()
    }
    else
    {
-      this->pimpl->m_singleEquipEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(recipeObs->equipment()));
-      this->pimpl->m_singleEquipEditor->show();
+      this->pimpl->m_equipEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(recipeObs->equipment()));
+      this->pimpl->m_equipEditor->show();
    }
 }
 
@@ -3003,8 +3000,8 @@ void MainWindow::showStyleEditor() {
    if ( recipeObs && ! recipeObs->style() ) {
       QMessageBox::warning( this, tr("No style"), tr("You must select a style first."));
    } else {
-      this->pimpl->m_singleStyleEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(recipeObs->style()));
-      this->pimpl->m_singleStyleEditor->show();
+      this->pimpl->m_styleEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(recipeObs->style()));
+      this->pimpl->m_styleEditor->show();
    }
    return;
 }
