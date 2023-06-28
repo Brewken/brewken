@@ -52,7 +52,6 @@ public:
 
    //! \brief Add items to the list model
    void addItems(QList<NE *> items) {
-      qDebug() << Q_FUNC_INFO << "Adding up to" << items.size() << "of" << NE::staticMetaObject.className();
       QList<NE *> tmp;
       for (NE * ii : items) {
          // if the item is not already in the list and
@@ -65,9 +64,7 @@ public:
 
       if (tmp.size() > 0) {
          int size = m_items.size();
-         qDebug() << Q_FUNC_INFO << "Adding " << tmp.size() << "of" << NE::staticMetaObject.className() << "to existing list of" << size;
          m_derived->beginInsertRows(QModelIndex(), size, size + tmp.size());
-         qDebug() << Q_FUNC_INFO << "AOK";
          m_items.append(tmp);
 
          for (NE * ii : tmp) {

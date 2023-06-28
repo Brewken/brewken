@@ -100,7 +100,9 @@ protected:
          rightItem = source->data(right);
       }
 
-      auto const columnIndex = static_cast<NeTableModel::ColumnIndex>(left.column());
+      // As per more detailed comment in tableModels/ItemDelegate.h, we need "typename" here only until Apple ship Clang
+      // 16 or later as their standard C++ compiler.
+      auto const columnIndex = static_cast<typename NeTableModel::ColumnIndex>(left.column());
       return this->derived().isLessThan(columnIndex, leftItem, rightItem);
    }
 
