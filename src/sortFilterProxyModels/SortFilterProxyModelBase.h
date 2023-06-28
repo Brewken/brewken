@@ -18,6 +18,8 @@
 #define SORTFILTERPROXYMODELS_SORTFILTERPROXYMODELBASE_H
 #pragma once
 
+#include <QDebug>
+
 /**
  * \brief Curiously Recurring Template Pattern (CRTP) base class for HopSortFilterProxyModel,
  *        FermentableSortFilterProxyModel, etc

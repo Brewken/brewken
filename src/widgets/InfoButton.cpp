@@ -30,7 +30,11 @@ namespace {
    QColor const backgroundColorPressed   {0x63, 0x14, 0x82};
    QColor const backgroundColorInfoHidden{0x82, 0x63, 0x14};
    QColor const foregroundColorEnabled   {0xf8, 0xe0, 0x27};
-   QColor const foregroundColorDisabled  {0x82, 0x63, 0x14};
+   QColor const foregroundColorDisabled  {0x80, 0x80, 0x80};
+   // In newer versions of Qt, we can use QColorConstants::Transparent, but it's not exactly hard to declare our own
+   // transparent "color".  (Note it's only the fourth parameter that matters here.  Transparent black = transparent
+   // white etc!
+   QColor const backgroundTransparent    {0x00, 0x00, 0x00, 0x00};
 
    // In English, "i" stands for "info" (which is short for "information", which is short for "Please show me more
    // information about this setting").
@@ -115,7 +119,7 @@ void InfoButton::paintEvent([[maybe_unused]] QPaintEvent * event) {
    // show one color for when the info is displayed and another for when it is hidden.
    QColor const & backgroundColor{
       (
-         !m_infoText ? QColorConstants::Transparent : (
+         !m_infoText ? backgroundTransparent : (
             this->isDown() ? backgroundColorPressed : (
                m_infoText->isVisible() ? backgroundColorInfoShown : backgroundColorInfoHidden
             )
