@@ -24,6 +24,7 @@
 
 #include "sortFilterProxyModels/SortFilterProxyModelBase.h"
 #include "tableModels/MiscTableModel.h"
+#include "listModels/MiscListModel.h"
 
 /*!
  * \class MiscSortFilterProxyModel
@@ -32,7 +33,8 @@
  */
 class MiscSortFilterProxyModel : public QSortFilterProxyModel,
                                  public SortFilterProxyModelBase<MiscSortFilterProxyModel,
-                                                                 MiscTableModel> {
+                                                                 MiscTableModel,
+                                                                 MiscListModel> {
    Q_OBJECT
 
    SORT_FILTER_PROXY_MODEL_COMMON_DECL(Misc)

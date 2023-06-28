@@ -1,6 +1,5 @@
 /*======================================================================================================================
- * sortFilterProxyModels/EquipmentSortFilterProxyModel.h is part of Brewken, and is copyright the following authors
- * 2023:
+ * listModels/MashStepListModel.h is part of Brewken, and is copyright the following authors 2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -14,28 +13,23 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef SORTFILTERPROXYMODELS_EQUIPMENTSSORTFILTERPROXYMODEL_H
-#define SORTFILTERPROXYMODELS_EQUIPMENTSSORTFILTERPROXYMODEL_H
+#ifndef LISTMODELS_MASHSTEPLISTMODEL_H
+#define LISTMODELS_MASHSTEPLISTMODEL_H
 #pragma once
 
-#include <QSortFilterProxyModel>
+#include <QAbstractListModel>
 
-#include "sortFilterProxyModels/SortFilterProxyModelBase.h"
-#include "tableModels/EquipmentTableModel.h"
-#include "listModels/EquipmentListModel.h"
+#include "listModels/ListModelBase.h"
+#include "model/MashStep.h"
 
 /*!
- * \class EquipmentSortFilterProxyModel
+ * \class MashStepListModel
  *
- * \brief Proxy model for sorting/filtering Equipments.
+ * \brief Model for a list of MashSteps.
  */
-class EquipmentSortFilterProxyModel : public QSortFilterProxyModel,
-                                      public SortFilterProxyModelBase<EquipmentSortFilterProxyModel,
-                                                                      EquipmentTableModel,
-                                                                      EquipmentListModel> {
+class MashStepListModel : public QAbstractListModel, public ListModelBase<MashStepListModel, MashStep> {
    Q_OBJECT
-
-   SORT_FILTER_PROXY_MODEL_COMMON_DECL(Equipment)
+   LIST_MODEL_COMMON_DECL(MashStep)
 };
 
 #endif

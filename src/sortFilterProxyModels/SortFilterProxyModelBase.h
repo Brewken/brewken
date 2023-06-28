@@ -29,7 +29,7 @@
  *
  *        Derived classes need to implement lessThan to provide the right per-column logic for this.
  */
-template<class Derived, class NeTableModel>
+template<class Derived, class NeTableModel, class NeListModel>
 class SortFilterProxyModelBase {
 public:
    SortFilterProxyModelBase(bool filter) :
@@ -43,36 +43,53 @@ protected:
       // Note that sourceModel can be either a subclass of QAbstractListModel (eg StyleListModel) or a subclass of
       // QAbstractTableModel (eg StyleTableModel)
       //
-      //                  QAbstractItemModel
-      //                     |         |
-      //                     |         |
-      //      QAbstractListModel      QAbstractTableModel
-      //              |                        |
-      //              |                        |
-      //              |                  BtTableModel   TableModelBase<StyleTableModel, Style>
-      //              |                        |         /
-      //              |                        |        /
-      //              |                       ...      /
-      //              |                        |      /
-      //              |                        |     /
-      //        StyleListModel          StyleTableModel
+      //                                             QAbstractItemModel
+      //                                                |         |
+      //                                                |         |
+      //                                 QAbstractListModel      QAbstractTableModel
+      //                                         |                        |
+      //                                         |                        |
+      //  ListModelBase<StyleListModel, Style>   |                 BtTableModel   TableModelBase<StyleTableModel, Style>
+      //                               \         |                        |         /
+      //                                \        |                        |        /
+      //                                 \       |                       ...      /
+      //                                  \      |                        |      /
+      //                                   \     |                        |     /
+      //                                   StyleListModel          StyleTableModel
       //
       // In some cases, we can just treat sourceModel as QAbstractItemModel and rely on virtual member functions, such
       // as index() and data().  In others, we need to cast as:
       //
       //    - getRow() is only in TableModelBase
-      //    - at() is only in XxxxListModel
+      //    - at() is only in ListModelBase
       //
+      // The simplest way round this is to try both options.  This requires we have a ListModel class for every
+      // TableModel class and vice versa (ie, if FooTableModel exists then so must FooListModel), which means, in
+      // practice, that we create a few ListModel classes that we don't otherwise use.  However, since ListModelBase
+      // does all the work, this is actually almost no overhead.  The obvious alternative, of creating a common base
+      // class from which ListModelBase and TableModelBase inherit, seems a fair bit of work in comparison!
       //
-      NeTableModel * model = qobject_cast<NeTableModel *>(this->derived().sourceModel());
-      if (model) {
-         QModelIndex index = model->index(source_row, 0, source_parent);
+      NeTableModel * tableModel = qobject_cast<NeTableModel *>(this->derived().sourceModel());
+      if (tableModel) {
+         QModelIndex index = tableModel->index(source_row, 0, source_parent);
 
-         return !m_filter || (model->data(index).toString().contains(this->derived().filterRegExp()) &&
-                              model->getRow(source_row)->display());
+         return !m_filter || (tableModel->data(index).toString().contains(this->derived().filterRegExp()) &&
+                              tableModel->getRow(source_row)->display());
       }
-      // TODO: Fix this!
-      Q_ASSERT(false);
+
+      NeListModel* listModel = qobject_cast<NeListModel*>(this->derived().sourceModel());
+      if (listModel) {
+         auto listItem = listModel->at(source_row);
+         if (!listItem) {
+            qWarning() << Q_FUNC_INFO << "Non-existent item at row" << source_row;
+            return true;
+         }
+
+         return listItem->display() && !listItem->deleted();
+      }
+
+      qWarning() << Q_FUNC_INFO << "Unrecognised source model";
+      return true;
    }
 
    bool doLessThan(QModelIndex const & left, QModelIndex const & right) const {
@@ -103,7 +120,8 @@ private:
 #define SORT_FILTER_PROXY_MODEL_COMMON_DECL(NeName) \
    /* This allows SortFilterProxyModelBase to call protected and private members of Derived */  \
    friend class SortFilterProxyModelBase<NeName##SortFilterProxyModel,                          \
-                                         NeName##TableModel>;                                   \
+                                         NeName##TableModel,                                    \
+                                         NeName##ListModel>;                                    \
                                                                                                 \
    public:                                                                                      \
       NeName##SortFilterProxyModel(QObject * parent = nullptr, bool filter = true);             \
@@ -129,7 +147,8 @@ private:
    NeName##SortFilterProxyModel::NeName##SortFilterProxyModel(QObject * parent, bool filter) :    \
       QSortFilterProxyModel{parent},                                                              \
       SortFilterProxyModelBase<NeName##SortFilterProxyModel,                                      \
-                                         NeName##TableModel>{filter} {                            \
+                                         NeName##TableModel,                                      \
+                                         NeName##ListModel>{filter} {                             \
       return;                                                                                     \
    }                                                                                              \
                                                                                                   \

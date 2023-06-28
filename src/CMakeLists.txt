@@ -99,9 +99,15 @@ set(filesToCompile_cpp
     ${repoDir}/src/json/JsonUtils.cpp
     ${repoDir}/src/json/JsonXPath.cpp
     ${repoDir}/src/listModels/EquipmentListModel.cpp
+    ${repoDir}/src/listModels/FermentableListModel.cpp
+    ${repoDir}/src/listModels/HopListModel.cpp
     ${repoDir}/src/listModels/MashListModel.cpp
+    ${repoDir}/src/listModels/MashStepListModel.cpp
+    ${repoDir}/src/listModels/MiscListModel.cpp
+    ${repoDir}/src/listModels/SaltListModel.cpp
     ${repoDir}/src/listModels/StyleListModel.cpp
     ${repoDir}/src/listModels/WaterListModel.cpp
+    ${repoDir}/src/listModels/YeastListModel.cpp
     ${repoDir}/src/Localization.cpp
     ${repoDir}/src/Logging.cpp
     ${repoDir}/src/MainWindow.cpp

@@ -24,6 +24,7 @@
 
 #include "sortFilterProxyModels/SortFilterProxyModelBase.h"
 #include "tableModels/StyleTableModel.h"
+#include "listModels/StyleListModel.h"
 
 /*!
  * \class StyleSortFilterProxyModel
@@ -32,7 +33,8 @@
  */
 class StyleSortFilterProxyModel : public QSortFilterProxyModel,
                                   public SortFilterProxyModelBase<StyleSortFilterProxyModel,
-                                                                  StyleTableModel> {
+                                                                  StyleTableModel,
+                                                                  StyleListModel> {
    Q_OBJECT
 
    SORT_FILTER_PROXY_MODEL_COMMON_DECL(Style)

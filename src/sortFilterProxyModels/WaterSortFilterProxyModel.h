@@ -24,6 +24,7 @@
 
 #include "sortFilterProxyModels/SortFilterProxyModelBase.h"
 #include "tableModels/WaterTableModel.h"
+#include "listModels/WaterListModel.h"
 
 /*!
  * \class WaterSortFilterProxyModel
@@ -32,7 +33,8 @@
  */
 class WaterSortFilterProxyModel : public QSortFilterProxyModel,
                                   public SortFilterProxyModelBase<WaterSortFilterProxyModel,
-                                                                  WaterTableModel> {
+                                                                  WaterTableModel,
+                                                                  WaterListModel> {
    Q_OBJECT
 
    SORT_FILTER_PROXY_MODEL_COMMON_DECL(Water)

@@ -24,6 +24,7 @@
 
 #include "sortFilterProxyModels/SortFilterProxyModelBase.h"
 #include "tableModels/YeastTableModel.h"
+#include "listModels/YeastListModel.h"
 
 /*!
  * \class YeastSortFilterProxyModel
@@ -32,7 +33,8 @@
  */
 class YeastSortFilterProxyModel : public QSortFilterProxyModel,
                                   public SortFilterProxyModelBase<YeastSortFilterProxyModel,
-                                                                  YeastTableModel> {
+                                                                  YeastTableModel,
+                                                                  YeastListModel> {
    Q_OBJECT
 
    SORT_FILTER_PROXY_MODEL_COMMON_DECL(Yeast)
