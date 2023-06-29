@@ -93,7 +93,7 @@ void MashWizard::show()
    auto lastStep  = recObs->mash()->mashSteps().last();
 
    // Recalculate the mash thickness
-   double thickNum = firstStep->infuseAmount_l()/recObs->grainsInMash_kg();
+   double thickNum = firstStep->amount_l()/recObs->grainsInMash_kg();
    double thickness = thickNum * weightUnit->toCanonical(1).quantity() / volumeUnit->toCanonical(1).quantity() ;
    doubleSpinBox_thickness->setValue(thickness);
 
@@ -102,7 +102,7 @@ void MashWizard::show()
       radioButton_noSparge->setChecked(true);
       widget_batches->setEnabled(false);
       widget_mashThickness->setEnabled(false);
-   } else if ( lastStep->type() == MashStep::Type::flySparge ) {
+   } else if ( lastStep->type() == MashStep::Type::FlySparge ) {
       radioButton_flySparge->setChecked(true);
       widget_batches->setEnabled(false);
       widget_mashThickness->setEnabled(true);
@@ -207,10 +207,10 @@ void MashWizard::wizardry() {
    } else {
       // not sure I like this. Why is this here and not somewhere later?
       if (steps.size() == 1 ) {
-         mashStep->setInfuseAmount_l(recObs->targetTotalMashVol_l());
+         mashStep->setAmount_l(recObs->targetTotalMashVol_l());
       }
       // For no sparge, get the thickness of the first mash step
-      thickNum = mashStep->infuseAmount_l()/grainMass;
+      thickNum = mashStep->amount_l()/grainMass;
       thickness_LKg = thickNum;
    }
 
@@ -237,7 +237,7 @@ void MashWizard::wizardry() {
       return;
    }
 
-   mashStep->setInfuseAmount_l(massWater);
+   mashStep->setAmount_l(massWater);
    mashStep->setInfuseTemp_c(tw);
    //================End of first step=====================
 
@@ -260,7 +260,7 @@ void MashWizard::wizardry() {
 
          m_w = 0; // Total mass of water.
          for (int j = 0; j < i; ++j) {
-            m_w += steps[j]->infuseAmount_l();
+            m_w += steps[j]->amount_l();
          }
          m_g = grainMass;
          m_e = (mash->equipAdjust()) ? mash->mashTunWeight_kg() : 0;
@@ -277,7 +277,7 @@ void MashWizard::wizardry() {
             return;
          }
 
-         mashStep->setDecoctionAmount_l( r*(m_w + m_g/grainDensity) );
+         mashStep->setAmount_l( r*(m_w + m_g/grainDensity) );
       }
       else {
          tf = mashStep->stepTemp_c();
@@ -287,7 +287,7 @@ void MashWizard::wizardry() {
 
          massWater = (MC*(tf-t1))/(HeatCalculations::Cw_calGC * (tw-tf));
 
-         mashStep->setInfuseAmount_l(massWater);
+         mashStep->setAmount_l(massWater);
          mashStep->setInfuseTemp_c(tw);
       }
    }
@@ -296,7 +296,7 @@ void MashWizard::wizardry() {
    if ( bGroup->checkedButton() == radioButton_noSparge  && steps.size() > 1) {
       double otherMashStepTotal = 0.0;
       for (int i = 0; i < steps.size()-1; ++i) {
-         otherMashStepTotal += steps[i]->infuseAmount_l();
+         otherMashStepTotal += steps[i]->amount_l();
       }
 
       mashStep = steps.back();
@@ -322,7 +322,7 @@ void MashWizard::wizardry() {
                                   tr("Infusion temp."),
                                   tr("In order to hit your target temp on the final step, the infusion water must be above boiling. Lower your initial infusion volume."));
 
-      mashStep->setInfuseAmount_l(massWater);
+      mashStep->setAmount_l(massWater);
       mashStep->setInfuseTemp_c(tw);
    }
 
@@ -363,8 +363,8 @@ void MashWizard::wizardry() {
          double volPerBatch = spargeWater_l/numSteps; // its evil, but deal with it
          for(int i=0; i < numSteps; ++i ) {
             auto newMashStep = std::make_shared<MashStep>(tr("Batch Sparge %1").arg(i+1));
-            newMashStep->setType(MashStep::Type::batchSparge);
-            newMashStep->setInfuseAmount_l(volPerBatch);
+            newMashStep->setType(MashStep::Type::BatchSparge);
+            newMashStep->setAmount_l(volPerBatch);
             newMashStep->setInfuseTemp_c(tw);
             newMashStep->setEndTemp_c(tw);
             newMashStep->setStepTemp_c(tf);
@@ -384,8 +384,8 @@ void MashWizard::wizardry() {
       // fly sparge, I think
       else {
          auto newMashStep = std::make_shared<MashStep>(tr("Fly Sparge"));
-         newMashStep->setType(MashStep::Type::flySparge);
-         newMashStep->setInfuseAmount_l(spargeWater_l);
+         newMashStep->setType(MashStep::Type::FlySparge);
+         newMashStep->setAmount_l(spargeWater_l);
          newMashStep->setInfuseTemp_c(tw);
          newMashStep->setEndTemp_c(tw);
          newMashStep->setStepTemp_c(tf);

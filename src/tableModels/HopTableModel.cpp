@@ -136,6 +136,8 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
       return false;
    }
 
+   // .:TODO:. Need to bring the mass/volume logic across eg from Misc to account for liquid hop extract.
+
    bool retVal = false;
 ///   auto row = this->rows[index.row()];
    auto const columnIndex = static_cast<HopTableModel::ColumnIndex>(index.column());
@@ -145,10 +147,10 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
       case HopTableModel::ColumnIndex::Use:
       case HopTableModel::ColumnIndex::Form:
       case HopTableModel::ColumnIndex::Time:
-      case HopTableModel::ColumnIndex::Amount:
          retVal = this->writeDataToModel(index, value, role);
          break;
 
+      case HopTableModel::ColumnIndex::Amount:
       case HopTableModel::ColumnIndex::Inventory:
          retVal = this->writeDataToModel(index, value, role, Measurement::PhysicalQuantity::Mass);
          break;

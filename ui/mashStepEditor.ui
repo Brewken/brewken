@@ -23,12 +23,6 @@
       <layout class="QHBoxLayout" name="horizontalLayout_7">
        <item>
         <widget class="QLabel" name="label_name">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
          <property name="text">
           <string>Name</string>
          </property>
@@ -38,25 +32,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEdit_name">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>100</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
+        <widget class="SmartLineEdit" name="lineEdit_name">
          <property name="toolTip">
           <string>Name</string>
          </property>
@@ -67,51 +43,20 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
-        <widget class="QLabel" name="label_type">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+        <widget class="QLabel" name="label_mashStepType">
          <property name="text">
           <string>Type</string>
          </property>
          <property name="buddy">
-          <cstring>comboBox_type</cstring>
+          <cstring>comboBox_mashStepType</cstring>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox_type">
+        <widget class="BtComboBox" name="comboBox_mashStepType">
          <property name="toolTip">
           <string>Type</string>
          </property>
-         <item>
-          <property name="text">
-           <string>Infusion</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Temperature</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Decoction</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Fly Sparge</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Batch Sparge</string>
-          </property>
-         </item>
         </widget>
        </item>
       </layout>
@@ -120,12 +65,6 @@
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
         <widget class="SmartLabel" name="label_stepTemp">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -139,24 +78,6 @@
        </item>
        <item>
         <widget class="SmartLineEdit" name="lineEdit_stepTemp">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>100</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
          <property name="toolTip">
           <string>Target temp. of this step</string>
          </property>
@@ -167,13 +88,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
-        <widget class="SmartLabel" name="label_infuseAmount">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+        <widget class="SmartLabel" name="label_amount">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -181,30 +96,12 @@
           <string>Infuse Amount</string>
          </property>
          <property name="buddy">
-          <cstring>lineEdit_infuseAmount</cstring>
+          <cstring>lineEdit_amount</cstring>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="SmartLineEdit" name="lineEdit_infuseAmount">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>100</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
+        <widget class="SmartLineEdit" name="lineEdit_amount">
          <property name="toolTip">
           <string>Amount of water to infuse</string>
          </property>
@@ -216,12 +113,6 @@
       <layout class="QHBoxLayout" name="horizontalLayout_9">
        <item>
         <widget class="SmartLabel" name="label_infuseTemp">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -235,18 +126,6 @@
        </item>
        <item>
         <widget class="SmartLineEdit" name="lineEdit_infuseTemp">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>100</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
          <property name="toolTip">
           <string>Temperature of infusion water</string>
          </property>
@@ -261,54 +140,6 @@
      <property name="spacing">
       <number>2</number>
      </property>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_11">
-       <item>
-        <widget class="SmartLabel" name="label_decoctionAmount">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
-         </property>
-         <property name="text">
-          <string>Decoction Amount</string>
-         </property>
-         <property name="buddy">
-          <cstring>lineEdit_decoctionAmount</cstring>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="SmartLineEdit" name="lineEdit_decoctionAmount">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>100</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Amount of mash to decoct</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
@@ -332,24 +163,6 @@
        </item>
        <item>
         <widget class="SmartLineEdit" name="lineEdit_stepTime">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>100</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
          <property name="toolTip">
           <string>Time to conduct the step</string>
          </property>
@@ -361,12 +174,6 @@
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="SmartLabel" name="label_rampTime">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -380,24 +187,6 @@
        </item>
        <item>
         <widget class="SmartLineEdit" name="lineEdit_rampTime">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>100</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
          <property name="toolTip">
           <string>Lag time</string>
          </property>
@@ -409,12 +198,6 @@
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="SmartLabel" name="label_endTemp">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -428,24 +211,6 @@
        </item>
        <item>
         <widget class="SmartLineEdit" name="lineEdit_endTemp">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>100</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
          <property name="toolTip">
           <string>Final temp. of this step</string>
          </property>
@@ -454,12 +219,44 @@
       </layout>
      </item>
      <item>
-      <widget class="QDialogButtonBox" name="buttonBox">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+      <widget class="QPushButton" name="pushButton_new">
+       <property name="toolTip">
+        <string>New</string>
        </property>
-       <property name="standardButtons">
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       <property name="text">
+        <string>New</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../brewken.qrc">
+         <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_save">
+       <property name="toolTip">
+        <string>Save and close</string>
+       </property>
+       <property name="text">
+        <string>Save</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../brewken.qrc">
+         <normaloff>:/images/filesave.svg</normaloff>:/images/filesave.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_cancel">
+       <property name="toolTip">
+        <string>Discard and close</string>
+       </property>
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../brewken.qrc">
+         <normaloff>:/images/exit.svg</normaloff>:/images/exit.svg</iconset>
        </property>
       </widget>
      </item>
@@ -468,6 +265,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>BtComboBox</class>
+   <extends>QComboBox</extends>
+   <header>widgets/BtComboBox.h</header>
+  </customwidget>
   <customwidget>
    <class>SmartLabel</class>
    <extends>QLabel</extends>
@@ -486,38 +288,4 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>mashStepEditor</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>470</x>
-     <y>176</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>mashStepEditor</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>470</x>
-     <y>176</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
 </ui>

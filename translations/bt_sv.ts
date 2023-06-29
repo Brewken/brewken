@@ -2225,7 +2225,31 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Mash Step</source>
+        <source>Infusion</source>
+        <translation type="unfinished">avkok</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation type="unfinished">Temperatur</translation>
+    </message>
+    <message>
+        <source>Decoction</source>
+        <translation type="unfinished">Avkok</translation>
+    </message>
+    <message>
+        <source>Normal (Fly) Sparge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Batch Sparge (Drain Mash Tun)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Souring Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Souring Wort</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2262,34 +2286,6 @@ Log file may contain more details.</source>
     <message>
         <source>Time</source>
         <translation>Tid</translation>
-    </message>
-    <message>
-        <source>Change Mash Step Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Mash Step Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Mash Step Decoction Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Mash Step Infuse Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Mash Step Infuse Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Mash Step Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Mash Step Time</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2958,7 +2954,7 @@ Error message:
     </message>
     <message>
         <source>Infusion</source>
-        <translation>avkok</translation>
+        <translation type="vanished">avkok</translation>
     </message>
     <message>
         <source>Temperature</source>
@@ -2966,7 +2962,7 @@ Error message:
     </message>
     <message>
         <source>Decoction</source>
-        <translation>Avkok</translation>
+        <translation type="vanished">Avkok</translation>
     </message>
     <message>
         <source>Ale</source>
@@ -3066,11 +3062,11 @@ Error message:
     </message>
     <message>
         <source>Fly Sparge</source>
-        <translation>Löpande vattning</translation>
+        <translation type="vanished">Löpande vattning</translation>
     </message>
     <message>
         <source>Batch Sparge</source>
-        <translation>Batch vattning</translation>
+        <translation type="vanished">Batch vattning</translation>
     </message>
     <message>
         <source>Connection Test</source>

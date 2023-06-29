@@ -449,12 +449,12 @@ void Testing::recipeCalcTest_allGrain() {
    auto singleConversion_convert = std::make_shared<MashStep>();
    singleConversion_convert->setName("Conversion");
    singleConversion_convert->setType(MashStep::Type::Infusion);
-   singleConversion_convert->setInfuseAmount_l(conversion_l);
+   singleConversion_convert->setAmount_l(conversion_l);
    singleConversion->addMashStep(singleConversion_convert);
    auto singleConversion_sparge = std::make_shared<MashStep>();
    singleConversion_sparge->setName("Sparge");
    singleConversion_sparge->setType(MashStep::Type::Infusion);
-   singleConversion_sparge->setInfuseAmount_l(
+   singleConversion_sparge->setAmount_l(
       rec->boilSize_l()
       + equipFiveGalNoLoss->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg) * grain_kg // Grain absorption
       - conversion_l // Water we already added
@@ -567,11 +567,11 @@ void Testing::postBoilLossOgTest() {
    singleConversion->addMashStep(singleConversion_convert);
 
    // Infusion for recNoLoss
-   singleConversion_convert->setInfuseAmount_l(mashWaterNoLoss_l);
+   singleConversion_convert->setAmount_l(mashWaterNoLoss_l);
    recNoLoss->setMash(singleConversion.get());
 
    // Infusion for recLoss
-   singleConversion_convert->setInfuseAmount_l(mashWaterLoss_l);
+   singleConversion_convert->setAmount_l(mashWaterLoss_l);
    recLoss->setMash(singleConversion.get());
 
    // Verify we hit the right boil/final volumes (that the test is sane)

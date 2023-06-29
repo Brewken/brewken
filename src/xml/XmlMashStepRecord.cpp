@@ -27,24 +27,13 @@ XmlRecord::ProcessingResult XmlMashStepRecord::normaliseAndStoreInDb(std::shared
    //
    // There are a couple of extra things to check/fix on MashStep objects we are reading in.
    //
-   // Per the notes in beerxml/v1/BeerXml.xsd, one thing we can't currently check via XML XSD is the restriction that
-   // it doesn't make sense to have infuseAmount_l set to anything other than 0 (the default) if thy type of step is a
-   // Decoction (which doesn't involve infusing, ie adding, water).
+   // (1) Per the notes in beerxml/v1/BeerXml.xsd, one thing we can't currently check via XML XSD is the restriction
+   // that it doesn't make sense to have infuseAmount_l set to anything other than 0 (the default) if thy type of step
+   // is a Decoction (which doesn't involve infusing, ie adding, water).  However, now that only have one amount field,
+   // not two (one for infusion and another for decoction), I'm not going to worry too much about enforcing this on
+   // input.
    //
-   // We _could_ just barf here and refuse to continue the import, but there is a sane and simple "fix" for the bad
-   // data, so let's just correct it and log a warning about what we did.
-   // INFUSE_AMOUNT is not supposed to be specified if TYPE is "Decoction".  We can check it here in code though.
-   //
-   auto mashStep = std::static_pointer_cast<MashStep>(this->namedEntity);
-   if (mashStep->type() == MashStep::Type::Decoction && mashStep->infuseAmount_l() != 0) {
-      qWarning() <<
-        Q_FUNC_INFO << "Read in a decoction Mash Step with a non-zero infusion volume (" <<
-        mashStep->infuseAmount_l() << ").  Ignoring supplied infusion volume and using 0.0";
-      mashStep->setInfuseAmount_l(0.0);
-   }
-
-   //
-   // Despite what one might infer from the constructor signatures, every MashStep is, in theory, supposed to have a
+   // (2) Despite what one might infer from the constructor signatures, every MashStep is, in theory, supposed to have a
    // name.  (It does after all inherit from NamedEntity.)  However, at least some versions of Brewken have allowed
    // creation and export of recipes with one or more unnamed MashSteps.  Moreover, the BeerXML 1.0 standard only says
    // the NAME tag has to be present, not that it can't be empty.  (We might wish that the standard had been more
@@ -56,6 +45,7 @@ XmlRecord::ProcessingResult XmlMashStepRecord::normaliseAndStoreInDb(std::shared
    // Therefore, if only a blank name was supplied in the XML, we will amend this to "Unnamed Mash Step" (or whatever
    // that translates to in your language).
    //
+   auto mashStep = std::static_pointer_cast<MashStep>(this->namedEntity);
    if (0 == mashStep->name().length()) {
       qWarning() << Q_FUNC_INFO << "Setting default name on unnamed MASH_STEP record";
       // Note that tr() is a static member function of QObject.  We do not inherit from QObject, but MashStep does

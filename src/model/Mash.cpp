@@ -301,7 +301,7 @@ double Mash::totalMashWater_l() {
 
    for (auto step : this-> mashSteps()) {
       if (step->isInfusion()) {
-         waterAdded_l += step->infuseAmount_l();
+         waterAdded_l += step->amount_l();
       }
    }
 
@@ -313,7 +313,7 @@ double Mash::totalInfusionAmount_l() const {
 
    for (auto step :  this->mashSteps()) {
       if (step->isInfusion() && !step->isSparge() ) {
-         waterAdded_l += step->infuseAmount_l();
+         waterAdded_l += step->amount_l();
       }
    }
 
@@ -325,7 +325,7 @@ double Mash::totalSpargeAmount_l() const {
 
    for (auto step : this-> mashSteps()) {
       if (step->isSparge()) {
-         waterAdded_l += step->infuseAmount_l();
+         waterAdded_l += step->amount_l();
       }
    }
 

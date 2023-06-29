@@ -323,13 +323,6 @@ namespace {
    // Database field mappings for MashStep
    // NB: MashSteps don't get folders, because they don't separate from their Mash
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   EnumStringMapping const MASH_STEP_TYPE_ENUM {
-      {MashStep::Type::Infusion   , "Infusion"   },
-      {MashStep::Type::Temperature, "Temperature"},
-      {MashStep::Type::Decoction  , "Decoction"  },
-      {MashStep::Type::flySparge  , "FlySparge"  },
-      {MashStep::Type::batchSparge, "BatchSparge"}
-   };
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<MashStep> {
       "mashstep",
       {
@@ -338,16 +331,20 @@ namespace {
          {ObjectStore::FieldType::Bool  , "deleted"         , PropertyNames::NamedEntity::deleted       },
          {ObjectStore::FieldType::Bool  , "display"         , PropertyNames::NamedEntity::display       },
          // NB: MashSteps don't have folders, as each one is owned by a Mash
-         {ObjectStore::FieldType::Double, "decoction_amount", PropertyNames::MashStep::decoctionAmount_l},
+//         {ObjectStore::FieldType::Double, "decoction_amount", PropertyNames::MashStep::decoctionAmount_l},
          {ObjectStore::FieldType::Double, "end_temp"        , PropertyNames::MashStep::endTemp_c        },
-         {ObjectStore::FieldType::Double, "infuse_amount"   , PropertyNames::MashStep::infuseAmount_l   },
+//         {ObjectStore::FieldType::Double, "infuse_amount"   , PropertyNames::MashStep::infuseAmount_l   },
          {ObjectStore::FieldType::Double, "infuse_temp"     , PropertyNames::MashStep::infuseTemp_c     },
          {ObjectStore::FieldType::Int   , "mash_id"         , PropertyNames::MashStep::mashId           , nullptr, &PRIMARY_TABLE<Mash>},
-         {ObjectStore::FieldType::Enum  , "mstype"          , PropertyNames::MashStep::type             , &MASH_STEP_TYPE_ENUM},
+         {ObjectStore::FieldType::Enum  , "mstype"          , PropertyNames::MashStep::type             , &MashStep::typeStringMapping},
          {ObjectStore::FieldType::Double, "ramp_time"       , PropertyNames::MashStep::rampTime_min     },
          {ObjectStore::FieldType::Int   , "step_number"     , PropertyNames::MashStep::stepNumber       },
          {ObjectStore::FieldType::Double, "step_temp"       , PropertyNames::MashStep::stepTemp_c       },
          {ObjectStore::FieldType::Double, "step_time"       , PropertyNames::MashStep::stepTime_min     },
+         // Now we support BeerJSON, amount_l unifies and replaces infuseAmount_l and decoctionAmount_l
+         // See comment in model/MashStep.h for more info
+         {ObjectStore::FieldType::Double, "amount_l"        , PropertyNames::MashStep::amount_l         },
+
       }
    };
    // MashSteps don't have children

@@ -2209,7 +2209,31 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Mash Step</source>
+        <source>Infusion</source>
+        <translation type="unfinished">Настаивание</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation type="unfinished">Температура</translation>
+    </message>
+    <message>
+        <source>Decoction</source>
+        <translation type="unfinished">Отвар</translation>
+    </message>
+    <message>
+        <source>Normal (Fly) Sparge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Batch Sparge (Drain Mash Tun)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Souring Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Souring Wort</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2246,34 +2270,6 @@ Log file may contain more details.</source>
     <message>
         <source>Time</source>
         <translation>Время</translation>
-    </message>
-    <message>
-        <source>Change Mash Step Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Mash Step Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Mash Step Decoction Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Mash Step Infuse Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Mash Step Infuse Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Mash Step Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Mash Step Time</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2970,7 +2966,7 @@ Error message:
     </message>
     <message>
         <source>Infusion</source>
-        <translation>Настаивание</translation>
+        <translation type="vanished">Настаивание</translation>
     </message>
     <message>
         <source>Temperature</source>
@@ -2978,7 +2974,7 @@ Error message:
     </message>
     <message>
         <source>Decoction</source>
-        <translation>Отвар</translation>
+        <translation type="vanished">Отвар</translation>
     </message>
     <message>
         <source>Ale</source>
@@ -3077,12 +3073,8 @@ Error message:
         <translation type="vanished">Каталог с данными &quot;%1&quot; отсутствует. Некоторые функции будут недоступны.</translation>
     </message>
     <message>
-        <source>Fly Sparge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Batch Sparge</source>
-        <translation type="unfinished">Промывка &apos;частями&apos;.</translation>
+        <translation type="obsolete">Промывка &apos;частями&apos;.</translation>
     </message>
     <message>
         <source>Connection Test</source>

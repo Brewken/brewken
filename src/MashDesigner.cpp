@@ -164,7 +164,7 @@ void MashDesigner::saveStep() {
 
    // finish a few things -- this may be premature optimization
    if (isInfusion()) {
-      this->mashStep->setInfuseAmount_l(selectedAmount_l());
+      this->mashStep->setAmount_l(selectedAmount_l());
       this->mashStep->setInfuseTemp_c(this->selectedTemp_c());
    }
 
@@ -424,7 +424,7 @@ double MashDesigner::waterFromMash_l() {
    // A newly-created mash step will not yet have been added to the mash
    if (this->mashStep && this->mashStep->getMashId() <= 0) {
       if (this->isInfusion()) {
-         waterAdded_l += this->mashStep->infuseAmount_l();
+         waterAdded_l += this->mashStep->amount_l();
       }
    }
 
@@ -534,7 +534,7 @@ void MashDesigner::updateAmtSlider() {
 
       horizontalSlider_amount->setValue(static_cast<int>(ratio*horizontalSlider_amount->maximum()));
       if (this->mashStep) {
-         this->mashStep->setInfuseAmount_l(vol);
+         this->mashStep->setAmount_l(vol);
       }
    }
    else {
@@ -554,10 +554,10 @@ void MashDesigner::updateAmt() {
       label_amt->setText(Measurement::displayAmount(Measurement::Amount{vol, Measurement::Units::liters}));
 
       if (this->mashStep) {
-         this->mashStep->setInfuseAmount_l(vol);
+         this->mashStep->setAmount_l(vol);
       }
    } else if (isDecoction()) {
-      label_amt->setText(Measurement::displayAmount(Measurement::Amount{this->mashStep->decoctionAmount_l(), Measurement::Units::liters}));
+      label_amt->setText(Measurement::displayAmount(Measurement::Amount{this->mashStep->amount_l(), Measurement::Units::liters}));
    } else {
       label_amt->setText(Measurement::displayAmount(Measurement::Amount{0, Measurement::Units::liters}));
    }
@@ -598,7 +598,7 @@ void MashDesigner::saveTargetTemp() {
 
    if (this->isDecoction()) {
       if (this->mashStep) {
-         this->mashStep->setDecoctionAmount_l(this->getDecoctionAmount_l());
+         this->mashStep->setAmount_l(this->getDecoctionAmount_l());
       }
 
       this->updateAmtSlider();
@@ -651,12 +651,12 @@ double MashDesigner::getDecoctionAmount_l() {
 
 bool MashDesigner::isBatchSparge() const {
    MashStep::Type stepType = type();
-   return (stepType == MashStep::Type::batchSparge);
+   return (stepType == MashStep::Type::BatchSparge);
 }
 
 bool MashDesigner::isFlySparge() const {
    MashStep::Type stepType = type();
-   return (stepType == MashStep::Type::flySparge);
+   return (stepType == MashStep::Type::FlySparge);
 }
 
 bool MashDesigner::isSparge() const {
@@ -707,7 +707,7 @@ void MashDesigner::typeChanged() {
       horizontalSlider_temp->setEnabled(false);
 
       if (this->mashStep) {
-         this->mashStep->setDecoctionAmount_l(getDecoctionAmount_l());
+         this->mashStep->setAmount_l(getDecoctionAmount_l());
       }
 
       updateAmtSlider();

@@ -67,6 +67,8 @@
  *          - \c void \c readFieldsFromEditItem -- (Re)read one or all fields from the object into the relevant GUI
  *                                                 field(s).
  *
+ *        Finally, derived class needs to have the following QPushButton members (typically defined in the .ui file):
+ *           pushButton_new, pushButton_save, pushButton_cancel
  */
 template<class NE, class Derived>
 class EditorBase {
@@ -87,8 +89,8 @@ public:
     */
    void connectSignalsAndSlots() {
       // Standard editor slot connections
-      m_derived->connect(this->m_derived->pushButton_new,    &QAbstractButton::clicked, m_derived, &Derived::clickedNew   );
-      m_derived->connect(this->m_derived->pushButton_save,   &QAbstractButton::clicked, m_derived, &Derived::save         );
+      m_derived->connect(this->m_derived->pushButton_new   , &QAbstractButton::clicked, m_derived, &Derived::clickedNew   );
+      m_derived->connect(this->m_derived->pushButton_save  , &QAbstractButton::clicked, m_derived, &Derived::save         );
       m_derived->connect(this->m_derived->pushButton_cancel, &QAbstractButton::clicked, m_derived, &Derived::clearAndClose);
       return;
    }

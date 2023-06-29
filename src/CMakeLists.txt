@@ -113,7 +113,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/MainWindow.cpp
     ${repoDir}/src/MashButton.cpp
     ${repoDir}/src/MashDesigner.cpp
-    ${repoDir}/src/MashStepTableWidget.cpp
     ${repoDir}/src/MashWizard.cpp
     ${repoDir}/src/matrix.cpp
     ${repoDir}/src/measurement/Amount.cpp

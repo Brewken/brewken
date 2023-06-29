@@ -104,11 +104,10 @@ void ScaleRecipeTool::scale(Equipment* equip, double newEff) {
 
    Mash* mash = this->recObs->mash();
    if (mash) {
+      // Reset all these to zero so that the user
+      // will know to re-run the mash wizard.
       for (auto step : mash->mashSteps()) {
-         // Reset all these to zero so that the user
-         // will know to re-run the mash wizard.
-         step->setDecoctionAmount_l(0);
-         step->setInfuseAmount_l(0);
+         step->setAmount_l(0);
       }
    }
 

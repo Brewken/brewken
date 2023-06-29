@@ -305,7 +305,7 @@ public:
 
       // Mashes
       m_mashStepTableModel = std::make_unique<MashStepTableModel>(m_self.mashStepTableWidget);
-      m_self.mashStepTableWidget->setItemDelegate(new MashStepItemDelegate());
+      m_self.mashStepTableWidget->setItemDelegate(new MashStepItemDelegate(m_self.mashStepTableWidget, *m_mashStepTableModel));
       m_self.mashStepTableWidget->setModel(m_mashStepTableModel.get());
       connect(m_self.mashStepTableWidget, &QTableView::doubleClicked, &m_self, [&](const QModelIndex &idx) {
          if (idx.column() == 0) {
@@ -2576,7 +2576,7 @@ void MainWindow::addMashStep() {
 
    // This ultimately gets stored in MainWindow::addMashStepToMash()
    auto step = std::make_shared<MashStep>("");
-   this->pimpl->m_mashStepEditor->setMashStep(step);
+   this->pimpl->m_mashStepEditor->setEditItem(step);
    this->pimpl->m_mashStepEditor->setVisible(true);
    return;
 }
@@ -2692,7 +2692,7 @@ void MainWindow::editSelectedMashStep() {
    }
 
    auto step = this->pimpl->m_mashStepTableModel->getRow(static_cast<unsigned int>(row));
-   this->pimpl->m_mashStepEditor->setMashStep(step);
+   this->pimpl->m_mashStepEditor->setEditItem(step);
    this->pimpl->m_mashStepEditor->setVisible(true);
    return;
 }

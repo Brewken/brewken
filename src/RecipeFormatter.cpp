@@ -811,15 +811,15 @@ public:
          QString tmp = "<tr>";
          tmp += QString("<td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td><td>%6</td>")
                .arg(step->name())
-               .arg(step->typeStringTr());
+               .arg(MashStep::typeDisplayNames[step->type()]);
 
          if (step->isInfusion()) {
-            tmp = tmp.arg(Measurement::displayAmount(Measurement::Amount{step->infuseAmount_l(),
+            tmp = tmp.arg(Measurement::displayAmount(Measurement::Amount{step->amount_l(),
                                                                          Measurement::Units::liters}))
                      .arg(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c(),
                                                                          Measurement::Units::celsius}));
          } else if (step->isDecoction()) {
-            tmp = tmp.arg( Measurement::displayAmount(Measurement::Amount{step->decoctionAmount_l(),
+            tmp = tmp.arg( Measurement::displayAmount(Measurement::Amount{step->amount_l(),
                                                                           Measurement::Units::liters}))
                   .arg("---");
          } else {
@@ -861,14 +861,14 @@ public:
 
          for (auto step : mashSteps) {
             names.append(step->name());
-            types.append(step->typeStringTr());
+            types.append(MashStep::typeDisplayNames[step->type()]);
             if ( step->isInfusion() ) {
-               amounts.append(Measurement::displayAmount(Measurement::Amount{step->infuseAmount_l(),
+               amounts.append(Measurement::displayAmount(Measurement::Amount{step->amount_l(),
                                                                              Measurement::Units::liters}));
                temps.append(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c(),
                                                                            Measurement::Units::celsius}));
             } else if( step->isDecoction() ) {
-               amounts.append(Measurement::displayAmount(Measurement::Amount{step->decoctionAmount_l(),
+               amounts.append(Measurement::displayAmount(Measurement::Amount{step->amount_l(),
                                                                              Measurement::Units::liters}));
                temps.append("---");
             } else {

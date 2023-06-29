@@ -740,16 +740,16 @@ QVector<PreInstruction> Recipe::mashInstructions(double timeRemaining,
       QString str;
       if (step->isInfusion()) {
          str = tr("Add %1 water at %2 to mash to bring it to %3.")
-               .arg(Measurement::displayAmount(Measurement::Amount{step->infuseAmount_l(), Measurement::Units::liters}))
+               .arg(Measurement::displayAmount(Measurement::Amount{step->amount_l(), Measurement::Units::liters}))
                .arg(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c(), Measurement::Units::celsius}))
                .arg(Measurement::displayAmount(Measurement::Amount{step->stepTemp_c(), Measurement::Units::celsius}));
-         totalWaterAdded_l += step->infuseAmount_l();
+         totalWaterAdded_l += step->amount_l();
       } else if (step->isTemperature()) {
          str = tr("Heat mash to %1.").arg(Measurement::displayAmount(Measurement::Amount{step->stepTemp_c(),
                                                                                          Measurement::Units::celsius}));
       } else if (step->isDecoction()) {
          str = tr("Bring %1 of the mash to a boil and return to the mash tun to bring it to %2.")
-               .arg(Measurement::displayAmount(Measurement::Amount{step->decoctionAmount_l(),
+               .arg(Measurement::displayAmount(Measurement::Amount{step->amount_l(),
                                                                    Measurement::Units::liters}))
                .arg(Measurement::displayAmount(Measurement::Amount{step->stepTemp_c(), Measurement::Units::celsius}));
       }
@@ -757,7 +757,7 @@ QVector<PreInstruction> Recipe::mashInstructions(double timeRemaining,
       str += tr(" Hold for %1.").arg(Measurement::displayAmount(Measurement::Amount{step->stepTime_min(),
                                                                                     Measurement::Units::minutes}));
 
-      preins.push_back(PreInstruction(str, QString("%1 - %2").arg(step->typeStringTr()).arg(step->name()),
+      preins.push_back(PreInstruction(str, QString("%1 - %2").arg(MashStep::typeDisplayNames[step->type()]).arg(step->name()),
                                       timeRemaining));
       timeRemaining -= step->stepTime_min();
    }
@@ -2718,11 +2718,11 @@ QList<QString> Recipe::getReagents(QList< std::shared_ptr<MashStep> > msteps) {
       QString tmp;
       if (ii + 1 < msteps.size()) {
          tmp = tr("%1 water to %2, ")
-               .arg(Measurement::displayAmount(Measurement::Amount{msteps[ii]->infuseAmount_l(), Measurement::Units::liters}))
+               .arg(Measurement::displayAmount(Measurement::Amount{msteps[ii]->amount_l(), Measurement::Units::liters}))
                .arg(Measurement::displayAmount(Measurement::Amount{msteps[ii]->infuseTemp_c(), Measurement::Units::celsius}));
       } else {
          tmp = tr("%1 water to %2 ")
-               .arg(Measurement::displayAmount(Measurement::Amount{msteps[ii]->infuseAmount_l(), Measurement::Units::liters}))
+               .arg(Measurement::displayAmount(Measurement::Amount{msteps[ii]->amount_l(), Measurement::Units::liters}))
                .arg(Measurement::displayAmount(Measurement::Amount{msteps[ii]->infuseTemp_c(), Measurement::Units::celsius}));
       }
       reagents.append(tmp);

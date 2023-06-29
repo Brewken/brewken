@@ -50,7 +50,7 @@ NamedMashEditor::NamedMashEditor(QWidget* parent, MashStepEditor* editor, bool s
 
    //! Create the table model (and may St. Stevens take pity)
    this->mashStepTableModel = new MashStepTableModel(mashStepTableWidget);
-   this->mashStepTableWidget->setItemDelegate(new MashStepItemDelegate());
+   this->mashStepTableWidget->setItemDelegate(new MashStepItemDelegate(this->mashStepTableWidget, *this->mashStepTableModel));
    this->mashStepTableWidget->setModel(mashStepTableModel);
 
    //! Preserve the step editor
@@ -186,7 +186,7 @@ void NamedMashEditor::addMashStep() {
    // The call to Mash::addMashStep() will also store the MashStep in the ObjectStore / DB
    auto step = std::make_shared<MashStep>();
    this->mashObs->addMashStep(step);
-   mashStepEditor->setMashStep(step);
+   mashStepEditor->setEditItem(step);
    mashStepEditor->setVisible(true);
    return;
 }

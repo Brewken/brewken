@@ -531,6 +531,11 @@ namespace {
     * \brief This is a lot of schema and data changes to support BeerJSON - or rather the new data structures that
     *        BeerJSON introduces over BeerXML and what else we already had.  We also try to standardise some
     *        serialisations across BeerJSON, DB and UI.
+    *
+    *        Where we are adding new columns (or otherwise renaming existing ones) we are starting to try to use the
+    *        same convention we have for properties where the "units" of the column are appended to its name - hence
+    *        names ending in "_pct" (for percent), "_l" (for liters), etc.  One day perhaps we'll rename all the
+    *        relevant existing columns, but I think we've got enough other change in this update!
     */
    bool migrate_to_11(Database & db, BtSqlQuery q) {
       QVector<QueryAndParameters> const migrationQueries{
@@ -699,6 +704,18 @@ namespace {
          {QString("ALTER TABLE equipment ADD COLUMN fermenter_notes                %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE equipment ADD COLUMN aging_vessel_notes             %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE equipment ADD COLUMN packaging_vessel_notes         %1").arg(db.getDbNativeTypeName<QString>())},
+         // We only need to update the old Style type mapping.  The new ones should "just work".
+         {QString("     UPDATE mashstep SET mstype = 'infusion'       WHERE mstype = 'Infusion'   ")},
+         {QString("     UPDATE mashstep SET mstype = 'temperature'    WHERE mstype = 'Temperature'")},
+         {QString("     UPDATE mashstep SET mstype = 'decoction'      WHERE mstype = 'Decoction'  ")},
+         {QString("     UPDATE mashstep SET mstype = 'sparge'         WHERE mstype = 'FlySparge'  ")},
+         {QString("     UPDATE mashstep SET mstype = 'drain mash tun' WHERE mstype = 'BatchSparge'")},
+         // The two different amount fields are unified.
+         // Note that, per https://sqlite.org/changes.html, SQLite finally supports "DROP COLUMN" as of its
+         // 2021-03-12 (3.35.0) release (and the teething troubles were ironed out by the 2021-04-19 (3.35.5) release!)
+         {QString("ALTER TABLE mashstep RENAME COLUMN infuse_amount TO amount_l")},
+         {QString("     UPDATE mashstep SET amount_l = decoction_amount WHERE mstype = 'Decoction'")},
+         {QString("ALTER TABLE mashstep DROP COLUMN decoction_amount")},
 
 
 

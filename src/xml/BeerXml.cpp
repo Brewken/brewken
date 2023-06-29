@@ -435,14 +435,18 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<MashStep>{"MASH_STEP"};
    EnumStringMapping const BEER_XML_MASH_STEP_TYPE_MAPPER {
-      {MashStep::Type::Infusion   , "Infusion"                     },
-      {MashStep::Type::Temperature, "Temperature"                  },
-      {MashStep::Type::Decoction  , "Decoction"                    },
-      // Inside Brewken we also have MashStep::flySparge and MashStep::batchSparge which are not mentioned in the
+      {MashStep::Type::Infusion   , "Infusion"                      },
+      {MashStep::Type::Temperature, "Temperature"                   },
+      {MashStep::Type::Decoction  , "Decoction"                     },
+      // We also have MashStep::FlySparge and MashStep::BatchSparge which are not mentioned in the
       // BeerXML 1.0 Standard.  They get treated as "Infusion" when we write to BeerXML
       // Note that we include a comment here to ensure we don't have multiple mappings from "Infusion"
-      {MashStep::Type::flySparge  , "Infusion<!-- Fly Sparge -->"  },
-      {MashStep::Type::batchSparge, "Infusion<!-- Batch Sparge -->"},
+      {MashStep::Type::FlySparge  , "Infusion<!-- Fly Sparge -->"   },
+      {MashStep::Type::BatchSparge, "Infusion<!-- Batch Sparge -->" },
+      // Similarly, BeerJSON adds another couple of mash step types
+      {MashStep::Type::SouringMash, "Decoction<!-- Souring Mash -->"},
+      {MashStep::Type::SouringWort, "Decoction<!-- Souring Wort -->"},
+
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<MashStep> {
       // Type                                  XPath                 Q_PROPERTY                                  Enum Mapper
