@@ -25,6 +25,7 @@
 #include <functional>
 #include <memory> // For PImpl
 #include <optional>
+#include <utility> // For std::pair
 
 #include <QMultiMap>
 #include <QObject>
@@ -88,6 +89,14 @@ namespace Measurement {
        *        \c Unit.
        */
       static void initialiseLookups();
+
+      /**
+       * \brief Given a string of quantity plus optional units, this function breaks it down into the quantity (or 0.0
+       *        if none was found) and the units (or "" if none was found).  This is a bit fiddly to get right (partly
+       *        because of locale-specific thousands and decimal separators, and partly because unit names can contain
+       *        symbols such as '/').  So we only want to do it in one place!
+       */
+      static std::pair<double, QString> splitAmountString(QString const & inputString, bool * ok = nullptr);
 
       /**
        * \brief Test whether two \c Unit references are the same.  (This is by no means a full test for equality,

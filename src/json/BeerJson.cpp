@@ -265,19 +265,19 @@ namespace {
       JsonRecordDefinition::create<JsonRecord>,
       {
          // Type                                             Name                         Q_PROPERTY
-         {JsonRecordDefinition::FieldType::RequiredConstant, "version",                   jsonVersionWeSupport},
-         {JsonRecordDefinition::FieldType::Array,            "fermentables",              BtString::NULL_STR},
-         {JsonRecordDefinition::FieldType::Array,            "miscellaneous_ingredients", BtString::NULL_STR},
-         {JsonRecordDefinition::FieldType::Array,            "hop_varieties",             BtString::NULL_STR},
-         {JsonRecordDefinition::FieldType::Array,            "cultures",                  BtString::NULL_STR},
-         {JsonRecordDefinition::FieldType::Array,            "profiles",                  BtString::NULL_STR},
-         {JsonRecordDefinition::FieldType::Array,            "styles",                    BtString::NULL_STR},
-         {JsonRecordDefinition::FieldType::Array,            "mashes",                    BtString::NULL_STR},
-         {JsonRecordDefinition::FieldType::Array,            "fermentations",             BtString::NULL_STR},
-         {JsonRecordDefinition::FieldType::Array,            "recipes",                   BtString::NULL_STR},
-         {JsonRecordDefinition::FieldType::Array,            "equipments",                BtString::NULL_STR},
-         {JsonRecordDefinition::FieldType::Array,            "boil",                      BtString::NULL_STR},
-         {JsonRecordDefinition::FieldType::Array,            "packaging",                 BtString::NULL_STR}
+         {JsonRecordDefinition::FieldType::RequiredConstant, "version"                  , jsonVersionWeSupport},
+         {JsonRecordDefinition::FieldType::Array           , "fermentables"             , BtString::NULL_STR  },
+         {JsonRecordDefinition::FieldType::Array           , "miscellaneous_ingredients", BtString::NULL_STR  },
+         {JsonRecordDefinition::FieldType::Array           , "hop_varieties"            , BtString::NULL_STR  },
+         {JsonRecordDefinition::FieldType::Array           , "cultures"                 , BtString::NULL_STR  },
+         {JsonRecordDefinition::FieldType::Array           , "profiles"                 , BtString::NULL_STR  },
+         {JsonRecordDefinition::FieldType::Array           , "styles"                   , BtString::NULL_STR  },
+         {JsonRecordDefinition::FieldType::Array           , "mashes"                   , BtString::NULL_STR  },
+         {JsonRecordDefinition::FieldType::Array           , "fermentations"            , BtString::NULL_STR  },
+         {JsonRecordDefinition::FieldType::Array           , "recipes"                  , BtString::NULL_STR  },
+         {JsonRecordDefinition::FieldType::Array           , "equipments"               , BtString::NULL_STR  },
+         {JsonRecordDefinition::FieldType::Array           , "boil"                     , BtString::NULL_STR  },
+         {JsonRecordDefinition::FieldType::Array           , "packaging"                , BtString::NULL_STR  }
       }
    };
 
@@ -388,26 +388,26 @@ namespace {
    };
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_HopType_ExclBase {
       // Type                                                       XPath                                Q_PROPERTY                                 Enum/Unit Mapper
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "alpha_acid"                       , PropertyNames::Hop::alpha_pct,             &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "beta_acid"                        , PropertyNames::Hop::beta_pct,              &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::Enum                      , "type"                             , PropertyNames::Hop::type,                  &Hop::typeStringMapping},
-      {JsonRecordDefinition::FieldType::String                    , "notes"                            , PropertyNames::Hop::notes,                 },
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "percent_lost"                     , PropertyNames::Hop::hsi_pct,               &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::String                    , "substitutes"                      , PropertyNames::Hop::substitutes,           },
-      {JsonRecordDefinition::FieldType::Double                    , "oil_content/total_oil_ml_per_100g", PropertyNames::Hop::total_oil_ml_per_100g, },
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/humulene"             , PropertyNames::Hop::humulene_pct,          &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/caryophyllene"        , PropertyNames::Hop::caryophyllene_pct,     &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/cohumulone"           , PropertyNames::Hop::cohumulone_pct,        &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/myrcene"              , PropertyNames::Hop::myrcene_pct,           &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/farnesene"            , PropertyNames::Hop::farnesene_pct,         &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/geraniol"             , PropertyNames::Hop::geraniol_pct,          &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/b_pinene"             , PropertyNames::Hop::b_pinene_pct,          &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/linalool"             , PropertyNames::Hop::linalool_pct,          &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/limonene"             , PropertyNames::Hop::limonene_pct,          &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/nerol"                , PropertyNames::Hop::nerol_pct,             &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/pinene"               , PropertyNames::Hop::pinene_pct,            &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/polyphenols"          , PropertyNames::Hop::polyphenols_pct,       &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/xanthohumol"          , PropertyNames::Hop::xanthohumol_pct,       &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "alpha_acid"                       , PropertyNames::Hop::alpha_pct            , &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "beta_acid"                        , PropertyNames::Hop::beta_pct             , &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::Enum                      , "type"                             , PropertyNames::Hop::type                 , &Hop::typeStringMapping},
+      {JsonRecordDefinition::FieldType::String                    , "notes"                            , PropertyNames::Hop::notes                },
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "percent_lost"                     , PropertyNames::Hop::hsi_pct              , &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::String                    , "substitutes"                      , PropertyNames::Hop::substitutes          },
+      {JsonRecordDefinition::FieldType::Double                    , "oil_content/total_oil_ml_per_100g", PropertyNames::Hop::total_oil_ml_per_100g},
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/humulene"             , PropertyNames::Hop::humulene_pct         , &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/caryophyllene"        , PropertyNames::Hop::caryophyllene_pct    , &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/cohumulone"           , PropertyNames::Hop::cohumulone_pct       , &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/myrcene"              , PropertyNames::Hop::myrcene_pct          , &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/farnesene"            , PropertyNames::Hop::farnesene_pct        , &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/geraniol"             , PropertyNames::Hop::geraniol_pct         , &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/b_pinene"             , PropertyNames::Hop::b_pinene_pct         , &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/linalool"             , PropertyNames::Hop::linalool_pct         , &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/limonene"             , PropertyNames::Hop::limonene_pct         , &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/nerol"                , PropertyNames::Hop::nerol_pct            , &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/pinene"               , PropertyNames::Hop::pinene_pct           , &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/polyphenols"          , PropertyNames::Hop::polyphenols_pct      , &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/xanthohumol"          , PropertyNames::Hop::xanthohumol_pct      , &BEER_JSON_PERCENT_UNIT},
       {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount"                 , PropertyNames::NamedEntityWithInventory::inventoryWithUnits, &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER}, // .:TODO.JSON:. Extend Hop::amount_kg so we can cope with volumes for extract etc
 
       // .:TODO.JSON:. Note that we'll need to look at HopAdditionType, IBUEstimateType, IBUMethodType when we use Hops in Recipes
@@ -447,11 +447,11 @@ namespace {
          {JsonRecordDefinition::FieldType::Bool                      , "pof"                      , PropertyNames::Yeast::phenolicOffFlavorPositive},
          {JsonRecordDefinition::FieldType::Bool                      , "glucoamylase"             , PropertyNames::Yeast::glucoamylasePositive     },
          {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount"         , PropertyNames::NamedEntityWithInventory::inventoryWithUnits, &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no1",              PropertyNames::Yeast::killerProducingK1Toxin   },
-         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no2",              PropertyNames::Yeast::killerProducingK2Toxin   },
-         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no28",             PropertyNames::Yeast::killerProducingK28Toxin  },
-         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/klus",             PropertyNames::Yeast::killerProducingKlusToxin },
-         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/neutral",          PropertyNames::Yeast::killerNeutral            },
+         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no1"             , PropertyNames::Yeast::killerProducingK1Toxin   },
+         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no2"             , PropertyNames::Yeast::killerProducingK2Toxin   },
+         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no28"            , PropertyNames::Yeast::killerProducingK28Toxin  },
+         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/klus"            , PropertyNames::Yeast::killerProducingKlusToxin },
+         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/neutral"         , PropertyNames::Yeast::killerNeutral            },
          // Note that there is, AFAICT, no equivalent in BeerJSON to the following optional BeerXML properties:
          //  • Int:  TIMES_CULTURED   / PropertyNames::Yeast::timesCultured
          //  • Bool: ADD_TO_SECONDARY / PropertyNames::Yeast::addToSecondary
@@ -467,22 +467,22 @@ namespace {
       "Water",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Water > >,
       {
-         // Type                                                       XPath             Q_PROPERTY                             Enum/Unit Mapper
-         {JsonRecordDefinition::FieldType::String,                     "name",           PropertyNames::NamedEntity::name,      },
-         {JsonRecordDefinition::FieldType::String,                     "producer",       BtString::NULL_STR,                    }, // Not sure what this means for water...
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "calcium",        PropertyNames::Water::calcium_ppm,     &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "bicarbonate",    PropertyNames::Water::bicarbonate_ppm, &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "potassium",      BtString::NULL_STR,                    &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "iron",           BtString::NULL_STR,                    &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "nitrate",        BtString::NULL_STR,                    &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "nitrite",        BtString::NULL_STR,                    &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "flouride",       BtString::NULL_STR,                    &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "sulfate",        PropertyNames::Water::sulfate_ppm,     &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "chloride",       PropertyNames::Water::chloride_ppm,    &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "sodium",         PropertyNames::Water::sodium_ppm,      &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "magnesium",      PropertyNames::Water::magnesium_ppm,   &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
-         {JsonRecordDefinition::FieldType::SingleUnitValue,            "ph",             PropertyNames::Water::ph,              &BEER_JSON_ACIDITY_UNIT},
-         {JsonRecordDefinition::FieldType::String,                     "notes",          PropertyNames::Water::notes,           },
+         // Type                                                       XPath          Q_PROPERTY                             Enum/Unit Mapper
+         {JsonRecordDefinition::FieldType::String                    , "name"       , PropertyNames::NamedEntity::name     },
+         {JsonRecordDefinition::FieldType::String                    , "producer"   , BtString::NULL_STR                   }, // Not sure what this means for water...
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "calcium"    , PropertyNames::Water::calcium_ppm    , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "bicarbonate", PropertyNames::Water::bicarbonate_ppm, &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "potassium"  , BtString::NULL_STR                   , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "iron"       , BtString::NULL_STR                   , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "nitrate"    , BtString::NULL_STR                   , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "nitrite"    , BtString::NULL_STR                   , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "flouride"   , BtString::NULL_STR                   , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "sulfate"    , PropertyNames::Water::sulfate_ppm    , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "chloride"   , PropertyNames::Water::chloride_ppm   , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "sodium"     , PropertyNames::Water::sodium_ppm     , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "magnesium"  , PropertyNames::Water::magnesium_ppm  , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
+         {JsonRecordDefinition::FieldType::SingleUnitValue           , "ph"         , PropertyNames::Water::ph             , &BEER_JSON_ACIDITY_UNIT},
+         {JsonRecordDefinition::FieldType::String                    , "notes"      , PropertyNames::Water::notes          },
 
          // .:TODO.JSON:. Note that we'll need to look at WaterAdditionType at some point...
       }
@@ -498,32 +498,32 @@ namespace {
       JsonRecordDefinition::create< JsonNamedEntityRecord< Style > >,
       {
          // Type                                                 XPath                                     Q_PROPERTY                               Enum/Unit Mapper
-         {JsonRecordDefinition::FieldType::String,               "name",                                   PropertyNames::NamedEntity::name       },
-         {JsonRecordDefinition::FieldType::String,               "category",                               PropertyNames::Style::category         },
-         {JsonRecordDefinition::FieldType::Int,                  "category_number",                        PropertyNames::Style::categoryNumber   },
-         {JsonRecordDefinition::FieldType::String,               "style_letter",                           PropertyNames::Style::styleLetter      },
-         {JsonRecordDefinition::FieldType::String,               "style_guide",                            PropertyNames::Style::styleGuide       },
-         {JsonRecordDefinition::FieldType::Enum,                 "type",                                   PropertyNames::Style::type             , &Style::typeStringMapping},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "original_gravity/minimum",               PropertyNames::Style::ogMin            , &BEER_JSON_DENSITY_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "original_gravity/maximum",               PropertyNames::Style::ogMax            , &BEER_JSON_DENSITY_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "final_gravity/minimum",                  PropertyNames::Style::fgMin            , &BEER_JSON_DENSITY_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "final_gravity/maximum",                  PropertyNames::Style::fgMax            , &BEER_JSON_DENSITY_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::SingleUnitValue,      "international_bitterness_units/minimum", PropertyNames::Style::ibuMin           , &BEER_JSON_BITTERNESS_UNIT},
-         {JsonRecordDefinition::FieldType::SingleUnitValue,      "international_bitterness_units/maximum", PropertyNames::Style::ibuMax           , &BEER_JSON_BITTERNESS_UNIT},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "color/minimum",                          PropertyNames::Style::colorMin_srm     , &BEER_JSON_COLOR_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "color/maximum",                          PropertyNames::Style::colorMax_srm     , &BEER_JSON_COLOR_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "carbonation/minimum",                    PropertyNames::Style::carbMin_vol      , &BEER_JSON_CARBONATION_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "carbonation/maximum",                    PropertyNames::Style::carbMax_vol      , &BEER_JSON_CARBONATION_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::SingleUnitValue,      "alcohol_by_volume/minimum",              PropertyNames::Style::abvMin_pct       , &BEER_JSON_PERCENT_UNIT},
-         {JsonRecordDefinition::FieldType::SingleUnitValue,      "alcohol_by_volume/maximum",              PropertyNames::Style::abvMax_pct       , &BEER_JSON_PERCENT_UNIT},
-         {JsonRecordDefinition::FieldType::String,               "notes",                                  PropertyNames::Style::notes            },
-         {JsonRecordDefinition::FieldType::String,               "aroma",                                  PropertyNames::Style::aroma            },
-         {JsonRecordDefinition::FieldType::String,               "appearance",                             PropertyNames::Style::appearance       },
-         {JsonRecordDefinition::FieldType::String,               "flavor",                                 PropertyNames::Style::flavor           },
-         {JsonRecordDefinition::FieldType::String,               "mouthfeel",                              PropertyNames::Style::mouthfeel        },
-         {JsonRecordDefinition::FieldType::String,               "overall_impression",                     PropertyNames::Style::overallImpression},
-         {JsonRecordDefinition::FieldType::String,               "ingredients",                            PropertyNames::Style::ingredients      },
-         {JsonRecordDefinition::FieldType::String,               "examples",                               PropertyNames::Style::examples         },
+         {JsonRecordDefinition::FieldType::String              , "name"                                  , PropertyNames::NamedEntity::name       },
+         {JsonRecordDefinition::FieldType::String              , "category"                              , PropertyNames::Style::category         },
+         {JsonRecordDefinition::FieldType::Int                 , "category_number"                       , PropertyNames::Style::categoryNumber   },
+         {JsonRecordDefinition::FieldType::String              , "style_letter"                          , PropertyNames::Style::styleLetter      },
+         {JsonRecordDefinition::FieldType::String              , "style_guide"                           , PropertyNames::Style::styleGuide       },
+         {JsonRecordDefinition::FieldType::Enum                , "type"                                  , PropertyNames::Style::type             , &Style::typeStringMapping},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "original_gravity/minimum"              , PropertyNames::Style::ogMin            , &BEER_JSON_DENSITY_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "original_gravity/maximum"              , PropertyNames::Style::ogMax            , &BEER_JSON_DENSITY_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "final_gravity/minimum"                 , PropertyNames::Style::fgMin            , &BEER_JSON_DENSITY_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "final_gravity/maximum"                 , PropertyNames::Style::fgMax            , &BEER_JSON_DENSITY_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "international_bitterness_units/minimum", PropertyNames::Style::ibuMin           , &BEER_JSON_BITTERNESS_UNIT},
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "international_bitterness_units/maximum", PropertyNames::Style::ibuMax           , &BEER_JSON_BITTERNESS_UNIT},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "color/minimum"                         , PropertyNames::Style::colorMin_srm     , &BEER_JSON_COLOR_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "color/maximum"                         , PropertyNames::Style::colorMax_srm     , &BEER_JSON_COLOR_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "carbonation/minimum"                   , PropertyNames::Style::carbMin_vol      , &BEER_JSON_CARBONATION_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "carbonation/maximum"                   , PropertyNames::Style::carbMax_vol      , &BEER_JSON_CARBONATION_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "alcohol_by_volume/minimum"             , PropertyNames::Style::abvMin_pct       , &BEER_JSON_PERCENT_UNIT},
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "alcohol_by_volume/maximum"             , PropertyNames::Style::abvMax_pct       , &BEER_JSON_PERCENT_UNIT},
+         {JsonRecordDefinition::FieldType::String              , "notes"                                 , PropertyNames::Style::notes            },
+         {JsonRecordDefinition::FieldType::String              , "aroma"                                 , PropertyNames::Style::aroma            },
+         {JsonRecordDefinition::FieldType::String              , "appearance"                            , PropertyNames::Style::appearance       },
+         {JsonRecordDefinition::FieldType::String              , "flavor"                                , PropertyNames::Style::flavor           },
+         {JsonRecordDefinition::FieldType::String              , "mouthfeel"                             , PropertyNames::Style::mouthfeel        },
+         {JsonRecordDefinition::FieldType::String              , "overall_impression"                    , PropertyNames::Style::overallImpression},
+         {JsonRecordDefinition::FieldType::String              , "ingredients"                           , PropertyNames::Style::ingredients      },
+         {JsonRecordDefinition::FieldType::String              , "examples"                              , PropertyNames::Style::examples         },
       }
    };
 
@@ -531,6 +531,31 @@ namespace {
    // Field mappings for mashes BeerJSON records TODO
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //      JsonRecordDefinition::create< JsonMashRecord >,
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Field mappings for mash steps BeerJSON records TODO
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<MashStep> {
+      "MashStepType",              // JSON recordName
+      &MashStep::typeLookup,    // Type Lookup for our corresponding model object
+      "MashStep",               // NamedEntity class name
+      JsonRecordDefinition::create< JsonNamedEntityRecord< MashStep > >,
+      {
+         // Type                                                 XPath                 Q_PROPERTY                                       Enum/Unit Mapper
+         {JsonRecordDefinition::FieldType::String              , "name"              , PropertyNames::NamedEntity::name               },
+         {JsonRecordDefinition::FieldType::Enum                , "type"              , PropertyNames::MashStep::type                  , &MashStep::typeStringMapping          },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "amount"            , PropertyNames::MashStep::amount_l              , &BEER_JSON_VOLUME_UNIT_MAPPER         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "step_temperature"  , PropertyNames::MashStep::stepTemp_c            , &BEER_JSON_TEMPERATURE_UNIT_MAPPER    },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "step_time"         , PropertyNames::MashStep::stepTime_min          , &BEER_JSON_TIME_UNIT_MAPPER           },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "ramp_time"         , PropertyNames::MashStep::rampTime_min          , &BEER_JSON_TIME_UNIT_MAPPER           },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "end_temperature"   , PropertyNames::MashStep::endTemp_c             , &BEER_JSON_TEMPERATURE_UNIT_MAPPER    },
+         {JsonRecordDefinition::FieldType::String              , "description"       , PropertyNames::MashStep::description           },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "water_grain_ratio" , PropertyNames::MashStep::liquorToGristRatio_lKg, &BEER_JSON_SPECIFIC_VOLUME_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "infuse_temperature", PropertyNames::MashStep::infuseTemp_c          , &BEER_JSON_TEMPERATURE_UNIT_MAPPER    },
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "start_ph"          , PropertyNames::MashStep::startAcidity_pH       , &BEER_JSON_ACIDITY_UNIT               },
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "end_ph"            , PropertyNames::MashStep::endAcidity_pH         , &BEER_JSON_ACIDITY_UNIT               },
+      }
+   };
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for fermentations BeerJSON records TODO
@@ -651,7 +676,7 @@ namespace {
          BEER_JSON_RECORD_DEFINITION<Misc>       ,
          BEER_JSON_RECORD_DEFINITION<Water>      ,
          BEER_JSON_RECORD_DEFINITION<Style>      ,
-//         BEER_JSON_RECORD_DEFINITION<MashStep>   ,
+         BEER_JSON_RECORD_DEFINITION<MashStep>   ,
 //         BEER_JSON_RECORD_DEFINITION<Mash>       ,
          BEER_JSON_RECORD_DEFINITION<Equipment>  ,
 //         BEER_JSON_RECORD_DEFINITION<Instruction>,

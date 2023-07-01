@@ -24,7 +24,6 @@
 #include <algorithm>
 #include <QDebug>
 #include <QObject>
-#include <QRegExp>
 #include <QString>
 
 #include "Algorithms.h"
@@ -227,11 +226,11 @@ void BrewNote::populateNote(Recipe* parent) {
          auto mStep = steps.at(0);
 
          if (mStep) {
-            double endTemp = mStep->endTemp_c() > 0.0 ? mStep->endTemp_c() : mStep->stepTemp_c();
+            double strikeTemp = mStep->infuseTemp_c().value_or(mStep->stepTemp_c());
+            setStrikeTemp_c(strikeTemp);
+            setProjStrikeTemp_c(strikeTemp);
 
-            setStrikeTemp_c(mStep->infuseTemp_c());
-            setProjStrikeTemp_c(mStep->infuseTemp_c());
-
+            double endTemp = mStep->endTemp_c().value_or(mStep->stepTemp_c());
             setMashFinTemp_c(endTemp);
             setProjMashFinTemp_c(endTemp);
          }
@@ -241,8 +240,9 @@ void BrewNote::populateNote(Recipe* parent) {
             // and therefore the internal assert that the index is positive is
             // bunk. This is OK, as we just checked that we will not underflow.
             mStep = steps.at( steps.size() - 2 );
-            setMashFinTemp_c( mStep->endTemp_c());
-            setProjMashFinTemp_c( mStep->endTemp_c());
+            double endTemp = mStep->endTemp_c().value_or(mStep->stepTemp_c());
+            setMashFinTemp_c(endTemp);
+            setProjMashFinTemp_c(endTemp);
          }
       }
    }

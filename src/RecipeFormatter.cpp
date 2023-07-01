@@ -816,7 +816,7 @@ public:
          if (step->isInfusion()) {
             tmp = tmp.arg(Measurement::displayAmount(Measurement::Amount{step->amount_l(),
                                                                          Measurement::Units::liters}))
-                     .arg(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c(),
+                     .arg(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c().value_or(step->stepTemp_c()),
                                                                          Measurement::Units::celsius}));
          } else if (step->isDecoction()) {
             tmp = tmp.arg( Measurement::displayAmount(Measurement::Amount{step->amount_l(),
@@ -865,7 +865,7 @@ public:
             if ( step->isInfusion() ) {
                amounts.append(Measurement::displayAmount(Measurement::Amount{step->amount_l(),
                                                                              Measurement::Units::liters}));
-               temps.append(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c(),
+               temps.append(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c().value_or(step->stepTemp_c()),
                                                                            Measurement::Units::celsius}));
             } else if( step->isDecoction() ) {
                amounts.append(Measurement::displayAmount(Measurement::Amount{step->amount_l(),

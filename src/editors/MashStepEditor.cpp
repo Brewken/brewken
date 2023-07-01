@@ -27,115 +27,53 @@ MashStepEditor::MashStepEditor(QWidget* parent) :
    EditorBase<MashStep, MashStepEditor>() {
    this->setupUi(this);
 
-///   this->comboBox_mashStepType->setCurrentIndex(-1);
+   SMART_FIELD_INIT(MashStepEditor, label_name           , lineEdit_name           , MashStep, PropertyNames::NamedEntity::name               );
+   SMART_FIELD_INIT(MashStepEditor, label_stepTemp       , lineEdit_stepTemp       , MashStep, PropertyNames::MashStep::stepTemp_c            , 1);
+   SMART_FIELD_INIT(MashStepEditor, label_amount         , lineEdit_amount         , MashStep, PropertyNames::MashStep::amount_l              );
+   SMART_FIELD_INIT(MashStepEditor, label_infuseTemp     , lineEdit_infuseTemp     , MashStep, PropertyNames::MashStep::infuseTemp_c          , 1);
+   SMART_FIELD_INIT(MashStepEditor, label_stepTime       , lineEdit_stepTime       , MashStep, PropertyNames::MashStep::stepTime_min          , 0);
+   SMART_FIELD_INIT(MashStepEditor, label_rampTime       , lineEdit_rampTime       , MashStep, PropertyNames::MashStep::rampTime_min          , 0);
+   SMART_FIELD_INIT(MashStepEditor, label_endTemp        , lineEdit_endTemp        , MashStep, PropertyNames::MashStep::endTemp_c             , 1);
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   SMART_FIELD_INIT(MashStepEditor, label_thickness      , lineEdit_thickness      , MashStep, PropertyNames::MashStep::liquorToGristRatio_lKg, 1);
 
-   SMART_FIELD_INIT(MashStepEditor, label_name           , lineEdit_name           , MashStep, PropertyNames::NamedEntity::name          );
-   SMART_FIELD_INIT(MashStepEditor, label_stepTemp       , lineEdit_stepTemp       , MashStep, PropertyNames::MashStep::stepTemp_c       , 1);
-   SMART_FIELD_INIT(MashStepEditor, label_amount         , lineEdit_amount         , MashStep, PropertyNames::MashStep::amount_l         );
-   SMART_FIELD_INIT(MashStepEditor, label_infuseTemp     , lineEdit_infuseTemp     , MashStep, PropertyNames::MashStep::infuseTemp_c     , 1);
-   SMART_FIELD_INIT(MashStepEditor, label_stepTime       , lineEdit_stepTime       , MashStep, PropertyNames::MashStep::stepTime_min     , 0);
-   SMART_FIELD_INIT(MashStepEditor, label_rampTime       , lineEdit_rampTime       , MashStep, PropertyNames::MashStep::rampTime_min     , 0);
-   SMART_FIELD_INIT(MashStepEditor, label_endTemp        , lineEdit_endTemp        , MashStep, PropertyNames::MashStep::endTemp_c        , 1);
 
    BT_COMBO_BOX_INIT(MashStepEditor, comboBox_mashStepType, MashStep, type);
 
-///   connect(this->buttonBox,     &QDialogButtonBox::accepted,    this, &MashStepEditor::saveAndClose);
-///   connect(this->buttonBox,     &QDialogButtonBox::rejected,    this, &MashStepEditor::close       );
-///   connect(this->comboBox_mashStepType, &QComboBox::currentTextChanged, this, &MashStepEditor::grayOutStuff);
    this->connectSignalsAndSlots();
+
+   // This is extra for this editor
+   connect(this->comboBox_mashStepType, &QComboBox::currentTextChanged, this, &MashStepEditor::grayOutStuff);
    return;
 }
 
 MashStepEditor::~MashStepEditor() = default;
 
-///void MashStepEditor::showChanges(QMetaProperty* metaProp) {
-///   if (!this->obs) {
-///      this->clear();
-///      return;
-///   }
-///
-///   QString propName;
-///   QVariant value;
-///   bool updateAll = false;
-///
-///   if (metaProp == nullptr) {
-///      updateAll = true;
-///   } else {
-///      propName = metaProp->name();
-///      value = metaProp->read(this->obs.get());
-///   }
 void MashStepEditor::readFieldsFromEditItem(std::optional<QString> propName) {
-   if (!propName || *propName == PropertyNames::NamedEntity::name          ) { this->lineEdit_name        ->setTextCursor(m_editItem->name        ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::MashStep::type             ) { this->comboBox_mashStepType->setValue     (m_editItem->type        ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::MashStep::infuseAmount_l   ) { this->lineEdit_amount      ->setAmount    (m_editItem->amount_l    ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::MashStep::infuseTemp_c     ) { this->lineEdit_infuseTemp  ->setAmount    (m_editItem->infuseTemp_c()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::MashStep::stepTemp_c       ) { this->lineEdit_stepTemp    ->setAmount    (m_editItem->stepTemp_c  ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::MashStep::stepTime_min     ) { this->lineEdit_stepTime    ->setAmount    (m_editItem->stepTime_min()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::MashStep::rampTime_min     ) { this->lineEdit_rampTime    ->setAmount    (m_editItem->rampTime_min()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::MashStep::endTemp_c        ) { this->lineEdit_endTemp     ->setAmount    (m_editItem->endTemp_c   ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::NamedEntity::name               ) { this->lineEdit_name        ->setTextCursor(m_editItem->name                  ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::MashStep::type                  ) { this->comboBox_mashStepType->setValue     (m_editItem->type                  ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::MashStep::infuseAmount_l        ) { this->lineEdit_amount      ->setAmount    (m_editItem->amount_l              ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::MashStep::infuseTemp_c          ) { this->lineEdit_infuseTemp  ->setAmount    (m_editItem->infuseTemp_c          ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::MashStep::stepTemp_c            ) { this->lineEdit_stepTemp    ->setAmount    (m_editItem->stepTemp_c            ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::MashStep::stepTime_min          ) { this->lineEdit_stepTime    ->setAmount    (m_editItem->stepTime_min          ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::MashStep::rampTime_min          ) { this->lineEdit_rampTime    ->setAmount    (m_editItem->rampTime_min          ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::MashStep::endTemp_c             ) { this->lineEdit_endTemp     ->setAmount    (m_editItem->endTemp_c             ()); if (propName) { return; } }
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   if (!propName || *propName == PropertyNames::MashStep::liquorToGristRatio_lKg) { this->lineEdit_thickness   ->setAmount    (m_editItem->liquorToGristRatio_lKg()); if (propName) { return; } }
    return;
 }
 
-///void MashStepEditor::clear() {
-///   this->lineEdit_name           ->setText(QString(""));
-///   this->comboBox_mashStepType           ->setCurrentIndex(0);
-///   this->lineEdit_infuseAmount   ->setText(QString(""));
-///   this->lineEdit_infuseTemp     ->setText(QString(""));
-///   this->lineEdit_decoctionAmount->setText(QString(""));
-///   this->lineEdit_stepTemp       ->setText(QString(""));
-///   this->lineEdit_stepTime       ->setText(QString(""));
-///   this->lineEdit_rampTime       ->setText(QString(""));
-///   this->lineEdit_endTemp        ->setText(QString(""));
-///   return;
-///}
-///
-///void MashStepEditor::close() {
-///   setVisible(false);
-///   return;
-///}
-///
-///void MashStepEditor::changed(QMetaProperty prop, QVariant /*val*/) {
-///   if (sender() != this->obs.get()) {
-///      return;
-///   }
-///
-///   showChanges(&prop);
-///   return;
-///}
-
-///void MashStepEditor::setMashStep(std::shared_ptr<MashStep> step) {
-///   if (this->obs) {
-///      disconnect(this->obs.get(), nullptr, this, nullptr);
-///   }
-///
-///   this->obs = step;
-///
-///   if (this->obs) {
-///      connect(this->obs.get(), &MashStep::changed, this, &MashStepEditor::changed);
-///      showChanges();
-///   }
-///   return;
-///}
-
 void MashStepEditor::writeFieldsToEditItem() {
-   this->m_editItem->setName             (this->lineEdit_name->text());
-   this->m_editItem->setType             (this->comboBox_mashStepType   ->getNonOptValue<MashStep::Type>());
-   this->m_editItem->setAmount_l         (this->lineEdit_amount         ->getNonOptCanonicalQty());
-   this->m_editItem->setInfuseTemp_c     (this->lineEdit_infuseTemp     ->getNonOptCanonicalQty());
-   this->m_editItem->setStepTemp_c       (this->lineEdit_stepTemp       ->getNonOptCanonicalQty());
-   this->m_editItem->setStepTime_min     (this->lineEdit_stepTime       ->getNonOptCanonicalQty());
-   this->m_editItem->setRampTime_min     (this->lineEdit_rampTime       ->getNonOptCanonicalQty());
-   this->m_editItem->setEndTemp_c        (this->lineEdit_endTemp        ->getNonOptCanonicalQty());
-
-///   if (this->obs->key() < 0) {
-///      // This is a new MashStep, so we need to store it.
-///      // We'll ask MainWindow to do this for us, because then it can be an undoable action.
-///      //
-///      // The Mash of this MashStep should already have been set by the caller
-///      MainWindow::instance().addMashStepToMash(this->obs);
-///   }
-///
-///   setVisible(false);
+   this->m_editItem->setName                  (this->lineEdit_name->text());
+   this->m_editItem->setType                  (this->comboBox_mashStepType->getNonOptValue<MashStep::Type>());
+   this->m_editItem->setAmount_l              (this->lineEdit_amount      ->getNonOptCanonicalQty());
+   this->m_editItem->setInfuseTemp_c          (this->lineEdit_infuseTemp  ->getOptCanonicalQty   ());
+   this->m_editItem->setStepTemp_c            (this->lineEdit_stepTemp    ->getNonOptCanonicalQty());
+   this->m_editItem->setStepTime_min          (this->lineEdit_stepTime    ->getNonOptCanonicalQty());
+   this->m_editItem->setRampTime_min          (this->lineEdit_rampTime    ->getOptCanonicalQty   ());
+   this->m_editItem->setEndTemp_c             (this->lineEdit_endTemp     ->getOptCanonicalQty   ());
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   this->m_editItem->setLiquorToGristRatio_lKg(this->lineEdit_thickness   ->getOptCanonicalQty   ());
    return;
 }
 
@@ -144,23 +82,23 @@ void MashStepEditor::writeLateFieldsToEditItem() {
    return;
 }
 
-void MashStepEditor::grayOutStuff(QString const & text) {
-   if (text == "Infusion") {
-//      lineEdit_infuseAmount->setEnabled(true);
-      lineEdit_infuseTemp->setEnabled(true);
-//      lineEdit_decoctionAmount->setEnabled(false);
-   } else if (text == "Decoction") {
-//      lineEdit_infuseAmount->setEnabled(false);
-      lineEdit_infuseTemp->setEnabled(false);
-//      lineEdit_decoctionAmount->setEnabled(true);
-   } else if (text == "Temperature") {
-//      lineEdit_infuseAmount->setEnabled(false);
-      lineEdit_infuseTemp->setEnabled(false);
-//      lineEdit_decoctionAmount->setEnabled(false);
-   } else {
-//      lineEdit_infuseAmount->setEnabled(true);
-      lineEdit_infuseTemp->setEnabled(true);
-//      lineEdit_decoctionAmount->setEnabled(true);
+void MashStepEditor::grayOutStuff([[maybe_unused]] QString const & text) {
+   auto const msType = this->comboBox_mashStepType->getNonOptValue<MashStep::Type>();
+   switch (msType) {
+      case MashStep::Type::Infusion:
+      case MashStep::Type::FlySparge  :
+      case MashStep::Type::BatchSparge:
+      case MashStep::Type::SouringMash:
+      case MashStep::Type::SouringWort:
+         lineEdit_infuseTemp->setEnabled(true);
+         break;
+
+      case MashStep::Type::Decoction:
+      case MashStep::Type::Temperature:
+         lineEdit_infuseTemp->setEnabled(false);
+         break;
+
+      // No default case as we want the compiler to warn us if we missed one
    }
    return;
 }

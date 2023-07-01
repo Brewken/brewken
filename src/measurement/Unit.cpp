@@ -29,48 +29,11 @@
 
 #include "Algorithms.h"
 #include "Localization.h"
+#include "Logging.h"
 #include "measurement/Measurement.h"
 #include "measurement/UnitSystem.h"
 
 namespace {
-
-   QRegExp getRegExpToMatchAmountPlusUnits() {
-      QRegExp amtUnit;
-
-      // Make sure we get the right decimal point (. or ,) and the right grouping
-      // separator (, or .). Some locales write 1.000,10 and other write
-      // 1,000.10. We need to catch both
-      QString const decimal =  QRegExp::escape(Localization::getLocale().decimalPoint());
-      QString const grouping = QRegExp::escape(Localization::getLocale().groupSeparator());
-
-      amtUnit.setPattern("((?:\\d+" + grouping + ")?\\d+(?:" + decimal + "\\d+)?|" + decimal + "\\d+)\\s*(\\w+)?");
-      amtUnit.setCaseSensitivity(Qt::CaseInsensitive);
-
-      return amtUnit;
-   }
-
-   QString unitNameFromAmountString(QString const & qstr) {
-      QRegExp amtUnit = getRegExpToMatchAmountPlusUnits();
-
-      // if the regex dies, return ?
-      if (amtUnit.indexIn(qstr) == -1) {
-         return QString("?");
-      }
-
-      // Get the unit from the second capture
-      return amtUnit.cap(2);
-   }
-
-   double quantityFromAmountString(QString const & qstr) {
-      QRegExp amtUnit = getRegExpToMatchAmountPlusUnits();
-
-      // if the regex dies, return 0.0
-      if (amtUnit.indexIn(qstr) == -1) {
-         return 0.0;
-      }
-
-      return Localization::toDouble(amtUnit.cap(1), Q_FUNC_INFO);
-   }
 
    /**
     * \brief This is useful to allow us to initialise \c unitNameLookup and \c physicalQuantityToCanonicalUnit after
@@ -134,6 +97,7 @@ namespace {
 
       auto matches = unitNameLookup.values(NameLookupKey{physicalQuantity, name.toLower()});
       qDebug() << Q_FUNC_INFO << name << "has" << matches.length() << "case-insensitive match(es)";
+
       if (caseInensitiveMatching) {
          return matches;
       }
@@ -251,6 +215,57 @@ void Measurement::Unit::initialiseLookups() {
    return;
 }
 
+std::pair<double, QString> Measurement::Unit::splitAmountString(QString const & inputString, bool * ok) {
+   // All functions in QRegExp are reentrant, so it should be safe to use as a shared const in multi-threaded code.
+   static QRegExp const amtUnit {
+      //
+      // For the numeric part (the quantity) we need to make sure we get the right decimal point (. or ,) and the right
+      // grouping separator (, or .).  Some locales write 1.000,10 and others write 1,000.10.  We need to catch both.
+      //
+      // For the units, we have to be a bit careful.  We used to use "\\w" to match "word characters" for the unit name.
+      // This was fine when we had "simple" unit names such as "kg" and "floz", but it breaks for names containing
+      // symbols, such as "L/kg" or "c/g·C".  Instead, we have to match non-space characters
+      //
+      "((?:\\d+" + QRegExp::escape(Localization::getLocale().groupSeparator()) + ")?\\d+(?:" +
+      QRegExp::escape(Localization::getLocale().decimalPoint()) + "\\d+)?|" +
+      QRegExp::escape(Localization::getLocale().decimalPoint()) + "\\d+)\\s*([^\\s]+)?",
+      Qt::CaseInsensitive
+   };
+
+   // Make sure we can parse the string
+   if (amtUnit.indexIn(inputString) == -1) {
+      qDebug() << Q_FUNC_INFO << "Unable to parse" << inputString << "so treating as 0.0";
+      if (ok) {
+         *ok = false;
+      }
+      return std::pair<double, QString>{0.0, ""};
+   }
+
+   if (ok) {
+      *ok = true;
+   }
+   double quantity = 0.0;
+   QString numericPartOfInput{amtUnit.cap(1)};
+   try {
+      quantity = Localization::toDouble(numericPartOfInput, Q_FUNC_INFO);
+   } catch (std::invalid_argument const & ex) {
+      qWarning() << Q_FUNC_INFO << "Could not parse" << numericPartOfInput << "as number:" << ex.what();
+      if (ok) {
+         *ok = false;
+      }
+   } catch(std::out_of_range const & ex) {
+      qWarning() << Q_FUNC_INFO << "Out of range parsing" << numericPartOfInput << "as number:" << ex.what();
+      if (ok) {
+         *ok = false;
+      }
+   }
+
+   QString const unitName = amtUnit.cap(2);
+
+   return std::pair<double, QString>{quantity, unitName};
+}
+
+
 bool Measurement::Unit::operator==(Unit const & other) const {
    // Since we're not intending to create multiple instances of any given UnitSystem, it should be enough to check
    // the addresses are equal, but, as belt-and-braces, we'll check the names & physical quantities are equal as a
@@ -302,9 +317,9 @@ Measurement::Unit const & Measurement::Unit::getCanonicalUnit(Measurement::Physi
 QString Measurement::Unit::convertWithoutContext(QString const & qstr, QString const & toUnitName) {
 
    qDebug() << Q_FUNC_INFO << "Trying to convert" << qstr << "to" << toUnitName;
-   double fromQuantity = quantityFromAmountString(qstr);
+   double const fromQuantity = Measurement::Unit::splitAmountString(qstr).first;
 
-   QString const fromUnitName = unitNameFromAmountString(qstr);
+   QString const fromUnitName =  Measurement::Unit::splitAmountString(qstr).second;
    auto const fromUnits = getUnitsOnlyByName(fromUnitName);
    auto const toUnits   = getUnitsOnlyByName(toUnitName);
    qDebug() <<

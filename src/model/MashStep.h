@@ -35,15 +35,20 @@
 #define AddPropertyName(property) namespace PropertyNames::MashStep { BtStringConst const property{#property}; }
 AddPropertyName(amount_l         )
 AddPropertyName(decoctionAmount_l) // Should only be used for BeerXML
+AddPropertyName(description      )
+AddPropertyName(endAcidity_pH    )
 AddPropertyName(endTemp_c        )
 AddPropertyName(infuseAmount_l   ) // Should only be used for BeerXML
 AddPropertyName(infuseTemp_c     )
+AddPropertyName(liquorToGristRatio_lKg)
 AddPropertyName(mashId           )
 AddPropertyName(rampTime_min     )
+AddPropertyName(startAcidity_pH  )
 AddPropertyName(stepNumber       )
 AddPropertyName(stepTemp_c       )
 AddPropertyName(stepTime_min     )
 AddPropertyName(type             )
+
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -117,56 +122,76 @@ public:
     *        BeerXML, but their use is @deprecated in other contexts as the underlying storage is now one amount field.
     *        (Because of the way we do serialisation, we only need the getter functions for these legacy attributes.
     *        When we are reading from BeerXML, they get put in a \c NamedParameterBundle.)
+    *
+    *        Strictly speaking this is an optional field in BeerJSON, because it's not required for every type of mash
+    *        step, but I don't think it's too ambiguous for us to retain 0.0 as the "unspecified / not relevant" value.
+    *        This saves us a bit of hassle in adding logic to check whether the field should be set and what default
+    *        value to use if it's not etc.
     */
    Q_PROPERTY(double amount_l READ amount_l WRITE setAmount_l          )
 
-   //! \brief The infusion amount in liters.
+   //! \brief The infusion amount in liters - NB: Retained only for BeerXML; DO NOT USE.
    Q_PROPERTY(double infuseAmount_l READ infuseAmount_l /*WRITE setInfuseAmount_l*/ STORED false)
+   //! \brief The decoction amount in liters - NB: Retained only for BeerXML; DO NOT USE.
+   Q_PROPERTY(double decoctionAmount_l READ decoctionAmount_l /*WRITE setDecoctionAmount_l*/ STORED false)
    //! \brief The target temperature of this step in C.
    Q_PROPERTY(double stepTemp_c READ stepTemp_c WRITE setStepTemp_c                      )
    //! \brief The time of the step in min.
    Q_PROPERTY(double stepTime_min READ stepTime_min WRITE setStepTime_min                )
-   //! \brief The time it takes to ramp the temp to the target temp in min.  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-   Q_PROPERTY(double rampTime_min READ rampTime_min WRITE setRampTime_min                )
-   //! \brief The target ending temp of the step in C.                       ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-   Q_PROPERTY(double endTemp_c READ endTemp_c WRITE setEndTemp_c                         )
-   //! \brief The infusion temp in C.
-   Q_PROPERTY(double infuseTemp_c READ infuseTemp_c WRITE setInfuseTemp_c                )
-   //! \brief The decoction amount in liters.
-   Q_PROPERTY(double decoctionAmount_l READ decoctionAmount_l /*WRITE setDecoctionAmount_l*/ STORED false)
+   //! \brief The time it takes to ramp the temp to the target temp in min.  ⮜⮜⮜ Optional in BeerXML & BeerJSON ⮞⮞⮞
+   Q_PROPERTY(std::optional<double> rampTime_min READ rampTime_min WRITE setRampTime_min                )
+   //! \brief The target ending temp of the step in C.                       ⮜⮜⮜ Optional in BeerXML & BeerJSON ⮞⮞⮞
+   Q_PROPERTY(std::optional<double> endTemp_c READ endTemp_c WRITE setEndTemp_c                         )
+   //! \brief The infusion temp in C.                                        ⮜⮜⮜ Not part of BeerXML; optional in BeerJSON ⮞⮞⮞
+   Q_PROPERTY(std::optional<double> infuseTemp_c READ infuseTemp_c WRITE setInfuseTemp_c                )
    //! \brief The step number in a sequence of other steps.  Step numbers start from 1.
    Q_PROPERTY(int    stepNumber READ stepNumber WRITE setStepNumber /*NOTIFY changed*/ STORED false )
    //! \brief The Mash to which this MashStep belongs
    Q_PROPERTY(int    mashId READ getMashId WRITE setMashId )
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   Q_PROPERTY(QString               description            READ description            WRITE setDescription           )
+   /**
+    * \brief Mash thickness, aka liquor-to-grist ratio, is the volume of strike water (liters) divided by the mass of
+    *        grist (kilograms).  Its practical range is 2 to 4 and most often is around 2.5 to 3.2.
+    */
+   Q_PROPERTY(std::optional<double> liquorToGristRatio_lKg READ liquorToGristRatio_lKg WRITE setLiquorToGristRatio_lKg)
+   Q_PROPERTY(std::optional<double> startAcidity_pH        READ startAcidity_pH        WRITE setStartAcidity_pH       )
+   Q_PROPERTY(std::optional<double>   endAcidity_pH        READ   endAcidity_pH        WRITE   setEndAcidity_pH       )
+
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    Type type() const;
-   double amount_l() const; // ⮜⮜⮜ Added, to replace infuseAmount_l & decoctionAmount_l, for BeerJSON support ⮞⮞⮞
-   [[deprecated]] double infuseAmount_l() const;
-   double stepTemp_c() const;
-   double stepTime_min() const;
-   double rampTime_min() const;
-   double endTemp_c() const;
-   double infuseTemp_c() const;
-   [[deprecated]] double decoctionAmount_l() const;
-   int getMashId() const;
-
-   //! What number this step is in the mash.
-   int stepNumber() const;
+   double                amount_l              () const; // ⮜⮜⮜ Added, to replace infuseAmount_l & decoctionAmount_l, for BeerJSON support ⮞⮞⮞
+   [[deprecated]] double infuseAmount_l        () const;
+   [[deprecated]] double decoctionAmount_l     () const;
+   double                stepTemp_c            () const;
+   double                stepTime_min          () const;
+   std::optional<double> rampTime_min          () const;
+   std::optional<double> endTemp_c             () const;
+   std::optional<double> infuseTemp_c          () const;
+   int                   stepNumber            () const;
+   int                   getMashId             () const;
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   QString               description           () const;
+   std::optional<double> liquorToGristRatio_lKg() const;
+   std::optional<double> startAcidity_pH       () const;
+   std::optional<double> endAcidity_pH         () const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   void setType(Type t);
-   void setAmount_l(double var); // ⮜⮜⮜ Added, to replace setInfuseAmount_l & setDecoctionAmount_l, for BeerJSON support ⮞⮞⮞
-//   void setInfuseAmount_l(double var);
-   void setStepTemp_c(double var);
-   void setStepTime_min(double var);
-   void setRampTime_min(double var);
-   void setEndTemp_c(double var);
-   void setInfuseTemp_c(double var);
-//   void setDecoctionAmount_l(double var);
-   void setStepNumber(int stepNumber);
-   void setMashId(int mashId);
-
+   void setType                  (Type                  const   val);
+   void setAmount_l              (double                const   val); // ⮜⮜⮜ Added, to replace setInfuseAmount_l & setDecoctionAmount_l, for BeerJSON support ⮞⮞⮞
+   void setStepTemp_c            (double                const   val);
+   void setStepTime_min          (double                const   val);
+   void setRampTime_min          (std::optional<double> const   val);
+   void setEndTemp_c             (std::optional<double> const   val);
+   void setInfuseTemp_c          (std::optional<double> const   val);
+   void setStepNumber            (int                   const   stepNumber);
+   void setMashId                (int                   const   mashId    );
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   void setDescription           (QString               const & val);
+   void setLiquorToGristRatio_lKg(std::optional<double> const   val);
+   void setStartAcidity_pH       (std::optional<double> const   val);
+   void setEndAcidity_pH         (std::optional<double> const   val);
 
    //! some convenience methods
    bool isInfusion() const;
@@ -183,15 +208,21 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   Type   m_type;
-   double m_amount_l;
-   double m_stepTemp_c;
-   double m_stepTime_min;
-   double m_rampTime_min;
-   double m_endTemp_c;
-   double m_infuseTemp_c;
-   int    m_stepNumber;
-   int    m_mashId;
+   Type                  m_type                  ;
+   double                m_amount_l              ;
+   double                m_stepTemp_c            ;
+   double                m_stepTime_min          ;
+   std::optional<double> m_rampTime_min          ;
+   std::optional<double> m_endTemp_c             ;
+   std::optional<double> m_infuseTemp_c          ;
+   int                   m_stepNumber            ;
+   int                   m_mashId                ;
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   QString               m_description           ;
+   std::optional<double> m_liquorToGristRatio_lKg;
+   std::optional<double> m_startAcidity_pH       ;
+   std::optional<double> m_endAcidity_pH         ;
+
 };
 
 #endif

@@ -741,7 +741,7 @@ QVector<PreInstruction> Recipe::mashInstructions(double timeRemaining,
       if (step->isInfusion()) {
          str = tr("Add %1 water at %2 to mash to bring it to %3.")
                .arg(Measurement::displayAmount(Measurement::Amount{step->amount_l(), Measurement::Units::liters}))
-               .arg(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c(), Measurement::Units::celsius}))
+               .arg(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c().value_or(step->stepTemp_c()), Measurement::Units::celsius}))
                .arg(Measurement::displayAmount(Measurement::Amount{step->stepTemp_c(), Measurement::Units::celsius}));
          totalWaterAdded_l += step->amount_l();
       } else if (step->isTemperature()) {
@@ -2719,11 +2719,11 @@ QList<QString> Recipe::getReagents(QList< std::shared_ptr<MashStep> > msteps) {
       if (ii + 1 < msteps.size()) {
          tmp = tr("%1 water to %2, ")
                .arg(Measurement::displayAmount(Measurement::Amount{msteps[ii]->amount_l(), Measurement::Units::liters}))
-               .arg(Measurement::displayAmount(Measurement::Amount{msteps[ii]->infuseTemp_c(), Measurement::Units::celsius}));
+               .arg(Measurement::displayAmount(Measurement::Amount{msteps[ii]->infuseTemp_c().value_or(msteps[ii]->stepTemp_c()), Measurement::Units::celsius}));
       } else {
          tmp = tr("%1 water to %2 ")
                .arg(Measurement::displayAmount(Measurement::Amount{msteps[ii]->amount_l(), Measurement::Units::liters}))
-               .arg(Measurement::displayAmount(Measurement::Amount{msteps[ii]->infuseTemp_c(), Measurement::Units::celsius}));
+               .arg(Measurement::displayAmount(Measurement::Amount{msteps[ii]->infuseTemp_c().value_or(msteps[ii]->stepTemp_c()), Measurement::Units::celsius}));
       }
       reagents.append(tmp);
    }

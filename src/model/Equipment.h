@@ -59,7 +59,7 @@ AddPropertyName(kettleOutflowPerMinute_l   )
 AddPropertyName(kettleSpecificHeat_calGC   )
 AddPropertyName(kettleType                 )
 AddPropertyName(kettleWeight_kg            )
-AddPropertyName(lauterTunDeadspaceLoss_l          )
+AddPropertyName(lauterTunDeadspaceLoss_l   )
 AddPropertyName(lauterTunNotes             )
 AddPropertyName(lauterTunSpecificHeat_calGC)
 AddPropertyName(lauterTunType              )
@@ -78,7 +78,7 @@ AddPropertyName(packagingVesselType        )
 AddPropertyName(packagingVesselVolume_l    )
 AddPropertyName(topUpKettle_l              )
 AddPropertyName(topUpWater_l               )
-AddPropertyName(kettleTrubChillerLoss_l          )
+AddPropertyName(kettleTrubChillerLoss_l    )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================

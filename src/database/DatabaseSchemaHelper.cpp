@@ -716,6 +716,10 @@ namespace {
          {QString("ALTER TABLE mashstep RENAME COLUMN infuse_amount TO amount_l")},
          {QString("     UPDATE mashstep SET amount_l = decoction_amount WHERE mstype = 'Decoction'")},
          {QString("ALTER TABLE mashstep DROP COLUMN decoction_amount")},
+         {QString("ALTER TABLE mashstep ADD COLUMN description               %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE mashstep ADD COLUMN liquor_to_grist_ratio_lkg %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE mashstep ADD COLUMN start_acidity_ph          %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE mashstep ADD COLUMN end_acidity_ph            %1").arg(db.getDbNativeTypeName<double >())},
 
 
 

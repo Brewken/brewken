@@ -181,25 +181,8 @@ bool Measurement::UnitSystem::operator==(UnitSystem const & other) const {
 }
 
 Measurement::Amount Measurement::UnitSystem::qstringToSI(QString qstr, Unit const & defUnit) const {
-   // All functions in QRegExp are reentrant, so it should be safe to use as a shared const in multi-threaded code.
-   static QRegExp const amtUnit {
-      // Make sure we get the right decimal point (. or ,) and the right grouping separator (, or .).  Some locales
-      // write 1.000,10 and others write 1,000.10.  We need to catch both.
-      "((?:\\d+" + QRegExp::escape(Localization::getLocale().groupSeparator()) + ")?\\d+(?:" +
-      QRegExp::escape(Localization::getLocale().decimalPoint()) + "\\d+)?|" +
-      QRegExp::escape(Localization::getLocale().decimalPoint()) + "\\d+)\\s*(\\w+)?",
-      Qt::CaseInsensitive
-   };
-
-   // make sure we can parse the string
-   if (amtUnit.indexIn(qstr) == -1) {
-      qDebug() << Q_FUNC_INFO << "Unable to parse" << qstr;
-      return Amount{0.0, Measurement::Unit::getCanonicalUnit(this->pimpl->physicalQuantity)};
-   }
-
-   double const amt = Localization::toDouble(amtUnit.cap(1), Q_FUNC_INFO);
-
-   QString const unitName = amtUnit.cap(2);
+   // This is a pretty neat feature from C++17 that makes it easier to have a function return more than one thing
+   auto const [amt, unitName] = Measurement::Unit::splitAmountString(qstr);
 
    // Look first in this unit system. If you can't find it here, find it
    // globally. I *think* this finally has all the weird magic right. If the
@@ -542,9 +525,9 @@ namespace Measurement::UnitSystems {
                                           &Measurement::Units::litresPerKilogram,
                                           "specificVolume_Metric",
                                           Measurement::SystemOfMeasurement::Metric,
-                                          {{UnitSystem::RelativeScale::ExtraSmall, &Measurement::Units::litresPerGram         },
+                                          {{UnitSystem::RelativeScale::ExtraSmall, &Measurement::Units::litresPerKilogram     },
                                            {UnitSystem::RelativeScale::Small     , &Measurement::Units::cubicMetersPerKilogram},
-                                           {UnitSystem::RelativeScale::Medium    , &Measurement::Units::litresPerKilogram     }}};
+                                           {UnitSystem::RelativeScale::Medium    , &Measurement::Units::litresPerGram         }}};
 
    UnitSystem const specificVolume_UsCustomary{PhysicalQuantity::SpecificVolume,
                                                &Measurement::Units::us_quartsPerPound,

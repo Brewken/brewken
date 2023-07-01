@@ -78,7 +78,9 @@ bool operator==(Measurement::Amount const & lhs, Measurement::Amount const & rhs
 
 template<class S>
 S & operator<<(S & stream, Measurement::Amount const amount) {
-   stream << amount.quantity() << " " << amount.unit()->name;
+   // QDebug puts extra spaces around each thing you output but QTextStream does not (I think), so, to get the right gap
+   // between the quantity and the unit, we need to be a bit heavy-handed.
+   stream << QString("%1 %2").arg(amount.quantity()).arg(amount.unit()->name);
    return stream;
 }
 

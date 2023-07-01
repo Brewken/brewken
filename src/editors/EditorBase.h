@@ -19,6 +19,7 @@
 
 #include <memory>
 
+#include <QAbstractButton>
 #include <QInputDialog>
 #include <QString>
 

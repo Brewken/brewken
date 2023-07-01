@@ -124,8 +124,8 @@ bool MashDesigner::nextStep(int step) {
    this->prevStep = this->mashStep;
    if (this->mashStep) {
       // NOTE: This needs to be changed. Assumes 1L of water is 1 kg.
-      this->MC += this->mashStep->infuseAmount_l() * HeatCalculations::Cw_calGC;
-      this->addedWater_l += this->mashStep->infuseAmount_l();
+      this->MC += this->mashStep->amount_l() * HeatCalculations::Cw_calGC;
+      this->addedWater_l += this->mashStep->amount_l();
 
       if (!this->prevStep) {
          // If the last step is null, we need to add the influence of the tun.
