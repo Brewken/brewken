@@ -216,6 +216,11 @@ void Measurement::Unit::initialiseLookups() {
 }
 
 std::pair<double, QString> Measurement::Unit::splitAmountString(QString const & inputString, bool * ok) {
+   // Assume it didn't work until it did.  It's less code this way!
+   if (ok) {
+      *ok = false;
+   }
+
    // All functions in QRegExp are reentrant, so it should be safe to use as a shared const in multi-threaded code.
    static QRegExp const amtUnit {
       //
@@ -235,36 +240,30 @@ std::pair<double, QString> Measurement::Unit::splitAmountString(QString const & 
    // Make sure we can parse the string
    if (amtUnit.indexIn(inputString) == -1) {
       qDebug() << Q_FUNC_INFO << "Unable to parse" << inputString << "so treating as 0.0";
-      if (ok) {
-         *ok = false;
-      }
       return std::pair<double, QString>{0.0, ""};
-   }
-
-   if (ok) {
-      *ok = true;
-   }
-   double quantity = 0.0;
-   QString numericPartOfInput{amtUnit.cap(1)};
-   try {
-      quantity = Localization::toDouble(numericPartOfInput, Q_FUNC_INFO);
-   } catch (std::invalid_argument const & ex) {
-      qWarning() << Q_FUNC_INFO << "Could not parse" << numericPartOfInput << "as number:" << ex.what();
-      if (ok) {
-         *ok = false;
-      }
-   } catch(std::out_of_range const & ex) {
-      qWarning() << Q_FUNC_INFO << "Out of range parsing" << numericPartOfInput << "as number:" << ex.what();
-      if (ok) {
-         *ok = false;
-      }
    }
 
    QString const unitName = amtUnit.cap(2);
 
+   double quantity = 0.0;
+   QString numericPartOfInput{amtUnit.cap(1)};
+   try {
+      quantity = Localization::toDouble(numericPartOfInput, Q_FUNC_INFO);
+      // If we didn't throw an exception then all must finally be OK!
+      if (ok) {
+         *ok = true;
+      }
+   } catch (std::invalid_argument const & ex) {
+      // If we get this error it's most probably either a bug in our regular expression or a problem with
+      // Localization::getLocale().
+      qWarning() << Q_FUNC_INFO << "Could not parse" << numericPartOfInput << "as number:" << ex.what();
+   } catch(std::out_of_range const & ex) {
+      // This one is more likely user error!
+      qWarning() << Q_FUNC_INFO << "Out of range parsing" << numericPartOfInput << "as number:" << ex.what();
+   }
+
    return std::pair<double, QString>{quantity, unitName};
 }
-
 
 bool Measurement::Unit::operator==(Unit const & other) const {
    // Since we're not intending to create multiple instances of any given UnitSystem, it should be enough to check

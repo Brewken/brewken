@@ -68,6 +68,11 @@ namespace Measurement {
        *                  \c convertFromCanonical are no-ops).  (Note that the canonical units may or may not be in the
        *                  same \c UnitSystem as this \c Unit.  Eg canonical units for mass are kilograms so there's a
        *                  conversion to do whether you're starting from pounds, grams, ounces or milligrams.)
+       *
+       * .:TODO:. Although we already do case-insensitive matching for unit names, I think we could do more on having
+       *          generous matching for the longer/more complex units (eg "c/g·C" and "mPa-s").  Even a knowledgeable
+       *          user isn't necessarily going to guess the exact abbreviation we've used, so it would be better to have
+       *          either a list of valid alternatives or, possibly, a list of regular expressions.
        */
       Unit(UnitSystem const & unitSystem,
            QString const unitName,

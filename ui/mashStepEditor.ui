@@ -216,7 +216,51 @@
        </property>
       </widget>
      </item>
-
+     <item row="10" column="1">
+      <widget class="SmartLabel" name="label_startAcidity">
+       <property name="text">
+        <string>Start Acidity</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEdit_startAcidity</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="2">
+      <widget class="SmartLineEdit" name="lineEdit_startAcidity">
+      </widget>
+     </item>
+     <item row="10" column="4">
+      <widget class="SmartLabel" name="label_endAcidity">
+       <property name="text">
+        <string>End Acidity</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEdit_endAcidity</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="5">
+      <widget class="SmartLineEdit" name="lineEdit_endAcidity">
+      </widget>
+     </item>
+     <item row="12" column="1">
+      <widget class="QLabel" name="label_description">
+       <property name="toolTip">
+        <string>Optional description of this mash step</string>
+       </property>
+       <property name="text">
+        <string>Description</string>
+       </property>
+       <property name="buddy">
+        <cstring>textEdit_description</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="2" colspan="4">
+      <widget class="QTextEdit" name="textEdit_description">
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
