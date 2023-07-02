@@ -63,6 +63,11 @@ class MashStep : public NamedEntity {
    Q_OBJECT
 
 public:
+   /**
+    * \brief See comment in model/NamedEntity.h
+    */
+   static QString const LocalisedName;
+
    //! \brief The type of step.
    enum class Type {Infusion   ,
                     Temperature,

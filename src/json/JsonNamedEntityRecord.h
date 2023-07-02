@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * json/JsonNamedEntityRecord.h is part of Brewken, and is copyright the following authors 2020-2022:
+ * json/JsonNamedEntityRecord.h is part of Brewken, and is copyright the following authors 2020-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -45,25 +45,25 @@ public:
                          boost::json::value & recordData,
                          JsonRecordDefinition const & recordDefinition) :
       JsonRecord{jsonCoding, recordData, recordDefinition /*, NE::staticMetaObject.className()*/} {
-      this->includeInStats = this->includedInStats();
+      this->m_includeInStats = this->includedInStats();
       return;
    }
 
 protected:
    virtual void constructNamedEntity() {
       // It's a coding error if this function is called when we already have a NamedEntity
-      Q_ASSERT(nullptr == this->namedEntity.get());
+      Q_ASSERT(nullptr == this->m_namedEntity.get());
 
-      this->namedEntity = std::make_shared<NE>(this->namedParameterBundle);
+      this->m_namedEntity = std::make_shared<NE>(this->m_namedParameterBundle);
    }
 
    virtual int storeNamedEntityInDb() {
-      return ObjectStoreWrapper::insert(std::static_pointer_cast<NE>(this->namedEntity));
+      return ObjectStoreWrapper::insert(std::static_pointer_cast<NE>(this->m_namedEntity));
    }
 
 public:
    virtual void deleteNamedEntityFromDb() {
-      ObjectStoreWrapper::hardDelete(*std::static_pointer_cast<NE>(this->namedEntity));
+      ObjectStoreWrapper::hardDelete(*std::static_pointer_cast<NE>(this->m_namedEntity));
       return;
    }
 
@@ -85,10 +85,10 @@ protected:
     */
    virtual bool isDuplicate() {
       // It's a coding error if we are searching for a duplicate of a null object
-      Q_ASSERT(nullptr != this->namedEntity.get());
+      Q_ASSERT(nullptr != this->m_namedEntity.get());
 
       // This copy of the pointer is just to make it clearer what we're passing to lambda in findFirstMatching() below
-      std::shared_ptr<NE const> const currentEntity = std::static_pointer_cast<NE const>(this->namedEntity);
+      std::shared_ptr<NE const> const currentEntity = std::static_pointer_cast<NE const>(this->m_namedEntity);
       auto matchResult = ObjectStoreTyped<NE>::getInstance().findFirstMatching(
          //
          // Note that, because we run this check both before and after something has been stored in the database (for
@@ -107,14 +107,14 @@ protected:
       if (matchResult) {
          qDebug() <<
             Q_FUNC_INFO << "Found a match (#" << matchResult.value()->key() << "," << matchResult.value()->name() <<
-            ") for #" << this->namedEntity->key() << ", " << this->namedEntity->name();
+            ") for #" << this->m_namedEntity->key() << ", " << this->m_namedEntity->name();
          // Set our Hop/Yeast/Fermentable/etc to the one we found already stored in the database, so that any
          // containing Recipe etc can refer to it.  The new object we created will get deleted by the magic of shared
          // pointers.
-         this->namedEntity = matchResult.value();
+         this->m_namedEntity = matchResult.value();
          return true;
       }
-      qDebug() << Q_FUNC_INFO << "No match found for "<< this->namedEntity->name();
+      qDebug() << Q_FUNC_INFO << "No match found for "<< this->m_namedEntity->name();
       return false;
    }
 
@@ -129,7 +129,7 @@ protected:
     *        See below for trivial specialisations of this function for classes where names are not unique.
     */
    virtual void normaliseName() {
-      QString currentName = this->namedEntity->name();
+      QString currentName = this->m_namedEntity->name();
 
       while (
          //
@@ -141,7 +141,7 @@ protected:
             [currentName](std::shared_ptr<NE> ne) {return ne->name() == currentName;}
          )
       ) {
-         qDebug() << Q_FUNC_INFO << "Found existing " << this->recordDefinition.namedEntityClassName << "named" << currentName;
+         qDebug() << Q_FUNC_INFO << "Found existing " << this->m_recordDefinition.namedEntityClassName << "named" << currentName;
 
          JsonRecord::modifyClashingName(currentName);
 
@@ -151,7 +151,7 @@ protected:
          qDebug() << Q_FUNC_INFO << "Trying " << currentName;
       }
 
-      this->namedEntity->setName(currentName);
+      this->m_namedEntity->setName(currentName);
 
       return;
    }
@@ -185,9 +185,9 @@ template<> inline void JsonNamedEntityRecord<BrewNote>::normaliseName() { return
 // Specialisations for cases where object is owned by its containing entity
 template<> inline void JsonNamedEntityRecord<BrewNote>::setContainingEntity(std::shared_ptr<NamedEntity> containingEntity) {
    qDebug() <<
-      Q_FUNC_INFO << "BrewNote * " << static_cast<void*>(this->namedEntity.get()) << ", Recipe * " <<
+      Q_FUNC_INFO << "BrewNote * " << static_cast<void*>(this->m_namedEntity.get()) << ", Recipe * " <<
       static_cast<void*>(containingEntity.get());
-   auto brewNote = std::static_pointer_cast<BrewNote>(this->namedEntity);
+   auto brewNote = std::static_pointer_cast<BrewNote>(this->m_namedEntity);
    brewNote->setRecipe(static_cast<Recipe *>(containingEntity.get()));
    return;
 }

@@ -78,6 +78,9 @@ class Hop : public NamedEntityWithInventory {
    Q_OBJECT
 
 public:
+   /**
+    * \brief See comment in model/NamedEntity.h
+    */
    static QString const LocalisedName;
 
    /*!

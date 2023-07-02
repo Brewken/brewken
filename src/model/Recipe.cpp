@@ -176,11 +176,21 @@ namespace {
       return PropertyNames::Recipe::yeastIds;
    }
 
-   QHash<QString, Recipe::Type> const RECIPE_TYPE_STRING_TO_TYPE {
-      {"Extract",      Recipe::Type::Extract},
-      {"Partial Mash", Recipe::Type::PartialMash},
-      {"All Grain",    Recipe::Type::AllGrain}
-   };
+///   QHash<QString, Recipe::Type> const RECIPE_TYPE_STRING_TO_TYPE {
+///      {"Extract",      Recipe::Type::Extract},
+///      {"Partial Mash", Recipe::Type::PartialMash},
+///      {"All Grain",    Recipe::Type::AllGrain}
+///   };
+
+
+   bool isFermentableSugar(Fermentable * fermy) {
+      if (fermy->type() == Fermentable::Type::Sugar && fermy->name() == "Milk Sugar (Lactose)") {
+         return false;
+      }
+
+      return true;
+   }
+
 }
 
 
@@ -351,12 +361,12 @@ bool Recipe::isEqualTo(NamedEntity const & other) const {
       this->m_og                == rhs.m_og                &&
       this->m_fg                == rhs.m_fg                &&
       ObjectStoreWrapper::compareListByIds<Fermentable>(this->pimpl->fermentableIds, rhs.pimpl->fermentableIds) &&
-      ObjectStoreWrapper::compareListByIds<Hop>(        this->pimpl->hopIds,         rhs.pimpl->hopIds)         &&
+      ObjectStoreWrapper::compareListByIds<Hop        >(this->pimpl->hopIds,         rhs.pimpl->hopIds)         &&
       ObjectStoreWrapper::compareListByIds<Instruction>(this->pimpl->instructionIds, rhs.pimpl->instructionIds) &&
-      ObjectStoreWrapper::compareListByIds<Misc>(       this->pimpl->miscIds,        rhs.pimpl->miscIds)        &&
-      ObjectStoreWrapper::compareListByIds<Salt>(       this->pimpl->saltIds,        rhs.pimpl->saltIds)        &&
-      ObjectStoreWrapper::compareListByIds<Water>(      this->pimpl->waterIds,       rhs.pimpl->waterIds)       &&
-      ObjectStoreWrapper::compareListByIds<Yeast>(      this->pimpl->yeastIds,       rhs.pimpl->yeastIds)
+      ObjectStoreWrapper::compareListByIds<Misc       >(this->pimpl->miscIds,        rhs.pimpl->miscIds)        &&
+      ObjectStoreWrapper::compareListByIds<Salt       >(this->pimpl->saltIds,        rhs.pimpl->saltIds)        &&
+      ObjectStoreWrapper::compareListByIds<Water      >(this->pimpl->waterIds,       rhs.pimpl->waterIds)       &&
+      ObjectStoreWrapper::compareListByIds<Yeast      >(this->pimpl->yeastIds,       rhs.pimpl->yeastIds)
    );
 }
 
@@ -585,12 +595,12 @@ Recipe::Recipe(Recipe const & other) :
    // currently store BrewNote IDs in Recipe.)
    //
    this->pimpl->copyList<Fermentable>(*this, other);
-   this->pimpl->copyList<Hop> (*this, other);
+   this->pimpl->copyList<Hop        >(*this, other);
    this->pimpl->copyList<Instruction>(*this, other);
-   this->pimpl->copyList<Misc> (*this, other);
-   this->pimpl->copyList<Salt> (*this, other);
-   this->pimpl->copyList<Water> (*this, other);
-   this->pimpl->copyList<Yeast> (*this, other);
+   this->pimpl->copyList<Misc       >(*this, other);
+   this->pimpl->copyList<Salt       >(*this, other);
+   this->pimpl->copyList<Water      >(*this, other);
+   this->pimpl->copyList<Yeast      >(*this, other);
 
    //
    // You might think that Style, Mash and Equipment could safely be shared between Recipes.   However, AFAICT, none of
@@ -931,14 +941,6 @@ PreInstruction Recipe::boilFermentablesPre(double timeRemaining) {
    str += ".";
 
    return PreInstruction(str, tr("Boil/steep fermentables"), timeRemaining);
-}
-
-bool Recipe::isFermentableSugar(Fermentable * fermy) {
-   if (fermy->type() == Fermentable::Type::Sugar && fermy->name() == "Milk Sugar (Lactose)") {
-      return false;
-   }
-
-   return true;
 }
 
 PreInstruction Recipe::addExtracts(double timeRemaining) const {
@@ -2600,7 +2602,7 @@ void Recipe::recalcOgFg() {
 //====================================Helpers===========================================
 
 double Recipe::ibuFromHop(Hop const * hop) {
-   Equipment * equip = equipment();
+   Equipment * equip = this->equipment();
    double ibus = 0.0;
    double fwhAdjust = Localization::toDouble(
       PersistentSettings::value(PersistentSettings::Names::firstWortHopAdjustment, 1.1).toString(),
@@ -2666,10 +2668,10 @@ double Recipe::ibuFromHop(Hop const * hop) {
    return ibus;
 }
 
-// this was fixed, but not with an at
-bool Recipe::isValidType(const QString & str) {
-   return RECIPE_TYPE_STRING_TO_TYPE.contains(str);
-}
+///// this was fixed, but not with an at
+///bool Recipe::isValidType(const QString & str) {
+///   return RECIPE_TYPE_STRING_TO_TYPE.contains(str);
+///}
 
 QList<QString> Recipe::getReagents(QList<Fermentable *> ferms) {
    QList<QString> reagents;

@@ -26,6 +26,8 @@
 #include "model/NamedParameterBundle.h"
 #include "PhysicalConstants.h"
 
+QString const MashStep::LocalisedName = tr("Mash Step");
+
 EnumStringMapping const MashStep::typeStringMapping {
    {MashStep::Type::Infusion   , "infusion"      },
    {MashStep::Type::Temperature, "temperature"   },

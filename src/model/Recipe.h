@@ -135,10 +135,15 @@ class Yeast;
 class Recipe : public NamedEntity {
    Q_OBJECT
 
-   // .:TODO:. Would be good to eliminate all these friend declarations, or at least to document why they are needed
+   /**
+    * \brief \c MainWindow is a friend so it can access \c Recipe::recalcAll() and \c Recipe::recalcIBU()
+    */
    friend class MainWindow;
 
 public:
+   /**
+    * \brief See comment in model/NamedEntity.h
+    */
    static QString const LocalisedName;
 
    /**
@@ -394,36 +399,36 @@ public:
     */
    Recipe * revertToPreviousVersion();
 
-   // Getters
-   Type    type()               const;
-   QString brewer()             const;
-   double  batchSize_l()        const;
-   double  boilSize_l()         const;
-   double  boilTime_min()       const;
-   double  efficiency_pct()     const;
-   QString asstBrewer()         const;
-   QString notes()              const;
-   QString tasteNotes()         const;
-   double  tasteRating()        const;
-   double  og();
-   double  fg();
+   //============================================ "GETTER" MEMBER FUNCTIONS ============================================
+   Type    type              () const;
+   QString brewer            () const;
+   double  batchSize_l       () const;
+   double  boilSize_l        () const;
+   double  boilTime_min      () const;
+   double  efficiency_pct    () const;
+   QString asstBrewer        () const;
+   QString notes             () const;
+   QString tasteNotes        () const;
+   double  tasteRating       () const;
+   double  og                () ;
+   double  fg                () ;
    int     fermentationStages() const;
-   double  primaryAge_days()    const;
-   double  primaryTemp_c()      const;
-   double  secondaryAge_days()  const;
-   double  secondaryTemp_c()    const;
-   double  tertiaryAge_days()   const;
-   double  tertiaryTemp_c()     const;
-   double  age_days()           const;
-   double  ageTemp_c()          const;
-   QDate   date()               const;
-   double  carbonation_vols()   const;
-   bool    forcedCarbonation()  const;
-   QString primingSugarName()   const;
-   double  carbonationTemp_c()  const;
-   double  primingSugarEquiv()  const;
-   double  kegPrimingFactor()   const;
-   bool    locked()             const;
+   double  primaryAge_days   () const;
+   double  primaryTemp_c     () const;
+   double  secondaryAge_days () const;
+   double  secondaryTemp_c   () const;
+   double  tertiaryAge_days  () const;
+   double  tertiaryTemp_c    () const;
+   double  age_days          () const;
+   double  ageTemp_c         () const;
+   QDate   date              () const;
+   double  carbonation_vols  () const;
+   bool    forcedCarbonation () const;
+   QString primingSugarName  () const;
+   double  carbonationTemp_c () const;
+   double  primingSugarEquiv () const;
+   double  kegPrimingFactor  () const;
+   bool    locked            () const;
 
    // Calculated getters.
    double points();
@@ -502,7 +507,6 @@ public:
    PreInstruction boilFermentablesPre(double timeRemaining);
    bool hasBoilFermentable();
    bool hasBoilExtract();
-   static bool isFermentableSugar(Fermentable *);
    bool hasAncestors() const;
    bool isMyAncestor(Recipe const & maybe) const;
    bool hasDescendants() const;
@@ -692,7 +696,7 @@ private:
 
    //void setDefaults();
    void addPreinstructions(QVector<PreInstruction> preins);
-   bool isValidType(const QString & str);
+///   bool isValidType(const QString & str);
 };
 
 /**

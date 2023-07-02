@@ -248,7 +248,7 @@ private:
                     QVariant & value);
 
 protected:
-   JsonCoding const & jsonCoding;
+   JsonCoding const & m_jsonCoding;
 
    /**
     * The underlying type of the contents of \c recordData is \c boost::json::object.  However, we need to store it as
@@ -256,12 +256,12 @@ protected:
     * extract the contained \c boost::json::object from a \c boost::json::value, you cannot go in the other direction
     * and get the containing \c boost::json::value from a \c boost::json::object).
     */
-   boost::json::value & recordData;
-   JsonRecordDefinition const & recordDefinition;
+   boost::json::value & m_recordData;
+   JsonRecordDefinition const & m_recordDefinition;
 
    // Name-value pairs containing all the field data from the JSON record that will be used to construct/populate
    // this->namedEntity
-   NamedParameterBundle namedParameterBundle;
+   NamedParameterBundle m_namedParameterBundle;
 
    //
    // If we created a new NamedEntity (ie Hop/Yeast/Recipe/etc) object to populate with data read in from an JSON file,
@@ -273,20 +273,25 @@ protected:
    // Hop/Yeast/Recipe/etc object to be destroyed when the JsonNamedEntityRecord is destroyed (typically at end of
    // document processing).
    //
-   std::shared_ptr<NamedEntity> namedEntity;
+   std::shared_ptr<NamedEntity> m_namedEntity;
 
    // This determines whether we include this record in the stats we show the user (about how many records were read in
    // or skipped from a file.  By default it's true.  Subclass constructors set it to false for types of record that
    // are entirely owned and contained by other records (eg MashSteps are just part of a Mash, so we tell the user
    // about reading in a Mash but not about reading in a MashStep).
-   bool includeInStats;
+   bool m_includeInStats;
 
    //
-   // Keep track of any child (ie contained) records
+   // Keep track of any child (ie contained) records as we're reading in FROM a JSON file.  (NB: We don't need to do
+   // this when writing out TO a JSON file as we don't have to worry about duplicate detection or construction order
+   // etc.)
    //
-   struct ChildRecord {
+   // Note that we don't use QVector here or below as it always wants to be able to copy things, which doesn't play
+   // nicely with there being a std::unique_ptr inside the ChildRecordSet struct.
+   //
+   struct ChildRecordSet {
       /**
-       * \brief Notes the attribute/field to which this child record relates.  Eg, if a recipe record has hop and
+       * \brief Notes the attribute/field to which this set of child records relates.  Eg, if a recipe record has hop and
        *        fermentable child records, then it needs to know which is which and how to store them.
        *        If it's \c nullptr then that means this is a top-level record (eg just a hop variety rather than a use
        *        of a hop in a recipe).
@@ -296,12 +301,10 @@ protected:
       /**
        * \brief The actual child record
        */
-      std::unique_ptr<JsonRecord> record;
+      std::vector< std::unique_ptr<JsonRecord> > records;
    };
 
-   // Note that we don't use QVector here as it always wants to be able to copy things, which doesn't play nicely with
-   // there being a std::unique_ptr inside the ChildRecord struct.
-   std::vector<ChildRecord> childRecords;
+   std::vector<ChildRecordSet> m_childRecordSets;
 };
 
 #endif

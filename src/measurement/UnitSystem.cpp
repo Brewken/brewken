@@ -181,7 +181,8 @@ bool Measurement::UnitSystem::operator==(UnitSystem const & other) const {
 }
 
 Measurement::Amount Measurement::UnitSystem::qstringToSI(QString qstr, Unit const & defUnit) const {
-   // This is a pretty neat feature from C++17 that makes it easier to have a function return more than one thing
+   // Structured binding declarations are a pretty neat feature from C++17 that make it easier to have a function return
+   // more than one thing.
    auto const [amt, unitName] = Measurement::Unit::splitAmountString(qstr);
 
    // Look first in this unit system. If you can't find it here, find it

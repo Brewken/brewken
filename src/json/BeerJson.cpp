@@ -557,11 +557,6 @@ namespace {
 //      JsonRecordDefinition::create< JsonNamedEntityRecord< Fermantation > >,
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // Field mappings for recipes BeerJSON records TODO
-   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//      JsonRecordDefinition::create< JsonRecipRecord >,
-
-   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for equipments BeerJSON records TODO
    //
    // Yes, all the permutations below are technically allowed in BeerJSON.  I think this is a place where simplifying
@@ -647,6 +642,27 @@ namespace {
    // Field mappings for boil BeerJSON records TODO
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //      JsonRecordDefinition::create< JsonNamedEntityRecord< Boil > >,
+
+
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Field mappings for recipes BeerJSON records TODO
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//      JsonRecordDefinition::create< JsonRecipRecord >,
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Recipe> {
+      "recipes",              // JSON recordName
+      &Recipe::typeLookup,    // Type Lookup for our corresponding model object
+      "Recipe",               // NamedEntity class name
+      JsonRecordDefinition::create< JsonNamedEntityRecord<Recipe> >,
+      {
+         // Type                                                 XPath                                     Q_PROPERTY                                Value Decoder
+         {JsonRecordDefinition::FieldType::String              , "name"                                  , PropertyNames::NamedEntity::name        },
+//         {JsonRecordDefinition::FieldType::Enum                , "type"                                  , PropertyNames::Recipe::type             , &Recipe::typeStringMapping},
+//         {JsonRecordDefinition::FieldType::String              , "author"                                , PropertyNames::Recipe::author           },
+         // TODO Finish this!
+      }
+   };
+
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for packaging BeerJSON records TODO
