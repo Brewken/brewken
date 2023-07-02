@@ -97,10 +97,16 @@ JsonXPath::JsonXPath(char const * const xPath) :
          // Don't think we need the optional boost::algorithm::token_compress_on final parameter as we never have "//"
          // in the paths.
          //
+         // Note that splitting on '/' for a "/dog/cat" string is going to give us "", "dog", "cat", so we just discard
+         // any empty string.  This is OK as there is never a case where two successive slashes are valid in an XPath,
+         // ie we never see anything along the lines of "/dog//cat".
+         //
          std::vector<std::string> jpKeys{};
          boost::algorithm::split(jpKeys, pathPart, boost::algorithm::is_any_of("/"));
          for (auto const & jpKey : jpKeys) {
-            this->m_pathNodes.push_back(jpKey);
+            if (!jpKey.empty()) {
+               this->m_pathNodes.push_back(jpKey);
+            }
          }
 
       } else {
@@ -456,7 +462,10 @@ std::string_view JsonXPath::asKey() const {
    // It's also a coding error if there is more than one path node
    Q_ASSERT(this->m_pathNodes.size() == 1);
 
-   std::string_view key{std::get<JsonKey>(this->m_pathParts[0])};
+   // We need to get the first path part (m_pathParts[0]) and then strip the beginning '/' character from it
+   // (.substr(1)) before we pass it to the string_view constructor.  (Maybe there is a slick way to skip over the '/'
+   // in the string_view constructor, but I didn't yet find it.)
+   std::string_view key{std::get<JsonKey>(this->m_pathParts[0]).substr(1)};
    return key;
 }
 

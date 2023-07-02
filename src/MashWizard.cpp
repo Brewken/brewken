@@ -124,13 +124,17 @@ void MashWizard::show()
    return;
 }
 
-double MashWizard::calcDecoctionAmount( MashStep* step, Mash* mash, double waterMass, double grainMass, double lastTemp, double boiling)
-{
-   double grainDensity = PhysicalConstants::grainDensity_kgL;
+double MashWizard::calcDecoctionAmount(MashStep * step,
+                                       Mash * mash,
+                                       double waterMass,
+                                       double grainMass,
+                                       double lastTemp,
+                                       double boiling) {
+   double const grainDensity = PhysicalConstants::grainDensity_kgL;
 
    double stepTemp  = step->stepTemp_c();
-   double equipMass = (mash->equipAdjust()) ? mash->mashTunWeight_kg() : 0;
-   double c_e       = (mash->equipAdjust()) ? mash->mashTunSpecificHeat_calGC() : 0;
+   double equipMass = (mash->equipAdjust()) ? mash->mashTunWeight_kg().value_or(0.0) : 0.0;
+   double c_e       = (mash->equipAdjust()) ? mash->mashTunSpecificHeat_calGC().value_or(0.0) : 0.0;
 
    double grHeat = grainMass * HeatCalculations::Cw_calGC;
    double waHeat = waterMass * HeatCalculations::Cgrain_calGC;
@@ -153,16 +157,15 @@ double MashWizard::calcDecoctionAmount( MashStep* step, Mash* mash, double water
 }
 
 void MashWizard::wizardry() {
-   if( recObs == nullptr || recObs->mash() == nullptr )
+   if (!this->recObs || !this->recObs->mash()) {
       return;
+   }
 
    Mash* mash = recObs->mash();
    double thickness_LKg;
    double thickNum;
    double MC, MCw; // Thermal mass of mash and water.
-   double tw, tf, t1; // Water, final, and initial temps.
-   double grainMass = 0.0, massWater = 0.0;
-   double grainDensity = PhysicalConstants::grainDensity_kgL;
+   double const grainDensity = PhysicalConstants::grainDensity_kgL;
    double absorption_LKg = PhysicalConstants::grainAbsorption_Lkg;
    double boilingPoint_c = 100.0;
    double lauterDeadspace = 0.0;
@@ -180,7 +183,7 @@ void MashWizard::wizardry() {
    // We ensured that there was at least one mash step when we displayed the thickness dialog in show().
    auto mashStep = steps.at(0);
    if (!mashStep) {
-      qCritical() << "MashWizard::wizardry(): first mash step was null.";
+      qCritical() << Q_FUNC_INFO << "First mash step was null.";
       return;
    }
 
@@ -200,7 +203,7 @@ void MashWizard::wizardry() {
    }
 
    steps = tmp;
-   grainMass = recObs->grainsInMash_kg();
+   double grainMass = recObs->grainsInMash_kg();
    if ( bGroup->checkedButton() != radioButton_noSparge ) {
       thickNum = doubleSpinBox_thickness->value();
       thickness_LKg = thickNum * volumeUnit->toCanonical(1).quantity() / weightUnit->toCanonical(1).quantity();
@@ -220,17 +223,17 @@ void MashWizard::wizardry() {
    }
 
    // Do first step
-   tf = mashStep->stepTemp_c();
-   t1 = mash->grainTemp_c();
-   massWater = thickness_LKg * grainMass;
+   double tempFinal = mashStep->stepTemp_c();
+   double tempInitial = mash->grainTemp_c();
+   double massWater = thickness_LKg * grainMass;
    MCw = HeatCalculations::Cw_calGC * massWater;
    MC = HeatCalculations::Cgrain_calGC * grainMass;
 
    // I am specifically ignoring BeerXML's request to only do this if mash->getEquipAdjust() is set.
-   tw = MC/MCw * (tf-t1) + (mash->mashTunSpecificHeat_calGC()*mash->mashTunWeight_kg())/MCw * (tf-mash->tunTemp_c()) + tf;
+   double tempWater = MC/MCw * (tempFinal-tempInitial) + (mash->mashTunSpecificHeat_calGC().value_or(0.0)*mash->mashTunWeight_kg().value_or(0.0))/MCw * (tempFinal-mash->tunTemp_c().value_or(0.0)) + tempFinal;
 
    // Can't have water above boiling.
-   if( tw > boilingPoint_c ) {
+   if( tempWater > boilingPoint_c ) {
       QMessageBox::information(this,
                                tr("Mash too thick"),
                                tr("Your mash is too thick for desired temp. at first step."));
@@ -238,13 +241,13 @@ void MashWizard::wizardry() {
    }
 
    mashStep->setAmount_l(massWater);
-   mashStep->setInfuseTemp_c(tw);
+   mashStep->setInfuseTemp_c(tempWater);
    //================End of first step=====================
 
    // Do rest of steps.
    // Add thermal mass of equipment to MC.
    // I am specifically ignoring BeerXML's request to only do this if mash->getEquipAdjust() is set.
-   MC += mash->mashTunSpecificHeat_calGC()*mash->mashTunWeight_kg();
+   MC += mash->mashTunSpecificHeat_calGC().value_or(0.0) * mash->mashTunWeight_kg().value_or(0.0);
 
    for (int i = 1; i < steps.size(); ++i) {
       mashStep = steps[i];
@@ -255,40 +258,40 @@ void MashWizard::wizardry() {
          double m_w, m_g, m_e, r;
          double c_w, c_g, c_e;
 
-         tf = mashStep->stepTemp_c();
-         t1 = steps[i-1]->stepTemp_c();
+         tempFinal = mashStep->stepTemp_c();
+         tempInitial = steps[i-1]->stepTemp_c();
 
          m_w = 0; // Total mass of water.
          for (int j = 0; j < i; ++j) {
             m_w += steps[j]->amount_l();
          }
          m_g = grainMass;
-         m_e = (mash->equipAdjust()) ? mash->mashTunWeight_kg() : 0;
+         m_e = mash->equipAdjust() ? mash->mashTunWeight_kg().value_or(0.0) : 0.0;
 
          c_w = HeatCalculations::Cw_calGC;
          c_g = HeatCalculations::Cgrain_calGC;
-         c_e = (mash->equipAdjust()) ? mash->mashTunSpecificHeat_calGC() : 0;
+         c_e = mash->equipAdjust() ? mash->mashTunSpecificHeat_calGC().value_or(0.0) : 0.0;
 
          // r is the ratio of water and grain to take out for decoction.
-         r = ((m_w*c_w + m_g*c_g + m_e*c_e)*(tf-t1)) / ((m_w*c_w + m_g*c_g)*(boilingPoint_c-tf) + (m_w*c_w + m_g*c_g)*(tf-t1));
+         r = ((m_w*c_w + m_g*c_g + m_e*c_e)*(tempFinal-tempInitial)) / ((m_w*c_w + m_g*c_g)*(boilingPoint_c-tempFinal) + (m_w*c_w + m_g*c_g)*(tempFinal-tempInitial));
          if( r < 0 || r > 1 ) {
             QMessageBox::critical(this, tr("Decoction error"), tr("Something went wrong in decoction calculation.") );
-            qCritical().nospace() << "Decoction: r=" << r;
+            qCritical().nospace() << Q_FUNC_INFO << "Decoction: r=" << r;
             return;
          }
 
          mashStep->setAmount_l( r*(m_w + m_g/grainDensity) );
       }
       else {
-         tf = mashStep->stepTemp_c();
-         t1 = steps[i-1]->stepTemp_c();
-         tw = boilingPoint_c; // Assume adding boiling water to minimize final volume.
+         tempFinal = mashStep->stepTemp_c();
+         tempInitial = steps[i-1]->stepTemp_c();
+         tempWater = boilingPoint_c; // Assume adding boiling water to minimize final volume.
          MC += massWater * HeatCalculations::Cw_calGC; // Add thermal mass of last addition.
 
-         massWater = (MC*(tf-t1))/(HeatCalculations::Cw_calGC * (tw-tf));
+         massWater = (MC*(tempFinal-tempInitial))/(HeatCalculations::Cw_calGC * (tempWater-tempFinal));
 
          mashStep->setAmount_l(massWater);
-         mashStep->setInfuseTemp_c(tw);
+         mashStep->setInfuseTemp_c(tempWater);
       }
    }
 
@@ -302,28 +305,28 @@ void MashWizard::wizardry() {
       mashStep = steps.back();
 
       if (steps.size() > 1 ) {
-         t1 = steps[steps.size()-2]->stepTemp_c();
+         tempInitial = steps[steps.size()-2]->stepTemp_c();
       } else {
-         t1 = mash->grainTemp_c();
+         tempInitial = mash->grainTemp_c();
       }
 
       double targetWortFromMash= recObs->targetTotalMashVol_l() + lauterDeadspace;
 
       massWater = (targetWortFromMash - otherMashStepTotal)*Algorithms::getWaterDensity_kgL(0);
 
-      tf = mashStep->stepTemp_c();
+      tempFinal = mashStep->stepTemp_c();
       MC += massWater * HeatCalculations::Cw_calGC; // Add thermal mass of last addition.
 
 
-      tw = (MC*(tf-t1))/massWater/HeatCalculations::Cw_calGC + tf;
+      tempWater = (MC*(tempFinal-tempInitial))/massWater/HeatCalculations::Cw_calGC + tempFinal;
 
-      if(tw > boilingPoint_c)
+      if(tempWater > boilingPoint_c)
          QMessageBox::information(this,
                                   tr("Infusion temp."),
                                   tr("In order to hit your target temp on the final step, the infusion water must be above boiling. Lower your initial infusion volume."));
 
       mashStep->setAmount_l(massWater);
-      mashStep->setInfuseTemp_c(tw);
+      mashStep->setInfuseTemp_c(tempWater);
    }
 
    // Now, do a sparge step, using just enough water that the total
@@ -337,23 +340,23 @@ void MashWizard::wizardry() {
    {
       spargeWater_l += lauterDeadspace;
       int lastMashStep = steps.size()-1;
-      tf = mash->spargeTemp_c();
+      tempFinal = mash->spargeTemp_c().value_or(0.0); // TODO We should have some better logic if spargeTemp_c is unset or 0.
       if( lastMashStep >= 0 )
-         t1 = steps[lastMashStep]->stepTemp_c() - 10.0; // You will lose about 10C from last step.
+         tempInitial = steps[lastMashStep]->stepTemp_c() - 10.0; // You will lose about 10C from last step.
       else
       {
-         qCritical() << "MashWizard::wizardry(): Should have had at least one mash step before getting to sparging.";
+         qCritical() << Q_FUNC_INFO << "Should have had at least one mash step before getting to sparging.";
          return;
       }
       MC = recObs->grainsInMash_kg() * HeatCalculations::Cgrain_calGC
            + absorption_LKg * recObs->grainsInMash_kg() * HeatCalculations::Cw_calGC
-           + mash->mashTunWeight_kg() * mash->mashTunSpecificHeat_calGC();
+           + mash->mashTunWeight_kg().value_or(0.0) * mash->mashTunSpecificHeat_calGC().value_or(0.0);
 
       massWater = spargeWater_l;
 
-      tw = (MC/(massWater*HeatCalculations::Cw_calGC))*(tf-t1) + tf;
+      tempWater = (MC/(massWater*HeatCalculations::Cw_calGC))*(tempFinal-tempInitial) + tempFinal;
 
-      if(tw > boilingPoint_c)
+      if(tempWater > boilingPoint_c)
          QMessageBox::information(this,
                                   tr("Sparge temp."),
                                   tr("In order to hit your sparge temp, the sparge water must be above boiling. Lower your sparge temp, or allow for more sparge water."));
@@ -365,9 +368,9 @@ void MashWizard::wizardry() {
             auto newMashStep = std::make_shared<MashStep>(tr("Batch Sparge %1").arg(i+1));
             newMashStep->setType(MashStep::Type::BatchSparge);
             newMashStep->setAmount_l(volPerBatch);
-            newMashStep->setInfuseTemp_c(tw);
-            newMashStep->setEndTemp_c(tw);
-            newMashStep->setStepTemp_c(tf);
+            newMashStep->setInfuseTemp_c(tempWater);
+            newMashStep->setEndTemp_c(tempWater);
+            newMashStep->setStepTemp_c(tempFinal);
             newMashStep->setStepTime_min(15);
             newMashStep->setMashId(mash->key());
             ObjectStoreWrapper::insert(newMashStep);
@@ -386,9 +389,9 @@ void MashWizard::wizardry() {
          auto newMashStep = std::make_shared<MashStep>(tr("Fly Sparge"));
          newMashStep->setType(MashStep::Type::FlySparge);
          newMashStep->setAmount_l(spargeWater_l);
-         newMashStep->setInfuseTemp_c(tw);
-         newMashStep->setEndTemp_c(tw);
-         newMashStep->setStepTemp_c(tf);
+         newMashStep->setInfuseTemp_c(tempWater);
+         newMashStep->setEndTemp_c(tempWater);
+         newMashStep->setStepTemp_c(tempFinal);
          newMashStep->setStepTime_min(15);
          newMashStep->setMashId(mash->key());
          ObjectStoreWrapper::insert(newMashStep);

@@ -560,6 +560,46 @@ protected:
       return true;
    }
 
+   /**
+    * \brief In certain circumstances, we need to be able to convert a `QList<Hop *>` or `QList<Fermentable *>` etc to
+    *        QList<NamedEntity *>.  This function does that work.
+    */
+   template<typename T>
+   static QList<NamedEntity *> downcastRawList(QList<T *> const & inputList) {
+      QList<NamedEntity *> outputList;
+      outputList.reserve(inputList.size());
+      for (T * ii : inputList) {
+         outputList.append(static_cast<NamedEntity *>(ii));
+      }
+      return outputList;
+   }
+
+   /**
+    * \brief As above but for converting `QList<shared_ptr<Hop>>` or `QList<shared_ptr<Fermentable>>` etc to
+    *        QList<shared_ptr<NamedEntity>>.  (Note we are assuming that the returned list of pointers is used only relatively
+    *        briefly by the caller, so giving back raw pointers is unproblematic.)
+    */
+   template<typename T>
+   static QList< std::shared_ptr<NamedEntity> > downcastList(QList< std::shared_ptr<T> > const & inputList) {
+      QList< std::shared_ptr<NamedEntity> > outputList;
+      outputList.reserve(inputList.size());
+      for (std::shared_ptr<T> ii : inputList) {
+         outputList.append(std::static_pointer_cast<NamedEntity>(ii));
+      }
+      return outputList;
+   }
+
+   template<typename T>
+   static QList< std::shared_ptr<T> > upcastList(QList< std::shared_ptr<NamedEntity> > const & inputList) {
+      QList< std::shared_ptr<T> > outputList;
+      outputList.reserve(inputList.size());
+      for (std::shared_ptr<NamedEntity> ii : inputList) {
+         outputList.append(std::static_pointer_cast<T>(ii));
+      }
+      return outputList;
+   }
+
+
 private:
   QString m_folder;
   QString m_name;
@@ -632,5 +672,8 @@ S & operator<<(S & stream, NE const * namedEntity) {
    }
    return stream;
 }
+
+Q_DECLARE_METATYPE(NamedEntity *)
+Q_DECLARE_METATYPE(std::shared_ptr<NamedEntity>)
 
 #endif

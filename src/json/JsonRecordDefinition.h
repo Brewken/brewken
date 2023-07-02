@@ -266,7 +266,8 @@ public:
                      EnumStringMapping                  const *,  // FieldType::Enum
                      JsonMeasureableUnitsMapping        const *,  // FieldType::MeasurementWithUnits
                      ListOfJsonMeasureableUnitsMappings const *,  // FieldType::OneOfMeasurementsWithUnits
-                     JsonSingleUnitSpecifier            const *>; // FieldType::SingleUnitValue
+                     JsonSingleUnitSpecifier            const *,  // FieldType::SingleUnitValue
+                     JsonRecordDefinition               const *>; // FieldType::Array
       ValueDecoder valueDecoder;
       /**
        * \brief Trivial constructor allows us to default \c valueDecoder and saves us having to put & before every

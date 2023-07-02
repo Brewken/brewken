@@ -201,23 +201,27 @@ void MashStep::setEndAcidity_pH         (std::optional<double> const   val) { th
 
 
 bool MashStep::isInfusion() const {
-   return ( m_type == MashStep::Type::Infusion    ||
-            m_type == MashStep::Type::BatchSparge ||
-            m_type == MashStep::Type::FlySparge );
+   return (m_type == MashStep::Type::Infusion    ||
+           m_type == MashStep::Type::BatchSparge ||
+           m_type == MashStep::Type::FlySparge);
 }
 
 bool MashStep::isSparge() const {
-   return ( m_type == MashStep::Type::BatchSparge ||
-            m_type == MashStep::Type::FlySparge   ||
-            name() == "Final Batch Sparge" );
+   // NOTE: We have a bit of a hack here checking the name.  It's because BeerXML doesn't natively support sparge as a
+   //       mash step type.  So this is a heuristic to detect what was "really meant" in a recipe that originated in
+   //       BeerXML.  (Once we have persuaded the entire brewing world to switch to BeerJSON, and to update all existing
+   //       recipes, this will no longer be necessary.  So it's only temporary. :D)
+   return (m_type == MashStep::Type::BatchSparge ||
+           m_type == MashStep::Type::FlySparge   ||
+           name() == "Final Batch Sparge");
 }
 
 bool MashStep::isTemperature() const {
-   return ( m_type == MashStep::Type::Temperature );
+   return (m_type == MashStep::Type::Temperature);
 }
 
 bool MashStep::isDecoction() const {
-   return ( m_type == MashStep::Type::Decoction );
+   return (m_type == MashStep::Type::Decoction);
 }
 
 Recipe * MashStep::getOwningRecipe() {

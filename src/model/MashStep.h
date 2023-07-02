@@ -63,8 +63,6 @@ class MashStep : public NamedEntity {
    Q_OBJECT
 
 public:
-//   static QString const LocalisedName;
-
    //! \brief The type of step.
    enum class Type {Infusion   ,
                     Temperature,
@@ -128,36 +126,34 @@ public:
     *        This saves us a bit of hassle in adding logic to check whether the field should be set and what default
     *        value to use if it's not etc.
     */
-   Q_PROPERTY(double amount_l READ amount_l WRITE setAmount_l          )
-
+   Q_PROPERTY(double                amount_l               READ amount_l              WRITE setAmount_l                         )
    //! \brief The infusion amount in liters - NB: Retained only for BeerXML; DO NOT USE.
-   Q_PROPERTY(double infuseAmount_l READ infuseAmount_l /*WRITE setInfuseAmount_l*/ STORED false)
+   Q_PROPERTY(double                infuseAmount_l         READ infuseAmount_l       /*WRITE setInfuseAmount_l*/    STORED false)
    //! \brief The decoction amount in liters - NB: Retained only for BeerXML; DO NOT USE.
-   Q_PROPERTY(double decoctionAmount_l READ decoctionAmount_l /*WRITE setDecoctionAmount_l*/ STORED false)
+   Q_PROPERTY(double                decoctionAmount_l      READ decoctionAmount_l    /*WRITE setDecoctionAmount_l*/ STORED false)
    //! \brief The target temperature of this step in C.
-   Q_PROPERTY(double stepTemp_c READ stepTemp_c WRITE setStepTemp_c                      )
+   Q_PROPERTY(double                stepTemp_c             READ stepTemp_c             WRITE setStepTemp_c                      )
    //! \brief The time of the step in min.
-   Q_PROPERTY(double stepTime_min READ stepTime_min WRITE setStepTime_min                )
+   Q_PROPERTY(double                stepTime_min           READ stepTime_min           WRITE setStepTime_min                    )
    //! \brief The time it takes to ramp the temp to the target temp in min.  ⮜⮜⮜ Optional in BeerXML & BeerJSON ⮞⮞⮞
-   Q_PROPERTY(std::optional<double> rampTime_min READ rampTime_min WRITE setRampTime_min                )
+   Q_PROPERTY(std::optional<double> rampTime_min           READ rampTime_min           WRITE setRampTime_min                    )
    //! \brief The target ending temp of the step in C.                       ⮜⮜⮜ Optional in BeerXML & BeerJSON ⮞⮞⮞
-   Q_PROPERTY(std::optional<double> endTemp_c READ endTemp_c WRITE setEndTemp_c                         )
+   Q_PROPERTY(std::optional<double> endTemp_c              READ endTemp_c              WRITE setEndTemp_c                       )
    //! \brief The infusion temp in C.                                        ⮜⮜⮜ Not part of BeerXML; optional in BeerJSON ⮞⮞⮞
-   Q_PROPERTY(std::optional<double> infuseTemp_c READ infuseTemp_c WRITE setInfuseTemp_c                )
+   Q_PROPERTY(std::optional<double> infuseTemp_c           READ infuseTemp_c           WRITE setInfuseTemp_c                    )
    //! \brief The step number in a sequence of other steps.  Step numbers start from 1.
-   Q_PROPERTY(int    stepNumber READ stepNumber WRITE setStepNumber /*NOTIFY changed*/ STORED false )
+   Q_PROPERTY(int                   stepNumber             READ stepNumber             WRITE setStepNumber          STORED false)
    //! \brief The Mash to which this MashStep belongs
-   Q_PROPERTY(int    mashId READ getMashId WRITE setMashId )
+   Q_PROPERTY(int                   mashId                 READ getMashId              WRITE setMashId                          )
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   Q_PROPERTY(QString               description            READ description            WRITE setDescription           )
+   Q_PROPERTY(QString               description            READ description            WRITE setDescription                     )
    /**
     * \brief Mash thickness, aka liquor-to-grist ratio, is the volume of strike water (liters) divided by the mass of
     *        grist (kilograms).  Its practical range is 2 to 4 and most often is around 2.5 to 3.2.
     */
-   Q_PROPERTY(std::optional<double> liquorToGristRatio_lKg READ liquorToGristRatio_lKg WRITE setLiquorToGristRatio_lKg)
-   Q_PROPERTY(std::optional<double> startAcidity_pH        READ startAcidity_pH        WRITE setStartAcidity_pH       )
-   Q_PROPERTY(std::optional<double>   endAcidity_pH        READ   endAcidity_pH        WRITE   setEndAcidity_pH       )
-
+   Q_PROPERTY(std::optional<double> liquorToGristRatio_lKg READ liquorToGristRatio_lKg WRITE setLiquorToGristRatio_lKg          )
+   Q_PROPERTY(std::optional<double> startAcidity_pH        READ startAcidity_pH        WRITE setStartAcidity_pH                 )
+   Q_PROPERTY(std::optional<double>   endAcidity_pH        READ   endAcidity_pH        WRITE   setEndAcidity_pH                 )
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    Type type() const;
@@ -222,7 +218,6 @@ private:
    std::optional<double> m_liquorToGristRatio_lKg;
    std::optional<double> m_startAcidity_pH       ;
    std::optional<double> m_endAcidity_pH         ;
-
 };
 
 #endif

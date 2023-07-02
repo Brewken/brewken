@@ -134,6 +134,12 @@ public:
    [[nodiscard]] virtual ProcessingResult normaliseAndStoreInDb(std::shared_ptr<NamedEntity> containingEntity,
                                                                 QTextStream & userMessage,
                                                                 ImportRecordCount & stats);
+
+   static void listToJson(QList< std::shared_ptr<NamedEntity> > const & objectsToWrite,
+                          boost::json::array & outputArray,
+                          JsonCoding const & coding,
+                          JsonRecordDefinition const & recordDefinition);
+
    /**
     * \brief Convert a \c NamedEntity to JSON
     * \param namedEntityToExport The object that we want to convert to JSON

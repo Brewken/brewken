@@ -93,24 +93,24 @@ JsonRecordDefinition const & JsonCoding::getRoot() const {
    return this->getJsonRecordDefinitionByNamedEntity("");
 }
 
-JsonRecordDefinition const & JsonCoding::getJsonRecordDefinitionByName(QString const & recordName) const {
-///   qDebug() <<
-///      Q_FUNC_INFO << "Searching for" << recordName << "in" << this->pimpl->jsonRecordDefinitions.size() <<
-///      "record definitions";
-   auto result = std::find_if(
-      this->pimpl->jsonRecordDefinitions.cbegin(),
-      this->pimpl->jsonRecordDefinitions.cend(),
-      [recordName](JsonRecordDefinition const & recordDefn){return recordDefn.recordName == recordName;}
-   );
-   // It's a coding error if we didn't find the requested element (because we should only ever look for elements we know
-   // about!)
-   if (result == this->pimpl->jsonRecordDefinitions.end()) {
-      qCritical() << Q_FUNC_INFO << "Unable to find record definition for" << recordName;
-      Q_ASSERT(false);
-      throw std::invalid_argument{"Invalid record definition"};
-   }
-   return *result;
-}
+///JsonRecordDefinition const & JsonCoding::getJsonRecordDefinitionByName(QString const & recordName) const {
+//////   qDebug() <<
+//////      Q_FUNC_INFO << "Searching for" << recordName << "in" << this->pimpl->jsonRecordDefinitions.size() <<
+//////      "record definitions";
+///   auto result = std::find_if(
+///      this->pimpl->jsonRecordDefinitions.cbegin(),
+///      this->pimpl->jsonRecordDefinitions.cend(),
+///      [recordName](JsonRecordDefinition const & recordDefn){return recordDefn.recordName == recordName;}
+///   );
+///   // It's a coding error if we didn't find the requested element (because we should only ever look for elements we know
+///   // about!)
+///   if (result == this->pimpl->jsonRecordDefinitions.end()) {
+///      qCritical() << Q_FUNC_INFO << "Unable to find record definition for" << recordName;
+///      Q_ASSERT(false);
+///      throw std::invalid_argument{"Invalid record definition"};
+///   }
+///   return *result;
+///}
 
 JsonRecordDefinition const & JsonCoding::getJsonRecordDefinitionByNamedEntity(QString const & namedEntityClassName) const {
 ///   qDebug() <<

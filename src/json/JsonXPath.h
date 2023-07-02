@@ -154,6 +154,10 @@ public:
     *        Collectively, we call these "path nodes" (see \c PathNode below).
     */
    using JsonKey = std::string;
+   using PathPart = std::variant<JsonPointer, NamedArrayItemId>;
+   // Note that, in JsonXPath::moveObjectPointerToLeaf it is very helpful to have a null state for this variant.  We do
+   // not have the same requirement for PathPart.
+   using PathNode = std::variant<std::monostate, JsonKey, NamedArrayItemId>;
 
 private:
    // NOTE: We don't make any of our member variables const as we want to store \c JsonXPath objects inside (structs
@@ -171,15 +175,7 @@ private:
     * \brief This is only used for logging (see operator<< below)
     */
    char const * m_rawXPath;
-
-   using PathPart = std::variant<JsonPointer, NamedArrayItemId>;
-
    std::vector<PathPart> m_pathParts;
-
-   // Note that, in JsonXPath::moveObjectPointerToLeaf it is very helpful to have a null state for this variant.  We do
-   // not have the same requirement for PathPart.
-   using PathNode = std::variant<std::monostate, JsonKey, NamedArrayItemId>;
-
    std::vector<PathNode> m_pathNodes;
 };
 
@@ -195,6 +191,26 @@ S & operator<<(S & stream, JsonXPath const & jsonXPath) {
 template<class S>
 S & operator<<(S & stream, JsonXPath::NamedArrayItemId const & namedArrayItemId) {
    stream << "[" << namedArrayItemId.key.c_str() << "=\"" << namedArrayItemId.value.c_str() << "\"]";
+   return stream;
+}
+template<class S>
+S & operator<<(S & stream, JsonXPath::PathPart const & pathPart) {
+   if (std::holds_alternative<JsonXPath::JsonPointer>(pathPart)) {
+      stream << std::get<JsonXPath::JsonPointer>(pathPart).c_str();
+   } else {
+      stream << std::get<JsonXPath::NamedArrayItemId>(pathPart);
+   }
+   return stream;
+}
+template<class S>
+S & operator<<(S & stream, JsonXPath::PathNode const & pathNode) {
+   if (std::holds_alternative<std::monostate>(pathNode)) {
+      stream << "null";
+   } else if (std::holds_alternative<JsonXPath::JsonKey>(pathNode)) {
+      stream << std::get<JsonXPath::JsonKey>(pathNode).c_str();
+   } else {
+      stream << std::get<JsonXPath::NamedArrayItemId>(pathNode);
+   }
    return stream;
 }
 //! @}

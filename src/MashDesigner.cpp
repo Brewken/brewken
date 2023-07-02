@@ -129,7 +129,8 @@ bool MashDesigner::nextStep(int step) {
 
       if (!this->prevStep) {
          // If the last step is null, we need to add the influence of the tun.
-         this->MC += this->mash->mashTunSpecificHeat_calGC() * this->mash->mashTunWeight_kg();
+         this->MC += this->mash->mashTunSpecificHeat_calGC().value_or(0.0) *
+                     this->mash->mashTunWeight_kg().value_or(0.0);
       }
    }
 
@@ -248,14 +249,14 @@ double MashDesigner::volFromTemp_l(double temp_c) {
    double tf = stepTemp_c();
    // Initial temp is the last step's temp if the last step exists, otherwise the grain temp.
    double t1 = (!this->prevStep) ? mash->grainTemp_c() : this->prevStep->stepTemp_c();
-   double mt = mash->mashTunSpecificHeat_calGC();
-   double ct = mash->mashTunWeight_kg();
+   double mt = mash->mashTunSpecificHeat_calGC().value_or(0.0);
+   double ct = mash->mashTunWeight_kg().value_or(0.0);
 
    double mw = 1/(HeatCalculations::Cw_calGC * (tw - tf)) *
-      (MC * (tf - t1) + ((!this->prevStep) ? mt * ct * (tf - this->mash->tunTemp_c()) : 0));
+      (MC * (tf - t1) + ((!this->prevStep) ? mt * ct * (tf - this->mash->tunTemp_c().value_or(0.0)) : 0));
 
    // Sanity check for unlikely edge cases
-   mw = std::max(0., mw);
+   mw = std::max(0.0, mw);
 
    // NOTE: This needs to be changed. Assumes 1L of water is 1 kg.
    return mw;
@@ -289,15 +290,15 @@ double MashDesigner::tempFromVolume_c(double vol_l) {
    if (isSparge()) {
       t1 = (!this->prevStep) ? this->mash->grainTemp_c() : this->prevStep->stepTemp_c() - 10;
    }
-   double mt = this->mash->mashTunSpecificHeat_calGC();
-   double ct = this->mash->mashTunWeight_kg();
+   double const mt = this->mash->mashTunSpecificHeat_calGC().value_or(0.0);
+   double const ct = this->mash->mashTunWeight_kg().value_or(0.0);
 
    double batchMC = grain_kg * HeatCalculations::Cgrain_calGC
                     + absorption_LKg * grain_kg * HeatCalculations::Cw_calGC
-                    + this->mash->mashTunWeight_kg() * this->mash->mashTunSpecificHeat_calGC();
+                    + this->mash->mashTunWeight_kg().value_or(0.0) * this->mash->mashTunSpecificHeat_calGC().value_or(0.0);
 
    double tw = 1 / (mw * cw) * (
-      (this->isSparge() ? batchMC : MC) * (tf - t1) + (!this->prevStep ? mt * ct * (tf - this->mash->tunTemp_c()) : 0)
+      (this->isSparge() ? batchMC : MC) * (tf - t1) + (!this->prevStep ? mt * ct * (tf - this->mash->tunTemp_c().value_or(0.0)) : 0.0)
    ) + tf;
 
    // Sanity check this value

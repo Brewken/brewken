@@ -72,12 +72,12 @@ public:
     */
    JsonRecordDefinition const & getRoot() const;
 
-   /**
-    * \brief For a given record name (eg "hops", "yeasts", etc) retrieve the corresponding \c JsonRecordDefinition
-    * \param recordName must be that of one of the list of \c JsonRecordDefinition object supplied when we were
-    *                   constructed
-    */
-   JsonRecordDefinition const & getJsonRecordDefinitionByName(QString const & recordName) const;
+///   /**
+///    * \brief For a given record name (eg "hops", "yeasts", etc) retrieve the corresponding \c JsonRecordDefinition
+///    * \param recordName must be that of one of the list of \c JsonRecordDefinition object supplied when we were
+///    *                   constructed
+///    */
+///   JsonRecordDefinition const & getJsonRecordDefinitionByName(QString const & recordName) const;
 
    /**
     * \brief For a given named entity class name (eg "Hop", "Yeast", etc) retrieve the corresponding

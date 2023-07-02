@@ -89,7 +89,6 @@ TypeLookup const Mash::typeLookup {
    {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::equipAdjust          , Mash::m_equipAdjust          ,           NonPhysicalQuantity::Bool                ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::grainTemp_c          , Mash::m_grainTemp_c          , Measurement::PhysicalQuantity::Temperature         ),
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::mashSteps            , Mash::m_mashSteps            ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::notes                , Mash::m_notes                ,           NonPhysicalQuantity::String              ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::ph                   , Mash::m_ph                   , Measurement::PhysicalQuantity::Acidity             ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::spargeTemp_c         , Mash::m_spargeTemp_c         , Measurement::PhysicalQuantity::Temperature         ),
@@ -98,6 +97,9 @@ TypeLookup const Mash::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::mashTunSpecificHeat_calGC, Mash::m_mashTunSpecificHeat_calGC, Measurement::PhysicalQuantity::SpecificHeatCapacity),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::tunTemp_c            , Mash::m_tunTemp_c            , Measurement::PhysicalQuantity::Temperature         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::mashTunWeight_kg         , Mash::m_mashTunWeight_kg         , Measurement::PhysicalQuantity::Mass                ),
+
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Mash::mashSteps        , Mash, mashSteps         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Mash::mashStepsDowncast, Mash, mashStepsDowncast ),
    },
    // Parent class lookup
    &NamedEntity::typeLookup
@@ -197,38 +199,15 @@ void Mash::setKey(int key) {
    return;
 }
 
-
-void Mash::setGrainTemp_c(double var) {
-   this->setAndNotify(PropertyNames::Mash::grainTemp_c, this->m_grainTemp_c, var);
-}
-
-void Mash::setNotes(QString const & var) {
-   this->setAndNotify(PropertyNames::Mash::notes, this->m_notes, var);
-}
-
-void Mash::setTunTemp_c(double var) {
-   this->setAndNotify(PropertyNames::Mash::tunTemp_c, this->m_tunTemp_c, var);
-}
-
-void Mash::setSpargeTemp_c(double var) {
-   this->setAndNotify(PropertyNames::Mash::spargeTemp_c, this->m_spargeTemp_c, var);
-}
-
-void Mash::setEquipAdjust(bool var) {
-   this->setAndNotify(PropertyNames::Mash::equipAdjust, this->m_equipAdjust, var);
-}
-
-void Mash::setPh(double var) {
-   this->setAndNotify(PropertyNames::Mash::ph, this->m_ph, this->enforceMinAndMax(var, "pH", 0.0, 14.0, 7.0));
-}
-
-void Mash::setTunWeight_kg(double var) {
-   this->setAndNotify(PropertyNames::Mash::mashTunWeight_kg, this->m_mashTunWeight_kg, this->enforceMin(var, "tun weight"));
-}
-
-void Mash::setMashTunSpecificHeat_calGC(double var) {
-   this->setAndNotify(PropertyNames::Mash::mashTunSpecificHeat_calGC, this->m_mashTunSpecificHeat_calGC, this->enforceMin(var, "specific heat"));
-}
+//============================================= "SETTER" MEMBER FUNCTIONS ==============================================
+void Mash::setGrainTemp_c              (double                const   val) { this->setAndNotify(PropertyNames::Mash::grainTemp_c              , this->m_grainTemp_c              , val                                              ); return; }
+void Mash::setNotes                    (QString               const & val) { this->setAndNotify(PropertyNames::Mash::notes                    , this->m_notes                    , val                                              ); return; }
+void Mash::setTunTemp_c                (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Mash::tunTemp_c                , this->m_tunTemp_c                , val                                              ); return; }
+void Mash::setSpargeTemp_c             (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Mash::spargeTemp_c             , this->m_spargeTemp_c             , val                                              ); return; }
+void Mash::setPh                       (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Mash::ph                       , this->m_ph                       , this->enforceMinAndMax(val, "pH", 0.0, 14.0, 7.0)); return; }
+void Mash::setTunWeight_kg             (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Mash::mashTunWeight_kg         , this->m_mashTunWeight_kg         , this->enforceMin(val, "tun weight")              ); return; }
+void Mash::setMashTunSpecificHeat_calGC(std::optional<double> const   val) { this->setAndNotify(PropertyNames::Mash::mashTunSpecificHeat_calGC, this->m_mashTunSpecificHeat_calGC, this->enforceMin(val, "specific heat")           ); return; }
+void Mash::setEquipAdjust              (bool                  const   val) { this->setAndNotify(PropertyNames::Mash::equipAdjust              , this->m_equipAdjust              , val                                              ); return; }
 
 void Mash::swapMashSteps(MashStep & ms1, MashStep & ms2) {
    // It's a coding error if either of the steps does not belong to this mash
@@ -278,22 +257,15 @@ void Mash::removeAllMashSteps() {
    return;
 }
 
-//============================="GET" METHODS====================================
-QString Mash::notes() const { return m_notes; }
-
-double Mash::grainTemp_c() const { return m_grainTemp_c; }
-
-double Mash::tunTemp_c() const { return m_tunTemp_c; }
-
-double Mash::spargeTemp_c() const { return m_spargeTemp_c; }
-
-double Mash::ph() const { return m_ph; }
-
-double Mash::mashTunWeight_kg() const { return m_mashTunWeight_kg; }
-
-double Mash::mashTunSpecificHeat_calGC() const { return m_mashTunSpecificHeat_calGC; }
-
-bool Mash::equipAdjust() const { return m_equipAdjust; }
+//============================================= "GETTER" MEMBER FUNCTIONS ==============================================
+double                Mash::grainTemp_c              () const { return m_grainTemp_c              ; }
+QString               Mash::notes                    () const { return m_notes                    ; }
+std::optional<double> Mash::tunTemp_c                () const { return m_tunTemp_c                ; }
+std::optional<double> Mash::spargeTemp_c             () const { return m_spargeTemp_c             ; }
+std::optional<double> Mash::ph                       () const { return m_ph                       ; }
+std::optional<double> Mash::mashTunWeight_kg         () const { return m_mashTunWeight_kg         ; }
+std::optional<double> Mash::mashTunSpecificHeat_calGC() const { return m_mashTunSpecificHeat_calGC; }
+bool                  Mash::equipAdjust              () const { return m_equipAdjust              ; }
 
 // === other methods ===
 double Mash::totalMashWater_l() {
@@ -349,7 +321,7 @@ bool Mash::hasSparge() const {
    return false;
 }
 
-QList< std::shared_ptr<MashStep> > Mash::mashSteps() const {
+QList<std::shared_ptr<MashStep>> Mash::mashSteps() const {
    //
    // The Mash owns its MashSteps, but, for the moment at least, it's the MashStep that knows which Mash it's in
    // (and in what order) rather than the Mash which knows which MashSteps it has, so we have to ask.  The only
@@ -378,6 +350,18 @@ QList< std::shared_ptr<MashStep> > Mash::mashSteps() const {
    }
 
    return mashSteps;
+}
+
+QList<std::shared_ptr<NamedEntity>> Mash::mashStepsDowncast() const {
+   return NamedEntity::downcastList(this->mashSteps());
+}
+
+void Mash::setMashStepsDowncast(QList<std::shared_ptr<NamedEntity>> const & val) {
+   QList<std::shared_ptr<MashStep>> steps = NamedEntity::upcastList<MashStep>(val);
+   for (auto step : steps) {
+      this->addMashStep(step);
+   }
+   return;
 }
 
 void Mash::acceptMashStepChange([[maybe_unused]] QMetaProperty prop,
