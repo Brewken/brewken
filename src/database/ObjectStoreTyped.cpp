@@ -581,11 +581,6 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Recipe
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   EnumStringMapping const RECIPE_STEP_TYPE_ENUM {
-      {Recipe::Type::Extract    , "Extract"     },
-      {Recipe::Type::PartialMash, "Partial Mash"},
-      {Recipe::Type::AllGrain   , "All Grain"   },
-   };
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<Recipe> {
       "recipe",
       {
@@ -624,7 +619,7 @@ namespace {
          {ObjectStore::FieldType::Double, "taste_rating"       , PropertyNames::Recipe::tasteRating       },
          {ObjectStore::FieldType::Double, "tertiary_age"       , PropertyNames::Recipe::tertiaryAge_days  },
          {ObjectStore::FieldType::Double, "tertiary_temp"      , PropertyNames::Recipe::tertiaryTemp_c    },
-         {ObjectStore::FieldType::Enum  , "type"               , PropertyNames::Recipe::type              , &RECIPE_STEP_TYPE_ENUM},
+         {ObjectStore::FieldType::Enum  , "type"               , PropertyNames::Recipe::type              , &Recipe::typeStringMapping},
          {ObjectStore::FieldType::Int   , "ancestor_id"        , PropertyNames::Recipe::ancestorId        , nullptr,                &PRIMARY_TABLE<Recipe>},
          {ObjectStore::FieldType::Bool  , "locked"             , PropertyNames::Recipe::locked            },
       }

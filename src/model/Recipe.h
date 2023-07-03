@@ -165,14 +165,40 @@ public:
    };
 
    //! \brief The type of recipe
-   enum class Type { Extract, PartialMash, AllGrain };
+   enum class Type {
+      Extract    ,
+      PartialMash,
+      AllGrain   ,
+      // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+      Cider      ,
+      Kombucha   ,
+      Soda       ,
+      Other      ,
+      Mead       ,
+      Wine       ,
+   };
    // This allows us to store the above enum class in a QVariant
    Q_ENUM(Type)
+
+   /*!
+    * \brief Mapping between \c Recipe::Type and string values suitable for serialisation in DB, BeerJSON, etc (but
+    *        \b not BeerXML)
+    *
+    *        This can also be used to obtain the number of values of \c Type, albeit at run-time rather than
+    *        compile-time.  (One day, C++ will have reflection and we won't need to do things this way.)
+    */
+   static EnumStringMapping const typeStringMapping;
+
+   /*!
+    * \brief Localised names of \c Recipe::Type values suitable for displaying to the end user
+    */
+   static EnumStringMapping const typeDisplayNames;
+
 
    //=============================================== REGULAR PROPERTIES ================================================
    //! \brief The \b Type
    Q_PROPERTY(Type    type               READ type               WRITE setType             )
-   //! \brief The brewer.
+   //! \brief The brewer.  This becomes "author" in BeerJSON
    Q_PROPERTY(QString brewer             READ brewer             WRITE setBrewer           )
    //! \brief The batch size in liters.
    Q_PROPERTY(double  batchSize_l        READ batchSize_l        WRITE setBatchSize_l      )
@@ -182,7 +208,7 @@ public:
    Q_PROPERTY(double  boilTime_min       READ boilTime_min       WRITE setBoilTime_min     )
    //! \brief The overall efficiency in percent.
    Q_PROPERTY(double  efficiency_pct     READ efficiency_pct     WRITE setEfficiency_pct   )
-   //! \brief The assistant brewer.
+   //! \brief The assistant brewer.  This becomes "coauthor" in BeerJSON
    Q_PROPERTY(QString asstBrewer         READ asstBrewer         WRITE setAsstBrewer       )
    //! \brief The notes.
    Q_PROPERTY(QString notes              READ notes              WRITE setNotes            )
@@ -212,7 +238,11 @@ public:
    Q_PROPERTY(double  age_days           READ age_days           WRITE setAge_days         )
    //! \brief The temp in C as beer is aging after bottling.
    Q_PROPERTY(double  ageTemp_c          READ ageTemp_c          WRITE setAgeTemp_c        )
-   //! \brief The date the recipe was created or brewed. I'm not sure yet.
+   /**
+    * \brief In BeerXML, a recipe has a date which is supposed to be when it was brewed.  This is slightly meaningless
+    *        unless you take it to mean "first brewed".  We then take that to be the "created" date in BeerJSON.
+    *        ⮜⮜⮜ TODO In both BeerXML and BeerJSON, this is an optional field ⮞⮞⮞
+    */
    Q_PROPERTY(QDate   date               READ date               WRITE setDate             )
    //! \brief The carbonation in volumes of CO2 at standard temperature and pressure (STP).
    Q_PROPERTY(double  carbonation_vols   READ carbonation_vols   WRITE setCarbonation_vols )

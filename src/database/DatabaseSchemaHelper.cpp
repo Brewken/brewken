@@ -704,7 +704,7 @@ namespace {
          {QString("ALTER TABLE equipment ADD COLUMN fermenter_notes                %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE equipment ADD COLUMN aging_vessel_notes             %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE equipment ADD COLUMN packaging_vessel_notes         %1").arg(db.getDbNativeTypeName<QString>())},
-         // We only need to update the old Style type mapping.  The new ones should "just work".
+         // We only need to update the old MashStep type mapping.  The new ones should "just work".
          {QString("     UPDATE mashstep SET mstype = 'infusion'       WHERE mstype = 'Infusion'   ")},
          {QString("     UPDATE mashstep SET mstype = 'temperature'    WHERE mstype = 'Temperature'")},
          {QString("     UPDATE mashstep SET mstype = 'decoction'      WHERE mstype = 'Decoction'  ")},
@@ -720,6 +720,10 @@ namespace {
          {QString("ALTER TABLE mashstep ADD COLUMN liquor_to_grist_ratio_lkg %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE mashstep ADD COLUMN start_acidity_ph          %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE mashstep ADD COLUMN end_acidity_ph            %1").arg(db.getDbNativeTypeName<double >())},
+         // We only need to update the old Recipe type mapping.  The new ones should "just work".
+         {QString("     UPDATE recipe SET type = 'extract'      WHERE type = 'Extract'     ")},
+         {QString("     UPDATE recipe SET type = 'partial mash' WHERE type = 'Partial Mash'")},
+         {QString("     UPDATE recipe SET type = 'all grain'    WHERE type = 'All Grain'   ")},
 
 
 

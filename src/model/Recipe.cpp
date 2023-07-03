@@ -337,6 +337,35 @@ template<> QVector<int> & Recipe::impl::accessIds<Yeast>()       { return this->
 
 QString const Recipe::LocalisedName = tr("Recipe");
 
+// Note that Recipe::typeStringMapping and Recipe::FormMapping are as defined by BeerJSON, but we also use them for the DB and
+// for the UI.  We can't use them for BeerXML as it only supports subsets of these types.
+EnumStringMapping const Recipe::typeStringMapping {
+   {Recipe::Type::Extract    , "extract"     },
+   {Recipe::Type::PartialMash, "partial mash"},
+   {Recipe::Type::AllGrain   , "all grain"   },
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   {Recipe::Type::Cider      , "cider"       },
+   {Recipe::Type::Kombucha   , "kombucha"    },
+   {Recipe::Type::Soda       , "soda"        },
+   {Recipe::Type::Other      , "other"       },
+   {Recipe::Type::Mead       , "mead"        },
+   {Recipe::Type::Wine       , "wine"        },
+};
+
+EnumStringMapping const Recipe::typeDisplayNames {
+   {Recipe::Type::Extract    , tr("Extract"     )},
+   {Recipe::Type::PartialMash, tr("Partial Mash")},
+   {Recipe::Type::AllGrain   , tr("All Grain"   )},
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   {Recipe::Type::Cider      , tr("Cider"       )},
+   {Recipe::Type::Kombucha   , tr("Kombucha"    )},
+   {Recipe::Type::Soda       , tr("Soda"        )},
+   {Recipe::Type::Other      , tr("Other"       )},
+   {Recipe::Type::Mead       , tr("Mead"        )},
+   {Recipe::Type::Wine       , tr("Wine"        )},
+};
+
+
 bool Recipe::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    Recipe const & rhs = static_cast<Recipe const &>(other);

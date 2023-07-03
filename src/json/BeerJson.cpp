@@ -256,8 +256,12 @@ namespace {
    // One day perhaps we should split Hop up into HopBase, HopVariety and HopAddition, and do likewise for Fermentable,
    // Misc, Yeast, etc.  But that's quite a big change so, for now, we'll stick with our existing object structure.
    //
-   // It would be nice to be able to make the JsonRecordDefinition::FieldDefinitions constants constexpr rather than just
-   // const, but this is not yet easy because QVector cannot be constexpr, std::vector cannot yet be constexpr,
+   // TBD: BeerJSON makes the distinction between, eg, a Style that you load in from the top-level "styles" array and
+   //      one that you specify in a Recipe.  The latter is a subset of the former.  We need to decide how to resolve
+   //      this.  Similarly, a FermentableAddition has different fields from a Fermentable.
+   //
+   // It would be nice to be able to make the JsonRecordDefinition::FieldDefinitions constants constexpr rather than
+   // just const, but this is not yet easy because QVector cannot be constexpr, std::vector cannot yet be constexpr,
    // std::array (which can be constexpr) cannot deduce its own length when used with non-trivial types, and the
    // proposed std::make_array is still experimental and not yet actually part of std.  (There are various workarounds
    // with template metaprogramming but it's all a bit painful compared with the marginal benefit we would get.)
@@ -655,10 +659,17 @@ namespace {
       "Recipe",               // NamedEntity class name
       JsonRecordDefinition::create< JsonNamedEntityRecord<Recipe> >,
       {
-         // Type                                                 XPath                                     Q_PROPERTY                                Value Decoder
-         {JsonRecordDefinition::FieldType::String              , "name"                                  , PropertyNames::NamedEntity::name        },
-//         {JsonRecordDefinition::FieldType::Enum                , "type"                                  , PropertyNames::Recipe::type             , &Recipe::typeStringMapping},
-//         {JsonRecordDefinition::FieldType::String              , "author"                                , PropertyNames::Recipe::author           },
+         // Type                                                 XPath                    Q_PROPERTY                                Value Decoder
+         {JsonRecordDefinition::FieldType::String              , "name"                 , PropertyNames::NamedEntity::name        },
+         {JsonRecordDefinition::FieldType::Enum                , "type"                 , PropertyNames::Recipe::type             , &Recipe::typeStringMapping},
+         {JsonRecordDefinition::FieldType::String              , "author"               , PropertyNames::Recipe::brewer           },
+         {JsonRecordDefinition::FieldType::String              , "coauthor"             , PropertyNames::Recipe::asstBrewer       },
+         {JsonRecordDefinition::FieldType::Date                , "created"              , PropertyNames::Recipe::date             },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "batch_size"           , PropertyNames::Recipe::batchSize_l      , &BEER_JSON_VOLUME_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "efficiency/brewhouse" , PropertyNames::Recipe::efficiency_pct   , &BEER_JSON_PERCENT_UNIT      },
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "efficiency/conversion", BtString::NULL_STR                      , &BEER_JSON_PERCENT_UNIT      }, // .:TBD:. Do we want to support this optional BeerJSON field?
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "efficiency/lauter"    , BtString::NULL_STR                      , &BEER_JSON_PERCENT_UNIT      }, // .:TBD:. Do we want to support this optional BeerJSON field?
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "efficiency/mash"      , BtString::NULL_STR                      , &BEER_JSON_PERCENT_UNIT      }, // .:TBD:. Do we want to support this optional BeerJSON field?
          // TODO Finish this!
       }
    };
@@ -682,15 +693,15 @@ namespace {
          // Type                                             Name                         Q_PROPERTY            Value Decoder
          {JsonRecordDefinition::FieldType::RequiredConstant, "version"                  , jsonVersionWeSupport},
          {JsonRecordDefinition::FieldType::Array           , "fermentables"             , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Fermentable>},
-         {JsonRecordDefinition::FieldType::Array           , "miscellaneous_ingredients", BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Misc>},
-         {JsonRecordDefinition::FieldType::Array           , "hop_varieties"            , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Hop>},
-         {JsonRecordDefinition::FieldType::Array           , "cultures"                 , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Yeast>},
+         {JsonRecordDefinition::FieldType::Array           , "miscellaneous_ingredients", BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Misc       >},
+         {JsonRecordDefinition::FieldType::Array           , "hop_varieties"            , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Hop        >},
+         {JsonRecordDefinition::FieldType::Array           , "cultures"                 , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Yeast      >},
          {JsonRecordDefinition::FieldType::Array           , "profiles"                 , BtString::NULL_STR  , /* TODO */},
-         {JsonRecordDefinition::FieldType::Array           , "styles"                   , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Style>},
-         {JsonRecordDefinition::FieldType::Array           , "mashes"                   , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Mash>},
+         {JsonRecordDefinition::FieldType::Array           , "styles"                   , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Style      >},
+         {JsonRecordDefinition::FieldType::Array           , "mashes"                   , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Mash       >},
+         {JsonRecordDefinition::FieldType::Array           , "recipes"                  , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Recipe     >},
+         {JsonRecordDefinition::FieldType::Array           , "equipments"               , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Equipment  >},
          {JsonRecordDefinition::FieldType::Array           , "fermentations"            , BtString::NULL_STR  , /* TODO */},
-         {JsonRecordDefinition::FieldType::Array           , "recipes"                  , BtString::NULL_STR  , /* TODO */},
-         {JsonRecordDefinition::FieldType::Array           , "equipments"               , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Equipment>},
          {JsonRecordDefinition::FieldType::Array           , "boil"                     , BtString::NULL_STR  , /* TODO */},
          {JsonRecordDefinition::FieldType::Array           , "packaging"                , BtString::NULL_STR  , /* TODO */}
       }

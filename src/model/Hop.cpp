@@ -31,8 +31,8 @@
 
 QString const Hop::LocalisedName = tr("Hop");
 
-// Note that Hop::typeStringMapping and Hop::FormMapping are as defined by BeerJSON, but we also use them for the DB and
-// for the UI.  We can't use them for BeerXML as it only supports subsets of these types.
+// Note that Hop::typeStringMapping and Hop::formStringMapping are as defined by BeerJSON, but we also use them for the
+// DB and for the UI.  We can't use them for BeerXML as it only supports subsets of these types.
 EnumStringMapping const Hop::typeStringMapping {
    {Hop::Type::Bittering              , "bittering"              },
    {Hop::Type::Aroma                  , "aroma"                  },

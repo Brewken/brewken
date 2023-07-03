@@ -625,9 +625,18 @@ namespace {
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> QString const BEER_XML_RECORD_NAME<Recipe>{"RECIPE"};
    EnumStringMapping const BEER_XML_RECIPE_STEP_TYPE_MAPPER {
-      {Recipe::Type::Extract    , "Extract"     },
-      {Recipe::Type::PartialMash, "Partial Mash"},
-      {Recipe::Type::AllGrain   , "All Grain"   },
+      {Recipe::Type::Extract    , "Extract"                   },
+      {Recipe::Type::PartialMash, "Partial Mash"              },
+      {Recipe::Type::AllGrain   , "All Grain"                 },
+      // These other types are in BeerJSON but are not mentioned in the BeerXML 1.0 Standard.  They get an (extremely)
+      // approximate mapping when we write to BeerXML
+      // Note that we include a comment here to ensure we don't have multiple mappings for the same strings
+      {Recipe::Type::Cider      , "All Grain<!-- Cider -->"   },
+      {Recipe::Type::Kombucha   , "All Grain<!-- Kombucha -->"},
+      {Recipe::Type::Soda       , "All Grain<!-- Soda -->"    },
+      {Recipe::Type::Other      , "All Grain<!-- Other -->"   },
+      {Recipe::Type::Mead       , "All Grain<!-- Mead -->"    },
+      {Recipe::Type::Wine       , "All Grain<!-- Wine -->"    },
    };
    template<> XmlRecord::FieldDefinitions const BEER_XML_RECORD_FIELDS<Recipe> {
       // Type                                  XPath                       Q_PROPERTY                                 Enum Mapper
