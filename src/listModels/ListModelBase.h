@@ -27,6 +27,7 @@
 
 #include "model/Recipe.h"
 #include "database/ObjectStoreWrapper.h"
+#include "utils/CuriouslyRecurringTemplateBase.h"
 
 /**
  * \brief Curiously Recurring Template Pattern (CRTP) base class for EquipmentListModel, StyleListModel, etc
@@ -39,14 +40,13 @@
  *        Derived classes need to implement lessThan to provide the right per-column logic for this.
  */
 template<class Derived, class NE>
-class ListModelBase {
+class ListModelBase : public CuriouslyRecurringTemplateBase<Derived> {
 public:
    ListModelBase() :
-      m_derived{static_cast<Derived *>(this)},
       m_items{},
       m_recipe{nullptr} {
-      m_derived->connect(&ObjectStoreTyped<NE>::getInstance(), &ObjectStoreTyped<NE>::signalObjectInserted, m_derived, &Derived::addItem);
-      m_derived->connect(&ObjectStoreTyped<NE>::getInstance(), &ObjectStoreTyped<NE>::signalObjectDeleted , m_derived, &Derived::removeItem);
+      this->derived().connect(&ObjectStoreTyped<NE>::getInstance(), &ObjectStoreTyped<NE>::signalObjectInserted, &this->derived(), &Derived::addItem);
+      this->derived().connect(&ObjectStoreTyped<NE>::getInstance(), &ObjectStoreTyped<NE>::signalObjectDeleted , &this->derived(), &Derived::removeItem);
       return;
    }
 
@@ -64,14 +64,14 @@ public:
 
       if (tmp.size() > 0) {
          int size = m_items.size();
-         m_derived->beginInsertRows(QModelIndex(), size, size + tmp.size());
+         this->derived().beginInsertRows(QModelIndex(), size, size + tmp.size());
          m_items.append(tmp);
 
          for (NE * ii : tmp) {
-            m_derived->connect(ii, &NamedEntity::changed, m_derived, &Derived::itemChanged);
+            this->derived().connect(ii, &NamedEntity::changed, &this->derived(), &Derived::itemChanged);
          }
 
-         m_derived->endInsertRows();
+         this->derived().endInsertRows();
       }
       return;
    }
@@ -79,11 +79,11 @@ public:
    //! \brief Remove all items from the list model
    void removeAll() {
       if (m_items.size() > 0) {
-         m_derived->beginRemoveRows(QModelIndex(), 0, m_items.size() - 1);
+         this->derived().beginRemoveRows(QModelIndex(), 0, m_items.size() - 1);
          while (!m_items.isEmpty()) {
-            m_derived->disconnect(m_items.takeLast(), nullptr, m_derived, nullptr);
+            this->derived().disconnect(m_items.takeLast(), nullptr, &this->derived(), nullptr);
          }
-         m_derived->endRemoveRows();
+         this->derived().endRemoveRows();
       }
       return;
    }
@@ -108,28 +108,28 @@ public:
          return QModelIndex();
       }
 
-      return m_derived->index(indx, 0);
+      return this->derived().index(indx, 0);
    }
 
    void remove(NE * item) {
       int ndx = m_items.indexOf(item);
       if (ndx >= 0) {
-         m_derived->beginRemoveRows(QModelIndex(), ndx, ndx);
-         m_derived->disconnect(item, nullptr, m_derived, nullptr);
+         this->derived().beginRemoveRows(QModelIndex(), ndx, ndx);
+         this->derived().disconnect(item, nullptr, &this->derived(), nullptr);
          m_items.removeAt(ndx);
-         m_derived->endRemoveRows();
+         this->derived().endRemoveRows();
       }
       return;
    }
 
    void observeRecipe(Recipe * rec) {
       if (m_recipe) {
-         m_derived->disconnect(m_recipe, nullptr, m_derived, nullptr);
+         this->derived().disconnect(m_recipe, nullptr, &this->derived(), nullptr);
       }
       m_recipe = rec;
 
       if (m_recipe )
-         m_derived->connect(m_recipe, &NamedEntity::changed, m_derived, &Derived::recipeChanged);
+         this->derived().connect(m_recipe, &NamedEntity::changed, &this->derived(), &Derived::recipeChanged);
       return;
    }
 
@@ -153,7 +153,7 @@ protected:
    }
 
    void doItemChanged(QMetaProperty prop, [[maybe_unused]] QVariant val) {
-      NE * neSender = qobject_cast<NE *>(m_derived->sender());
+      NE * neSender = qobject_cast<NE *>(this->derived().sender());
       if (!neSender) {
          return;
       }
@@ -162,8 +162,8 @@ protected:
       if (propName == PropertyNames::NamedEntity::name) {
          int ndx = m_items.indexOf(neSender);
          if (ndx >= 0 ) {
-            m_derived->emit dataChanged(m_derived->createIndex(ndx, 0),
-                                        m_derived->createIndex(ndx, 0));
+            this->derived().emit dataChanged(this->derived().createIndex(ndx, 0),
+                                        this->derived().createIndex(ndx, 0));
          }
       }
       return;
@@ -178,10 +178,10 @@ protected:
 
       if (!m_items.contains(ne) ) {
          int size = m_items.size();
-         m_derived->beginInsertRows(QModelIndex(), size, size);
+         this->derived().beginInsertRows(QModelIndex(), size, size);
          m_items.append(ne);
-         m_derived->connect(ne, &NamedEntity::changed, m_derived, &Derived::itemChanged );
-         m_derived->endInsertRows();
+         this->derived().connect(ne, &NamedEntity::changed, &this->derived(), &Derived::itemChanged );
+         this->derived().endInsertRows();
       }
       return;
    }
@@ -203,7 +203,6 @@ protected:
    }
 
 private:
-   Derived *   m_derived;
    QList<NE *> m_items  ;
    Recipe *    m_recipe ;
 };
@@ -248,10 +247,10 @@ private:
       ListModelBase<NeName##ListModel, NeName>() {                                                    \
       /* Note that the following line cannot be moved to the ListModelBase constructor as, if we */   \
       /* do, we'll get a "pure virtual method called" error during the execution of              */   \
-      /* m_derived->beginInsertRows.  This will be because QAbstractItemModel::beginInsertRows   */   \
-      /* call a virtual function but the mechanism for making virtual calls (often a vtable) on  */   \
-      /* an object is not guaranteed to be set up until all the object's base class constructors */   \
-      /* have been executed.                                                                     */   \
+      /* this->derived().beginInsertRows.  This will be because                                  */   \
+      /* QAbstractItemModel::beginInsertRows calls a virtual function but the mechanism for      */   \
+      /* making virtual calls (often a vtable) on an object is not guaranteed to be set up until */   \
+      /* all the object's base class constructors have been executed.                            */   \
       this->addItems(ObjectStoreTyped<NeName>::getInstance().getAllRaw());                            \
       return;                                                                                         \
    }                                                                                                  \

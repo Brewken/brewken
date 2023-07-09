@@ -272,6 +272,6 @@ double Water::ppm(Water::Ion const ion) const {
    return 0.0;
 }
 
-Recipe * Water::getOwningRecipe() {
+Recipe * Water::getOwningRecipe() const {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }

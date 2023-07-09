@@ -201,7 +201,7 @@ public:
    void setSpargeRo_pct    (double              const   val);
    void setAlkalinityAsHCO3(bool                const   val);
 
-   virtual Recipe * getOwningRecipe();
+   virtual Recipe * getOwningRecipe() const;
 
 signals:
 

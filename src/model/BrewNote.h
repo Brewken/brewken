@@ -229,7 +229,7 @@ public:
    double projFermPoints() const;
    double projAtten() const;
 
-   virtual Recipe * getOwningRecipe();
+   virtual Recipe * getOwningRecipe() const;
 
 signals:
    void brewDateChanged(const QDate &);

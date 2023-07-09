@@ -185,7 +185,7 @@ void NamedMashEditor::addMashStep() {
 
    // The call to Mash::addMashStep() will also store the MashStep in the ObjectStore / DB
    auto step = std::make_shared<MashStep>();
-   this->mashObs->addMashStep(step);
+   this->mashObs->addStep(step);
    mashStepEditor->setEditItem(step);
    mashStepEditor->setVisible(true);
    return;
@@ -217,7 +217,7 @@ void NamedMashEditor::removeMashStep() {
    }
 
    auto step = mashStepTableModel->getRow(selected[0].row());
-   this->mashObs->removeMashStep(step);
+   this->mashObs->removeStep(step);
    return;
 }
 

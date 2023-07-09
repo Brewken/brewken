@@ -169,8 +169,8 @@ void MashDesigner::saveStep() {
       this->mashStep->setInfuseTemp_c(this->selectedTemp_c());
    }
 
-   // Mash::addMashStep() will ensure the mash step is stored in the DB and has the correct mash ID etc
-   this->mash->addMashStep(this->mashStep);
+   // Mash::addStep() will ensure the mash step is stored in the DB and has the correct mash ID etc
+   this->mash->addStep(this->mashStep);
    return;
 }
 
@@ -351,7 +351,7 @@ bool MashDesigner::initializeMash() {
       this->mash = std::make_shared<Mash>("");
    } else {
       qDebug() << Q_FUNC_INFO << "Clear all steps of existing Mash";
-      this->mash->removeAllMashSteps();
+      this->mash->removeAllSteps();
    }
 
    // Order matters. Don't do this until every that could return false has
@@ -423,7 +423,7 @@ double MashDesigner::waterFromMash_l() {
    double waterAdded_l = this->mash->totalMashWater_l();
 
    // A newly-created mash step will not yet have been added to the mash
-   if (this->mashStep && this->mashStep->getMashId() <= 0) {
+   if (this->mashStep && this->mashStep->ownerId() <= 0) {
       if (this->isInfusion()) {
          waterAdded_l += this->mashStep->amount_l();
       }

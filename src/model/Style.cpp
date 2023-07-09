@@ -256,6 +256,6 @@ void Style::setFlavor           (QString               const & val) { this->setA
 void Style::setMouthfeel        (QString               const & val) { this->setAndNotify(PropertyNames::Style::mouthfeel        , this->m_mouthfeel        , val); }
 void Style::setOverallImpression(QString               const & val) { this->setAndNotify(PropertyNames::Style::overallImpression, this->m_overallImpression, val); }
 
-Recipe * Style::getOwningRecipe() {
+Recipe * Style::getOwningRecipe() const {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }

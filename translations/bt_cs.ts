@@ -64,6 +64,13 @@
     </message>
 </context>
 <context>
+    <name>Boil</name>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished">Chmelovar</translation>
+    </message>
+</context>
+<context>
     <name>BrewDayFormatter</name>
     <message>
         <source>Brewday</source>
@@ -1426,6 +1433,13 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Fermentation</name>
+    <message>
+        <source>Fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>HelpDialog</name>
     <message>
         <source>for</source>
@@ -2184,6 +2198,14 @@ Log file may contain more details.</source>
     <message>
         <source>Souring Wort</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation type="obsolete">Krok</translation>
     </message>
 </context>
 <context>
@@ -3868,6 +3890,65 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <source>Recipe</source>
         <translation type="unfinished">Recept</translation>
     </message>
+    <message>
+        <source>Extract</source>
+        <translation type="unfinished">Výtažek</translation>
+    </message>
+    <message>
+        <source>Partial Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All Grain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cider</source>
+        <translation type="unfinished">Cider</translation>
+    </message>
+    <message>
+        <source>Kombucha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Soda</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished">Jiný</translation>
+    </message>
+    <message>
+        <source>Mead</source>
+        <translation type="unfinished">Medovina</translation>
+    </message>
+    <message>
+        <source>Wine</source>
+        <translation type="unfinished">Víno</translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAddition</name>
+    <message>
+        <source>Named Entity In Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>add_to_mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>add_to_boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>add_to_fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>add_to_package</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeExtrasWidget</name>
@@ -4394,6 +4475,20 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Too high for style.</source>
         <translation type="unfinished">Příliš vysoké pro tento styl.</translation>
+    </message>
+</context>
+<context>
+    <name>Step</name>
+    <message>
+        <source>Step</source>
+        <translation type="unfinished">Krok</translation>
+    </message>
+</context>
+<context>
+    <name>StepExtended</name>
+    <message>
+        <source>Extended Step</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7119,15 +7214,15 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Infusion</source>
-        <translation>Infuze</translation>
+        <translation type="vanished">Infuze</translation>
     </message>
     <message>
         <source>Temperature</source>
-        <translation>Teplota</translation>
+        <translation type="vanished">Teplota</translation>
     </message>
     <message>
         <source>Decoction</source>
-        <translation>Dekokce</translation>
+        <translation type="vanished">Dekokce</translation>
     </message>
     <message>
         <source>Target temp.</source>
@@ -7139,7 +7234,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Infuse Amount</source>
-        <translation>Infuzní množství</translation>
+        <translation type="vanished">Infuzní množství</translation>
     </message>
     <message>
         <source>Amount of water to infuse</source>
@@ -7155,11 +7250,11 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Decoction Amount</source>
-        <translation>Dekokční množ.</translation>
+        <translation type="vanished">Dekokční množ.</translation>
     </message>
     <message>
         <source>Amount of mash to decoct</source>
-        <translation>Množství rmutu pro dekokci</translation>
+        <translation type="vanished">Množství rmutu pro dekokci</translation>
     </message>
     <message>
         <source>Time</source>
@@ -7186,12 +7281,56 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation>Konečná teplota tohoto kroku</translation>
     </message>
     <message>
-        <source>Fly Sparge</source>
+        <source>Batch Sparge</source>
+        <translation type="obsolete">Vyslazení</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished">Množství</translation>
+    </message>
+    <message>
+        <source>Thickness</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Batch Sparge</source>
-        <translation type="unfinished">Vyslazení</translation>
+        <source>Mash thickness, aka liquor-to-grist ratio, is the volume of strike water divided by the mass of grist.  In metric units (liters and kilograms), its practical range is 2 to 4 and most often is around 2.5 to 3.2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optional description of this mash step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nový</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Uložit</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Zrušit</translation>
     </message>
 </context>
 <context>
@@ -7222,6 +7361,10 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Batches</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This wizard calculates the correct mash temperatures and volumes for a single batch sparge mash.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

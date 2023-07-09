@@ -253,7 +253,8 @@ public:
    bool operator<(NamedEntity const & other) const;
    bool operator>(NamedEntity const & other) const;
 
-   // Everything that inherits from BeerXML has a name, delete, display and a folder
+   // Everything that inherits from NamedEntity has a name, delete, display and a folder
+   // TBD: Not everything _should_ have a folder -- eg MashStep does not make use of it
    Q_PROPERTY(QString name   READ name WRITE setName )
    Q_PROPERTY(bool deleted   READ deleted WRITE setDeleted )
    Q_PROPERTY(bool display   READ display WRITE setDisplay )
@@ -324,7 +325,7 @@ public:
     *
     * \return \c nullptr if this object is not, and does not belong to, any Recipe
     */
-   virtual Recipe * getOwningRecipe() = 0;
+   virtual Recipe * getOwningRecipe() const = 0;
 
    /*!
     * \brief Some entities (eg Fermentable, Hop) get copied when added to a recipe, but others (eg Instruction) don't.
@@ -560,6 +561,7 @@ protected:
       return true;
    }
 
+public:
    /**
     * \brief In certain circumstances, we need to be able to convert a `QList<Hop *>` or `QList<Fermentable *>` etc to
     *        QList<NamedEntity *>.  This function does that work.
@@ -598,7 +600,6 @@ protected:
       }
       return outputList;
    }
-
 
 private:
   QString m_folder;

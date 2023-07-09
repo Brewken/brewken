@@ -125,9 +125,13 @@ set(filesToCompile_cpp
     ${repoDir}/src/measurement/SystemOfMeasurement.cpp
     ${repoDir}/src/measurement/Unit.cpp
     ${repoDir}/src/measurement/UnitSystem.cpp
+    ${repoDir}/src/model/Boil.cpp
+    ${repoDir}/src/model/BoilStep.cpp
     ${repoDir}/src/model/BrewNote.cpp
     ${repoDir}/src/model/Equipment.cpp
     ${repoDir}/src/model/Fermentable.cpp
+    ${repoDir}/src/model/Fermentation.cpp
+    ${repoDir}/src/model/FermentationStep.cpp
     ${repoDir}/src/model/Hop.cpp
     ${repoDir}/src/model/Instruction.cpp
     ${repoDir}/src/model/Inventory.cpp
@@ -138,7 +142,11 @@ set(filesToCompile_cpp
     ${repoDir}/src/model/NamedEntityWithInventory.cpp
     ${repoDir}/src/model/NamedParameterBundle.cpp
     ${repoDir}/src/model/Recipe.cpp
+    ${repoDir}/src/model/RecipeAddition.cpp
+    ${repoDir}/src/model/RecipeAdditionHop.cpp
     ${repoDir}/src/model/Salt.cpp
+    ${repoDir}/src/model/Step.cpp
+    ${repoDir}/src/model/StepExtended.cpp
     ${repoDir}/src/model/Style.cpp
     ${repoDir}/src/model/Water.cpp
     ${repoDir}/src/model/Yeast.cpp

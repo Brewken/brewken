@@ -50,7 +50,7 @@ MashStepTableModel::MashStepTableModel(QTableView * parent, bool editable) :
          SMART_COLUMN_HEADER_DEFN(MashStepTableModel, Amount    , tr("Amount"       ), MashStep, PropertyNames::MashStep::amount_l      ),
          SMART_COLUMN_HEADER_DEFN(MashStepTableModel, Temp      , tr("Infusion Temp"), MashStep, PropertyNames::MashStep::infuseTemp_c  ),
          SMART_COLUMN_HEADER_DEFN(MashStepTableModel, TargetTemp, tr("Target Temp"  ), MashStep, PropertyNames::MashStep::stepTemp_c    ),
-         SMART_COLUMN_HEADER_DEFN(MashStepTableModel, Time      , tr("Time"         ), MashStep, PropertyNames::MashStep::stepTime_min  ),
+         SMART_COLUMN_HEADER_DEFN(MashStepTableModel, Time      , tr("Time"         ), MashStep, PropertyNames::    Step::stepTime_min  ),
       }
    },
    TableModelBase<MashStepTableModel, MashStep>{},
@@ -121,7 +121,7 @@ void MashStepTableModel::setMash(Mash * m) {
 
    // Connect new signals, unless there is no new Mash or we're not changing Mash
    if (m && this->mashObs != m) {
-      connect(m, &Mash::mashStepsChanged, this, &MashStepTableModel::mashChanged);
+      connect(m, &Mash::stepsChanged, this, &MashStepTableModel::mashChanged);
    }
 
    this->mashObs = m;
@@ -215,19 +215,19 @@ void MashStepTableModel::mashStepChanged(QMetaProperty prop,
 
    MashStep* stepSender = qobject_cast<MashStep*>(sender());
    if (stepSender) {
-      if (stepSender->getMashId() != this->mashObs->key()) {
+      if (stepSender->ownerId() != this->mashObs->key()) {
          // It really shouldn't happen that we get a notification for a MashStep that's not in the Mash we're watching,
          // but, if we do, then stop trying to process the update.
          qCritical() <<
             Q_FUNC_INFO << "Instance @" << static_cast<void *>(this) << "received update for MashStep" <<
-            stepSender->key() << "of Mash" << stepSender->getMashId() << "but we are watching Mash" <<
+            stepSender->key() << "of Mash" << stepSender->ownerId() << "but we are watching Mash" <<
             this->mashObs->key();
          return;
       }
 
       int ii = this->findIndexOf(stepSender);
       if (ii >= 0) {
-         if (prop.name() == PropertyNames::MashStep::stepNumber) {
+         if (prop.name() == PropertyNames::Step::stepNumber) {
             this->reorderMashStep(this->rows.at(ii), ii);
          }
 
@@ -491,7 +491,7 @@ void MashStepTableModel::moveStepUp(int i) {
       return;
    }
 
-   this->mashObs->swapMashSteps(*this->rows[i], *this->rows[i-1]);
+   this->mashObs->swapSteps(*this->rows[i], *this->rows[i-1]);
    return;
 }
 
@@ -500,7 +500,7 @@ void MashStepTableModel::moveStepDown(int i) {
       return;
    }
 
-   this->mashObs->swapMashSteps(*this->rows[i], *this->rows[i+1]);
+   this->mashObs->swapSteps(*this->rows[i], *this->rows[i+1]);
    return;
 }
 

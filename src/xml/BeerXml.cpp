@@ -455,10 +455,10 @@ namespace {
       {XmlRecord::FieldType::Enum            , "TYPE"                     , PropertyNames::MashStep::type                  , &BEER_XML_MASH_STEP_TYPE_MAPPER},
       {XmlRecord::FieldType::Double          , "INFUSE_AMOUNT"            , PropertyNames::MashStep::infuseAmount_l        }, // Should not be supplied if TYPE is "Decoction"
       {XmlRecord::FieldType::Double          , "STEP_TEMP"                , PropertyNames::MashStep::stepTemp_c            },
-      {XmlRecord::FieldType::Double          , "STEP_TIME"                , PropertyNames::MashStep::stepTime_min          },
-      {XmlRecord::FieldType::Double          , "RAMP_TIME"                , PropertyNames::MashStep::rampTime_min          },
-      {XmlRecord::FieldType::Double          , "END_TEMP"                 , PropertyNames::MashStep::endTemp_c             },
-      {XmlRecord::FieldType::String          , "DESCRIPTION"              , PropertyNames::MashStep::description           }, // Extension tag ⮜⮜⮜ Support added as part of BeerJSON work ⮞⮞⮞
+      {XmlRecord::FieldType::Double          , "STEP_TIME"                , PropertyNames::    Step::stepTime_min          },
+      {XmlRecord::FieldType::Double          , "RAMP_TIME"                , PropertyNames::    Step::rampTime_mins         },
+      {XmlRecord::FieldType::Double          , "END_TEMP"                 , PropertyNames::    Step::endTemp_c             },
+      {XmlRecord::FieldType::String          , "DESCRIPTION"              , PropertyNames::    Step::description           }, // Extension tag ⮜⮜⮜ Support added as part of BeerJSON work ⮞⮞⮞
       {XmlRecord::FieldType::String          , "WATER_GRAIN_RATIO"        , BtString::NULL_STR                             }, // Extension tag NB: Similar to LIQUOR_TO_GRIST_RATIO_LKG below, but STRING including unit names
       {XmlRecord::FieldType::String          , "DECOCTION_AMT"            , BtString::NULL_STR                             }, // Extension tag
       {XmlRecord::FieldType::String          , "INFUSE_TEMP"              , BtString::NULL_STR                             }, // Extension tag NB: Similar to INFUSE_TEMP_C below, but STRING including unit names
@@ -468,8 +468,8 @@ namespace {
       {XmlRecord::FieldType::Double          , "DECOCTION_AMOUNT"         , PropertyNames::MashStep::decoctionAmount_l     }, // Non-standard tag, not part of BeerXML 1.0 standard
       // ⮜⮜⮜ Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML ⮞⮞⮞
       {XmlRecord::FieldType::Double          , "LIQUOR_TO_GRIST_RATIO_LKG", PropertyNames::MashStep::liquorToGristRatio_lKg},
-      {XmlRecord::FieldType::Double          , "START_ACIDITY_PH"         , PropertyNames::MashStep::startAcidity_pH       },
-      {XmlRecord::FieldType::Double          , "END_ACIDITY_PH"           , PropertyNames::MashStep::endAcidity_pH         },
+      {XmlRecord::FieldType::Double          , "START_ACIDITY_PH"         , PropertyNames::    Step::startAcidity_pH       },
+      {XmlRecord::FieldType::Double          , "END_ACIDITY_PH"           , PropertyNames::    Step::endAcidity_pH         },
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

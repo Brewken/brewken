@@ -192,7 +192,7 @@ void Misc::setAmountWithUnits(MassOrVolumeAmt const   val) {
 
 //========================OTHER METHODS=========================================
 
-Recipe * Misc::getOwningRecipe() {
+Recipe * Misc::getOwningRecipe() const {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }
 

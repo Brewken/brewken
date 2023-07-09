@@ -64,6 +64,13 @@
     </message>
 </context>
 <context>
+    <name>Boil</name>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BrewDayFormatter</name>
     <message>
         <source>Brewday</source>
@@ -1497,6 +1504,13 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Fermentation</name>
+    <message>
+        <source>Fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>HelpDialog</name>
     <message>
         <source>for</source>
@@ -2259,6 +2273,14 @@ Log file may contain more details.</source>
     <message>
         <source>Souring Wort</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation type="obsolete">Pas</translation>
     </message>
 </context>
 <context>
@@ -3951,6 +3973,65 @@ El volum final al primari és de %1.</translation>
         <source>Recipe</source>
         <translation type="unfinished">Recepta</translation>
     </message>
+    <message>
+        <source>Extract</source>
+        <translation type="unfinished">Extracte</translation>
+    </message>
+    <message>
+        <source>Partial Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All Grain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cider</source>
+        <translation type="unfinished">Sidra</translation>
+    </message>
+    <message>
+        <source>Kombucha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Soda</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mead</source>
+        <translation type="unfinished">Aiguamel</translation>
+    </message>
+    <message>
+        <source>Wine</source>
+        <translation type="unfinished">Vi</translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAddition</name>
+    <message>
+        <source>Named Entity In Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>add_to_mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>add_to_boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>add_to_fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>add_to_package</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeExtrasWidget</name>
@@ -4491,6 +4572,20 @@ El volum final al primari és de %1.</translation>
     <message>
         <source>Color (%1)</source>
         <translation type="obsolete">Color (%1)</translation>
+    </message>
+</context>
+<context>
+    <name>Step</name>
+    <message>
+        <source>Step</source>
+        <translation type="unfinished">Pas</translation>
+    </message>
+</context>
+<context>
+    <name>StepExtended</name>
+    <message>
+        <source>Extended Step</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7210,15 +7305,15 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Infusion</source>
-        <translation>Infusió</translation>
+        <translation type="vanished">Infusió</translation>
     </message>
     <message>
         <source>Temperature</source>
-        <translation>Temperatura</translation>
+        <translation type="vanished">Temperatura</translation>
     </message>
     <message>
         <source>Decoction</source>
-        <translation>Decocció</translation>
+        <translation type="vanished">Decocció</translation>
     </message>
     <message>
         <source>Target temp.</source>
@@ -7230,7 +7325,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Infuse Amount</source>
-        <translation>Quantitat d&apos;aigua</translation>
+        <translation type="vanished">Quantitat d&apos;aigua</translation>
     </message>
     <message>
         <source>Amount of water to infuse</source>
@@ -7246,11 +7341,11 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Decoction Amount</source>
-        <translation>Quantitat de la decocció</translation>
+        <translation type="vanished">Quantitat de la decocció</translation>
     </message>
     <message>
         <source>Amount of mash to decoct</source>
-        <translation>Quantitat de líquid de la maceració per a la decocció</translation>
+        <translation type="vanished">Quantitat de líquid de la maceració per a la decocció</translation>
     </message>
     <message>
         <source>Time</source>
@@ -7277,12 +7372,56 @@ El volum final al primari és de %1.</translation>
         <translation>Temp. fial final del pas</translation>
     </message>
     <message>
-        <source>Fly Sparge</source>
+        <source>Batch Sparge</source>
+        <translation type="obsolete">Batch Sparge</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished">Quantitat</translation>
+    </message>
+    <message>
+        <source>Thickness</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Batch Sparge</source>
-        <translation type="unfinished">Batch Sparge</translation>
+        <source>Mash thickness, aka liquor-to-grist ratio, is the volume of strike water divided by the mass of grist.  In metric units (liters and kilograms), its practical range is 2 to 4 and most often is around 2.5 to 3.2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optional description of this mash step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
     </message>
 </context>
 <context>
@@ -7313,6 +7452,10 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Batches</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This wizard calculates the correct mash temperatures and volumes for a single batch sparge mash.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -64,6 +64,13 @@
     </message>
 </context>
 <context>
+    <name>Boil</name>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BrewDayFormatter</name>
     <message>
         <source>Brewday</source>
@@ -1497,6 +1504,13 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Fermentation</name>
+    <message>
+        <source>Fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>HelpDialog</name>
     <message>
         <source>for</source>
@@ -2263,6 +2277,14 @@ Log file may contain more details.</source>
     <message>
         <source>Souring Wort</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation type="obsolete">Étape</translation>
     </message>
 </context>
 <context>
@@ -3955,6 +3977,65 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
         <source>Recipe</source>
         <translation type="unfinished">Recette</translation>
     </message>
+    <message>
+        <source>Extract</source>
+        <translation type="unfinished">Extrait</translation>
+    </message>
+    <message>
+        <source>Partial Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All Grain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cider</source>
+        <translation type="unfinished">Cidre</translation>
+    </message>
+    <message>
+        <source>Kombucha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Soda</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mead</source>
+        <translation type="unfinished">Hydromel</translation>
+    </message>
+    <message>
+        <source>Wine</source>
+        <translation type="unfinished">Vin</translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAddition</name>
+    <message>
+        <source>Named Entity In Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>add_to_mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>add_to_boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>add_to_fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>add_to_package</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeExtrasWidget</name>
@@ -4495,6 +4576,20 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     <message>
         <source>Color (%1)</source>
         <translation type="obsolete">Couleur (%1)</translation>
+    </message>
+</context>
+<context>
+    <name>Step</name>
+    <message>
+        <source>Step</source>
+        <translation type="unfinished">Étape</translation>
+    </message>
+</context>
+<context>
+    <name>StepExtended</name>
+    <message>
+        <source>Extended Step</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7228,15 +7323,15 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     </message>
     <message>
         <source>Infusion</source>
-        <translation>Infusion</translation>
+        <translation type="vanished">Infusion</translation>
     </message>
     <message>
         <source>Temperature</source>
-        <translation>Chauffe</translation>
+        <translation type="vanished">Chauffe</translation>
     </message>
     <message>
         <source>Decoction</source>
-        <translation>Décoction</translation>
+        <translation type="vanished">Décoction</translation>
     </message>
     <message>
         <source>Target temp.</source>
@@ -7248,7 +7343,7 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     </message>
     <message>
         <source>Infuse Amount</source>
-        <translation>Volume d&apos;infusion</translation>
+        <translation type="vanished">Volume d&apos;infusion</translation>
     </message>
     <message>
         <source>Amount of water to infuse</source>
@@ -7264,11 +7359,11 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     </message>
     <message>
         <source>Decoction Amount</source>
-        <translation>Volume de décoction</translation>
+        <translation type="vanished">Volume de décoction</translation>
     </message>
     <message>
         <source>Amount of mash to decoct</source>
-        <translation>Volume de moût à prélever pour la décoction</translation>
+        <translation type="vanished">Volume de moût à prélever pour la décoction</translation>
     </message>
     <message>
         <source>Time</source>
@@ -7295,12 +7390,56 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
         <translation>Température finale de ce palier</translation>
     </message>
     <message>
-        <source>Fly Sparge</source>
+        <source>Batch Sparge</source>
+        <translation type="obsolete">Rinçage par lots</translation>
+    </message>
+    <message>
+        <source>Amount</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Batch Sparge</source>
-        <translation type="unfinished">Rinçage par lots</translation>
+        <source>Thickness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash thickness, aka liquor-to-grist ratio, is the volume of strike water divided by the mass of grist.  In metric units (liters and kilograms), its practical range is 2 to 4 and most often is around 2.5 to 3.2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optional description of this mash step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nouveau</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Sauvegarder</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuler</translation>
     </message>
 </context>
 <context>
@@ -7331,6 +7470,10 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     </message>
     <message>
         <source>Batches</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This wizard calculates the correct mash temperatures and volumes for a single batch sparge mash.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

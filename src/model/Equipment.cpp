@@ -429,6 +429,6 @@ double Equipment::wortEndOfBoil_l( double kettleWort_l ) const {
 
 // Although it's a similar one-liner implementation for many subclasses of NamedEntity, we can't push the
 // implementation of this down to the base class, as Recipe::uses() is templated and won't work with type erasure.
-Recipe * Equipment::getOwningRecipe() {
+Recipe * Equipment::getOwningRecipe() const {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }

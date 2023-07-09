@@ -450,7 +450,7 @@ void Testing::recipeCalcTest_allGrain() {
    singleConversion_convert->setName("Conversion");
    singleConversion_convert->setType(MashStep::Type::Infusion);
    singleConversion_convert->setAmount_l(conversion_l);
-   singleConversion->addMashStep(singleConversion_convert);
+   singleConversion->addStep(singleConversion_convert);
    auto singleConversion_sparge = std::make_shared<MashStep>();
    singleConversion_sparge->setName("Sparge");
    singleConversion_sparge->setType(MashStep::Type::Infusion);
@@ -459,7 +459,7 @@ void Testing::recipeCalcTest_allGrain() {
       + equipFiveGalNoLoss->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg) * grain_kg // Grain absorption
       - conversion_l // Water we already added
    );
-   singleConversion->addMashStep(singleConversion_sparge);
+   singleConversion->addStep(singleConversion_sparge);
 
    // Add equipment
    rec->setEquipment(equipFiveGalNoLoss.get());
@@ -564,7 +564,7 @@ void Testing::postBoilLossOgTest() {
    auto singleConversion_convert = std::make_shared<MashStep>();
    singleConversion_convert->setName("Conversion");
    singleConversion_convert->setType(MashStep::Type::Infusion);
-   singleConversion->addMashStep(singleConversion_convert);
+   singleConversion->addStep(singleConversion_convert);
 
    // Infusion for recNoLoss
    singleConversion_convert->setAmount_l(mashWaterNoLoss_l);

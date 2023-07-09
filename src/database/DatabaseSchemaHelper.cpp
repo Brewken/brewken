@@ -538,6 +538,82 @@ namespace {
     *        relevant existing columns, but I think we've got enough other change in this update!
     */
    bool migrate_to_11(Database & db, BtSqlQuery q) {
+      // Some of the bits of SQL would be too cumbersome to build up in-place inside the migrationQueries vector, so
+      // we use string streams to do the string construction here.
+      QString createBoilSql;
+      QTextStream createBoilSqlStream(&createBoilSql);
+      createBoilSqlStream <<
+         "CREATE TABLE boil ("
+            "id"              " " << db.getDbNativePrimaryKeyDeclaration() << ", "
+            "name"            " " << db.getDbNativeTypeName<QString>()     << ", "
+            "deleted"         " " << db.getDbNativeTypeName<bool>()        << ", "
+            "display"         " " << db.getDbNativeTypeName<bool>()        << ", "
+            "folder"          " " << db.getDbNativeTypeName<QString>()     << ", "
+            "description"     " " << db.getDbNativeTypeName<QString>()     << ", "
+            "notes"           " " << db.getDbNativeTypeName<QString>()     << ", "
+            "pre_boil_size_l" " " << db.getDbNativeTypeName<double>()      << ", "
+            "boil_Time_mins"  " " << db.getDbNativeTypeName<double>()      <<
+         ");";
+
+      QString createBoilStepSql;
+      QTextStream createBoilStepSqlStream(&createBoilStepSql);
+      createBoilStepSqlStream <<
+         "CREATE TABLE boil_step ("
+            "id"               " " << db.getDbNativePrimaryKeyDeclaration() << ", "
+            "name"             " " << db.getDbNativeTypeName<QString>()     << ", "
+            "deleted"          " " << db.getDbNativeTypeName<bool>()        << ", "
+            "display"          " " << db.getDbNativeTypeName<bool>()        << ", "
+            "step_time_min"    " " << db.getDbNativeTypeName<double>()      << ", "
+            "end_temp_c"       " " << db.getDbNativeTypeName<double>()      << ", "
+            "ramp_time_mins"   " " << db.getDbNativeTypeName<double>()      << ", "
+            "step_number"      " " << db.getDbNativeTypeName<int>()         << ", "
+            "boil_id"          " " << db.getDbNativeTypeName<int>()         << ", "
+            "description"      " " << db.getDbNativeTypeName<QString>()     << ", "
+            "start_acidity_ph" " " << db.getDbNativeTypeName<double>()      << ", "
+            "end_acidity_ph"   " " << db.getDbNativeTypeName<double>()      << ", "
+            "start_temp_c"     " " << db.getDbNativeTypeName<double>()      << ", "
+            "start_gravity_sg" " " << db.getDbNativeTypeName<double>()      << ", "
+            "end_gravity_sg"   " " << db.getDbNativeTypeName<double>()      << ", "
+            "chilling_type"    " " << db.getDbNativeTypeName<QString>()     << ", "
+            "FOREIGN KEY(boil_id) REFERENCES boil(id)" <<
+         ");";
+
+      QString createFermentationSql;
+      QTextStream createFermentationSqlStream(&createFermentationSql);
+      createFermentationSqlStream <<
+         "CREATE TABLE fermentation ("
+            "id"              " " << db.getDbNativePrimaryKeyDeclaration() << ", "
+            "name"            " " << db.getDbNativeTypeName<QString>()     << ", "
+            "deleted"         " " << db.getDbNativeTypeName<bool>()        << ", "
+            "display"         " " << db.getDbNativeTypeName<bool>()        << ", "
+            "folder"          " " << db.getDbNativeTypeName<QString>()     << ", "
+            "description"     " " << db.getDbNativeTypeName<QString>()     << ", "
+            "notes"           " " << db.getDbNativeTypeName<QString>()     <<
+         ");";
+
+      QString createFermentationStepSql;
+      QTextStream createFermentationStepSqlStream(&createFermentationStepSql);
+      createFermentationStepSqlStream <<
+         "CREATE TABLE fermentation_step ("
+            "id"               " " << db.getDbNativePrimaryKeyDeclaration() << ", "
+            "name"             " " << db.getDbNativeTypeName<QString>()     << ", "
+            "deleted"          " " << db.getDbNativeTypeName<bool>()        << ", "
+            "display"          " " << db.getDbNativeTypeName<bool>()        << ", "
+            "step_time_min"    " " << db.getDbNativeTypeName<double>()      << ", "
+            "end_temp_c"       " " << db.getDbNativeTypeName<double>()      << ", "
+            "ramp_time_mins"   " " << db.getDbNativeTypeName<double>()      << ", "
+            "step_number"      " " << db.getDbNativeTypeName<int>()         << ", "
+            "fermentation_id"  " " << db.getDbNativeTypeName<int>()         << ", "
+            "description"      " " << db.getDbNativeTypeName<QString>()     << ", "
+            "start_acidity_ph" " " << db.getDbNativeTypeName<double>()      << ", "
+            "end_acidity_ph"   " " << db.getDbNativeTypeName<double>()      << ", "
+            "start_temp_c"     " " << db.getDbNativeTypeName<double>()      << ", "
+            "start_gravity_sg" " " << db.getDbNativeTypeName<double>()      << ", "
+            "end_gravity_sg"   " " << db.getDbNativeTypeName<double>()      << ", "
+            "vessel"           " " << db.getDbNativeTypeName<QString>()     << ", "
+            "FOREIGN KEY(fermentation_id) REFERENCES fermentation(id)" <<
+         ");";
+
       QVector<QueryAndParameters> const migrationQueries{
          //
          // There was a bug in an old version of the code that meant inventory_id got stored as a decimal instead of
@@ -704,26 +780,72 @@ namespace {
          {QString("ALTER TABLE equipment ADD COLUMN fermenter_notes                %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE equipment ADD COLUMN aging_vessel_notes             %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE equipment ADD COLUMN packaging_vessel_notes         %1").arg(db.getDbNativeTypeName<QString>())},
+         // Fix the table name for MashStep so it's consistent with most of the rest of our naming
+         {QString("ALTER TABLE mashstep RENAME TO mash_step")},
          // We only need to update the old MashStep type mapping.  The new ones should "just work".
-         {QString("     UPDATE mashstep SET mstype = 'infusion'       WHERE mstype = 'Infusion'   ")},
-         {QString("     UPDATE mashstep SET mstype = 'temperature'    WHERE mstype = 'Temperature'")},
-         {QString("     UPDATE mashstep SET mstype = 'decoction'      WHERE mstype = 'Decoction'  ")},
-         {QString("     UPDATE mashstep SET mstype = 'sparge'         WHERE mstype = 'FlySparge'  ")},
-         {QString("     UPDATE mashstep SET mstype = 'drain mash tun' WHERE mstype = 'BatchSparge'")},
+         {QString("     UPDATE mash_step SET mstype = 'infusion'       WHERE mstype = 'Infusion'   ")},
+         {QString("     UPDATE mash_step SET mstype = 'temperature'    WHERE mstype = 'Temperature'")},
+         {QString("     UPDATE mash_step SET mstype = 'decoction'      WHERE mstype = 'Decoction'  ")},
+         {QString("     UPDATE mash_step SET mstype = 'sparge'         WHERE mstype = 'FlySparge'  ")},
+         {QString("     UPDATE mash_step SET mstype = 'drain mash tun' WHERE mstype = 'BatchSparge'")},
          // The two different amount fields are unified.
          // Note that, per https://sqlite.org/changes.html, SQLite finally supports "DROP COLUMN" as of its
          // 2021-03-12 (3.35.0) release (and the teething troubles were ironed out by the 2021-04-19 (3.35.5) release!)
-         {QString("ALTER TABLE mashstep RENAME COLUMN infuse_amount TO amount_l")},
-         {QString("     UPDATE mashstep SET amount_l = decoction_amount WHERE mstype = 'Decoction'")},
-         {QString("ALTER TABLE mashstep DROP COLUMN decoction_amount")},
-         {QString("ALTER TABLE mashstep ADD COLUMN description               %1").arg(db.getDbNativeTypeName<QString>())},
-         {QString("ALTER TABLE mashstep ADD COLUMN liquor_to_grist_ratio_lkg %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE mashstep ADD COLUMN start_acidity_ph          %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE mashstep ADD COLUMN end_acidity_ph            %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE mash_step RENAME COLUMN infuse_amount TO amount_l")},
+         {QString("     UPDATE mash_step SET amount_l = decoction_amount WHERE mstype = 'Decoction'")},
+         {QString("ALTER TABLE mash_step DROP COLUMN decoction_amount")},
+         {QString("ALTER TABLE mash_step RENAME COLUMN ramp_time TO ramp_time_mins")},
+         {QString("ALTER TABLE mash_step ADD COLUMN description               %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE mash_step ADD COLUMN liquor_to_grist_ratio_lkg %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE mash_step ADD COLUMN start_acidity_ph          %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE mash_step ADD COLUMN end_acidity_ph            %1").arg(db.getDbNativeTypeName<double >())},
          // We only need to update the old Recipe type mapping.  The new ones should "just work".
          {QString("     UPDATE recipe SET type = 'extract'      WHERE type = 'Extract'     ")},
          {QString("     UPDATE recipe SET type = 'partial mash' WHERE type = 'Partial Mash'")},
          {QString("     UPDATE recipe SET type = 'all grain'    WHERE type = 'All Grain'   ")},
+         //
+         // We have to create and populate the boil and boil_step tables before we do hop_in_recipe as we need pre-boil
+         // steps to attach first wort hops to.  So we might as well do fermentation and fermentation_step at the same
+         // time.
+         //
+         {createBoilSql            },
+         {createBoilStepSql        },
+         {createFermentationSql    },
+         {createFermentationStepSql},
+         // TODO: Need to populate above tables!
+///         {QString("CREATE TABLE boil ( "
+///                     "id        %2, "
+///                     "recipe_id %1, "
+///                     "FOREIGN KEY(recipe_id) REFERENCES recipe(id), "
+///                  ");").arg(db.getDbNativeTypeName<int>(), db.getDbNativePrimaryKeyDeclaration())},
+
+
+         //
+         // Now comes the tricky stuff where we change the hop_in_recipe junction table to a full-blown object table,
+         // and remove hop children.
+         //
+         {QString("ALTER TABLE hop_in_recipe ADD COLUMN name              %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE hop_in_recipe ADD COLUMN display           %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE hop_in_recipe ADD COLUMN deleted           %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE hop_in_recipe ADD COLUMN folder            %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE hop_in_recipe ADD COLUMN stage             %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
+         {QString("ALTER TABLE hop_in_recipe ADD COLUMN step              %1").arg(db.getDbNativeTypeName<int    >())},
+         {QString("ALTER TABLE hop_in_recipe ADD COLUMN add_at_time_mins  %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE hop_in_recipe ADD COLUMN add_at_gravity_sg %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE hop_in_recipe ADD COLUMN add_at_acidity_ph %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE hop_in_recipe ADD COLUMN duration_mins     %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("     UPDATE hop_in_recipe SET display = ?"), {QVariant{true}}},
+         {QString("     UPDATE hop_in_recipe SET deleted = ?"), {QVariant{false}}},
+///         ¥¥¥¥ LOOK AT THIS PROPERLY
+///         {QString("     UPDATE hop_in_recipe SET stage = 'add_to_mash' WHERE hop_id IN (SELECT hop.id from hop, hop_in_recipe WHERE hop.id = hop_in_recipe.hop_id AND hop.use = 'Mash')")},
+///         {QString("     UPDATE hop_in_recipe SET stage = 'add_to_mash' WHERE hop_id IN (SELECT hop.id from hop, hop_in_recipe WHERE hop.id = hop_in_recipe.hop_id AND hop.use IN ())")},
+///         {QString("     UPDATE hop_in_recipe SET add_at_time_mins = ¥¥¥")},
+
+
+
+
+
+
 
 
 

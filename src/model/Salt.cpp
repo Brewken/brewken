@@ -283,6 +283,6 @@ double Salt::SO4() const {
    }
 }
 
-Recipe * Salt::getOwningRecipe() {
+Recipe * Salt::getOwningRecipe() const {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }

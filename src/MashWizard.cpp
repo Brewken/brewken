@@ -196,7 +196,7 @@ void MashWizard::wizardry() {
    // Find any batch sparges and remove them
    for (auto step : steps) {
       if (step->isSparge()) {
-         mash->removeMashStep(step);
+         mash->removeStep(step);
       } else {
          tmp.append(step);
       }
@@ -372,7 +372,7 @@ void MashWizard::wizardry() {
             newMashStep->setEndTemp_c(tempWater);
             newMashStep->setStepTemp_c(tempFinal);
             newMashStep->setStepTime_min(15);
-            newMashStep->setMashId(mash->key());
+            newMashStep->setOwnerId(mash->key());
             ObjectStoreWrapper::insert(newMashStep);
             steps.append(newMashStep);
             newMashStep->setStepNumber(steps.size());
@@ -382,7 +382,7 @@ void MashWizard::wizardry() {
                )
             );
          }
-         emit mash->mashStepsChanged();
+         emit mash->stepsChanged();
       }
       // fly sparge, I think
       else {
@@ -393,7 +393,7 @@ void MashWizard::wizardry() {
          newMashStep->setEndTemp_c(tempWater);
          newMashStep->setStepTemp_c(tempFinal);
          newMashStep->setStepTime_min(15);
-         newMashStep->setMashId(mash->key());
+         newMashStep->setOwnerId(mash->key());
          ObjectStoreWrapper::insert(newMashStep);
          steps.append(newMashStep);
          newMashStep->setStepNumber(steps.size());

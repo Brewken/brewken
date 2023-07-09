@@ -39,8 +39,12 @@
 #include "measurement/ColorMethods.h"
 #include "measurement/IbuMethods.h"
 #include "measurement/Measurement.h"
+#include "model/Boil.h"
+#include "model/BoilStep.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
+#include "model/Fermentation.h"
+#include "model/FermentationStep.h"
 #include "model/Hop.h"
 #include "model/Instruction.h"
 #include "model/Mash.h"
@@ -145,36 +149,18 @@ namespace {
    // update the database.  These template specialisations map from property type to property name.
    //
    template<class NE> BtStringConst const & propertyToPropertyName();
-   template<> BtStringConst const & propertyToPropertyName<Equipment>()   {
-      return PropertyNames::Recipe::equipmentId;
-   }
-   template<> BtStringConst const & propertyToPropertyName<Fermentable>() {
-      return PropertyNames::Recipe::fermentableIds;
-   }
-   template<> BtStringConst const & propertyToPropertyName<Hop>()         {
-      return PropertyNames::Recipe::hopIds;
-   }
-   template<> BtStringConst const & propertyToPropertyName<Instruction>() {
-      return PropertyNames::Recipe::instructionIds;
-   }
-   template<> BtStringConst const & propertyToPropertyName<Mash>()        {
-      return PropertyNames::Recipe::mashId;
-   }
-   template<> BtStringConst const & propertyToPropertyName<Misc>()        {
-      return PropertyNames::Recipe::miscIds;
-   }
-   template<> BtStringConst const & propertyToPropertyName<Salt>()        {
-      return PropertyNames::Recipe::saltIds;
-   }
-   template<> BtStringConst const & propertyToPropertyName<Style>()       {
-      return PropertyNames::Recipe::styleId;
-   }
-   template<> BtStringConst const & propertyToPropertyName<Water>()       {
-      return PropertyNames::Recipe::waterIds;
-   }
-   template<> BtStringConst const & propertyToPropertyName<Yeast>()       {
-      return PropertyNames::Recipe::yeastIds;
-   }
+   template<> BtStringConst const & propertyToPropertyName<Boil        >() { return PropertyNames::Recipe::boilId        ; }
+   template<> BtStringConst const & propertyToPropertyName<Equipment   >() { return PropertyNames::Recipe::equipmentId   ; }
+   template<> BtStringConst const & propertyToPropertyName<Fermentable >() { return PropertyNames::Recipe::fermentableIds; }
+   template<> BtStringConst const & propertyToPropertyName<Fermentation>() { return PropertyNames::Recipe::fermentationId; }
+   template<> BtStringConst const & propertyToPropertyName<Hop         >() { return PropertyNames::Recipe::hopIds        ; }
+   template<> BtStringConst const & propertyToPropertyName<Instruction >() { return PropertyNames::Recipe::instructionIds; }
+   template<> BtStringConst const & propertyToPropertyName<Mash        >() { return PropertyNames::Recipe::mashId        ; }
+   template<> BtStringConst const & propertyToPropertyName<Misc        >() { return PropertyNames::Recipe::miscIds       ; }
+   template<> BtStringConst const & propertyToPropertyName<Salt        >() { return PropertyNames::Recipe::saltIds       ; }
+   template<> BtStringConst const & propertyToPropertyName<Style       >() { return PropertyNames::Recipe::styleId       ; }
+   template<> BtStringConst const & propertyToPropertyName<Water       >() { return PropertyNames::Recipe::waterIds      ; }
+   template<> BtStringConst const & propertyToPropertyName<Yeast       >() { return PropertyNames::Recipe::yeastIds      ; }
 
 ///   QHash<QString, Recipe::Type> const RECIPE_TYPE_STRING_TO_TYPE {
 ///      {"Extract",      Recipe::Type::Extract},
@@ -315,6 +301,36 @@ public:
       return;
    }
 
+   template<class NE>
+   void setStepOwner(std::shared_ptr<NE> val, int & ourId, BtStringConst const & property) {
+      if (val->key() == ourId) {
+         return;
+      }
+
+      if (ourId > 0) {
+         std::shared_ptr<NE> oldVal = ObjectStoreWrapper::getById<NE>(ourId);
+         disconnect(oldVal.get(), nullptr, &this->recipe, nullptr);
+      }
+
+      std::shared_ptr<NE> valToAdd = copyIfNeeded(*val);
+      ourId = valToAdd->key();
+      this->recipe.propagatePropertyChange(propertyToPropertyName<NE>());
+
+      connect(valToAdd.get(), &NamedEntity::changed, &this->recipe, &Recipe::acceptChangeToContainedObject);
+      emit this->recipe.changed(this->recipe.metaProperty(*property), QVariant::fromValue<NE *>(valToAdd.get()));
+
+      this->recipe.recalcAll();
+
+      return;
+   }
+
+   template<class NE>
+   void setStepOwner(NE * val, int & ourId, BtStringConst const & property) {
+      Q_ASSERT(val);
+      this->setStepOwner<NE>(ObjectStoreWrapper::getSharedFromRaw(val), ourId, property);
+      return;
+   }
+
    // Member variables
    Recipe & recipe;
    QVector<int> fermentableIds;
@@ -384,9 +400,10 @@ bool Recipe::isEqualTo(NamedEntity const & other) const {
       this->m_tertiaryTemp_c    == rhs.m_tertiaryTemp_c    &&
       this->m_age               == rhs.m_age               &&
       this->m_ageTemp_c         == rhs.m_ageTemp_c         &&
-      ObjectStoreWrapper::compareById<Style>(    this->styleId,     rhs.styleId)     &&
-      ObjectStoreWrapper::compareById<Mash>(     this->mashId,      rhs.mashId)      &&
-      ObjectStoreWrapper::compareById<Equipment>(this->equipmentId, rhs.equipmentId) &&
+      ObjectStoreWrapper::compareById<Style    >(this->m_styleId,     rhs.m_styleId    ) &&
+      ObjectStoreWrapper::compareById<Mash     >(this->m_mashId,      rhs.m_mashId     ) &&
+      ObjectStoreWrapper::compareById<Boil     >(this->m_boilId,      rhs.m_boilId     ) &&
+      ObjectStoreWrapper::compareById<Equipment>(this->m_equipmentId, rhs.m_equipmentId) &&
       this->m_og                == rhs.m_og                &&
       this->m_fg                == rhs.m_fg                &&
       ObjectStoreWrapper::compareListByIds<Fermentable>(this->pimpl->fermentableIds, rhs.pimpl->fermentableIds) &&
@@ -438,11 +455,13 @@ TypeLookup const Recipe::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::tasteNotes        , Recipe::m_tasteNotes        ,           NonPhysicalQuantity::String        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::tasteRating       , Recipe::m_tasteRating       ,           NonPhysicalQuantity::Dimensionless ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::style             , Recipe::m_style             ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::styleId           , Recipe::styleId             ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::styleId           , Recipe::m_styleId             ), //<<
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::mash              , Recipe::m_mash              ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::mashId            , Recipe::mashId              ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::mashId            , Recipe::m_mashId              ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::boilId            , Recipe::m_boilId              ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::fermentationId    , Recipe::m_fermentationId      ), //<<
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::equipment         , Recipe::m_equipment         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::equipmentId       , Recipe::equipmentId         ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::equipmentId       , Recipe::m_equipmentId         ), //<<
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::og                , Recipe::m_og                , Measurement::PhysicalQuantity::Density       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::fg                , Recipe::m_fg                , Measurement::PhysicalQuantity::Density       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::locked            , Recipe::m_locked            ),
@@ -512,9 +531,11 @@ Recipe::Recipe(QString name) :
    m_notes             {""                           },
    m_tasteNotes        {""                           },
    m_tasteRating       {0.0                          },
-   styleId             {-1                           },
-   mashId              {-1                           },
-   equipmentId         {-1                           },
+   m_styleId           {-1                           },
+   m_equipmentId       {-1                           },
+   m_mashId            {-1                           },
+   m_boilId            {-1                           },
+   m_fermentationId    {-1                           },
    m_og                {1.0                          },
    m_fg                {1.0                          },
    m_locked            {false                        },
@@ -553,9 +574,11 @@ Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
    m_notes             {namedParameterBundle.val<QString     >(PropertyNames::Recipe::notes             )},
    m_tasteNotes        {namedParameterBundle.val<QString     >(PropertyNames::Recipe::tasteNotes        )},
    m_tasteRating       {namedParameterBundle.val<double      >(PropertyNames::Recipe::tasteRating       )},
-   styleId             {namedParameterBundle.val<int         >(PropertyNames::Recipe::styleId           )},
-   mashId              {namedParameterBundle.val<int         >(PropertyNames::Recipe::mashId            )},
-   equipmentId         {namedParameterBundle.val<int         >(PropertyNames::Recipe::equipmentId       )},
+   m_styleId           {namedParameterBundle.val<int         >(PropertyNames::Recipe::styleId           )},
+   m_equipmentId       {namedParameterBundle.val<int         >(PropertyNames::Recipe::equipmentId       )},
+   m_mashId            {namedParameterBundle.val<int         >(PropertyNames::Recipe::mashId            )},
+   m_boilId            {namedParameterBundle.val<int         >(PropertyNames::Recipe::boilId            , -1)},
+   m_fermentationId    {namedParameterBundle.val<int         >(PropertyNames::Recipe::fermentationId    , -1)},
    m_og                {namedParameterBundle.val<double      >(PropertyNames::Recipe::og                )},
    m_fg                {namedParameterBundle.val<double      >(PropertyNames::Recipe::fg                )},
    m_locked            {namedParameterBundle.val<bool        >(PropertyNames::Recipe::locked            )},
@@ -598,9 +621,11 @@ Recipe::Recipe(Recipe const & other) :
    m_notes             {other.m_notes             },
    m_tasteNotes        {other.m_tasteNotes        },
    m_tasteRating       {other.m_tasteRating       },
-   styleId             {other.styleId             },  // But see additional logic in body
-   mashId              {other.mashId              },  // But see additional logic in body
-   equipmentId         {other.equipmentId         },  // But see additional logic in body
+   m_styleId           {other.m_styleId           },  // But see additional logic in body
+   m_equipmentId       {other.m_equipmentId       },  // But see additional logic in body
+   m_mashId            {other.m_mashId            },  // But see additional logic in body
+   m_boilId            {other.m_boilId            },  // But see additional logic in body
+   m_fermentationId    {other.m_fermentationId     },  // But see additional logic in body
    m_og                {other.m_og                },
    m_fg                {other.m_fg                },
    m_locked            {other.m_locked            },
@@ -638,20 +663,11 @@ Recipe::Recipe(Recipe const & other) :
    //
    // We also need to be careful here as one or more of these may not be set to a valid value.
    //
-   if (other.equipmentId > 0) {
-      auto equipment = copyIfNeeded(*ObjectStoreWrapper::getById<Equipment>(other.equipmentId));
-      this->equipmentId = equipment->key();
-   }
-
-   if (other.mashId > 0) {
-      auto mash = copyIfNeeded(*ObjectStoreWrapper::getById<Mash>(other.mashId));
-      this->mashId = mash->key();
-   }
-
-   if (other.styleId > 0) {
-      auto style = copyIfNeeded(*ObjectStoreWrapper::getById<Style>(other.styleId));
-      this->styleId = style->key();
-   }
+   if (other.m_styleId        > 0) { auto item = copyIfNeeded(*ObjectStoreWrapper::getById<Style       >(other.m_styleId       )); this->m_styleId        = item->key(); }
+   if (other.m_equipmentId    > 0) { auto item = copyIfNeeded(*ObjectStoreWrapper::getById<Equipment   >(other.m_equipmentId   )); this->m_equipmentId    = item->key(); }
+   if (other.m_mashId         > 0) { auto item = copyIfNeeded(*ObjectStoreWrapper::getById<Mash        >(other.m_mashId        )); this->m_mashId         = item->key(); }
+   if (other.m_boilId         > 0) { auto item = copyIfNeeded(*ObjectStoreWrapper::getById<Boil        >(other.m_boilId        )); this->m_boilId         = item->key(); }
+   if (other.m_fermentationId > 0) { auto item = copyIfNeeded(*ObjectStoreWrapper::getById<Fermentation>(other.m_fermentationId)); this->m_fermentationId = item->key(); }
 
    this->pimpl->connectSignals();
 
@@ -1324,8 +1340,8 @@ template std::shared_ptr<Water      > Recipe::add(std::shared_ptr<Water      > v
 template std::shared_ptr<Salt       > Recipe::add(std::shared_ptr<Salt       > var);
 template std::shared_ptr<Instruction> Recipe::add(std::shared_ptr<Instruction> var);
 
-template<class NE> bool Recipe::uses(NE const & var) const {
-   int idToLookFor = var.key();
+template<class NE> bool Recipe::uses(NE const & val) const {
+   int idToLookFor = val.key();
    if (idToLookFor <= 0) {
       //
       // We shouldn't be trying to look for a Fermentable/Hop/etc that hasn't even been stored (and therefore does not
@@ -1334,7 +1350,7 @@ template<class NE> bool Recipe::uses(NE const & var) const {
       // the ID of the thing from which they were copied).
       //
       qCritical() <<
-         Q_FUNC_INFO << "Trying to search for use of" << var.metaObject()->className() << "that is not stored!";
+         Q_FUNC_INFO << "Trying to search for use of" << val.metaObject()->className() << "that is not stored!";
       return false;
    }
 
@@ -1346,22 +1362,21 @@ template<class NE> bool Recipe::uses(NE const & var) const {
 
    return match != this->pimpl->accessIds<NE>().cend();
 }
-template bool Recipe::uses(Fermentable  const & var) const;
-template bool Recipe::uses(Hop          const & var) const;
-template bool Recipe::uses(Instruction  const & var) const;
-template bool Recipe::uses(Misc         const & var) const;
-template bool Recipe::uses(Salt         const & var) const;
-template bool Recipe::uses(Water        const & var) const;
-template bool Recipe::uses(Yeast        const & var) const;
-template<> bool Recipe::uses<Equipment> (Equipment  const & var) const {
-   return var.key() == this->equipmentId;
-}
-template<> bool Recipe::uses<Mash> (Mash const & var) const {
-   return var.key() == this->mashId;
-}
-template<> bool Recipe::uses<Style> (Style const & var) const {
-   return var.key() == this->styleId;
-}
+template bool Recipe::uses(Fermentable  const & val) const;
+template bool Recipe::uses(Hop          const & val) const;
+template bool Recipe::uses(Instruction  const & val) const;
+template bool Recipe::uses(Misc         const & val) const;
+template bool Recipe::uses(Salt         const & val) const;
+template bool Recipe::uses(Water        const & val) const;
+template bool Recipe::uses(Yeast        const & val) const;
+template<> bool Recipe::uses<Equipment   > (Equipment    const & val) const { return val.key() == this->m_equipmentId   ; }
+template<> bool Recipe::uses<Style       > (Style        const & val) const { return val.key() == this->m_styleId       ; }
+template<> bool Recipe::uses<Mash        > (Mash         const & val) const { return val.key() == this->m_mashId        ; }
+// ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+template<> bool Recipe::uses<Boil        > (Boil         const & val) const { return val.key() == this->m_boilId        ; }
+template<> bool Recipe::uses<Fermentation> (Fermentation const & val) const { return val.key() == this->m_fermentationId; }
+
+
 
 template<class NE> std::shared_ptr<NE> Recipe::remove(std::shared_ptr<NE> var) {
    // It's a coding error to supply a null shared pointer
@@ -1459,101 +1474,66 @@ void Recipe::insertInstruction(Instruction const & ins, int pos) {
 }
 
 void Recipe::setStyle(Style * var) {
-   if (var->key() == this->styleId) {
+   if (var->key() == this->m_styleId) {
       return;
    }
 
    std::shared_ptr<Style> styleToAdd = copyIfNeeded(*var);
-   this->styleId = styleToAdd->key();
+   this->m_styleId = styleToAdd->key();
    this->propagatePropertyChange(propertyToPropertyName<Style>());
    return;
 }
 
 void Recipe::setEquipment(Equipment * var) {
-   if (var->key() == this->equipmentId) {
+   if (var->key() == this->m_equipmentId) {
       return;
    }
 
    std::shared_ptr<Equipment> equipmentToAdd = copyIfNeeded(*var);
-   this->equipmentId = equipmentToAdd->key();
+   this->m_equipmentId = equipmentToAdd->key();
    this->propagatePropertyChange(propertyToPropertyName<Equipment>());
    return;
 }
 
-void Recipe::setMash(std::shared_ptr<Mash> mash) {
-   // In the long run we'll keep this setter and retire the raw pointer version.  For now though, they pretty much
-   // share the same implementation.
-   this->setMash(mash.get());
-   return;
-}
+void Recipe::setMash        (std::shared_ptr<Mash        > val) { this->pimpl->setStepOwner<Mash        >(val, this->m_mashId        , PropertyNames::Recipe::mash        ); return; }
+void Recipe::setMash        (Mash *                        val) { this->pimpl->setStepOwner<Mash        >(val, this->m_mashId        , PropertyNames::Recipe::mash        ); return; }
+void Recipe::setBoil        (std::shared_ptr<Boil        > val) { this->pimpl->setStepOwner<Boil        >(val, this->m_boilId        , PropertyNames::Recipe::boil        ); return; }
+void Recipe::setBoil        (Boil *                        val) { this->pimpl->setStepOwner<Boil        >(val, this->m_boilId        , PropertyNames::Recipe::boil        ); return; }
+void Recipe::setFermentation(std::shared_ptr<Fermentation> val) { this->pimpl->setStepOwner<Fermentation>(val, this->m_fermentationId, PropertyNames::Recipe::fermentation); return; }
+void Recipe::setFermentation(Fermentation *                val) { this->pimpl->setStepOwner<Fermentation>(val, this->m_fermentationId, PropertyNames::Recipe::fermentation); return; }
 
-void Recipe::setMash(Mash * var) {
-   if (var->key() == this->mashId) {
-      return;
-   }
+///void Recipe::setMash(Mash * var) {
+///   if (var->key() == this->m_mashId) {
+///      return;
+///   }
+///
+///   // .:TBD:. Do we need to disconnect the old Mash?
+///
+///   std::shared_ptr<Mash> mashToAdd = copyIfNeeded(*var);
+///   this->m_mashId = mashToAdd->key();
+///   this->propagatePropertyChange(propertyToPropertyName<Mash>());
+///
+///   connect(mashToAdd.get(), &NamedEntity::changed, this, &Recipe::acceptChangeToContainedObject);
+///   emit this->changed(this->metaProperty(*PropertyNames::Recipe::mash), QVariant::fromValue<Mash *>(mashToAdd.get()));
+///
+///   this->recalcAll();
+///
+///   return;
+///}
 
-   // .:TBD:. Do we need to disconnect the old Mash?
+void Recipe::setStyleId       (int const id) { this->m_styleId        = id; return; }
+void Recipe::setEquipmentId   (int const id) { this->m_equipmentId    = id; return; }
+void Recipe::setMashId        (int const id) { this->m_mashId         = id; return; }
+void Recipe::setBoilId        (int const id) { this->m_boilId         = id; return; }
+void Recipe::setFermentationId(int const id) { this->m_fermentationId = id; return; }
 
-   std::shared_ptr<Mash> mashToAdd = copyIfNeeded(*var);
-   this->mashId = mashToAdd->key();
-   this->propagatePropertyChange(propertyToPropertyName<Mash>());
-
-   connect(mashToAdd.get(), &NamedEntity::changed, this, &Recipe::acceptChangeToContainedObject);
-   emit this->changed(this->metaProperty(*PropertyNames::Recipe::mash), QVariant::fromValue<Mash *>(mashToAdd.get()));
-
-   this->recalcAll();
-
-   return;
-}
-
-void Recipe::setStyleId(int id) {
-   this->styleId = id;
-}
-
-void Recipe::setEquipmentId(int id) {
-   this->equipmentId = id;
-}
-
-void Recipe::setMashId(int id) {
-   this->mashId = id;
-   return;
-}
-
-void Recipe::setFermentableIds(QVector<int> fermentableIds) {
-   this->pimpl->fermentableIds = fermentableIds;
-   return;
-}
-
-void Recipe::setHopIds(QVector<int> hopIds) {
-   this->pimpl->hopIds = hopIds;
-   return;
-}
-
-void Recipe::setInstructionIds(QVector<int> instructionIds) {
-   this->pimpl->instructionIds = instructionIds;
-   return;
-}
-
-void Recipe::setMiscIds(QVector<int> miscIds) {
-   this->pimpl->miscIds = miscIds;
-   return;
-}
-
-void Recipe::setSaltIds(QVector<int> saltIds) {
-   this->pimpl->saltIds = saltIds;
-   return;
-}
-
-void Recipe::setWaterIds(QVector<int> waterIds) {
-   this->pimpl->waterIds = waterIds;
-   return;
-}
-
-void Recipe::setYeastIds(QVector<int> yeastIds) {
-   this->pimpl->yeastIds = yeastIds;
-   return;
-}
-
+void Recipe::setFermentableIds(QVector<int> ids) {    this->pimpl->fermentableIds = ids; return; }
+void Recipe::setHopIds        (QVector<int> ids) {    this->pimpl->hopIds         = ids; return; }
+void Recipe::setInstructionIds(QVector<int> ids) {    this->pimpl->instructionIds = ids; return; }
+void Recipe::setMiscIds       (QVector<int> ids) {    this->pimpl->miscIds        = ids; return; }
+void Recipe::setSaltIds       (QVector<int> ids) {    this->pimpl->saltIds        = ids; return; }
+void Recipe::setWaterIds      (QVector<int> ids) {    this->pimpl->waterIds       = ids; return; }
+void Recipe::setYeastIds      (QVector<int> ids) {    this->pimpl->yeastIds       = ids; return; }
 
 //==============================="SET" METHODS=================================
 void Recipe::setType(Recipe::Type const val) {
@@ -1577,7 +1557,7 @@ void Recipe::setBatchSize_l(double var) {
    recalcAll();
 }
 
-void Recipe::setBoilSize_l(double var) {
+[[deprecated]] void Recipe::setBoilSize_l(double var) {
    this->setAndNotify(PropertyNames::Recipe::boilSize_l,
                       this->m_boilSize_l,
                       this->enforceMin(var, "boil size"));
@@ -1965,27 +1945,20 @@ double Recipe::points() {
 }
 
 //=========================Relational Getters=============================
-Style * Recipe::style() const {
-   return ObjectStoreWrapper::getByIdRaw<Style>(this->styleId);
-}
-int Recipe::getStyleId() const {
-   return this->styleId;
-}
-std::shared_ptr<Mash> Recipe::getMash() const {
-   return ObjectStoreWrapper::getById<Mash>(this->mashId);
-}
-Mash * Recipe::mash() const {
-   return ObjectStoreWrapper::getByIdRaw<Mash>(this->mashId);
-}
-int Recipe::getMashId() const {
-   return this->mashId;
-}
-Equipment * Recipe::equipment() const {
-   return ObjectStoreWrapper::getByIdRaw<Equipment>(this->equipmentId);
-}
-int Recipe::getEquipmentId() const {
-   return this->equipmentId;
-}
+Style * Recipe::style     () const { return ObjectStoreWrapper::getByIdRaw<Style>(this->m_styleId); }
+int     Recipe::getStyleId() const { return                                       this->m_styleId ; }
+Equipment * Recipe::equipment     () const { return ObjectStoreWrapper::getByIdRaw<Equipment>(this->m_equipmentId); }
+int         Recipe::getEquipmentId() const { return                                           this->m_equipmentId ; }
+std::shared_ptr<Mash>         Recipe::getMash          () const { return ObjectStoreWrapper::getById   <Mash        >(this->m_mashId); }
+Mash *                        Recipe::mash             () const { return ObjectStoreWrapper::getByIdRaw<Mash        >(this->m_mashId); }
+int                           Recipe::getMashId        () const { return                                              this->m_mashId ; }
+// ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+std::shared_ptr<Boil>         Recipe::getBoil          () const { return ObjectStoreWrapper::getById   <Boil        >(this->m_boilId); }
+Boil *                        Recipe::boil             () const { return ObjectStoreWrapper::getByIdRaw<Boil        >(this->m_boilId); }
+int                           Recipe::getBoilId        () const { return                                              this->m_boilId ; }
+std::shared_ptr<Fermentation> Recipe::getFermentation  () const { return ObjectStoreWrapper::getById   <Fermentation>(this->m_fermentationId); }
+Fermentation *                Recipe::fermentation     () const { return ObjectStoreWrapper::getByIdRaw<Fermentation>(this->m_fermentationId); }
+int                           Recipe::getFermentationId() const { return                                              this->m_fermentationId ; }
 
 QList<Instruction *> Recipe::instructions() const {
    return this->pimpl->getAllMyRaw<Instruction>();
@@ -2042,7 +2015,7 @@ QString Recipe::tasteNotes()         const { return m_tasteNotes;         }
 QString Recipe::primingSugarName()   const { return m_primingSugarName;   }
 bool    Recipe::forcedCarbonation()  const { return m_forcedCarbonation;  }
 double  Recipe::batchSize_l()        const { return m_batchSize_l;        }
-double  Recipe::boilSize_l()         const { return m_boilSize_l;         }
+[[deprecated]] double  Recipe::boilSize_l()         const { return m_boilSize_l;         }
 double  Recipe::boilTime_min()       const { return m_boilTime_min;       }
 double  Recipe::efficiency_pct()     const { return m_efficiency_pct;     }
 double  Recipe::tasteRating()        const { return m_tasteRating;        }
@@ -2815,8 +2788,8 @@ void Recipe::acceptChangeToContainedObject(QMetaProperty prop, QVariant val) {
          Q_FUNC_INFO << "Signal received from " << signalSenderClassName << ": changed" << propName << "to" << val;;
       Equipment * equipment = qobject_cast<Equipment *>(signalSender);
       if (equipment) {
-         qDebug() << Q_FUNC_INFO << "Equipment #" << equipment->key() << "(ours=" << this->equipmentId << ")";
-         Q_ASSERT(equipment->key() == this->equipmentId);
+         qDebug() << Q_FUNC_INFO << "Equipment #" << equipment->key() << "(ours=" << this->m_equipmentId << ")";
+         Q_ASSERT(equipment->key() == this->m_equipmentId);
          if (propName == *PropertyNames::Equipment::kettleBoilSize_l) {
             Q_ASSERT(val.canConvert<double>());
             this->setBoilSize_l(val.value<double>());
@@ -2888,8 +2861,11 @@ double Recipe::targetTotalMashVol_l() {
    return targetCollectedWortVol_l() + absorption_lKg * grainsInMash_kg();
 }
 
-Recipe * Recipe::getOwningRecipe() {
-   return this;
+Recipe * Recipe::getOwningRecipe() const {
+   // Recipes own themselves.
+   // Because this is a const function, the compiler treats the `this` pointer as a pointer to const Recipe.  This is
+   // why we need to cast it to return it.
+   return const_cast<Recipe *>(this);
 }
 
 void Recipe::hardDeleteOwnedEntities() {

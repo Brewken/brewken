@@ -29,6 +29,7 @@
 #include "model/Inventory.h"
 #include "tableModels/BtTableModel.h"
 #include "tableModels/BtTableModelInventory.h"
+#include "utils/CuriouslyRecurringTemplateBase.h"
 #include "utils/MetaTypes.h"
 
 // TODO: We would like to change "Add to Recipe" to "Set for Recipe" for things where the recipe only has one of them, eg Style or Equipment
@@ -91,7 +92,7 @@ template <typename T> concept      DoesNotObserveRecipe = std::negation_v<std::i
 //          template<class Caller> Recipe * doGetObservedRecipe() requires DoesNotObserveRecipe<Caller> {...} No-op
 //       And in each of the Derived classes, such as HopTableModel, we have a (macro-inserted) wrapper function such as:
 //          void HopTableModel::getObservedRecipe() { return this->doGetObservedRecipe<NeName##TableModel>(); }
-//       Then, from TableModel, we call m_derived->getObservedRecipe() and the correct version of doGetObservedRecipe()
+//       Then, from TableModel, we call this->derived().getObservedRecipe() and the correct version of doGetObservedRecipe()
 //       ends up being called.
 //
 //       NOTE: The IsTableModel constraint is useful as a belt-and-braces to make sure you're passing in a useful
@@ -131,7 +132,7 @@ struct TableModelTraits;
  *                                                    // totals.)
  */
 template<class Derived, class NE>
-class TableModelBase {
+class TableModelBase : public CuriouslyRecurringTemplateBase<Derived> {
 public:
    // This gets round the fact that we would not be able to access Derived::ColumnIndex directly
    //
@@ -140,7 +141,7 @@ public:
    using ColumnIndex = typename TableModelTraits<Derived>::ColumnIndex;
 
 protected:
-   TableModelBase() : m_derived{static_cast<Derived *>(this)}, rows{} {
+   TableModelBase() : rows{} {
       return;
    }
    // Need a virtual destructor as we have a virtual member function
@@ -156,7 +157,7 @@ public:
     *        https://stackoverflow.com/questions/51690394/overloading-member-function-among-multiple-base-classes).
     */
    BtTableModel::ColumnInfo const & get_ColumnInfo(ColumnIndex const columnIndex) const {
-      return m_derived->BtTableModel::getColumnInfo(static_cast<size_t>(columnIndex));
+      return this->derived().BtTableModel::getColumnInfo(static_cast<size_t>(columnIndex));
    }
 
    /**
@@ -164,21 +165,21 @@ public:
     */
    template<class Caller>
    void doObserveRecipe(Recipe * rec) requires IsTableModel<Caller> && ObservesRecipe<Caller> {
-      if (m_derived->recObs) {
+      if (this->derived().recObs) {
          qDebug() <<
-            Q_FUNC_INFO << "Unobserve Recipe #" << m_derived->recObs->key() << "(" << m_derived->recObs->name() << ")";
-         m_derived->disconnect(m_derived->recObs, nullptr, m_derived, nullptr);
+            Q_FUNC_INFO << "Unobserve Recipe #" << this->derived().recObs->key() << "(" << this->derived().recObs->name() << ")";
+         this->derived().disconnect(this->derived().recObs, nullptr, &this->derived(), nullptr);
          this->removeAll();
       }
 
-      m_derived->recObs = rec;
-      if (m_derived->recObs) {
+      this->derived().recObs = rec;
+      if (this->derived().recObs) {
          qDebug() <<
-            Q_FUNC_INFO << "Observe Recipe #" << m_derived->recObs->key() << "(" << m_derived->recObs->name() << ")";
-         m_derived->connect(m_derived->recObs, &NamedEntity::changed, m_derived, &Derived::changed);
+            Q_FUNC_INFO << "Observe Recipe #" << this->derived().recObs->key() << "(" << this->derived().recObs->name() << ")";
+         this->derived().connect(this->derived().recObs, &NamedEntity::changed, &this->derived(), &Derived::changed);
 
          // TBD: Commented out version doesn't compile on GCC
-         // this->addItems(m_derived->recObs->getAll<NE>());
+         // this->addItems(this->derived().recObs->getAll<NE>());
          this->addItems(rec->getAll<NE>());
       }
       qDebug() << Q_FUNC_INFO << "Now have" << this->rows.size() << "rows";
@@ -197,13 +198,13 @@ public:
    void observeDatabase(bool val) {
       if (val) {
          // Observing a database and a recipe are mutually exclusive.
-         m_derived->observeRecipe(nullptr);
+         this->derived().observeRecipe(nullptr);
          this->removeAll();
-         m_derived->connect(&ObjectStoreTyped<NE>::getInstance(), &ObjectStoreTyped<NE>::signalObjectInserted, m_derived, &Derived::addItem);
-         m_derived->connect(&ObjectStoreTyped<NE>::getInstance(), &ObjectStoreTyped<NE>::signalObjectDeleted , m_derived, &Derived::removeItem);
+         this->derived().connect(&ObjectStoreTyped<NE>::getInstance(), &ObjectStoreTyped<NE>::signalObjectInserted, &this->derived(), &Derived::addItem);
+         this->derived().connect(&ObjectStoreTyped<NE>::getInstance(), &ObjectStoreTyped<NE>::signalObjectDeleted , &this->derived(), &Derived::removeItem);
          this->addItems(ObjectStoreWrapper::getAll<NE>());
       } else {
-         m_derived->disconnect(&ObjectStoreTyped<NE>::getInstance(), nullptr, m_derived, nullptr);
+         this->derived().disconnect(&ObjectStoreTyped<NE>::getInstance(), nullptr, &this->derived(), nullptr);
          this->removeAll();
       }
       return;
@@ -297,7 +298,7 @@ public:
       }
 
       // If we are observing the database, ensure that the item is undeleted and fit to display.
-      Recipe * observedRecipe = m_derived->getObservedRecipe();
+      Recipe * observedRecipe = this->derived().getObservedRecipe();
       if (!observedRecipe && (item->deleted() || !item->display())) {
          return;
       }
@@ -315,12 +316,12 @@ public:
       }
 
       int size = this->rows.size();
-      m_derived->beginInsertRows(QModelIndex(), size, size);
+      this->derived().beginInsertRows(QModelIndex(), size, size);
       this->rows.append(item);
-      m_derived->connect(item.get(), &NamedEntity::changed, m_derived, &Derived::changed);
-      m_derived->added(item);
+      this->derived().connect(item.get(), &NamedEntity::changed, &this->derived(), &Derived::changed);
+      this->derived().added(item);
       //reset(); // Tell everybody that the table has changed.
-      m_derived->endInsertRows();
+      this->derived().endInsertRows();
       return;
    }
 
@@ -342,18 +343,18 @@ public:
    bool remove(std::shared_ptr<NE> item) {
       int rowNum = this->rows.indexOf(item);
       if (rowNum >= 0)  {
-         m_derived->beginRemoveRows(QModelIndex(), rowNum, rowNum);
-         m_derived->disconnect(item.get(), nullptr, m_derived, nullptr);
+         this->derived().beginRemoveRows(QModelIndex(), rowNum, rowNum);
+         this->derived().disconnect(item.get(), nullptr, &this->derived(), nullptr);
          this->rows.removeAt(rowNum);
 
-         m_derived->removed(item);
+         this->derived().removed(item);
 
          //reset(); // Tell everybody the table has changed.
-         m_derived->endRemoveRows();
+         this->derived().endRemoveRows();
 
-         if (m_derived->m_parentTableWidget) {
-            m_derived->m_parentTableWidget->resizeColumnsToContents();
-            m_derived->m_parentTableWidget->resizeRowsToContents();
+         if (this->derived().m_parentTableWidget) {
+            this->derived().m_parentTableWidget->resizeColumnsToContents();
+            this->derived().m_parentTableWidget->resizeRowsToContents();
          }
 
          return true;
@@ -378,7 +379,7 @@ protected:
    template<class Caller>
    Recipe * doGetObservedRecipe() const requires IsTableModel<Caller> && ObservesRecipe<Caller> {
       qDebug() << Q_FUNC_INFO << "Substantive version";
-      return m_derived->recObs;
+      return this->derived().recObs;
    }
    template<class Caller>
    Recipe * doGetObservedRecipe() const requires IsTableModel<Caller> && DoesNotObserveRecipe<Caller> {
@@ -394,21 +395,21 @@ protected:
          Q_FUNC_INFO << "Add up to " << items.size() << "of" << NE::staticMetaObject.className() <<
          "to existing list of" << this->rows.size();
 
-      auto tmp = this->removeDuplicates(items, m_derived->getObservedRecipe());
+      auto tmp = this->removeDuplicates(items, this->derived().getObservedRecipe());
 
       qDebug() << Q_FUNC_INFO << "After de-duping, adding " << tmp.size() << "of" << NE::staticMetaObject.className();
 
       int size = this->rows.size();
       if (size + tmp.size()) {
-         m_derived->beginInsertRows(QModelIndex(), size, size + tmp.size() - 1);
+         this->derived().beginInsertRows(QModelIndex(), size, size + tmp.size() - 1);
          this->rows.append(tmp);
 
          for (auto item : tmp) {
-            m_derived->connect(item.get(), &NamedEntity::changed, m_derived, &Derived::changed);
-            m_derived->added(item);
+            this->derived().connect(item.get(), &NamedEntity::changed, &this->derived(), &Derived::changed);
+            this->derived().added(item);
          }
 
-         m_derived->endInsertRows();
+         this->derived().endInsertRows();
       }
       return;
    }
@@ -419,14 +420,14 @@ protected:
    void removeAll() {
       int const size = this->rows.size();
       if (size > 0) {
-         m_derived->beginRemoveRows(QModelIndex(), 0, size - 1);
+         this->derived().beginRemoveRows(QModelIndex(), 0, size - 1);
          while (!this->rows.empty()) {
             auto item = this->rows.takeLast();
-            m_derived->disconnect(item.get(), nullptr, m_derived, nullptr);
-            //m_derived->removed(item); // Shouldn't be necessary as we call updateTotals() below
+            this->derived().disconnect(item.get(), nullptr, &this->derived(), nullptr);
+            //this->derived().removed(item); // Shouldn't be necessary as we call updateTotals() below
          }
-         m_derived->endRemoveRows();
-         m_derived->updateTotals();
+         this->derived().endRemoveRows();
+         this->derived().updateTotals();
       }
       return;
    }
@@ -716,8 +717,8 @@ protected:
       if (propertyName == PropertyNames::Inventory::amount) {
          for (int ii = 0; ii < this->rows.size(); ++ii) {
             if (invKey == this->rows.at(ii)->inventoryId()) {
-               emit m_derived->dataChanged(m_derived->createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)),
-                                           m_derived->createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)));
+               emit this->derived().dataChanged(this->derived().createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)),
+                                           this->derived().createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)));
             }
          }
       }
@@ -733,13 +734,13 @@ protected:
    template<class Caller>
    void checkRecipeItems(Recipe * recipe) requires IsTableModel<Caller> && ObservesRecipe<Caller>{
       qDebug() << Q_FUNC_INFO;
-      if (recipe == m_derived->recObs) {
+      if (recipe == this->derived().recObs) {
          this->removeAll();
          // TBD: Commented out version doesn't compile on GCC
-         // this->addItems(m_derived->recObs->getAll<NE>());
+         // this->addItems(this->derived().recObs->getAll<NE>());
          this->addItems(recipe->getAll<NE>());
-         if (m_derived->rowCount() > 0) {
-            emit m_derived->headerDataChanged(Qt::Vertical, 0, m_derived->rowCount() - 1);
+         if (this->derived().rowCount() > 0) {
+            emit this->derived().headerDataChanged(Qt::Vertical, 0, this->derived().rowCount() - 1);
          }
       }
       return;
@@ -767,22 +768,22 @@ protected:
 //         Q_FUNC_INFO << "Property" << prop.name() << "; val" << val << "; propNameOfOurIdsInRecipe" <<
 //         propNameOfOurIdsInRecipe;
       // Is sender one of our items?
-      NE * itemSender = qobject_cast<NE *>(m_derived->sender());
+      NE * itemSender = qobject_cast<NE *>(this->derived().sender());
       if (itemSender) {
          int ii = this->findIndexOf(itemSender);
          if (ii < 0) {
             return;
          }
 
-         m_derived->updateTotals();
-         emit m_derived->dataChanged(m_derived->createIndex(ii, 0),
-                                     m_derived->createIndex(ii, m_derived->columnCount() - 1));
-         emit m_derived->headerDataChanged(Qt::Vertical, ii, ii);
+         this->derived().updateTotals();
+         emit this->derived().dataChanged(this->derived().createIndex(ii, 0),
+                                     this->derived().createIndex(ii, this->derived().columnCount() - 1));
+         emit this->derived().headerDataChanged(Qt::Vertical, ii, ii);
          return;
       }
 
       // See if our recipe gained or lost items.
-      Recipe * recSender = qobject_cast<Recipe *>(m_derived->sender());
+      Recipe * recSender = qobject_cast<Recipe *>(this->derived().sender());
       if (recSender && prop.name() == propNameOfOurIdsInRecipe) {
          this->checkRecipeItems<Caller>(recSender);
       }
@@ -791,12 +792,6 @@ protected:
    }
 
    //================================================ Member Variables =================================================
-
-   /**
-    * \brief This is the 'this' pointer downcast to the derived class, which allows us to call non-virtual member
-    *        functions in the derived class from this templated base class.
-    */
-   Derived * m_derived;
 
    QList< std::shared_ptr<NE> > rows;
 };

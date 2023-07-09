@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * xml/XmlMashStepRecord.cpp is part of Brewken, and is copyright the following authors 2020-2022:
+ * xml/XmlMashStepRecord.cpp is part of Brewken, and is copyright the following authors 2020-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -73,8 +73,8 @@ void XmlMashStepRecord::setContainingEntity(std::shared_ptr<NamedEntity> contain
    auto mashStep = std::static_pointer_cast<MashStep>(this->namedEntity);
    auto mash = std::static_pointer_cast<Mash>(containingEntity);
 
-   // Mash::addMashStep() will make the right calls to MashStep::setMashId() and MashStep::setStepNumber()
-   mash->addMashStep(mashStep);
+   // Mash::addStep() will make the right calls to MashStep::setOwnerId() and MashStep::setStepNumber()
+   mash->addStep(mashStep);
    return;
 }
 

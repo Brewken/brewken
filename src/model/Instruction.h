@@ -99,7 +99,7 @@ public:
 
    int instructionNumber() const;
 
-   virtual Recipe * getOwningRecipe();
+   virtual Recipe * getOwningRecipe() const;
 
 signals:
 

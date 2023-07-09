@@ -527,14 +527,14 @@ namespace {
          {JsonRecordDefinition::FieldType::Enum                , "type"              , PropertyNames::MashStep::type                  , &MashStep::typeStringMapping          },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "amount"            , PropertyNames::MashStep::amount_l              , &BEER_JSON_VOLUME_UNIT_MAPPER         },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "step_temperature"  , PropertyNames::MashStep::stepTemp_c            , &BEER_JSON_TEMPERATURE_UNIT_MAPPER    },
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "step_time"         , PropertyNames::MashStep::stepTime_min          , &BEER_JSON_TIME_UNIT_MAPPER           },
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "ramp_time"         , PropertyNames::MashStep::rampTime_min          , &BEER_JSON_TIME_UNIT_MAPPER           },
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "end_temperature"   , PropertyNames::MashStep::endTemp_c             , &BEER_JSON_TEMPERATURE_UNIT_MAPPER    },
-         {JsonRecordDefinition::FieldType::String              , "description"       , PropertyNames::MashStep::description           },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "step_time"         , PropertyNames::    Step::stepTime_min          , &BEER_JSON_TIME_UNIT_MAPPER           },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "ramp_time"         , PropertyNames::    Step::rampTime_mins         , &BEER_JSON_TIME_UNIT_MAPPER           },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "end_temperature"   , PropertyNames::    Step::endTemp_c             , &BEER_JSON_TEMPERATURE_UNIT_MAPPER    },
+         {JsonRecordDefinition::FieldType::String              , "description"       , PropertyNames::    Step::description           },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "water_grain_ratio" , PropertyNames::MashStep::liquorToGristRatio_lKg, &BEER_JSON_SPECIFIC_VOLUME_UNIT_MAPPER},
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "infuse_temperature", PropertyNames::MashStep::infuseTemp_c          , &BEER_JSON_TEMPERATURE_UNIT_MAPPER    },
-         {JsonRecordDefinition::FieldType::SingleUnitValue     , "start_ph"          , PropertyNames::MashStep::startAcidity_pH       , &BEER_JSON_ACIDITY_UNIT               },
-         {JsonRecordDefinition::FieldType::SingleUnitValue     , "end_ph"            , PropertyNames::MashStep::endAcidity_pH         , &BEER_JSON_ACIDITY_UNIT               },
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "start_ph"          , PropertyNames::    Step::startAcidity_pH       , &BEER_JSON_ACIDITY_UNIT               },
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "end_ph"            , PropertyNames::    Step::endAcidity_pH         , &BEER_JSON_ACIDITY_UNIT               },
       }
    };
 

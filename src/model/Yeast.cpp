@@ -328,7 +328,7 @@ double Yeast::getTypicalAttenuation_pct() const {
    return Yeast::DefaultAttenuation_pct;
 }
 
-Recipe * Yeast::getOwningRecipe() {
+Recipe * Yeast::getOwningRecipe() const {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }
 

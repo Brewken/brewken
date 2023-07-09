@@ -511,7 +511,7 @@ void BrewNote::setRecipe(Recipe * recipe) {
    return;
 }
 
-Recipe * BrewNote::getOwningRecipe() {
+Recipe * BrewNote::getOwningRecipe() const {
    // getById will return nullptr if the recipe ID is invalid, which is what we want here
    return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
 }

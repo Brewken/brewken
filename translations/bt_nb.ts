@@ -64,6 +64,13 @@
     </message>
 </context>
 <context>
+    <name>Boil</name>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished">Kok</translation>
+    </message>
+</context>
+<context>
     <name>BrewDayFormatter</name>
     <message>
         <source>Brewday</source>
@@ -1426,6 +1433,13 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Fermentation</name>
+    <message>
+        <source>Fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>HelpDialog</name>
     <message>
         <source>for</source>
@@ -2184,6 +2198,14 @@ Log file may contain more details.</source>
     <message>
         <source>Souring Wort</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation type="obsolete">Trinn</translation>
     </message>
 </context>
 <context>
@@ -3872,6 +3894,65 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <source>Recipe</source>
         <translation type="unfinished">Oppskrift</translation>
     </message>
+    <message>
+        <source>Extract</source>
+        <translation type="unfinished">Ekstrakt</translation>
+    </message>
+    <message>
+        <source>Partial Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All Grain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cider</source>
+        <translation type="unfinished">Sider</translation>
+    </message>
+    <message>
+        <source>Kombucha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Soda</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished">Annet</translation>
+    </message>
+    <message>
+        <source>Mead</source>
+        <translation type="unfinished">Mjød</translation>
+    </message>
+    <message>
+        <source>Wine</source>
+        <translation type="unfinished">Vin</translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAddition</name>
+    <message>
+        <source>Named Entity In Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>add_to_mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>add_to_boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>add_to_fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>add_to_package</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeExtrasWidget</name>
@@ -4401,6 +4482,20 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     <message>
         <source>Too high for style.</source>
         <translation type="unfinished">For høy for øltypen</translation>
+    </message>
+</context>
+<context>
+    <name>Step</name>
+    <message>
+        <source>Step</source>
+        <translation type="unfinished">Trinn</translation>
+    </message>
+</context>
+<context>
+    <name>StepExtended</name>
+    <message>
+        <source>Extended Step</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7124,15 +7219,15 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Infusion</source>
-        <translation>Infusjon</translation>
+        <translation type="vanished">Infusjon</translation>
     </message>
     <message>
         <source>Temperature</source>
-        <translation>Temperatur</translation>
+        <translation type="vanished">Temperatur</translation>
     </message>
     <message>
         <source>Decoction</source>
-        <translation>Innkoking</translation>
+        <translation type="vanished">Innkoking</translation>
     </message>
     <message>
         <source>Target temp.</source>
@@ -7144,7 +7239,7 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Infuse Amount</source>
-        <translation>Infusjonsmengde</translation>
+        <translation type="vanished">Infusjonsmengde</translation>
     </message>
     <message>
         <source>Amount of water to infuse</source>
@@ -7160,11 +7255,11 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Decoction Amount</source>
-        <translation>Innkokingsmengde</translation>
+        <translation type="vanished">Innkokingsmengde</translation>
     </message>
     <message>
         <source>Amount of mash to decoct</source>
-        <translation>Mengde mesk til å innkoke</translation>
+        <translation type="vanished">Mengde mesk til å innkoke</translation>
     </message>
     <message>
         <source>Time</source>
@@ -7191,12 +7286,56 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <translation>Endelig temp. for denne fasen</translation>
     </message>
     <message>
-        <source>Fly Sparge</source>
+        <source>Batch Sparge</source>
+        <translation type="obsolete">Skylling</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished">Mengde</translation>
+    </message>
+    <message>
+        <source>Thickness</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Batch Sparge</source>
-        <translation type="unfinished">Skylling</translation>
+        <source>Mash thickness, aka liquor-to-grist ratio, is the volume of strike water divided by the mass of grist.  In metric units (liters and kilograms), its practical range is 2 to 4 and most often is around 2.5 to 3.2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optional description of this mash step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Lagre</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
     </message>
 </context>
 <context>
@@ -7227,6 +7366,10 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Batches</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This wizard calculates the correct mash temperatures and volumes for a single batch sparge mash.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

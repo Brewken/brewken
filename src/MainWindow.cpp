@@ -111,9 +111,11 @@
 #include "MashWizard.h"
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
+#include "model/Boil.h"
 #include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
+#include "model/Fermentation.h"
 #include "model/Mash.h"
 #include "model/Recipe.h"
 #include "model/Style.h"
@@ -576,6 +578,10 @@ void MainWindow::init() {
    qDebug() << Q_FUNC_INFO << "Recipe signals connected";
    Mash::connectSignals();
    qDebug() << Q_FUNC_INFO << "Mash signals connected";
+   Boil::connectSignals();
+   qDebug() << Q_FUNC_INFO << "Boil signals connected";
+   Fermentation::connectSignals();
+   qDebug() << Q_FUNC_INFO << "Fermentation signals connected";
 
    // I do not like this connection here.
    connect(this->pimpl->m_ancestorDialog,  &AncestorDialog::ancestoryChanged, treeView_recipe->model(), &BtTreeModel::versionedRecipe);
@@ -1865,9 +1871,9 @@ void MainWindow::addMashStepToMash(std::shared_ptr<MashStep> mashStep) {
    ObjectStoreWrapper::insert(mashStep);
    this->doOrRedoUpdate(
       newUndoableAddOrRemove(*this->recipeObs->mash(),
-                             &Mash::addMashStep,
+                             &Mash::addStep,
                              mashStep,
-                             &Mash::removeMashStep,
+                             &Mash::removeStep,
                              tr("Add mash step to recipe"))
    );
    // We don't need to call this->pimpl->m_mashStepTableModel->addMashStep(mashStep) here because the change to the mash will already
@@ -2608,9 +2614,9 @@ void MainWindow::removeSelectedMashStep() {
    auto step = this->pimpl->m_mashStepTableModel->getRow(row);
    this->doOrRedoUpdate(
       newUndoableAddOrRemove(*this->recipeObs->mash(),
-                              &Mash::removeMashStep,
+                              &Mash::removeStep,
                               step,
-                              &Mash::addMashStep,
+                              &Mash::addStep,
                               &MainWindow::removeMashStep,
                               static_cast<void (MainWindow::*)(std::shared_ptr<MashStep>)>(nullptr),
                               tr("Remove mash step"))
@@ -2709,7 +2715,7 @@ void MainWindow::removeMash() {
    //from the database.
    //remove from db
 
-   m->removeAllMashSteps();
+   m->removeAllSteps();
    ObjectStoreWrapper::softDelete(*m);
 
    auto defaultMash = std::make_shared<Mash>();

@@ -329,7 +329,7 @@ void Hop::setPinene_pct           (std::optional<double>   const   val) { this->
 void Hop::setPolyphenols_pct      (std::optional<double>   const   val) { this->setAndNotify(PropertyNames::Hop::polyphenols_pct      , this->m_polyphenols_pct      , this->enforceMinAndMax(val, "polyphenols_pct",       0.0, 100.0)); }
 void Hop::setXanthohumol_pct      (std::optional<double>   const   val) { this->setAndNotify(PropertyNames::Hop::xanthohumol_pct      , this->m_xanthohumol_pct      , this->enforceMinAndMax(val, "xanthohumol_pct",       0.0, 100.0)); }
 
-Recipe * Hop::getOwningRecipe() {
+Recipe * Hop::getOwningRecipe() const {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }
 

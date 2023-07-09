@@ -19,6 +19,7 @@
 #pragma once
 
 #include <QDebug>
+#include "utils/CuriouslyRecurringTemplateBase.h"
 
 /**
  * \brief Curiously Recurring Template Pattern (CRTP) base class for HopSortFilterProxyModel,
@@ -32,7 +33,7 @@
  *        Derived classes need to implement lessThan to provide the right per-column logic for this.
  */
 template<class Derived, class NeTableModel, class NeListModel>
-class SortFilterProxyModelBase {
+class SortFilterProxyModelBase : public CuriouslyRecurringTemplateBase<Derived> {
 public:
    SortFilterProxyModelBase(bool filter) :
       m_filter{filter} {
@@ -110,9 +111,6 @@ protected:
 
 private:
    bool const m_filter;
-   Derived const & derived() const {
-      return *static_cast<Derived const *>(this);
-   }
 };
 
 

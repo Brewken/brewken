@@ -31,6 +31,7 @@
 
 #include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
+#include "utils/CuriouslyRecurringTemplateBase.h"
 
 // TBD: Double-click does different things depending on whether you're looking at list of things in a recipe or
 // list of all things.  Propose it should become consistent!
@@ -88,15 +89,14 @@
  *        † Not the greatest name, but `new` is a reserved word and `create` is already taken by QWidget
  */
 template<class Derived, class NE, class NeTableModel, class NeSortFilterProxyModel, class NeEditor>
-class CatalogBase {
+class CatalogBase : public CuriouslyRecurringTemplateBase<Derived> {
 public:
 
    CatalogBase(MainWindow * parent) :
-      m_derived               {static_cast<Derived *>(this)             },
       m_parent                {parent                                   },
-      m_neEditor              {new NeEditor(m_derived)                  },
-      m_verticalLayout        {new QVBoxLayout(m_derived)               },
-      m_tableWidget           {new QTableView (m_derived)               },
+      m_neEditor              {new NeEditor(&this->derived())           },
+      m_verticalLayout        {new QVBoxLayout(&this->derived())        },
+      m_tableWidget           {new QTableView (&this->derived())        },
       m_horizontalLayout      {new QHBoxLayout()                        },
       m_qLineEdit_searchBox   {new QLineEdit()                          },
       m_horizontalSpacer      {new QSpacerItem(40,
@@ -104,9 +104,9 @@ public:
                                                QSizePolicy::Expanding,
                                                QSizePolicy::Minimum)    },
       m_pushButton_addToRecipe{this->createAddToRecipeButton()          },
-      m_pushButton_new        {new QPushButton(m_derived)               },
-      m_pushButton_edit       {new QPushButton(m_derived)               },
-      m_pushButton_remove     {new QPushButton(m_derived)               },
+      m_pushButton_new        {new QPushButton(&this->derived())        },
+      m_pushButton_edit       {new QPushButton(&this->derived())        },
+      m_pushButton_remove     {new QPushButton(&this->derived())        },
       m_neTableModel          {new NeTableModel(m_tableWidget, false)   },
       m_neTableProxy          {new NeSortFilterProxyModel(m_tableWidget)} {
 
@@ -152,10 +152,10 @@ public:
       m_verticalLayout->addLayout(m_horizontalLayout);
 
 
-      this->m_derived->resize(800, 300);
+      this->derived().resize(800, 300);
 
       this->retranslateUi();
-      QMetaObject::connectSlotsByName(this->m_derived);
+      QMetaObject::connectSlotsByName(&this->derived());
 
       // Note, per https://doc.qt.io/qt-6/signalsandslots-syntaxes.html and
       // https://wiki.qt.io/New_Signal_Slot_Syntax#Default_arguments_in_slot, use of a trivial lambda function to allow
@@ -164,13 +164,13 @@ public:
       // We could probably use the same or similar trick to avoid having to declare "public slots" at all in HopCatalog,
       // FermentableCatalog, etc, but I'm not sure it buys us much.
       if (m_pushButton_addToRecipe) {
-         m_derived->connect(m_pushButton_addToRecipe, &QAbstractButton::clicked,         m_derived, [this]() { this->add(); return; } );
+         this->derived().connect(m_pushButton_addToRecipe, &QAbstractButton::clicked,         &this->derived(), [this]() { this->add(); return; } );
       }
-      m_derived->connect(m_pushButton_edit       , &QAbstractButton::clicked,         m_derived, &Derived::editSelected     );
-      m_derived->connect(m_pushButton_remove     , &QAbstractButton::clicked,         m_derived, &Derived::removeItem );
-      m_derived->connect(m_pushButton_new        , &QAbstractButton::clicked,         m_derived, &Derived::newItem    );
-      m_derived->connect(m_tableWidget           , &QAbstractItemView::doubleClicked, m_derived, &Derived::addItem    );
-      m_derived->connect(m_qLineEdit_searchBox   , &QLineEdit::textEdited,            m_derived, &Derived::filterItems);
+      this->derived().connect(m_pushButton_edit       , &QAbstractButton::clicked,         &this->derived(), &Derived::editSelected     );
+      this->derived().connect(m_pushButton_remove     , &QAbstractButton::clicked,         &this->derived(), &Derived::removeItem );
+      this->derived().connect(m_pushButton_new        , &QAbstractButton::clicked,         &this->derived(), &Derived::newItem    );
+      this->derived().connect(m_tableWidget           , &QAbstractItemView::doubleClicked, &this->derived(), &Derived::addItem    );
+      this->derived().connect(m_qLineEdit_searchBox   , &QLineEdit::textEdited,            &this->derived(), &Derived::filterItems);
 
       m_neTableModel->observeDatabase(true);
 
@@ -179,7 +179,7 @@ public:
    virtual ~CatalogBase() = default;
 
    QPushButton * createAddToRecipeButton() requires IsTableModel<NeTableModel> && HasInventory<NeTableModel> {
-      return new QPushButton(m_derived);
+      return new QPushButton(&this->derived());
    }
    QPushButton * createAddToRecipeButton() requires IsTableModel<NeTableModel> && HasNoInventory<NeTableModel> {
       // No-op version
@@ -187,7 +187,7 @@ public:
    }
 
    void retranslateUi() {
-      m_derived->setWindowTitle(QString(QObject::tr("%1 Catalog / Database")).arg(NE::LocalisedName));
+      this->derived().setWindowTitle(QString(QObject::tr("%1 Catalog / Database")).arg(NE::LocalisedName));
       if (m_pushButton_addToRecipe) {
          m_pushButton_addToRecipe->setText(QString(QObject::tr("Add to Recipe")));
       }
@@ -332,7 +332,7 @@ public:
     * \param folder
     */
    void makeNew(QString folder = "") {
-      QString name = QInputDialog::getText(this->m_derived,
+      QString name = QInputDialog::getText(&this->derived(),
                                            QString(QObject::tr("%1 name")).arg(NE::staticMetaObject.className()),
                                            QString(QObject::tr("%1 name:")).arg(NE::staticMetaObject.className()));
       if (name.isEmpty()) {
@@ -359,12 +359,6 @@ public:
    }
 
    //================================================ Member Variables =================================================
-
-   /**
-    * \brief This is the 'this' pointer downcast to the derived class, which allows us to call non-virtual member
-    *        functions in the derived class from this templated base class.
-    */
-   Derived * m_derived;
 
    // Arguably we don't need to store this pointer as MainWindow is a singleton.  However, we get given it at
    // construction, so, why not...

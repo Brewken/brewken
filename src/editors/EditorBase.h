@@ -25,6 +25,7 @@
 
 #include "database/ObjectStoreWrapper.h"
 #include "model/NamedEntity.h"
+#include "utils/CuriouslyRecurringTemplateBase.h"
 
 /**
  * \class EditorBase
@@ -72,10 +73,9 @@
  *           pushButton_new, pushButton_save, pushButton_cancel
  */
 template<class NE, class Derived>
-class EditorBase {
+class EditorBase : public CuriouslyRecurringTemplateBase<Derived> {
 public:
    EditorBase() :
-      m_derived{static_cast<Derived *>(this)},
       m_editItem{nullptr} {
       return;
    }
@@ -90,9 +90,9 @@ public:
     */
    void connectSignalsAndSlots() {
       // Standard editor slot connections
-      m_derived->connect(this->m_derived->pushButton_new   , &QAbstractButton::clicked, m_derived, &Derived::clickedNew   );
-      m_derived->connect(this->m_derived->pushButton_save  , &QAbstractButton::clicked, m_derived, &Derived::save         );
-      m_derived->connect(this->m_derived->pushButton_cancel, &QAbstractButton::clicked, m_derived, &Derived::clearAndClose);
+      this->derived().connect(this->derived().pushButton_new   , &QAbstractButton::clicked, &this->derived(), &Derived::clickedNew   );
+      this->derived().connect(this->derived().pushButton_save  , &QAbstractButton::clicked, &this->derived(), &Derived::save         );
+      this->derived().connect(this->derived().pushButton_cancel, &QAbstractButton::clicked, &this->derived(), &Derived::clearAndClose);
       return;
    }
 
@@ -103,12 +103,12 @@ public:
     */
    void setEditItem(std::shared_ptr<NE> editItem = nullptr) {
       if (this->m_editItem) {
-         this->m_derived->disconnect(this->m_editItem.get(), nullptr, this->m_derived, nullptr);
+         this->derived().disconnect(this->m_editItem.get(), nullptr, &this->derived(), nullptr);
       }
       this->m_editItem = editItem;
       if (this->m_editItem) {
-         this->m_derived->connect(this->m_editItem.get(), &NamedEntity::changed, this->m_derived, &Derived::changed);
-         this->m_derived->readFieldsFromEditItem(std::nullopt);
+         this->derived().connect(this->m_editItem.get(), &NamedEntity::changed, &this->derived(), &Derived::changed);
+         this->derived().readFieldsFromEditItem(std::nullopt);
       }
       return;
    }
@@ -125,7 +125,7 @@ public:
     *        This is also called from \c BtTreeView::newNamedEntity.
     */
    void newEditItem(QString folder = "") {
-      QString name = QInputDialog::getText(this->m_derived,
+      QString name = QInputDialog::getText(&this->derived(),
                                            QString(QObject::tr("%1 name")).arg(NE::staticMetaObject.className()),
                                            QString(QObject::tr("%1 name:")).arg(NE::staticMetaObject.className()));
       if (name.isEmpty()) {
@@ -138,7 +138,7 @@ public:
       }
 
       this->setEditItem(ne);
-      this->m_derived->show();
+      this->derived().show();
       return;
    }
 
@@ -156,23 +156,23 @@ public:
     */
    void doSave() {
       if (!this->m_editItem) {
-         this->m_derived->setVisible(false);
+         this->derived().setVisible(false);
          return;
       }
-      // Note that we have to call this->m_derived->validateBeforeSave(), not just this->validateBeforeSave(), in order
+      // Note that we have to call this->derived().validateBeforeSave(), not just this->validateBeforeSave(), in order
       // to allow the derived class to override validateBeforeSave().  But, because of the magic of the CRTP, there is
       // no need to make validateBeforeSave() virtual.
-      if (!this->m_derived->validateBeforeSave()) {
+      if (!this->derived().validateBeforeSave()) {
          return;
       }
 
-      this->m_derived->writeFieldsToEditItem();
+      this->derived().writeFieldsToEditItem();
       if (this->m_editItem->key() < 0) {
          ObjectStoreWrapper::insert(this->m_editItem);
       }
-      this->m_derived->writeLateFieldsToEditItem();
+      this->derived().writeLateFieldsToEditItem();
 
-      this->m_derived->setVisible(false);
+      this->derived().setVisible(false);
       return;
    }
 
@@ -181,7 +181,7 @@ public:
     */
    void doClearAndClose() {
       this->setEditItem();
-      this->m_derived->setVisible(false); // Hide the window.
+      this->derived().setVisible(false); // Hide the window.
       return;
    }
 
@@ -193,17 +193,12 @@ public:
     */
    void doChanged(QObject * sender, QMetaProperty prop, [[maybe_unused]] QVariant val) {
       if (this->m_editItem && sender == this->m_editItem.get()) {
-         this->m_derived->readFieldsFromEditItem(prop.name());
+         this->derived().readFieldsFromEditItem(prop.name());
       }
       return;
    }
 
 protected:
-   /**
-    * \brief This is the 'this' pointer downcast to the derived class, which allows us to call non-virtual member
-    *        functions in the derived class from this templated base class.
-    */
-   Derived * m_derived;
 
    /**
     * \brief This is the \c NamedEntity subclass object we are creating or editing.  We are also "observing" it in the

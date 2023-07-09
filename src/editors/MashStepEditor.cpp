@@ -31,13 +31,13 @@ MashStepEditor::MashStepEditor(QWidget* parent) :
    SMART_FIELD_INIT(MashStepEditor, label_stepTemp       , lineEdit_stepTemp       , MashStep, PropertyNames::MashStep::stepTemp_c            , 1);
    SMART_FIELD_INIT(MashStepEditor, label_amount         , lineEdit_amount         , MashStep, PropertyNames::MashStep::amount_l              );
    SMART_FIELD_INIT(MashStepEditor, label_infuseTemp     , lineEdit_infuseTemp     , MashStep, PropertyNames::MashStep::infuseTemp_c          , 1);
-   SMART_FIELD_INIT(MashStepEditor, label_stepTime       , lineEdit_stepTime       , MashStep, PropertyNames::MashStep::stepTime_min          , 0);
-   SMART_FIELD_INIT(MashStepEditor, label_rampTime       , lineEdit_rampTime       , MashStep, PropertyNames::MashStep::rampTime_min          , 0);
-   SMART_FIELD_INIT(MashStepEditor, label_endTemp        , lineEdit_endTemp        , MashStep, PropertyNames::MashStep::endTemp_c             , 1);
+   SMART_FIELD_INIT(MashStepEditor, label_stepTime       , lineEdit_stepTime       , MashStep, PropertyNames::    Step::stepTime_min          , 0);
+   SMART_FIELD_INIT(MashStepEditor, label_rampTime       , lineEdit_rampTime       , MashStep, PropertyNames::    Step::rampTime_mins         , 0);
+   SMART_FIELD_INIT(MashStepEditor, label_endTemp        , lineEdit_endTemp        , MashStep, PropertyNames::    Step::endTemp_c             , 1);
    // ⮜⮜⮜ All three below added for BeerJSON support ⮞⮞⮞
    SMART_FIELD_INIT(MashStepEditor, label_thickness      , lineEdit_thickness      , MashStep, PropertyNames::MashStep::liquorToGristRatio_lKg, 1);
-   SMART_FIELD_INIT(MashStepEditor, label_startAcidity   , lineEdit_startAcidity   , MashStep, PropertyNames::MashStep::startAcidity_pH       , 1);
-   SMART_FIELD_INIT(MashStepEditor, label_endAcidity     , lineEdit_endAcidity     , MashStep, PropertyNames::MashStep::endAcidity_pH         , 1);
+   SMART_FIELD_INIT(MashStepEditor, label_startAcidity   , lineEdit_startAcidity   , MashStep, PropertyNames::    Step::startAcidity_pH       , 1);
+   SMART_FIELD_INIT(MashStepEditor, label_endAcidity     , lineEdit_endAcidity     , MashStep, PropertyNames::    Step::endAcidity_pH         , 1);
 
    BT_COMBO_BOX_INIT(MashStepEditor, comboBox_mashStepType, MashStep, type);
 
@@ -56,14 +56,14 @@ void MashStepEditor::readFieldsFromEditItem(std::optional<QString> propName) {
    if (!propName || *propName == PropertyNames::MashStep::infuseAmount_l        ) { this->lineEdit_amount      ->setAmount    (m_editItem->amount_l              ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::MashStep::infuseTemp_c          ) { this->lineEdit_infuseTemp  ->setAmount    (m_editItem->infuseTemp_c          ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::MashStep::stepTemp_c            ) { this->lineEdit_stepTemp    ->setAmount    (m_editItem->stepTemp_c            ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::MashStep::stepTime_min          ) { this->lineEdit_stepTime    ->setAmount    (m_editItem->stepTime_min          ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::MashStep::rampTime_min          ) { this->lineEdit_rampTime    ->setAmount    (m_editItem->rampTime_min          ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::MashStep::endTemp_c             ) { this->lineEdit_endTemp     ->setAmount    (m_editItem->endTemp_c             ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::    Step::stepTime_min          ) { this->lineEdit_stepTime    ->setAmount    (m_editItem->stepTime_min          ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::    Step::rampTime_mins         ) { this->lineEdit_rampTime    ->setAmount    (m_editItem->rampTime_mins         ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::    Step::endTemp_c             ) { this->lineEdit_endTemp     ->setAmount    (m_editItem->endTemp_c             ()); if (propName) { return; } }
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    if (!propName || *propName == PropertyNames::MashStep::liquorToGristRatio_lKg) { this->lineEdit_thickness   ->setAmount    (m_editItem->liquorToGristRatio_lKg()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::MashStep::startAcidity_pH       ) { this->lineEdit_startAcidity->setAmount    (m_editItem->startAcidity_pH       ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::MashStep::endAcidity_pH         ) { this->lineEdit_endAcidity  ->setAmount    (m_editItem->endAcidity_pH         ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::MashStep::description           ) { this->textEdit_description ->setPlainText (m_editItem->description           ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::    Step::startAcidity_pH       ) { this->lineEdit_startAcidity->setAmount    (m_editItem->startAcidity_pH       ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::    Step::endAcidity_pH         ) { this->lineEdit_endAcidity  ->setAmount    (m_editItem->endAcidity_pH         ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::    Step::description           ) { this->textEdit_description ->setPlainText (m_editItem->description           ()); if (propName) { return; } }
    return;
 }
 
@@ -74,7 +74,7 @@ void MashStepEditor::writeFieldsToEditItem() {
    this->m_editItem->setInfuseTemp_c          (this->lineEdit_infuseTemp  ->getOptCanonicalQty   ());
    this->m_editItem->setStepTemp_c            (this->lineEdit_stepTemp    ->getNonOptCanonicalQty());
    this->m_editItem->setStepTime_min          (this->lineEdit_stepTime    ->getNonOptCanonicalQty());
-   this->m_editItem->setRampTime_min          (this->lineEdit_rampTime    ->getOptCanonicalQty   ());
+   this->m_editItem->setRampTime_mins         (this->lineEdit_rampTime    ->getOptCanonicalQty   ());
    this->m_editItem->setEndTemp_c             (this->lineEdit_endTemp     ->getOptCanonicalQty   ());
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    this->m_editItem->setLiquorToGristRatio_lKg(this->lineEdit_thickness   ->getOptCanonicalQty   ());

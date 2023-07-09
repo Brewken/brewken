@@ -244,7 +244,7 @@ public:
    void setMouthfeel        (QString               const & val);
    void setOverallImpression(QString               const & val);
 
-   virtual Recipe * getOwningRecipe();
+   virtual Recipe * getOwningRecipe() const;
 
 signals:
 

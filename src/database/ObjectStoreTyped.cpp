@@ -18,24 +18,27 @@
 #include  <mutex> // for std::once_flag
 
 #include "database/DbTransaction.h"
+#include "model/Boil.h"
+#include "model/BoilStep.h"
 #include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
+#include "model/Fermentation.h"
+#include "model/FermentationStep.h"
 #include "model/Hop.h"
 #include "model/Instruction.h"
 #include "model/Inventory.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Misc.h"
+#include "model/RecipeAdditionHop.h"
 #include "model/Recipe.h"
 #include "model/Salt.h"
 #include "model/Style.h"
 #include "model/Water.h"
 #include "model/Yeast.h"
 
-
 namespace {
-
    //
    // By the magic of templated variables and template specialisation, we have below all the constructor parameters for
    // each type of ObjectStoreTyped.
@@ -301,18 +304,18 @@ namespace {
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<Mash> {
       "mash",
       {
-         {ObjectStore::FieldType::Int   , "id"               , PropertyNames::NamedEntity::key           },
-         {ObjectStore::FieldType::String, "name"             , PropertyNames::NamedEntity::name          },
-         {ObjectStore::FieldType::Bool  , "deleted"          , PropertyNames::NamedEntity::deleted       },
-         {ObjectStore::FieldType::Bool  , "display"          , PropertyNames::NamedEntity::display       },
-         {ObjectStore::FieldType::String, "folder"           , PropertyNames::NamedEntity::folder        },
-         {ObjectStore::FieldType::Bool  , "equip_adjust"     , PropertyNames::Mash::equipAdjust          },
-         {ObjectStore::FieldType::Double, "grain_temp"       , PropertyNames::Mash::grainTemp_c          },
-         {ObjectStore::FieldType::String, "notes"            , PropertyNames::Mash::notes                },
-         {ObjectStore::FieldType::Double, "ph"               , PropertyNames::Mash::ph                   },
-         {ObjectStore::FieldType::Double, "sparge_temp"      , PropertyNames::Mash::spargeTemp_c         },
+         {ObjectStore::FieldType::Int   , "id"               , PropertyNames::NamedEntity::key               },
+         {ObjectStore::FieldType::String, "name"             , PropertyNames::NamedEntity::name              },
+         {ObjectStore::FieldType::Bool  , "deleted"          , PropertyNames::NamedEntity::deleted           },
+         {ObjectStore::FieldType::Bool  , "display"          , PropertyNames::NamedEntity::display           },
+         {ObjectStore::FieldType::String, "folder"           , PropertyNames::NamedEntity::folder            },
+         {ObjectStore::FieldType::Bool  , "equip_adjust"     , PropertyNames::Mash::equipAdjust              },
+         {ObjectStore::FieldType::Double, "grain_temp"       , PropertyNames::Mash::grainTemp_c              },
+         {ObjectStore::FieldType::String, "notes"            , PropertyNames::Mash::notes                    },
+         {ObjectStore::FieldType::Double, "ph"               , PropertyNames::Mash::ph                       },
+         {ObjectStore::FieldType::Double, "sparge_temp"      , PropertyNames::Mash::spargeTemp_c             },
          {ObjectStore::FieldType::Double, "tun_specific_heat", PropertyNames::Mash::mashTunSpecificHeat_calGC},
-         {ObjectStore::FieldType::Double, "tun_temp"         , PropertyNames::Mash::tunTemp_c            },
+         {ObjectStore::FieldType::Double, "tun_temp"         , PropertyNames::Mash::tunTemp_c                },
          {ObjectStore::FieldType::Double, "tun_weight"       , PropertyNames::Mash::mashTunWeight_kg         },
       }
    };
@@ -324,33 +327,129 @@ namespace {
    // NB: MashSteps don't get folders, because they don't separate from their Mash
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<MashStep> {
-      "mashstep",
+      "mash_step",
       {
          {ObjectStore::FieldType::Int   , "id"                       , PropertyNames::NamedEntity::key                },
          {ObjectStore::FieldType::String, "name"                     , PropertyNames::NamedEntity::name               },
          {ObjectStore::FieldType::Bool  , "deleted"                  , PropertyNames::NamedEntity::deleted            },
          {ObjectStore::FieldType::Bool  , "display"                  , PropertyNames::NamedEntity::display            },
          // NB: MashSteps don't have folders, as each one is owned by a Mash
-         {ObjectStore::FieldType::Double, "end_temp"                 , PropertyNames::MashStep::endTemp_c             },
+         {ObjectStore::FieldType::Double, "end_temp"                 , PropertyNames::    Step::endTemp_c             },
          {ObjectStore::FieldType::Double, "infuse_temp"              , PropertyNames::MashStep::infuseTemp_c          },
-         {ObjectStore::FieldType::Int   , "mash_id"                  , PropertyNames::MashStep::mashId                , nullptr, &PRIMARY_TABLE<Mash>},
+         {ObjectStore::FieldType::Int   , "mash_id"                  , PropertyNames::    Step::ownerId               , nullptr                     , &PRIMARY_TABLE<Mash>},
          {ObjectStore::FieldType::Enum  , "mstype"                   , PropertyNames::MashStep::type                  , &MashStep::typeStringMapping},
-         {ObjectStore::FieldType::Double, "ramp_time"                , PropertyNames::MashStep::rampTime_min          },
-         {ObjectStore::FieldType::Int   , "step_number"              , PropertyNames::MashStep::stepNumber            },
+         {ObjectStore::FieldType::Double, "ramp_time_mins"           , PropertyNames::    Step::rampTime_mins         },
+         {ObjectStore::FieldType::Int   , "step_number"              , PropertyNames::    Step::stepNumber            },
          {ObjectStore::FieldType::Double, "step_temp"                , PropertyNames::MashStep::stepTemp_c            },
-         {ObjectStore::FieldType::Double, "step_time"                , PropertyNames::MashStep::stepTime_min          },
+         {ObjectStore::FieldType::Double, "step_time"                , PropertyNames::    Step::stepTime_min          },
          // Now we support BeerJSON, amount_l unifies and replaces infuseAmount_l and decoctionAmount_l
          // See comment in model/MashStep.h for more info
          {ObjectStore::FieldType::Double, "amount_l"                 , PropertyNames::MashStep::amount_l              },
          // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-         {ObjectStore::FieldType::String, "description"              , PropertyNames::MashStep::description           },
+         {ObjectStore::FieldType::String, "description"              , PropertyNames::    Step::description           },
          {ObjectStore::FieldType::Double, "liquor_to_grist_ratio_lkg", PropertyNames::MashStep::liquorToGristRatio_lKg},
-         {ObjectStore::FieldType::Double, "start_acidity_ph"         , PropertyNames::MashStep::startAcidity_pH       },
-         {ObjectStore::FieldType::Double, "end_acidity_ph"           , PropertyNames::MashStep::endAcidity_pH         },
+         {ObjectStore::FieldType::Double, "start_acidity_ph"         , PropertyNames::    Step::startAcidity_pH       },
+         {ObjectStore::FieldType::Double, "end_acidity_ph"           , PropertyNames::    Step::endAcidity_pH         },
       }
    };
    // MashSteps don't have children
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<MashStep> {};
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Database field mappings for Boil
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> ObjectStore::TableDefinition const PRIMARY_TABLE<Boil> {
+      "boil",
+      {
+         {ObjectStore::FieldType::Int   , "id"             , PropertyNames::NamedEntity::key    },
+         {ObjectStore::FieldType::String, "name"           , PropertyNames::NamedEntity::name   },
+         {ObjectStore::FieldType::Bool  , "deleted"        , PropertyNames::NamedEntity::deleted},
+         {ObjectStore::FieldType::Bool  , "display"        , PropertyNames::NamedEntity::display},
+         {ObjectStore::FieldType::String, "folder"         , PropertyNames::NamedEntity::folder },
+         {ObjectStore::FieldType::String, "description"    , PropertyNames::Boil::description   },
+         {ObjectStore::FieldType::String, "notes"          , PropertyNames::Boil::notes         },
+         {ObjectStore::FieldType::Double, "pre_boil_size_l", PropertyNames::Boil::preBoilSize_l },
+         {ObjectStore::FieldType::Double, "boil_Time_mins" , PropertyNames::Boil::boilTime_mins },
+      }
+   };
+   // Boils don't have children, and the link with their BoilSteps is stored in the BoilStep (as between Recipe and BrewNotes)
+   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Boil> {};
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Database field mappings for BoilStep
+   // NB: BoilSteps don't get folders, because they don't separate from their Boil
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> ObjectStore::TableDefinition const PRIMARY_TABLE<BoilStep> {
+      "boil_step",
+      {
+         {ObjectStore::FieldType::Int   , "id"              , PropertyNames::NamedEntity::key             },
+         {ObjectStore::FieldType::String, "name"            , PropertyNames::NamedEntity::name            },
+         {ObjectStore::FieldType::Bool  , "deleted"         , PropertyNames::NamedEntity::deleted         },
+         {ObjectStore::FieldType::Bool  , "display"         , PropertyNames::NamedEntity::display         },
+         // NB: BoilSteps don't have folders, as each one is owned by a Boil
+         {ObjectStore::FieldType::Double, "step_time_min"   , PropertyNames::Step::stepTime_min           },
+         {ObjectStore::FieldType::Double, "end_temp_c"      , PropertyNames::Step::endTemp_c              },
+         {ObjectStore::FieldType::Double, "ramp_time_mins"  , PropertyNames::Step::rampTime_mins          },
+         {ObjectStore::FieldType::Int   , "step_number"     , PropertyNames::Step::stepNumber             },
+         {ObjectStore::FieldType::Int   , "boil_id"         , PropertyNames::Step::ownerId                , nullptr                             , &PRIMARY_TABLE<Boil>},
+         {ObjectStore::FieldType::String, "description"     , PropertyNames::Step::description            },
+         {ObjectStore::FieldType::Double, "start_acidity_ph", PropertyNames::Step::startAcidity_pH        },
+         {ObjectStore::FieldType::Double, "end_acidity_ph"  , PropertyNames::Step::endAcidity_pH          },
+         {ObjectStore::FieldType::Double, "start_temp_c"    , PropertyNames::StepExtended::startTemp_c    },
+         {ObjectStore::FieldType::Double, "start_gravity_sg", PropertyNames::StepExtended::startGravity_sg},
+         {ObjectStore::FieldType::Double, "end_gravity_sg"  , PropertyNames::StepExtended::  endGravity_sg},
+         {ObjectStore::FieldType::Enum  , "chilling_type"   , PropertyNames::BoilStep::chillingType       , &BoilStep::chillingTypeStringMapping},
+      }
+   };
+   // BoilSteps don't have children
+   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<BoilStep> {};
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Database field mappings for Fermentation
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> ObjectStore::TableDefinition const PRIMARY_TABLE<Fermentation> {
+      "fermentation",
+      {
+         {ObjectStore::FieldType::Int   , "id"               , PropertyNames::NamedEntity::key               },
+         {ObjectStore::FieldType::String, "name"             , PropertyNames::NamedEntity::name              },
+         {ObjectStore::FieldType::Bool  , "deleted"          , PropertyNames::NamedEntity::deleted           },
+         {ObjectStore::FieldType::Bool  , "display"          , PropertyNames::NamedEntity::display           },
+         {ObjectStore::FieldType::String, "folder"           , PropertyNames::NamedEntity::folder            },
+         {ObjectStore::FieldType::String, "description"      , PropertyNames::Fermentation::description      },
+         {ObjectStore::FieldType::String, "notes"            , PropertyNames::Fermentation::notes            },
+      }
+   };
+   // Fermentations don't have children, and the link with their FermentationSteps is stored in the FermentationStep (as between Recipe and BrewNotes)
+   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Fermentation> {};
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Database field mappings for FermentationStep
+   // NB: FermentationSteps don't get folders, because they don't separate from their Fermentation
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> ObjectStore::TableDefinition const PRIMARY_TABLE<FermentationStep> {
+      "fermentation_step",
+      {
+         {ObjectStore::FieldType::Int   , "id"              , PropertyNames::NamedEntity::key             },
+         {ObjectStore::FieldType::String, "name"            , PropertyNames::NamedEntity::name            },
+         {ObjectStore::FieldType::Bool  , "deleted"         , PropertyNames::NamedEntity::deleted         },
+         {ObjectStore::FieldType::Bool  , "display"         , PropertyNames::NamedEntity::display         },
+         // NB: FermentationSteps don't have folders, as each one is owned by a Fermentation
+         {ObjectStore::FieldType::Double, "step_time_min"   , PropertyNames::Step::stepTime_min           },
+         {ObjectStore::FieldType::Double, "end_temp_c"      , PropertyNames::Step::endTemp_c              },
+         {ObjectStore::FieldType::Double, "ramp_time_mins"  , PropertyNames::Step::rampTime_mins          },
+         {ObjectStore::FieldType::Int   , "step_number"     , PropertyNames::Step::stepNumber             },
+         {ObjectStore::FieldType::Int   , "fermentation_id" , PropertyNames::Step::ownerId                , nullptr, &PRIMARY_TABLE<Fermentation>},
+         {ObjectStore::FieldType::String, "description"     , PropertyNames::Step::description            },
+         {ObjectStore::FieldType::Double, "start_acidity_ph", PropertyNames::Step::startAcidity_pH        },
+         {ObjectStore::FieldType::Double, "end_acidity_ph"  , PropertyNames::Step::endAcidity_pH          },
+         {ObjectStore::FieldType::Double, "start_temp_c"    , PropertyNames::StepExtended::startTemp_c    },
+         {ObjectStore::FieldType::Double, "start_gravity_sg", PropertyNames::StepExtended::startGravity_sg},
+         {ObjectStore::FieldType::Double, "end_gravity_sg"  , PropertyNames::StepExtended::  endGravity_sg},
+         {ObjectStore::FieldType::String, "vessel"          , PropertyNames::FermentationStep::vessel     },
+      }
+   };
+   // FermentationSteps don't have children
+   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<FermentationStep> {};
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for InventoryMisc
@@ -375,7 +474,7 @@ namespace {
          {ObjectStore::FieldType::Bool  , "deleted"         , PropertyNames::NamedEntity::deleted                 },
          {ObjectStore::FieldType::Bool  , "display"         , PropertyNames::NamedEntity::display                 },
          {ObjectStore::FieldType::String, "folder"          , PropertyNames::NamedEntity::folder                  },
-         {ObjectStore::FieldType::Int   , "inventory_id"    , PropertyNames::NamedEntityWithInventory::inventoryId, nullptr,         &PRIMARY_TABLE<InventoryMisc>},
+         {ObjectStore::FieldType::Int   , "inventory_id"    , PropertyNames::NamedEntityWithInventory::inventoryId, nullptr                 , &PRIMARY_TABLE<InventoryMisc>},
          {ObjectStore::FieldType::Enum  , "mtype"           , PropertyNames::Misc::type                           , &Misc::typeStringMapping},
          {ObjectStore::FieldType::Enum  , "use"             , PropertyNames::Misc::use                            , &Misc::useStringMapping },
          {ObjectStore::FieldType::Double, "time"            , PropertyNames::Misc::time_min                       },
@@ -601,7 +700,7 @@ namespace {
          {ObjectStore::FieldType::Date  , "date"               , PropertyNames::Recipe::date              },
          {ObjectStore::FieldType::Double, "efficiency"         , PropertyNames::Recipe::efficiency_pct    },
          {ObjectStore::FieldType::Int   , "equipment_id"       , PropertyNames::Recipe::equipmentId       , nullptr,                &PRIMARY_TABLE<Equipment>},
-         {ObjectStore::FieldType::UInt  , "fermentation_stages", PropertyNames::Recipe::fermentationStages},
+         {ObjectStore::FieldType::Int   , "fermentation_stages", PropertyNames::Recipe::fermentationStages}, // TBD: This could become UInt with corresponding changes in model/Recipe.h
          {ObjectStore::FieldType::Double, "fg"                 , PropertyNames::Recipe::fg                },
          {ObjectStore::FieldType::Bool  , "forced_carb"        , PropertyNames::Recipe::forcedCarbonation },
          {ObjectStore::FieldType::Double, "keg_priming_factor" , PropertyNames::Recipe::kegPrimingFactor  },
@@ -636,14 +735,14 @@ namespace {
             {ObjectStore::FieldType::Int, "fermentable_id",    PropertyNames::Recipe::fermentableIds, nullptr, &PRIMARY_TABLE<Fermentable>},
          }
       },
-      {
-         "hop_in_recipe",
-         {
-            {ObjectStore::FieldType::Int, "id"                                                                                            },
-            {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Recipe>     },
-            {ObjectStore::FieldType::Int, "hop_id",            PropertyNames::Recipe::hopIds,         nullptr, &PRIMARY_TABLE<Hop>        },
-         }
-      },
+///      {
+///         "hop_in_recipe",
+///         {
+///            {ObjectStore::FieldType::Int, "id"                                                                                            },
+///            {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Recipe>     },
+///            {ObjectStore::FieldType::Int, "hop_id",            PropertyNames::Recipe::hopIds,         nullptr, &PRIMARY_TABLE<Hop>        },
+///         }
+///      },
       {
          "instruction_in_recipe",
          {
@@ -685,6 +784,28 @@ namespace {
             {ObjectStore::FieldType::Int, "yeast_id",          PropertyNames::Recipe::yeastIds,       nullptr, &PRIMARY_TABLE<Yeast>      },
          }
       },
+   };
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Database field mappings for RecipeAdditionHop
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> ObjectStore::TableDefinition const PRIMARY_TABLE<RecipeAdditionHop> {
+      "hop_in_recipe",
+      {
+         {ObjectStore::FieldType::Int   , "id"               , PropertyNames::NamedEntity::key                    },
+         {ObjectStore::FieldType::String, "name"             , PropertyNames::NamedEntity::name                   },
+         {ObjectStore::FieldType::Bool  , "display"          , PropertyNames::NamedEntity::display                },
+         {ObjectStore::FieldType::Bool  , "deleted"          , PropertyNames::NamedEntity::deleted                },
+         {ObjectStore::FieldType::String, "folder"           , PropertyNames::NamedEntity::folder                 },
+         {ObjectStore::FieldType::Int   , "recipe_id"        , PropertyNames::RecipeAddition::recipeId       , nullptr                                 , &PRIMARY_TABLE<Recipe>},
+         {ObjectStore::FieldType::Int   , "hop_id"           , PropertyNames::RecipeAddition::ingredientId   , nullptr                                 , &PRIMARY_TABLE<Hop>   },
+         {ObjectStore::FieldType::Enum  , "stage"            , PropertyNames::RecipeAddition::stage          , &RecipeAddition::stageStringMapping},
+         {ObjectStore::FieldType::Int   , "step"             , PropertyNames::RecipeAddition::step           },
+         {ObjectStore::FieldType::Double, "add_at_time_mins" , PropertyNames::RecipeAddition::addAtTime_mins },
+         {ObjectStore::FieldType::Double, "add_at_gravity_sg", PropertyNames::RecipeAddition::addAtGravity_sg},
+         {ObjectStore::FieldType::Double, "add_at_acidity_ph", PropertyNames::RecipeAddition::addAtAcidity_pH},
+         {ObjectStore::FieldType::Double, "duration_mins"    , PropertyNames::RecipeAddition::duration_mins  },
+      }
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -757,29 +878,37 @@ ObjectStoreTyped<NE> & ObjectStoreTyped<NE>::getInstance() {
 }
 
 // We have to make sure that each version of the above function gets instantiated
-template ObjectStoreTyped<BrewNote> &             ObjectStoreTyped<BrewNote            >::getInstance();
-template ObjectStoreTyped<Equipment> &            ObjectStoreTyped<Equipment           >::getInstance();
-template ObjectStoreTyped<Fermentable> &          ObjectStoreTyped<Fermentable         >::getInstance();
-template ObjectStoreTyped<Hop> &                  ObjectStoreTyped<Hop                 >::getInstance();
-template ObjectStoreTyped<Instruction> &          ObjectStoreTyped<Instruction         >::getInstance();
+template ObjectStoreTyped<Boil                > & ObjectStoreTyped<Boil                >::getInstance();
+template ObjectStoreTyped<BoilStep            > & ObjectStoreTyped<BoilStep            >::getInstance();
+template ObjectStoreTyped<BrewNote            > & ObjectStoreTyped<BrewNote            >::getInstance();
+template ObjectStoreTyped<Equipment           > & ObjectStoreTyped<Equipment           >::getInstance();
+template ObjectStoreTyped<Fermentable         > & ObjectStoreTyped<Fermentable         >::getInstance();
+template ObjectStoreTyped<Fermentation        > & ObjectStoreTyped<Fermentation        >::getInstance();
+template ObjectStoreTyped<FermentationStep    > & ObjectStoreTyped<FermentationStep    >::getInstance();
+template ObjectStoreTyped<Hop                 > & ObjectStoreTyped<Hop                 >::getInstance();
+template ObjectStoreTyped<Instruction         > & ObjectStoreTyped<Instruction         >::getInstance();
 template ObjectStoreTyped<InventoryFermentable> & ObjectStoreTyped<InventoryFermentable>::getInstance();
-template ObjectStoreTyped<InventoryHop> &         ObjectStoreTyped<InventoryHop        >::getInstance();
-template ObjectStoreTyped<InventoryMisc> &        ObjectStoreTyped<InventoryMisc       >::getInstance();
-template ObjectStoreTyped<InventoryYeast> &       ObjectStoreTyped<InventoryYeast      >::getInstance();
-template ObjectStoreTyped<Mash> &                 ObjectStoreTyped<Mash                >::getInstance();
-template ObjectStoreTyped<MashStep> &             ObjectStoreTyped<MashStep            >::getInstance();
-template ObjectStoreTyped<Misc> &                 ObjectStoreTyped<Misc                >::getInstance();
-template ObjectStoreTyped<Recipe> &               ObjectStoreTyped<Recipe              >::getInstance();
-template ObjectStoreTyped<Salt> &                 ObjectStoreTyped<Salt                >::getInstance();
-template ObjectStoreTyped<Style> &                ObjectStoreTyped<Style               >::getInstance();
-template ObjectStoreTyped<Water> &                ObjectStoreTyped<Water               >::getInstance();
-template ObjectStoreTyped<Yeast> &                ObjectStoreTyped<Yeast               >::getInstance();
+template ObjectStoreTyped<InventoryHop        > & ObjectStoreTyped<InventoryHop        >::getInstance();
+template ObjectStoreTyped<InventoryMisc       > & ObjectStoreTyped<InventoryMisc       >::getInstance();
+template ObjectStoreTyped<InventoryYeast      > & ObjectStoreTyped<InventoryYeast      >::getInstance();
+template ObjectStoreTyped<Mash                > & ObjectStoreTyped<Mash                >::getInstance();
+template ObjectStoreTyped<MashStep            > & ObjectStoreTyped<MashStep            >::getInstance();
+template ObjectStoreTyped<Misc                > & ObjectStoreTyped<Misc                >::getInstance();
+template ObjectStoreTyped<Recipe              > & ObjectStoreTyped<Recipe              >::getInstance();
+template ObjectStoreTyped<Salt                > & ObjectStoreTyped<Salt                >::getInstance();
+template ObjectStoreTyped<Style               > & ObjectStoreTyped<Style               >::getInstance();
+template ObjectStoreTyped<Water               > & ObjectStoreTyped<Water               >::getInstance();
+template ObjectStoreTyped<Yeast               > & ObjectStoreTyped<Yeast               >::getInstance();
 
 namespace {
    QVector<ObjectStore const *> AllObjectStores {
+      &ostSingleton<Boil                >,
+      &ostSingleton<BoilStep            >,
       &ostSingleton<BrewNote            >,
       &ostSingleton<Equipment           >,
       &ostSingleton<Fermentable         >,
+      &ostSingleton<Fermentation        >,
+      &ostSingleton<FermentationStep    >,
       &ostSingleton<Hop                 >,
       &ostSingleton<Instruction         >,
       &ostSingleton<InventoryFermentable>,

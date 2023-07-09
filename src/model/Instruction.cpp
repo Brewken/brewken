@@ -184,6 +184,6 @@ int Instruction::instructionNumber() const {
    return this->pimpl->getRecipe()->instructionNumber(*this);
 }
 
-Recipe * Instruction::getOwningRecipe() {
+Recipe * Instruction::getOwningRecipe() const {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }
