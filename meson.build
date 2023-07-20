@@ -672,6 +672,7 @@ commonSourceFiles = files([
    'src/model/Fermentation.cpp',
    'src/model/FermentationStep.cpp',
    'src/model/Hop.cpp',
+   'src/model/HopBase.cpp',
    'src/model/Instruction.cpp',
    'src/model/Inventory.cpp',
    'src/model/Mash.cpp',
@@ -683,6 +684,7 @@ commonSourceFiles = files([
    'src/model/Recipe.cpp',
    'src/model/RecipeAddition.cpp',
    'src/model/RecipeAdditionHop.cpp',
+   'src/model/RecipeAdditionMassOrVolume.cpp',
    'src/model/Salt.cpp',
    'src/model/Step.cpp',
    'src/model/StepExtended.cpp',
@@ -738,6 +740,7 @@ commonSourceFiles = files([
    'src/utils/MetaTypes.cpp',
    'src/utils/OptionalHelpers.cpp',
    'src/utils/OStreamWriterForQFile.cpp',
+   'src/utils/PropertyPath.cpp',
    'src/utils/TimerUtils.cpp',
    'src/utils/TypeLookup.cpp',
    'src/WaterButton.cpp',
@@ -845,6 +848,7 @@ mocHeaders = files([
    'src/model/Fermentation.h',
    'src/model/FermentationStep.h',
    'src/model/Hop.h',
+   'src/model/HopBase.h',
    'src/model/Instruction.h',
    'src/model/Inventory.h',
    'src/model/Mash.h',
@@ -855,6 +859,7 @@ mocHeaders = files([
    'src/model/Recipe.h',
    'src/model/RecipeAddition.h',
    'src/model/RecipeAdditionHop.h',
+   'src/model/RecipeAdditionMassOrVolume.h',
    'src/model/Salt.h',
    'src/model/Step.h',
    'src/model/StepExtended.h',
@@ -1568,5 +1573,6 @@ test('Test NamedParameterBundle',            testRunner, args : ['testNamedParam
 test('Test number display and parsing',      testRunner, args : ['testNumberDisplayAndParsing'])
 test('Test algorithms',                      testRunner, args : ['testAlgorithms'])
 test('Test type lookups',                    testRunner, args : ['testTypeLookups'])
+test('Test inventory',                       testRunner, args : ['testInventory'])
 # Need a bit longer than the default 30 second timeout for the log rotation test on some platforms
 test('Test log rotation',                    testRunner, args : ['testLogRotation'], timeout : 60)

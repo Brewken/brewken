@@ -53,13 +53,14 @@ HopTableModel::HopTableModel(QTableView * parent, bool editable) :
       {
          // Note that we have to use PropertyNames::NamedEntityWithInventory::inventoryWithUnits because
          // PropertyNames::NamedEntityWithInventory::inventory is not implemented
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Name     , tr("Name"     ), Hop, PropertyNames::NamedEntity::name),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Alpha    , tr("Alpha %"  ), Hop, PropertyNames::Hop::alpha_pct   , PrecisionInfo{1}),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Amount   , tr("Amount"   ), Hop, PropertyNames::Hop::amount_kg   ),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Inventory, tr("Inventory"), Hop, PropertyNames::NamedEntityWithInventory::inventoryWithUnits   ),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Form     , tr("Form"     ), Hop, PropertyNames::Hop::form        , EnumInfo{Hop::formStringMapping, Hop::formDisplayNames}),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Use      , tr("Use"      ), Hop, PropertyNames::Hop::use         , EnumInfo{Hop::useStringMapping,  Hop::useDisplayNames }),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Time     , tr("Time"     ), Hop, PropertyNames::Hop::time_min    ),
+         SMART_COLUMN_HEADER_DEFN(HopTableModel, Name     , tr("Name"       ), Hop, PropertyNames::NamedEntity::name                           ),
+         SMART_COLUMN_HEADER_DEFN(HopTableModel, Alpha    , tr("Alpha %"    ), Hop, PropertyNames::HopBase::alpha_pct                          , PrecisionInfo{1}),
+         SMART_COLUMN_HEADER_DEFN(HopTableModel, Amount   , tr("Amount"     ), Hop, PropertyNames::Hop::amount                                 ),
+         SMART_COLUMN_HEADER_DEFN(HopTableModel, Inventory, tr("Inventory"  ), Hop, PropertyNames::NamedEntityWithInventory::inventoryWithUnits),
+         SMART_COLUMN_HEADER_DEFN(HopTableModel, IsWeight , tr("Amount Type"), Hop, PropertyNames::Hop::amountIsWeight                         , BoolInfo{tr("Volume")              , tr("Weight")             }),
+         SMART_COLUMN_HEADER_DEFN(HopTableModel, Form     , tr("Form"       ), Hop, PropertyNames::HopBase::form                               , EnumInfo{HopBase::formStringMapping, HopBase::formDisplayNames}),
+         SMART_COLUMN_HEADER_DEFN(HopTableModel, Use      , tr("Use"        ), Hop, PropertyNames::Hop::use                                    , EnumInfo{Hop::useStringMapping     , Hop::useDisplayNames     }),
+         SMART_COLUMN_HEADER_DEFN(HopTableModel, Time     , tr("Time"       ), Hop, PropertyNames::Hop::time_min                               ),
       }
    },
    TableModelBase<HopTableModel, Hop>{},
@@ -98,6 +99,7 @@ QVariant HopTableModel::data(const QModelIndex & index, int role) const {
       case HopTableModel::ColumnIndex::Form:
       case HopTableModel::ColumnIndex::Amount:
       case HopTableModel::ColumnIndex::Inventory:
+      case HopTableModel::ColumnIndex::IsWeight:
          return this->readDataFromModel(index, role);
 
       // No default case as we want the compiler to warn us if we missed one
@@ -147,6 +149,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
       case HopTableModel::ColumnIndex::Use:
       case HopTableModel::ColumnIndex::Form:
       case HopTableModel::ColumnIndex::Time:
+      case HopTableModel::ColumnIndex::IsWeight:
          retVal = this->writeDataToModel(index, value, role);
          break;
 

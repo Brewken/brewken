@@ -331,7 +331,9 @@ public:
     * \brief Some entities (eg Fermentable, Hop) get copied when added to a recipe, but others (eg Instruction) don't.
     *        For those that do, we think of the copy as being a child of the original NamedEntity.  This function allows
     *        us to access that parent.
-    * \return Pointer to the parent NamedEntity from which this one was originally copied, or null if no such parent exists.
+    *
+    * \return Pointer to the parent NamedEntity from which this one was originally copied, or null if no such parent
+    *         exists.
     */
    NamedEntity * getParent() const;
 
@@ -353,6 +355,17 @@ public:
     *        By default this function does nothing.  Subclasses override it if needed.
     */
    virtual void hardDeleteOrphanedEntities();
+
+   /**
+    * \brief Where a \c NamedEntity contains and owns another \c NamedEntity (eg as \c Recipe can contain a \c Boil),
+    *        this allows generic code to ensure that such a contained object exists -- typically because we want to set
+    *        one of its properties.
+    *
+    *        Child classes need to override this for any properties where it is relevant.
+    *
+    * \return Pointer to the object whose existence we want to ensure (which will have been newly created if necessary).
+    */
+   virtual NamedEntity * ensureExists(BtStringConst const & property);
 
 signals:
    /*!
@@ -674,7 +687,9 @@ S & operator<<(S & stream, NE const * namedEntity) {
    return stream;
 }
 
+// Note that we cannot write `Q_DECLARE_METATYPE(NamedEntity)` here, because NamedEntity is an abstract class
 Q_DECLARE_METATYPE(NamedEntity *)
+Q_DECLARE_METATYPE(NamedEntity const *)
 Q_DECLARE_METATYPE(std::shared_ptr<NamedEntity>)
 
 #endif

@@ -1193,6 +1193,7 @@ add_test(NAME testNamedParameterBundle    COMMAND bin/${fileName_unitTestRunner}
 add_test(NAME testNumberDisplayAndParsing COMMAND bin/${fileName_unitTestRunner} testNumberDisplayAndParsing)
 add_test(NAME testAlgorithms              COMMAND bin/${fileName_unitTestRunner} testAlgorithms             )
 add_test(NAME testTypeLookups             COMMAND bin/${fileName_unitTestRunner} testTypeLookups            )
+add_test(NAME testInventory               COMMAND bin/${fileName_unitTestRunner} testInventory              )
 add_test(NAME testLogRotation             COMMAND bin/${fileName_unitTestRunner} testLogRotation            )
 
 #=======================================================================================================================
@@ -1661,227 +1662,227 @@ add_dependencies(FinalMessage ${fileName_executable})
 # but it's a lot less hassle.
 #
 
-#
-# Cross-platform packaging options
-#
-# Note that we don't bother setting the following
-#   - CPACK_PACKAGE_NAME as it defaults to the project name, which is what we want
-#   - CPACK_PACKAGE_DIRECTORY as it defaults to the build directory, which is what we want
-#   - CPACK_PACKAGE_VERSION_MAJOR as it defaults to the version given in the project command above, which is what we
-#                                 want
-#   - CPACK_PACKAGE_VERSION_MINOR for the same reason
-#   - CPACK_PACKAGE_VERSION_PATCH for the same reason
-#   - CPACK_SET_DESTDIR as it is only needed to is to "install software at non-default location"
-#   - CPACK_PACKAGING_INSTALL_PREFIX as the defaults from each generator should usually be fine
-#   - CPACK_PACKAGE_CONTACT as, AFAICT, it's only used to provide a default value for CPACK_DEBIAN_PACKAGE_MAINTAINER
-#
-set(CPACK_PACKAGE_VENDOR "The ${capitalisedProjectName} Team")
-string(
-   CONCAT
-   CPACK_PACKAGE_DESCRIPTION
-   # Note that the lines here are not supposed to be more than 79 characters long, otherwise rpmlint will spew an error.
-   # (If they are more than 80 characters long, then lintian will also complain, though only with a warning.)
-   "Brewken is a calculator for brewing beer. It is a Qt-based program which\n"
-   "allows you to create recipes from a database of ingredients. It calculates\n"
-   "all the important parameters, helps you with mash temperatures, and just\n"
-   "makes the process of recipe formulation much easier."
-)
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "GUI beer brewing software")
-set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/Brewken/brewken")
-#
-message("CMAKE_PROJECT_NAME = ${CMAKE_PROJECT_NAME}")
-message("PROJECT_VERSION = ${PROJECT_VERSION}")
-set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${PROJECT_VERSION}_${CMAKE_SYSTEM_PROCESSOR}")
-set(CPACK_PACKAGE_INSTALL_DIRECTORY "${capitalisedProjectName}-${PROJECT_VERSION}")
-if(NOT WIN32)
-   # Setting this on Windows breaks the NSIS packager with some confusing message saying it can't find the file
-   set(CPACK_PACKAGE_ICON "${repoDir}/images/${PROJECT_NAME}.svg")
-endif()
-set(CPACK_PACKAGE_CHECKSUM "SHA256")
-set(CPACK_RESOURCE_FILE_LICENSE "${repoDir}/COPYING.GPLv3")
-set(CPACK_STRIP_FILES true)
-set(CPACK_VERBATIM_VARIABLES true)
-set(CPACK_PACKAGE_EXECUTABLES "${fileName_executable}" "${capitalisedProjectName}")
+###
+### Cross-platform packaging options
+###
+### Note that we don't bother setting the following
+###   - CPACK_PACKAGE_NAME as it defaults to the project name, which is what we want
+###   - CPACK_PACKAGE_DIRECTORY as it defaults to the build directory, which is what we want
+###   - CPACK_PACKAGE_VERSION_MAJOR as it defaults to the version given in the project command above, which is what we
+###                                 want
+###   - CPACK_PACKAGE_VERSION_MINOR for the same reason
+###   - CPACK_PACKAGE_VERSION_PATCH for the same reason
+###   - CPACK_SET_DESTDIR as it is only needed to is to "install software at non-default location"
+###   - CPACK_PACKAGING_INSTALL_PREFIX as the defaults from each generator should usually be fine
+###   - CPACK_PACKAGE_CONTACT as, AFAICT, it's only used to provide a default value for CPACK_DEBIAN_PACKAGE_MAINTAINER
+###
+###set(CPACK_PACKAGE_VENDOR "The ${capitalisedProjectName} Team")
+###string(
+###   CONCAT
+###   CPACK_PACKAGE_DESCRIPTION
+###   # Note that the lines here are not supposed to be more than 79 characters long, otherwise rpmlint will spew an error.
+###   # (If they are more than 80 characters long, then lintian will also complain, though only with a warning.)
+###   "Brewken is a calculator for brewing beer. It is a Qt-based program which\n"
+###   "allows you to create recipes from a database of ingredients. It calculates\n"
+###   "all the important parameters, helps you with mash temperatures, and just\n"
+###   "makes the process of recipe formulation much easier."
+###)
+###set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "GUI beer brewing software")
+###set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/Brewken/brewken")
+###
+###message("CMAKE_PROJECT_NAME = ${CMAKE_PROJECT_NAME}")
+###message("PROJECT_VERSION = ${PROJECT_VERSION}")
+###set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${PROJECT_VERSION}_${CMAKE_SYSTEM_PROCESSOR}")
+###set(CPACK_PACKAGE_INSTALL_DIRECTORY "${capitalisedProjectName}-${PROJECT_VERSION}")
+###if(NOT WIN32)
+###   # Setting this on Windows breaks the NSIS packager with some confusing message saying it can't find the file
+###   set(CPACK_PACKAGE_ICON "${repoDir}/images/${PROJECT_NAME}.svg")
+###endif()
+###set(CPACK_PACKAGE_CHECKSUM "SHA256")
+###set(CPACK_RESOURCE_FILE_LICENSE "${repoDir}/COPYING.GPLv3")
+###set(CPACK_STRIP_FILES true)
+###set(CPACK_VERBATIM_VARIABLES true)
+###set(CPACK_PACKAGE_EXECUTABLES "${fileName_executable}" "${capitalisedProjectName}")
+###
+###
+### Variables for Source Package Generators
+###
+###set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${PROJECT_VERSION}_source")
+###set(CPACK_SOURCE_GENERATOR "TBZ2;")
+###set(CPACK_SOURCE_IGNORE_FILES "/.svn/"
+###                              "~$"
+###                              "/CMakeFiles/"
+###                              "/_CPack_Packages/"
+###                              "^${PROJECT_NAME}.*deb$"
+###                              "^${PROJECT_NAME}.*rpm$"
+###                              "^${PROJECT_NAME}.*tar.*$"
+###                              "CPack.*"
+###                              "Makefile"
+###                              "cmake_install.*"
+###                              "\\\\.o$"
+###                              "/${PROJECT_NAME}.dir/"
+###                              "moc_.*"
+###                              "qrc_${PROJECT_NAME}.*"
+###                              "ui_.*h"
+###                              "install_manifest.*"
+###                              "config\\\\.h")
 
-#
-# Variables for Source Package Generators
-#
-set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${PROJECT_VERSION}_source")
-set(CPACK_SOURCE_GENERATOR "TBZ2;")
-set(CPACK_SOURCE_IGNORE_FILES "/.svn/"
-                              "~$"
-                              "/CMakeFiles/"
-                              "/_CPack_Packages/"
-                              "^${PROJECT_NAME}.*deb$"
-                              "^${PROJECT_NAME}.*rpm$"
-                              "^${PROJECT_NAME}.*tar.*$"
-                              "CPack.*"
-                              "Makefile"
-                              "cmake_install.*"
-                              "\\\\.o$"
-                              "/${PROJECT_NAME}.dir/"
-                              "moc_.*"
-                              "qrc_${PROJECT_NAME}.*"
-                              "ui_.*h"
-                              "install_manifest.*"
-                              "config\\\\.h")
-
-if(UNIX AND NOT APPLE)
-   #================================================= Linux Packaging ==================================================
-   set(CPACK_GENERATOR "DEB;RPM;TBZ2;")
-
-   #-----------------DEB----------------
-   # See https://cmake.org/cmake/help/latest/cpack_gen/deb.html
-
-   # We don't set CPACK_DEBIAN_PACKAGE_NAME as it defaults to CMAKE_PROJECT_NAME, which is what we want
-   # (We don't want to put the version in the package name as it gets added to the file name automatically, so you'd
-   # end up with it twice.  Plus you'd get a bad-package-name error from lintian.)
-
-   set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
-
-   set(CPACK_DEBIAN_PACKAGE_VERSION "${PROJECT_VERSION}-1")
-
-   # See https://www.debian.org/doc/debian-policy/ch-binary.html#s-maintainer for more on the "maintainer", but
-   # essentially it's a required package property that needs to be either one person or a group mailing list.  In the
-   # latter case, the individual maintainers need be listed in a separate property called "uploaders", though I can't
-   # see a way to set this via CPack.
-   #
-   # Also note, per https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-maintainer, that it's simplest
-   # to avoid having full stops in the maintainer's name.
-   set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Matt Young <mfsy@yahoo.com>")
-
-   # This should save us having to set CPACK_DEBIAN_PACKAGE_DEPENDS manually
-   set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-
-   set(CPACK_DEBIAN_PACKAGE_SECTION "misc")
-   set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
-
-   # By default, CPack sets directory permissions with group_write enabled (775 in the old money).  Lintian doesn't like
-   # this and wants only the owner to have write permission (755 in the old money).  So we have to tell CPack here what
-   # permissions to use.
-   set(CPACK_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-                                                   GROUP_READ GROUP_EXECUTE
-                                                   WORLD_READ WORLD_EXECUTE)
-   #-----------------RPM-----------------
-   # See https://cmake.org/cmake/help/latest/cpack_gen/rpm.html
-
-   set(CPACK_RPM_FILE_NAME RPM-DEFAULT)
-
-   # RPM file name is supposed to be <NAME>-<VERSION>-<RELEASE>.<ARCH>.rpm.  However, CPack doesn't, by default, stick
-   # RELEASE in there, so we add it to version.  (The reason for having both version and release is that "version is
-   # controlled by the original author and release is controlled by whoever constructed the RPM".  So we always set
-   # release to 1.)
-   set(CPACK_RPM_PACKAGE_VERSION "${PROJECT_VERSION}-1")
-
-   # CPACK_RPM_PACKAGE_DESCRIPTION defaults to CPACK_PACKAGE_DESCRIPTION_FILE rather than CPACK_PACKAGE_DESCRIPTION,
-   # so we have to set it explicitly here
-   set(CPACK_RPM_PACKAGE_DESCRIPTION ${CPACK_PACKAGE_DESCRIPTION})
-
-   # This has to match one of the ValidLicenses values in packaging/linux/rpmLintFilters.toml.  (See comment in that file for
-   # more info.)
-   set(CPACK_RPM_PACKAGE_LICENSE "GPL-3.0-or-later")
-
-   set(CPACK_RPM_PACKAGE_GROUP "Applications/Productivity")
-
-   # This should (I think) save us having to set CPACK_RPM_PACKAGE_REQUIRES manually
-   set(CPACK_RPM_PACKAGE_AUTOREQ yes)
-
-   # .:TBD:. Not sure what these are for...
-   set(CPACK_RPM_SPEC_MORE_DEFINE "%define ignore \#")
-   set(CPACK_RPM_USER_FILELIST "%ignore /usr"
-                               "%ignore /usr/local"
-                               "%ignore /usr/local/bin"
-                               "%ignore /usr/local/share"
-                               "%ignore /usr/local/share/applications")
-elseif(WIN32)
-   #================================================ Windows Packaging =================================================
-   # http://www.thegigsite.com/cmake-2.6.0/CMakeCPackOptions.cmake
-   set(CPACK_GENERATOR "NSIS")
-
-   # The title displayed at the top of the installer.
-   set(CPACK_NSIS_PACKAGE_NAME "${capitalisedProjectName}-${PROJECT_VERSION}")
-   # The display name string that appears in the Windows Apps & features in Control Panel
-   set(CPACK_NSIS_DISPLAY_NAME "${capitalisedProjectName}-${PROJECT_VERSION}")
-   # ?
-   set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${capitalisedProjectName}-${PROJECT_VERSION}")
-   # URL to a web site providing more information about your application
-   set(CPACK_NSIS_URL_INFO_ABOUT "https://github.com/Brewken/brewken")
-   # The name of a *.ico file used as the main icon for the generated install program
-   set(CPACK_NSIS_MUI_ICON ${repoDir}/win/BrewkenIcon_96.ico)
-
-   # Lists each of the executables and associated text label to be used to create Start Menu shortcuts.
-   # For example, setting this to the list ccmake;CMake would create a shortcut named "CMake" that would execute the
-   # installed executable ccmake.
-   set(CPACK_PACKAGE_EXECUTABLES "${fileName_executable};${capitalisedProjectName}")
-
-   # List of desktop links to create. Each desktop link requires a corresponding start menu shortcut as created by
-   # CPACK_PACKAGE_EXECUTABLES.
-   set(CPACK_CREATE_DESKTOP_LINKS ${fileName_executable})
-
-   # In theory CMake should work out for itself which tool to use for dependency resolution.  In practice, on Windows,
-   # it seems there are issues.  In an MSYS2/MinGW environment we want to use objdump rather than the Visual Studio
-   # dumpbin.
-   #
-   # .:TBD:. This is not sufficient to get objdump used...
-   set(CMAKE_OBJDUMP "objdump")
-   set(CMAKE_GET_RUNTIME_DEPENDENCIES_TOOL objdump)
-   set(CMAKE_GET_RUNTIME_DEPENDENCIES_COMMAND /usr/bin/objdump)
-
-   message(STATUS "CMAKE_GET_RUNTIME_DEPENDENCIES_PLATFORM is " ${CMAKE_GET_RUNTIME_DEPENDENCIES_PLATFORM})
-   message(STATUS "CMAKE_GET_RUNTIME_DEPENDENCIES_TOOL is "     ${CMAKE_GET_RUNTIME_DEPENDENCIES_TOOL})
-   message(STATUS "CMAKE_GET_RUNTIME_DEPENDENCIES_COMMAND is "  ${CMAKE_GET_RUNTIME_DEPENDENCIES_COMMAND})
-
-   set(CPACK_NSIS_MODIFY_PATH ON)
-
-elseif(APPLE)
-   #================================================== Mac Packaging ===================================================
-   # Broadly speaking, what we want for Mac is a a DMG disk image which the end user can mount and from s/he can copy
-   # the application bundle to her/his Applications folder.  (On MacOS, a bundle a directory structure that appears as a
-   # single entity when viewed in the Finder.)
-   #
-   # It seems like there are two CPack generators that could potentially be used for this:
-   #   - Bundle (https://cmake.org/cmake/help/latest/cpack_gen/bundle.html) which I think is used in conjunction with
-   #     the DragNDrop generator
-   #   - DragNDrop (https://cmake.org/cmake/help/latest/cpack_gen/dmg.html) which generates a DMG disk image from which
-   #     the end user copies the application to her/his Applications folder
-   #
-   # According to
-   # https://stackoverflow.com/questions/46011440/cmake-cpack-preferred-package-generators-for-different-platforms, it's
-   # best to "Avoid the Bundle generator, it is older and more limited in what it supports, [compared with] the DMG
-   # [aka DragNDrop] generator."
-   #
-   # There is also the "official" Qt way to do things for Mac at https://doc.qt.io/qt-6/macos-deployment.html.  This
-   # does not use CPack but does offer options for doing things more directly in CMake.  (NB: As of January 2021, Qt is
-   # migrating from qmake to cmake -- see https://www.qt.io/blog/qt-and-cmake-the-past-the-present-and-the-future.)  We
-   # have to be a bit careful about mixing and matching approaches as we don't want to end up eg with a bundle inside a
-   # bundle.
-   #
-   # Another potential option would be the Qt Installation Framework (IFW) -- see
-   # https://doc.qt.io/qtinstallerframework/ --  for which there is a CPack generator
-   # (https://cmake.org/cmake/help/latest/cpack_gen/ifw.html).  This creates a cross-platform GUI installer using Qt.
-   # However, there are downsides to having a custom tool for install and upgrade, and, additionally, there's not a huge
-   # amount of info about how to get the CPack IFW generator working on Mac.
-   #
-   # Since we're using CPack for Windows and Linux, it feels like it makes sense to use it for Mac too, we we go with
-   # the DragNDrop generator.  Creation of the bundle is handled prior in CMake, prior to invocation of CPack, by the
-   # MACOSX_BUNDLE target property etc (per https://cmake.org/cmake/help/latest/prop_tgt/MACOSX_BUNDLE_INFO_PLIST.html).
-   #
-   # NOTE If you are on Linux and you want to check the contents of a Mac disk image file called, say, foo.dmg, you can
-   #      extract it into regular files from the command line with:
-   #         7z x foo.dmg
-   #
-   set(CPACK_GENERATOR "DragNDrop")
-
-   # The volume name of the generated disk image. Defaults to CPACK_PACKAGE_FILE_NAME, which we set above to be
-   # something very specific for the benefit of Linux packages.  We choose a simpler/nicer name for the Mac disk image.
-   set(CPACK_DMG_VOLUME_NAME "${CMAKE_PROJECT_NAME} ${PROJECT_VERSION}")
-
-   message(STATUS "Building Mac package")
-endif()
-
-# The documentation implies that all the CPACK_* variables need to be set before we include the CPack module, so that's
-# what we do.
-INCLUDE(CPack)
+### if(UNIX AND NOT APPLE)
+###    #================================================= Linux Packaging ==================================================
+###    set(CPACK_GENERATOR "DEB;RPM;TBZ2;")
+###
+###    #-----------------DEB----------------
+###    # See https://cmake.org/cmake/help/latest/cpack_gen/deb.html
+###
+###    # We don't set CPACK_DEBIAN_PACKAGE_NAME as it defaults to CMAKE_PROJECT_NAME, which is what we want
+###    # (We don't want to put the version in the package name as it gets added to the file name automatically, so you'd
+###    # end up with it twice.  Plus you'd get a bad-package-name error from lintian.)
+###
+###    set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
+###
+###    set(CPACK_DEBIAN_PACKAGE_VERSION "${PROJECT_VERSION}-1")
+###
+###    # See https://www.debian.org/doc/debian-policy/ch-binary.html#s-maintainer for more on the "maintainer", but
+###    # essentially it's a required package property that needs to be either one person or a group mailing list.  In the
+###    # latter case, the individual maintainers need be listed in a separate property called "uploaders", though I can't
+###    # see a way to set this via CPack.
+###    #
+###    # Also note, per https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-maintainer, that it's simplest
+###    # to avoid having full stops in the maintainer's name.
+###    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Matt Young <mfsy@yahoo.com>")
+###
+###    # This should save us having to set CPACK_DEBIAN_PACKAGE_DEPENDS manually
+###    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+###
+###    set(CPACK_DEBIAN_PACKAGE_SECTION "misc")
+###    set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+###
+###    # By default, CPack sets directory permissions with group_write enabled (775 in the old money).  Lintian doesn't like
+###    # this and wants only the owner to have write permission (755 in the old money).  So we have to tell CPack here what
+###    # permissions to use.
+###    set(CPACK_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+###                                                    GROUP_READ GROUP_EXECUTE
+###                                                    WORLD_READ WORLD_EXECUTE)
+###    #-----------------RPM-----------------
+###    # See https://cmake.org/cmake/help/latest/cpack_gen/rpm.html
+###
+###    set(CPACK_RPM_FILE_NAME RPM-DEFAULT)
+###
+###    # RPM file name is supposed to be <NAME>-<VERSION>-<RELEASE>.<ARCH>.rpm.  However, CPack doesn't, by default, stick
+###    # RELEASE in there, so we add it to version.  (The reason for having both version and release is that "version is
+###    # controlled by the original author and release is controlled by whoever constructed the RPM".  So we always set
+###    # release to 1.)
+###    set(CPACK_RPM_PACKAGE_VERSION "${PROJECT_VERSION}-1")
+###
+###    # CPACK_RPM_PACKAGE_DESCRIPTION defaults to CPACK_PACKAGE_DESCRIPTION_FILE rather than CPACK_PACKAGE_DESCRIPTION,
+###    # so we have to set it explicitly here
+###    set(CPACK_RPM_PACKAGE_DESCRIPTION ${CPACK_PACKAGE_DESCRIPTION})
+###
+###    # This has to match one of the ValidLicenses values in packaging/linux/rpmLintFilters.toml.  (See comment in that file for
+###    # more info.)
+###    set(CPACK_RPM_PACKAGE_LICENSE "GPL-3.0-or-later")
+###
+###    set(CPACK_RPM_PACKAGE_GROUP "Applications/Productivity")
+###
+###    # This should (I think) save us having to set CPACK_RPM_PACKAGE_REQUIRES manually
+###    set(CPACK_RPM_PACKAGE_AUTOREQ yes)
+###
+###    # .:TBD:. Not sure what these are for...
+###    set(CPACK_RPM_SPEC_MORE_DEFINE "%define ignore \#")
+###    set(CPACK_RPM_USER_FILELIST "%ignore /usr"
+###                                "%ignore /usr/local"
+###                                "%ignore /usr/local/bin"
+###                                "%ignore /usr/local/share"
+###                                "%ignore /usr/local/share/applications")
+### elseif(WIN32)
+###    #================================================ Windows Packaging =================================================
+###    # http://www.thegigsite.com/cmake-2.6.0/CMakeCPackOptions.cmake
+###    set(CPACK_GENERATOR "NSIS")
+###
+###    # The title displayed at the top of the installer.
+###    set(CPACK_NSIS_PACKAGE_NAME "${capitalisedProjectName}-${PROJECT_VERSION}")
+###    # The display name string that appears in the Windows Apps & features in Control Panel
+###    set(CPACK_NSIS_DISPLAY_NAME "${capitalisedProjectName}-${PROJECT_VERSION}")
+###    # ?
+###    set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${capitalisedProjectName}-${PROJECT_VERSION}")
+###    # URL to a web site providing more information about your application
+###    set(CPACK_NSIS_URL_INFO_ABOUT "https://github.com/Brewken/brewken")
+###    # The name of a *.ico file used as the main icon for the generated install program
+###    set(CPACK_NSIS_MUI_ICON ${repoDir}/win/BrewkenIcon_96.ico)
+###
+###    # Lists each of the executables and associated text label to be used to create Start Menu shortcuts.
+###    # For example, setting this to the list ccmake;CMake would create a shortcut named "CMake" that would execute the
+###    # installed executable ccmake.
+###    set(CPACK_PACKAGE_EXECUTABLES "${fileName_executable};${capitalisedProjectName}")
+###
+###    # List of desktop links to create. Each desktop link requires a corresponding start menu shortcut as created by
+###    # CPACK_PACKAGE_EXECUTABLES.
+###    set(CPACK_CREATE_DESKTOP_LINKS ${fileName_executable})
+###
+###    # In theory CMake should work out for itself which tool to use for dependency resolution.  In practice, on Windows,
+###    # it seems there are issues.  In an MSYS2/MinGW environment we want to use objdump rather than the Visual Studio
+###    # dumpbin.
+###    #
+###    # .:TBD:. This is not sufficient to get objdump used...
+###    set(CMAKE_OBJDUMP "objdump")
+###    set(CMAKE_GET_RUNTIME_DEPENDENCIES_TOOL objdump)
+###    set(CMAKE_GET_RUNTIME_DEPENDENCIES_COMMAND /usr/bin/objdump)
+###
+###    message(STATUS "CMAKE_GET_RUNTIME_DEPENDENCIES_PLATFORM is " ${CMAKE_GET_RUNTIME_DEPENDENCIES_PLATFORM})
+###    message(STATUS "CMAKE_GET_RUNTIME_DEPENDENCIES_TOOL is "     ${CMAKE_GET_RUNTIME_DEPENDENCIES_TOOL})
+###    message(STATUS "CMAKE_GET_RUNTIME_DEPENDENCIES_COMMAND is "  ${CMAKE_GET_RUNTIME_DEPENDENCIES_COMMAND})
+###
+###    set(CPACK_NSIS_MODIFY_PATH ON)
+###
+### elseif(APPLE)
+###    #================================================== Mac Packaging ===================================================
+###    # Broadly speaking, what we want for Mac is a a DMG disk image which the end user can mount and from s/he can copy
+###    # the application bundle to her/his Applications folder.  (On MacOS, a bundle a directory structure that appears as a
+###    # single entity when viewed in the Finder.)
+###    #
+###    # It seems like there are two CPack generators that could potentially be used for this:
+###    #   - Bundle (https://cmake.org/cmake/help/latest/cpack_gen/bundle.html) which I think is used in conjunction with
+###    #     the DragNDrop generator
+###    #   - DragNDrop (https://cmake.org/cmake/help/latest/cpack_gen/dmg.html) which generates a DMG disk image from which
+###    #     the end user copies the application to her/his Applications folder
+###    #
+###    # According to
+###    # https://stackoverflow.com/questions/46011440/cmake-cpack-preferred-package-generators-for-different-platforms, it's
+###    # best to "Avoid the Bundle generator, it is older and more limited in what it supports, [compared with] the DMG
+###    # [aka DragNDrop] generator."
+###    #
+###    # There is also the "official" Qt way to do things for Mac at https://doc.qt.io/qt-6/macos-deployment.html.  This
+###    # does not use CPack but does offer options for doing things more directly in CMake.  (NB: As of January 2021, Qt is
+###    # migrating from qmake to cmake -- see https://www.qt.io/blog/qt-and-cmake-the-past-the-present-and-the-future.)  We
+###    # have to be a bit careful about mixing and matching approaches as we don't want to end up eg with a bundle inside a
+###    # bundle.
+###    #
+###    # Another potential option would be the Qt Installation Framework (IFW) -- see
+###    # https://doc.qt.io/qtinstallerframework/ --  for which there is a CPack generator
+###    # (https://cmake.org/cmake/help/latest/cpack_gen/ifw.html).  This creates a cross-platform GUI installer using Qt.
+###    # However, there are downsides to having a custom tool for install and upgrade, and, additionally, there's not a huge
+###    # amount of info about how to get the CPack IFW generator working on Mac.
+###    #
+###    # Since we're using CPack for Windows and Linux, it feels like it makes sense to use it for Mac too, we we go with
+###    # the DragNDrop generator.  Creation of the bundle is handled prior in CMake, prior to invocation of CPack, by the
+###    # MACOSX_BUNDLE target property etc (per https://cmake.org/cmake/help/latest/prop_tgt/MACOSX_BUNDLE_INFO_PLIST.html).
+###    #
+###    # NOTE If you are on Linux and you want to check the contents of a Mac disk image file called, say, foo.dmg, you can
+###    #      extract it into regular files from the command line with:
+###    #         7z x foo.dmg
+###    #
+###    set(CPACK_GENERATOR "DragNDrop")
+###
+###    # The volume name of the generated disk image. Defaults to CPACK_PACKAGE_FILE_NAME, which we set above to be
+###    # something very specific for the benefit of Linux packages.  We choose a simpler/nicer name for the Mac disk image.
+###    set(CPACK_DMG_VOLUME_NAME "${CMAKE_PROJECT_NAME} ${PROJECT_VERSION}")
+###
+###    message(STATUS "Building Mac package")
+### endif()
+###
+### # The documentation implies that all the CPACK_* variables need to be set before we include the CPack module, so that's
+### # what we do.
+### INCLUDE(CPack)
 
 #=======================================================================================================================
 #================================================= Custom Make Targets =================================================

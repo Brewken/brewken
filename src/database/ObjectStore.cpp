@@ -582,7 +582,7 @@ public:
          Q_ASSERT(false);
       }
 
-      if (this->typeLookup.isOptional(fieldDefn.propertyName)) {
+      if (this->typeLookup.getType(fieldDefn.propertyName).isOptional()) {
          //
          // This is an optional field, so we are converting a QVariant holding std::optional<T> to a QVariant holding
          // either T or null, with relevant special case handling for when T is actually an enum (where we need to
@@ -705,7 +705,7 @@ public:
          }
       }
 
-      if (this->typeLookup.isOptional(fieldDefn.propertyName)) {
+      if (this->typeLookup.getType(fieldDefn.propertyName).isOptional()) {
          //
          // This is an optional field, so we are converting from a QVariant holding either T or null to a QVariant
          // holding std::optional<T>, with relevant special case handling for when T is actually an enum (where we need
@@ -1309,12 +1309,12 @@ void ObjectStore::loadAll(Database * database) {
          this->pimpl->wrapAndUnmapAsNeeded(this->pimpl->primaryTable, fieldDefn, fieldValue);
 
          // It's a coding error if we got the same parameter twice
-         Q_ASSERT(!namedParameterBundle.contains(*fieldDefn.propertyName));
+         Q_ASSERT(!namedParameterBundle.contains(fieldDefn.propertyName));
 
          namedParameterBundle.insert(fieldDefn.propertyName, fieldValue);
 
          // We assert that the insert always works!
-         Q_ASSERT(namedParameterBundle.contains(*fieldDefn.propertyName));
+         Q_ASSERT(namedParameterBundle.contains(fieldDefn.propertyName));
 
          if (!readPrimaryKey) {
             readPrimaryKey = true;

@@ -21,6 +21,7 @@
 #include <optional>
 #include <typeindex>
 #include <typeinfo>
+#include <type_traits>
 
 #include "BtFieldType.h"
 #include "utils/BtStringConst.h"
@@ -32,6 +33,8 @@ class BtStringConst;
 namespace PropertyNames::None {
    extern BtStringConst const none;
 }
+
+class TypeLookup;
 
 /**
  * \brief Extends \c std::type_index with some other info we need about a type for serialisation, specifically whether
@@ -63,6 +66,12 @@ struct TypeInfo {
       OptionalOther
    };
    Classification classification;
+
+   /**
+    * \brief If the type is a subclass of \c NamedEntity (or a raw or smart pointer to one) then this will point to the
+    *        \c TypeLookup for that class.  This is used in \c PropertyPath.  Otherwise this will hold \c nullptr.
+    */
+   TypeLookup const * typeLookup;
 
    /**
     * \brief Where appropriate, this tells us what is actually being stored.  Eg, \c typeIndex might tells us that a
@@ -109,12 +118,21 @@ struct TypeInfo {
     *
     *        Note that if \c T is \c std::optional<U> then U can be extracted by \c typename \c T::value_type.
     */
-   template<typename T>        const static TypeInfo construct(BtStringConst const & propertyName, std::optional<BtFieldType> fieldType);  // No general case, only specialisations
-   template<IsRequiredEnum  T> const static TypeInfo construct(BtStringConst const & propertyName, std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(T),                      Classification::RequiredEnum , fieldType, propertyName}; }
-   template<IsRequiredOther T> const static TypeInfo construct(BtStringConst const & propertyName, std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(T),                      Classification::RequiredOther, fieldType, propertyName}; }
-   template<IsOptionalEnum  T> const static TypeInfo construct(BtStringConst const & propertyName, std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(typename T::value_type), Classification::OptionalEnum , fieldType, propertyName}; }
-   template<IsOptionalOther T> const static TypeInfo construct(BtStringConst const & propertyName, std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(typename T::value_type), Classification::OptionalOther, fieldType, propertyName}; }
-
+   template<typename T>        const static TypeInfo construct(BtStringConst const & propertyName,
+                                                               std::optional<BtFieldType> fieldType,
+                                                               TypeLookup const * typeLookup);  // No general case, only specialisations
+   template<IsRequiredEnum  T> const static TypeInfo construct(BtStringConst const & propertyName,
+                                                               TypeLookup const * typeLookup = nullptr,
+                                                               std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(T),                      Classification::RequiredEnum , typeLookup, fieldType, propertyName}; }
+   template<IsRequiredOther T> const static TypeInfo construct(BtStringConst const & propertyName,
+                                                               TypeLookup const * typeLookup = nullptr,
+                                                               std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(T),                      Classification::RequiredOther, typeLookup, fieldType, propertyName}; }
+   template<IsOptionalEnum  T> const static TypeInfo construct(BtStringConst const & propertyName,
+                                                               TypeLookup const * typeLookup = nullptr,
+                                                               std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(typename T::value_type), Classification::OptionalEnum , typeLookup, fieldType, propertyName}; }
+   template<IsOptionalOther T> const static TypeInfo construct(BtStringConst const & propertyName,
+                                                               TypeLookup const * typeLookup = nullptr,
+                                                               std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(typename T::value_type), Classification::OptionalOther, typeLookup, fieldType, propertyName}; }
 };
 
 
@@ -163,15 +181,27 @@ public:
    TypeInfo const & getType(BtStringConst const & propertyName) const;
 
    /**
+    * TODO: Delete this.  Callers should use getType().isOptional().
     * \brief Returns whether the attribute for a given property name is optional (ie std::optional<T> rather than T)
     */
-   bool isOptional(BtStringConst const & propertyName) const;
+   [[deprecated]] bool isOptional(BtStringConst const & propertyName) const;
 
 private:
    char       const * const className;
    LookupMap          const lookupMap;
    TypeLookup const * const parentClassLookup;
 };
+
+/**
+ * \brief This is an additional concept for determining whether a class has a `static TypeLookup const typeLookup`
+ *        member.
+ */
+template <typename T> concept HasTypeLookup = requires {
+   { T::typeLookup } -> std::same_as<TypeLookup>;
+};
+
+template<typename      T> struct TypeLookupOf    : std::integral_constant<TypeLookup const *, nullptr       > {};
+template<HasTypeLookup T> struct TypeLookupOf<T> : std::integral_constant<TypeLookup const *, &T::typeLookup> {};
 
 /**
  * \brief This macro simplifies the entries in the \c initializerList parameter of a \c TypeLookup constructor call.  It
@@ -190,7 +220,27 @@ private:
  *        painful than it would otherwise be!
  */
 #define PROPERTY_TYPE_LOOKUP_ENTRY(propNameConstVar, memberVar, ...) \
-   {&propNameConstVar, TypeInfo::construct<decltype(memberVar)>(propNameConstVar __VA_OPT__ (, __VA_ARGS__))}
+   {&propNameConstVar, TypeInfo::construct<decltype(memberVar)>(propNameConstVar, TypeLookupOf<decltype(memberVar)>::value __VA_OPT__ (, __VA_ARGS__))}
+
+
+/**
+ * \brief This is a trick to allow us to get the return type of a pointer to a member function with a similar syntax
+ *        to the way we get it for a member variable.
+ *
+ *        See https://stackoverflow.com/questions/76325552/c-get-return-type-of-a-pointer-to-a-member-function
+ */
+//! @{
+template<typename MembFnPtr> struct MemberFunctionReturnType;
+template<typename Ret, typename Obj, typename... Args> struct MemberFunctionReturnType<Ret(Obj::*)(Args...)> {
+   using type = Ret;
+};
+template<typename Ret, typename Obj, typename... Args> struct MemberFunctionReturnType<Ret(Obj::*)(Args...) const> {
+   using type = Ret;
+};
+template<auto MembFnPtr> using MemberFunctionReturnType_t = typename MemberFunctionReturnType<decltype(MembFnPtr)>::type;
+//! @}
+
+
 
 /**
  * \brief Similar to \c PROPERTY_TYPE_LOOKUP_ENTRY but used when we do not have a member variable and instead must use
@@ -207,9 +257,14 @@ private:
  *        function, I did not yet find a way to get from said pointer to member function to the type ID of the
  *        function's return value.
  */
-#define PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(propNameConstVar, className, getterFunction, ...) \
-   {&propNameConstVar, TypeInfo::construct<  decltype(std::declval<className&>().getterFunction())   >(propNameConstVar __VA_OPT__ (, __VA_ARGS__))}
+//////#define PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(propNameConstVar, className, getterFunction, ...)
+//////   {&propNameConstVar, TypeInfo::construct<  decltype(std::declval<className&>().getterFunction())   >(propNameConstVar __VA_OPT__ (, __VA_ARGS__))}
 ///   {&propNameConstVar, TypeInfo::construct<  decltype(&getterFunction)>(propNameConstVar __VA_OPT__ (, __VA_ARGS__))}
+
+#define PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(propNameConstVar, getterMemberFunction, ...) \
+   {&propNameConstVar, TypeInfo::construct<MemberFunctionReturnType_t<&getterMemberFunction>>(propNameConstVar, TypeLookupOf<MemberFunctionReturnType_t<&getterMemberFunction>>::value __VA_OPT__ (, __VA_ARGS__))}
+
+
 
 /**
  * \brief Convenience function for logging

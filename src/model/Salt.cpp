@@ -88,7 +88,7 @@ TypeLookup const Salt::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::type          , Salt::m_type            ,         NonPhysicalQuantity::Enum      ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::whenToAdd     , Salt::m_whenToAdd       ,         NonPhysicalQuantity::Enum      ),
 
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Salt::amountWithUnits    , Salt, amountWithUnits            , Measurement::PqEitherMassOrVolume             ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Salt::amountWithUnits, Salt::amountWithUnits, Measurement::PqEitherMassOrVolume  ),
    },
    // Parent class lookup
    &NamedEntity::typeLookup

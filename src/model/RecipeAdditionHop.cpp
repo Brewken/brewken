@@ -16,6 +16,7 @@
 #include "model/RecipeAdditionHop.h"
 
 #include "database/ObjectStoreTyped.h"
+#include "database/ObjectStoreWrapper.h"
 #include "model/NamedParameterBundle.h"
 
 ObjectStore & RecipeAdditionHop::getObjectStoreTypedInstance() const {
@@ -23,13 +24,13 @@ ObjectStore & RecipeAdditionHop::getObjectStoreTypedInstance() const {
 }
 
 RecipeAdditionHop::RecipeAdditionHop(QString name) :
-   RecipeAddition{name},
+   RecipeAdditionMassOrVolume{name},
    InRecipeBase<RecipeAdditionHop, Hop>{} {
    return;
 }
 
 RecipeAdditionHop::RecipeAdditionHop(NamedParameterBundle const & namedParameterBundle) :
-   RecipeAddition{namedParameterBundle} {
+   RecipeAdditionMassOrVolume{namedParameterBundle} {
    //
    // If the addition stage is not specified then we assume it is boil, as this is the first stage at which it is usual
    // to add hops.
@@ -40,8 +41,12 @@ RecipeAdditionHop::RecipeAdditionHop(NamedParameterBundle const & namedParameter
 }
 
 RecipeAdditionHop::RecipeAdditionHop(RecipeAdditionHop const & other) :
-   RecipeAddition{other} {
+   RecipeAdditionMassOrVolume{other} {
    return;
 }
 
 RecipeAdditionHop::~RecipeAdditionHop() = default;
+
+Recipe * RecipeAdditionHop::getOwningRecipe() const {
+   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+}

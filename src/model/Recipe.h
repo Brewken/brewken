@@ -78,7 +78,7 @@ AddPropertyName(finalVolume_l     )
 AddPropertyName(forcedCarbonation )
 AddPropertyName(grainsInMash_kg   )
 AddPropertyName(grains_kg         )
-AddPropertyName(hopIds            )
+AddPropertyName(hopAdditionIds    )
 AddPropertyName(hops              )
 AddPropertyName(IBU               )
 AddPropertyName(IBUs              )
@@ -130,6 +130,7 @@ class Instruction;
 class Mash;
 class MashStep;
 class PreInstruction;
+class RecipeAdditionHop;
 class Style;
 class Water;
 class Yeast;
@@ -321,7 +322,7 @@ public:
    Q_PROPERTY(Style *        style           READ style              WRITE setStyle          STORED false)
    Q_PROPERTY(int            styleId         READ getStyleId         WRITE setStyleId)
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   Q_PROPERTY(Boil *         boil            READ boil               WRITE setBoil           STORED false)
+   Q_PROPERTY(std::optional<std::shared_ptr<Boil>> boil     READ boil               WRITE setBoil           STORED false)
    Q_PROPERTY(int            boilId          READ getBoilId          WRITE setBoilId)
    Q_PROPERTY(Fermentation * fermentation    READ fermentation       WRITE setFermentation   STORED false)
    Q_PROPERTY(int            fermentationId  READ getFermentationId  WRITE setFermentationId)
@@ -330,9 +331,9 @@ public:
    // one of their elements is replaced by another with a different key.
    //! \brief The brew notes.
    Q_PROPERTY(QList<BrewNote *> brewNotes READ brewNotes /*WRITE*/ /*NOTIFY changed*/ STORED false)
-   //! \brief The hops.
-   Q_PROPERTY(QList<Hop *> hops   READ hops /*WRITE*/ /*NOTIFY changed*/ STORED false)
-   Q_PROPERTY(QVector<int> hopIds READ getHopIds WRITE setHopIds)
+   //! \brief The hop additions.
+   Q_PROPERTY(QList<RecipeAdditionHop *> hopAdditions   READ hopAdditions                           STORED false)
+   Q_PROPERTY(QVector<int>               hopAdditionIds READ hopAdditionIds WRITE setHopAdditionIds)
    //! \brief The instructions.
    Q_PROPERTY(QList<Instruction *> instructions   READ instructions /*WRITE*/ /*NOTIFY changed*/ STORED false)
    Q_PROPERTY(QVector<int>         instructionIds READ getInstructionIds WRITE setInstructionIds)
@@ -497,38 +498,37 @@ public:
 
    // Relational getters
    template<typename NE> QList<std::shared_ptr<NE>> getAll() const;
-   QList<Hop *>                  hops                     () const;
-   QVector<int>                  getHopIds                () const;
-   QList<Instruction *>          instructions             () const;
-   QVector<int>                  getInstructionIds        () const;
-   QList<Fermentable *>          fermentables             () const;
-   QVector<int>                  getFermentableIds        () const;
-   QList<Misc *>                 miscs                    () const;
-   QVector<int>                  getMiscIds               () const;
-   QList<Yeast *>                yeasts                   () const;
-   QVector<int>                  getYeastIds              () const;
-   QList<Water *>                waters                   () const;
-   QVector<int>                  getWaterIds              () const;
-   QList<Salt *>                 salts                    () const;
-   QVector<int>                  getSaltIds               () const;
-   QList<BrewNote *>             brewNotes                () const;
-   QList<Recipe *>               ancestors                () const;
-   std::shared_ptr<Mash>         getMash                  () const;
-   Mash *                        mash                     () const;
-   int                           getMashId                () const;
-   Equipment *                   equipment                () const;
-   int                           getEquipmentId           () const;
-   Style *                       style                    () const;
-   int                           getStyleId               () const;
+   QList<RecipeAdditionHop *>           hopAdditions             () const;
+   QVector<int>                         hopAdditionIds           () const;
+   QList<Instruction *>                 instructions             () const;
+   QVector<int>                         getInstructionIds        () const;
+   QList<Fermentable *>                 fermentables             () const;
+   QVector<int>                         getFermentableIds        () const;
+   QList<Misc *>                        miscs                    () const;
+   QVector<int>                         getMiscIds               () const;
+   QList<Yeast *>                       yeasts                   () const;
+   QVector<int>                         getYeastIds              () const;
+   QList<Water *>                       waters                   () const;
+   QVector<int>                         getWaterIds              () const;
+   QList<Salt *>                        salts                    () const;
+   QVector<int>                         getSaltIds               () const;
+   QList<BrewNote *>                    brewNotes                () const;
+   QList<Recipe *>                      ancestors                () const;
+   std::shared_ptr<Mash>                getMash                  () const;
+   Mash *                               mash                     () const;
+   int                                  getMashId                () const;
+   Equipment *                          equipment                () const;
+   int                                  getEquipmentId           () const;
+   Style *                              style                    () const;
+   int                                  getStyleId               () const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   std::shared_ptr<Boil>         getBoil                  () const;
-   Boil *                        boil                     () const;
-   int                           getBoilId                () const;
-   std::shared_ptr<Fermentation> getFermentation          () const;
-   Fermentation *                fermentation             () const;
-   int                           getFermentationId        () const;
+   std::optional<std::shared_ptr<Boil>> boil                     () const;
+   int                                  getBoilId                () const;
+   std::shared_ptr<Fermentation>        getFermentation          () const;
+   Fermentation *                       fermentation             () const;
+   int                                  getFermentationId        () const;
 
-   int                           getAncestorId            () const;
+   int                                  getAncestorId            () const;
 
    // Relational setters
    void setEquipment   (Equipment *                   val);
@@ -536,8 +536,7 @@ public:
    void setMash        (std::shared_ptr<Mash>         val);
    void setMash        (Mash *                        val);
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   void setBoil        (std::shared_ptr<Boil>         val);
-   void setBoil        (Boil *                        val);
+   void setBoil        (std::optional<std::shared_ptr<Boil>> val);
    void setFermentation(std::shared_ptr<Fermentation> val);
    void setFermentation(Fermentation *                val);
 
@@ -553,7 +552,7 @@ public:
    void setBoilId        (int const id);
    void setFermentationId(int const id);
    void setFermentableIds(QVector<int> ids);
-   void setHopIds        (QVector<int> ids);
+   void setHopAdditionIds(QVector<int> ids);
    void setInstructionIds(QVector<int> ids);
    void setMiscIds       (QVector<int> ids);
    void setSaltIds       (QVector<int> ids);

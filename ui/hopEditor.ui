@@ -120,28 +120,25 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="SmartLabel" name="label_inventory">
-         <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
-         </property>
+        <widget class="QLabel" name="label_origin">
          <property name="text">
-          <string>Amount in Inventory</string>
+          <string>Origin</string>
          </property>
          <property name="buddy">
-          <cstring>lineEdit_inventory</cstring>
+          <cstring>lineEdit_origin</cstring>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="SmartLineEdit" name="lineEdit_inventory">
+        <widget class="SmartLineEdit" name="lineEdit_origin">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="toolTip">
-          <string>Amount in inventory</string>
+          <string>Origin</string>
          </property>
         </widget>
        </item>
@@ -169,17 +166,17 @@
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="label_origin">
+        <widget class="QLabel" name="label_producer">
          <property name="text">
-          <string>Origin</string>
+          <string>Producer</string>
          </property>
          <property name="buddy">
-          <cstring>lineEdit_origin</cstring>
+          <cstring>lineEdit_producer</cstring>
          </property>
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="SmartLineEdit" name="lineEdit_origin">
+        <widget class="SmartLineEdit" name="lineEdit_producer">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -187,7 +184,7 @@
           </sizepolicy>
          </property>
          <property name="toolTip">
-          <string>Origin</string>
+          <string>Producer</string>
          </property>
         </widget>
        </item>
@@ -215,17 +212,20 @@
         </widget>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="label_producer">
+        <widget class="SmartLabel" name="label_time">
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
          <property name="text">
-          <string>Producer</string>
+          <string>Time</string>
          </property>
          <property name="buddy">
-          <cstring>lineEdit_producer</cstring>
+          <cstring>lineEdit_time</cstring>
          </property>
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="SmartLineEdit" name="lineEdit_producer">
+        <widget class="SmartLineEdit" name="lineEdit_time">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -233,7 +233,7 @@
           </sizepolicy>
          </property>
          <property name="toolTip">
-          <string>Producer</string>
+          <string>Time</string>
          </property>
         </widget>
        </item>
@@ -261,28 +261,63 @@
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="SmartLabel" name="label_time">
+        <widget class="SmartLabel" name="label_inventory">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
          <property name="text">
-          <string>Time</string>
+          <string>Amount in Inventory</string>
          </property>
          <property name="buddy">
-          <cstring>lineEdit_time</cstring>
+          <cstring>lineEdit_inventory</cstring>
          </property>
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="SmartLineEdit" name="lineEdit_time">
+        <widget class="SmartLineEdit" name="lineEdit_inventory">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="toolTip">
-          <string>Time</string>
+          <string>Amount in inventory</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="2">
+        <widget class="QLabel" name="label_amountIsWeight">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Check it if the amount listed is in kg instead of L.</string>
+         </property>
+         <property name="text">
+          <string>Amount is weight?</string>
+         </property>
+         <property name="buddy">
+          <cstring>checkBox_amountIsWeight</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="3">
+        <widget class="SmartCheckBox" name="checkBox_amountIsWeight">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Checked if the given amount is weight instead of volume</string>
+         </property>
+         <property name="text">
+          <string/>
          </property>
         </widget>
        </item>
@@ -899,6 +934,11 @@
    <class>BtComboBox</class>
    <extends>QComboBox</extends>
    <header>widgets/BtComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SmartCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>widgets/SmartCheckBox.h</header>
   </customwidget>
   <customwidget>
    <class>SmartLabel</class>

@@ -64,8 +64,8 @@ TypeLookup const Mash::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::tunTemp_c            , Mash::m_tunTemp_c            , Measurement::PhysicalQuantity::Temperature         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::mashTunWeight_kg     , Mash::m_mashTunWeight_kg     , Measurement::PhysicalQuantity::Mass                ),
 
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Mash::mashSteps        , Mash, mashSteps         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Mash::mashStepsDowncast, Mash, mashStepsDowncast ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Mash::mashSteps        , Mash::mashSteps        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Mash::mashStepsDowncast, Mash::mashStepsDowncast),
    },
    // Parent class lookup
    &NamedEntity::typeLookup

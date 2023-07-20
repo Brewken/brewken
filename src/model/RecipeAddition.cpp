@@ -17,7 +17,7 @@
 
 #include "model/NamedParameterBundle.h"
 
-QString const RecipeAddition::LocalisedName = tr("Named Entity In Recipe");
+QString const RecipeAddition::LocalisedName = tr("Recipe Addition");
 
 // Note that RecipeAddition::stageStringMapping is as defined by BeerJSON, but we also use them for the DB and for
 // the UI.  We can't use them for BeerXML as it doesn't really support any similar field.

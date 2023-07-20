@@ -364,18 +364,18 @@ namespace {
    // Field mappings for hop_varieties BeerJSON records - see schemas/beerjson/1.0/hop.json
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_HopBase {
-      // Type                                   XPath         Q_PROPERTY                        Value Decoder
-      {JsonRecordDefinition::FieldType::String, "name"      , PropertyNames::NamedEntity::name},
-      {JsonRecordDefinition::FieldType::String, "producer"  , PropertyNames::Hop::producer    },
-      {JsonRecordDefinition::FieldType::String, "product_id", PropertyNames::Hop::product_id  },
-      {JsonRecordDefinition::FieldType::String, "origin"    , PropertyNames::Hop::origin      },
-      {JsonRecordDefinition::FieldType::String, "year"      , PropertyNames::Hop::year        },
-      {JsonRecordDefinition::FieldType::Enum  , "form"      , PropertyNames::Hop::form        , &Hop::formStringMapping},
+      // Type                                            XPath         Q_PROPERTY                        Value Decoder
+      {JsonRecordDefinition::FieldType::String         , "name"      , PropertyNames::NamedEntity::name},
+      {JsonRecordDefinition::FieldType::String         , "producer"  , PropertyNames::HopBase::producer    },
+      {JsonRecordDefinition::FieldType::String         , "product_id", PropertyNames::HopBase::product_id  },
+      {JsonRecordDefinition::FieldType::String         , "origin"    , PropertyNames::HopBase::origin      },
+      {JsonRecordDefinition::FieldType::String         , "year"      , PropertyNames::HopBase::year        },
+      {JsonRecordDefinition::FieldType::Enum           , "form"      , PropertyNames::HopBase::form        , &HopBase::formStringMapping},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "alpha_acid", PropertyNames::HopBase::alpha_pct   , &BEER_JSON_PERCENT_UNIT},
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "beta_acid" , PropertyNames::HopBase::beta_pct    , &BEER_JSON_PERCENT_UNIT},
    };
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_HopType_ExclBase {
       // Type                                                       XPath                                Q_PROPERTY                                 Value Decoder
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "alpha_acid"                       , PropertyNames::Hop::alpha_pct            , &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "beta_acid"                        , PropertyNames::Hop::beta_pct             , &BEER_JSON_PERCENT_UNIT},
       {JsonRecordDefinition::FieldType::Enum                      , "type"                             , PropertyNames::Hop::type                 , &Hop::typeStringMapping},
       {JsonRecordDefinition::FieldType::String                    , "notes"                            , PropertyNames::Hop::notes                },
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "percent_lost"                     , PropertyNames::Hop::hsi_pct              , &BEER_JSON_PERCENT_UNIT},

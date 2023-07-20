@@ -61,8 +61,8 @@ private slots:
    //! \brief Verify pstdint.h is sane
    void pstdintTest();
 
-   //! \brief Unit test: verify Brewken runs
-   void runTest();
+   //! \brief Unit test: verify we can set and read inventory via Qt Properties
+   void testInventory();
 
    //! \brief Verify standard all-grain recipe calculates properly
    void recipeCalcTest_allGrain();

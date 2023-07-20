@@ -262,6 +262,22 @@ namespace {
       return randSTR;
    }
 
+   /**
+    * \return Cascade pellets at 4% alpha acid
+    */
+   std::shared_ptr<Hop> makeHop_Cascade() {
+      // Cascade pellets at 4% AA
+      auto hop = std::make_shared<Hop>();
+      ObjectStoreWrapper::insert(hop);
+      hop->setName("Cascade 4pct");
+      hop->setAlpha_pct(4.0);
+      hop->setUse(Hop::Use::Boil);
+      hop->setTime_min(60);
+      hop->setType(Hop::Type::AromaAndBittering);
+      hop->setForm(Hop::Form::Pellet);
+      return hop;
+   }
+
 }
 
 Testing::Testing() :
@@ -401,14 +417,7 @@ void Testing::initTestCase() {
       this->equipFiveGalNoLoss->setBoilingPoint_c(100);
 
       // Cascade pellets at 4% AA
-      this->cascade_4pct = std::make_shared<Hop>();
-      ObjectStoreWrapper::insert(this->cascade_4pct);
-      this->cascade_4pct->setName("Cascade 4pct");
-      this->cascade_4pct->setAlpha_pct(4.0);
-      this->cascade_4pct->setUse(Hop::Use::Boil);
-      this->cascade_4pct->setTime_min(60);
-      this->cascade_4pct->setType(Hop::Type::AromaAndBittering);
-      this->cascade_4pct->setForm(Hop::Form::Leaf);
+      this->cascade_4pct = makeHop_Cascade();
 
       // 70% yield, no moisture, 2 SRM
       this->twoRow = std::make_shared<Fermentable>();
@@ -465,7 +474,8 @@ void Testing::recipeCalcTest_allGrain() {
    rec->setEquipment(equipFiveGalNoLoss.get());
 
    // Add hops (85g)
-   cascade_4pct->setAmount_kg(0.085);
+   cascade_4pct->setAmount(0.085);
+   cascade_4pct->setAmountIsWeight(true);
    rec->add(this->cascade_4pct);
 
    // Add grain
@@ -502,7 +512,7 @@ void Testing::recipeCalcTest_allGrain() {
    // Ground-truth IBUs (mg/L of isomerized alpha acid)
    //   ~40 IBUs
    double ibus =
-      cascade_4pct->amount_kg()*1e6     // Hops in mg
+      cascade_4pct->amount()*1e6     // Hops in mg
       * cascade_4pct->alpha_pct()/100.0 // AA ratio
       * 0.235 // Tinseth utilization (60 min @ 12 Plato)
       / rec->batchSize_l();
@@ -575,10 +585,10 @@ void Testing::postBoilLossOgTest() {
    recLoss->setMash(singleConversion.get());
 
    // Verify we hit the right boil/final volumes (that the test is sane)
-   QVERIFY2( fuzzyComp(recNoLoss->boilVolume_l(),  recNoLoss->boilSize_l(),  0.1),     "Wrong boil volume calculation (recNoLoss)" );
-   QVERIFY2( fuzzyComp(recLoss->boilVolume_l(),    recLoss->boilSize_l(),    0.1),     "Wrong boil volume calculation (recLoss)" );
-   QVERIFY2( fuzzyComp(recNoLoss->finalVolume_l(), recNoLoss->batchSize_l(), 0.1),     "Wrong final volume calculation (recNoLoss)" );
-   QVERIFY2( fuzzyComp(recLoss->finalVolume_l(),   recLoss->batchSize_l(),   0.1),     "Wrong final volume calculation (recLoss)" );
+   QVERIFY2(fuzzyComp(recNoLoss->boilVolume_l(),  recNoLoss->boilSize_l(),  0.1), "Wrong boil volume calculation (recNoLoss)");
+   QVERIFY2(fuzzyComp(  recLoss->boilVolume_l(),    recLoss->boilSize_l(),  0.1), "Wrong boil volume calculation (recLoss)"  );
+   QVERIFY2(fuzzyComp(recNoLoss->finalVolume_l(), recNoLoss->batchSize_l(), 0.1), "Wrong final volume calculation (recNoLoss)");
+   QVERIFY2(fuzzyComp(  recLoss->finalVolume_l(),   recLoss->batchSize_l(), 0.1), "Wrong final volume calculation (recLoss)"  );
 
    // The OG calc itself is verified in recipeCalcTest_*(), so just verify that
    // the two OGs are the same
@@ -750,7 +760,7 @@ void Testing::testAlgorithms() {
 }
 
 void Testing::testTypeLookups() {
-   QVERIFY2(Hop::typeLookup.getType(PropertyNames::Hop::alpha_pct).typeIndex == typeid(double),
+   QVERIFY2(Hop::typeLookup.getType(PropertyNames::HopBase::alpha_pct).typeIndex == typeid(double),
             "PropertyNames::Hop::alpha_pct not a double");
    auto const & grainGroupTypeInfo = Fermentable::typeLookup.getType(PropertyNames::Fermentable::grainGroup);
    QVERIFY2(grainGroupTypeInfo.isOptional(),
@@ -842,11 +852,14 @@ void Testing::pstdintTest() {
 }
 
 
-void Testing::runTest() {
-   // .:TBD:. We should probably retire this function... :o)
-   QVERIFY( 1==1 );
-   /*
-   MainWindow& mw = Application::mainWindow();
-   QVERIFY( mw );
-   */
+void Testing::testInventory() {
+   bool setOk = this->cascade_4pct->setProperty(*PropertyNames::PropertiesForInventory::inventory, 123.45);
+   QVERIFY2(setOk, "Error setting hop inventory property");
+   QVariant inventoryRaw = this->cascade_4pct->property(*PropertyNames::PropertiesForInventory::inventory);
+   QVERIFY2(inventoryRaw.canConvert<double>(), "Error retrieving hop inventory property");
+   double inventory = inventoryRaw.toDouble();
+
+   QVERIFY2(fuzzyComp(inventory, 123.45,  0.00000001), "Wrong hop inventory amount");
+
+   return;
 }

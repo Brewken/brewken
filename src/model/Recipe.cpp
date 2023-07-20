@@ -51,6 +51,7 @@
 #include "model/MashStep.h"
 #include "model/Misc.h"
 #include "model/NamedParameterBundle.h"
+#include "model/RecipeAdditionHop.h"
 #include "model/Salt.h"
 #include "model/Style.h"
 #include "model/Water.h"
@@ -190,7 +191,7 @@ public:
    impl(Recipe & recipe) :
       recipe{recipe},
       fermentableIds{},
-      hopIds{},
+      m_hopAdditionIds{},
       instructionIds{},
       miscIds{},
       saltIds{},
@@ -331,10 +332,44 @@ public:
       return;
    }
 
+   template<class NE>
+   void setStepOwner(std::optional<std::shared_ptr<NE>> val, int & ourId, BtStringConst const & property) {
+      if (!val && ourId < 0) {
+         // No change (from "not set" to "not set")
+         return;
+      }
+      if (val && val.value()->key() == ourId) {
+         // No change (same object as we already have)
+         return;
+      }
+
+      if (ourId > 0) {
+         std::shared_ptr<NE> oldVal = ObjectStoreWrapper::getById<NE>(ourId);
+         disconnect(oldVal.get(), nullptr, &this->recipe, nullptr);
+         // TBD: We should probably delete oldVal here as we "own" it
+      }
+
+      if (!val) {
+         ourId = -1;
+         return;
+      }
+
+      std::shared_ptr<NE> valToAdd = copyIfNeeded(**val);
+      ourId = valToAdd->key();
+      this->recipe.propagatePropertyChange(propertyToPropertyName<NE>());
+
+      connect(valToAdd.get(), &NamedEntity::changed, &this->recipe, &Recipe::acceptChangeToContainedObject);
+      emit this->recipe.changed(this->recipe.metaProperty(*property), QVariant::fromValue<NE *>(valToAdd.get()));
+
+      this->recipe.recalcAll();
+
+      return;
+   }
+
    // Member variables
    Recipe & recipe;
    QVector<int> fermentableIds;
-   QVector<int> hopIds;
+   QVector<int> m_hopAdditionIds;
    QVector<int> instructionIds;
    QVector<int> miscIds;
    QVector<int> saltIds;
@@ -344,7 +379,7 @@ public:
 };
 
 template<> QVector<int> & Recipe::impl::accessIds<Fermentable>() { return this->fermentableIds; }
-template<> QVector<int> & Recipe::impl::accessIds<Hop>()         { return this->hopIds; }
+template<> QVector<int> & Recipe::impl::accessIds<RecipeAdditionHop>()         { return this->m_hopAdditionIds; }
 template<> QVector<int> & Recipe::impl::accessIds<Instruction>() { return this->instructionIds; }
 template<> QVector<int> & Recipe::impl::accessIds<Misc>()        { return this->miscIds; }
 template<> QVector<int> & Recipe::impl::accessIds<Salt>()        { return this->saltIds; }
@@ -406,13 +441,13 @@ bool Recipe::isEqualTo(NamedEntity const & other) const {
       ObjectStoreWrapper::compareById<Equipment>(this->m_equipmentId, rhs.m_equipmentId) &&
       this->m_og                == rhs.m_og                &&
       this->m_fg                == rhs.m_fg                &&
-      ObjectStoreWrapper::compareListByIds<Fermentable>(this->pimpl->fermentableIds, rhs.pimpl->fermentableIds) &&
-      ObjectStoreWrapper::compareListByIds<Hop        >(this->pimpl->hopIds,         rhs.pimpl->hopIds)         &&
-      ObjectStoreWrapper::compareListByIds<Instruction>(this->pimpl->instructionIds, rhs.pimpl->instructionIds) &&
-      ObjectStoreWrapper::compareListByIds<Misc       >(this->pimpl->miscIds,        rhs.pimpl->miscIds)        &&
-      ObjectStoreWrapper::compareListByIds<Salt       >(this->pimpl->saltIds,        rhs.pimpl->saltIds)        &&
-      ObjectStoreWrapper::compareListByIds<Water      >(this->pimpl->waterIds,       rhs.pimpl->waterIds)       &&
-      ObjectStoreWrapper::compareListByIds<Yeast      >(this->pimpl->yeastIds,       rhs.pimpl->yeastIds)
+      ObjectStoreWrapper::compareListByIds<Fermentable      >(this->pimpl->fermentableIds  , rhs.pimpl->fermentableIds  ) &&
+      ObjectStoreWrapper::compareListByIds<RecipeAdditionHop>(this->pimpl->m_hopAdditionIds, rhs.pimpl->m_hopAdditionIds) &&
+      ObjectStoreWrapper::compareListByIds<Instruction      >(this->pimpl->instructionIds  , rhs.pimpl->instructionIds  ) &&
+      ObjectStoreWrapper::compareListByIds<Misc             >(this->pimpl->miscIds         , rhs.pimpl->miscIds         ) &&
+      ObjectStoreWrapper::compareListByIds<Salt             >(this->pimpl->saltIds         , rhs.pimpl->saltIds         ) &&
+      ObjectStoreWrapper::compareListByIds<Water            >(this->pimpl->waterIds        , rhs.pimpl->waterIds        ) &&
+      ObjectStoreWrapper::compareListByIds<Yeast            >(this->pimpl->yeastIds        , rhs.pimpl->yeastIds        )
    );
 }
 
@@ -480,7 +515,7 @@ TypeLookup const Recipe::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::finalVolume_l     , Recipe::m_finalVolume_l     , Measurement::PhysicalQuantity::Volume        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::grainsInMash_kg   , Recipe::m_grainsInMash_kg   , Measurement::PhysicalQuantity::Mass          ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::grains_kg         , Recipe::m_grains_kg         , Measurement::PhysicalQuantity::Mass          ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::hopIds            , Recipe::impl::hopIds            ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::hopAdditionIds    , Recipe::impl::m_hopAdditionIds),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::hops              , Recipe::m_hops              ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::IBU               , Recipe::m_IBU               , Measurement::PhysicalQuantity::Bitterness    ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::IBUs              , Recipe::m_IBUs              ),
@@ -844,7 +879,10 @@ QVector<PreInstruction> Recipe::hopSteps(Hop::Use type) {
             str = tr("Use %1 %2 for %3");
          }
 
-         str = str.arg(Measurement::displayAmount(Measurement::Amount{hop->amount_kg(), Measurement::Units::kilograms}))
+         str = str .arg(Measurement::displayAmount(Measurement::Amount{
+                                                      hop->amount(),
+                                                      hop->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
+                                                   }))
                .arg(hop->name())
                .arg(Measurement::displayAmount(Measurement::Amount{hop->time_min(), Measurement::Units::minutes}));
 
@@ -1260,7 +1298,7 @@ QString Recipe::nextAddToBoil(double & time) {
       }
       if (h->time_min() < time && h->time_min() > max) {
          ret = tr("Add %1 %2 to boil at %3.")
-               .arg(Measurement::displayAmount(Measurement::Amount{h->amount_kg(), Measurement::Units::kilograms}))
+               .arg(Measurement::displayAmount(h->amountWithUnits()))
                .arg(h->name())
                .arg(Measurement::displayAmount(Measurement::Amount{h->time_min(), Measurement::Units::minutes}));
 
@@ -1279,11 +1317,7 @@ QString Recipe::nextAddToBoil(double & time) {
       }
       if (m->time_min() < time && m->time_min() > max) {
          ret = tr("Add %1 %2 to boil at %3.");
-         if (m->amountIsWeight()) {
-            ret = ret.arg(Measurement::displayAmount(Measurement::Amount{m->amount(), Measurement::Units::kilograms}));
-         } else {
-            ret = ret.arg(Measurement::displayAmount(Measurement::Amount{m->amount(), Measurement::Units::liters}));
-         }
+         ret = ret.arg(Measurement::displayAmount(m->amountWithUnits()));
 
          ret = ret.arg(m->name());
          ret = ret.arg(Measurement::displayAmount(Measurement::Amount{m->time_min(), Measurement::Units::minutes}));
@@ -1363,7 +1397,7 @@ template<class NE> bool Recipe::uses(NE const & val) const {
    return match != this->pimpl->accessIds<NE>().cend();
 }
 template bool Recipe::uses(Fermentable  const & val) const;
-template bool Recipe::uses(Hop          const & val) const;
+template bool Recipe::uses(RecipeAdditionHop          const & val) const;
 template bool Recipe::uses(Instruction  const & val) const;
 template bool Recipe::uses(Misc         const & val) const;
 template bool Recipe::uses(Salt         const & val) const;
@@ -1497,8 +1531,8 @@ void Recipe::setEquipment(Equipment * var) {
 
 void Recipe::setMash        (std::shared_ptr<Mash        > val) { this->pimpl->setStepOwner<Mash        >(val, this->m_mashId        , PropertyNames::Recipe::mash        ); return; }
 void Recipe::setMash        (Mash *                        val) { this->pimpl->setStepOwner<Mash        >(val, this->m_mashId        , PropertyNames::Recipe::mash        ); return; }
-void Recipe::setBoil        (std::shared_ptr<Boil        > val) { this->pimpl->setStepOwner<Boil        >(val, this->m_boilId        , PropertyNames::Recipe::boil        ); return; }
-void Recipe::setBoil        (Boil *                        val) { this->pimpl->setStepOwner<Boil        >(val, this->m_boilId        , PropertyNames::Recipe::boil        ); return; }
+void Recipe::setBoil        (std::optional<std::shared_ptr<Boil>> val) { this->pimpl->setStepOwner<Boil        >(val, this->m_boilId        , PropertyNames::Recipe::boil        ); return; }
+///void Recipe::setBoil        (Boil *                        val) { this->pimpl->setStepOwner<Boil        >(val, this->m_boilId        , PropertyNames::Recipe::boil        ); return; }
 void Recipe::setFermentation(std::shared_ptr<Fermentation> val) { this->pimpl->setStepOwner<Fermentation>(val, this->m_fermentationId, PropertyNames::Recipe::fermentation); return; }
 void Recipe::setFermentation(Fermentation *                val) { this->pimpl->setStepOwner<Fermentation>(val, this->m_fermentationId, PropertyNames::Recipe::fermentation); return; }
 
@@ -1953,11 +1987,27 @@ std::shared_ptr<Mash>         Recipe::getMash          () const { return ObjectS
 Mash *                        Recipe::mash             () const { return ObjectStoreWrapper::getByIdRaw<Mash        >(this->m_mashId); }
 int                           Recipe::getMashId        () const { return                                              this->m_mashId ; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-std::shared_ptr<Boil>         Recipe::getBoil          () const { return ObjectStoreWrapper::getById   <Boil        >(this->m_boilId); }
-Boil *                        Recipe::boil             () const { return ObjectStoreWrapper::getByIdRaw<Boil        >(this->m_boilId); }
+std::optional<std::shared_ptr<Boil>> Recipe::boil() const {
+   // In BeerJSON, boil is an optional record.  There are people making beer without boiling -- eg see
+   // https://byo.com/article/raw-ale/.  So we ought to support it.
+   if (this->m_boilId < 0) {
+      // Negative ID just means there isn't one -- because this is how we store "NULL" for a foreign key
+      return std::nullopt;
+   }
+   auto retVal = ObjectStoreWrapper::getById<Boil>(this->m_boilId);
+   if (!retVal) {
+      // I would think it's a coding error to have a seemingly valid boil ID that's not in the database, but we try to
+      // recover as best we can.
+      qCritical() << Q_FUNC_INFO << "Invalid boil ID (" << this->m_boilId << ") on Recipe #" << this->key();
+      return std::nullopt;
+   }
+
+   return retVal;
+}
+///Boil *                        Recipe::boil             () const { return ObjectStoreWrapper::getByIdRaw<Boil        >(this->m_boilId); }
 int                           Recipe::getBoilId        () const { return                                              this->m_boilId ; }
 std::shared_ptr<Fermentation> Recipe::getFermentation  () const { return ObjectStoreWrapper::getById   <Fermentation>(this->m_fermentationId); }
-Fermentation *                Recipe::fermentation     () const { return ObjectStoreWrapper::getByIdRaw<Fermentation>(this->m_fermentationId); }
+///Fermentation *                Recipe::fermentation     () const { return ObjectStoreWrapper::getByIdRaw<Fermentation>(this->m_fermentationId); }
 int                           Recipe::getFermentationId() const { return                                              this->m_fermentationId ; }
 
 QList<Instruction *> Recipe::instructions() const {
@@ -2620,7 +2670,11 @@ double Recipe::ibuFromHop(Hop const * hop) {
    }
 
    double AArating = hop->alpha_pct() / 100.0;
-   double grams = hop->amount_kg() * 1000.0;
+   // .:TBD.JSON:.  What to do if hop is measured by volume?
+   if (!hop->amountIsWeight()) {
+      qCritical() << Q_FUNC_INFO << "Using Hop volume as weight - THIS IS PROBABLY WRONG!";
+   }
+   double grams = hop->amount() * 1000.0;
    double minutes = hop->time_min();
    // Assume 100% utilization until further notice
    double hopUtilization = 1.0;
@@ -2653,15 +2707,18 @@ double Recipe::ibuFromHop(Hop const * hop) {
    //
    // - http://www.realbeer.com/hops/FAQ.html
    // - https://groups.google.com/forum/#!topic"brewtarget.h"lp/mv2qvWBC4sU
-   switch (hop->form()) {
-      case Hop::Form::Plug:
-         hopUtilization *= 1.02;
-         break;
-      case Hop::Form::Pellet:
-         hopUtilization *= 1.10;
-         break;
-      default:
-         break;
+   auto const hopForm = hop->form();
+   if (hopForm) {
+      switch (*hopForm) {
+         case Hop::Form::Plug:
+            hopUtilization *= 1.02;
+            break;
+         case Hop::Form::Pellet:
+            hopUtilization *= 1.10;
+            break;
+         default:
+            break;
+      }
    }
 
    // Adjust for hop utilization.
@@ -2703,7 +2760,7 @@ QList<QString> Recipe::getReagents(QList<Hop *> hops, bool firstWort) {
    for (int ii = 0; ii < hops.size(); ++ii) {
       if (firstWort && (hops[ii]->use() == Hop::Use::First_Wort)) {
          tmp = QString("%1 %2,")
-               .arg(Measurement::displayAmount(Measurement::Amount{hops[ii]->amount_kg(), Measurement::Units::kilograms}))
+               .arg(Measurement::displayAmount(hops[ii]->amountWithUnits()))
                .arg(hops[ii]->name());
          reagents.append(tmp);
       }

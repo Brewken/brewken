@@ -24,7 +24,7 @@
 #include "measurement/PhysicalQuantity.h"
 
 /**
- * \brief The types of value other than \c Measurement::PhysicalQuantity that can be shown in a UI field
+ * \brief The types of value other than \c Measurement::PhysicalQuantity that can be shown in a UI field.
  *
  *        Note that there is intentionally \b no value here for \c none or similar.
  */

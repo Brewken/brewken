@@ -45,6 +45,7 @@ template <> struct TableModelTraits<HopTableModel> {
       Alpha    ,
       Amount   ,
       Inventory,
+      IsWeight ,
       Form     ,
       Use      ,
       Time     ,

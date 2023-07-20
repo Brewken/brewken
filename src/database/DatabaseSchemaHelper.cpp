@@ -538,8 +538,15 @@ namespace {
     *        relevant existing columns, but I think we've got enough other change in this update!
     */
    bool migrate_to_11(Database & db, BtSqlQuery q) {
+      //
       // Some of the bits of SQL would be too cumbersome to build up in-place inside the migrationQueries vector, so
       // we use string streams to do the string construction here.
+      //
+      // Note that the `temp_recipe_id` columns are used just for the initial population of the table and are then
+      // dropped.  (For each row in recipe, we need to create a new row in boil and then update the row in recipe to
+      // refer to it.  Temporarily putting the recipe_id on boil, without a foreign key constraint, makes this a lot
+      // simpler.  Same applied to fermentation.)
+      //
       QString createBoilSql;
       QTextStream createBoilSqlStream(&createBoilSql);
       createBoilSqlStream <<
@@ -552,7 +559,8 @@ namespace {
             "description"     " " << db.getDbNativeTypeName<QString>()     << ", "
             "notes"           " " << db.getDbNativeTypeName<QString>()     << ", "
             "pre_boil_size_l" " " << db.getDbNativeTypeName<double>()      << ", "
-            "boil_Time_mins"  " " << db.getDbNativeTypeName<double>()      <<
+            "boil_Time_mins"  " " << db.getDbNativeTypeName<double>()      << ", "
+            "temp_recipe_id"  " " << db.getDbNativeTypeName<int>()         <<
          ");";
 
       QString createBoilStepSql;
@@ -588,7 +596,8 @@ namespace {
             "display"         " " << db.getDbNativeTypeName<bool>()        << ", "
             "folder"          " " << db.getDbNativeTypeName<QString>()     << ", "
             "description"     " " << db.getDbNativeTypeName<QString>()     << ", "
-            "notes"           " " << db.getDbNativeTypeName<QString>()     <<
+            "notes"           " " << db.getDbNativeTypeName<QString>()     << ", "
+            "temp_recipe_id"  " " << db.getDbNativeTypeName<int>()         <<
          ");";
 
       QString createFermentationStepSql;
@@ -633,6 +642,7 @@ namespace {
          {QString(     "UPDATE hop SET form = 'pellet' WHERE form = 'Pellet'")},
          {QString(     "UPDATE hop SET form = 'plug'   WHERE form = 'Plug'"  )},
          {QString(     "UPDATE hop SET form = 'leaf'   WHERE form = 'Leaf'"  )},
+         {QString("ALTER TABLE hop ADD COLUMN amount_is_weight      %1").arg(db.getDbNativeTypeName<bool   >())},
          {QString("ALTER TABLE hop ADD COLUMN producer              %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop ADD COLUMN product_id            %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop ADD COLUMN year                  %1").arg(db.getDbNativeTypeName<QString>())},
@@ -646,6 +656,7 @@ namespace {
          {QString("ALTER TABLE hop ADD COLUMN pinene_pct            %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE hop ADD COLUMN polyphenols_pct       %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE hop ADD COLUMN xanthohumol_pct       %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("     UPDATE hop SET amount_is_weight = ?"), {QVariant{true}}}, // All existing amounts will be weights
          //
          // Fermentable: Extended and additional fields for BeerJSON
          //
@@ -803,22 +814,74 @@ namespace {
          {QString("     UPDATE recipe SET type = 'extract'      WHERE type = 'Extract'     ")},
          {QString("     UPDATE recipe SET type = 'partial mash' WHERE type = 'Partial Mash'")},
          {QString("     UPDATE recipe SET type = 'all grain'    WHERE type = 'All Grain'   ")},
+         // TODO: Add boii_id and fermentation_id columns
+         {QString("ALTER TABLE recipe ADD COLUMN boil_id         %1 REFERENCES boil         (id)").arg(db.getDbNativeTypeName<int>())},
+         {QString("ALTER TABLE recipe ADD COLUMN fermentation_id %1 REFERENCES fermentation (id)").arg(db.getDbNativeTypeName<int>())},
          //
          // We have to create and populate the boil and boil_step tables before we do hop_in_recipe as we need pre-boil
          // steps to attach first wort hops to.  So we might as well do fermentation and fermentation_step at the same
          // time.
          //
+         // As noted above, we use a temporary column on the new tables to simplify populating them with data linked to
+         // recipe.
+         //
          {createBoilSql            },
          {createBoilStepSql        },
          {createFermentationSql    },
          {createFermentationStepSql},
-         // TODO: Need to populate above tables!
-///         {QString("CREATE TABLE boil ( "
-///                     "id        %2, "
-///                     "recipe_id %1, "
-///                     "FOREIGN KEY(recipe_id) REFERENCES recipe(id), "
-///                  ");").arg(db.getDbNativeTypeName<int>(), db.getDbNativePrimaryKeyDeclaration())},
-
+         {QString("INSERT INTO boil ("
+                      "name, "
+                      "deleted, "
+                      "display, "
+                      "folder, "
+                      "description, "
+                      "notes, "
+                      "pre_boil_size_l, "
+                      "boil_Time_mins, "
+                      "temp_recipe_id "
+                  ") SELECT "
+                     "'Boil for ' || name, "
+                     "?, "
+                     "?, "
+                     "'', "
+                     "'', "
+                     "'', "
+                     "boil_size, "
+                     "boil_time, "
+                     "id "
+                  "FROM recipe"
+         ), {QVariant{false}, QVariant{true}}},
+         {QString("INSERT INTO fermentation ("
+                      "name, "
+                      "deleted, "
+                      "display, "
+                      "folder, "
+                      "description, "
+                      "notes, "
+                      "temp_recipe_id "
+                  ") SELECT "
+                     "'Fermentation for ' || name, "
+                     "?, "
+                     "?, "
+                     "'', "
+                     "'', "
+                     "'', "
+                     "id "
+                  "FROM recipe"
+         ), {QVariant{false}, QVariant{true}}},
+         {QString("UPDATE recipe SET recipe.boil_id         = boil.id         FROM boil         WHERE recipe.id = boil.temp_recipe_id")},
+         {QString("UPDATE recipe SET recipe.fermentation_id = fermentation.id FROM fermentation WHERE recipe.id = fermentation.temp_recipe_id")},
+         // Get rid of the temporary columns now that they have served their purpose.
+         {QString("ALTER TABLE boil         DROP COLUMN temp_recipe_id")},
+         {QString("ALTER TABLE fermentation DROP COLUMN temp_recipe_id")},
+         //
+         // Now we copied two recipe columns onto the boil table, we can drop them from the recipe table
+         //
+         {QString("ALTER TABLE recipe DROP COLUMN boil_size")},
+         {QString("ALTER TABLE recipe DROP COLUMN boil_time")},
+         //
+         // TODO Populate boil_steps.  We want to have a pre-boil step and a boil step as it makes the hop addition stuff easier.
+         //
 
          //
          // Now comes the tricky stuff where we change the hop_in_recipe junction table to a full-blown object table,

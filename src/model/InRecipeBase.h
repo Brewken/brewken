@@ -17,6 +17,8 @@
 #define MODEL_INRECIPEBASE_H
 #pragma once
 
+#include "utils/CuriouslyRecurringTemplateBase.h"
+
 /**
  * \brief Small template base class to provide common functionaility for recipe addition classes: \c RecipeAdditionHop,
  *        \c RecipeAdditionFermentable, \c RecipeAdditionMisc, \c RecipeAdditionYeast.
@@ -34,14 +36,10 @@
  * \param Ingredient = the ingredient class, eg \c Hop
  */
 template<class Derived, class Ingredient>
-class InRecipeBase {
+class InRecipeBase : public CuriouslyRecurringTemplateBase<Derived> {
 public:
 
 protected:
-
-   // CRTP boilerplate functions
-   Derived       & derived()       { return static_cast<Derived      &>(*this); }
-   Derived const & derived() const { return static_cast<Derived const&>(*this); }
 
    InRecipeBase() {
       return;

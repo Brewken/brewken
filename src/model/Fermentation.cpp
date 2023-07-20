@@ -37,11 +37,11 @@ ObjectStore & Fermentation::getObjectStoreTypedInstance() const {
 TypeLookup const Fermentation::typeLookup {
    "Fermentation",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentation::description  , Fermentation::m_description  ,           NonPhysicalQuantity::String),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentation::notes        , Fermentation::m_notes        ,           NonPhysicalQuantity::String),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentation::description, Fermentation::m_description, NonPhysicalQuantity::String),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentation::notes      , Fermentation::m_notes      , NonPhysicalQuantity::String),
 
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentation::fermentationSteps        , Fermentation, fermentationSteps         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentation::fermentationStepsDowncast, Fermentation, fermentationStepsDowncast ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentation::fermentationSteps        , Fermentation::fermentationSteps        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentation::fermentationStepsDowncast, Fermentation::fermentationStepsDowncast),
    },
    // Parent class lookup
    &NamedEntity::typeLookup

@@ -555,7 +555,7 @@ public:
          hTable += QString("<tr><td>%1</td><td>%2%</td><td>%3</td><td>%4</td><td>%5</td><td>%6</td><td>%7</td></tr>")
                .arg(hop->name())
                .arg(Measurement::displayQuantity(hop->alpha_pct(), 1) )
-               .arg(Measurement::displayAmount(Measurement::Amount{hop->amount_kg(), Measurement::Units::kilograms}))
+               .arg(Measurement::displayAmount(hop->amountWithUnits()))
                .arg(Hop::useDisplayNames[hop->use()])
                .arg(Measurement::displayAmount(Measurement::Amount{hop->time_min(), Measurement::Units::minutes}))
                .arg(Hop::formDisplayNames[hop->form()])
@@ -589,8 +589,7 @@ public:
 
             names.append(hop->name());
             alphas.append(QString("%1%").arg(Measurement::displayQuantity(hop->alpha_pct(), 1)));
-            amounts.append(Measurement::displayAmount(Measurement::Amount{hop->amount_kg(),
-                                                                          Measurement::Units::kilograms}));
+            amounts.append(Measurement::displayAmount(hop->amountWithUnits()));
             uses.append(Hop::useDisplayNames[hop->use()]);
             times.append(Measurement::displayAmount(Measurement::Amount{hop->time_min(), Measurement::Units::minutes}));
             forms.append(Hop::formDisplayNames[hop->form()]);
@@ -1365,18 +1364,26 @@ QString RecipeFormatter::getToolTip(Hop* hop) {
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
            .arg(tr("Alpha"))
            .arg(Measurement::displayQuantity(hop->alpha_pct(), 3));
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-           .arg(tr("Beta"))
-           .arg(Measurement::displayQuantity(hop->beta_pct(), 3));
+   if (hop->beta_pct()) {
+      body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td>")
+            .arg(tr("Beta"))
+            .arg(Measurement::displayQuantity(*hop->beta_pct(), 3));
+   }
+   body += QString("</tr>");
 
    // Second row -- form and use
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-           .arg(tr("Form"))
-           .arg(Hop::formDisplayNames[hop->form()]);
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-           .arg(tr("Use"))
-           .arg(Hop::useDisplayNames[hop->use()]);
-
+   body += QString("<tr>");
+   if (hop->form()) {
+      body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
+            .arg(tr("Form"))
+            .arg(Hop::formDisplayNames[*hop->form()]);
+   }
+   if (hop->use()) {
+      body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
+            .arg(tr("Use"))
+            .arg(Hop::useDisplayNames[*hop->use()]);
+   }
+   body += QString("</tr>");
    body += "</table></body></html>";
 
    return header + body;

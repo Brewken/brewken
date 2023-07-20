@@ -81,5 +81,4 @@ template <typename T> concept IsOptionalEnum  = is_optional_enum<T>::value;
 template <typename T> concept IsOptionalOther = !is_optional_enum<T>::value && is_optional<T>::value;
 #endif
 
-
 #endif

@@ -26,6 +26,7 @@
 #include "json/JsonCoding.h"
 #include "json/JsonUtils.h"
 #include "model/Hop.h"  // Only needed for workaround/hack for Hop year property
+#include "model/NamedEntity.h"
 #include "model/NamedParameterBundle.h"
 #include "utils/ErrorCodeToStream.h"
 #include "utils/ImportRecordCount.h"
@@ -370,9 +371,9 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
             // If it's not an array then it's fields on the object we're currently populating
             //
 
-            // It should not be possible for propertyName to be a null pointer.  (It may well be a pointer to
-            // BtString::NULL_STR, in which case propertyName->isNull() will return true, but that's fine.)
-            Q_ASSERT(fieldDefinition.propertyName);
+///            // It should not be possible for propertyName to be a null pointer.  (It may well be a pointer to
+///            // BtString::NULL_STR, in which case propertyName->isNull() will return true, but that's fine.)
+///            Q_ASSERT(fieldDefinition.propertyName);
 
             bool parsedValueOk = false;
             QVariant parsedValue;
@@ -382,11 +383,12 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
             // our internal data model.  If it is, then, for whatever underlying type T it is, we need the parsedValue
             // QVariant to hold std::optional<T> instead of just T.
             //
-            // NB: propertyName is not actually a property name when fieldType is RequiredConstant
+///            // NB: propertyName is not actually a property name when fieldType is RequiredConstant
+            // NB: propertyPath is not actually a property path when fieldType is RequiredConstant
             //
             bool const propertyIsOptional {
                (fieldDefinition.type == JsonRecordDefinition::FieldType::RequiredConstant) ?
-                  false : this->m_recordDefinition.typeLookup->isOptional(*fieldDefinition.propertyName)
+                  false : fieldDefinition.propertyPath.getTypeInfo(*this->m_recordDefinition.typeLookup).isOptional()
             };
 
             //
@@ -586,7 +588,7 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
                   //
                   qDebug() <<
                      Q_FUNC_INFO << "Skipping " << this->m_recordDefinition.namedEntityClassName << " node " <<
-                     fieldDefinition.xPath << "=" << *container << "(" << *fieldDefinition.propertyName <<
+                     fieldDefinition.xPath << "=" << *container << "(" << fieldDefinition.propertyPath.asXPath() <<
                      ") as not useful";
                   continue; // NB: _NOT_break here.  We want to jump straight to the next run through the for loop.
 
@@ -600,10 +602,10 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
             // But, if this was a field we were expecting to use, then it's a problem that we couldn't parse it and
             // we should bail.
             //
-            if (!parsedValueOk && !fieldDefinition.propertyName->isNull()) {
+            if (!parsedValueOk && !fieldDefinition.propertyPath.isNull()) {
                userMessage <<
                   "Could not parse " << this->m_recordDefinition.namedEntityClassName << " node " <<
-                  fieldDefinition.xPath << "=" << *container << " into " << *fieldDefinition.propertyName;
+                  fieldDefinition.xPath << "=" << *container << " into " << fieldDefinition.propertyPath.asXPath();
                return false;
             }
 
@@ -612,8 +614,8 @@ std::shared_ptr<NamedEntity> JsonRecord::getNamedEntity() const {
             //
             // If we do need it, we now store the value
             //
-            if (!fieldDefinition.propertyName->isNull()) {
-               this->m_namedParameterBundle.insert(*fieldDefinition.propertyName, parsedValue);
+            if (!fieldDefinition.propertyPath.isNull()) {
+               this->m_namedParameterBundle.insert(fieldDefinition.propertyPath, parsedValue);
             }
          }
       }
@@ -776,7 +778,7 @@ void JsonRecord::deleteNamedEntityFromDb() {
    for (auto & childRecordSet : this->m_childRecordSets) {
       if (childRecordSet.parentFieldDefinition) {
          qDebug() <<
-            Q_FUNC_INFO << childRecordSet.parentFieldDefinition->propertyName << "has" <<
+            Q_FUNC_INFO << childRecordSet.parentFieldDefinition->propertyPath << "has" <<
             childRecordSet.records.size() << "entries";
       } else {
          qDebug() << Q_FUNC_INFO << "Top-level record has" << childRecordSet.records.size() << "entries";
@@ -808,56 +810,86 @@ void JsonRecord::deleteNamedEntityFromDb() {
       // JSON to work.  However, we can tell whether a property is read-only by calling QMetaProperty::isWritable().
       //
       if (childRecordSet.parentFieldDefinition) {
-         BtStringConst const & propertyName = *childRecordSet.parentFieldDefinition->propertyName;
-         if (!propertyName.isNull()) {
+         auto const & propertyPath = childRecordSet.parentFieldDefinition->propertyPath;
+         if (!propertyPath.isNull()) {
             // It's a coding error if we had a property defined for a record that's not trying to populate a NamedEntity
             // (ie for the root record).
             Q_ASSERT(this->m_namedEntity);
 
-            // It's a coding error if we're trying to set a non-existent property on the NamedEntity subclass for this
-            // record.
-            QMetaObject const * metaObject = this->m_namedEntity->metaObject();
-            int propertyIndex = metaObject->indexOfProperty(*propertyName);
-            Q_ASSERT(propertyIndex >= 0);
-
-            QMetaProperty metaProperty = metaObject->property(propertyIndex);
-            if (metaProperty.isWritable()) {
-               // It's a coding error if we can't create a valid QVariant from a pointer to class we are trying to "set"
-               Q_ASSERT(QVariant::fromValue(processedChildren.first().get()).isValid());
-
-               qDebug() <<
-                  Q_FUNC_INFO << "Setting" << propertyName << "property (type = " <<
-                  this->m_namedEntity->metaObject()->property(
-                     this->m_namedEntity->metaObject()->indexOfProperty(*propertyName)
-                  ).typeName() << ") on" << this->m_recordDefinition.namedEntityClassName << "object";
-
-               //
-               // How we set the property depends on whether this is a single child record or an array of them
-               //
-               if (childRecordSet.parentFieldDefinition->type != JsonRecordDefinition::FieldType::Array) {
-                  // It's a coding error if we ended up with more than on child when there's only supposed to be one!
-                  if (processedChildren.size() > 1) {
-                     qCritical() <<
-                        Q_FUNC_INFO << "Only expecting one record for" << propertyName << "property (type = " <<
-                        this->m_namedEntity->metaObject()->property(
-                           this->m_namedEntity->metaObject()->indexOfProperty(*propertyName)
-                        ).typeName() << ") on" << this->m_recordDefinition.namedEntityClassName <<
-                        "object, but found" << processedChildren.size();
-                     Q_ASSERT(false);
-                  }
-                  // TBD: For the moment we are assuming single-item setters always take raw pointers
-                  this->m_namedEntity->setProperty(*propertyName, QVariant::fromValue(processedChildren.first().get()));
-               } else {
-                  // Multi-item setters all take a list of shared pointers
-                  this->m_namedEntity->setProperty(*propertyName, QVariant::fromValue(processedChildren));
+            QVariant valueToSet;
+            //
+            // How we set the property depends on whether this is a single child record or an array of them
+            //
+            if (childRecordSet.parentFieldDefinition->type != JsonRecordDefinition::FieldType::Array) {
+               // It's a coding error if we ended up with more than on child when there's only supposed to be one!
+               if (processedChildren.size() > 1) {
+                  qCritical() <<
+                     Q_FUNC_INFO << "Only expecting one record for" << propertyPath << "property on" <<
+                     this->m_recordDefinition.namedEntityClassName << "object, but found" << processedChildren.size();
+                  Q_ASSERT(false);
                }
+               // TBD: For the moment we are assuming single-item setters always take raw pointers
+               valueToSet = QVariant::fromValue(processedChildren.first().get());
             } else {
-               qDebug() << Q_FUNC_INFO << "Skipping non-writeable" << propertyName << "property (type = " <<
-                  this->m_namedEntity->metaObject()->property(
-                     this->m_namedEntity->metaObject()->indexOfProperty(*propertyName)
-                  ).typeName() << ") on" << this->m_recordDefinition.namedEntityClassName << "object";
+               // Multi-item setters all take a list of shared pointers
+               valueToSet = QVariant::fromValue(processedChildren);
             }
+
+            propertyPath.setValue(*this->m_namedEntity, valueToSet);
          }
+
+
+
+///         BtStringConst const & propertyName = *childRecordSet.parentFieldDefinition->propertyName;
+///         if (!propertyName.isNull()) {
+///            // It's a coding error if we had a property defined for a record that's not trying to populate a NamedEntity
+///            // (ie for the root record).
+///            Q_ASSERT(this->m_namedEntity);
+///
+///            // It's a coding error if we're trying to set a non-existent property on the NamedEntity subclass for this
+///            // record.
+///            QMetaObject const * metaObject = this->m_namedEntity->metaObject();
+///            int propertyIndex = metaObject->indexOfProperty(*propertyName);
+///            Q_ASSERT(propertyIndex >= 0);
+///
+///            QMetaProperty metaProperty = metaObject->property(propertyIndex);
+///            if (metaProperty.isWritable()) {
+///               // It's a coding error if we can't create a valid QVariant from a pointer to class we are trying to "set"
+///               Q_ASSERT(QVariant::fromValue(processedChildren.first().get()).isValid());
+///
+///               qDebug() <<
+///                  Q_FUNC_INFO << "Setting" << propertyName << "property (type = " <<
+///                  this->m_namedEntity->metaObject()->property(
+///                     this->m_namedEntity->metaObject()->indexOfProperty(*propertyName)
+///                  ).typeName() << ") on" << this->m_recordDefinition.namedEntityClassName << "object";
+///
+///               //
+///               // How we set the property depends on whether this is a single child record or an array of them
+///               //
+///               if (childRecordSet.parentFieldDefinition->type != JsonRecordDefinition::FieldType::Array) {
+///                  // It's a coding error if we ended up with more than on child when there's only supposed to be one!
+///                  if (processedChildren.size() > 1) {
+///                     qCritical() <<
+///                        Q_FUNC_INFO << "Only expecting one record for" << propertyName << "property (type = " <<
+///                        this->m_namedEntity->metaObject()->property(
+///                           this->m_namedEntity->metaObject()->indexOfProperty(*propertyName)
+///                        ).typeName() << ") on" << this->m_recordDefinition.namedEntityClassName <<
+///                        "object, but found" << processedChildren.size();
+///                     Q_ASSERT(false);
+///                  }
+///                  // TBD: For the moment we are assuming single-item setters always take raw pointers
+///                  this->m_namedEntity->setProperty(*propertyName, QVariant::fromValue(processedChildren.first().get()));
+///               } else {
+///                  // Multi-item setters all take a list of shared pointers
+///                  this->m_namedEntity->setProperty(*propertyName, QVariant::fromValue(processedChildren));
+///               }
+///            } else {
+///               qDebug() << Q_FUNC_INFO << "Skipping non-writeable" << propertyName << "property (type = " <<
+///                  this->m_namedEntity->metaObject()->property(
+///                     this->m_namedEntity->metaObject()->indexOfProperty(*propertyName)
+///                  ).typeName() << ") on" << this->m_recordDefinition.namedEntityClassName << "object";
+///            }
+///         }
 
       }
 
@@ -1003,15 +1035,15 @@ void JsonRecord::insertValue(JsonRecordDefinition::FieldDefinition const & field
       Q_FUNC_INFO << "Writing" << std::string(key).c_str() << "=" << value << "(type" << fieldDefinition.type << ")";
 
    //
-   // If the Qt property is an optional value, we need to unwrap it from std::optional and then, if it's null,
-   // skip writing it out.  Strong typing of std::optional makes this a bit more work here (but it helps us in
-   // other ways elsewhere).
+   // If the Qt property is an optional value, we need to unwrap it from std::optional and then, if it's null, skip
+   // writing it out.  Strong typing of std::optional makes this a bit more work here (but it helps us in other ways
+   // elsewhere).
    //
-   // NB: propertyName is not actually a property name when fieldType is RequiredConstant
+   // NB: propertyPath is not actually a property path when fieldType is RequiredConstant
    //
    bool const propertyIsOptional {
       (fieldDefinition.type == JsonRecordDefinition::FieldType::RequiredConstant) ?
-         false : this->m_recordDefinition.typeLookup->isOptional(*fieldDefinition.propertyName)
+         false : fieldDefinition.propertyPath.getTypeInfo(*this->m_recordDefinition.typeLookup).isOptional()
    };
 
    switch(fieldDefinition.type) {
@@ -1186,11 +1218,11 @@ void JsonRecord::insertValue(JsonRecordDefinition::FieldDefinition const & field
          // always write a constant value on output.  At the moment it's only needed for the VERSION tag in
          // BeerJSON.
          //
-         // Because it's such an edge case, we abuse the propertyName field to hold the default value (ie what we
+         // Because it's such an edge case, we abuse the propertyPath field to hold the default value (ie what we
          // write out).  This saves having an extra almost-never-used field on
          // JsonRecordDefinition::FieldDefinition.
          //
-         recordDataAsObject.emplace(fieldDefinition.xPath.asKey(), **fieldDefinition.propertyName);
+         recordDataAsObject.emplace(fieldDefinition.xPath.asKey(), fieldDefinition.propertyPath.asXPath().toStdString());
          break;
 
       // Don't need a default case as we want the compiler to warn us if we didn't cover everything explicitly above
@@ -1232,19 +1264,20 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport) {
    // BeerJSON doesn't care about field order, so we don't either (though it would be relatively small additional work
    // to control field order precisely).
    for (auto & fieldDefinition : this->m_recordDefinition.fieldDefinitions) {
-      // It should not be possible for propertyName to be a null pointer.  (It may well be a pointer to
-      // BtString::NULL_STR, in which case propertyName->isNull() will return true, but that's fine.)
-      //
+///      // It should not be possible for propertyName to be a null pointer.  (It may well be a pointer to
+///      // BtString::NULL_STR, in which case propertyName->isNull() will return true, but that's fine.)
+///      //
+///      Q_ASSERT(fieldDefinition.propertyName);
       // If there isn't a property name that means this is not a field we support so there's nothing to write out.
-      Q_ASSERT(fieldDefinition.propertyName);
-      if (fieldDefinition.propertyName->isNull()) {
+      if (fieldDefinition.propertyPath.isNull()) {
          // At the moment at least, we support all sub-record fields, so it's a coding error if one of them does not
          // have a property name.
          Q_ASSERT(JsonRecordDefinition::FieldType::Array != fieldDefinition.type);
          continue;
       }
 
-      QVariant value = namedEntityToExport.property(**fieldDefinition.propertyName);
+///      QVariant value = namedEntityToExport.property(**fieldDefinition.propertyName);
+      QVariant value = fieldDefinition.propertyPath.getValue(namedEntityToExport);
       Q_ASSERT(value.isValid());
 
       //
@@ -1303,7 +1336,7 @@ void JsonRecord::subRecordToJson(JsonRecordDefinition::FieldDefinition const & f
    // records
    qCritical() << Q_FUNC_INFO <<
       "Coding error: cannot export" << namedEntityToExport.metaObject()->className() << "(" <<
-      this->m_recordDefinition.namedEntityClassName << ") property" << fieldDefinition.propertyName << "to <" <<
+      this->m_recordDefinition.namedEntityClassName << ") property" << fieldDefinition.propertyPath << "to <" <<
       fieldDefinition.xPath << "> from base class JsonRecord";
    Q_ASSERT(false);
    return;

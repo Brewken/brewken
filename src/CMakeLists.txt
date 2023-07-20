@@ -133,6 +133,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/model/Fermentation.cpp
     ${repoDir}/src/model/FermentationStep.cpp
     ${repoDir}/src/model/Hop.cpp
+    ${repoDir}/src/model/HopBase.cpp
     ${repoDir}/src/model/Instruction.cpp
     ${repoDir}/src/model/Inventory.cpp
     ${repoDir}/src/model/Mash.cpp
@@ -144,6 +145,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/model/Recipe.cpp
     ${repoDir}/src/model/RecipeAddition.cpp
     ${repoDir}/src/model/RecipeAdditionHop.cpp
+    ${repoDir}/src/model/RecipeAdditionMassOrVolume.cpp
     ${repoDir}/src/model/Salt.cpp
     ${repoDir}/src/model/Step.cpp
     ${repoDir}/src/model/StepExtended.cpp
@@ -199,6 +201,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/utils/MetaTypes.cpp
     ${repoDir}/src/utils/OptionalHelpers.cpp
     ${repoDir}/src/utils/OStreamWriterForQFile.cpp
+    ${repoDir}/src/utils/PropertyPath.cpp
     ${repoDir}/src/utils/TimerUtils.cpp
     ${repoDir}/src/utils/TypeLookup.cpp
     ${repoDir}/src/WaterButton.cpp

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedEntity.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * model/NamedEntity.cpp is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -494,6 +494,16 @@ void NamedEntity::hardDeleteOrphanedEntities() {
    // If we are not overridden in the subclass then there is no work to do
    qDebug() << Q_FUNC_INFO << this->metaObject()->className() << "leaves no other entities as orphans";
    return;
+}
+
+NamedEntity * NamedEntity::ensureExists(BtStringConst const & property) {
+   // It's a coding error if this gets called and is not overridden.  (We can't make the function pure virtual because
+   // not all child classes need to override it.
+   qCritical() <<
+      Q_FUNC_INFO << this->metaObject()->className() << "does not know how to ensure property" << property << "exists";
+   // Stop here on debug builds
+   Q_ASSERT(false);
+   return nullptr;
 }
 
 //======================================================================================================================

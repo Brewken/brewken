@@ -146,7 +146,7 @@ TypeLookup const Yeast::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::killerProducingKlusToxin , Yeast::m_killerProducingKlusToxin ,           NonPhysicalQuantity::Bool         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::killerNeutral            , Yeast::m_killerNeutral            ,           NonPhysicalQuantity::Bool         ),
 
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Yeast::amountWithUnits    , Yeast, amountWithUnits            , Measurement::PqEitherMassOrVolume           ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Yeast::amountWithUnits    , Yeast::amountWithUnits            , Measurement::PqEitherMassOrVolume           ),
    },
    // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
    &NamedEntityWithInventory::typeLookup

@@ -265,9 +265,7 @@ void TimerMainDialog::on_loadRecipesButton_clicked() {
    QList<Hop*> hops = recipe->hops();
    for (Hop * h : hops) {
       if (h->use() == Hop::Use::Boil) {
-         note = tr("%1 of %2").arg(
-            Measurement::displayAmount(Measurement::Amount{h->amount_kg(), Measurement::Units::kilograms})
-         ).arg(h->name());
+         note = tr("%1 of %2").arg(Measurement::displayAmount(h->amountWithUnits())).arg(h->name());
          int newTime = h->time_min() * 60;
          for (TimerWidget* td : *timers) {
                if (td->getTime() == newTime){

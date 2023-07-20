@@ -87,6 +87,7 @@ FermentableEditor::FermentableEditor(QWidget* parent) :
 FermentableEditor::~FermentableEditor() = default;
 
 void FermentableEditor::writeFieldsToEditItem() {
+   // .:TBD:. Need to add inventory here I think
 
    this->m_editItem->setType(this->comboBox_type      ->getNonOptValue<Fermentable::Type      >());
 

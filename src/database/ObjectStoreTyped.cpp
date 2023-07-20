@@ -234,25 +234,26 @@ namespace {
          {ObjectStore::FieldType::Bool  , "deleted"              , PropertyNames::NamedEntity::deleted                 },
          {ObjectStore::FieldType::String, "folder"               , PropertyNames::NamedEntity::folder                  },
          {ObjectStore::FieldType::Int   , "inventory_id"         , PropertyNames::NamedEntityWithInventory::inventoryId, nullptr,           &PRIMARY_TABLE<InventoryHop>},
-         {ObjectStore::FieldType::Double, "alpha"                , PropertyNames::Hop::alpha_pct                       },
-         {ObjectStore::FieldType::Double, "amount"               , PropertyNames::Hop::amount_kg                       },
-         {ObjectStore::FieldType::Double, "beta"                 , PropertyNames::Hop::beta_pct                        },
+         {ObjectStore::FieldType::Double, "alpha"                , PropertyNames::HopBase::alpha_pct                   },
+         {ObjectStore::FieldType::Double, "amount"               , PropertyNames::Hop::amount                          },
+         {ObjectStore::FieldType::Bool  , "amount_is_weight"     , PropertyNames::Hop::amountIsWeight                  },
+         {ObjectStore::FieldType::Double, "beta"                 , PropertyNames::HopBase::beta_pct                    },
          {ObjectStore::FieldType::Double, "caryophyllene"        , PropertyNames::Hop::caryophyllene_pct               },
          {ObjectStore::FieldType::Double, "cohumulone"           , PropertyNames::Hop::cohumulone_pct                  },
-         {ObjectStore::FieldType::Enum  , "form"                 , PropertyNames::Hop::form                            , &Hop::formStringMapping},
+         {ObjectStore::FieldType::Enum  , "form"                 , PropertyNames::HopBase::form                        , &HopBase::formStringMapping},
          {ObjectStore::FieldType::Double, "hsi"                  , PropertyNames::Hop::hsi_pct                         },
          {ObjectStore::FieldType::Double, "humulene"             , PropertyNames::Hop::humulene_pct                    },
          {ObjectStore::FieldType::Double, "myrcene"              , PropertyNames::Hop::myrcene_pct                     },
          {ObjectStore::FieldType::String, "notes"                , PropertyNames::Hop::notes                           },
-         {ObjectStore::FieldType::String, "origin"               , PropertyNames::Hop::origin                          },
+         {ObjectStore::FieldType::String, "origin"               , PropertyNames::HopBase::origin                      },
          {ObjectStore::FieldType::String, "substitutes"          , PropertyNames::Hop::substitutes                     },
          {ObjectStore::FieldType::Double, "time"                 , PropertyNames::Hop::time_min                        },
          {ObjectStore::FieldType::Enum  , "htype"                , PropertyNames::Hop::type                            , &Hop::typeStringMapping},
          {ObjectStore::FieldType::Enum  , "use"                  , PropertyNames::Hop::use                             , &Hop::useStringMapping},
          // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-         {ObjectStore::FieldType::String, "producer"             , PropertyNames::Hop::producer                        },
-         {ObjectStore::FieldType::String, "product_id"           , PropertyNames::Hop::product_id                      },
-         {ObjectStore::FieldType::String, "year"                 , PropertyNames::Hop::year                            },
+         {ObjectStore::FieldType::String, "producer"             , PropertyNames::HopBase::producer                    },
+         {ObjectStore::FieldType::String, "product_id"           , PropertyNames::HopBase::product_id                  },
+         {ObjectStore::FieldType::String, "year"                 , PropertyNames::HopBase::year                        },
          {ObjectStore::FieldType::Double, "total_oil_ml_per_100g", PropertyNames::Hop::total_oil_ml_per_100g           },
          {ObjectStore::FieldType::Double, "farnesene_pct"        , PropertyNames::Hop::farnesene_pct                   },
          {ObjectStore::FieldType::Double, "geraniol_pct"         , PropertyNames::Hop::geraniol_pct                    },
@@ -692,8 +693,8 @@ namespace {
          {ObjectStore::FieldType::Double, "age_temp"           , PropertyNames::Recipe::ageTemp_c         },
          {ObjectStore::FieldType::String, "assistant_brewer"   , PropertyNames::Recipe::asstBrewer        },
          {ObjectStore::FieldType::Double, "batch_size"         , PropertyNames::Recipe::batchSize_l       },
-         {ObjectStore::FieldType::Double, "boil_size"          , PropertyNames::Recipe::boilSize_l        },
-         {ObjectStore::FieldType::Double, "boil_time"          , PropertyNames::Recipe::boilTime_min      },
+///         {ObjectStore::FieldType::Double, "boil_size"          , PropertyNames::Recipe::boilSize_l        },
+///         {ObjectStore::FieldType::Double, "boil_time"          , PropertyNames::Recipe::boilTime_min      },
          {ObjectStore::FieldType::String, "brewer"             , PropertyNames::Recipe::brewer            },
          {ObjectStore::FieldType::Double, "carb_volume"        , PropertyNames::Recipe::carbonation_vols  },
          {ObjectStore::FieldType::Double, "carbonationtemp_c"  , PropertyNames::Recipe::carbonationTemp_c },
@@ -721,6 +722,8 @@ namespace {
          {ObjectStore::FieldType::Enum  , "type"               , PropertyNames::Recipe::type              , &Recipe::typeStringMapping},
          {ObjectStore::FieldType::Int   , "ancestor_id"        , PropertyNames::Recipe::ancestorId        , nullptr,                &PRIMARY_TABLE<Recipe>},
          {ObjectStore::FieldType::Bool  , "locked"             , PropertyNames::Recipe::locked            },
+         {ObjectStore::FieldType::Int   , "boil_id"            , PropertyNames::Recipe::boilId            , nullptr,                &PRIMARY_TABLE<Boil>},
+         {ObjectStore::FieldType::Int   , "fermentation_id"    , PropertyNames::Recipe::fermentationId    , nullptr,                &PRIMARY_TABLE<Fermentation>},
       }
    };
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Recipe> {
@@ -895,6 +898,7 @@ template ObjectStoreTyped<Mash                > & ObjectStoreTyped<Mash         
 template ObjectStoreTyped<MashStep            > & ObjectStoreTyped<MashStep            >::getInstance();
 template ObjectStoreTyped<Misc                > & ObjectStoreTyped<Misc                >::getInstance();
 template ObjectStoreTyped<Recipe              > & ObjectStoreTyped<Recipe              >::getInstance();
+template ObjectStoreTyped<RecipeAdditionHop   > & ObjectStoreTyped<RecipeAdditionHop   >::getInstance();
 template ObjectStoreTyped<Salt                > & ObjectStoreTyped<Salt                >::getInstance();
 template ObjectStoreTyped<Style               > & ObjectStoreTyped<Style               >::getInstance();
 template ObjectStoreTyped<Water               > & ObjectStoreTyped<Water               >::getInstance();
@@ -919,6 +923,7 @@ namespace {
       &ostSingleton<MashStep            >,
       &ostSingleton<Misc                >,
       &ostSingleton<Recipe              >,
+      &ostSingleton<RecipeAdditionHop   >,
       &ostSingleton<Salt                >,
       &ostSingleton<Style               >,
       &ostSingleton<Water               >,

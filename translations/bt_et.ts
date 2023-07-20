@@ -71,6 +71,21 @@
     </message>
 </context>
 <context>
+    <name>BoilStep</name>
+    <message>
+        <source>Boil Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Batch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inline</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BrewDayFormatter</name>
     <message>
         <source>Brewday</source>
@@ -1017,6 +1032,13 @@ Log file may contain more details.</source>
     <name>Fermentation</name>
     <message>
         <source>Fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FermentationStep</name>
+    <message>
+        <source>Fermentation Step</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2777,10 +2799,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 water to %2, </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>for upcoming infusions.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2976,10 +2994,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 water to %2 </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>mash</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2997,10 +3011,6 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source> into the %1 water</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 %2, </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3043,13 +3053,21 @@ The final volume in the primary is %1.</source>
         <source>Wine</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>%1 water to %2, </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 water to %2 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 %2, </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
-    <message>
-        <source>Named Entity In Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>add_to_mash</source>
         <translation type="unfinished"></translation>
@@ -3064,6 +3082,17 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>add_to_package</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionMassOrVolume</name>
+    <message>
+        <source>Recipe Addition (Mass or Volume)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

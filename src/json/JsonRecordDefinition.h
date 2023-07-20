@@ -28,6 +28,7 @@
 #include "model/NamedEntity.h"
 #include "utils/BtStringConst.h"
 #include "utils/EnumStringMapping.h"
+#include "utils/PropertyPath.h"
 #include "utils/TypeLookup.h"
 
 // Forward declarations
@@ -256,11 +257,14 @@ public:
    struct FieldDefinition {
       FieldType             type;
       JsonXPath             xPath;
-      // Both propertyName and the options inside valueDecoder are pointers rather than references because we store
-      // FieldDefinitions in a vector, so everything needs to be copyable.
-      // NOTE that propertyName should never be null (use BtString::NULL_STR instead).  This requirement makes logging
-      // simpler elsewhere.
-      BtStringConst const * propertyName;
+///      // Both propertyName and the options inside valueDecoder are pointers rather than references because we store
+///      // FieldDefinitions in a vector, so everything needs to be copyable.
+///      // NOTE that propertyName should never be null (use BtString::NULL_STR instead).  This requirement makes logging
+///      // simpler elsewhere.
+///      BtStringConst const * propertyName;
+
+      PropertyPath propertyPath;
+
       using ValueDecoder =
          std::variant<std::monostate,
                      EnumStringMapping                  const *,  // FieldType::Enum
@@ -275,7 +279,8 @@ public:
        */
       FieldDefinition(FieldType type,
                       JsonXPath xPath,
-                      BtStringConst const & propertyName,
+///                      BtStringConst const & propertyName,
+                      PropertyPath propertyPath,
                       ValueDecoder valueDecoder = ValueDecoder{});
    };
 

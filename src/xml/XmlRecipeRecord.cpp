@@ -37,18 +37,22 @@ namespace {
       return;
    }
    template<> void setAmountsEtc(Hop & hop, NamedParameterBundle const & npb) {
-      hop.setAmount_kg(npb.val<double>(PropertyNames::Hop::amount_kg));
-      hop.setTime_min (npb.val<double>(PropertyNames::Hop::time_min ));
+      // For Hop, assume amount is weight unless otherwise specified because base BeerXML does not include the
+      // possibility of fermentables being measured by volume.  (It is an extension we have added as a result of
+      // implementing support for BeerJSON.)
+      hop.setAmount        (npb.val<double>(PropertyNames::Hop::amount        ));
+      hop.setAmountIsWeight(npb.val<bool  >(PropertyNames::Hop::amountIsWeight, true));
+      hop.setTime_min      (npb.val<double>(PropertyNames::Hop::time_min ));
       return;
    }
    template<> void setAmountsEtc(Fermentable & fermentable, NamedParameterBundle const & npb) {
       // For Fermentable, assume amount is weight unless otherwise specified because base BeerXML does not include the
       // possibility of fermentables being measured by volume.  (It is an extension we have added as a result of
       // implementing support for BeerJSON.)
-      fermentable.setAmount         (npb.val<double>(PropertyNames::Fermentable::amount        ));
-      fermentable.setAmountIsWeight (npb.val<bool  >(PropertyNames::Fermentable::amountIsWeight, true));
-      fermentable.setAddAfterBoil   (npb.val<bool  >(PropertyNames::Fermentable::addAfterBoil  ));
-      fermentable.setIsMashed       (npb.val<bool  >(PropertyNames::Fermentable::isMashed      ));
+      fermentable.setAmount        (npb.val<double>(PropertyNames::Fermentable::amount        ));
+      fermentable.setAmountIsWeight(npb.val<bool  >(PropertyNames::Fermentable::amountIsWeight, true));
+      fermentable.setAddAfterBoil  (npb.val<bool  >(PropertyNames::Fermentable::addAfterBoil  ));
+      fermentable.setIsMashed      (npb.val<bool  >(PropertyNames::Fermentable::isMashed      ));
       return;
    }
    template<> void setAmountsEtc(Misc & misc, NamedParameterBundle const & npb) {
