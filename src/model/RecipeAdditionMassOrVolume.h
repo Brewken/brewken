@@ -52,7 +52,7 @@ public:
     */
    static TypeLookup const typeLookup;
 
-   RecipeAdditionMassOrVolume(QString name = "");
+   RecipeAdditionMassOrVolume(QString name = "", int const recipeId = -1, int const ingredientId = -1);
    RecipeAdditionMassOrVolume(RecipeAdditionMassOrVolume const & other);
    RecipeAdditionMassOrVolume(NamedParameterBundle const & namedParameterBundle);
 
@@ -63,6 +63,7 @@ public:
     * \brief Mass (in kg) or Volume (in liters)
     */
    Q_PROPERTY(double          amount           READ amount           WRITE setAmount         )
+   // Normally you aren't going to need to change this if it can be obtained from the Hop/Fermentable/etc you're adding
    Q_PROPERTY(bool            amountIsWeight   READ amountIsWeight   WRITE setAmountIsWeight )
    Q_PROPERTY(MassOrVolumeAmt amountWithUnits  READ amountWithUnits  WRITE setAmountWithUnits)
 

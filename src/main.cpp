@@ -36,8 +36,8 @@
 #include "Localization.h"
 #include "Logging.h"
 #include "PersistentSettings.h"
+#include "serialization/xml/BeerXml.h"
 #include "utils/MetaTypes.h"
-#include "xml/BeerXml.h"
 
 namespace {
 

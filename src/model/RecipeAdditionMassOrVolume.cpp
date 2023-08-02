@@ -15,7 +15,6 @@
  =====================================================================================================================*/
 #include "model/RecipeAdditionMassOrVolume.h"
 
-
 #include "model/NamedParameterBundle.h"
 
 QString const RecipeAdditionMassOrVolume::LocalisedName = tr("Recipe Addition (Mass or Volume)");
@@ -35,25 +34,31 @@ bool RecipeAdditionMassOrVolume::isEqualTo(NamedEntity const & other) const {
 TypeLookup const RecipeAdditionMassOrVolume::typeLookup {
    "RecipeAdditionMassOrVolume",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAdditionMassOrVolume::amount        , RecipeAdditionMassOrVolume::m_amount        , Measurement::PqEitherMassOrVolume             ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAdditionMassOrVolume::amountIsWeight, RecipeAdditionMassOrVolume::m_amountIsWeight,           NonPhysicalQuantity::Bool           ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAdditionMassOrVolume::amount        , RecipeAdditionMassOrVolume::m_amount        , Measurement::PqEitherMassOrVolume),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAdditionMassOrVolume::amountIsWeight, RecipeAdditionMassOrVolume::m_amountIsWeight, NonPhysicalQuantity::Bool        ),
+
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionMassOrVolume::amountWithUnits, RecipeAdditionMassOrVolume::amountWithUnits, Measurement::PqEitherMassOrVolume),
    },
-   // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
+   // Parent class lookup.  NB: RecipeAddition not NamedEntity!
    &RecipeAddition::typeLookup
 };
 static_assert(std::is_base_of<RecipeAddition, RecipeAdditionMassOrVolume>::value);
 
-RecipeAdditionMassOrVolume::RecipeAdditionMassOrVolume(QString name) :
-   RecipeAddition  {name},
+RecipeAdditionMassOrVolume::RecipeAdditionMassOrVolume(QString name, int const recipeId, int const ingredientId) :
+   RecipeAddition  {name, recipeId, ingredientId},
    m_amount        {0.0 },
    m_amountIsWeight{true} {
    return;
 }
 
 RecipeAdditionMassOrVolume::RecipeAdditionMassOrVolume(NamedParameterBundle const & namedParameterBundle) :
-   RecipeAddition{namedParameterBundle},
-   m_amount        {namedParameterBundle.val<double>(PropertyNames::RecipeAdditionMassOrVolume::amount        )},
-   m_amountIsWeight{namedParameterBundle.val<bool  >(PropertyNames::RecipeAdditionMassOrVolume::amountIsWeight)} {
+   RecipeAddition{namedParameterBundle} {
+   this->setEitherOrReqParams<MassOrVolumeAmt>(namedParameterBundle,
+                                               PropertyNames::RecipeAdditionMassOrVolume::amount         ,
+                                               PropertyNames::RecipeAdditionMassOrVolume::amountIsWeight ,
+                                               PropertyNames::RecipeAdditionMassOrVolume::amountWithUnits,
+                                               this->m_amount,
+                                               this->m_amountIsWeight);
    return;
 }
 

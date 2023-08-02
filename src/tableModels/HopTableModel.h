@@ -42,13 +42,11 @@ class HopTableModel;
 template <> struct TableModelTraits<HopTableModel> {
    enum class ColumnIndex {
       Name     ,
+      Form     ,
+      Year     ,
       Alpha    ,
-      Amount   ,
       Inventory,
       IsWeight ,
-      Form     ,
-      Use      ,
-      Time     ,
    };
 };
 
@@ -57,7 +55,7 @@ template <> struct TableModelTraits<HopTableModel> {
  *
  * \brief Model class for a list of hops.
  */
-class HopTableModel : public BtTableModelInventory, public TableModelBase<HopTableModel, Hop> {
+class HopTableModel : public BtTableModel, public TableModelBase<HopTableModel, Hop> {
    Q_OBJECT
 
    TABLE_MODEL_COMMON_DECL(Hop)

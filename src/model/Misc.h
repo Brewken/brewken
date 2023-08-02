@@ -149,7 +149,7 @@ public:
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    Type               type           () const;
-   std::optional<Use> use            () const; // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
+   [[deprecated]] std::optional<Use> use            () const; // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
    std::optional<int> useAsInt       () const; // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
    double             amount         () const;
    double             time_min       () const;

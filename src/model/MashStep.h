@@ -111,8 +111,8 @@ public:
     *
     *        Historically, we had two separate amount properties -- \c infuseAmount_l and \c decoctionAmount_l.  This
     *        is because BeerXML only allows an infusion amount to be specified and prohibits the use of this field for
-    *        a decoction amount, whilst not providing any mechanism to specify the decoction amount.  We then added a
-    *        decoction amount field to our BeerXML records as an extension tag.
+    *        a decoction amount, whilst not actually providing any mechanism to specify the decoction amount.  We then
+    *        added a decoction amount field to our BeerXML records as an extension tag.
     *
     *        With BeerJSON, this nonsense is corrected and there is one amount field whose meaning (infusion amount or
     *        decoction amount) can be determined from the type field.
@@ -132,9 +132,20 @@ public:
    Q_PROPERTY(double                infuseAmount_l         READ infuseAmount_l       /*WRITE setInfuseAmount_l*/    STORED false)
    //! \brief The decoction amount in liters - NB: Retained only for BeerXML; DO NOT USE.
    Q_PROPERTY(double                decoctionAmount_l      READ decoctionAmount_l    /*WRITE setDecoctionAmount_l*/ STORED false)
-   //! \brief The target temperature of this step in C.
+   /**
+    * \brief The target temperature of this step in C.
+    *
+    *        This is the main field to use when dealing with the mash step temperature.  The optional \c endTemp_c field
+    *        that we inherit from \c Step is used in BeerXML and BeerJSON to signify "The expected temperature the mash
+    *        falls to after a long mash step."
+    */
    Q_PROPERTY(double                stepTemp_c             READ stepTemp_c             WRITE setStepTemp_c                      )
-   //! \brief The infusion temp in C.                                        ⮜⮜⮜ Not part of BeerXML; optional in BeerJSON ⮞⮞⮞
+   /**
+    * \brief The infusion temp in C.                                        ⮜⮜⮜ Not part of BeerXML; optional in BeerJSON ⮞⮞⮞
+    *
+    *        An infusion step is where you're adding hot water to the mash, so this is the temperature of the water
+    *        being added.
+    */
    Q_PROPERTY(std::optional<double> infuseTemp_c           READ infuseTemp_c           WRITE setInfuseTemp_c                    )
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    /**

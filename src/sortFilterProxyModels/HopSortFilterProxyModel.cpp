@@ -30,7 +30,8 @@ bool HopSortFilterProxyModel::isLessThan(HopTableModel::ColumnIndex const column
    switch (columnIndex) {
       case HopTableModel::ColumnIndex::Name:
       case HopTableModel::ColumnIndex::Form:
-      case HopTableModel::ColumnIndex::Use :
+      case HopTableModel::ColumnIndex::Year:
+      case HopTableModel::ColumnIndex::IsWeight:
          return leftItem.toString() < rightItem.toString();
 
       case HopTableModel::ColumnIndex::Alpha:
@@ -38,13 +39,8 @@ bool HopSortFilterProxyModel::isLessThan(HopTableModel::ColumnIndex const column
                 Measurement::extractRawFromString<double>(rightItem.toString());
 
       case HopTableModel::ColumnIndex::Inventory:
-      case HopTableModel::ColumnIndex::Amount:
          return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Mass) <
                 Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Mass);
-
-      case HopTableModel::ColumnIndex::Time:
-         return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Time) <
-                Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Time);
 
       // No default case as we want the compiler to warn us if we missed one
    }

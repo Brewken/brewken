@@ -15,7 +15,11 @@
  =====================================================================================================================*/
 #include "model/RecipeAddition.h"
 
+#include "model/Fermentable.h"
+#include "model/Hop.h"
+#include "model/Misc.h"
 #include "model/NamedParameterBundle.h"
+#include "model/Recipe.h"
 
 QString const RecipeAddition::LocalisedName = tr("Recipe Addition");
 
@@ -68,7 +72,7 @@ TypeLookup const RecipeAddition::typeLookup {
 };
 static_assert(std::is_base_of<NamedEntity, RecipeAddition>::value);
 
-RecipeAddition::RecipeAddition(QString name) :
+RecipeAddition::RecipeAddition(QString name, int const recipeId, int const ingredientId) :
    NamedEntity{name, true},
    m_recipeId       {-1},
    m_ingredientId   {-1},
@@ -109,6 +113,23 @@ RecipeAddition::RecipeAddition(RecipeAddition const & other) :
 }
 
 RecipeAddition::~RecipeAddition() = default;
+
+[[nodiscard]] bool RecipeAddition::lessThanByTime(RecipeAddition const * const lhs, RecipeAddition const * const rhs) {
+
+   if (lhs->m_stage != rhs->m_stage) {
+      return lhs->m_stage < rhs->m_stage;
+   }
+
+   if (lhs->m_step != rhs->m_step) {
+      return lhs->m_step < rhs->m_step;
+   }
+
+   if (lhs->m_addAtTime_mins != rhs->m_addAtTime_mins) {
+      return lhs->m_addAtTime_mins < rhs->m_addAtTime_mins;
+   }
+
+   return lhs->name() < rhs->name();
+}
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
 int                        RecipeAddition::recipeId       () const { return this->m_recipeId       ; }

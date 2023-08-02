@@ -51,15 +51,15 @@ FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) 
       {
          // NOTE: Need PropertyNames::Fermentable::amountWithUnits not PropertyNames::Fermentable::amount below so we
          //       can handle mass-or-volume generically in TableModelBase.  Same for inventoryWithUnits.
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Name     , tr("Name"       ), Fermentable, PropertyNames::NamedEntity::name                           ),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Type     , tr("Type"       ), Fermentable, PropertyNames::Fermentable::type                           , EnumInfo{Fermentable::typeStringMapping, Fermentable::typeDisplayNames}),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Amount   , tr("Amount"     ), Fermentable, PropertyNames::Fermentable::amountWithUnits                ),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Inventory, tr("Inventory"  ), Fermentable, PropertyNames::NamedEntityWithInventory::inventoryWithUnits),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, IsWeight , tr("Amount Type"), Fermentable, PropertyNames::Fermentable::amountIsWeight                 , BoolInfo{tr("Volume"    ), tr("Weight")}),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, IsMashed , tr("Method"     ), Fermentable, PropertyNames::Fermentable::isMashed                       , BoolInfo{tr("Not mashed"), tr("Mashed")}),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, AfterBoil, tr("Addition"   ), Fermentable, PropertyNames::Fermentable::addAfterBoil                   , BoolInfo{tr("Normal"    ), tr("Late"  )}),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Yield    , tr("Yield %"    ), Fermentable, PropertyNames::Fermentable::yield_pct                      , PrecisionInfo{1}),
-         SMART_COLUMN_HEADER_DEFN(FermentableTableModel, Color    , tr("Color"      ), Fermentable, PropertyNames::Fermentable::color_srm                      , PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(Fermentable, Name     , tr("Name"       ), PropertyNames::NamedEntity::name                           ),
+         TABLE_MODEL_HEADER(Fermentable, Type     , tr("Type"       ), PropertyNames::Fermentable::type                           , EnumInfo{Fermentable::typeStringMapping, Fermentable::typeDisplayNames}),
+         TABLE_MODEL_HEADER(Fermentable, Amount   , tr("Amount"     ), PropertyNames::Fermentable::amountWithUnits                ),
+         TABLE_MODEL_HEADER(Fermentable, Inventory, tr("Inventory"  ), PropertyNames::NamedEntityWithInventory::inventoryWithUnits),
+         TABLE_MODEL_HEADER(Fermentable, IsWeight , tr("Amount Type"), PropertyNames::Fermentable::amountIsWeight                 , BoolInfo{tr("Volume"    ), tr("Weight")}),
+         TABLE_MODEL_HEADER(Fermentable, IsMashed , tr("Method"     ), PropertyNames::Fermentable::isMashed                       , BoolInfo{tr("Not mashed"), tr("Mashed")}),
+         TABLE_MODEL_HEADER(Fermentable, AfterBoil, tr("Addition"   ), PropertyNames::Fermentable::addAfterBoil                   , BoolInfo{tr("Normal"    ), tr("Late"  )}),
+         TABLE_MODEL_HEADER(Fermentable, Yield    , tr("Yield %"    ), PropertyNames::Fermentable::yield_pct                      , PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(Fermentable, Color    , tr("Color"      ), PropertyNames::Fermentable::color_srm                      , PrecisionInfo{1}),
       }
    },
    TableModelBase<FermentableTableModel, Fermentable>{},

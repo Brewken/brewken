@@ -34,12 +34,12 @@ StyleTableModel::StyleTableModel(QTableView* parent, bool editable) :
       parent,
       editable,
       {
-         SMART_COLUMN_HEADER_DEFN(StyleTableModel, Name          , tr("Name"           ), Style, PropertyNames::NamedEntity::name    ),
-         SMART_COLUMN_HEADER_DEFN(StyleTableModel, Type          , tr("Type"           ), Style, PropertyNames::Style::type          , EnumInfo{Style::typeStringMapping, Style::typeDisplayNames}),
-         SMART_COLUMN_HEADER_DEFN(StyleTableModel, Category      , tr("Category"       ), Style, PropertyNames::Style::category      ),
-         SMART_COLUMN_HEADER_DEFN(StyleTableModel, CategoryNumber, tr("Category Number"), Style, PropertyNames::Style::categoryNumber),
-         SMART_COLUMN_HEADER_DEFN(StyleTableModel, StyleLetter   , tr("Style Letter"   ), Style, PropertyNames::Style::styleLetter   ),
-         SMART_COLUMN_HEADER_DEFN(StyleTableModel, StyleGuide    , tr("Style Guide"    ), Style, PropertyNames::Style::styleGuide    ),
+         TABLE_MODEL_HEADER(Style, Name          , tr("Name"           ), PropertyNames::NamedEntity::name    ),
+         TABLE_MODEL_HEADER(Style, Type          , tr("Type"           ), PropertyNames::Style::type          , EnumInfo{Style::typeStringMapping, Style::typeDisplayNames}),
+         TABLE_MODEL_HEADER(Style, Category      , tr("Category"       ), PropertyNames::Style::category      ),
+         TABLE_MODEL_HEADER(Style, CategoryNumber, tr("Category Number"), PropertyNames::Style::categoryNumber),
+         TABLE_MODEL_HEADER(Style, StyleLetter   , tr("Style Letter"   ), PropertyNames::Style::styleLetter   ),
+         TABLE_MODEL_HEADER(Style, StyleGuide    , tr("Style Guide"    ), PropertyNames::Style::styleGuide    ),
       }
    },
    TableModelBase<StyleTableModel, Style>{} {

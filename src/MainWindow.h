@@ -48,55 +48,11 @@
 
 // Forward Declarations
 
-class AboutDialog;
-class AlcoholTool;
-class AncestorDialog;
-class BeerColorWidget;
-class BrewDayScrollWidget;
 class BrewNoteWidget;
-class BtDatePopup;
-class ConverterTool;
-class EquipmentEditor;
-class EquipmentListModel;
-class FermentableEditor;
-class FermentableSortFilterProxyModel;
-class FermentableTableModel;
-class HopEditor;
-class HopSortFilterProxyModel;
-class HopTableModel;
-class HtmlViewer;
-class HydrometerTool;
-class MashDesigner;
-class MashEditor;
-class MashListModel;
-class MashStepEditor;
-class MashStepTableModel;
-class MashWizard;
-class MiscEditor;
-class MiscSortFilterProxyModel;
-class MiscTableModel;
-class NamedMashEditor;
-class OgAdjuster;
 class OptionDialog;
-class PitchDialog;
-class PrimingDialog;
-class PrintAndPreviewDialog;
 class Recipe;
-class RecipeExtrasWidget;
-class RecipeFormatter;
-class RefractoDialog;
-class ScaleRecipeTool;
-class StrikeWaterDialog;
-class StyleEditor;
-class StyleListModel;
-class StyleSortFilterProxyModel;
-class TimerMainDialog;
-class WaterDialog;
-class WaterEditor;
-class WaterListModel;
-class YeastEditor;
-class YeastSortFilterProxyModel;
-class YeastTableModel;
+
+class RecipeAdditionHop;
 
 /*!
  * \class MainWindow
@@ -163,6 +119,8 @@ public:
     */
    template<class NE> void addToRecipe(std::shared_ptr<NE> ne);
 
+   void addHopToRecipe(Hop * hop);
+
 public slots:
 
    //! \brief Accepts Recipe changes, and takes appropriate action to show the changes.
@@ -205,10 +163,17 @@ public slots:
    //! \brief Show the pitch dialog.
    void showPitchDialog();
 
-   //! \brief Remove selected Hop(s) from the Recipe.
-   void removeSelectedHop();
-   //! \brief Edit selected Hop.
-   void editSelectedHop();
+   /**
+    * \brief Remove selected Hop addition(s) from the Recipe.
+    *
+    *        The name is a bit cumbersome, but is more accurate than, say, `removeSelectedHop`.  You might have the same
+    *        hop added at two different points, and this is only removing one of those additions.
+    */
+   void removeSelectedHopAddition();
+   /**
+    * \brief Edit the Hop in the selected Hop addition.
+    */
+   void editHopOfSelectedHopAddition();
 
    //! \brief Remove selected Misc(s) from the Recipe.
    void removeSelectedMisc();
@@ -333,7 +298,9 @@ private:
    // Insert all the usual boilerplate to prevent copy/assignment/move
    NO_COPY_DECLARATIONS(MainWindow)
 
-   void removeHop(std::shared_ptr<Hop> itemToRemove);
+   // TODO: At the moment, these need to be in MainWindow itself rather than in the pimpl because of the way function
+   // pointers get passed to UndoableAddOrRemove.  We should fix that at some point.
+   void removeHopAddition(std::shared_ptr<RecipeAdditionHop> itemToRemove);
    void removeFermentable(std::shared_ptr<Fermentable> itemToRemove);
    void removeMisc(std::shared_ptr<Misc> itemToRemove);
    void removeYeast(std::shared_ptr<Yeast> itemToRemove);
@@ -351,22 +318,10 @@ private:
    QDialog* brewDayDialog;
    QPrinter *printer;
 
-
-
-
    int confirmDelete;
 
    //! \brief Fix pixel dimensions according to dots-per-inch (DPI) of screen we're on.
    void setSizesInPixelsBasedOnDpi();
-
-   //! \brief Currently highlighted fermentable in the fermentable table.
-   Fermentable* selectedFermentable();
-   //! \brief Currently highlighted hop in the hop table.
-   Hop* selectedHop();
-   //! \brief Currently highlighted misc in the misc table.
-   Misc* selectedMisc();
-   //! \brief Currently highlighted yeast in the yeast table
-   Yeast* selectedYeast();
 
    //! \brief Find an open brewnote tab, if it is open
    BrewNoteWidget* findBrewNoteWidget(BrewNote* b);

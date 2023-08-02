@@ -43,14 +43,14 @@ WaterTableModel::WaterTableModel(QTableView * parent) :
       parent,
       false,
       {
-         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Name       , tr("Name"             ), Water, PropertyNames::NamedEntity::name     ),
-         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Amount     , tr("Amount"           ), Water, PropertyNames::Water::amount         ),
-         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Calcium    , tr("Calcium (ppm)"    ), Water, PropertyNames::Water::calcium_ppm    ),
-         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Bicarbonate, tr("Bicarbonate (ppm)"), Water, PropertyNames::Water::bicarbonate_ppm),
-         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Sulfate    , tr("Sulfate (ppm)"    ), Water, PropertyNames::Water::sulfate_ppm    ),
-         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Chloride   , tr("Chloride (ppm)"   ), Water, PropertyNames::Water::chloride_ppm   ),
-         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Sodium     , tr("Sodium (ppm)"     ), Water, PropertyNames::Water::sodium_ppm     ),
-         SMART_COLUMN_HEADER_DEFN(WaterTableModel, Magnesium  , tr("Magnesium (ppm)"  ), Water, PropertyNames::Water::magnesium_ppm  ),
+         TABLE_MODEL_HEADER(Water, Name       , tr("Name"             ), PropertyNames::NamedEntity::name     ),
+         TABLE_MODEL_HEADER(Water, Amount     , tr("Amount"           ), PropertyNames::Water::amount         ),
+         TABLE_MODEL_HEADER(Water, Calcium    , tr("Calcium (ppm)"    ), PropertyNames::Water::calcium_ppm    ),
+         TABLE_MODEL_HEADER(Water, Bicarbonate, tr("Bicarbonate (ppm)"), PropertyNames::Water::bicarbonate_ppm),
+         TABLE_MODEL_HEADER(Water, Sulfate    , tr("Sulfate (ppm)"    ), PropertyNames::Water::sulfate_ppm    ),
+         TABLE_MODEL_HEADER(Water, Chloride   , tr("Chloride (ppm)"   ), PropertyNames::Water::chloride_ppm   ),
+         TABLE_MODEL_HEADER(Water, Sodium     , tr("Sodium (ppm)"     ), PropertyNames::Water::sodium_ppm     ),
+         TABLE_MODEL_HEADER(Water, Magnesium  , tr("Magnesium (ppm)"  ), PropertyNames::Water::magnesium_ppm  ),
       }
    },
    BtTableModelData<Water>{} {

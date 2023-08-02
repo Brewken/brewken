@@ -22,6 +22,7 @@
 #include <QButtonGroup>
 
 #include "listModels/EquipmentListModel.h"
+#include "model/Boil.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
@@ -29,6 +30,7 @@
 #include "model/MashStep.h"
 #include "model/Misc.h"
 #include "model/Recipe.h"
+#include "model/RecipeAdditionHop.h"
 #include "model/Water.h"
 #include "model/Yeast.h"
 #include "NamedEntitySortProxyModel.h"
@@ -77,9 +79,11 @@ void ScaleRecipeTool::scale(Equipment* equip, double newEff) {
 
    this->recObs->setEquipment(equip);
    this->recObs->setBatchSize_l(newBatchSize_l);
-   this->recObs->setBoilSize_l(equip->kettleBoilSize_l());
+   this->recObs->nonOptBoil()->setPreBoilSize_l(equip->kettleBoilSize_l());
    this->recObs->setEfficiency_pct(newEff);
-   this->recObs->setBoilTime_min(equip->boilTime_min().value_or(Equipment::default_boilTime_min));
+   if (this->recObs->boil()) {
+      (*this->recObs->boil())->setBoilTime_mins(equip->boilTime_min().value_or(Equipment::default_boilTime_min));
+   }
 
    for (auto ferm : this->recObs->fermentables()) {
       // We assume volumes and masses get scaled the same way
@@ -90,12 +94,14 @@ void ScaleRecipeTool::scale(Equipment* equip, double newEff) {
       }
    }
 
-   for (auto hop : this->recObs->hops()) {
-      hop->setAmount_kg(hop->amount_kg() * volRatio);
+   for (auto hopAddition : this->recObs->hopAdditions()) {
+      // We assume volumes and masses get scaled the same way
+      hopAddition->setAmount(hopAddition->amount() * volRatio);
    }
 
    for (auto misc : this->recObs->miscs()) {
-      misc->setAmount( misc->amount() * volRatio);
+      // We assume volumes and masses get scaled the same way
+      misc->setAmount(misc->amount() * volRatio);
    }
 
    for (auto water : this->recObs->waters()) {

@@ -110,9 +110,9 @@ template <typename T> concept      DoesNotObserveRecipe = std::negation_v<std::i
  *        \c HopTableModel::ColumnIndex.  But we'd also like \c HopTableModel::ColumnIndex to be accessible from within
  *        \c TableModelBase, which normally isn't possible, eg as explained at
  *        https://stackoverflow.com/questions/5534759/c-with-crtp-class-defined-in-the-derived-class-is-not-accessible-in-the-base
- *        Per the same link, the way around this is to use a traits class.  This is another "trick" where we declare
- *        a template for the "traits" class before the base class of the curiously recurring template pattern (CRTP),
- *        but then specialise that "traits" class in the derived class.
+ *        However, per the same link, the way around this is to use a traits class.  This is another "trick" where we
+ *        declare a template for the "traits" class before the base class of the curiously recurring template pattern
+ *        (CRTP), but then specialise that "traits" class in the derived class.
  */
 template<class Derived>
 struct TableModelTraits;
@@ -477,12 +477,13 @@ protected:
       auto const & columnInfo = this->get_ColumnInfo(columnIndex);
 ///      qDebug().noquote() << Q_FUNC_INFO << "role = " << role << Logging::getStackTrace();
 
-      QVariant modelData = row->property(*columnInfo.propertyName);
+///      QVariant modelData = row->property(*columnInfo.propertyName);
+      QVariant modelData = columnInfo.propertyPath.getValue(*row);
       if (!modelData.isValid()) {
          // It's a programming error if we couldn't read a property modelData
          qCritical() <<
             Q_FUNC_INFO << "Unable to read" << row->metaObject()->className() << "property" <<
-            columnInfo.propertyName;
+            columnInfo.propertyPath;
          Q_ASSERT(false); // Stop here on debug builds
       }
 
@@ -595,7 +596,7 @@ protected:
             } else {
                // It's a coding error if we get here
                qCritical() <<
-                  Q_FUNC_INFO << columnInfo.columnFqName << "Don't know how to parse" << columnInfo.propertyName <<
+                  Q_FUNC_INFO << columnInfo.columnFqName << "Don't know how to parse" << columnInfo.propertyPath <<
                   "TypeInfo:" << typeInfo << ", modelData:" << modelData;
                Q_ASSERT(false);
             }
@@ -696,7 +697,7 @@ protected:
             } else {
                // It's a coding error if we get here
                qCritical() <<
-                  Q_FUNC_INFO << columnInfo.columnFqName << "Don't know how to parse" << columnInfo.propertyName <<
+                  Q_FUNC_INFO << columnInfo.columnFqName << "Don't know how to parse" << columnInfo.propertyPath <<
                   "TypeInfo:" << typeInfo << ", value:" << value << ", amount:" << amount;
                Q_ASSERT(false);
             }
@@ -851,6 +852,9 @@ protected:
  *
  *        NB: Mostly I have tried to make these macro-included function bodies trivial.  Macros are a bit clunky, so we
  *            only really want to use them for the things that are hard to do other ways.
+ *
+ *        Note that the RecipePropertyName parameter is ultimately ignored in updateInventory for table models that
+ *        do not observe a recipe, so can be set to PropertyNames::None::none in such cases.
  */
 #define TABLE_MODEL_COMMON_CODE(NeName, LcNeName, RecipePropertyName) \
    void NeName##TableModel::observeRecipe(Recipe * rec) {                                               \

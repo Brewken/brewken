@@ -26,10 +26,10 @@
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QObject>
-#include <QPrintDialog>
 #include <QPrinter>
 #include <QPushButton>
 #include <QStringList>
+#include <QTextBrowser>
 #include <QTextDocument>
 #include <QVBoxLayout>
 
@@ -48,6 +48,7 @@
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Misc.h"
+#include "model/RecipeAdditionHop.h"
 #include "model/Style.h"
 #include "model/Water.h"
 #include "model/Yeast.h"
@@ -55,11 +56,11 @@
 
 namespace {
    //! Get the maximum number of characters in a list of strings.
-   unsigned int getMaxLength( QStringList* list ) {
+   unsigned int getMaxLength(QStringList & list) {
       int maxlen = 0;
-      for (int ii = 0; ii < list->count(); ++ii) {
-         if (list->at(ii).size() > maxlen) {
-            maxlen = list->at(ii).size();
+      for (int ii = 0; ii < list.count(); ++ii) {
+         if (list.at(ii).size() > maxlen) {
+            maxlen = list.at(ii).size();
          }
       }
 
@@ -67,18 +68,18 @@ namespace {
    }
 
    //! Prepend a string with spaces until its final length is the given length.
-   QString padToLength( const QString &str, unsigned int length ) {
+   QString padToLength(QString const & str, unsigned int length ) {
       // The 0 is redundant. It makes me feel better
       return QString("%1").arg(str, 0 - static_cast<int>(length), ' ');
    }
 
    //! Same as \b padToLength but with multiple strings.
-   void padAllToMaxLength( QStringList* list, unsigned int padding = 2) {
-      unsigned int maxlen = getMaxLength( list );
-      int size = list->count();
+   void padAllToMaxLength(QStringList & list, unsigned int padding = 2) {
+      unsigned int maxlen = getMaxLength(list);
+      int size = list.count();
       for (int ii = 0; ii < size; ++ii) {
          // Add a padding so that text doesn't run together.
-         list->replace(ii, padToLength( list->at(ii), maxlen + padding ) );
+         list.replace(ii, padToLength( list.at(ii), maxlen + padding ) );
       }
       return;
    }
@@ -124,10 +125,10 @@ namespace {
       return wrappedText;
    }
 
-   QList<Hop*> sortHopsByTime(Recipe* rec) {
-      QList<Hop*> sorted = rec->hops();
+   QList<RecipeAdditionHop *> sortHopAdditionsByTime(Recipe * rec) {
+      QList<RecipeAdditionHop *> sorted = rec->hopAdditions();
 
-      std::sort(sorted.begin(), sorted.end(), hopLessThanByTime);
+      std::sort(sorted.begin(), sorted.end(), RecipeAddition::lessThanByTime);
       return sorted;
    }
 
@@ -400,8 +401,8 @@ public:
                                                                                          Measurement::Units::srm}, 1))
                               .arg(ColorMethods::colorFormulaName()));
 
-      padAllToMaxLength(&entry);
-      padAllToMaxLength(&value);
+      padAllToMaxLength(entry);
+      padAllToMaxLength(value);
 
       QString ret = "";
       for(int ii = 0; ii < nbLines; ++ii) {
@@ -477,15 +478,13 @@ public:
       QList<Fermentable*> ferms = sortFermentablesByWeight(this->rec);
       int size = ferms.size();
       if (size > 0) {
-         QStringList names, types, amounts, masheds, lates, yields, colors;
-
-         names.append(tr("Name"));
-         types.append(tr("Type"));
-         amounts.append(tr("Amount"));
-         masheds.append(tr("Mashed"));
-         lates.append(tr("Late"));
-         yields.append(tr("Yield"));
-         colors.append(tr("Color"));
+         QStringList names  {tr("Name"  )};
+         QStringList types  {tr("Type"  )};
+         QStringList amounts{tr("Amount")};
+         QStringList masheds{tr("Mashed")};
+         QStringList lates  {tr("Late"  )};
+         QStringList yields {tr("Yield" )};
+         QStringList colors {tr("Color" )};
 
          for (int ii = 0; ii < size; ++ii) {
             Fermentable* ferm =  ferms[ii];
@@ -499,13 +498,13 @@ public:
                                                                                             Measurement::Units::srm}, 1)));
          }
 
-         padAllToMaxLength(&names);
-         padAllToMaxLength(&types);
-         padAllToMaxLength(&amounts);
-         padAllToMaxLength(&masheds);
-         padAllToMaxLength(&lates);
-         padAllToMaxLength(&yields);
-         padAllToMaxLength(&colors);
+         padAllToMaxLength(names);
+         padAllToMaxLength(types);
+         padAllToMaxLength(amounts);
+         padAllToMaxLength(masheds);
+         padAllToMaxLength(lates);
+         padAllToMaxLength(yields);
+         padAllToMaxLength(colors);
 
          for (int ii = 0; ii < size+1; ++ii) {
             ret += names.at(ii) + types.at(ii) + amounts.at(ii) + masheds.at(ii) + lates.at(ii) + yields.at(ii) + colors.at(ii) + "\n";
@@ -523,15 +522,15 @@ public:
          return "";
       }
 
-      QList<Hop*> hops = sortHopsByTime(rec);
+      QList<RecipeAdditionHop *> hopAdditions = sortHopAdditionsByTime(rec);
 
-      int size = hops.size();
+      int size = hopAdditions.size();
       if ( size < 1 ) {
          return "";
       }
 
       QString hTable = QString("<h3>%1</h3>").arg(tr("Hops"));
-      hTable += QString("<table id=\"hops\">");
+      hTable += QString("<table id=\"hopAdditions\">");
       // Set up the header row.
       hTable += QString("<tr>"
                         "<th align=\"left\" width=\"20%\">%1</th>"
@@ -545,21 +544,24 @@ public:
             .arg(tr("Name"))
             .arg(tr("Alpha"))
             .arg(tr("Amount"))
-            .arg(tr("Use"))
+            .arg(tr("Add During"))
             .arg(tr("Time"))
             .arg(tr("Form"))
             .arg(tr("IBU"));
 
       for(int ii = 0; ii < size; ++ii) {
-         Hop *hop = hops[ii];
+         RecipeAdditionHop * hopAddition = hopAdditions[ii];
          hTable += QString("<tr><td>%1</td><td>%2%</td><td>%3</td><td>%4</td><td>%5</td><td>%6</td><td>%7</td></tr>")
-               .arg(hop->name())
-               .arg(Measurement::displayQuantity(hop->alpha_pct(), 1) )
-               .arg(Measurement::displayAmount(hop->amountWithUnits()))
-               .arg(Hop::useDisplayNames[hop->use()])
-               .arg(Measurement::displayAmount(Measurement::Amount{hop->time_min(), Measurement::Units::minutes}))
-               .arg(Hop::formDisplayNames[hop->form()])
-               .arg(Measurement::displayQuantity(rec->ibuFromHop(hop), 1) );
+               .arg(hopAddition->hop()->name())
+               .arg(Measurement::displayQuantity(hopAddition->hop()->alpha_pct(), 1) )
+               .arg(Measurement::displayAmount(hopAddition->amountWithUnits()))
+               .arg(RecipeAddition::stageDisplayNames[hopAddition->stage()])
+               // TBD: If we end up having hop additions that are not time based (which is technically allowed now we're
+               //      following the BeerJSON model instead of the BeerXML one) then we'll need to rework this a bit
+               //      (along with other places we use `hopAddition->addAtTime_mins().value_or(0.0)`
+               .arg(Measurement::displayAmount(Measurement::Amount{hopAddition->addAtTime_mins().value_or(0.0), Measurement::Units::minutes}))
+               .arg(Hop::formDisplayNames[hopAddition->hop()->form()])
+               .arg(Measurement::displayQuantity(rec->ibuFromHopAddition(hopAddition), 1) );
       }
       hTable += "</table>";
       return hTable;
@@ -571,41 +573,39 @@ public:
       }
 
       QString ret = "";
-      QList<Hop*> hops = sortHopsByTime(rec);
-      int size = hops.size();
-      if ( size > 0 ) {
-         QStringList names, alphas, amounts, uses, times, forms, ibus;
+      QList<RecipeAdditionHop *> hopAdditions = sortHopAdditionsByTime(rec);
+      int size = hopAdditions.size();
+      if (size > 0) {
+         QStringList names  {tr("Name"      )};
+         QStringList alphas {tr("Alpha"     )};
+         QStringList amounts{tr("Amount"    )};
+         QStringList stages {tr("Add During")};
+         QStringList times  {tr("Time"      )};
+         QStringList forms  {tr("Form"      )};
+         QStringList ibus   {tr("IBU"       )};
 
-         names.append(tr("Name"));
-         alphas.append(("Alpha"));
-         amounts.append(tr("Amount"));
-         uses.append(tr("Use"));
-         times.append(tr("Time"));
-         forms.append(tr("Form"));
-         ibus.append(tr("IBU"));
+         for (int ii = 0; ii < size; ++ii) {
+            RecipeAdditionHop * hopAddition = hopAdditions[ii];
 
-         for(int ii = 0; ii < size; ++ii) {
-            Hop* hop = hops[ii];
-
-            names.append(hop->name());
-            alphas.append(QString("%1%").arg(Measurement::displayQuantity(hop->alpha_pct(), 1)));
-            amounts.append(Measurement::displayAmount(hop->amountWithUnits()));
-            uses.append(Hop::useDisplayNames[hop->use()]);
-            times.append(Measurement::displayAmount(Measurement::Amount{hop->time_min(), Measurement::Units::minutes}));
-            forms.append(Hop::formDisplayNames[hop->form()]);
-            ibus.append(QString("%1").arg( Measurement::displayQuantity(rec->ibuFromHop(hop), 1)));
+            names.append(hopAddition->name());
+            alphas.append(QString("%1%").arg(Measurement::displayQuantity(hopAddition->hop()->alpha_pct(), 1)));
+            amounts.append(Measurement::displayAmount(hopAddition->amountWithUnits()));
+            stages.append(RecipeAddition::stageDisplayNames[hopAddition->stage()]);
+            times.append(Measurement::displayAmount(Measurement::Amount{hopAddition->addAtTime_mins().value_or(0.0), Measurement::Units::minutes}));
+            forms.append(Hop::formDisplayNames[hopAddition->hop()->form()]);
+            ibus.append(QString("%1").arg( Measurement::displayQuantity(rec->ibuFromHopAddition(hopAddition), 1)));
          }
 
-         padAllToMaxLength(&names);
-         padAllToMaxLength(&alphas);
-         padAllToMaxLength(&amounts);
-         padAllToMaxLength(&uses);
-         padAllToMaxLength(&times);
-         padAllToMaxLength(&forms);
-         padAllToMaxLength(&ibus);
+         padAllToMaxLength(names);
+         padAllToMaxLength(alphas);
+         padAllToMaxLength(amounts);
+         padAllToMaxLength(stages);
+         padAllToMaxLength(times);
+         padAllToMaxLength(forms);
+         padAllToMaxLength(ibus);
 
-         for(int ii = 0; ii < size+1; ++ii) {
-            ret += names.at(ii) + alphas.at(ii) + amounts.at(ii) + uses.at(ii) + times.at(ii) + forms.at(ii) + ibus.at(ii) + "\n";
+         for (int ii = 0; ii < size + 1; ++ii) {
+            ret += names.at(ii) + alphas.at(ii) + amounts.at(ii) + stages.at(ii) + times.at(ii) + forms.at(ii) + ibus.at(ii) + "\n";
          }
       }
       return ret;
@@ -678,11 +678,11 @@ public:
             times.append(Measurement::displayAmount(Measurement::Amount{misc->time_min(),  Measurement::Units::minutes}));
          }
 
-         padAllToMaxLength(&names);
-         padAllToMaxLength(&types);
-         padAllToMaxLength(&uses);
-         padAllToMaxLength(&amounts);
-         padAllToMaxLength(&times);
+         padAllToMaxLength(names);
+         padAllToMaxLength(types);
+         padAllToMaxLength(uses);
+         padAllToMaxLength(amounts);
+         padAllToMaxLength(times);
 
          for (int ii = 0; ii < size+1; ++ii) {
             ret += names.at(ii) + types.at(ii) + uses.at(ii) + amounts.at(ii) + times.at(ii) + "\n";
@@ -765,11 +765,11 @@ public:
             stages.append(yeast->addToSecondary() ? tr("Secondary") : tr("Primary"));
          }
 
-         padAllToMaxLength(&names);
-         padAllToMaxLength(&types);
-         padAllToMaxLength(&forms);
-         padAllToMaxLength(&amounts);
-         padAllToMaxLength(&stages);
+         padAllToMaxLength(names);
+         padAllToMaxLength(types);
+         padAllToMaxLength(forms);
+         padAllToMaxLength(amounts);
+         padAllToMaxLength(stages);
 
          for (int ii = 0; ii < size+1; ++ii) {
             ret += names.at(ii) + types.at(ii) + forms.at(ii) + amounts.at(ii) + stages.at(ii) + "\n";
@@ -880,12 +880,12 @@ public:
                                                                         Measurement::Units::minutes}, 0));
          }
 
-         padAllToMaxLength(&names);
-         padAllToMaxLength(&types);
-         padAllToMaxLength(&amounts);
-         padAllToMaxLength(&temps);
-         padAllToMaxLength(&targets);
-         padAllToMaxLength(&times);
+         padAllToMaxLength(names);
+         padAllToMaxLength(types);
+         padAllToMaxLength(amounts);
+         padAllToMaxLength(temps);
+         padAllToMaxLength(targets);
+         padAllToMaxLength(times);
 
          for (int ii = 0; ii < size+1; ++ii) {
             ret += names.at(ii) + types.at(ii) + amounts.at(ii) + temps.at(ii) + targets.at(ii) + times.at(ii) + "\n";
@@ -950,7 +950,7 @@ public:
             //Wrap instruction text to 75 ( 80 (text separator length) - 5 (num colunm lenght) )
             text.append(QString("- %1").arg(wrapText(ins->directions(), 75)));
          }
-         padAllToMaxLength(&num, 1);
+         padAllToMaxLength(num, 1);
          //Set a margin to align multiple line instructions
          QString leftMargin = QString("").leftJustified(num.at(0).size() + 2, ' ');
          for (int ii = 0; ii < size; ++ii) {
@@ -1371,17 +1371,17 @@ QString RecipeFormatter::getToolTip(Hop* hop) {
    }
    body += QString("</tr>");
 
-   // Second row -- form and use
+   // Second row -- form and type
    body += QString("<tr>");
    if (hop->form()) {
       body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
             .arg(tr("Form"))
             .arg(Hop::formDisplayNames[*hop->form()]);
    }
-   if (hop->use()) {
+   if (hop->type()) {
       body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-            .arg(tr("Use"))
-            .arg(Hop::useDisplayNames[*hop->use()]);
+            .arg(tr("Type"))
+            .arg(Hop::typeDisplayNames[*hop->type()]);
    }
    body += QString("</tr>");
    body += "</table></body></html>";

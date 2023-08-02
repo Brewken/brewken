@@ -44,13 +44,13 @@ MiscTableModel::MiscTableModel(QTableView* parent, bool editable) :
       {
          // NOTE: Need PropertyNames::Fermentable::amountWithUnits not PropertyNames::Fermentable::amount below so we
          //       can handle mass-or-volume generically in TableModelBase.  Same for inventoryWithUnits.
-         SMART_COLUMN_HEADER_DEFN(MiscTableModel, Name     , tr("Name"       ), Misc, PropertyNames::NamedEntity::name                           ),
-         SMART_COLUMN_HEADER_DEFN(MiscTableModel, Type     , tr("Type"       ), Misc, PropertyNames::Misc::type                                  , EnumInfo{Misc::typeStringMapping, Misc::typeDisplayNames}),
-         SMART_COLUMN_HEADER_DEFN(MiscTableModel, Use      , tr("Use"        ), Misc, PropertyNames::Misc::use                                   , EnumInfo{Misc:: useStringMapping, Misc:: useDisplayNames}),
-         SMART_COLUMN_HEADER_DEFN(MiscTableModel, Time     , tr("Time"       ), Misc, PropertyNames::Misc::time_min                              ),
-         SMART_COLUMN_HEADER_DEFN(MiscTableModel, Amount   , tr("Amount"     ), Misc, PropertyNames::Misc::amountWithUnits                       ),
-         SMART_COLUMN_HEADER_DEFN(MiscTableModel, Inventory, tr("Inventory"  ), Misc, PropertyNames::NamedEntityWithInventory::inventoryWithUnits),
-         SMART_COLUMN_HEADER_DEFN(MiscTableModel, IsWeight , tr("Amount Type"), Misc, PropertyNames::Misc::amountIsWeight                        , BoolInfo{tr("Volume"    ), tr("Weight")}),
+         TABLE_MODEL_HEADER(Misc, Name     , tr("Name"       ), PropertyNames::NamedEntity::name                           ),
+         TABLE_MODEL_HEADER(Misc, Type     , tr("Type"       ), PropertyNames::Misc::type                                  , EnumInfo{Misc::typeStringMapping, Misc::typeDisplayNames}),
+         TABLE_MODEL_HEADER(Misc, Use      , tr("Use"        ), PropertyNames::Misc::use                                   , EnumInfo{Misc:: useStringMapping, Misc:: useDisplayNames}),
+         TABLE_MODEL_HEADER(Misc, Time     , tr("Time"       ), PropertyNames::Misc::time_min                              ),
+         TABLE_MODEL_HEADER(Misc, Amount   , tr("Amount"     ), PropertyNames::Misc::amountWithUnits                       ),
+         TABLE_MODEL_HEADER(Misc, Inventory, tr("Inventory"  ), PropertyNames::NamedEntityWithInventory::inventoryWithUnits),
+         TABLE_MODEL_HEADER(Misc, IsWeight , tr("Amount Type"), PropertyNames::Misc::amountIsWeight                        , BoolInfo{tr("Volume"    ), tr("Weight")}),
       }
    },
    TableModelBase<MiscTableModel, Misc>{} {

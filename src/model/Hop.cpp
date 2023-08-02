@@ -33,6 +33,24 @@ QString const Hop::LocalisedName = tr("Hop");
 
 // Note that Hop::typeStringMapping and Hop::formStringMapping are as defined by BeerJSON, but we also use them for the
 // DB and for the UI.  We can't use them for BeerXML as it only supports subsets of these types.
+EnumStringMapping const Hop::formStringMapping {
+   {Hop::Form::Leaf   , "leaf"      },
+   {Hop::Form::Pellet , "pellet"    },
+   {Hop::Form::Plug   , "plug"      },
+   {Hop::Form::Extract, "extract"   },
+   {Hop::Form::WetLeaf, "leaf (wet)"},
+   {Hop::Form::Powder , "powder"    },
+};
+
+EnumStringMapping const Hop::formDisplayNames {
+   {Hop::Form::Leaf   , tr("Leaf"   )},
+   {Hop::Form::Pellet , tr("Pellet" )},
+   {Hop::Form::Plug   , tr("Plug"   )},
+   {Hop::Form::Extract, tr("Extract")},
+   {Hop::Form::WetLeaf, tr("WetLeaf")},
+   {Hop::Form::Powder , tr("Powder" )},
+};
+
 EnumStringMapping const Hop::typeStringMapping {
    {Hop::Type::Bittering              , "bittering"              },
    {Hop::Type::Aroma                  , "aroma"                  },
@@ -75,6 +93,10 @@ bool Hop::isEqualTo(NamedEntity const & other) const {
    Hop const & rhs = static_cast<Hop const &>(other);
    // Base class will already have ensured names are equal
    return (
+      this->m_alpha_pct             == rhs.m_alpha_pct             &&
+      this->m_form                  == rhs.m_form                  &&
+      this->m_beta_pct              == rhs.m_beta_pct              &&
+      this->m_origin                == rhs.m_origin                &&
       this->m_use                   == rhs.m_use                   &&
       this->m_type                  == rhs.m_type                  &&
       this->m_hsi_pct               == rhs.m_hsi_pct               &&
@@ -93,8 +115,9 @@ bool Hop::isEqualTo(NamedEntity const & other) const {
       this->m_pinene_pct            == rhs.m_pinene_pct            &&
       this->m_polyphenols_pct       == rhs.m_polyphenols_pct       &&
       this->m_xanthohumol_pct       == rhs.m_xanthohumol_pct       &&
-      // Parent classes have to be equal too
-      this->HopBase::isEqualTo(other)
+      this->m_producer              == rhs.m_producer              &&
+      this->m_product_id            == rhs.m_product_id            &&
+      this->m_year                  == rhs.m_year
    );
 }
 
@@ -105,6 +128,10 @@ ObjectStore & Hop::getObjectStoreTypedInstance() const {
 TypeLookup const Hop::typeLookup {
    "Hop",
    {
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::alpha_pct            , Hop::m_alpha_pct            ,           NonPhysicalQuantity::Percentage   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::form                 , Hop::m_form                 ,           NonPhysicalQuantity::Enum         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::beta_pct             , Hop::m_beta_pct             ,           NonPhysicalQuantity::Percentage   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::origin               , Hop::m_origin               ,           NonPhysicalQuantity::String       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::use                  , Hop::m_use                  ,           NonPhysicalQuantity::Enum         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::type                 , Hop::m_type                 ,           NonPhysicalQuantity::Enum         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amount               , Hop::m_amount               , Measurement::PqEitherMassOrVolume           ),
@@ -128,20 +155,21 @@ TypeLookup const Hop::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::pinene_pct           , Hop::m_pinene_pct           ,           NonPhysicalQuantity::Percentage   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::polyphenols_pct      , Hop::m_polyphenols_pct      ,           NonPhysicalQuantity::Percentage   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::xanthohumol_pct      , Hop::m_xanthohumol_pct      ,           NonPhysicalQuantity::Percentage   ),
-      PROPERTIES_FOR_INVENTORY_TYPE_LOOKUP_DEFNS(Hop)
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::producer             , Hop::m_producer             ,           NonPhysicalQuantity::String       ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::product_id           , Hop::m_product_id           ,           NonPhysicalQuantity::String       ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::year                 , Hop::m_year                 ,           NonPhysicalQuantity::String       ),
    },
-   // Parent class lookup.  NB: HopBase not NamedEntity!
-   &HopBase::typeLookup
-///   // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
-///   &NamedEntityWithInventory::typeLookup
+   // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
+   &NamedEntityWithInventory::typeLookup
 };
-///static_assert(std::is_base_of<NamedEntityWithInventory, Hop>::value);
-static_assert(std::is_base_of<HopBase, Hop>::value);
+static_assert(std::is_base_of<NamedEntityWithInventory, Hop>::value);
 
 Hop::Hop(QString name) :
-///   NamedEntityWithInventory{name, true},
-   HopBase                {name},
-   PropertiesForInventory<Hop>{},
+   NamedEntityWithInventory{name, true},
+   m_alpha_pct            {0.0         },
+   m_form                 {std::nullopt},
+   m_beta_pct             {std::nullopt},
+   m_origin               {""          },
    m_use                  {std::nullopt},
    m_type                 {std::nullopt},
    m_amount               {0.0         },
@@ -164,14 +192,19 @@ Hop::Hop(QString name) :
    m_nerol_pct            {std::nullopt},
    m_pinene_pct           {std::nullopt},
    m_polyphenols_pct      {std::nullopt},
-   m_xanthohumol_pct      {std::nullopt} {
+   m_xanthohumol_pct      {std::nullopt},
+   m_producer             {""          },
+   m_product_id           {""          },
+   m_year                 {""          } {
    return;
 }
 
 Hop::Hop(NamedParameterBundle const & namedParameterBundle) :
-///   NamedEntityWithInventory{namedParameterBundle},
-   HopBase                {namedParameterBundle},
-   PropertiesForInventory<Hop>{},
+   NamedEntityWithInventory{namedParameterBundle},
+   m_alpha_pct            {namedParameterBundle.val<double               >(PropertyNames::Hop::alpha_pct            )},
+   m_form                 {namedParameterBundle.optEnumVal<Hop::Form >(PropertyNames::Hop::form                 )},
+   m_beta_pct             {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::beta_pct             )},
+   m_origin               {namedParameterBundle.val<QString              >(PropertyNames::Hop::origin               )},
    m_use                  {namedParameterBundle.optEnumVal<Hop::Use      >(PropertyNames::Hop::use                  )},
    m_type                 {namedParameterBundle.optEnumVal<Hop::Type     >(PropertyNames::Hop::type                 )},
    m_time_min             {namedParameterBundle.val<double               >(PropertyNames::Hop::time_min             )},
@@ -192,15 +225,20 @@ Hop::Hop(NamedParameterBundle const & namedParameterBundle) :
    m_nerol_pct            {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::nerol_pct            )},
    m_pinene_pct           {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::pinene_pct           )},
    m_polyphenols_pct      {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::polyphenols_pct      )},
-   m_xanthohumol_pct      {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::xanthohumol_pct      )} {
+   m_xanthohumol_pct      {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::xanthohumol_pct      )},
+   m_producer             {namedParameterBundle.val<QString              >(PropertyNames::Hop::producer             )},
+   m_product_id           {namedParameterBundle.val<QString              >(PropertyNames::Hop::product_id           )},
+   m_year                 {namedParameterBundle.val<QString              >(PropertyNames::Hop::year                 )} {
    this->setEitherOrReqParams<MassOrVolumeAmt             >(namedParameterBundle, PropertyNames::Hop::amount    , PropertyNames::Hop::amountIsWeight           , PropertyNames::Hop::amountWithUnits    , this->m_amount    , this->m_amountIsWeight           );
    return;
 }
 
 Hop::Hop(Hop const & other) :
-///   NamedEntityWithInventory{other                        },
-   HopBase                 {other                        },
-   PropertiesForInventory<Hop>{},
+   NamedEntityWithInventory{other                        },
+   m_alpha_pct             {other.m_alpha_pct            },
+   m_form                  {other.m_form                 },
+   m_beta_pct              {other.m_beta_pct             },
+   m_origin                {other.m_origin               },
    m_use                   {other.m_use                  },
    m_type                  {other.m_type                 },
    m_amount                {other.m_amount               },
@@ -223,13 +261,21 @@ Hop::Hop(Hop const & other) :
    m_nerol_pct             {other.m_nerol_pct            },
    m_pinene_pct            {other.m_pinene_pct           },
    m_polyphenols_pct       {other.m_polyphenols_pct      },
-   m_xanthohumol_pct       {other.m_xanthohumol_pct      } {
+   m_xanthohumol_pct       {other.m_xanthohumol_pct      },
+   m_producer              {other.m_producer             },
+   m_product_id            {other.m_product_id           },
+   m_year                  {other.m_year                 } {
    return;
 }
 
 Hop::~Hop() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
+double                   Hop::alpha_pct            () const { return this->m_alpha_pct            ; }
+std::optional<Hop::Form> Hop::form                 () const { return this->m_form                 ; }
+std::optional<int>       Hop::formAsInt            () const { return Optional::toOptInt(m_form)   ; }
+std::optional<double>    Hop::beta_pct             () const { return this->m_beta_pct             ; }
+QString                  Hop::origin               () const { return this->m_origin               ; }
 double                   Hop::amount               () const { return this->m_amount               ; }
 bool                     Hop::amountIsWeight       () const { return this->m_amountIsWeight       ; } // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
 std::optional<Hop::Use>  Hop::use                  () const { return this->m_use                  ; }
@@ -255,12 +301,20 @@ std::optional<double>   Hop::nerol_pct            () const { return this->m_nero
 std::optional<double>   Hop::pinene_pct           () const { return this->m_pinene_pct           ; }
 std::optional<double>   Hop::polyphenols_pct      () const { return this->m_polyphenols_pct      ; }
 std::optional<double>   Hop::xanthohumol_pct      () const { return this->m_xanthohumol_pct      ; }
+QString                 Hop::producer             () const { return this->m_producer             ; }
+QString                 Hop::product_id           () const { return this->m_product_id           ; }
+QString                 Hop::year                 () const { return this->m_year                 ; }
 
 // Combined getters (all added for BeerJSON support)
 MassOrVolumeAmt         Hop::amountWithUnits      () const { return MassOrVolumeAmt{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void Hop::setAmount               (double                   const   val) { this->setAndNotify(PropertyNames::Hop::amount               , this->m_amount               , this->enforceMin      (val, "amount"));                     return; }
+void Hop::setAlpha_pct            (double                   const   val) { this->setAndNotify(PropertyNames::Hop::alpha_pct            , this->m_alpha_pct            , this->enforceMinAndMax(val, "alpha", 0.0, 100.0)); return; }
+void Hop::setForm                 (std::optional<Hop::Form> const   val) { this->setAndNotify(PropertyNames::Hop::form                 , this->m_form                 , val                                             ); return; }
+void Hop::setFormAsInt            (std::optional<int>       const   val) { this->setAndNotify(PropertyNames::Hop::form                 , this->m_form                 , Optional::fromOptInt<Form>(val)                 ); return; }
+void Hop::setBeta_pct             (std::optional<double>    const   val) { this->setAndNotify(PropertyNames::Hop::beta_pct             , this->m_beta_pct             , this->enforceMinAndMax(val, "beta",  0.0, 100.0)); return; }
+void Hop::setOrigin               (QString                  const & val) { this->setAndNotify(PropertyNames::Hop::origin               , this->m_origin               , val                                             ); return; }
+void Hop::setAmount               (double                   const   val) { this->setAndNotify(PropertyNames::Hop::amount               , this->m_amount               , this->enforceMin(val, "amount")                 ); return; }
 void Hop::setAmountIsWeight       (bool                     const   val) { this->setAndNotify(PropertyNames::Hop::amountIsWeight       , this->m_amountIsWeight       , val); return; } // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
 
 void Hop::setUse                  (std::optional<Hop::Use>  const   val) { this->setAndNotify(PropertyNames::Hop::use                  , this->m_use                  , val                                                             ); return; }
@@ -286,21 +340,14 @@ void Hop::setNerol_pct            (std::optional<double>    const   val) { this-
 void Hop::setPinene_pct           (std::optional<double>    const   val) { this->setAndNotify(PropertyNames::Hop::pinene_pct           , this->m_pinene_pct           , this->enforceMinAndMax(val, "pinene_pct",            0.0, 100.0)); return; }
 void Hop::setPolyphenols_pct      (std::optional<double>    const   val) { this->setAndNotify(PropertyNames::Hop::polyphenols_pct      , this->m_polyphenols_pct      , this->enforceMinAndMax(val, "polyphenols_pct",       0.0, 100.0)); return; }
 void Hop::setXanthohumol_pct      (std::optional<double>    const   val) { this->setAndNotify(PropertyNames::Hop::xanthohumol_pct      , this->m_xanthohumol_pct      , this->enforceMinAndMax(val, "xanthohumol_pct",       0.0, 100.0)); return; }
+void Hop::setProducer             (QString                  const & val) { this->setAndNotify(PropertyNames::Hop::producer             , this->m_producer             , val                                                             ); return; }
+void Hop::setProduct_id           (QString                  const & val) { this->setAndNotify(PropertyNames::Hop::product_id           , this->m_product_id           , val                                                             ); return; }
+void Hop::setYear                 (QString                  const   val) { this->setAndNotify(PropertyNames::Hop::year                 , this->m_year                 , val                                                             ); return; }
 
 Recipe * Hop::getOwningRecipe() const {
-   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
-}
-
-bool hopLessThanByTime(Hop const * const lhs, Hop const * const rhs) {
-   if (lhs->use() == rhs->use())    {
-      if (lhs->time_min() == rhs->time_min()) {
-         return lhs->name() < rhs->name();
-      }
-      return lhs->time_min() > rhs->time_min();
-   }
-   return lhs->use() < rhs->use();
+///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+   return nullptr;
 }
 
 // Insert the boiler-plate stuff for inventory
-///INVENTORY_COMMON_CODE_MO(Hop)
-PROPERTIES_FOR_INVENTORY_COMMON_CODE(Hop)
+INVENTORY_COMMON_CODE(Hop)

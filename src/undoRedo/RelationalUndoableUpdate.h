@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * undoRedo/RelationalUndoableUpdate.h is part of Brewken, and is copyright the following authors 2020-2022:
+ * undoRedo/RelationalUndoableUpdate.h is part of Brewken, and is copyright the following authors 2020-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -23,9 +23,7 @@
 #include <QVariant>
 
 #include "Logging.h"
-#include "model/Recipe.h"
-#include "model/Style.h"
-#include "StyleButton.h"
+#include "MainWindow.h"
 
 /*!
  * \class RelationalUndoableUpdate
@@ -56,25 +54,25 @@ public:
                             VV * newValue,
                             void (MainWindow::*callback)(void),
                             QString const & description,
-                            QUndoCommand * parent = nullptr)
-   : QUndoCommand(parent), updatee(updatee), setter(setter), oldValue(oldValue), newValue(newValue), callback(callback)
-   {
+                            QUndoCommand * parent = nullptr) :
+      QUndoCommand{parent},
+      updatee{updatee},
+      setter{setter},
+      oldValue{oldValue},
+      newValue{newValue},
+      callback{callback} {
       // Parent class handles storing description and making it accessible to the undo stack etc - we just have to give
       // it the text.
       this->setText(description);
       return;
    }
 
-   ~RelationalUndoableUpdate()
-   {
-      return;
-   }
+   ~RelationalUndoableUpdate() = default;
 
    /*!
     * \brief Apply the update (including for the first time)
     */
-   void redo()
-   {
+   void redo() {
       QUndoCommand::redo();
       this->undoOrRedo(false);
       return;
@@ -83,8 +81,7 @@ public:
    /*!
     * \brief Undo applying the update
     */
-   void undo()
-   {
+   void undo() {
       QUndoCommand::undo();
       this->undoOrRedo(true);
       return;
@@ -95,8 +92,7 @@ private:
     * \brief Undo or redo applying the update
     * \param isUndo true for undo, false for redo
     */
-   void undoOrRedo(bool const isUndo)
-   {
+   void undoOrRedo(bool const isUndo) {
       (this->updatee.*(this->setter))(isUndo ? this->oldValue : this->newValue);
       if (this->callback != nullptr) {
          (MainWindow::instance().*(this->callback))();
@@ -128,6 +124,5 @@ template<class UU, class VV> RelationalUndoableUpdate<UU, VV> * newRelationalUnd
                                                                                             QUndoCommand * parent = nullptr) {
    return new RelationalUndoableUpdate<UU, VV>(updatee, setter, oldValue, newValue, callback, description, parent);
 }
-
 
 #endif

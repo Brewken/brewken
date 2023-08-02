@@ -16,4 +16,4 @@
 #include "listModels/HopListModel.h"
 
 // Insert the boiler-plate stuff that we cannot do in ListModelBase
-LIST_MODEL_COMMON_CODE(Hop, PropertyNames::Recipe::hops)
+LIST_MODEL_COMMON_CODE(Hop, PropertyNames::Recipe::hopAdditions)

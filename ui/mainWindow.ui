@@ -1203,7 +1203,7 @@
              </attribute>
              <layout class="QHBoxLayout" name="horizontalLayout_20">
               <item>
-               <widget class="QTableView" name="hopTable"/>
+               <widget class="QTableView" name="hopAdditionTable"/>
               </item>
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_hops">
@@ -2208,7 +2208,7 @@
   <customwidget>
    <class>EquipmentButton</class>
    <extends>QPushButton</extends>
-   <header>EquipmentButton.h</header>
+   <header>buttons/EquipmentButton.h</header>
   </customwidget>
   <customwidget>
    <class>RecipeTreeView</class>
@@ -2238,12 +2238,12 @@
   <customwidget>
    <class>StyleButton</class>
    <extends>QPushButton</extends>
-   <header>StyleButton.h</header>
+   <header>buttons/StyleButton.h</header>
   </customwidget>
   <customwidget>
    <class>MashButton</class>
    <extends>QPushButton</extends>
-   <header>MashButton.h</header>
+   <header>buttons/MashButton.h</header>
   </customwidget>
   <customwidget>
    <class>StyleTreeView</class>
@@ -2288,7 +2288,7 @@
   <tabstop>pushButton_addFerm</tabstop>
   <tabstop>pushButton_removeFerm</tabstop>
   <tabstop>pushButton_editFerm</tabstop>
-  <tabstop>hopTable</tabstop>
+  <tabstop>hopAdditionTable</tabstop>
   <tabstop>pushButton_addHop</tabstop>
   <tabstop>pushButton_removeHop</tabstop>
   <tabstop>pushButton_editHop</tabstop>

@@ -64,6 +64,33 @@
     </message>
 </context>
 <context>
+    <name>Base</name>
+    <message>
+        <source>Leaf</source>
+        <translation type="unfinished">Folha</translation>
+    </message>
+    <message>
+        <source>Pellet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>WetLeaf</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Powder</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Boil</name>
     <message>
         <source>Boil</source>
@@ -993,6 +1020,22 @@ Log file may contain more details.</source>
         <source>ALLDB</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>About to upgrade database schema from v %1 to v %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click OK to continue (or Abort to close the program without upgrading)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The upgrade should retain all your existing data.  Nonetheless, we advise you to make a manual backup of your PostgreSQL database just in case.  If you didn&apos;t already do this, click Abort.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A backup of your SQLite database is in the directory %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -1591,15 +1634,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Leaf</source>
-        <translation>Folha</translation>
+        <translation type="vanished">Folha</translation>
     </message>
     <message>
         <source>Pellet</source>
-        <translation>Pastilha</translation>
+        <translation type="vanished">Pastilha</translation>
     </message>
     <message>
         <source>Plug</source>
-        <translation>Plugue</translation>
+        <translation type="vanished">Plugue</translation>
     </message>
     <message>
         <source>Flavor</source>
@@ -1622,24 +1665,19 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Extract</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>WetLeaf</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Powder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Post-Boil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Hop</source>
         <translation type="unfinished">Lúpulo</translation>
+    </message>
+</context>
+<context>
+    <name>HopBase</name>
+    <message>
+        <source>Leaf</source>
+        <translation type="obsolete">Folha</translation>
     </message>
 </context>
 <context>
@@ -1759,15 +1797,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Quantidade</translation>
+        <translation type="vanished">Quantidade</translation>
     </message>
     <message>
         <source>Use</source>
-        <translation>Usar</translation>
+        <translation type="vanished">Usar</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Tempo</translation>
+        <translation type="vanished">Tempo</translation>
     </message>
     <message>
         <source>Form</source>
@@ -1776,6 +1814,22 @@ Log file may contain more details.</source>
     <message>
         <source>Inventory</source>
         <translation>Inventário</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Tipo Quantidade</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="unfinished">Volume</translation>
+    </message>
+    <message>
+        <source>Weight</source>
+        <translation type="unfinished">Peso</translation>
+    </message>
+    <message>
+        <source>Year</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2136,10 +2190,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Remove hop from recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Remove misc from recipe</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2169,6 +2219,14 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>None of the selected items is exportable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove %1 from recipe</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3686,6 +3744,14 @@ Log file may contain more details.</source>
         <source>ft^3/lb</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>RecordSimple</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RecordComplex</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -3755,7 +3821,7 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Use %1 %2 for %3</source>
-        <translation>Usar %1 %2 para %3</translation>
+        <translation type="vanished">Usar %1 %2 para %3</translation>
     </message>
     <message>
         <source>Hop addition</source>
@@ -3979,6 +4045,10 @@ O volume final do fermentador primário é %1.</translation>
         <source>%1 %2, </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Put %1 %2 into packaging for %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -4001,6 +4071,60 @@ O volume final do fermentador primário é %1.</translation>
     <message>
         <source>Recipe Addition</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionHop</name>
+    <message>
+        <source>Hop Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionHopTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nome</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alpha %</source>
+        <translation type="unfinished">Alfa %</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished">Quantidade</translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Inventário</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="obsolete">Tipo Quantidade</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="obsolete">Volume</translation>
+    </message>
+    <message>
+        <source>Weight</source>
+        <translation type="obsolete">Peso</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished">Tempo</translation>
+    </message>
+    <message>
+        <source>Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stage</source>
+        <translation type="unfinished">Etapa</translation>
     </message>
 </context>
 <context>
@@ -4381,6 +4505,10 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add During</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6496,6 +6624,18 @@ O volume final do fermentador primário é %1.</translation>
     <message>
         <source>Total Oil ml/100g</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check it if the amount listed is in kg instead of L.</source>
+        <translation type="unfinished">Checar se a quantidade está em Kg em vez de L.</translation>
+    </message>
+    <message>
+        <source>Amount is weight?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Checked if the given amount is weight instead of volume</source>
+        <translation type="unfinished">Verifique se a quantidade informada é um peso ao invés de um volume</translation>
     </message>
 </context>
 <context>

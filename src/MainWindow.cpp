@@ -131,13 +131,13 @@
 #include "RefractoDialog.h"
 #include "ScaleRecipeTool.h"
 #include "sortFilterProxyModels/FermentableSortFilterProxyModel.h"
-#include "sortFilterProxyModels/HopSortFilterProxyModel.h"
+#include "sortFilterProxyModels/RecipeAdditionHopSortFilterProxyModel.h"
 #include "sortFilterProxyModels/MiscSortFilterProxyModel.h"
 #include "sortFilterProxyModels/StyleSortFilterProxyModel.h"
 #include "sortFilterProxyModels/YeastSortFilterProxyModel.h"
 #include "StrikeWaterDialog.h"
 #include "tableModels/FermentableTableModel.h"
-#include "tableModels/HopTableModel.h"
+#include "tableModels/RecipeAdditionHopTableModel.h"
 #include "tableModels/MashStepTableModel.h"
 #include "tableModels/MiscTableModel.h"
 #include "tableModels/YeastTableModel.h"
@@ -231,12 +231,12 @@ public:
       fileOpener{},
       m_undoStack{std::make_unique<QUndoStack>(&m_self)},
       m_fermTableModel    {nullptr},
-      m_hopTableModel     {nullptr},
+      m_hopAdditionsTableModel     {nullptr},
       m_mashStepTableModel{nullptr},
       m_miscTableModel    {nullptr},
       m_yeastTableModel   {nullptr},
       m_fermTableProxy    {nullptr},
-      m_hopTableProxy     {nullptr},
+      m_hopAdditionsTableProxy     {nullptr},
       m_miscTableProxy    {nullptr},
       m_styleProxyModel   {nullptr},
       m_yeastTableProxy   {nullptr} {
@@ -267,17 +267,17 @@ public:
          }
       });
 
-      // Hops
-      m_hopTableModel = std::make_unique<HopTableModel>(m_self.hopTable);
-      m_hopTableProxy = std::make_unique<HopSortFilterProxyModel>(m_self.hopTable, false);
-      m_hopTableProxy->setSourceModel(m_hopTableModel.get());
-      m_self.hopTable->setItemDelegate(new HopItemDelegate(m_self.hopTable, *m_hopTableModel));
-      m_self.hopTable->setModel(m_hopTableProxy.get());
-      // Hop table show IBUs in row headers.
-      m_hopTableModel->setShowIBUs(true);
-      connect(m_self.hopTable, &QTableView::doubleClicked, &m_self, [&](const QModelIndex &idx) {
+      // Hop additions
+      m_hopAdditionsTableModel = std::make_unique<RecipeAdditionHopTableModel>(m_self.hopAdditionTable);
+      m_hopAdditionsTableProxy = std::make_unique<RecipeAdditionHopSortFilterProxyModel>(m_self.hopAdditionTable, false);
+      m_hopAdditionsTableProxy->setSourceModel(m_hopAdditionsTableModel.get());
+      m_self.hopAdditionTable->setItemDelegate(new RecipeAdditionHopItemDelegate(m_self.hopAdditionTable, *m_hopAdditionsTableModel));
+      m_self.hopAdditionTable->setModel(m_hopAdditionsTableProxy.get());
+      // RecipeAdditionHop table show IBUs in row headers.
+      m_hopAdditionsTableModel->setShowIBUs(true);
+      connect(m_self.hopAdditionTable, &QTableView::doubleClicked, &m_self, [&](const QModelIndex &idx) {
          if (idx.column() == 0) {
-            m_self.editSelectedHop();
+            m_self.editHopOfSelectedHopAddition();
          }
       });
 
@@ -319,9 +319,9 @@ public:
       m_self.fermentableTable->horizontalHeader()->setSortIndicator(static_cast<int>(FermentableTableModel::ColumnIndex::Amount), Qt::DescendingOrder );
       m_self.fermentableTable->setSortingEnabled(true);
       m_fermTableProxy->setDynamicSortFilter(true);
-      m_self.hopTable->horizontalHeader()->setSortIndicator(static_cast<int>(HopTableModel::ColumnIndex::Time), Qt::DescendingOrder );
-      m_self.hopTable->setSortingEnabled(true);
-      m_hopTableProxy->setDynamicSortFilter(true);
+      m_self.hopAdditionTable->horizontalHeader()->setSortIndicator(static_cast<int>(RecipeAdditionHopTableModel::ColumnIndex::Time), Qt::DescendingOrder );
+      m_self.hopAdditionTable->setSortingEnabled(true);
+      m_hopAdditionsTableProxy->setDynamicSortFilter(true);
       m_self.miscTable->horizontalHeader()->setSortIndicator(static_cast<int>(MiscTableModel::ColumnIndex::Use), Qt::DescendingOrder );
       m_self.miscTable->setSortingEnabled(true);
       m_miscTableProxy->setDynamicSortFilter(true);
@@ -404,6 +404,99 @@ public:
       m_singleNamedMashEditor = std::make_unique<NamedMashEditor>(&m_self, m_mashStepEditor.get(), true);
    }
 
+   /**
+    * \brief Common code for getting the currently highlighted entry in one of the recipe additions tables
+    *        (hopAdditions, etc).
+    */
+   template<class NE, class Table, class Proxy, class TableModel>
+   NE * selected(Table * table, Proxy * proxy, TableModel * tableModel) {
+      QModelIndexList selected = table->selectionModel()->selectedIndexes();
+
+      int size = selected.size();
+      if (size == 0) {
+         return nullptr;
+      }
+
+      // Make sure only one row is selected.
+      QModelIndex viewIndex = selected[0];
+      int row = viewIndex.row();
+      for (int i = 1; i < size; ++i ) {
+         if (selected[i].row() != row) {
+            return nullptr;
+         }
+      }
+
+      QModelIndex modelIndex = proxy->mapToSource(viewIndex);
+      return tableModel->getRow(modelIndex.row()).get();
+   }
+
+   Fermentable       * selectedFermentable() { return this->selected<Fermentable      >(m_self.fermentableTable, this->m_fermTableProxy.get()        , this->m_fermTableModel.get()        ); }
+   RecipeAdditionHop * selectedHopAddition() { return this->selected<RecipeAdditionHop>(m_self.hopAdditionTable, this->m_hopAdditionsTableProxy.get(), this->m_hopAdditionsTableModel.get()); }
+   Misc              * selectedMisc       () { return this->selected<Misc             >(m_self.miscTable       , this->m_miscTableProxy.get()        , this->m_miscTableModel.get()        ); }
+   Yeast             * selectedYeast      () { return this->selected<Yeast            >(m_self.yeastTable      , this->m_yeastTableProxy.get()       , this->m_yeastTableModel.get()       ); }
+
+   /**
+    * \brief Use this for adding \c RecipeAdditionHop etc
+    */
+   template<class NE>
+   void doRecipeAddition(std::shared_ptr<NE> ne) {
+      Q_ASSERT(ne);
+
+      this->m_self.doOrRedoUpdate(
+         newUndoableAddOrRemove(*this->m_self.recipeObs,
+                                &Recipe::addAddition<NE>,
+                                ne,
+                                &Recipe::removeAddition<NE>,
+                                QString(tr("Add %1 to recipe")).arg(NE::LocalisedName))
+      );
+
+      // Since we just added an ingredient, switch the focus to the tab that lists that type of ingredient.  We rely here
+      // on the individual tabs following a naming convention (recipeHopTab, recipeFermentableTab, etc)
+      // Note that we want the untranslated class name because this is not for display but to refer to a QWidget inside
+      // tabWidget_ingredients
+      auto const widgetName = QString("recipe%1Tab").arg(NE::staticMetaObject.className());
+      qDebug() << Q_FUNC_INFO << widgetName;
+      QWidget * widget = this->m_self.tabWidget_ingredients->findChild<QWidget *>(widgetName);
+      Q_ASSERT(widget);
+      this->m_self.tabWidget_ingredients->setCurrentWidget(widget);
+
+      // We don't need to call this->pimpl->m_hopAdditionsTableModel->addHop(hop) here (or the equivalent for fermentable, misc or
+      // yeast) because the change to the recipe will already have triggered the necessary updates to
+      // this->pimpl->m_hopAdditionsTableModel/this->pimpl->m_fermentableTableModel/etc.
+      return;
+   }
+
+   /**
+    * \brief Use this for removing \c RecipeAdditionHop etc
+    */
+   template<class NE, class Table, class Proxy, class TableModel>
+   void doRemoveRecipeAddition(Table * table, Proxy * proxy, TableModel * tableModel) {
+      QModelIndexList selected = table->selectionModel()->selectedIndexes();
+      QList< std::shared_ptr<NE> > itemsToRemove;
+
+      int size = selected.size();
+      if (size == 0) {
+         return;
+      }
+
+      for (int i = 0; i < size; i++) {
+         QModelIndex viewIndex = selected.at(i);
+         QModelIndex modelIndex = proxy->mapToSource(viewIndex);
+         itemsToRemove.append(tableModel->getRow(modelIndex.row()));
+      }
+
+      for (auto item : itemsToRemove) {
+         this->m_self.doOrRedoUpdate(
+            newUndoableAddOrRemove(*this->m_self.recipeObs,
+                                    &Recipe::removeAddition<NE>,
+                                    item,
+                                    &Recipe::addAddition<NE>,
+                                    tr("Remove %1 from recipe").arg(NE::LocalisedName))
+         );
+         tableModel->remove(item);
+      }
+      return;
+   }
 
 
    //================================================ MEMBER VARIABLES =================================================
@@ -416,14 +509,14 @@ public:
 
    // all things tables should go here.
    std::unique_ptr<FermentableTableModel> m_fermTableModel    ;
-   std::unique_ptr<HopTableModel        > m_hopTableModel     ;
+   std::unique_ptr<RecipeAdditionHopTableModel> m_hopAdditionsTableModel;
    std::unique_ptr<MashStepTableModel   > m_mashStepTableModel;
    std::unique_ptr<MiscTableModel       > m_miscTableModel    ;
    std::unique_ptr<YeastTableModel      > m_yeastTableModel   ;
 
    // all things sort/filter proxy go here
    std::unique_ptr<FermentableSortFilterProxyModel> m_fermTableProxy ;
-   std::unique_ptr<HopSortFilterProxyModel        > m_hopTableProxy  ;
+   std::unique_ptr<RecipeAdditionHopSortFilterProxyModel> m_hopAdditionsTableProxy  ;
    std::unique_ptr<MiscSortFilterProxyModel       > m_miscTableProxy ;
    std::unique_ptr<StyleSortFilterProxyModel      > m_styleProxyModel;
    std::unique_ptr<YeastSortFilterProxyModel      > m_yeastTableProxy;
@@ -959,12 +1052,12 @@ void MainWindow::setupClicks() {
    connect(this->pushButton_addMisc       , &QAbstractButton::clicked, this->pimpl->m_miscCatalog  , &QWidget::show                        );
    connect(this->pushButton_addYeast      , &QAbstractButton::clicked, this->pimpl->m_yeastCatalog , &QWidget::show                        );
    connect(this->pushButton_removeFerm    , &QAbstractButton::clicked, this        , &MainWindow::removeSelectedFermentable);
-   connect(this->pushButton_removeHop     , &QAbstractButton::clicked, this        , &MainWindow::removeSelectedHop        );
+   connect(this->pushButton_removeHop     , &QAbstractButton::clicked, this        , &MainWindow::removeSelectedHopAddition        );
    connect(this->pushButton_removeMisc    , &QAbstractButton::clicked, this        , &MainWindow::removeSelectedMisc       );
    connect(this->pushButton_removeYeast   , &QAbstractButton::clicked, this        , &MainWindow::removeSelectedYeast      );
    connect(this->pushButton_editFerm      , &QAbstractButton::clicked, this        , &MainWindow::editSelectedFermentable  );
    connect(this->pushButton_editMisc      , &QAbstractButton::clicked, this        , &MainWindow::editSelectedMisc         );
-   connect(this->pushButton_editHop       , &QAbstractButton::clicked, this        , &MainWindow::editSelectedHop          );
+   connect(this->pushButton_editHop       , &QAbstractButton::clicked, this        , &MainWindow::editHopOfSelectedHopAddition          );
    connect(this->pushButton_editYeast     , &QAbstractButton::clicked, this        , &MainWindow::editSelectedYeast        );
    connect(this->pushButton_editMash      , &QAbstractButton::clicked, this->pimpl->m_mashEditor  , &MashEditor::showEditor               );
    connect(this->pushButton_addMashStep   , &QAbstractButton::clicked, this        , &MainWindow::addMashStep              );
@@ -1292,7 +1385,7 @@ void MainWindow::setRecipe(Recipe* recipe) {
 
    // Reset all previous recipe shit.
    this->pimpl->m_fermTableModel->observeRecipe(recipe);
-   this->pimpl->m_hopTableModel->observeRecipe(recipe);
+   this->pimpl->m_hopAdditionsTableModel->observeRecipe(recipe);
    this->pimpl->m_miscTableModel->observeRecipe(recipe);
    this->pimpl->m_yeastTableModel->observeRecipe(recipe);
    this->pimpl->m_mashStepTableModel->setMash(recipeObs->mash());
@@ -1398,7 +1491,7 @@ void MainWindow::lockRecipe(int state) {
    pushButton_removeFerm->setEnabled(enabled);
    pushButton_editFerm->setEnabled(enabled);
 
-   hopTable->setEnabled(enabled);
+   hopAdditionTable->setEnabled(enabled);
    pushButton_addHop->setEnabled(enabled);
    pushButton_removeHop->setEnabled(enabled);
    pushButton_editHop->setEnabled(enabled);
@@ -1450,10 +1543,13 @@ void MainWindow::showChanges(QMetaProperty* prop) {
       propName = prop->name();
    }
 
+
    // May St. Stevens preserve me
    this->lineEdit_name      ->setText  (this->recipeObs->name          ());
    this->lineEdit_batchSize ->setAmount(this->recipeObs->batchSize_l   ());
-   this->lineEdit_boilSize  ->setAmount(this->recipeObs->boilSize_l    ());
+   // TODO: One day we'll want to do some work to properly handle no-boil recipes....
+   double const boilSize = recipeObs->boil() ? (*recipeObs->boil())->preBoilSize_l().value_or(0.0) : 0.0;
+   this->lineEdit_boilSize  ->setAmount(boilSize);
    this->lineEdit_efficiency->setAmount(this->recipeObs->efficiency_pct());
    this->lineEdit_boilTime  ->setAmount(this->recipeObs->boilTime_min  ());
    this->lineEdit_name      ->setCursorPosition(0);
@@ -1505,7 +1601,7 @@ void MainWindow::showChanges(QMetaProperty* prop) {
    this->rangeWidget_batchSize->setValue         (this->label_batchSize->getAmountToDisplay(this->recipeObs->finalVolume_l()));
 
    this->rangeWidget_boilsize->setRange         (0,
-                                                 this->label_boilSize->getAmountToDisplay(this->recipeObs->boilSize_l()));
+                                                 this->label_boilSize->getAmountToDisplay(boilSize));
    this->rangeWidget_boilsize->setPreferredRange(0,
                                                  this->label_boilSize->getAmountToDisplay(this->recipeObs->boilVolume_l()));
    this->rangeWidget_boilsize->setValue         (this->label_boilSize->getAmountToDisplay(this->recipeObs->boilVolume_l()));
@@ -1542,7 +1638,7 @@ void MainWindow::showChanges(QMetaProperty* prop) {
    // modifiers isn't automatically updating my display
    if (updateAll) {
      recipeObs->recalcIBU();
-     this->pimpl->m_hopTableProxy->invalidate();
+     this->pimpl->m_hopAdditionsTableProxy->invalidate();
    }
    return;
 }
@@ -1717,7 +1813,7 @@ void MainWindow::droppedRecipeFermentable(QList<Fermentable*>ferms) {
    return;
 }
 
-void MainWindow::droppedRecipeHop(QList<Hop*>hops) {
+void MainWindow::droppedRecipeHop(QList<Hop *> hops) {
    if (!this->recipeObs) {
       return;
    }
@@ -1725,11 +1821,14 @@ void MainWindow::droppedRecipeHop(QList<Hop*>hops) {
    if (tabWidget_ingredients->currentWidget() != recipeHopTab) {
       tabWidget_ingredients->setCurrentWidget(recipeHopTab);
    }
+
+   auto hopAdditions = RecipeAdditionHop::create(*this->recipeObs, hops);
+
    this->doOrRedoUpdate(
       newUndoableAddOrRemoveList(*this->recipeObs,
-                                 &Recipe::add<Hop>,
-                                 hops,
-                                 &Recipe::remove<Hop>,
+                                 &Recipe::addAddition<RecipeAdditionHop>,
+                                 hopAdditions,
+                                 &Recipe::removeAddition<RecipeAdditionHop>,
                                  tr("Drop hops on a recipe"))
    );
    return;
@@ -1846,19 +1945,34 @@ void MainWindow::addToRecipe(std::shared_ptr<NE> ne) {
    Q_ASSERT(widget);
    this->tabWidget_ingredients->setCurrentWidget(widget);
 
-   // We don't need to call this->pimpl->m_hopTableModel->addHop(hop) here (or the equivalent for fermentable, misc or
+   // We don't need to call this->pimpl->m_hopAdditionsTableModel->addHop(hop) here (or the equivalent for fermentable, misc or
    // yeast) because the change to the recipe will already have triggered the necessary updates to
-   // this->pimpl->m_hopTableModel/this->pimpl->m_fermentableTableModel/etc.
+   // this->pimpl->m_hopAdditionsTableModel/this->pimpl->m_fermentableTableModel/etc.
    return;
 }
 //
 // Instantiate the above template function for the types that are going to use it
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
 //
-template void MainWindow::addToRecipe(std::shared_ptr<Hop        > ne);
 template void MainWindow::addToRecipe(std::shared_ptr<Fermentable> ne);
 template void MainWindow::addToRecipe(std::shared_ptr<Misc       > ne);
 template void MainWindow::addToRecipe(std::shared_ptr<Yeast      > ne);
+
+void MainWindow::addHopToRecipe(Hop * hop) {
+   if (!this->recipeObs) {
+      return;
+   }
+   auto hopAddition = std::make_shared<RecipeAdditionHop>(*this->recipeObs, *hop);
+   this->pimpl->doRecipeAddition(hopAddition);
+   return;
+}
+
+void MainWindow::removeSelectedHopAddition() {
+   this->pimpl->doRemoveRecipeAddition<RecipeAdditionHop>(hopAdditionTable,
+                                                          this->pimpl->m_hopAdditionsTableProxy.get(),
+                                                          this->pimpl->m_hopAdditionsTableModel.get());
+   return;
+}
 
 void MainWindow::addMashStepToMash(std::shared_ptr<MashStep> mashStep) {
    qDebug() << Q_FUNC_INFO;
@@ -1953,92 +2067,9 @@ void MainWindow::editRedo() {
    return;
 }
 
-Fermentable* MainWindow::selectedFermentable() {
-   QModelIndexList selected = fermentableTable->selectionModel()->selectedIndexes();
-
-   int size = selected.size();
-   if (size == 0) {
-      return nullptr;
-   }
-
-   // Make sure only one row is selected.
-   QModelIndex viewIndex = selected[0];
-   int row = viewIndex.row();
-   for (int i = 1; i < size; ++i ) {
-      if (selected[i].row() != row) {
-         return nullptr;
-      }
-   }
-
-   QModelIndex modelIndex = this->pimpl->m_fermTableProxy->mapToSource(viewIndex);
-   return this->pimpl->m_fermTableModel->getRow(modelIndex.row()).get();
-}
-
-Hop* MainWindow::selectedHop() {
-   QModelIndexList selected = hopTable->selectionModel()->selectedIndexes();
-
-   int size = selected.size();
-   if (size == 0) {
-      return nullptr;
-   }
-
-   // Make sure only one row is selected.
-   QModelIndex viewIndex = selected[0];
-   int row = viewIndex.row();
-   for (int i = 1; i < size; ++i ) {
-      if (selected[i].row() != row) {
-         return nullptr;
-      }
-   }
-
-   QModelIndex modelIndex = this->pimpl->m_hopTableProxy->mapToSource(viewIndex);
-   return this->pimpl->m_hopTableModel->getRow(modelIndex.row()).get();
-}
-
-Misc* MainWindow::selectedMisc() {
-   QModelIndexList selected = miscTable->selectionModel()->selectedIndexes();
-
-   int size = selected.size();
-   if (size == 0) {
-      return nullptr;
-   }
-
-   // Make sure only one row is selected.
-   QModelIndex viewIndex = selected[0];
-   int row = viewIndex.row();
-   for (int i = 1; i < size; ++i ) {
-      if (selected[i].row() != row) {
-         return nullptr;
-      }
-   }
-
-   QModelIndex modelIndex = this->pimpl->m_miscTableProxy->mapToSource(viewIndex);
-   return this->pimpl->m_miscTableModel->getRow(modelIndex.row()).get();
-}
-
-Yeast* MainWindow::selectedYeast() {
-   QModelIndexList selected = yeastTable->selectionModel()->selectedIndexes();
-
-   int size = selected.size();
-   if (size == 0) {
-      return nullptr;
-   }
-
-   // Make sure only one row is selected.
-   QModelIndex viewIndex = selected[0];
-   int row = viewIndex.row();
-   for (int i = 1; i < size; ++i ) {
-      if (selected[i].row() != row) {
-         return nullptr;
-      }
-   }
-
-   QModelIndex modelIndex = this->pimpl->m_yeastTableProxy->mapToSource(viewIndex);
-   return this->pimpl->m_yeastTableModel->getRow(modelIndex.row()).get();
-}
-
-void MainWindow::removeHop(std::shared_ptr<Hop> itemToRemove) {
-   this->pimpl->m_hopTableModel->remove(itemToRemove);
+// .:TBD:. Can we get rid of this now?
+void MainWindow::removeHopAddition(std::shared_ptr<RecipeAdditionHop> itemToRemove) {
+   this->pimpl->m_hopAdditionsTableModel->remove(itemToRemove);
    return;
 }
 void MainWindow::removeFermentable(std::shared_ptr<Fermentable> itemToRemove) {
@@ -2094,7 +2125,7 @@ void MainWindow::removeSelectedFermentable() {
 }
 
 void MainWindow::editSelectedFermentable() {
-   Fermentable* f = selectedFermentable();
+   Fermentable* f = this->pimpl->selectedFermentable();
    if (!f) {
       return;
    }
@@ -2105,7 +2136,7 @@ void MainWindow::editSelectedFermentable() {
 }
 
 void MainWindow::editSelectedMisc() {
-   Misc* m = selectedMisc();
+   Misc* m = this->pimpl->selectedMisc();
    if (!m) {
       return;
    }
@@ -2114,19 +2145,24 @@ void MainWindow::editSelectedMisc() {
    this->pimpl->m_miscEditor->show();
 }
 
-void MainWindow::editSelectedHop() {
-   Hop* h = selectedHop();
-   if (!h) {
+void MainWindow::editHopOfSelectedHopAddition() {
+   RecipeAdditionHop * hopAddition = this->pimpl->selectedHopAddition();
+   if (!hopAddition) {
       return;
    }
 
-   this->pimpl->m_hopEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(h));
+   Hop * hop = hopAddition->hop();
+   if (!hop) {
+      return;
+   }
+
+   this->pimpl->m_hopEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(hop));
    this->pimpl->m_hopEditor->show();
    return;
 }
 
 void MainWindow::editSelectedYeast() {
-   Yeast* y = selectedYeast();
+   Yeast* y = this->pimpl->selectedYeast();
    if (!y) {
       return;
    }
@@ -2135,36 +2171,6 @@ void MainWindow::editSelectedYeast() {
    this->pimpl->m_yeastEditor->show();
    return;
 }
-
-void MainWindow::removeSelectedHop() {
-   QModelIndexList selected = hopTable->selectionModel()->selectedIndexes();
-   QList< std::shared_ptr<Hop> > itemsToRemove;
-
-   int size = selected.size();
-   if (size == 0) {
-      return;
-   }
-
-   for (int i = 0; i < size; i++) {
-      QModelIndex viewIndex = selected.at(i);
-      QModelIndex modelIndex = this->pimpl->m_hopTableProxy->mapToSource(viewIndex);
-      itemsToRemove.append(this->pimpl->m_hopTableModel->getRow(modelIndex.row()));
-   }
-
-   for (auto item : itemsToRemove) {
-      this->doOrRedoUpdate(
-         newUndoableAddOrRemove(*this->recipeObs,
-                                 &Recipe::remove<Hop>,
-                                 item,
-                                 &Recipe::add<Hop>,
-                                 &MainWindow::removeHop,
-                                 static_cast<void (MainWindow::*)(std::shared_ptr<Hop>)>(nullptr),
-                                 tr("Remove hop from recipe"))
-      );
-   }
-
-}
-
 
 void MainWindow::removeSelectedMisc() {
    QModelIndexList selected = miscTable->selectionModel()->selectedIndexes();
@@ -2234,18 +2240,24 @@ void MainWindow::newRecipe()
    if( name.isEmpty() )
       return;
 
-   Recipe* newRec = new Recipe(name);
+   std::shared_ptr<Recipe> newRec = std::make_shared<Recipe>(name);
 
    // bad things happened -- let somebody know
-   if ( ! newRec ) {
-      QMessageBox::warning(this,tr("Error creating recipe"),
+   if (!newRec) {
+      QMessageBox::warning(this,
+                           tr("Error creating recipe"),
                            tr("An error was returned while creating %1").arg(name));
       return;
    }
+   ObjectStoreWrapper::insert(newRec);
+   std::shared_ptr<Boil> newBoil = std::make_shared<Boil>(QString("Boil for").arg(name));
+   newRec->setBoil(newBoil);
+   ObjectStoreWrapper::insert(newBoil);
+
    // Set the following stuff so everything appears nice
    // and the calculations don't divide by zero... things like that.
    newRec->setBatchSize_l(18.93); // 5 gallons
-   newRec->setBoilSize_l(23.47);  // 6.2 gallons
+   newBoil->setPreBoilSize_l(23.47);  // 6.2 gallons
    newRec->setEfficiency_pct(70.0);
 
    // we need a valid key, so insert the recipe before we add equipment
@@ -2256,13 +2268,12 @@ void MainWindow::newRecipe()
       // database
       if ( e ) {
          newRec->setBatchSize_l( e->fermenterBatchSize_l() );
-         newRec->setBoilSize_l( e->kettleBoilSize_l() );
-         newRec->setBoilTime_min( e->boilTime_min().value_or(Equipment::default_boilTime_min) );
+         newBoil->setPreBoilSize_l( e->kettleBoilSize_l() );
+         newBoil->setBoilTime_mins( e->boilTime_min().value_or(Equipment::default_boilTime_min) );
          newRec->setEquipment(e);
       }
    }
 
-   ObjectStoreWrapper::insert(*newRec);
 
    // a new recipe will be put in a folder if you right click on a recipe or
    // folder. Otherwise, it goes into the main window?
@@ -2293,8 +2304,8 @@ void MainWindow::newRecipe()
          }
       }
    }
-   setTreeSelection(treeView_recipe->findElement(newRec));
-   setRecipe(newRec);
+   this->setTreeSelection(treeView_recipe->findElement(newRec.get()));
+   this->setRecipe(newRec.get());
    return;
 }
 
@@ -2452,8 +2463,10 @@ void MainWindow::reduceInventory() {
       //
       for (auto ii : rec->fermentables()) { ii->setInventoryAmount(std::max(                 ii->inventory()  - ii->amount(),    0.0)); }
       for (auto ii : rec->miscs       ()) { ii->setInventoryAmount(std::max(                 ii->inventory()  - ii->amount(),    0.0)); }
-      for (auto ii : rec->hops        ()) { ii->setInventoryAmount(std::max(                 ii->inventory()  - ii->amount_kg(), 0.0)); }
+///      for (auto ii : rec->hops        ()) { ii->setInventoryAmount(std::max(                 ii->inventory()  - ii->amount_kg(), 0.0)); }
       for (auto ii : rec->yeasts      ()) { ii->setInventoryQuanta(std::max(static_cast<int>(ii->inventory()) - 1,               0  )); }
+
+/// TODO      for (auto ii : rec->hopAdditions()) {
    }
 
    return;

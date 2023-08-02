@@ -34,6 +34,7 @@
 #include "model/NamedEntity.h"
 #include "utils/BtStringConst.h"
 #include "utils/EnumStringMapping.h"
+#include "utils/PropertyPath.h"
 
 class Recipe;
 template<class Derived, class NE> class TableModelBase; // This forward declaration is so we can make it a friend
@@ -62,36 +63,36 @@ template<class Derived, class NE> class TableModelBase; // This forward declarat
  *                           \
  *                            \
  *                          BtTableModel                TableModelBase<NE, xxxTableModel>
- *                                /   \                 /    /     /
- *                               /     \               /    /     /
- *                              /     MashStepTableModel   /     /
- *                             /                          /     /
- *                            /                          /     /
- *                         BtTableModelRecipeObserver   /     /
- *                              \       \              /     /
- *                               \       \            /     /
- *                                \      SaltTableModel    /
- *                                 \    WaterTableModel   /
- *                                  \                    /
- *                                   \                  /
- *                         BtTableModelInventory       /
- *                                    \               /
- *                                     \             /
- *                                FermentableTableModel
- *                                    HopTableModel
- *                                   MiscTableModel
- *                                   YeastTableModel
+ *                                /   \                 /    /      /
+ *                               /     \               /    /      /
+ *                              /     MashStepTableModel   /      /
+ *                             /        HopTableModel     /      /
+ *                            /                          /      /
+ *                   BtTableModelRecipeObserver         /      /
+ *                      \               \              /      /
+ *                       \               \            /      /
+ *                        \    RecipeAdditionHopTableModel  /
+ *                         \            SaltTableModel     /
+ *                          \          WaterTableModel    /
+ *                           \                           /
+ *                         BtTableModelInventory        /
+ *                                    \                /
+ *                                     \              /
+ *                                  FermentableTableModel
+ *                                      MiscTableModel
+ *                                      YeastTableModel
  *
- *        Eg HopTableModel inherits from BtTableModelInventory and TableModelBase<Hop, HopTableModel>
+ *        Eg RecipeAdditionHopTableModel inherits from BtTableModelRecipeObserver and
+ *        TableModelBase<RecipeAdditionHopTableModel, RecipeAdditionHop>
  *
  *        The \c BtTableModelRecipeObserver class adds a pointer to a \c Recipe to \c BtTableModel.
- *        The \c BtTableModelInventory class adds a boolean \c inventoryEditable flag to \c BtTableModelRecipeObserver.
+ *        The \c BtTableModelInventory class adds a boolean \c inventoryEditable flag to \c BtTableModelRecipeObserver. -- TODO We will retire this once we have switched over to RecipeAdditionXyz
  *
  *        You might be wondering why there isn't a corresponding inheritance hierarchy in \c TableModelBase.  This is
  *        because, by the magic of template metaprogramming \c TableModelBase "knows" whether its derived class inherits
  *        from \c BtTableModelRecipeObserver or \c BtTableModelInventory, and can therefore adapt accordingly.
  */
-// TODO: Need to kill off BtTableModelData once we have switched everything over to using TableModelBase
+// TODO: Need to kill off BtTableModelData once we have switched everything over to using TableModelBase (just WaterTableModel left to do)
 template<class NE>
 class BtTableModelData {
 protected:
@@ -242,7 +243,7 @@ public:
     *        act on the pop-up menu selections directly, rather than \c SmartLabel sending a signal that
     *        \c SmartLineEdit (and sometimes others) pick up.
     *
-    *        NOTE that you usually want to use the SMART_COLUMN_HEADER_INIT macro when constructing
+    *        NOTE that you usually want to use the TABLE_MODEL_HEADER macro when constructing
     */
    struct ColumnInfo {
       /**
@@ -272,19 +273,40 @@ public:
       QString const label;
 
       /**
-       * \brief
-       */
-      BtStringConst const & propertyName;
-
-      /**
        * \brief What type of data is shown in this column
        */
       TypeInfo const & typeInfo;
 
       /**
+       * \brief Parameters to construct the \c PropertyPath to which this field relates.  Usually this is just a
+       *        property name, eg \c PropertyNames::NamedEntity::name.  But, eg, in \c RecipeAdditionHopTableModel and
+       *        similar places, we need `{PropertyNames::RecipeAdditionHop::hop, PropertyNames::Hop::alpha_pct}`, etc.
+       */
+      PropertyPath propertyPath;
+
+      /**
        * \brief Extra info, dependent on the type of value in the column
        */
-      std::optional<std::variant<EnumInfo, BoolInfo, PrecisionInfo>> extras = std::nullopt;
+      std::optional<std::variant<EnumInfo, BoolInfo, PrecisionInfo>> extras;
+
+      ColumnInfo(char const * const   tableModelName,
+                 char const * const   columnName    ,
+                 char const * const   columnFqName  ,
+                 size_t       const   index         ,
+                 QString      const   label         ,
+                 TypeLookup   const & typeLookup    ,
+                 PropertyPath         propertyPath  ,
+                 std::optional<std::variant<EnumInfo, BoolInfo, PrecisionInfo>> extras = std::nullopt) :
+         tableModelName{tableModelName                      },
+         columnName    {columnName                          },
+         columnFqName  {columnFqName                        },
+         index         {index                               },
+         label         {label                               },
+         typeInfo      {propertyPath.getTypeInfo(typeLookup)},
+         propertyPath  {propertyPath                        },
+         extras        {extras                              } {
+         return;
+      }
 
       // Stuff for setting display units and scales -- per column
       // I know it looks odd to have const setters, but they are const because they do not change the data in the struct
@@ -358,26 +380,32 @@ public:
  *
  *        you write:
  *
- *           SMART_COLUMN_HEADER_DEFN(HopTableModel, Alpha, tr("Alpha %"), Hop, PropertyNames::Hop::alpha);
+ *           TABLE_MODEL_HEADER(HopTableModel, Alpha, tr("Alpha %"), PropertyNames::Hop::alpha);
  *
- *        Arguments not specified below are passed in to initialise \c BtTableModel::ColumnInfo::extra.
+ *        Arguments not specified below are passed in to initialise \c BtTableModel::ColumnInfo::propertyPath and, if
+ *        present, \c BtTableModel::ColumnInfo::extras.
  *
  * \param tableModelClass The class name of the class holding the field we're initialising, eg \c HopTableModel.
  * \param columnName
  * \param labelText
  * \param modelClass The subclass of \c NamedEntity that we're editing.  Eg in \c HopEditor, this will be \c Hop
- * \param propertyName The name of the property to which this field relates, eg in \c HopEditor, this could be
- *                     \c PropertyNames::NamedEntity::name, \c PropertyNames::Hop::alpha_pct, etc.  (Note, as per
- *                     comments in \c widgets/SmartAmounts.h, we intentionally do \b not automatically insert the
- *                     \c PropertyNames:: prefix.)
+ *
+ * Note that for the ... arguments, if they are non-trivial, we need to explicitly call the relevant constructor, eg we
+ * must write `PropertyPath{{PropertyNames::RecipeAdditionHop::hop, PropertyNames::Hop::alpha_pct}}` instead of just
+ * `{PropertyNames::RecipeAdditionHop::hop, PropertyNames::Hop::alpha_pct}` as we can in some other places.  (For
+ * trivial parameters, such as `PropertyNames::NamedEntity::name`, we don't need to do this.)  This is the price of
+ * going via a macro.
+ *
+ * Note too, unlike some other places, because at least one extra non-named parameter is always required, we don't need
+ * the `__VA_OPT__(, )` wrapper around __VA_ARGS__.
  */
-#define SMART_COLUMN_HEADER_DEFN(tableModelClass, columnName, labelText, modelClass, propertyName, ...) \
-   BtTableModel::ColumnInfo{#tableModelClass, \
+#define TABLE_MODEL_HEADER(modelClass, columnName, labelText, ...) \
+   BtTableModel::ColumnInfo{#modelClass "TableModel", \
                             #columnName, \
-                            #tableModelClass "::ColumnIndex::" #columnName, \
-                            static_cast<size_t>(tableModelClass::ColumnIndex::columnName), \
+                            #modelClass "TableModel::ColumnIndex::" #columnName, \
+                            static_cast<size_t>(modelClass##TableModel::ColumnIndex::columnName), \
                             labelText, \
-                            propertyName, \
-                            modelClass::typeLookup.getType(propertyName) \
-                            __VA_OPT__(, __VA_ARGS__)}
+                            modelClass::typeLookup, \
+                            __VA_ARGS__}
+
 #endif

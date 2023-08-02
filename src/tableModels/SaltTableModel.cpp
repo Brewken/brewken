@@ -52,10 +52,10 @@ SaltTableModel::SaltTableModel(QTableView* parent, bool editable) :
          //       can handle mass-or-volume generically in TableModelBase.
          //
          // Note too that, for the purposes of these columns, the "name" of a Salt is not its "NamedEntity name" but actually its type
-         SMART_COLUMN_HEADER_DEFN(SaltTableModel, Name   , tr("Name"    ), Salt, PropertyNames::Salt::type           , EnumInfo{Salt::typeStringMapping, Salt::typeDisplayNames}),
-         SMART_COLUMN_HEADER_DEFN(SaltTableModel, Amount , tr("Amount"  ), Salt, PropertyNames::Salt::amountWithUnits),
-         SMART_COLUMN_HEADER_DEFN(SaltTableModel, AddTo  , tr("Added To"), Salt, PropertyNames::Salt::whenToAdd      , EnumInfo{Salt::whenToAddStringMapping, Salt::whenToAddDisplayNames}),
-         SMART_COLUMN_HEADER_DEFN(SaltTableModel, PctAcid, tr("% Acid"  ), Salt, PropertyNames::Salt::percentAcid    ),
+         TABLE_MODEL_HEADER(Salt, Name   , tr("Name"    ), PropertyNames::Salt::type           , EnumInfo{Salt::typeStringMapping, Salt::typeDisplayNames}),
+         TABLE_MODEL_HEADER(Salt, Amount , tr("Amount"  ), PropertyNames::Salt::amountWithUnits),
+         TABLE_MODEL_HEADER(Salt, AddTo  , tr("Added To"), PropertyNames::Salt::whenToAdd      , EnumInfo{Salt::whenToAddStringMapping, Salt::whenToAddDisplayNames}),
+         TABLE_MODEL_HEADER(Salt, PctAcid, tr("% Acid"  ), PropertyNames::Salt::percentAcid    ),
       }
    },
    TableModelBase<SaltTableModel, Salt>{} {

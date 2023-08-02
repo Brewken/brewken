@@ -29,22 +29,23 @@
 #include <QStringList>
 #include <QSqlRecord>
 
-#include "model/HopBase.h"
-#include "model/PropertiesForInventory.h"
-///#include "model/NamedEntityWithInventory.h"
+#include "model/NamedEntityWithInventory.h"
 #include "utils/EnumStringMapping.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Hop { BtStringConst const property{#property}; }
-AddPropertyName(amount               )
-AddPropertyName(amountIsWeight       )
-AddPropertyName(amountWithUnits      )
+AddPropertyName(alpha_pct            )
+AddPropertyName(amount               ) // Deprecated - moved to RecipeAdditionHop
+AddPropertyName(amountIsWeight       ) // Deprecated - moved to RecipeAdditionHop
+AddPropertyName(amountWithUnits      ) // Deprecated - moved to RecipeAdditionHop
+AddPropertyName(beta_pct             )
 AddPropertyName(b_pinene_pct         )
 AddPropertyName(caryophyllene_pct    )
 AddPropertyName(cohumulone_pct       )
 AddPropertyName(farnesene_pct        )
+AddPropertyName(form                 )
 AddPropertyName(geraniol_pct         )
 AddPropertyName(hsi_pct              )
 AddPropertyName(humulene_pct         )
@@ -53,14 +54,18 @@ AddPropertyName(linalool_pct         )
 AddPropertyName(myrcene_pct          )
 AddPropertyName(nerol_pct            )
 AddPropertyName(notes                )
+AddPropertyName(origin               )
 AddPropertyName(pinene_pct           )
 AddPropertyName(polyphenols_pct      )
+AddPropertyName(producer             )
+AddPropertyName(product_id           )
 AddPropertyName(substitutes          )
 AddPropertyName(time_min             )
 AddPropertyName(total_oil_ml_per_100g)
 AddPropertyName(type                 )
 AddPropertyName(use                  )
 AddPropertyName(xanthohumol_pct      )
+AddPropertyName(year                 )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -71,16 +76,41 @@ AddPropertyName(xanthohumol_pct      )
  *
  * \brief Model class for a hop record in the database.
  */
-///class Hop : public NamedEntityWithInventory {
-class Hop : public HopBase, public PropertiesForInventory<Hop> {
+class Hop : public NamedEntityWithInventory {
    Q_OBJECT
-   PROPERTIES_FOR_INVENTORY_DECL(Hop)
 
 public:
    /**
     * \brief See comment in model/NamedEntity.h
     */
    static QString const LocalisedName;
+
+   /*!
+    * \brief The form of the hop.
+    */
+   enum class Form {Leaf,
+                    Pellet,
+                    Plug,
+                    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+                    Extract,
+                    WetLeaf,
+                    Powder};
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Form)
+
+   /*!
+    * \brief Mapping between \c Hop::Form and string values suitable for serialisation in DB, BeerJSON, etc (but \b not
+    *        BeerXML)
+    *
+    *        This can also be used to obtain the number of values of \c Type, albeit at run-time rather than
+    *        compile-time.  (One day, C++ will have reflection and we won't need to do things this way.)
+    */
+   static EnumStringMapping const formStringMapping;
+
+   /*!
+    * \brief Localised names of \c Hop::Form values suitable for displaying to the end user
+    */
+   static EnumStringMapping const formDisplayNames;
 
    /*!
     * \brief The type of hop, meaning for what properties it is used.  Arguably we should have three binary flags
@@ -114,7 +144,7 @@ public:
 
    /*!
     * \brief The way the hop is used.
-    *        NOTE that this is not stored in BeerJSON
+    *        NOTE that this is not stored in BeerJSON, and is deprecated in favour of \c RecipeAddition::Stage
     */
    enum class Use {Mash,
                    First_Wort,
@@ -151,6 +181,19 @@ public:
    virtual ~Hop();
 
    //=================================================== PROPERTIES ====================================================
+   //! \brief The percent alpha acid
+   Q_PROPERTY(double                alpha_pct    READ alpha_pct    WRITE setAlpha_pct            )
+   /**
+    * \brief The \c Form.                ⮜⮜⮜ Optional in BeerJSON and BeerXML ⮞⮞⮞
+    *
+    *        See comment in \c model/Fermentable.h for \c grainGroup property for why this has to be
+    *        \c std::optional<int>, not \c std::optional<Use>
+    */
+   Q_PROPERTY(std::optional<int>    form         READ formAsInt    WRITE setFormAsInt            )
+   //! \brief The percent of beta acids.  ⮜⮜⮜ Optional in BeerJSON and BeerXML ⮞⮞⮞
+   Q_PROPERTY(std::optional<double> beta_pct     READ beta_pct     WRITE setBeta_pct             )
+   //! \brief The origin.
+   Q_PROPERTY(QString               origin       READ origin       WRITE setOrigin               )
    //! \brief The amount in either kg or L, depending on \c amountIsWeight()   ⮜⮜⮜ Modified for BeerJSON support.  NB: BeerXML only supports kg. ⮞⮞⮞
    Q_PROPERTY(double                amount                READ amount                WRITE setAmount               )
    //! \brief Whether the amount is weight (kg), or volume (L).  ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
@@ -204,20 +247,27 @@ public:
    Q_PROPERTY(std::optional<double> pinene_pct            READ pinene_pct            WRITE setPinene_pct           )
    Q_PROPERTY(std::optional<double> polyphenols_pct       READ polyphenols_pct       WRITE setPolyphenols_pct      )
    Q_PROPERTY(std::optional<double> xanthohumol_pct       READ xanthohumol_pct       WRITE setXanthohumol_pct      )
+   Q_PROPERTY(QString               producer     READ producer     WRITE setProducer             )
+   Q_PROPERTY(QString               product_id   READ product_id   WRITE setProduct_id           )
    /**
-    * \brief Amounts of a \c Fermentable can be measured by mass or by volume (depending usually on what it is)
-    *
-    * .:TBD JSON:. Check what else we need to do to tie in to Mixed2PhysicalQuantities, plus look at how we force weight
-    * for BeerXML.
+    * \brief It might seem odd to store year as a string rather than, say, std::optional<unsigned int>, but this is
+    *        deliberate and for two reasons.  Firstly BeerJSON treats it as a string.  Secondly, we don't want it
+    *        formatted as a number when we display it.  Nobody writes "2,023" or "2 023" for the year 2023.
     */
-   Q_PROPERTY(MassOrVolumeAmt       amountWithUnits       READ amountWithUnits       WRITE setAmountWithUnits      )
+   Q_PROPERTY(QString               year         READ year         WRITE setYear                 )
+
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-   double                amount               () const;
-   bool                  amountIsWeight       () const; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-   std::optional<Use>    use                  () const; // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
+   double                alpha_pct () const;
+   std::optional<Form  > form      () const;
+   std::optional<int   > formAsInt () const;
+   std::optional<double> beta_pct  () const;
+   QString               origin    () const;
+   [[deprecated]] double                amount               () const;
+   [[deprecated]] bool                  amountIsWeight       () const; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+   [[deprecated]] std::optional<Use>    use                  () const; // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
    std::optional<int>    useAsInt             () const; // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
-   double                time_min             () const;
+   [[deprecated]] double                time_min             () const;
    QString               notes                () const;
    std::optional<Type>   type                 () const;
    std::optional<int>    typeAsInt            () const;
@@ -238,13 +288,21 @@ public:
    std::optional<double> pinene_pct           () const;
    std::optional<double> polyphenols_pct      () const;
    std::optional<double> xanthohumol_pct      () const;
+   QString               producer  () const;
+   QString               product_id() const;
+   QString               year      () const;
 
    // Combined getters (all added for BeerJSON support)
-   MassOrVolumeAmt       amountWithUnits      () const;
+   [[deprecated]] MassOrVolumeAmt       amountWithUnits      () const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   void setAmount               (double                const   val);
-   void setAmountIsWeight       (bool                  const   val); // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+   void setAlpha_pct (double                const   val);
+   void setForm      (std::optional<Form  > const   val);
+   void setFormAsInt (std::optional<int   > const   val);
+   void setBeta_pct  (std::optional<double> const   val);
+   void setOrigin    (QString               const & val);
+   [[deprecated]] void setAmount               (double                const   val);
+   [[deprecated]] void setAmountIsWeight       (bool                  const   val); // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
    void setUse                  (std::optional<Use>    const   val); // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
    void setUseAsInt             (std::optional<int>    const   val); // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
    void setTime_min             (double                const   val);
@@ -268,12 +326,15 @@ public:
    void setPinene_pct           (std::optional<double> const   val);
    void setPolyphenols_pct      (std::optional<double> const   val);
    void setXanthohumol_pct      (std::optional<double> const   val);
+   void setProducer  (QString               const & val);
+   void setProduct_id(QString               const & val);
+   void setYear      (QString               const   val);
 
    // Combined setters (all added for BeerJSON support)
-   void setAmountWithUnits      (MassOrVolumeAmt       const   val);
+//   void setAmountWithUnits      (MassOrVolumeAmt       const   val);
 
    // Insert boiler-plate declarations for inventory
-///   INVENTORY_COMMON_HEADER_DECLS
+   INVENTORY_COMMON_HEADER_DECLS
 
    virtual Recipe * getOwningRecipe() const;
 
@@ -282,6 +343,10 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
+   double                m_alpha_pct ;
+   std::optional<Form  > m_form      ;
+   std::optional<double> m_beta_pct  ;
+   QString               m_origin    ;
    std::optional<Use>    m_use                  ; // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
    std::optional<Type>   m_type                 ;
    double                m_amount               ; // Primarily valid in "Use Of" instance
@@ -305,15 +370,13 @@ private:
    std::optional<double> m_pinene_pct           ;
    std::optional<double> m_polyphenols_pct      ;
    std::optional<double> m_xanthohumol_pct      ;
+   QString               m_producer  ;
+   QString               m_product_id;
+   QString               m_year      ;
 
    void setDefaults();
 };
 
 Q_DECLARE_METATYPE( QList<Hop*> )
-
-/**
- * \brief This function is used (as a parameter to std::sort) for sorting in the recipe formatter
- */
-bool hopLessThanByTime(Hop const * const lhs, Hop const * const rhs);
 
 #endif

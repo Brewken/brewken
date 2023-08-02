@@ -34,10 +34,10 @@ EquipmentTableModel::EquipmentTableModel(QTableView* parent, bool editable) :
       parent,
       editable,
       {
-         SMART_COLUMN_HEADER_DEFN(EquipmentTableModel, Name           , tr("Name"            ), Equipment, PropertyNames::NamedEntity::name              ),
-         SMART_COLUMN_HEADER_DEFN(EquipmentTableModel, MashTunVolume  , tr("Mash Tun Volume" ), Equipment, PropertyNames::Equipment::mashTunVolume_l     ),
-         SMART_COLUMN_HEADER_DEFN(EquipmentTableModel, KettleVolume   , tr("Kettle Volume"   ), Equipment, PropertyNames::Equipment::kettleBoilSize_l    ),
-         SMART_COLUMN_HEADER_DEFN(EquipmentTableModel, FermenterVolume, tr("Fermenter Volume"), Equipment, PropertyNames::Equipment::fermenterBatchSize_l),
+         TABLE_MODEL_HEADER(Equipment, Name           , tr("Name"            ), PropertyNames::NamedEntity::name              ),
+         TABLE_MODEL_HEADER(Equipment, MashTunVolume  , tr("Mash Tun Volume" ), PropertyNames::Equipment::mashTunVolume_l     ),
+         TABLE_MODEL_HEADER(Equipment, KettleVolume   , tr("Kettle Volume"   ), PropertyNames::Equipment::kettleBoilSize_l    ),
+         TABLE_MODEL_HEADER(Equipment, FermenterVolume, tr("Fermenter Volume"), PropertyNames::Equipment::fermenterBatchSize_l),
       }
    },
    TableModelBase<EquipmentTableModel, Equipment>{} {

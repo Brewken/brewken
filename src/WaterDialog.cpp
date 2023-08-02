@@ -26,6 +26,7 @@
 #include <QFont>
 #include <QInputDialog>
 
+#include "buttons/WaterButton.h"
 #include "database/ObjectStoreWrapper.h"
 #include "measurement/ColorMethods.h"
 #include "model/Fermentable.h"
@@ -35,7 +36,6 @@
 #include "model/Salt.h"
 #include "tableModels/SaltTableModel.h"
 #include "tableModels/WaterTableModel.h"
-#include "WaterButton.h"
 #include "editors/WaterEditor.h"
 #include "listModels/WaterListModel.h"
 #include "sortFilterProxyModels/WaterSortFilterProxyModel.h"

@@ -58,6 +58,10 @@ set(filesToCompile_cpp
     ${repoDir}/src/BtTreeItem.cpp
     ${repoDir}/src/BtTreeModel.cpp
     ${repoDir}/src/BtTreeView.cpp
+    ${repoDir}/src/buttons/EquipmentButton.cpp
+    ${repoDir}/src/buttons/MashButton.cpp
+    ${repoDir}/src/buttons/StyleButton.cpp
+    ${repoDir}/src/buttons/WaterButton.cpp
     ${repoDir}/src/catalogs/EquipmentCatalog.cpp
     ${repoDir}/src/catalogs/FermentableCatalog.cpp
     ${repoDir}/src/catalogs/HopCatalog.cpp
@@ -81,7 +85,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/editors/StyleEditor.cpp
     ${repoDir}/src/editors/WaterEditor.cpp
     ${repoDir}/src/editors/YeastEditor.cpp
-    ${repoDir}/src/EquipmentButton.cpp
     ${repoDir}/src/HeatCalculations.cpp
     ${repoDir}/src/HelpDialog.cpp
     ${repoDir}/src/Html.cpp
@@ -90,20 +93,13 @@ set(filesToCompile_cpp
     ${repoDir}/src/ImportExport.cpp
     ${repoDir}/src/InstructionWidget.cpp
     ${repoDir}/src/InventoryFormatter.cpp
-    ${repoDir}/src/json/BeerJson.cpp
-    ${repoDir}/src/json/JsonCoding.cpp
-    ${repoDir}/src/json/JsonMeasureableUnitsMapping.cpp
-    ${repoDir}/src/json/JsonRecord.cpp
-    ${repoDir}/src/json/JsonRecordDefinition.cpp
-    ${repoDir}/src/json/JsonSchema.cpp
-    ${repoDir}/src/json/JsonUtils.cpp
-    ${repoDir}/src/json/JsonXPath.cpp
     ${repoDir}/src/listModels/EquipmentListModel.cpp
     ${repoDir}/src/listModels/FermentableListModel.cpp
     ${repoDir}/src/listModels/HopListModel.cpp
     ${repoDir}/src/listModels/MashListModel.cpp
     ${repoDir}/src/listModels/MashStepListModel.cpp
     ${repoDir}/src/listModels/MiscListModel.cpp
+    ${repoDir}/src/listModels/RecipeAdditionHopListModel.cpp
     ${repoDir}/src/listModels/SaltListModel.cpp
     ${repoDir}/src/listModels/StyleListModel.cpp
     ${repoDir}/src/listModels/WaterListModel.cpp
@@ -111,10 +107,8 @@ set(filesToCompile_cpp
     ${repoDir}/src/Localization.cpp
     ${repoDir}/src/Logging.cpp
     ${repoDir}/src/MainWindow.cpp
-    ${repoDir}/src/MashButton.cpp
     ${repoDir}/src/MashDesigner.cpp
     ${repoDir}/src/MashWizard.cpp
-    ${repoDir}/src/matrix.cpp
     ${repoDir}/src/measurement/Amount.cpp
     ${repoDir}/src/measurement/ColorMethods.cpp
     ${repoDir}/src/measurement/ConstrainedAmount.cpp
@@ -133,7 +127,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/model/Fermentation.cpp
     ${repoDir}/src/model/FermentationStep.cpp
     ${repoDir}/src/model/Hop.cpp
-    ${repoDir}/src/model/HopBase.cpp
     ${repoDir}/src/model/Instruction.cpp
     ${repoDir}/src/model/Inventory.cpp
     ${repoDir}/src/model/Mash.cpp
@@ -142,10 +135,10 @@ set(filesToCompile_cpp
     ${repoDir}/src/model/NamedEntity.cpp
     ${repoDir}/src/model/NamedEntityWithInventory.cpp
     ${repoDir}/src/model/NamedParameterBundle.cpp
-    ${repoDir}/src/model/Recipe.cpp
     ${repoDir}/src/model/RecipeAddition.cpp
     ${repoDir}/src/model/RecipeAdditionHop.cpp
     ${repoDir}/src/model/RecipeAdditionMassOrVolume.cpp
+    ${repoDir}/src/model/Recipe.cpp
     ${repoDir}/src/model/Salt.cpp
     ${repoDir}/src/model/Step.cpp
     ${repoDir}/src/model/StepExtended.cpp
@@ -157,7 +150,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/OptionDialog.cpp
     ${repoDir}/src/PersistentSettings.cpp
     ${repoDir}/src/PitchDialog.cpp
-    ${repoDir}/src/PreInstruction.cpp
     ${repoDir}/src/PrimingDialog.cpp
     ${repoDir}/src/PrintAndPreviewDialog.cpp
     ${repoDir}/src/RadarChart.cpp
@@ -166,16 +158,34 @@ set(filesToCompile_cpp
     ${repoDir}/src/RecipeFormatter.cpp
     ${repoDir}/src/RefractoDialog.cpp
     ${repoDir}/src/ScaleRecipeTool.cpp
+    ${repoDir}/src/serialization/json/BeerJson.cpp
+    ${repoDir}/src/serialization/json/JsonCoding.cpp
+    ${repoDir}/src/serialization/json/JsonMeasureableUnitsMapping.cpp
+    ${repoDir}/src/serialization/json/JsonRecord.cpp
+    ${repoDir}/src/serialization/json/JsonRecordDefinition.cpp
+    ${repoDir}/src/serialization/json/JsonSchema.cpp
+    ${repoDir}/src/serialization/json/JsonUtils.cpp
+    ${repoDir}/src/serialization/json/JsonXPath.cpp
+    ${repoDir}/src/serialization/SerializationRecord.cpp
+    ${repoDir}/src/serialization/xml/BeerXml.cpp
+    ${repoDir}/src/serialization/xml/BtDomErrorHandler.cpp
+    ${repoDir}/src/serialization/xml/XercesHelpers.cpp
+    ${repoDir}/src/serialization/xml/XmlCoding.cpp
+    ${repoDir}/src/serialization/xml/XmlMashRecord.cpp
+    ${repoDir}/src/serialization/xml/XmlMashStepRecord.cpp
+    ${repoDir}/src/serialization/xml/XmlRecipeRecord.cpp
+    ${repoDir}/src/serialization/xml/XmlRecord.cpp
+    ${repoDir}/src/serialization/xml/XmlRecordDefinition.cpp
     ${repoDir}/src/sortFilterProxyModels/BtTreeFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/EquipmentSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/FermentableSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/HopSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/MiscSortFilterProxyModel.cpp
+    ${repoDir}/src/sortFilterProxyModels/RecipeAdditionHopSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/StyleSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/WaterSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/YeastSortFilterProxyModel.cpp
     ${repoDir}/src/StrikeWaterDialog.cpp
-    ${repoDir}/src/StyleButton.cpp
     ${repoDir}/src/StyleRangeWidget.cpp
     ${repoDir}/src/tableModels/BtTableModel.cpp
     ${repoDir}/src/tableModels/BtTableModelInventory.cpp
@@ -184,6 +194,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/tableModels/HopTableModel.cpp
     ${repoDir}/src/tableModels/MashStepTableModel.cpp
     ${repoDir}/src/tableModels/MiscTableModel.cpp
+    ${repoDir}/src/tableModels/RecipeAdditionHopTableModel.cpp
     ${repoDir}/src/tableModels/SaltTableModel.cpp
     ${repoDir}/src/tableModels/StyleTableModel.cpp
     ${repoDir}/src/tableModels/WaterTableModel.cpp
@@ -204,7 +215,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/utils/PropertyPath.cpp
     ${repoDir}/src/utils/TimerUtils.cpp
     ${repoDir}/src/utils/TypeLookup.cpp
-    ${repoDir}/src/WaterButton.cpp
     ${repoDir}/src/WaterDialog.cpp
     ${repoDir}/src/widgets/Animator.cpp
     ${repoDir}/src/widgets/BtBoolComboBox.cpp
@@ -223,12 +233,4 @@ set(filesToCompile_cpp
     ${repoDir}/src/widgets/SmartLineEdit.cpp
     ${repoDir}/src/widgets/ToggleSwitch.cpp
     ${repoDir}/src/widgets/UnitAndScalePopUpMenu.cpp
-    ${repoDir}/src/xml/BeerXml.cpp
-    ${repoDir}/src/xml/BtDomErrorHandler.cpp
-    ${repoDir}/src/xml/XercesHelpers.cpp
-    ${repoDir}/src/xml/XmlCoding.cpp
-    ${repoDir}/src/xml/XmlMashRecord.cpp
-    ${repoDir}/src/xml/XmlMashStepRecord.cpp
-    ${repoDir}/src/xml/XmlRecipeRecord.cpp
-    ${repoDir}/src/xml/XmlRecord.cpp
 )

@@ -194,7 +194,7 @@ protected:
    }
 
    void doRecipeChanged(QMetaProperty prop, QVariant val, BtStringConst const & propNameInRecipe) {
-      if (prop.name()== propNameInRecipe) {
+      if (prop.name() == propNameInRecipe) {
          NE * newItem = val.value<NE *>();
          // .:TODO:. Now do something with the changed item
          Q_UNUSED(newItem); // Until then, this will keep the compiler happy
@@ -203,8 +203,8 @@ protected:
    }
 
 private:
-   QList<NE *> m_items  ;
-   Recipe *    m_recipe ;
+   QList<NE *> m_items ;
+   Recipe *    m_recipe;
 };
 
 /**

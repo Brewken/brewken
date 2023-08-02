@@ -26,6 +26,7 @@
 
 #include "editors/MiscEditor.h"
 #include "model/Misc.h"
+#include "sortFilterProxyModels/MiscSortFilterProxyModel.h"
 #include "tableModels/MiscTableModel.h"
 
 // This needs to be the last include.  (I know, I know...)

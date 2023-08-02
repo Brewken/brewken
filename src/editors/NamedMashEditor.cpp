@@ -154,7 +154,7 @@ void NamedMashEditor::showChanges(QMetaProperty* prop) {
    } else {
       propName = prop->name();
    }
-   qDebug() << Q_FUNC_INFO << "Updating" << (updateAll ? "all" : "property") << propName;
+   qDebug() << Q_FUNC_INFO << "Updating" << (updateAll ? "all properties" : "property") << propName;
 
    if (updateAll || propName == PropertyNames::NamedEntity::name          ) {lineEdit_name      ->setText     (mashObs->name                 ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Mash::grainTemp_c          ) {lineEdit_grainTemp ->setAmount   (mashObs->grainTemp_c          ()); if (!updateAll) { return; } }

@@ -38,7 +38,7 @@
 #include "model/BrewNote.h"
 #include "model/Recipe.h"
 #include "model/Water.h"
-#include "xml/BeerXml.h"
+#include "serialization/xml/BeerXml.h"
 
 int constexpr DatabaseSchemaHelper::dbVersion = 11;
 
@@ -96,6 +96,7 @@ namespace {
                q.lastError().text();
             return false;
          }
+         qDebug() << Q_FUNC_INFO << q.numRowsAffected() << "rows affected";
          priorQueryHadResults = q.next();
          priorQuerySql = query.sql;
       }
@@ -547,6 +548,9 @@ namespace {
       // refer to it.  Temporarily putting the recipe_id on boil, without a foreign key constraint, makes this a lot
       // simpler.  Same applied to fermentation.)
       //
+      // As of this schema, we start using SQLite's "STRICT" option on newly-created tables.  One day, it would be nice
+      // to back-apply it to existing tables, but that would require dropping and recreating all the tables...
+      //
       QString createBoilSql;
       QTextStream createBoilSqlStream(&createBoilSql);
       createBoilSqlStream <<
@@ -561,7 +565,7 @@ namespace {
             "pre_boil_size_l" " " << db.getDbNativeTypeName<double>()      << ", "
             "boil_Time_mins"  " " << db.getDbNativeTypeName<double>()      << ", "
             "temp_recipe_id"  " " << db.getDbNativeTypeName<int>()         <<
-         ");";
+         ")" << db.getCreateTableCoda() << ";";
 
       QString createBoilStepSql;
       QTextStream createBoilStepSqlStream(&createBoilStepSql);
@@ -584,7 +588,7 @@ namespace {
             "end_gravity_sg"   " " << db.getDbNativeTypeName<double>()      << ", "
             "chilling_type"    " " << db.getDbNativeTypeName<QString>()     << ", "
             "FOREIGN KEY(boil_id) REFERENCES boil(id)" <<
-         ");";
+         ")" << db.getCreateTableCoda() << ";";
 
       QString createFermentationSql;
       QTextStream createFermentationSqlStream(&createFermentationSql);
@@ -598,7 +602,7 @@ namespace {
             "description"     " " << db.getDbNativeTypeName<QString>()     << ", "
             "notes"           " " << db.getDbNativeTypeName<QString>()     << ", "
             "temp_recipe_id"  " " << db.getDbNativeTypeName<int>()         <<
-         ");";
+         ")" << db.getCreateTableCoda() << ";";
 
       QString createFermentationStepSql;
       QTextStream createFermentationStepSqlStream(&createFermentationStepSql);
@@ -621,7 +625,7 @@ namespace {
             "end_gravity_sg"   " " << db.getDbNativeTypeName<double>()      << ", "
             "vessel"           " " << db.getDbNativeTypeName<QString>()     << ", "
             "FOREIGN KEY(fermentation_id) REFERENCES fermentation(id)" <<
-         ");";
+         ")" << db.getCreateTableCoda() << ";";
 
       QVector<QueryAndParameters> const migrationQueries{
          //
@@ -642,7 +646,6 @@ namespace {
          {QString(     "UPDATE hop SET form = 'pellet' WHERE form = 'Pellet'")},
          {QString(     "UPDATE hop SET form = 'plug'   WHERE form = 'Plug'"  )},
          {QString(     "UPDATE hop SET form = 'leaf'   WHERE form = 'Leaf'"  )},
-         {QString("ALTER TABLE hop ADD COLUMN amount_is_weight      %1").arg(db.getDbNativeTypeName<bool   >())},
          {QString("ALTER TABLE hop ADD COLUMN producer              %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop ADD COLUMN product_id            %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop ADD COLUMN year                  %1").arg(db.getDbNativeTypeName<QString>())},
@@ -656,7 +659,6 @@ namespace {
          {QString("ALTER TABLE hop ADD COLUMN pinene_pct            %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE hop ADD COLUMN polyphenols_pct       %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE hop ADD COLUMN xanthohumol_pct       %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("     UPDATE hop SET amount_is_weight = ?"), {QVariant{true}}}, // All existing amounts will be weights
          //
          // Fermentable: Extended and additional fields for BeerJSON
          //
@@ -791,6 +793,9 @@ namespace {
          {QString("ALTER TABLE equipment ADD COLUMN fermenter_notes                %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE equipment ADD COLUMN aging_vessel_notes             %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE equipment ADD COLUMN packaging_vessel_notes         %1").arg(db.getDbNativeTypeName<QString>())},
+         //
+         // MashStep
+         //
          // Fix the table name for MashStep so it's consistent with most of the rest of our naming
          {QString("ALTER TABLE mashstep RENAME TO mash_step")},
          // We only need to update the old MashStep type mapping.  The new ones should "just work".
@@ -810,6 +815,11 @@ namespace {
          {QString("ALTER TABLE mash_step ADD COLUMN liquor_to_grist_ratio_lkg %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE mash_step ADD COLUMN start_acidity_ph          %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE mash_step ADD COLUMN end_acidity_ph            %1").arg(db.getDbNativeTypeName<double >())},
+         // Now that we properly support optional fields, we can fix "zero means not set" on certain fields
+         {QString("     UPDATE mash_step SET end_temp = NULL WHERE end_temp = 0")},
+         //
+         // Recipe
+         //
          // We only need to update the old Recipe type mapping.  The new ones should "just work".
          {QString("     UPDATE recipe SET type = 'extract'      WHERE type = 'Extract'     ")},
          {QString("     UPDATE recipe SET type = 'partial mash' WHERE type = 'Partial Mash'")},
@@ -830,15 +840,15 @@ namespace {
          {createFermentationSql    },
          {createFermentationStepSql},
          {QString("INSERT INTO boil ("
-                      "name, "
-                      "deleted, "
-                      "display, "
-                      "folder, "
-                      "description, "
-                      "notes, "
+                      "name           , "
+                      "deleted        , "
+                      "display        , "
+                      "folder         , "
+                      "description    , "
+                      "notes          , "
                       "pre_boil_size_l, "
-                      "boil_Time_mins, "
-                      "temp_recipe_id "
+                      "boil_Time_mins , "
+                      "temp_recipe_id   "
                   ") SELECT "
                      "'Boil for ' || name, "
                      "?, "
@@ -869,8 +879,9 @@ namespace {
                      "id "
                   "FROM recipe"
          ), {QVariant{false}, QVariant{true}}},
-         {QString("UPDATE recipe SET recipe.boil_id         = boil.id         FROM boil         WHERE recipe.id = boil.temp_recipe_id")},
-         {QString("UPDATE recipe SET recipe.fermentation_id = fermentation.id FROM fermentation WHERE recipe.id = fermentation.temp_recipe_id")},
+         {QString("UPDATE recipe SET boil_id         = (SELECT boil.id         FROM boil        , recipe WHERE recipe.id = boil.temp_recipe_id        )")},
+         {QString("UPDATE recipe SET fermentation_id = (SELECT fermentation.id FROM fermentation, recipe WHERE recipe.id = fermentation.temp_recipe_id)")},
+
          // Get rid of the temporary columns now that they have served their purpose.
          {QString("ALTER TABLE boil         DROP COLUMN temp_recipe_id")},
          {QString("ALTER TABLE fermentation DROP COLUMN temp_recipe_id")},
@@ -880,9 +891,140 @@ namespace {
          {QString("ALTER TABLE recipe DROP COLUMN boil_size")},
          {QString("ALTER TABLE recipe DROP COLUMN boil_time")},
          //
-         // TODO Populate boil_steps.  We want to have a pre-boil step and a boil step as it makes the hop addition stuff easier.
+         // Populate boil_steps.  We want to have a pre-boil step, a boil step, and a post-boil step as it makes the hop
+         // addition stuff easier.
          //
-
+         // For the pre-boil step, ie ramping up from mash temperature to boil temperature, we take the end temperature
+         // of the last mash step as the starting point.  This will be mash_step.end_temp IF SET, and
+         // mash_step.step_temp otherwise.
+         //
+         // Note that, because mash_id is stored in both the mash_step and recipe tables, we don't actually have to look
+         // at the mash table here.
+         //
+         // The PARTITION BY stuff below is a SQL window function that helps us get the max mash step number for each
+         // mash ID.  As often with SQL, there are several ways to achieve this result.  The small size of our data sets
+         // means we're not too anxious about performance so we prefer clarity (to the extent that's possible with
+         // SQL!).
+         //
+         {QString("INSERT INTO boil_step ("
+                     "name            ,"
+                     "deleted         ,"
+                     "display         ,"
+                     "step_time_min   ,"
+                     "end_temp_c      ,"
+                     "ramp_time_mins  ,"
+                     "step_number     ,"
+                     "boil_id         ,"
+                     "description     ,"
+                     "start_acidity_ph,"
+                     "end_acidity_ph  ,"
+                     "start_temp_c    ,"
+                     "start_gravity_sg,"
+                     "end_gravity_sg  ,"
+                     "chilling_type   "
+                  ") SELECT "
+                     "'Pre-boil for ' || recipe.name, "                              // name
+                     "?, "                                                           // deleted
+                     "?, "                                                           // display
+                     "NULL, "                                                        // step_time_min
+                     "100.0, "                                                       // end_temp_c
+                     "NULL, "                                                        // ramp_time_mins
+                     "1, "                                                           // step_number
+                     "recipe.boil_id, "                                              // boil_id
+                     "'Automatically-generated pre-boil step for ' || recipe.name, " // description
+                     "NULL, "                                                        // start_acidity_ph
+                     "NULL, "                                                        // end_acidity_ph
+                     "last_mash_step.temperature, "                                  // start_temp_c
+                     "NULL, "                                                        // start_gravity_sg
+                     "NULL, "                                                        // end_gravity_sg
+                     "NULL "                                                         // chilling_type
+                  "FROM recipe, "
+                       "("
+                          "SELECT mash_id, "
+                                 "step_temp, "
+                                 "end_temp, "
+                                 "step_number, "
+                                 "IIF(step_temp < end_temp, step_temp, end_temp) AS temperature, "
+                                 "ROW_NUMBER() OVER ("
+                                    "PARTITION BY mash_id "
+                                    "ORDER BY step_number DESC"
+                                 ") reversed_step_number "
+                          "FROM mash_step "
+                       ") AS last_mash_step "
+                  "WHERE reversed_step_number = 1 "
+                  "AND recipe.mash_id = last_mash_step.mash_id"
+         ), {QVariant{false}, QVariant{true}}},
+         // Adding the second step for the actual boil itself is easier
+         {QString("INSERT INTO boil_step ("
+                     "name            ,"
+                     "deleted         ,"
+                     "display         ,"
+                     "step_time_min   ,"
+                     "end_temp_c      ,"
+                     "ramp_time_mins  ,"
+                     "step_number     ,"
+                     "boil_id         ,"
+                     "description     ,"
+                     "start_acidity_ph,"
+                     "end_acidity_ph  ,"
+                     "start_temp_c    ,"
+                     "start_gravity_sg,"
+                     "end_gravity_sg  ,"
+                     "chilling_type   "
+                  ") SELECT "
+                     "'Boil proper for ' || recipe.name, "                              // name
+                     "?, "                                                              // deleted
+                     "?, "                                                              // display
+                     "NULL, "                                                           // step_time_min
+                     "100.0, "                                                          // end_temp_c
+                     "NULL, "                                                           // ramp_time_mins
+                     "2, "                                                              // step_number
+                     "recipe.boil_id, "                                                 // boil_id
+                     "'Automatically-generated boil proper step for ' || recipe.name, " // description
+                     "NULL, "                                                           // start_acidity_ph
+                     "NULL, "                                                           // end_acidity_ph
+                     "100.0, "                                                          // start_temp_c
+                     "NULL, "                                                           // start_gravity_sg
+                     "NULL, "                                                           // end_gravity_sg
+                     "NULL "                                                            // chilling_type
+                  "FROM recipe"
+         ), {QVariant{false}, QVariant{true}}},
+         // For the post-boil step, we'll assume we are cooling to primary fermentation temperature, if known (ie it's
+         // non-zero), or to 30°C otherwise.
+         {QString("INSERT INTO boil_step ("
+                     "name            ,"
+                     "deleted         ,"
+                     "display         ,"
+                     "step_time_min   ,"
+                     "end_temp_c      ,"
+                     "ramp_time_mins  ,"
+                     "step_number     ,"
+                     "boil_id         ,"
+                     "description     ,"
+                     "start_acidity_ph,"
+                     "end_acidity_ph  ,"
+                     "start_temp_c    ,"
+                     "start_gravity_sg,"
+                     "end_gravity_sg  ,"
+                     "chilling_type   "
+                  ") SELECT "
+                     "'Boil proper for ' || recipe.name, "                            // name
+                     "?, "                                                            // deleted
+                     "?, "                                                            // display
+                     "NULL, "                                                         // step_time_min
+                     "IIF(recipe.primary_temp > 0.0, recipe.primary_temp, 30.0), "    // end_temp_c
+                     "NULL, "                                                         // ramp_time_mins
+                     "3, "                                                            // step_number
+                     "recipe.boil_id, "                                               // boil_id
+                     "'Automatically-generated post-boil step for ' || recipe.name, " // description
+                     "NULL, "                                                         // start_acidity_ph
+                     "NULL, "                                                         // end_acidity_ph
+                     "100.0, "                                                        // start_temp_c
+                     "NULL, "                                                         // start_gravity_sg
+                     "NULL, "                                                         // end_gravity_sg
+                     "NULL "                                                          // chilling_type
+                  "FROM recipe"
+         ), {QVariant{false}, QVariant{true}}},
          //
          // Now comes the tricky stuff where we change the hop_in_recipe junction table to a full-blown object table,
          // and remove hop children.
@@ -891,6 +1033,8 @@ namespace {
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN display           %1").arg(db.getDbNativeTypeName<bool   >())},
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN deleted           %1").arg(db.getDbNativeTypeName<bool   >())},
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN folder            %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE hop_in_recipe ADD COLUMN amount            %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE hop_in_recipe ADD COLUMN amount_is_weight  %1").arg(db.getDbNativeTypeName<bool   >())},
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN stage             %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN step              %1").arg(db.getDbNativeTypeName<int    >())},
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN add_at_time_mins  %1").arg(db.getDbNativeTypeName<double >())},
@@ -899,21 +1043,141 @@ namespace {
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN duration_mins     %1").arg(db.getDbNativeTypeName<double >())},
          {QString("     UPDATE hop_in_recipe SET display = ?"), {QVariant{true}}},
          {QString("     UPDATE hop_in_recipe SET deleted = ?"), {QVariant{false}}},
-///         ¥¥¥¥ LOOK AT THIS PROPERLY
-///         {QString("     UPDATE hop_in_recipe SET stage = 'add_to_mash' WHERE hop_id IN (SELECT hop.id from hop, hop_in_recipe WHERE hop.id = hop_in_recipe.hop_id AND hop.use = 'Mash')")},
-///         {QString("     UPDATE hop_in_recipe SET stage = 'add_to_mash' WHERE hop_id IN (SELECT hop.id from hop, hop_in_recipe WHERE hop.id = hop_in_recipe.hop_id AND hop.use IN ())")},
-///         {QString("     UPDATE hop_in_recipe SET add_at_time_mins = ¥¥¥")},
-
-
-
-
-
-
-
-
-
-
+         //
+         // Bring the amounts across from the hop table.  At the outset, all amounts are going to be weights, because
+         // the previous schemas did not support volumes for hop additions.
+         //
+         // Although we mostly try to avoid it, we are using non-standard UPDATE FROM syntax here (see
+         // https://www.sqlite.org/lang_update.html#update_from).  Fortunately, SQLite follows PostgreSQL for this, so
+         // the same query should work on both databases.
+         //
+         {QString("UPDATE hop_in_recipe "
+                  "SET amount = h.amount, "
+                     "amount_is_weight = ? "
+                  "FROM ("
+                     "SELECT id, "
+                            "amount "
+                     "FROM hop"
+                  ") AS h "
+                  "WHERE hop_in_recipe.hop_id = h.id"), {QVariant{true}}},
+         //
+         // Now we brought the amounts across, we can drop them on the hop table.
+         //
+         // Technically we are losing some data here, because we lose the amount field for "parent" hops (ie those rows
+         // that do not correspond to "use of hop in a recipe".  However, this is meaningless data, which is why it
+         // isn't in the new schema, and the user has a backup of the old DB, so it should be OK.  (Note that inventory
+         // amounts are stored in a different table - hop_in_inventory.)
+         //
+         {QString("ALTER TABLE hop DROP COLUMN amount")},
+         //
+         // We need to map from old Hop::Use {Mash, First_Wort, Boil, Aroma, Dry_Hop} to new RecipeAddition::Stage
+         // {Mash, Boil, Fermentation, Packaging}.
+         //
+         // TODO: All this logic also needs to go into XML reading and writing
+         //
+         // Hop::Use::Mash -> RecipeAddition::Stage::Mash
+         //
+         {QString("UPDATE hop_in_recipe "
+                  "SET stage = 'add_to_mash' "
+                  "WHERE hop_id IN ("
+                     "SELECT id "
+                     "FROM hop "
+                     "WHERE lower(hop.use) = 'mash'"
+                  ")")},
+         //
+         // Hop::Use::First_Wort -> RecipeAddition::Stage::Boil + RecipeAddition::step = 1 (because we made sure above
+         // that every boil has a pre-boil step
+         //
+         {QString("UPDATE hop_in_recipe "
+                  "SET stage = 'add_to_boil', "
+                      "step  = 1 "
+                  "WHERE hop_id IN ("
+                     "SELECT id "
+                     "FROM hop "
+                     "WHERE lower(hop.use) = 'first wort'"
+                  ")")},
+         //
+         // Hop::Use::Boil -> RecipeAddition::Stage::Boil + RecipeAddition::step = 2 (because we made sure above that
+         // every boil has a "boil proper" step
+         //
+         {QString("UPDATE hop_in_recipe "
+                  "SET stage = 'add_to_boil', "
+                      "step  = 2 "
+                  "WHERE hop_id IN ("
+                     "SELECT id "
+                     "FROM hop "
+                     "WHERE lower(hop.use) = 'boil'"
+                  ")")},
+         //
+         // Hop::Use::Aroma -> RecipeAddition::Stage::Boil + RecipeAddition::step = 3 (because we made sure above that
+         // every boil has a post-boil step
+         //
+         {QString("UPDATE hop_in_recipe "
+                  "SET stage = 'add_to_boil', "
+                      "step  = 3 "
+                  "WHERE hop_id IN ("
+                     "SELECT id "
+                     "FROM hop "
+                     "WHERE lower(hop.use) = 'aroma'"
+                  ")")},
+         //
+         // Hop::Use::Dry_Hop -> RecipeAddition::Stage::Fermentation
+         //
+         {QString("UPDATE hop_in_recipe "
+                  "SET stage = 'add_to_fermentation' "
+                  "WHERE hop_id IN ("
+                     "SELECT id "
+                     "FROM hop "
+                     "WHERE lower(hop.use) = 'dry hop'"
+                  ")")},
+         //
+         // Now we pulled the info from the hop.use column into the hop_in_recipe table, we can drop the column
+         //
+         {QString("ALTER TABLE hop DROP COLUMN use")},
+         //
+         // Entries in hop_in_recipe will still be pointing to the "child" hop.  We need to point to the parent one.
+         //
+         {QString("UPDATE hop_in_recipe "
+                  "SET hop_id = hc.parent_id "
+                  "FROM ("
+                     "SELECT parent_id, "
+                            "child_id "
+                     "FROM hop_children"
+                  ") AS hc "
+                  "WHERE hop_in_recipe.hop_id = hc.child_id")},
+         //
+         // Now we can mark the child hops as deleted
+         //
+         {QString("UPDATE hop "
+                  "SET deleted = ?, "
+                      "display = ? "
+                  "WHERE hop.id IN (SELECT child_id FROM hop_children)"), {QVariant{true}, QVariant{false}}},
+         //
+         // So we don't need the hop_children table any more
+         //
+         {QString("DROP TABLE hop_children")},
+         //
+         // Whilst we're here, there are some unused columns on hop, and various other tables, that we should get rid
+         // of.  These were added a long time ago for a feature that was dropped (see
+         // https://github.com/Brewtarget/brewtarget/issues/557) so safe to delete.
+         //
+         // Don't forget we renamed mashstep to mash_step above!
+         //
+         {QString("ALTER TABLE hop         DROP COLUMN display_unit")},
+         {QString("ALTER TABLE hop         DROP COLUMN display_scale")},
+         {QString("ALTER TABLE fermentable DROP COLUMN display_unit")},
+         {QString("ALTER TABLE fermentable DROP COLUMN display_scale")},
+         {QString("ALTER TABLE mash_step   DROP COLUMN display_unit")},
+         {QString("ALTER TABLE mash_step   DROP COLUMN display_scale")},
+         {QString("ALTER TABLE mash_step   DROP COLUMN display_temp_unit")},
+         {QString("ALTER TABLE misc        DROP COLUMN display_unit")},
+         {QString("ALTER TABLE misc        DROP COLUMN display_scale")},
+         {QString("ALTER TABLE yeast       DROP COLUMN display_unit")},
+         {QString("ALTER TABLE yeast       DROP COLUMN display_scale")},
       };
+
+      // TODO: Can we move to SQLite Strict here?
+
       return executeSqlQueries(q, migrationQueries);
    }
 
@@ -976,6 +1240,7 @@ namespace {
    }
 
 }
+
 bool DatabaseSchemaHelper::upgrade = false;
 // Default namespace hides functions from everything outside this file.
 

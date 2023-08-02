@@ -17,45 +17,73 @@
 #define MODEL_RECIPEADDITIONHOP_H
 #pragma once
 
+#include <memory>
+
 #include "model/Hop.h"
-#include "model/InRecipeBase.h"
+#include "model/RecipeAdditionBase.h"
 #include "model/RecipeAdditionMassOrVolume.h"
 #include "model/Recipe.h"
 
-class RecipeAdditionHop : public RecipeAdditionMassOrVolume, public InRecipeBase<RecipeAdditionHop, Hop> {
+//======================================================================================================================
+//========================================== Start of property name constants ==========================================
+// See comment in model/NamedEntity.h
+#define AddPropertyName(property) namespace PropertyNames::RecipeAdditionHop { BtStringConst const property{#property}; }
+AddPropertyName(hop)
+#undef AddPropertyName
+//=========================================== End of property name constants ===========================================
+//======================================================================================================================
+
+class RecipeAdditionHop : public RecipeAdditionMassOrVolume, public RecipeAdditionBase<RecipeAdditionHop, Hop> {
    Q_OBJECT
+
+   RECIPE_ADDITION_DECL(Hop)
+
 public:
-   RecipeAdditionHop(QString name = "");
+   /**
+    * \brief See comment in model/NamedEntity.h
+    */
+   static QString const LocalisedName;
+
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
+
+   RecipeAdditionHop(QString name = "", int const recipeId = -1, int const hopId = -1);
    RecipeAdditionHop(NamedParameterBundle const & namedParameterBundle);
    RecipeAdditionHop(RecipeAdditionHop const & other);
 
    virtual ~RecipeAdditionHop();
 
+   //=================================================== PROPERTIES ====================================================
+   Q_PROPERTY(Hop * hop READ hop WRITE setHop)
+
+   //============================================ "GETTER" MEMBER FUNCTIONS ============================================
+   Hop * hop () const;
+
+   //============================================ "SETTER" MEMBER FUNCTIONS ============================================
+   void setHop(Hop * const val);
+
+   /**
+    * \brief With BeerJSON changes, there is no longer an explicit flag for a first wort hop addition.  You have to
+    *        jump through a couple of hoops to work it out, which is what this function does for you.
+    */
+   bool isFirstWort() const;
+
+   /**
+    * \brief Similarly, what used to be Hop::Use::Aroma (ie hops added at the end of the boil) is now something we need
+    *        to work out.
+    */
+   bool isAroma() const;
+
    virtual Recipe * getOwningRecipe() const;
-
-   // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-// We need to add in the properties from HopVarietyBase, which also exist in Hop.  It would be a bit painful to copy-and-paste here
-// Currently thinking that RecipeAddition should _contain_ a base object.  This then requires xpaths in our property names to handle setting.
-// The contained object always exists but is returned by pointer.
-
-   // utils/PropertyXPath.h
-
-   // Base class could be HopFundamentals or HopBase or HopVarietyBase
-
-
-   //                                HopVarietyBase - - - RecipeHopAddition --- RecipeAddition
-   //                                  /
-   //                                 /
-   //                               Hop (= VarietyInformation)
-
-
-   // ⮜⮜⮜ The following properties are only for BeerXML support ⮞⮞⮞
-   // When writing out to BeerXML, they pull information from the underlying hop we're adding.
 
 
 protected:
    // Note that we don't override isEqualTo, as we don't have any non-inherited member variables
    virtual ObjectStore & getObjectStoreTypedInstance() const;
+
 };
 
 #endif

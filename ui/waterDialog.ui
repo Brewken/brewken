@@ -456,7 +456,7 @@
   <customwidget>
    <class>WaterButton</class>
    <extends>QPushButton</extends>
-   <header>WaterButton.h</header>
+   <header>buttons/WaterButton.h</header>
   </customwidget>
   <customwidget>
    <class>SmartLabel</class>

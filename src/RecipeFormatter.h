@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * RecipeFormatter.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * RecipeFormatter.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -23,16 +23,10 @@
 
 #include <memory> // For PImpl
 
-#include <QDialog>
-#include <QFile>
 #include <QList>
 #include <QObject>
-#include <QPrintDialog>
-#include <QStringList>
-#include <QTextBrowser>
 
 #include "model/Recipe.h"
-#include "PrintAndPreviewDialog.h"
 
 /*!
  * \class RecipeFormatter
@@ -41,8 +35,6 @@
  */
 class RecipeFormatter : public QObject {
    Q_OBJECT
-
-   friend class PrintAndPreviewDialog;
 
 public:
    RecipeFormatter(QWidget * parent = nullptr);

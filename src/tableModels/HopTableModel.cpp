@@ -47,20 +47,18 @@
 #include "utils/BtStringConst.h"
 
 HopTableModel::HopTableModel(QTableView * parent, bool editable) :
-   BtTableModelInventory{
+   BtTableModel{
       parent,
       editable,
       {
          // Note that we have to use PropertyNames::NamedEntityWithInventory::inventoryWithUnits because
          // PropertyNames::NamedEntityWithInventory::inventory is not implemented
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Name     , tr("Name"       ), Hop, PropertyNames::NamedEntity::name                           ),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Alpha    , tr("Alpha %"    ), Hop, PropertyNames::HopBase::alpha_pct                          , PrecisionInfo{1}),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Amount   , tr("Amount"     ), Hop, PropertyNames::Hop::amount                                 ),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Inventory, tr("Inventory"  ), Hop, PropertyNames::NamedEntityWithInventory::inventoryWithUnits),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, IsWeight , tr("Amount Type"), Hop, PropertyNames::Hop::amountIsWeight                         , BoolInfo{tr("Volume")              , tr("Weight")             }),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Form     , tr("Form"       ), Hop, PropertyNames::HopBase::form                               , EnumInfo{HopBase::formStringMapping, HopBase::formDisplayNames}),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Use      , tr("Use"        ), Hop, PropertyNames::Hop::use                                    , EnumInfo{Hop::useStringMapping     , Hop::useDisplayNames     }),
-         SMART_COLUMN_HEADER_DEFN(HopTableModel, Time     , tr("Time"       ), Hop, PropertyNames::Hop::time_min                               ),
+         TABLE_MODEL_HEADER(Hop, Name     , tr("Name"       ), PropertyNames::NamedEntity::name                           ),
+         TABLE_MODEL_HEADER(Hop, Form     , tr("Form"       ), PropertyNames::Hop::form                                , EnumInfo{Hop::formStringMapping, Hop::formDisplayNames}),
+         TABLE_MODEL_HEADER(Hop, Year     , tr("Year"       ), PropertyNames::Hop::year                               ),
+         TABLE_MODEL_HEADER(Hop, Alpha    , tr("Alpha %"    ), PropertyNames::Hop::alpha_pct                           , PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(Hop, Inventory, tr("Inventory"  ), PropertyNames::NamedEntityWithInventory::inventoryWithUnits),
+         TABLE_MODEL_HEADER(Hop, IsWeight , tr("Amount Type"), PropertyNames::Hop::amountIsWeight                          , BoolInfo{tr("Volume")              , tr("Weight")             }),
       }
    },
    TableModelBase<HopTableModel, Hop>{},
@@ -93,11 +91,9 @@ QVariant HopTableModel::data(const QModelIndex & index, int role) const {
    auto const columnIndex = static_cast<HopTableModel::ColumnIndex>(index.column());
    switch (columnIndex) {
       case HopTableModel::ColumnIndex::Name:
-      case HopTableModel::ColumnIndex::Alpha:
-      case HopTableModel::ColumnIndex::Use:
-      case HopTableModel::ColumnIndex::Time:
       case HopTableModel::ColumnIndex::Form:
-      case HopTableModel::ColumnIndex::Amount:
+      case HopTableModel::ColumnIndex::Year:
+      case HopTableModel::ColumnIndex::Alpha:
       case HopTableModel::ColumnIndex::Inventory:
       case HopTableModel::ColumnIndex::IsWeight:
          return this->readDataFromModel(index, role);
@@ -111,13 +107,6 @@ QVariant HopTableModel::headerData(int section, Qt::Orientation orientation, int
    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
       return this->getColumnLabel(section);
    }
-   if (showIBUs && recObs && orientation == Qt::Vertical && role == Qt::DisplayRole) {
-      QList<double> ibus = recObs->IBUs();
-
-      if (ibus.size() > section) {
-         return QVariant(QString("%L1 IBU").arg(ibus.at(section), 0, 'f', 1));
-      }
-   }
    return QVariant();
 }
 
@@ -127,7 +116,7 @@ Qt::ItemFlags HopTableModel::flags(const QModelIndex & index) const {
       return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
    }
    if (columnIndex == HopTableModel::ColumnIndex::Inventory) {
-      return Qt::ItemIsEnabled | (this->isInventoryEditable() ? Qt::ItemIsEditable : Qt::NoItemFlags);
+      return Qt::ItemIsEnabled | Qt::ItemIsEditable;
    }
    return Qt::ItemIsSelectable |
           (this->m_editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
@@ -145,15 +134,13 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
    auto const columnIndex = static_cast<HopTableModel::ColumnIndex>(index.column());
    switch (columnIndex) {
       case HopTableModel::ColumnIndex::Name:
-      case HopTableModel::ColumnIndex::Alpha:
-      case HopTableModel::ColumnIndex::Use:
       case HopTableModel::ColumnIndex::Form:
-      case HopTableModel::ColumnIndex::Time:
+      case HopTableModel::ColumnIndex::Year:
+      case HopTableModel::ColumnIndex::Alpha:
       case HopTableModel::ColumnIndex::IsWeight:
          retVal = this->writeDataToModel(index, value, role);
          break;
 
-      case HopTableModel::ColumnIndex::Amount:
       case HopTableModel::ColumnIndex::Inventory:
          retVal = this->writeDataToModel(index, value, role, Measurement::PhysicalQuantity::Mass);
          break;
@@ -169,7 +156,7 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
 }
 
 // Insert the boiler-plate stuff that we cannot do in TableModelBase
-TABLE_MODEL_COMMON_CODE(Hop, hop, PropertyNames::Recipe::hopIds)
+TABLE_MODEL_COMMON_CODE(Hop, hop, PropertyNames::None::none)
 //=============================================== CLASS HopItemDelegate ================================================
 
 // Insert the boiler-plate stuff that we cannot do in ItemDelegate

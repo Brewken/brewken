@@ -49,6 +49,7 @@
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
+#include "model/Boil.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
@@ -447,7 +448,7 @@ void Testing::recipeCalcTest_allGrain() {
 
    // Basic recipe parameters
    rec->setBatchSize_l(equipFiveGalNoLoss->fermenterBatchSize_l());
-   rec->setBoilSize_l(equipFiveGalNoLoss->kettleBoilSize_l());
+   rec->nonOptBoil()->setPreBoilSize_l(equipFiveGalNoLoss->kettleBoilSize_l());
    rec->setEfficiency_pct(70.0);
 
    // Single conversion, single sparge
@@ -464,7 +465,7 @@ void Testing::recipeCalcTest_allGrain() {
    singleConversion_sparge->setName("Sparge");
    singleConversion_sparge->setType(MashStep::Type::Infusion);
    singleConversion_sparge->setAmount_l(
-      rec->boilSize_l()
+      (*rec->boil())->preBoilSize_l().value_or(0.0)
       + equipFiveGalNoLoss->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg) * grain_kg // Grain absorption
       - conversion_l // Water we already added
    );
@@ -474,8 +475,8 @@ void Testing::recipeCalcTest_allGrain() {
    rec->setEquipment(equipFiveGalNoLoss.get());
 
    // Add hops (85g)
-   cascade_4pct->setAmount(0.085);
-   cascade_4pct->setAmountIsWeight(true);
+   this->cascade_4pct->setAmount(0.085);
+   this->cascade_4pct->setAmountIsWeight(true);
    rec->add(this->cascade_4pct);
 
    // Add grain
@@ -541,17 +542,17 @@ void Testing::postBoilLossOgTest() {
 
    // Basic recipe parameters
    recNoLoss->setBatchSize_l(equipFiveGalNoLoss->fermenterBatchSize_l());
-   recNoLoss->setBoilSize_l(equipFiveGalNoLoss->kettleBoilSize_l());
+   recNoLoss->nonOptBoil()->setPreBoilSize_l(equipFiveGalNoLoss->kettleBoilSize_l());
    recNoLoss->setEfficiency_pct(70.0);
 
    recLoss->setBatchSize_l(eLoss->fermenterBatchSize_l() - eLoss->kettleTrubChillerLoss_l()); // Adjust for trub losses
-   recLoss->setBoilSize_l(eLoss->kettleBoilSize_l() - eLoss->kettleTrubChillerLoss_l());
+   recLoss->nonOptBoil()->setPreBoilSize_l(eLoss->kettleBoilSize_l() - eLoss->kettleTrubChillerLoss_l());
    recLoss->setEfficiency_pct(70.0);
 
-   double mashWaterNoLoss_l = recNoLoss->boilSize_l()
+   double mashWaterNoLoss_l = *recNoLoss->nonOptBoil()->preBoilSize_l()
       + equipFiveGalNoLoss->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg) * grain_kg
    ;
-   double mashWaterLoss_l = recLoss->boilSize_l()
+   double mashWaterLoss_l = *recLoss->nonOptBoil()->preBoilSize_l()
       + eLoss->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg) * grain_kg
    ;
 
@@ -585,8 +586,8 @@ void Testing::postBoilLossOgTest() {
    recLoss->setMash(singleConversion.get());
 
    // Verify we hit the right boil/final volumes (that the test is sane)
-   QVERIFY2(fuzzyComp(recNoLoss->boilVolume_l(),  recNoLoss->boilSize_l(),  0.1), "Wrong boil volume calculation (recNoLoss)");
-   QVERIFY2(fuzzyComp(  recLoss->boilVolume_l(),    recLoss->boilSize_l(),  0.1), "Wrong boil volume calculation (recLoss)"  );
+   QVERIFY2(fuzzyComp(recNoLoss->boilVolume_l(),  *recNoLoss->nonOptBoil()->preBoilSize_l(), 0.1), "Wrong boil volume calculation (recNoLoss)");
+   QVERIFY2(fuzzyComp(  recLoss->boilVolume_l(),    *recLoss->nonOptBoil()->preBoilSize_l(), 0.1), "Wrong boil volume calculation (recLoss)"  );
    QVERIFY2(fuzzyComp(recNoLoss->finalVolume_l(), recNoLoss->batchSize_l(), 0.1), "Wrong final volume calculation (recNoLoss)");
    QVERIFY2(fuzzyComp(  recLoss->finalVolume_l(),   recLoss->batchSize_l(), 0.1), "Wrong final volume calculation (recLoss)"  );
 
@@ -760,7 +761,7 @@ void Testing::testAlgorithms() {
 }
 
 void Testing::testTypeLookups() {
-   QVERIFY2(Hop::typeLookup.getType(PropertyNames::HopBase::alpha_pct).typeIndex == typeid(double),
+   QVERIFY2(Hop::typeLookup.getType(PropertyNames::Hop::alpha_pct).typeIndex == typeid(double),
             "PropertyNames::Hop::alpha_pct not a double");
    auto const & grainGroupTypeInfo = Fermentable::typeLookup.getType(PropertyNames::Fermentable::grainGroup);
    QVERIFY2(grainGroupTypeInfo.isOptional(),
@@ -853,9 +854,9 @@ void Testing::pstdintTest() {
 
 
 void Testing::testInventory() {
-   bool setOk = this->cascade_4pct->setProperty(*PropertyNames::PropertiesForInventory::inventory, 123.45);
+   bool setOk = this->cascade_4pct->setProperty(*PropertyNames::NamedEntityWithInventory::inventory, 123.45);
    QVERIFY2(setOk, "Error setting hop inventory property");
-   QVariant inventoryRaw = this->cascade_4pct->property(*PropertyNames::PropertiesForInventory::inventory);
+   QVariant inventoryRaw = this->cascade_4pct->property(*PropertyNames::NamedEntityWithInventory::inventory);
    QVERIFY2(inventoryRaw.canConvert<double>(), "Error retrieving hop inventory property");
    double inventory = inventoryRaw.toDouble();
 

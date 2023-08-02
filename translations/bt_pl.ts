@@ -64,6 +64,33 @@
     </message>
 </context>
 <context>
+    <name>Base</name>
+    <message>
+        <source>Leaf</source>
+        <translation type="unfinished">Szyszka</translation>
+    </message>
+    <message>
+        <source>Pellet</source>
+        <translation type="unfinished">Granulat</translation>
+    </message>
+    <message>
+        <source>Plug</source>
+        <translation type="unfinished">Tabletka</translation>
+    </message>
+    <message>
+        <source>Extract</source>
+        <translation type="unfinished">Ekstrakt</translation>
+    </message>
+    <message>
+        <source>WetLeaf</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Powder</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Boil</name>
     <message>
         <source>Boil</source>
@@ -954,6 +981,22 @@ Log file may contain more details.</source>
         <source>ALLDB</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>About to upgrade database schema from v %1 to v %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click OK to continue (or Abort to close the program without upgrading)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The upgrade should retain all your existing data.  Nonetheless, we advise you to make a manual backup of your PostgreSQL database just in case.  If you didn&apos;t already do this, click Abort.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A backup of your SQLite database is in the directory %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -1540,15 +1583,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Leaf</source>
-        <translation>Szyszka</translation>
+        <translation type="vanished">Szyszka</translation>
     </message>
     <message>
         <source>Pellet</source>
-        <translation>Granulat</translation>
+        <translation type="vanished">Granulat</translation>
     </message>
     <message>
         <source>Plug</source>
-        <translation>Tabletka</translation>
+        <translation type="vanished">Tabletka</translation>
     </message>
     <message>
         <source>Flavor</source>
@@ -1572,15 +1615,7 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Extract</source>
-        <translation type="unfinished">Ekstrakt</translation>
-    </message>
-    <message>
-        <source>WetLeaf</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Powder</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Ekstrakt</translation>
     </message>
     <message>
         <source>Post-Boil</source>
@@ -1589,6 +1624,25 @@ Log file may contain more details.</source>
     <message>
         <source>Hop</source>
         <translation type="unfinished">Chmiel</translation>
+    </message>
+</context>
+<context>
+    <name>HopBase</name>
+    <message>
+        <source>Leaf</source>
+        <translation type="obsolete">Szyszka</translation>
+    </message>
+    <message>
+        <source>Pellet</source>
+        <translation type="obsolete">Granulat</translation>
+    </message>
+    <message>
+        <source>Plug</source>
+        <translation type="obsolete">Tabletka</translation>
+    </message>
+    <message>
+        <source>Extract</source>
+        <translation type="obsolete">Ekstrakt</translation>
     </message>
 </context>
 <context>
@@ -1708,15 +1762,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Ilość</translation>
+        <translation type="vanished">Ilość</translation>
     </message>
     <message>
         <source>Use</source>
-        <translation>Użycie</translation>
+        <translation type="vanished">Użycie</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Czas</translation>
+        <translation type="vanished">Czas</translation>
     </message>
     <message>
         <source>Form</source>
@@ -1725,6 +1779,22 @@ Log file may contain more details.</source>
     <message>
         <source>Inventory</source>
         <translation>Magazyn</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Rodzaj kwoty</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="unfinished">Objętość</translation>
+    </message>
+    <message>
+        <source>Weight</source>
+        <translation type="unfinished">Waga</translation>
+    </message>
+    <message>
+        <source>Year</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2085,10 +2155,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Remove hop from recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Remove misc from recipe</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2118,6 +2184,14 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>None of the selected items is exportable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove %1 from recipe</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3607,6 +3681,14 @@ Log file may contain more details.</source>
         <source>ft^3/lb</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>RecordSimple</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RecordComplex</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -3676,7 +3758,7 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Use %1 %2 for %3</source>
-        <translation>Użyj %1 %2 dla %3</translation>
+        <translation type="vanished">Użyj %1 %2 dla %3</translation>
     </message>
     <message>
         <source>Hop addition</source>
@@ -3900,6 +3982,10 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
         <source>%1 %2, </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Put %1 %2 into packaging for %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -3922,6 +4008,60 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     <message>
         <source>Recipe Addition</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionHop</name>
+    <message>
+        <source>Hop Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionHopTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alpha %</source>
+        <translation type="unfinished">Alfa %</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished">Ilość</translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Magazyn</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="obsolete">Rodzaj kwoty</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="obsolete">Objętość</translation>
+    </message>
+    <message>
+        <source>Weight</source>
+        <translation type="obsolete">Waga</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished">Czas</translation>
+    </message>
+    <message>
+        <source>Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stage</source>
+        <translation type="unfinished">Krok</translation>
     </message>
 </context>
 <context>
@@ -4302,6 +4442,10 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add During</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6383,6 +6527,18 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     <message>
         <source>Total Oil ml/100g</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check it if the amount listed is in kg instead of L.</source>
+        <translation type="unfinished">Zaznacz jeśli ilość podana jest w kg a nie w L.</translation>
+    </message>
+    <message>
+        <source>Amount is weight?</source>
+        <translation type="unfinished">Czy ilość jest wagą?</translation>
+    </message>
+    <message>
+        <source>Checked if the given amount is weight instead of volume</source>
+        <translation type="unfinished">Zaznacz jeśli podana ilość jest wagą a nie objętością</translation>
     </message>
 </context>
 <context>

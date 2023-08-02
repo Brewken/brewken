@@ -64,6 +64,33 @@
     </message>
 </context>
 <context>
+    <name>Base</name>
+    <message>
+        <source>Leaf</source>
+        <translation type="unfinished">Лист</translation>
+    </message>
+    <message>
+        <source>Pellet</source>
+        <translation type="unfinished">Грануле</translation>
+    </message>
+    <message>
+        <source>Plug</source>
+        <translation type="unfinished">Чеп</translation>
+    </message>
+    <message>
+        <source>Extract</source>
+        <translation type="unfinished">Екстракт</translation>
+    </message>
+    <message>
+        <source>WetLeaf</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Powder</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Boil</name>
     <message>
         <source>Boil</source>
@@ -954,6 +981,22 @@ Log file may contain more details.</source>
         <source>ALLDB</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>About to upgrade database schema from v %1 to v %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click OK to continue (or Abort to close the program without upgrading)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The upgrade should retain all your existing data.  Nonetheless, we advise you to make a manual backup of your PostgreSQL database just in case.  If you didn&apos;t already do this, click Abort.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A backup of your SQLite database is in the directory %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -1412,15 +1455,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Leaf</source>
-        <translation>Лист</translation>
+        <translation type="vanished">Лист</translation>
     </message>
     <message>
         <source>Pellet</source>
-        <translation>Грануле</translation>
+        <translation type="vanished">Грануле</translation>
     </message>
     <message>
         <source>Plug</source>
-        <translation>Чеп</translation>
+        <translation type="vanished">Чеп</translation>
     </message>
     <message>
         <source>Flavor</source>
@@ -1444,15 +1487,7 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Extract</source>
-        <translation type="unfinished">Екстракт</translation>
-    </message>
-    <message>
-        <source>WetLeaf</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Powder</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Екстракт</translation>
     </message>
     <message>
         <source>Post-Boil</source>
@@ -1461,6 +1496,25 @@ Log file may contain more details.</source>
     <message>
         <source>Hop</source>
         <translation type="unfinished">Хмељ</translation>
+    </message>
+</context>
+<context>
+    <name>HopBase</name>
+    <message>
+        <source>Leaf</source>
+        <translation type="obsolete">Лист</translation>
+    </message>
+    <message>
+        <source>Pellet</source>
+        <translation type="obsolete">Грануле</translation>
+    </message>
+    <message>
+        <source>Plug</source>
+        <translation type="obsolete">Чеп</translation>
+    </message>
+    <message>
+        <source>Extract</source>
+        <translation type="obsolete">Екстракт</translation>
     </message>
 </context>
 <context>
@@ -1580,15 +1634,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Количина</translation>
+        <translation type="vanished">Количина</translation>
     </message>
     <message>
         <source>Use</source>
-        <translation>Користи</translation>
+        <translation type="vanished">Користи</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Трајање</translation>
+        <translation type="vanished">Трајање</translation>
     </message>
     <message>
         <source>Form</source>
@@ -1597,6 +1651,22 @@ Log file may contain more details.</source>
     <message>
         <source>Inventory</source>
         <translation>Инвентар</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Тип количине</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="unfinished">Запремина</translation>
+    </message>
+    <message>
+        <source>Weight</source>
+        <translation type="unfinished">Тежина</translation>
+    </message>
+    <message>
+        <source>Year</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1957,10 +2027,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Remove hop from recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Remove misc from recipe</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1990,6 +2056,14 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>None of the selected items is exportable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove %1 from recipe</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3439,6 +3513,14 @@ Log file may contain more details.</source>
         <source>ft^3/lb</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>RecordSimple</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RecordComplex</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -3508,7 +3590,7 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Use %1 %2 for %3</source>
-        <translation>Користи %1 %2 на %3.</translation>
+        <translation type="vanished">Користи %1 %2 на %3.</translation>
     </message>
     <message>
         <source>Hop addition</source>
@@ -3729,6 +3811,10 @@ The final volume in the primary is %1.</source>
         <source>%1 %2, </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Put %1 %2 into packaging for %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -3751,6 +3837,64 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Recipe Addition</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionHop</name>
+    <message>
+        <source>Hop Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionHopTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Назив</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Облик</translation>
+    </message>
+    <message>
+        <source>Alpha %</source>
+        <translation type="unfinished">Алфа %</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished">Количина</translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Инвентар</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="obsolete">Тип количине</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="obsolete">Запремина</translation>
+    </message>
+    <message>
+        <source>Weight</source>
+        <translation type="obsolete">Тежина</translation>
+    </message>
+    <message>
+        <source>Use</source>
+        <translation type="obsolete">Користи</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished">Трајање</translation>
+    </message>
+    <message>
+        <source>Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stage</source>
+        <translation type="unfinished">Етапа</translation>
     </message>
 </context>
 <context>
@@ -4131,6 +4275,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add During</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5972,6 +6120,18 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Total Oil ml/100g</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check it if the amount listed is in kg instead of L.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount is weight?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Checked if the given amount is weight instead of volume</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -22,7 +22,7 @@ PropertyPath::PropertyPath(BtStringConst const & singleProperty) :
    return;
 }
 
-PropertyPath::PropertyPath(std::initializer_list<std::reference_wrapper<BtStringConst>> listOfProperties) :
+PropertyPath::PropertyPath(std::initializer_list<std::reference_wrapper<BtStringConst const>> listOfProperties) :
    m_properties{}, m_path{} {
    bool first = true;
    for (auto const & ii : listOfProperties) {
@@ -55,16 +55,24 @@ bool PropertyPath::isNull() const {
 
 TypeInfo const & PropertyPath::getTypeInfo(TypeLookup const & baseTypeLookup) const {
    TypeInfo const * returnValue = nullptr;
+   // Can be useful to uncomment the next line for debugging
+//   qDebug() << Q_FUNC_INFO << "Applying PropertyPath" << *this << "to" << baseTypeLookup;
 
    TypeLookup const * typeLookup = &baseTypeLookup;
    for (auto const property : this->m_properties) {
+      TypeInfo const & typeInfo = typeLookup->getType(*property);
       if (property == this->m_properties.last()) {
-         returnValue = &typeLookup->getType(*property);
+         returnValue = &typeInfo;
          break;
       }
-      typeLookup = typeLookup->getType(*property).typeLookup;
+      typeLookup = typeInfo.typeLookup;
       // It's a coding error if there is no TypeLookup
-      Q_ASSERT(typeLookup);
+      if (!typeLookup) {
+         qCritical() <<
+            Q_FUNC_INFO << "Applying PropertyPath" << *this << "to" << baseTypeLookup << ": no TypeLookup for" <<
+            *property << ". (getType returned " << typeInfo << ")";
+         Q_ASSERT(false);
+      }
    }
 
    return *returnValue;

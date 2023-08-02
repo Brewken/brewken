@@ -45,6 +45,41 @@ AddPropertyName(duration_mins  )
  *        This follows the corresponding BeerJSON \c HopAdditionType, \c FermentableAdditionType, etc types.  (However,
  *        note that we do \b not have a class corresponding with BeerJSON's \c WaterAdditionType as it's simpler just to
  *        include the two component fields directly in \c Recipe.)
+ *
+ *        In BeerJSON, the inheritance structure of, eg, hop-related records is:
+ *
+ *                                         HopVarietyBase
+ *                                            /     \
+ *                                           /       \
+ *                           VarietyInformation     HopAdditionType
+ *
+ *        And RecipeType->ingredients->hop_additions is an array of HopAdditionType (which adds amount and timing info
+ *        to HopVarietyBase).
+ *
+ *        HOWEVER, this is not the right structure for us.  The objective in BeerJSON is that a RecipeType record should
+ *        contain a "minimal collection of the description of ingredients, procedures and other required parameters
+ *        necessary to recreate a batch of beer".  Thus its HopAdditionType needs to give enough information about a hop
+ *        for the recipe to be usable even if the software reading the record does not already have a record for that
+ *        hop.
+ *
+ *        For our purposes, we want a \c RecipeAdditionHop to have the timing and quantity info of BeerJSON's
+ *        HopAdditionType, but not to duplicate information that is already in \c Hop.
+ *
+ *        In the long run, we'd like to distinguish between generic information about a particular hop variety (eg
+ *        Fuggle) and specific information about a particular batch of that hop (eg Xyz supplier's 2022 harvest pellets
+ *        with 4.4% alpha acid).  This is, however, outside the scope of the BeerJSON work, and will be something we
+ *        come back to as a future enhancement.  In the meantime, we have:
+ *
+ *                 NamedEntity
+ *                 /    |     \
+ *                /     |      \
+ *             Hop   Recipe   RecipeAddition
+ *                               \
+ *                                \
+ *                              RecipeAdditionMassOrVolume
+ *                                  \
+ *                                   \
+ *                                 RecipeAdditionHop
  */
 class RecipeAddition : public NamedEntity {
    Q_OBJECT
@@ -55,6 +90,9 @@ public:
     */
    static QString const LocalisedName;
 
+   /**
+    * Note that we rely on these values being in "chronological" order for \c lessThanByTime
+    */
    enum class Stage {Mash        ,
                      Boil        ,
                      Fermentation,
@@ -82,13 +120,19 @@ public:
     */
    static TypeLookup const typeLookup;
 
-   RecipeAddition(QString name = "");
+   RecipeAddition(QString name = "", int const recipeId = -1, int const ingredientId = -1);
    RecipeAddition(RecipeAddition const & other);
    RecipeAddition(NamedParameterBundle const & namedParameterBundle);
 
    virtual ~RecipeAddition();
 
+   /**
+   * \brief This function is used (as a parameter to std::sort) for sorting in the recipe formatter
+   */
+   [[nodiscard]] static bool lessThanByTime(RecipeAddition const * const lhs, RecipeAddition const * const rhs);
+
    //=================================================== PROPERTIES ====================================================
+
    /**
     * \brief The ID of the recipe in which the addition is being made
     */
@@ -104,7 +148,8 @@ public:
     *        present, so we make it required and subclasses should default it in their constructor (eg to
     *        \c RecipeAddition::Stage::Boil for a \c RecipeAdditionHop).
     *
-    *        Also, BeerJSON calls this "use", with values of "add_to_mash", "add_to_boil", etc.
+    *        Also, BeerJSON calls this "use", with values of "add_to_mash", "add_to_boil", etc.  This may well because
+    *        it replaces \c Hop::use etc.
     */
    Q_PROPERTY(Stage stage    READ stage    WRITE setStage)
 

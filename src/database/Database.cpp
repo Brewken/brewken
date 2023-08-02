@@ -118,6 +118,11 @@ namespace {
       "SERIAL PRIMARY KEY"   // PostgreSQL
    };
 
+   DbNativeVariants const createTableCoda {
+      " STRICT", // SQLite
+      ""         // PostgreSQL
+   };
+
    DbNativeVariants const sqlToAddColumnAsForeignKey {
       "ALTER TABLE %1 ADD COLUMN %2 INTEGER REFERENCES %3(%4);", // SQLite
       "ALTER TABLE %1 ADD COLUMN %2 INTEGER REFERENCES %3(%4);"  // PostgreSQL
@@ -398,6 +403,50 @@ public:
 
       bool doUpdate = currentVersion < newVersion;
       if (doUpdate) {
+         //
+         // Before we do a DB upgrade, we should back-up the DB (if we can).
+         //
+         // If we're in interactive mode (rather than, eg, running unit tests), we should tell the user, including
+         // giving them a chance to abort.
+         //
+         QString backupDir = PersistentSettings::value(
+            PersistentSettings::Names::directory,
+            PersistentSettings::getUserDataDir().canonicalPath(),
+            PersistentSettings::Sections::backups
+         ).toString();
+         QString backupName =
+            QString("%1 database.sqlite backup (before upgrade from v%2 to v%3)").arg(QDate::currentDate().toString("yyyy-MM-dd")).arg(currentVersion).arg(newVersion);
+         database.backupToDir(backupDir, backupName);
+
+         if (Application::isInteractive()) {
+            QMessageBox dbUpgradeMessageBox;
+            dbUpgradeMessageBox.setWindowTitle(tr("Software Upgraded"));
+            dbUpgradeMessageBox.setText(
+               tr("Before continuing, %1 %2 needs to upgrade your database schema "
+                  "(from v%3 to v%4).\n").arg(CONFIG_APPLICATION_NAME_UC).arg(CONFIG_VERSION_STRING).arg(currentVersion).arg(newVersion)
+            );
+            dbUpgradeMessageBox.setInformativeText(
+               tr("DON'T PANIC: Your existing data will be retained!")
+            );
+            if (this->dbType == Database::DbType::PGSQL) {
+               dbUpgradeMessageBox.setDetailedText(
+                  tr("The upgrade should retain all your existing data.\n\nEven so, it's a good idea to make a manual "
+                     "backup of your PostgreSQL database just in case.\n\nIf you didn't yet do this, click Abort.")
+               );
+            } else {
+               dbUpgradeMessageBox.setDetailedText(
+                  tr("Pre-upgrade database backup is in: \n%1").arg(backupDir)
+               );
+            }
+            dbUpgradeMessageBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Abort);
+            dbUpgradeMessageBox.setDefaultButton(QMessageBox::Ok);
+            int ret = dbUpgradeMessageBox.exec();
+            if (ret == QMessageBox::Abort) {
+               qDebug() << Q_FUNC_INFO << "User clicked \"Abort\".  Exiting.";
+               QCoreApplication::quit();
+            }
+         }
+
          bool success = DatabaseSchemaHelper::migrate(database, currentVersion, newVersion, database.sqlDatabase() );
          if (!success) {
             qCritical() << Q_FUNC_INFO << QString("Database migration %1->%2 failed").arg(currentVersion).arg(newVersion);
@@ -493,7 +542,11 @@ public:
       // finally, reset the counter and save the new list of files
       PersistentSettings::insert(PersistentSettings::Names::count, 0, PersistentSettings::Sections::backups);
       PersistentSettings::insert(PersistentSettings::Names::files, listOfFiles, PersistentSettings::Sections::backups);
+
+      return;
    }
+
+   //============================================== impl member variables ==============================================
 
    Database::DbType dbType;
    QString dbConName;
@@ -667,7 +720,7 @@ bool Database::load() {
          QMessageBox::critical(
             nullptr,
             QObject::tr("Database Failure"),
-            QObject::tr("Failed to update the database")
+            QObject::tr("Failed to update the database.\n\nSee log file for details.\n\nProgram will now exit.")
          );
       }
       return false;
@@ -1041,6 +1094,10 @@ template char const * Database::getDbNativeTypeName<QDate>() const;
 
 char const * Database::getDbNativePrimaryKeyDeclaration() const {
    return getDbNativeName(nativeIntPrimaryKeyDeclaration, this->pimpl->dbType);
+}
+
+char const * Database::getCreateTableCoda() const {
+   return getDbNativeName(createTableCoda, this->pimpl->dbType);
 }
 
 char const * Database::getSqlToAddColumnAsForeignKey() const {

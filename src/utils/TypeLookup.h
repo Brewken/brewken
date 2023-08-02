@@ -29,6 +29,7 @@
 #include "utils/TypeTraits.h"
 
 class BtStringConst;
+class NamedEntity;
 
 namespace PropertyNames::None {
    extern BtStringConst const none;
@@ -122,16 +123,16 @@ struct TypeInfo {
                                                                std::optional<BtFieldType> fieldType,
                                                                TypeLookup const * typeLookup);  // No general case, only specialisations
    template<IsRequiredEnum  T> const static TypeInfo construct(BtStringConst const & propertyName,
-                                                               TypeLookup const * typeLookup = nullptr,
+                                                               TypeLookup const * typeLookup,
                                                                std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(T),                      Classification::RequiredEnum , typeLookup, fieldType, propertyName}; }
    template<IsRequiredOther T> const static TypeInfo construct(BtStringConst const & propertyName,
-                                                               TypeLookup const * typeLookup = nullptr,
+                                                               TypeLookup const * typeLookup,
                                                                std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(T),                      Classification::RequiredOther, typeLookup, fieldType, propertyName}; }
    template<IsOptionalEnum  T> const static TypeInfo construct(BtStringConst const & propertyName,
-                                                               TypeLookup const * typeLookup = nullptr,
+                                                               TypeLookup const * typeLookup,
                                                                std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(typename T::value_type), Classification::OptionalEnum , typeLookup, fieldType, propertyName}; }
    template<IsOptionalOther T> const static TypeInfo construct(BtStringConst const & propertyName,
-                                                               TypeLookup const * typeLookup = nullptr,
+                                                               TypeLookup const * typeLookup,
                                                                std::optional<BtFieldType> fieldType = std::nullopt) { return TypeInfo{typeid(typename T::value_type), Classification::OptionalOther, typeLookup, fieldType, propertyName}; }
 };
 
@@ -151,6 +152,10 @@ struct TypeInfo {
  *        of type \c T or \c std::optional<T>.  But I _think_ the approach here is easier to debug.
  */
 class TypeLookup {
+
+   template<class S> friend S & operator<<(S & stream, TypeLookup const & typeLookup);
+   template<class S> friend S & operator<<(S & stream, TypeLookup const * typeLookup);
+
 public:
 
    /**
@@ -196,12 +201,15 @@ private:
  * \brief This is an additional concept for determining whether a class has a `static TypeLookup const typeLookup`
  *        member.
  */
-template <typename T> concept HasTypeLookup = requires {
-   { T::typeLookup } -> std::same_as<TypeLookup>;
-};
+///template <typename T> concept HasTypeLookup = requires {
+///   { T::typeLookup } -> std::same_as<TypeLookup>;
+///};
+template <typename T> concept HasTypeLookup = (std::is_base_of_v<NamedEntity, T> &&
+                                               std::same_as<decltype(T::typeLookup), TypeLookup const>);
 
-template<typename      T> struct TypeLookupOf    : std::integral_constant<TypeLookup const *, nullptr       > {};
-template<HasTypeLookup T> struct TypeLookupOf<T> : std::integral_constant<TypeLookup const *, &T::typeLookup> {};
+template<typename      T> struct TypeLookupOf      : std::integral_constant<TypeLookup const *, nullptr       > {};
+template<HasTypeLookup T> struct TypeLookupOf<T>   : std::integral_constant<TypeLookup const *, &T::typeLookup> {};
+template<HasTypeLookup T> struct TypeLookupOf<T *> : std::integral_constant<TypeLookup const *, &T::typeLookup> {};
 
 /**
  * \brief This macro simplifies the entries in the \c initializerList parameter of a \c TypeLookup constructor call.  It
@@ -222,7 +230,6 @@ template<HasTypeLookup T> struct TypeLookupOf<T> : std::integral_constant<TypeLo
 #define PROPERTY_TYPE_LOOKUP_ENTRY(propNameConstVar, memberVar, ...) \
    {&propNameConstVar, TypeInfo::construct<decltype(memberVar)>(propNameConstVar, TypeLookupOf<decltype(memberVar)>::value __VA_OPT__ (, __VA_ARGS__))}
 
-
 /**
  * \brief This is a trick to allow us to get the return type of a pointer to a member function with a similar syntax
  *        to the way we get it for a member variable.
@@ -240,8 +247,6 @@ template<typename Ret, typename Obj, typename... Args> struct MemberFunctionRetu
 template<auto MembFnPtr> using MemberFunctionReturnType_t = typename MemberFunctionReturnType<decltype(MembFnPtr)>::type;
 //! @}
 
-
-
 /**
  * \brief Similar to \c PROPERTY_TYPE_LOOKUP_ENTRY but used when we do not have a member variable and instead must use
  *        the return value of a getter member function.  This is usually when we have some combo getters/setters that
@@ -252,34 +257,24 @@ template<auto MembFnPtr> using MemberFunctionReturnType_t = typename MemberFunct
  *
  *           PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::betaGlucanWithUnits, Fermentable::betaGlucanWithUnits, Measurement::PqEitherMassOrVolumeConcentration),
  *
- *        I did try a version of this with 2nd and 3rd parameters combined (`Fermentable::betaGlucanWithUnits` instead
- *        of `Fermentable, betaGlucanWithUnits`).  However, although you can get the type ID of a pointer to a member
- *        function, I did not yet find a way to get from said pointer to member function to the type ID of the
- *        function's return value.
  */
-//////#define PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(propNameConstVar, className, getterFunction, ...)
-//////   {&propNameConstVar, TypeInfo::construct<  decltype(std::declval<className&>().getterFunction())   >(propNameConstVar __VA_OPT__ (, __VA_ARGS__))}
-///   {&propNameConstVar, TypeInfo::construct<  decltype(&getterFunction)>(propNameConstVar __VA_OPT__ (, __VA_ARGS__))}
-
 #define PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(propNameConstVar, getterMemberFunction, ...) \
    {&propNameConstVar, TypeInfo::construct<MemberFunctionReturnType_t<&getterMemberFunction>>(propNameConstVar, TypeLookupOf<MemberFunctionReturnType_t<&getterMemberFunction>>::value __VA_OPT__ (, __VA_ARGS__))}
 
 
-
 /**
- * \brief Convenience function for logging
+ * \brief Convenience functions for logging
  */
+//! @{
 template<class S>
 S & operator<<(S & stream, TypeInfo const & typeInfo) {
    stream <<
       "TypeInfo " << (typeInfo.isOptional() ? "" : "non-") << "optional \"" << typeInfo.typeIndex.name() <<
-      "\" fieldType:" << typeInfo.fieldType << ", property name:" << *typeInfo.propertyName;
+      "\" fieldType:" << typeInfo.fieldType << ", property name:" << *typeInfo.propertyName << ", typeLookup:" <<
+      typeInfo.typeLookup;
    return stream;
 }
 
-/**
- * \brief Convenience function for logging
- */
 template<class S>
 S & operator<<(S & stream, TypeInfo const * typeInfo) {
    if (!typeInfo) {
@@ -289,5 +284,24 @@ S & operator<<(S & stream, TypeInfo const * typeInfo) {
    }
    return stream;
 }
+
+template<class S>
+S & operator<<(S & stream, TypeLookup const & typeLookup) {
+   stream << "TypeLookup for " << typeLookup.className;
+   return stream;
+}
+
+template<class S>
+S & operator<<(S & stream, TypeLookup const * typeLookup) {
+   if (!typeLookup) {
+      stream << "nullptr";
+   } else {
+      stream << *typeLookup;
+   }
+   return stream;
+}
+
+//! @}
+
 
 #endif

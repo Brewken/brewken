@@ -48,13 +48,13 @@ YeastTableModel::YeastTableModel(QTableView * parent, bool editable) :
       {
          // NOTE: Need PropertyNames::Yeast::amountWithUnits not PropertyNames::Yeast::amount below so we
          //       can handle mass-or-volume generically in TableModelBase.  Same for inventoryWithUnits.
-         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Name     , tr("Name"      ), Yeast, PropertyNames::NamedEntity::name                           ),
-         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Lab      , tr("Laboratory"), Yeast, PropertyNames::Yeast::laboratory                           ),
-         SMART_COLUMN_HEADER_DEFN(YeastTableModel, ProdId   , tr("Product ID"), Yeast, PropertyNames::Yeast::productID                            ),
-         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Type     , tr("Type"      ), Yeast, PropertyNames::Yeast::type                                 , EnumInfo{Yeast::typeStringMapping, Yeast::typeDisplayNames}),
-         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Form     , tr("Form"      ), Yeast, PropertyNames::Yeast::form                                 , EnumInfo{Yeast::formStringMapping, Yeast::formDisplayNames}),
-         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Amount   , tr("Amount"    ), Yeast, PropertyNames::Yeast::amountWithUnits                      ),
-         SMART_COLUMN_HEADER_DEFN(YeastTableModel, Inventory, tr("Inventory" ), Yeast, PropertyNames::NamedEntityWithInventory::inventoryWithUnits),
+         TABLE_MODEL_HEADER(Yeast, Name     , tr("Name"      ), PropertyNames::NamedEntity::name                           ),
+         TABLE_MODEL_HEADER(Yeast, Lab      , tr("Laboratory"), PropertyNames::Yeast::laboratory                           ),
+         TABLE_MODEL_HEADER(Yeast, ProdId   , tr("Product ID"), PropertyNames::Yeast::productID                            ),
+         TABLE_MODEL_HEADER(Yeast, Type     , tr("Type"      ), PropertyNames::Yeast::type                                 , EnumInfo{Yeast::typeStringMapping, Yeast::typeDisplayNames}),
+         TABLE_MODEL_HEADER(Yeast, Form     , tr("Form"      ), PropertyNames::Yeast::form                                 , EnumInfo{Yeast::formStringMapping, Yeast::formDisplayNames}),
+         TABLE_MODEL_HEADER(Yeast, Amount   , tr("Amount"    ), PropertyNames::Yeast::amountWithUnits                      ),
+         TABLE_MODEL_HEADER(Yeast, Inventory, tr("Inventory" ), PropertyNames::NamedEntityWithInventory::inventoryWithUnits),
       }
    },
    TableModelBase<YeastTableModel, Yeast>{} {

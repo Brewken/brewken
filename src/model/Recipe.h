@@ -55,8 +55,8 @@ AddPropertyName(batchSize_l       )
 AddPropertyName(boil              )
 AddPropertyName(boilGrav          )
 AddPropertyName(boilId            )
-AddPropertyName(boilSize_l        )
-AddPropertyName(boilTime_min      )
+AddPropertyName(boilSize_l        ) // Deprecated, but retained for BeerXML -- see comments below
+AddPropertyName(boilTime_min      ) // Deprecated, but retained for BeerXML -- see comments below
 AddPropertyName(boilVolume_l      )
 AddPropertyName(brewer            )
 AddPropertyName(brewNotes         )
@@ -79,7 +79,7 @@ AddPropertyName(forcedCarbonation )
 AddPropertyName(grainsInMash_kg   )
 AddPropertyName(grains_kg         )
 AddPropertyName(hopAdditionIds    )
-AddPropertyName(hops              )
+AddPropertyName(hopAdditions      )
 AddPropertyName(IBU               )
 AddPropertyName(IBUs              )
 AddPropertyName(instructionIds    )
@@ -129,7 +129,6 @@ class FermentationStep;
 class Instruction;
 class Mash;
 class MashStep;
-class PreInstruction;
 class RecipeAdditionHop;
 class Style;
 class Water;
@@ -216,11 +215,17 @@ public:
    /**
     * \brief The boil size is the starting size for the main boil of the wort (in liters).  NOTE: This property is
     *        retained (and fully functional) for BeerXML support but is \b deprecated for other use as the same
-    *        information is now in the \c preBoilSize_l property of \c Boil.
+    *        information is now in the (NB optional) \c preBoilSize_l property of (NB optional) \c Boil.  (To SET a boil
+    *        size of `double boilSizeLiters` on `Recipe r`, call `r.nonOptBoil()->setPreBoilSize_l(boilSizeLiters)`.
     */
-   Q_PROPERTY(double  boilSize_l         READ boilSize_l         WRITE setBoilSize_l       )
-   //! \brief The boil time in minutes.
-   Q_PROPERTY(double  boilTime_min       READ boilTime_min       WRITE setBoilTime_min     )
+   Q_PROPERTY(double  boilSize_l         READ boilSize_l         /* WRITE setBoilSize_l */      )
+   /**
+    * \brief The boil time in minutes.    NOTE: This property is retained (and fully functional) for BeerXML support but
+    *        is \b deprecated for other use as the same information is now in the \c boilTime_mins property of (NB
+    *        optional) \c Boil.  (To SET a boil time of `double boilTimeMinutes` on `Recipe r`, call
+    *        `r.nonOptBoil()->setBoilTime_mins(boilTimeMinutes)`.
+    */
+   Q_PROPERTY(double  boilTime_min       READ boilTime_min       /* WRITE setBoilTime_min */    )
    //! \brief The overall efficiency in percent.
    Q_PROPERTY(double  efficiency_pct     READ efficiency_pct     WRITE setEfficiency_pct   )
    //! \brief The assistant brewer.  This becomes "coauthor" in BeerJSON
@@ -332,7 +337,7 @@ public:
    //! \brief The brew notes.
    Q_PROPERTY(QList<BrewNote *> brewNotes READ brewNotes /*WRITE*/ /*NOTIFY changed*/ STORED false)
    //! \brief The hop additions.
-   Q_PROPERTY(QList<RecipeAdditionHop *> hopAdditions   READ hopAdditions                           STORED false)
+   Q_PROPERTY(QList<RecipeAdditionHop *> hopAdditions   READ hopAdditions   /*WRITE setHopAdditions*/   STORED false)
    Q_PROPERTY(QVector<int>               hopAdditionIds READ hopAdditionIds WRITE setHopAdditionIds)
    //! \brief The instructions.
    Q_PROPERTY(QList<Instruction *> instructions   READ instructions /*WRITE*/ /*NOTIFY changed*/ STORED false)
@@ -405,12 +410,22 @@ public:
     */
    template<class NE> std::shared_ptr<NE> add(std::shared_ptr<NE> var);
 
+   /**
+    * \brief Use this for adding \c RecipeAdditionHop, etc.
+    */
+   template<class NE> std::shared_ptr<NE> addAddition(std::shared_ptr<NE> addition);
+
    /*!
     * \brief Remove \c var from the recipe and return what was removed - ie \c var
     *
     *        We want this to have the same signature as add because it makes the implementation of Undo/Redo easier
     */
    template<class NE> std::shared_ptr<NE> remove(std::shared_ptr<NE> var);
+
+   /**
+    * \brief Use this for removing \c RecipeAdditionHop, etc.
+    */
+   template<class NE> std::shared_ptr<NE> removeAddition(std::shared_ptr<NE> addition);
 
    /*!
     * \brief Returns whether \c var is used in this recipe
@@ -451,7 +466,7 @@ public:
    QString brewer            () const;
    double  batchSize_l       () const;
    [[deprecated]] double  boilSize_l        () const;
-   double  boilTime_min      () const;
+   [[deprecated]] double  boilTime_min      () const;
    double  efficiency_pct    () const;
    QString asstBrewer        () const;
    QString notes             () const;
@@ -523,6 +538,8 @@ public:
    int                                  getStyleId               () const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<std::shared_ptr<Boil>> boil                     () const;
+   //! \brief This will create a \c Boil object if it doesn't exist
+   std::shared_ptr<Boil>                nonOptBoil               ();
    int                                  getBoilId                () const;
    std::shared_ptr<Fermentation>        getFermentation          () const;
    Fermentation *                       fermentation             () const;
@@ -539,6 +556,7 @@ public:
    void setBoil        (std::optional<std::shared_ptr<Boil>> val);
    void setFermentation(std::shared_ptr<Fermentation> val);
    void setFermentation(Fermentation *                val);
+///   void setHopAdditions(QList<RecipeAdditionHop *>    val);
 
    /**
     * \brief These calls are intended for use by the ObjectStore when pulling data from the database.  As such they do
@@ -562,27 +580,20 @@ public:
    //! @}
 
    // Other junk.
-   QVector<PreInstruction> mashInstructions(double timeRemaining, double totalWaterAdded_l, unsigned int size);
-   QVector<PreInstruction> mashSteps();
-   QVector<PreInstruction> hopSteps(Hop::Use type = Hop::Use::Boil);
-   QVector<PreInstruction> miscSteps(Misc::Use type = Misc::Use::Boil);
-   PreInstruction boilFermentablesPre(double timeRemaining);
-   bool hasBoilFermentable();
-   bool hasBoilExtract();
    bool hasAncestors() const;
    bool isMyAncestor(Recipe const & maybe) const;
    bool hasDescendants() const;
-   PreInstruction addExtracts(double timeRemaining) const;
 
    // Helpers
    //! \brief Get the ibus from a given \c hop.
-   double ibuFromHop(Hop const * hop);
+   double ibuFromHopAddition(RecipeAdditionHop const * hop);
+   // .:TBD:. Not sure reagents is the best word here...
    //! \brief Formats the fermentables for instructions
    QList<QString> getReagents(QList<Fermentable *> ferms);
    //! \brief Formats the mashsteps for instructions
    QList<QString> getReagents(QList< std::shared_ptr<MashStep> >);
    //! \brief Formats the hops for instructions
-   QList<QString> getReagents(QList<Hop *> hops, bool firstWort = false);
+   QList<QString> getReagents(QList<RecipeAdditionHop *> hopAdditions, bool firstWort);
    //! \brief Formats the salts for instructions
    QStringList getReagents(QList<Salt *> salts, Salt::WhenToAdd wanted);
    QHash<QString, double> calcTotalPoints();
@@ -591,8 +602,8 @@ public:
    void setType              (Type    const   val);
    void setBrewer            (QString const & val);
    void setBatchSize_l       (double  const   val);
-   [[deprecated]] void setBoilSize_l        (double  const   val);
-   void setBoilTime_min      (double  const   val);
+///   [[deprecated]] void setBoilSize_l        (double  const   val);
+///   void setBoilTime_min      (double  const   val);
    void setEfficiency_pct    (double  const   val);
    void setAsstBrewer        (QString const & val);
    void setNotes             (QString const & val);
@@ -652,8 +663,7 @@ private:
    QString m_brewer;
    QString m_asstBrewer;
    double  m_batchSize_l;
-   double  m_boilSize_l; // TODO Remove this
-   double  m_boilTime_min;
+///   double  m_boilTime_min;
    double  m_efficiency_pct;
    int     m_fermentationStages;
    double  m_primaryAge_days;
@@ -729,6 +739,9 @@ private:
     * WARNING: this call took 0.15s in rev 916!
     */
    void recalcAll();
+
+   // TODO: I think we don't need Q_INVOKABLE here and that all the functions marked with it can move to impl
+
    // Emits changed(ABV_pct). Depends on: _og, _fg
    Q_INVOKABLE void recalcABV_pct();
    // Emits changed(color_srm). Depends on: _finalVolume_l
@@ -760,7 +773,6 @@ private:
    void saltWater(Salt::WhenToAdd when);
 
    //void setDefaults();
-   void addPreinstructions(QVector<PreInstruction> preins);
 ///   bool isValidType(const QString & str);
 };
 

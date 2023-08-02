@@ -63,7 +63,7 @@ bool NamedParameterBundle::contains(BtStringConst const & propertyName) const {
    return this->m_parameters.contains(*propertyName);
 }
 
-bool NamedParameterBundle::contains(PropertyPath  const & propertyPath) const {
+bool NamedParameterBundle::contains(PropertyPath const & propertyPath) const {
    NamedParameterBundle const * bundle = this;
    auto const & properties = propertyPath.properties();
    for (auto const property : properties) {

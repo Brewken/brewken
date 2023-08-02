@@ -21,9 +21,9 @@
 #include <QObject>
 
 #include "BtTreeView.h"
-#include "json/BeerJson.h"
+#include "serialization/json/BeerJson.h"
 #include "MainWindow.h"
-#include "xml/BeerXml.h"
+#include "serialization/xml/BeerXml.h"
 
 class Equipment;
 class Fermentable;
