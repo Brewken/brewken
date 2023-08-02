@@ -60,8 +60,8 @@ BoilStep::BoilStep(QString name) :
 }
 
 BoilStep::BoilStep(NamedParameterBundle const & namedParameterBundle) :
-   StepExtended  (namedParameterBundle                                                                ),
-   m_chillingType(namedParameterBundle.optEnumVal<ChillingType>(PropertyNames::BoilStep::chillingType)) {
+   StepExtended  (namedParameterBundle                                                              ),
+   SET_OPT_ENUM_FROM_NPB(m_chillingType, BoilStep::ChillingType, namedParameterBundle, PropertyNames::BoilStep::chillingType) {
    return;
 }
 

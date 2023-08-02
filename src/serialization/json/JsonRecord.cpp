@@ -537,7 +537,9 @@ JsonRecord::~JsonRecord() = default;
                   Q_ASSERT(container->is_object());
                   {
                      std::optional<double> value = readSingleUnitValue(fieldDefinition, container);
-                     qDebug() << Q_FUNC_INFO << "Read:" << value;
+                     qDebug() <<
+                        Q_FUNC_INFO << "Read:" << value << "for" << fieldDefinition.xPath << "/" <<
+                        fieldDefinition.propertyPath;
                      if (value) {
                         auto rawValue = *value;
                         parsedValue = Optional::variantFromRaw(rawValue, propertyIsOptional);

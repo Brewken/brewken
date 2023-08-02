@@ -134,8 +134,8 @@ TypeLookup const Hop::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::origin               , Hop::m_origin               ,           NonPhysicalQuantity::String       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::use                  , Hop::m_use                  ,           NonPhysicalQuantity::Enum         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::type                 , Hop::m_type                 ,           NonPhysicalQuantity::Enum         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amount               , Hop::m_amount               , Measurement::PqEitherMassOrVolume           ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amountIsWeight       , Hop::m_amountIsWeight       ,           NonPhysicalQuantity::Bool         ), // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amount               , Hop::m_amount               , Measurement::PqEitherMassOrVolume           ), // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amountIsWeight       , Hop::m_amountIsWeight       ,           NonPhysicalQuantity::Bool         ), // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::time_min             , Hop::m_time_min             , Measurement::PhysicalQuantity::Time         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::notes                , Hop::m_notes                ,           NonPhysicalQuantity::String       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::hsi_pct              , Hop::m_hsi_pct              ,           NonPhysicalQuantity::Percentage   ),
@@ -172,8 +172,6 @@ Hop::Hop(QString name) :
    m_origin               {""          },
    m_use                  {std::nullopt},
    m_type                 {std::nullopt},
-   m_amount               {0.0         },
-   m_amountIsWeight       {true        }, // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
    m_time_min             {0.0         },
    m_notes                {""          },
    m_hsi_pct              {0.0         },
@@ -201,35 +199,34 @@ Hop::Hop(QString name) :
 
 Hop::Hop(NamedParameterBundle const & namedParameterBundle) :
    NamedEntityWithInventory{namedParameterBundle},
-   m_alpha_pct            {namedParameterBundle.val<double               >(PropertyNames::Hop::alpha_pct            )},
-   m_form                 {namedParameterBundle.optEnumVal<Hop::Form >(PropertyNames::Hop::form                 )},
-   m_beta_pct             {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::beta_pct             )},
-   m_origin               {namedParameterBundle.val<QString              >(PropertyNames::Hop::origin               )},
-   m_use                  {namedParameterBundle.optEnumVal<Hop::Use      >(PropertyNames::Hop::use                  )},
-   m_type                 {namedParameterBundle.optEnumVal<Hop::Type     >(PropertyNames::Hop::type                 )},
-   m_time_min             {namedParameterBundle.val<double               >(PropertyNames::Hop::time_min             )},
-   m_notes                {namedParameterBundle.val<QString              >(PropertyNames::Hop::notes                )},
-   m_hsi_pct              {namedParameterBundle.val<double               >(PropertyNames::Hop::hsi_pct              )},
-   m_substitutes          {namedParameterBundle.val<QString              >(PropertyNames::Hop::substitutes          )},
-   m_humulene_pct         {namedParameterBundle.val<double               >(PropertyNames::Hop::humulene_pct         )},
-   m_caryophyllene_pct    {namedParameterBundle.val<double               >(PropertyNames::Hop::caryophyllene_pct    )},
-   m_cohumulone_pct       {namedParameterBundle.val<double               >(PropertyNames::Hop::cohumulone_pct       )},
-   m_myrcene_pct          {namedParameterBundle.val<double               >(PropertyNames::Hop::myrcene_pct          )},
+   SET_REGULAR_FROM_NPB (m_alpha_pct            , namedParameterBundle, PropertyNames::Hop::alpha_pct            ),
+   SET_OPT_ENUM_FROM_NPB(m_form      , Hop::Form, namedParameterBundle, PropertyNames::Hop::form                 ),
+   SET_REGULAR_FROM_NPB (m_beta_pct             , namedParameterBundle, PropertyNames::Hop::beta_pct             ),
+   SET_REGULAR_FROM_NPB (m_origin               , namedParameterBundle, PropertyNames::Hop::origin               ),
+   SET_OPT_ENUM_FROM_NPB(m_use       , Hop::Use , namedParameterBundle, PropertyNames::Hop::use                  ),
+   SET_OPT_ENUM_FROM_NPB(m_type      , Hop::Type, namedParameterBundle, PropertyNames::Hop::type                 ),
+   SET_REGULAR_FROM_NPB (m_time_min             , namedParameterBundle, PropertyNames::Hop::time_min             ),
+   SET_REGULAR_FROM_NPB (m_notes                , namedParameterBundle, PropertyNames::Hop::notes                ),
+   SET_REGULAR_FROM_NPB (m_hsi_pct              , namedParameterBundle, PropertyNames::Hop::hsi_pct              ),
+   SET_REGULAR_FROM_NPB (m_substitutes          , namedParameterBundle, PropertyNames::Hop::substitutes          ),
+   SET_REGULAR_FROM_NPB (m_humulene_pct         , namedParameterBundle, PropertyNames::Hop::humulene_pct         ),
+   SET_REGULAR_FROM_NPB (m_caryophyllene_pct    , namedParameterBundle, PropertyNames::Hop::caryophyllene_pct    ),
+   SET_REGULAR_FROM_NPB (m_cohumulone_pct       , namedParameterBundle, PropertyNames::Hop::cohumulone_pct       ),
+   SET_REGULAR_FROM_NPB (m_myrcene_pct          , namedParameterBundle, PropertyNames::Hop::myrcene_pct          ),
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   m_total_oil_ml_per_100g{namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::total_oil_ml_per_100g)},
-   m_farnesene_pct        {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::farnesene_pct        )},
-   m_geraniol_pct         {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::geraniol_pct         )},
-   m_b_pinene_pct         {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::b_pinene_pct         )},
-   m_linalool_pct         {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::linalool_pct         )},
-   m_limonene_pct         {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::limonene_pct         )},
-   m_nerol_pct            {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::nerol_pct            )},
-   m_pinene_pct           {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::pinene_pct           )},
-   m_polyphenols_pct      {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::polyphenols_pct      )},
-   m_xanthohumol_pct      {namedParameterBundle.val<std::optional<double>>(PropertyNames::Hop::xanthohumol_pct      )},
-   m_producer             {namedParameterBundle.val<QString              >(PropertyNames::Hop::producer             )},
-   m_product_id           {namedParameterBundle.val<QString              >(PropertyNames::Hop::product_id           )},
-   m_year                 {namedParameterBundle.val<QString              >(PropertyNames::Hop::year                 )} {
-   this->setEitherOrReqParams<MassOrVolumeAmt             >(namedParameterBundle, PropertyNames::Hop::amount    , PropertyNames::Hop::amountIsWeight           , PropertyNames::Hop::amountWithUnits    , this->m_amount    , this->m_amountIsWeight           );
+   SET_REGULAR_FROM_NPB (m_total_oil_ml_per_100g, namedParameterBundle, PropertyNames::Hop::total_oil_ml_per_100g),
+   SET_REGULAR_FROM_NPB (m_farnesene_pct        , namedParameterBundle, PropertyNames::Hop::farnesene_pct        ),
+   SET_REGULAR_FROM_NPB (m_geraniol_pct         , namedParameterBundle, PropertyNames::Hop::geraniol_pct         ),
+   SET_REGULAR_FROM_NPB (m_b_pinene_pct         , namedParameterBundle, PropertyNames::Hop::b_pinene_pct         ),
+   SET_REGULAR_FROM_NPB (m_linalool_pct         , namedParameterBundle, PropertyNames::Hop::linalool_pct         ),
+   SET_REGULAR_FROM_NPB (m_limonene_pct         , namedParameterBundle, PropertyNames::Hop::limonene_pct         ),
+   SET_REGULAR_FROM_NPB (m_nerol_pct            , namedParameterBundle, PropertyNames::Hop::nerol_pct            ),
+   SET_REGULAR_FROM_NPB (m_pinene_pct           , namedParameterBundle, PropertyNames::Hop::pinene_pct           ),
+   SET_REGULAR_FROM_NPB (m_polyphenols_pct      , namedParameterBundle, PropertyNames::Hop::polyphenols_pct      ),
+   SET_REGULAR_FROM_NPB (m_xanthohumol_pct      , namedParameterBundle, PropertyNames::Hop::xanthohumol_pct      ),
+   SET_REGULAR_FROM_NPB (m_producer             , namedParameterBundle, PropertyNames::Hop::producer             ),
+   SET_REGULAR_FROM_NPB (m_product_id           , namedParameterBundle, PropertyNames::Hop::product_id           ),
+   SET_REGULAR_FROM_NPB (m_year                 , namedParameterBundle, PropertyNames::Hop::year                 ) {
    return;
 }
 
@@ -241,8 +238,6 @@ Hop::Hop(Hop const & other) :
    m_origin                {other.m_origin               },
    m_use                   {other.m_use                  },
    m_type                  {other.m_type                 },
-   m_amount                {other.m_amount               },
-   m_amountIsWeight        {other.m_amountIsWeight       }, // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
    m_time_min              {other.m_time_min             },
    m_notes                 {other.m_notes                },
    m_hsi_pct               {other.m_hsi_pct              },
@@ -276,8 +271,8 @@ std::optional<Hop::Form> Hop::form                 () const { return this->m_for
 std::optional<int>       Hop::formAsInt            () const { return Optional::toOptInt(m_form)   ; }
 std::optional<double>    Hop::beta_pct             () const { return this->m_beta_pct             ; }
 QString                  Hop::origin               () const { return this->m_origin               ; }
-double                   Hop::amount               () const { return this->m_amount               ; }
-bool                     Hop::amountIsWeight       () const { return this->m_amountIsWeight       ; } // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+double                   Hop::amount               () const { return this->m_amount               ; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
+bool                     Hop::amountIsWeight       () const { return this->m_amountIsWeight       ; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 std::optional<Hop::Use>  Hop::use                  () const { return this->m_use                  ; }
 std::optional<int>       Hop::useAsInt             () const { return Optional::toOptInt(m_use)    ; }
 double                   Hop::time_min             () const { return this->m_time_min             ; }
@@ -305,17 +300,14 @@ QString                 Hop::producer             () const { return this->m_prod
 QString                 Hop::product_id           () const { return this->m_product_id           ; }
 QString                 Hop::year                 () const { return this->m_year                 ; }
 
-// Combined getters (all added for BeerJSON support)
-MassOrVolumeAmt         Hop::amountWithUnits      () const { return MassOrVolumeAmt{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
-
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
 void Hop::setAlpha_pct            (double                   const   val) { this->setAndNotify(PropertyNames::Hop::alpha_pct            , this->m_alpha_pct            , this->enforceMinAndMax(val, "alpha", 0.0, 100.0)); return; }
 void Hop::setForm                 (std::optional<Hop::Form> const   val) { this->setAndNotify(PropertyNames::Hop::form                 , this->m_form                 , val                                             ); return; }
 void Hop::setFormAsInt            (std::optional<int>       const   val) { this->setAndNotify(PropertyNames::Hop::form                 , this->m_form                 , Optional::fromOptInt<Form>(val)                 ); return; }
 void Hop::setBeta_pct             (std::optional<double>    const   val) { this->setAndNotify(PropertyNames::Hop::beta_pct             , this->m_beta_pct             , this->enforceMinAndMax(val, "beta",  0.0, 100.0)); return; }
 void Hop::setOrigin               (QString                  const & val) { this->setAndNotify(PropertyNames::Hop::origin               , this->m_origin               , val                                             ); return; }
-void Hop::setAmount               (double                   const   val) { this->setAndNotify(PropertyNames::Hop::amount               , this->m_amount               , this->enforceMin(val, "amount")                 ); return; }
-void Hop::setAmountIsWeight       (bool                     const   val) { this->setAndNotify(PropertyNames::Hop::amountIsWeight       , this->m_amountIsWeight       , val); return; } // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+void Hop::setAmount               (double                   const   val) { this->setAndNotify(PropertyNames::Hop::amount               , this->m_amount               , this->enforceMin(val, "amount")                 ); return; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
+void Hop::setAmountIsWeight       (bool                     const   val) { this->setAndNotify(PropertyNames::Hop::amountIsWeight       , this->m_amountIsWeight       , val); return; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 
 void Hop::setUse                  (std::optional<Hop::Use>  const   val) { this->setAndNotify(PropertyNames::Hop::use                  , this->m_use                  , val                                                             ); return; }
 void Hop::setUseAsInt             (std::optional<int>       const   val) { this->setAndNotify(PropertyNames::Hop::use                  , this->m_use                  , Optional::fromOptInt<Use>(val));                                   return; }

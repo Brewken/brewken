@@ -38,30 +38,30 @@ HopEditor::HopEditor(QWidget * parent) :
    this->tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);
 
    SMART_FIELD_INIT(HopEditor, label_name                 , lineEdit_name                 , Hop, PropertyNames::NamedEntity::name            );
-   SMART_FIELD_INIT(HopEditor, label_alpha                , lineEdit_alpha                , Hop, PropertyNames::Hop::alpha_pct            , 0);
+   SMART_FIELD_INIT(HopEditor, label_alpha                , lineEdit_alpha                , Hop, PropertyNames::Hop::alpha_pct            , 1);
    SMART_FIELD_INIT(HopEditor, label_inventory            , lineEdit_inventory            , Hop, PropertyNames::Hop::amount               );
    SMART_FIELD_INIT(HopEditor, label_time                 , lineEdit_time                 , Hop, PropertyNames::Hop::time_min             , 0);
-   SMART_FIELD_INIT(HopEditor, label_beta                 , lineEdit_beta                 , Hop, PropertyNames::Hop::beta_pct             , 0);
+   SMART_FIELD_INIT(HopEditor, label_beta                 , lineEdit_beta                 , Hop, PropertyNames::Hop::beta_pct             , 1);
    SMART_FIELD_INIT(HopEditor, label_HSI                  , lineEdit_HSI                  , Hop, PropertyNames::Hop::hsi_pct              , 0);
    SMART_FIELD_INIT(HopEditor, label_origin               , lineEdit_origin               , Hop, PropertyNames::Hop::origin                  );
-   SMART_FIELD_INIT(HopEditor, label_humulene             , lineEdit_humulene             , Hop, PropertyNames::Hop::humulene_pct         , 0);
-   SMART_FIELD_INIT(HopEditor, label_caryophyllene        , lineEdit_caryophyllene        , Hop, PropertyNames::Hop::caryophyllene_pct    , 0);
-   SMART_FIELD_INIT(HopEditor, label_cohumulone           , lineEdit_cohumulone           , Hop, PropertyNames::Hop::cohumulone_pct       , 0);
-   SMART_FIELD_INIT(HopEditor, label_myrcene              , lineEdit_myrcene              , Hop, PropertyNames::Hop::myrcene_pct          , 0);
+   SMART_FIELD_INIT(HopEditor, label_humulene             , lineEdit_humulene             , Hop, PropertyNames::Hop::humulene_pct         , 2);
+   SMART_FIELD_INIT(HopEditor, label_caryophyllene        , lineEdit_caryophyllene        , Hop, PropertyNames::Hop::caryophyllene_pct    , 2);
+   SMART_FIELD_INIT(HopEditor, label_cohumulone           , lineEdit_cohumulone           , Hop, PropertyNames::Hop::cohumulone_pct       , 2);
+   SMART_FIELD_INIT(HopEditor, label_myrcene              , lineEdit_myrcene              , Hop, PropertyNames::Hop::myrcene_pct          , 2);
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    SMART_FIELD_INIT(HopEditor, label_producer             , lineEdit_producer             , Hop, PropertyNames::Hop::producer                );
    SMART_FIELD_INIT(HopEditor, label_product_id           , lineEdit_product_id           , Hop, PropertyNames::Hop::product_id              );
    SMART_FIELD_INIT(HopEditor, label_year                 , lineEdit_year                 , Hop, PropertyNames::Hop::year                    );
    SMART_FIELD_INIT(HopEditor, label_total_oil_ml_per_100g, lineEdit_total_oil_ml_per_100g, Hop, PropertyNames::Hop::total_oil_ml_per_100g   );
-   SMART_FIELD_INIT(HopEditor, label_farnesene            , lineEdit_farnesene            , Hop, PropertyNames::Hop::farnesene_pct        , 0);
-   SMART_FIELD_INIT(HopEditor, label_geraniol             , lineEdit_geraniol             , Hop, PropertyNames::Hop::geraniol_pct         , 0);
-   SMART_FIELD_INIT(HopEditor, label_b_pinene             , lineEdit_b_pinene             , Hop, PropertyNames::Hop::b_pinene_pct         , 0);
-   SMART_FIELD_INIT(HopEditor, label_linalool             , lineEdit_linalool             , Hop, PropertyNames::Hop::linalool_pct         , 0);
-   SMART_FIELD_INIT(HopEditor, label_limonene             , lineEdit_limonene             , Hop, PropertyNames::Hop::limonene_pct         , 0);
-   SMART_FIELD_INIT(HopEditor, label_nerol                , lineEdit_nerol                , Hop, PropertyNames::Hop::nerol_pct            , 0);
-   SMART_FIELD_INIT(HopEditor, label_pinene               , lineEdit_pinene               , Hop, PropertyNames::Hop::pinene_pct           , 0);
-   SMART_FIELD_INIT(HopEditor, label_polyphenols          , lineEdit_polyphenols          , Hop, PropertyNames::Hop::polyphenols_pct      , 0);
-   SMART_FIELD_INIT(HopEditor, label_xanthohumol          , lineEdit_xanthohumol          , Hop, PropertyNames::Hop::xanthohumol_pct      , 0);
+   SMART_FIELD_INIT(HopEditor, label_farnesene            , lineEdit_farnesene            , Hop, PropertyNames::Hop::farnesene_pct        , 2);
+   SMART_FIELD_INIT(HopEditor, label_geraniol             , lineEdit_geraniol             , Hop, PropertyNames::Hop::geraniol_pct         , 2);
+   SMART_FIELD_INIT(HopEditor, label_b_pinene             , lineEdit_b_pinene             , Hop, PropertyNames::Hop::b_pinene_pct         , 2);
+   SMART_FIELD_INIT(HopEditor, label_linalool             , lineEdit_linalool             , Hop, PropertyNames::Hop::linalool_pct         , 2);
+   SMART_FIELD_INIT(HopEditor, label_limonene             , lineEdit_limonene             , Hop, PropertyNames::Hop::limonene_pct         , 2);
+   SMART_FIELD_INIT(HopEditor, label_nerol                , lineEdit_nerol                , Hop, PropertyNames::Hop::nerol_pct            , 2);
+   SMART_FIELD_INIT(HopEditor, label_pinene               , lineEdit_pinene               , Hop, PropertyNames::Hop::pinene_pct           , 2);
+   SMART_FIELD_INIT(HopEditor, label_polyphenols          , lineEdit_polyphenols          , Hop, PropertyNames::Hop::polyphenols_pct      , 2);
+   SMART_FIELD_INIT(HopEditor, label_xanthohumol          , lineEdit_xanthohumol          , Hop, PropertyNames::Hop::xanthohumol_pct      , 2);
 
    SMART_CHECK_BOX_INIT(HopEditor, checkBox_amountIsWeight           , label_amountIsWeight           , lineEdit_inventory , Hop, amountIsWeight           );
 

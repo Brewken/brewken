@@ -107,12 +107,17 @@ Salt::Salt(QString name) :
 
 Salt::Salt(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity       {namedParameterBundle},
-   m_whenToAdd       {namedParameterBundle.val<Salt::WhenToAdd>(PropertyNames::Salt::whenToAdd     )},
-   m_type            {namedParameterBundle.val<Salt::Type     >(PropertyNames::Salt::type          )},
-   m_percent_acid    {namedParameterBundle.val<double         >(PropertyNames::Salt::percentAcid   )},
-   m_is_acid         {namedParameterBundle.val<bool           >(PropertyNames::Salt::isAcid        )} {
+   SET_REGULAR_FROM_NPB (m_whenToAdd   , namedParameterBundle, PropertyNames::Salt::whenToAdd  ),
+   SET_REGULAR_FROM_NPB (m_type        , namedParameterBundle, PropertyNames::Salt::type       ),
+   SET_REGULAR_FROM_NPB (m_percent_acid, namedParameterBundle, PropertyNames::Salt::percentAcid),
+   SET_REGULAR_FROM_NPB (m_is_acid     , namedParameterBundle, PropertyNames::Salt::isAcid     ) {
 
-   this->setEitherOrReqParams<MassOrVolumeAmt             >(namedParameterBundle, PropertyNames::Salt::amount    , PropertyNames::Salt::amountIsWeight           , PropertyNames::Salt::amountWithUnits    , this->m_amount    , this->m_amountIsWeight           );
+   this->setEitherOrReqParams<MassOrVolumeAmt>(namedParameterBundle,
+                                               PropertyNames::Salt::amount,
+                                               PropertyNames::Salt::amountIsWeight,
+                                               PropertyNames::Salt::amountWithUnits,
+                                               this->m_amount,
+                                               this->m_amountIsWeight);
    return;
 }
 

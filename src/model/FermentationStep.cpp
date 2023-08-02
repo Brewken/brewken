@@ -50,7 +50,7 @@ FermentationStep::FermentationStep(QString name) :
 
 FermentationStep::FermentationStep(NamedParameterBundle const & namedParameterBundle) :
    StepExtended  (namedParameterBundle                                                                ),
-   m_vessel(namedParameterBundle.val<QString>(PropertyNames::FermentationStep::vessel, QString())) {
+   SET_REGULAR_FROM_NPB (m_vessel, namedParameterBundle, PropertyNames::FermentationStep::vessel, QString()) {
    return;
 }
 

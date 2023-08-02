@@ -66,10 +66,10 @@ Boil::Boil(QString name) :
 Boil::Boil(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity                {namedParameterBundle},
    StepOwnerBase<Boil, BoilStep>{},
-   m_description  {namedParameterBundle.val<QString              >(PropertyNames::Boil::description  )},
-   m_notes        {namedParameterBundle.val<QString              >(PropertyNames::Boil::notes        )},
-   m_preBoilSize_l{namedParameterBundle.val<std::optional<double>>(PropertyNames::Boil::preBoilSize_l)},
-   m_boilTime_mins{namedParameterBundle.val<double               >(PropertyNames::Boil::boilTime_mins)} {
+   SET_REGULAR_FROM_NPB (m_description  , namedParameterBundle, PropertyNames::Boil::description  ),
+   SET_REGULAR_FROM_NPB (m_notes        , namedParameterBundle, PropertyNames::Boil::notes        ),
+   SET_REGULAR_FROM_NPB (m_preBoilSize_l, namedParameterBundle, PropertyNames::Boil::preBoilSize_l),
+   SET_REGULAR_FROM_NPB (m_boilTime_mins, namedParameterBundle, PropertyNames::Boil::boilTime_mins) {
    return;
 }
 

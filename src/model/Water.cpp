@@ -121,20 +121,20 @@ Water::Water(QString name) :
 
 Water::Water(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity         {namedParameterBundle},
-   m_amount            {namedParameterBundle.val<double            >(PropertyNames::Water::amount          )},
-   m_calcium_ppm       {namedParameterBundle.val<double            >(PropertyNames::Water::calcium_ppm     )},
-   m_bicarbonate_ppm   {namedParameterBundle.val<double            >(PropertyNames::Water::bicarbonate_ppm )},
-   m_sulfate_ppm       {namedParameterBundle.val<double            >(PropertyNames::Water::sulfate_ppm     )},
-   m_chloride_ppm      {namedParameterBundle.val<double            >(PropertyNames::Water::chloride_ppm    )},
-   m_sodium_ppm        {namedParameterBundle.val<double            >(PropertyNames::Water::sodium_ppm      )},
-   m_magnesium_ppm     {namedParameterBundle.val<double            >(PropertyNames::Water::magnesium_ppm   )},
-   m_ph                {namedParameterBundle.val<double            >(PropertyNames::Water::ph              )},
-   m_alkalinity_ppm    {namedParameterBundle.val<double            >(PropertyNames::Water::alkalinity_ppm  )},
-   m_notes             {namedParameterBundle.val<QString           >(PropertyNames::Water::notes           )},
-   m_type              {namedParameterBundle.optEnumVal<Water::Type>(PropertyNames::Water::type            )},
-   m_mashRo_pct        {namedParameterBundle.val<double            >(PropertyNames::Water::mashRo_pct      )},
-   m_spargeRo_pct      {namedParameterBundle.val<double            >(PropertyNames::Water::spargeRo_pct    )},
-   m_alkalinity_as_hco3{namedParameterBundle.val<bool              >(PropertyNames::Water::alkalinityAsHCO3)} {
+   SET_REGULAR_FROM_NPB (m_amount            , namedParameterBundle, PropertyNames::Water::amount          ),
+   SET_REGULAR_FROM_NPB (m_calcium_ppm       , namedParameterBundle, PropertyNames::Water::calcium_ppm     ),
+   SET_REGULAR_FROM_NPB (m_bicarbonate_ppm   , namedParameterBundle, PropertyNames::Water::bicarbonate_ppm ),
+   SET_REGULAR_FROM_NPB (m_sulfate_ppm       , namedParameterBundle, PropertyNames::Water::sulfate_ppm     ),
+   SET_REGULAR_FROM_NPB (m_chloride_ppm      , namedParameterBundle, PropertyNames::Water::chloride_ppm    ),
+   SET_REGULAR_FROM_NPB (m_sodium_ppm        , namedParameterBundle, PropertyNames::Water::sodium_ppm      ),
+   SET_REGULAR_FROM_NPB (m_magnesium_ppm     , namedParameterBundle, PropertyNames::Water::magnesium_ppm   ),
+   SET_REGULAR_FROM_NPB (m_ph                , namedParameterBundle, PropertyNames::Water::ph              ),
+   SET_REGULAR_FROM_NPB (m_alkalinity_ppm    , namedParameterBundle, PropertyNames::Water::alkalinity_ppm  ),
+   SET_REGULAR_FROM_NPB (m_notes             , namedParameterBundle, PropertyNames::Water::notes           ),
+   SET_OPT_ENUM_FROM_NPB(m_type , Water::Type, namedParameterBundle, PropertyNames::Water::type            ),
+   SET_REGULAR_FROM_NPB (m_mashRo_pct        , namedParameterBundle, PropertyNames::Water::mashRo_pct      ),
+   SET_REGULAR_FROM_NPB (m_spargeRo_pct      , namedParameterBundle, PropertyNames::Water::spargeRo_pct    ),
+   SET_REGULAR_FROM_NPB (m_alkalinity_as_hco3, namedParameterBundle, PropertyNames::Water::alkalinityAsHCO3) {
    return;
 }
 

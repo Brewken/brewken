@@ -87,15 +87,15 @@ RecipeAddition::RecipeAddition(QString name, int const recipeId, int const ingre
 
 RecipeAddition::RecipeAddition(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity{namedParameterBundle},
-   m_recipeId        {namedParameterBundle.val<int                  >(PropertyNames::RecipeAddition::recipeId       )},
-   m_ingredientId    {namedParameterBundle.val<int                  >(PropertyNames::RecipeAddition::ingredientId   )},
+   SET_REGULAR_FROM_NPB (m_recipeId       , namedParameterBundle, PropertyNames::RecipeAddition::recipeId       ),
+   SET_REGULAR_FROM_NPB (m_ingredientId   , namedParameterBundle, PropertyNames::RecipeAddition::ingredientId   ),
    // Note that we do not set m_stage here as it is for subclasses to determine how that should be defaulted if it is
    // not present.
-   m_step            {namedParameterBundle.val<std::optional<int>   >(PropertyNames::RecipeAddition::step           )},
-   m_addAtTime_mins  {namedParameterBundle.val<std::optional<double>>(PropertyNames::RecipeAddition::addAtTime_mins )},
-   m_addAtGravity_sg {namedParameterBundle.val<std::optional<double>>(PropertyNames::RecipeAddition::addAtGravity_sg)},
-   m_addAtAcidity_pH {namedParameterBundle.val<std::optional<double>>(PropertyNames::RecipeAddition::addAtAcidity_pH)},
-   m_duration_mins   {namedParameterBundle.val<std::optional<double>>(PropertyNames::RecipeAddition::duration_mins  )} {
+   SET_REGULAR_FROM_NPB (m_step           , namedParameterBundle, PropertyNames::RecipeAddition::step           ),
+   SET_REGULAR_FROM_NPB (m_addAtTime_mins , namedParameterBundle, PropertyNames::RecipeAddition::addAtTime_mins ),
+   SET_REGULAR_FROM_NPB (m_addAtGravity_sg, namedParameterBundle, PropertyNames::RecipeAddition::addAtGravity_sg),
+   SET_REGULAR_FROM_NPB (m_addAtAcidity_pH, namedParameterBundle, PropertyNames::RecipeAddition::addAtAcidity_pH),
+   SET_REGULAR_FROM_NPB (m_duration_mins  , namedParameterBundle, PropertyNames::RecipeAddition::duration_mins  ) {
    return;
 }
 

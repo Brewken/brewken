@@ -180,14 +180,6 @@ public:
    char const * getDbNativePrimaryKeyDeclaration() const;
 
    /**
-    * \brief Returns the text, if any, that we need to put at the end of a CREATE TABLE statement.  This is needed in
-    *        SQLite to enable "strict" mode on tables (see https://www.sqlite.org/stricttables.html), which is something
-    *        we always want.  On PostgreSQL, this is an empty string as the "strict" behaviour (ie where you can't put a
-    *        string in a column that's supposed to hold integers, etc) is the default.
-    */
-   char const * getCreateTableCoda() const;
-
-   /**
     * \brief Returns a text template for an ALTER TABLE query to add a foreign key column to a table.  Callers should
     *        create a QString from the result and append .arg() calls to set:
     *           • table name (for table to modify) as argument 1

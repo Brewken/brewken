@@ -110,11 +110,11 @@ Instruction::Instruction(QString name) :
 Instruction::Instruction(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity {namedParameterBundle},
    pimpl       {std::make_unique<impl>(*this)},
-   m_directions{namedParameterBundle.val<QString>(PropertyNames::Instruction::directions)},
-   m_hasTimer  {namedParameterBundle.val<bool   >(PropertyNames::Instruction::hasTimer  )},
-   m_timerValue{namedParameterBundle.val<QString>(PropertyNames::Instruction::timerValue)},
-   m_completed {namedParameterBundle.val<bool   >(PropertyNames::Instruction::completed )},
-   m_interval  {namedParameterBundle.val<double >(PropertyNames::Instruction::interval  )} {
+   SET_REGULAR_FROM_NPB (m_directions, namedParameterBundle, PropertyNames::Instruction::directions),
+   SET_REGULAR_FROM_NPB (m_hasTimer  , namedParameterBundle, PropertyNames::Instruction::hasTimer  ),
+   SET_REGULAR_FROM_NPB (m_timerValue, namedParameterBundle, PropertyNames::Instruction::timerValue),
+   SET_REGULAR_FROM_NPB (m_completed , namedParameterBundle, PropertyNames::Instruction::completed ),
+   SET_REGULAR_FROM_NPB (m_interval  , namedParameterBundle, PropertyNames::Instruction::interval  ) {
    return;
 }
 

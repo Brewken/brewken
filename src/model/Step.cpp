@@ -69,16 +69,16 @@ Step::Step(QString name) :
 }
 
 Step::Step(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity      (namedParameterBundle                                                                 ),
-   m_stepTime_min   (namedParameterBundle.val<double               >(PropertyNames::Step::stepTime_min   )),
-   m_endTemp_c      (namedParameterBundle.val<std::optional<double>>(PropertyNames::Step::endTemp_c      )),
-   m_stepNumber     (namedParameterBundle.val<int                  >(PropertyNames::Step::stepNumber     )),
-   m_ownerId        (namedParameterBundle.val<int                  >(PropertyNames::Step::ownerId        )),
+   NamedEntity      (namedParameterBundle                                                             ),
+   SET_REGULAR_FROM_NPB (m_stepTime_min   , namedParameterBundle, PropertyNames::Step::stepTime_min   ),
+   SET_REGULAR_FROM_NPB (m_endTemp_c      , namedParameterBundle, PropertyNames::Step::endTemp_c      ),
+   SET_REGULAR_FROM_NPB (m_stepNumber     , namedParameterBundle, PropertyNames::Step::stepNumber     ),
+   SET_REGULAR_FROM_NPB (m_ownerId        , namedParameterBundle, PropertyNames::Step::ownerId        ),
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   m_description    (namedParameterBundle.val<QString              >(PropertyNames::Step::description    )),
-   m_rampTime_mins  (namedParameterBundle.val<std::optional<double>>(PropertyNames::Step::rampTime_mins  )),
-   m_startAcidity_pH(namedParameterBundle.val<std::optional<double>>(PropertyNames::Step::startAcidity_pH)),
-   m_endAcidity_pH  (namedParameterBundle.val<std::optional<double>>(PropertyNames::Step::endAcidity_pH  )) {
+   SET_REGULAR_FROM_NPB (m_description    , namedParameterBundle, PropertyNames::Step::description    ),
+   SET_REGULAR_FROM_NPB (m_rampTime_mins  , namedParameterBundle, PropertyNames::Step::rampTime_mins  ),
+   SET_REGULAR_FROM_NPB (m_startAcidity_pH, namedParameterBundle, PropertyNames::Step::startAcidity_pH),
+   SET_REGULAR_FROM_NPB (m_endAcidity_pH  , namedParameterBundle, PropertyNames::Step::endAcidity_pH  ) {
    return;
 }
 

@@ -58,8 +58,8 @@ public:
    }
 
    impl(NamedParameterBundle const & namedParameterBundle) :
-      id    {namedParameterBundle.val<int   >(PropertyNames::Inventory::id    )},
-      amount{namedParameterBundle.val<double>(PropertyNames::Inventory::amount)} {
+      SET_REGULAR_FROM_NPB (id    , namedParameterBundle, PropertyNames::Inventory::id    ),
+      SET_REGULAR_FROM_NPB (amount, namedParameterBundle, PropertyNames::Inventory::amount) {
       return;
    }
 

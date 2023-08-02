@@ -124,17 +124,21 @@ Misc::Misc(QString name) :
 
 Misc::Misc(NamedParameterBundle const & namedParameterBundle) :
    NamedEntityWithInventory{namedParameterBundle},
-   m_type                  {namedParameterBundle.val<Misc::Type      >(PropertyNames::Misc::type     )},
-   m_use                   {namedParameterBundle.optEnumVal<Misc::Use>(PropertyNames::Misc::use      )},
-   m_time_min              {namedParameterBundle.val<double          >(PropertyNames::Misc::time_min )},
-   m_useFor                {namedParameterBundle.val<QString         >(PropertyNames::Misc::useFor   )},
-   m_notes                 {namedParameterBundle.val<QString         >(PropertyNames::Misc::notes    )},
+   SET_REGULAR_FROM_NPB (m_type                , namedParameterBundle, PropertyNames::Misc::type     ),
+   SET_OPT_ENUM_FROM_NPB(m_use      , Misc::Use, namedParameterBundle, PropertyNames::Misc::use      ),
+   SET_REGULAR_FROM_NPB (m_time_min            , namedParameterBundle, PropertyNames::Misc::time_min ),
+   SET_REGULAR_FROM_NPB (m_useFor              , namedParameterBundle, PropertyNames::Misc::useFor   ),
+   SET_REGULAR_FROM_NPB (m_notes               , namedParameterBundle, PropertyNames::Misc::notes    ),
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   m_producer              {namedParameterBundle.val<QString         >(PropertyNames::Misc::producer )},
-   m_productId             {namedParameterBundle.val<QString         >(PropertyNames::Misc::productId)} {
+   SET_REGULAR_FROM_NPB (m_producer            , namedParameterBundle, PropertyNames::Misc::producer ),
+   SET_REGULAR_FROM_NPB (m_productId           , namedParameterBundle, PropertyNames::Misc::productId) {
 
-   this->setEitherOrReqParams<MassOrVolumeAmt>(namedParameterBundle, PropertyNames::Misc::amount, PropertyNames::Misc::amountIsWeight, PropertyNames::Misc::amountWithUnits, this->m_amount, this->m_amountIsWeight);
-
+   this->setEitherOrReqParams<MassOrVolumeAmt>(namedParameterBundle,
+                                               PropertyNames::Misc::amount,
+                                               PropertyNames::Misc::amountIsWeight,
+                                               PropertyNames::Misc::amountWithUnits,
+                                               this->m_amount,
+                                               this->m_amountIsWeight);
    return;
 }
 

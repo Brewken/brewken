@@ -54,10 +54,10 @@ StepExtended::StepExtended(QString name) :
 }
 
 StepExtended::StepExtended(NamedParameterBundle const & namedParameterBundle) :
-   Step             (namedParameterBundle                                                                         ),
-   m_startTemp_c    (namedParameterBundle.val<std::optional<double>>(PropertyNames::StepExtended::startTemp_c    )),
-   m_startGravity_sg(namedParameterBundle.val<std::optional<double>>(PropertyNames::StepExtended::startGravity_sg)),
-   m_endGravity_sg  (namedParameterBundle.val<std::optional<double>>(PropertyNames::StepExtended::endGravity_sg  )) {
+   Step             (namedParameterBundle                                                                     ),
+   SET_REGULAR_FROM_NPB (m_startTemp_c    , namedParameterBundle, PropertyNames::StepExtended::startTemp_c    ),
+   SET_REGULAR_FROM_NPB (m_startGravity_sg, namedParameterBundle, PropertyNames::StepExtended::startGravity_sg),
+   SET_REGULAR_FROM_NPB (m_endGravity_sg  , namedParameterBundle, PropertyNames::StepExtended::endGravity_sg  ) {
    return;
 }
 

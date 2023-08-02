@@ -123,7 +123,7 @@ namespace {
             queryStringAsStream << " " << getDatabaseNativeTypeName(database, fieldDefn.fieldType);
          }
       }
-      queryStringAsStream << "\n)" << database.getCreateTableCoda() << ";";
+      queryStringAsStream << "\n);";
 
       qDebug().noquote() << Q_FUNC_INFO << "Table creation: " << queryString;
 

@@ -98,12 +98,12 @@ MashStep::MashStep(QString name) :
 
 MashStep::MashStep(NamedParameterBundle const & namedParameterBundle) :
    Step                    (namedParameterBundle                                                                           ),
-   m_type                  (namedParameterBundle.val<MashStep::Type       >(PropertyNames::MashStep::type                  )),
-   m_amount_l              (namedParameterBundle.val<double               >(PropertyNames::MashStep::amount_l              , 0.0)),
-   m_stepTemp_c            (namedParameterBundle.val<double               >(PropertyNames::MashStep::stepTemp_c            )),
-   m_infuseTemp_c          (namedParameterBundle.val<std::optional<double>>(PropertyNames::MashStep::infuseTemp_c          )),
+   SET_REGULAR_FROM_NPB (m_type                  , namedParameterBundle, PropertyNames::MashStep::type                  ),
+   SET_REGULAR_FROM_NPB (m_amount_l              , namedParameterBundle, PropertyNames::MashStep::amount_l              , 0.0),
+   SET_REGULAR_FROM_NPB (m_stepTemp_c            , namedParameterBundle, PropertyNames::MashStep::stepTemp_c            ),
+   SET_REGULAR_FROM_NPB (m_infuseTemp_c          , namedParameterBundle, PropertyNames::MashStep::infuseTemp_c          ),
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   m_liquorToGristRatio_lKg(namedParameterBundle.val<std::optional<double>>(PropertyNames::MashStep::liquorToGristRatio_lKg)) {
+   SET_REGULAR_FROM_NPB (m_liquorToGristRatio_lKg, namedParameterBundle, PropertyNames::MashStep::liquorToGristRatio_lKg) {
    //
    // If we were constructed from BeerXML, it will have set decoctionAmount_l or infuseAmount_l instead of amount_l
    //

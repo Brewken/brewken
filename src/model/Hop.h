@@ -37,9 +37,9 @@
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Hop { BtStringConst const property{#property}; }
 AddPropertyName(alpha_pct            )
-AddPropertyName(amount               ) // Deprecated - moved to RecipeAdditionHop
-AddPropertyName(amountIsWeight       ) // Deprecated - moved to RecipeAdditionHop
-AddPropertyName(amountWithUnits      ) // Deprecated - moved to RecipeAdditionHop
+AddPropertyName(amount               ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
+AddPropertyName(amountIsWeight       ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
+AddPropertyName(amountWithUnits      ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 AddPropertyName(beta_pct             )
 AddPropertyName(b_pinene_pct         )
 AddPropertyName(caryophyllene_pct    )

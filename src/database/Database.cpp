@@ -95,8 +95,11 @@ namespace {
    // SQLite actually lets you store any type in any column, and only offers five "affinities" for "the recommended
    // type for data stored in a column".   There are no special types for boolean or date.  However, it also allows you
    // to use traditional SQL type names in create table statements etc (and does the mapping down to the affinities
-   // under the hood) and retains those names when you're browsing the database   We therefore use those traditional
+   // under the hood) and retains those names when you're browsing the database.   We therefore use those traditional
    // SQL typenames here as it makes the intent clearer for anyone looking directly at the database.
+   //
+   // NOTE HOWEVER, using BOOLEAN as a column type on a table in SQLite precludes us from creating that table as a
+   // "STRICT Table" (see https://www.sqlite.org/stricttables.html).
    //
    // PostgreSQL is the other extreme and has all sorts of specialised types (including for networking addresses,
    // geometric shapes and XML).  We need only a small subset of these.
@@ -116,11 +119,6 @@ namespace {
    DbNativeVariants const nativeIntPrimaryKeyDeclaration {
       "INTEGER PRIMARY KEY", // SQLite
       "SERIAL PRIMARY KEY"   // PostgreSQL
-   };
-
-   DbNativeVariants const createTableCoda {
-      " STRICT", // SQLite
-      ""         // PostgreSQL
    };
 
    DbNativeVariants const sqlToAddColumnAsForeignKey {
@@ -1094,10 +1092,6 @@ template char const * Database::getDbNativeTypeName<QDate>() const;
 
 char const * Database::getDbNativePrimaryKeyDeclaration() const {
    return getDbNativeName(nativeIntPrimaryKeyDeclaration, this->pimpl->dbType);
-}
-
-char const * Database::getCreateTableCoda() const {
-   return getDbNativeName(createTableCoda, this->pimpl->dbType);
 }
 
 char const * Database::getSqlToAddColumnAsForeignKey() const {

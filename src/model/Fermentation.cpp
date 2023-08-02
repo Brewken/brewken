@@ -60,8 +60,8 @@ Fermentation::Fermentation(QString name) :
 Fermentation::Fermentation(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity                {namedParameterBundle},
    StepOwnerBase<Fermentation, FermentationStep>{},
-   m_description  {namedParameterBundle.val<QString              >(PropertyNames::Fermentation::description  )},
-   m_notes        {namedParameterBundle.val<QString              >(PropertyNames::Fermentation::notes        )} {
+   SET_REGULAR_FROM_NPB (m_description  , namedParameterBundle, PropertyNames::Fermentation::description  ),
+   SET_REGULAR_FROM_NPB (m_notes        , namedParameterBundle, PropertyNames::Fermentation::notes        ) {
    return;
 }
 

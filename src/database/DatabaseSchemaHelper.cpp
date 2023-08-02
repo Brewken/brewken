@@ -565,7 +565,7 @@ namespace {
             "pre_boil_size_l" " " << db.getDbNativeTypeName<double>()      << ", "
             "boil_Time_mins"  " " << db.getDbNativeTypeName<double>()      << ", "
             "temp_recipe_id"  " " << db.getDbNativeTypeName<int>()         <<
-         ")" << db.getCreateTableCoda() << ";";
+         ");";
 
       QString createBoilStepSql;
       QTextStream createBoilStepSqlStream(&createBoilStepSql);
@@ -588,7 +588,7 @@ namespace {
             "end_gravity_sg"   " " << db.getDbNativeTypeName<double>()      << ", "
             "chilling_type"    " " << db.getDbNativeTypeName<QString>()     << ", "
             "FOREIGN KEY(boil_id) REFERENCES boil(id)" <<
-         ")" << db.getCreateTableCoda() << ";";
+         ");";
 
       QString createFermentationSql;
       QTextStream createFermentationSqlStream(&createFermentationSql);
@@ -602,7 +602,7 @@ namespace {
             "description"     " " << db.getDbNativeTypeName<QString>()     << ", "
             "notes"           " " << db.getDbNativeTypeName<QString>()     << ", "
             "temp_recipe_id"  " " << db.getDbNativeTypeName<int>()         <<
-         ")" << db.getCreateTableCoda() << ";";
+         ");";
 
       QString createFermentationStepSql;
       QTextStream createFermentationStepSqlStream(&createFermentationStepSql);
@@ -625,7 +625,7 @@ namespace {
             "end_gravity_sg"   " " << db.getDbNativeTypeName<double>()      << ", "
             "vessel"           " " << db.getDbNativeTypeName<QString>()     << ", "
             "FOREIGN KEY(fermentation_id) REFERENCES fermentation(id)" <<
-         ")" << db.getCreateTableCoda() << ";";
+         ");";
 
       QVector<QueryAndParameters> const migrationQueries{
          //

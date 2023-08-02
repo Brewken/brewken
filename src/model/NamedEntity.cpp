@@ -60,24 +60,24 @@ NamedEntity::NamedEntity(QString t_name, bool t_display, QString folder) :
 //
 NamedEntity::NamedEntity(NamedParameterBundle const & namedParameterBundle) :
    QObject        {nullptr},
-   m_key          {namedParameterBundle.val(PropertyNames::NamedEntity::key,       -1       )},
-   parentKey      {namedParameterBundle.val(PropertyNames::NamedEntity::parentKey, -1       )},
-   m_folder       {namedParameterBundle.val(PropertyNames::NamedEntity::folder,    QString{})},
-   m_name         {namedParameterBundle.val(PropertyNames::NamedEntity::name,      QString{})},
-   m_display      {namedParameterBundle.val(PropertyNames::NamedEntity::display,   true     )},
-   m_deleted      {namedParameterBundle.val(PropertyNames::NamedEntity::deleted,   false    )},
+   SET_REGULAR_FROM_NPB (m_key    , namedParameterBundle, PropertyNames::NamedEntity::key,       -1       ),
+   SET_REGULAR_FROM_NPB (parentKey, namedParameterBundle, PropertyNames::NamedEntity::parentKey, -1       ),
+   SET_REGULAR_FROM_NPB (m_folder , namedParameterBundle, PropertyNames::NamedEntity::folder,    QString{}),
+   SET_REGULAR_FROM_NPB (m_name   , namedParameterBundle, PropertyNames::NamedEntity::name,      QString{}),
+   SET_REGULAR_FROM_NPB (m_display, namedParameterBundle, PropertyNames::NamedEntity::display,   true     ),
+   SET_REGULAR_FROM_NPB (m_deleted, namedParameterBundle, PropertyNames::NamedEntity::deleted,   false    ),
    m_beingModified{false} {
    return;
 }
 
 NamedEntity::NamedEntity(NamedEntity const & other) :
-   QObject     {nullptr        }, // QObject doesn't have a copy constructor, so just make a new one
-   m_key       {-1             }, // We don't want to copy the other object's key/ID
-   parentKey   {other.parentKey},
-   m_folder    {other.m_folder },
-   m_name      {other.m_name   },
-   m_display   {other.m_display},
-   m_deleted   {other.m_deleted},
+   QObject        {nullptr        }, // QObject doesn't have a copy constructor, so just make a new one
+   m_key          {-1             }, // We don't want to copy the other object's key/ID
+   parentKey      {other.parentKey},
+   m_folder       {other.m_folder },
+   m_name         {other.m_name   },
+   m_display      {other.m_display},
+   m_deleted      {other.m_deleted},
    m_beingModified{false} {
    return;
 }

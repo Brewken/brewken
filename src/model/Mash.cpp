@@ -90,14 +90,14 @@ Mash::Mash(QString name) :
 Mash::Mash(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity                {namedParameterBundle},
    StepOwnerBase<Mash, MashStep>{},
-   m_grainTemp_c              {namedParameterBundle.val<double >(PropertyNames::Mash::grainTemp_c          )},
-   m_notes                    {namedParameterBundle.val<QString>(PropertyNames::Mash::notes                )},
-   m_tunTemp_c                {namedParameterBundle.val<double >(PropertyNames::Mash::tunTemp_c            )},
-   m_spargeTemp_c             {namedParameterBundle.val<double >(PropertyNames::Mash::spargeTemp_c         )},
-   m_ph                       {namedParameterBundle.val<double >(PropertyNames::Mash::ph                   )},
-   m_mashTunWeight_kg         {namedParameterBundle.val<double >(PropertyNames::Mash::mashTunWeight_kg         )},
-   m_mashTunSpecificHeat_calGC{namedParameterBundle.val<double >(PropertyNames::Mash::mashTunSpecificHeat_calGC)},
-   m_equipAdjust              {namedParameterBundle.val<bool   >(PropertyNames::Mash::equipAdjust          )} {
+   SET_REGULAR_FROM_NPB (m_grainTemp_c              , namedParameterBundle, PropertyNames::Mash::grainTemp_c              ),
+   SET_REGULAR_FROM_NPB (m_notes                    , namedParameterBundle, PropertyNames::Mash::notes                    ),
+   SET_REGULAR_FROM_NPB (m_tunTemp_c                , namedParameterBundle, PropertyNames::Mash::tunTemp_c                ),
+   SET_REGULAR_FROM_NPB (m_spargeTemp_c             , namedParameterBundle, PropertyNames::Mash::spargeTemp_c             ),
+   SET_REGULAR_FROM_NPB (m_ph                       , namedParameterBundle, PropertyNames::Mash::ph                       ),
+   SET_REGULAR_FROM_NPB (m_mashTunWeight_kg         , namedParameterBundle, PropertyNames::Mash::mashTunWeight_kg         ),
+   SET_REGULAR_FROM_NPB (m_mashTunSpecificHeat_calGC, namedParameterBundle, PropertyNames::Mash::mashTunSpecificHeat_calGC),
+   SET_REGULAR_FROM_NPB (m_equipAdjust              , namedParameterBundle, PropertyNames::Mash::equipAdjust              ) {
    return;
 }
 

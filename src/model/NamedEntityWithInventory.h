@@ -37,6 +37,14 @@ AddPropertyName(inventoryWithUnits)
  * \brief Extends \c NamedEntity to provide functionality for storing in Inventory
  *
  *        .:TBD:. Should we combine with amount?  But what about Salt?
+ *
+ *        We have two places we need to measure things: inventory and recipe additions.  Measurements are:
+ *
+ *           - By volume for water
+ *           - By mass or volume for Fermentable, Hop
+ *           - By mass, volume or count for Misc, Yeast
+ *
+ *           - By mass for salt, though NB BeerJSON does not support salt
  */
 class NamedEntityWithInventory : public NamedEntity {
    Q_OBJECT

@@ -67,18 +67,10 @@ public:
    NamedParameterBundle(OperationMode mode = Strict);
    ~NamedParameterBundle();
 
-///   /**
-///    * \brief Override of \c insert to support \c BtStringConst
-///    */
    void insert(BtStringConst const & propertyName, QVariant const & value);
 
    void insert(PropertyPath  const & propertyPath, QVariant const & value);
 
-///   using QHash<QString, QVariant>::contains;
-
-///   /**
-///    * \brief Overload of QHash<QString, QVariant>::contains to support passing \c BtStringConst
-///    */
    bool contains(BtStringConst const & propertyName) const;
 
    bool contains(PropertyPath  const & propertyPath) const;
@@ -160,5 +152,56 @@ private:
    OperationMode m_mode;
    std::map<QString, NamedParameterBundle> m_containedBundles;
 };
+
+
+//
+// In that past, in a constructor's member initializer list, we would put things along the lines of:
+//
+//     m_foobar{namedParameterBundle.val<double>(PropertyNames::Hop::foobar)}
+//
+// But this creates a subtle bug if, eg, m_foobar of type std::optional<double> instead of double.  So, it's safer to
+// write:
+//
+//     m_foobar{namedParameterBundle.val<decltype(m_foobar)>(PropertyNames::Hop::foobar)}
+//
+// But this is a bit clunky, and we have to refer to the member variable twice.
+//
+// So, now we use the macros below.
+//
+
+/**
+ * \brief In a constructor's member initializer list, instead of writing:
+ *
+ *           m_alpha_pct{namedParameterBundle.val<decltype(m_alpha_pct)>(PropertyNames::Hop::alpha_pct)}
+ *
+ *        this lets us write:
+ *
+ *           SET_REGULAR_FROM_NPB(m_alpha_pct, namedParameterBundle, PropertyNames::Hop::alpha_pct)
+ *
+ *        Similarly, instead of:
+ *
+ *           m_boilingPoint_c{namedParameterBundle.val<decltype(m_boilingPoint_c)>(PropertyNames::Equipment::boilingPoint_c, 100.0)}
+ *
+ *        we can write:
+ *
+ *           SET_REGULAR_FROM_NPB(m_boilingPoint_c, namedParameterBundle, PropertyNames::Equipment::boilingPoint_c, 100.0)
+ *
+ */
+#define SET_REGULAR_FROM_NPB(MemberVariable, NamedParameterBundle, PropertyName, ...) \
+   MemberVariable{NamedParameterBundle.val<decltype(MemberVariable)>(PropertyName __VA_OPT__(, __VA_ARGS__))}
+
+/**
+ * \brief In a constructor's member initializer list, instead of writing:
+ *
+ *           m_form{namedParameterBundle.optEnumVal<Hop::Form>(PropertyNames::Hop::form)}
+ *
+ *        this lets us write:
+ *
+ *           SET_OPT_ENUM_FROM_NPB(m_form, Hop::Form, namedParameterBundle, PropertyNames::Hop::form)
+ *
+ *        It doesn't save us anything, but it's neater next to SET_REGULAR_FROM_NPB
+ */
+#define SET_OPT_ENUM_FROM_NPB(MemberVariable, VariableType, NamedParameterBundle, PropertyName) \
+   MemberVariable{NamedParameterBundle.optEnumVal<VariableType>(PropertyName)}
 
 #endif
