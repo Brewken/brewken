@@ -66,6 +66,9 @@ namespace {
     * \brief This is used to assist the creation of instructions.
     */
    struct PreInstruction {
+      PreInstruction(QString text, QString title, double  time) : text{text}, title{title}, time{time} { return; }
+      ~PreInstruction() = default;
+
       QString text;
       QString title;
       double  time;

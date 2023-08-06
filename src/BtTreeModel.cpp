@@ -399,9 +399,12 @@ QVariant BtTreeModel::hopHeader(int section) const {
       case BtTreeItem::HopColumn::Form:
          return QVariant(tr("Type"));
       case BtTreeItem::HopColumn::AlphaPct:
-         return QVariant(tr("\% Alpha"));
+         return QVariant(tr("% Alpha"));
       case BtTreeItem::HopColumn::Origin:
          return QVariant(tr("Origin"));
+      case BtTreeItem::HopColumn::NumberOfColumns:
+         // This shouldn't be passed in.  Drop through to warning log below (outside switch).
+         break;
    }
 
    qWarning() << QString("BtTreeModel::getHopHeader Bad column: %1").arg(section);

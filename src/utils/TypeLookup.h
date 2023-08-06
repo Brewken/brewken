@@ -17,6 +17,7 @@
 #define UTILS_TYPELOOKUP_H
 #pragma once
 
+#include <concepts>
 #include <map>
 #include <optional>
 #include <typeindex>
