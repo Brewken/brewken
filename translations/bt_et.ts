@@ -64,36 +64,21 @@
     </message>
 </context>
 <context>
-    <name>Base</name>
-    <message>
-        <source>Leaf</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pellet</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Plug</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Extract</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>WetLeaf</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Powder</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Boil</name>
     <message>
         <source>Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pre-boil for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Main boil for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post-boil for %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -584,6 +569,14 @@
         <source>pH</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>%% Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Origin</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BtTreeView</name>
@@ -828,19 +821,29 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>About to upgrade database schema from v %1 to v %2.</source>
+        <source>Software Upgraded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Click OK to continue (or Abort to close the program without upgrading)</source>
+        <source>Before continuing, %1 %2 needs to upgrade your database schema (from v%3 to v%4).
+</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The upgrade should retain all your existing data.  Nonetheless, we advise you to make a manual backup of your PostgreSQL database just in case.  If you didn&apos;t already do this, click Abort.</source>
+        <source>DON&apos;T PANIC: Your existing data will be retained!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>A backup of your SQLite database is in the directory %1</source>
+        <source>The upgrade should retain all your existing data.
+
+Even so, it&apos;s a good idea to make a manual backup of your PostgreSQL database just in case.
+
+If you didn&apos;t yet do this, click Abort.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pre-upgrade database backup is in: 
+%1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1147,23 +1150,7 @@ Log file may contain more details.</source>
 <context>
     <name>Hop</name>
     <message>
-        <source>Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>First Wort</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Aroma</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dry Hop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1191,11 +1178,31 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Post-Boil</source>
+        <source>Hop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Hop</source>
+        <source>Leaf</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pellet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>WetLeaf</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Powder</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2241,10 +2248,6 @@ Error message:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Failed to update the database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error attempting to create directory &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2599,10 +2602,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Array</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Date</source>
         <translation type="unfinished">Kuupäev</translation>
     </message>
@@ -2807,11 +2806,19 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>RecordSimple</source>
+        <source>Failed to update the database.
+
+See log file for details.
+
+Program will now exit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>RecordComplex</source>
+        <source>Record</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ListOfRecords</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3132,6 +3139,26 @@ The final volume in the primary is %1.</source>
     <name>RecipeAdditionHop</name>
     <message>
         <source>Hop Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>First Wort</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post-Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dry Hop</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5040,10 +5067,6 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Alpha acids as percent by mass</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

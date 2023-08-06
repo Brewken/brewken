@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * sortFilterProxyModels/BtTreeFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * sortFilterProxyModels/BtTreeFilterProxyModel.cpp is part of Brewken, and is copyright the following authors
+ * 2009-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -104,15 +105,19 @@ namespace {
                                  [[maybe_unused]] QModelIndex const & right,
                                  Hop * lhs,
                                  Hop * rhs) {
-      switch (left.column()) {
-         case BtTreeItem::HOPNAMECOL:
+      switch (static_cast<BtTreeItem::HopColumn>(left.column())) {
+         case BtTreeItem::HopColumn::Name:
             return lhs->name() < rhs->name();
-         case BtTreeItem::HOPFORMCOL:
+         case BtTreeItem::HopColumn::Form:
             return lhs->form() < rhs->form();
-         case BtTreeItem::HOPUSECOL:
-            return lhs->use() < rhs->use();
+         case BtTreeItem::HopColumn::AlphaPct:
+            return lhs->alpha_pct() < rhs->alpha_pct();
+         case BtTreeItem::HopColumn::Origin:
+            return lhs->origin() < rhs->origin();
+         default:
+            return lhs->name() < rhs->name();
       }
-      return lhs->name() < rhs->name();
+      // Unreachable
    }
 
    template<> bool lessThan<Misc>([[maybe_unused]] BtTreeModel * model,

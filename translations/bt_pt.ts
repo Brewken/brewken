@@ -67,33 +67,25 @@
     <name>Base</name>
     <message>
         <source>Leaf</source>
-        <translation type="unfinished">Folha</translation>
-    </message>
-    <message>
-        <source>Pellet</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Plug</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Extract</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>WetLeaf</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Powder</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Folha</translation>
     </message>
 </context>
 <context>
     <name>Boil</name>
     <message>
         <source>Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pre-boil for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Main boil for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post-boil for %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -777,6 +769,14 @@
         <source>pH</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>%% Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Origin</source>
+        <translation type="unfinished">Origem</translation>
+    </message>
 </context>
 <context>
     <name>BtTreeView</name>
@@ -1021,19 +1021,29 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>About to upgrade database schema from v %1 to v %2.</source>
+        <source>Software Upgraded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Click OK to continue (or Abort to close the program without upgrading)</source>
+        <source>Before continuing, %1 %2 needs to upgrade your database schema (from v%3 to v%4).
+</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The upgrade should retain all your existing data.  Nonetheless, we advise you to make a manual backup of your PostgreSQL database just in case.  If you didn&apos;t already do this, click Abort.</source>
+        <source>DON&apos;T PANIC: Your existing data will be retained!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>A backup of your SQLite database is in the directory %1</source>
+        <source>The upgrade should retain all your existing data.
+
+Even so, it&apos;s a good idea to make a manual backup of your PostgreSQL database just in case.
+
+If you didn&apos;t yet do this, click Abort.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pre-upgrade database backup is in: 
+%1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1606,15 +1616,15 @@ Log file may contain more details.</source>
     <name>Hop</name>
     <message>
         <source>Mash</source>
-        <translation>Mosto</translation>
+        <translation type="vanished">Mosto</translation>
     </message>
     <message>
         <source>First Wort</source>
-        <translation>Primeiro mosto</translation>
+        <translation type="vanished">Primeiro mosto</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Ferver</translation>
+        <translation type="vanished">Ferver</translation>
     </message>
     <message>
         <source>Aroma</source>
@@ -1622,7 +1632,7 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Dry Hop</source>
-        <translation>Lúpulo Seco</translation>
+        <translation type="vanished">Lúpulo Seco</translation>
     </message>
     <message>
         <source>Bittering</source>
@@ -1634,15 +1644,15 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Leaf</source>
-        <translation type="vanished">Folha</translation>
+        <translation>Folha</translation>
     </message>
     <message>
         <source>Pellet</source>
-        <translation type="vanished">Pastilha</translation>
+        <translation>Pastilha</translation>
     </message>
     <message>
         <source>Plug</source>
-        <translation type="vanished">Plugue</translation>
+        <translation>Plugue</translation>
     </message>
     <message>
         <source>Flavor</source>
@@ -1665,12 +1675,20 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Post-Boil</source>
+        <source>Hop</source>
+        <translation type="unfinished">Lúpulo</translation>
+    </message>
+    <message>
+        <source>Extract</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Hop</source>
-        <translation type="unfinished">Lúpulo</translation>
+        <source>WetLeaf</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Powder</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3136,7 +3154,7 @@ Error message:
     </message>
     <message>
         <source>Failed to update the database</source>
-        <translation>Falha ao atualizar banco de dados</translation>
+        <translation type="vanished">Falha ao atualizar banco de dados</translation>
     </message>
     <message>
         <source>Error attempting to create directory &quot;%1&quot;</source>
@@ -3513,10 +3531,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Array</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Date</source>
         <translation type="unfinished">Data</translation>
     </message>
@@ -3745,11 +3759,19 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>RecordSimple</source>
+        <source>Failed to update the database.
+
+See log file for details.
+
+Program will now exit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>RecordComplex</source>
+        <source>Record</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ListOfRecords</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4077,6 +4099,26 @@ O volume final do fermentador primário é %1.</translation>
     <name>RecipeAdditionHop</name>
     <message>
         <source>Hop Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished">Mosto</translation>
+    </message>
+    <message>
+        <source>First Wort</source>
+        <translation type="unfinished">Primeiro mosto</translation>
+    </message>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post-Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dry Hop</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6347,7 +6389,7 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Use</source>
-        <translation>Uso</translation>
+        <translation type="vanished">Uso</translation>
     </message>
     <message>
         <source>Mash</source>

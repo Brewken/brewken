@@ -72,21 +72,6 @@ EnumStringMapping const Hop::typeDisplayNames {
 };
 
 
-EnumStringMapping const Hop::useStringMapping {
-   {Hop::Use::Mash      , "Mash"      },
-   {Hop::Use::First_Wort, "First Wort"},
-   {Hop::Use::Boil      , "Boil"      },
-   {Hop::Use::Aroma     , "Aroma"     },
-   {Hop::Use::Dry_Hop   , "Dry Hop"   },
-};
-
-EnumStringMapping const Hop::useDisplayNames {
-   {Hop::Use::Mash      , tr("Mash"      )},
-   {Hop::Use::First_Wort, tr("First Wort")},
-   {Hop::Use::Boil      , tr("Boil"      )},
-   {Hop::Use::Aroma     , tr("Post-Boil" )},
-   {Hop::Use::Dry_Hop   , tr("Dry Hop"   )},
-};
 
 bool Hop::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -97,7 +82,7 @@ bool Hop::isEqualTo(NamedEntity const & other) const {
       this->m_form                  == rhs.m_form                  &&
       this->m_beta_pct              == rhs.m_beta_pct              &&
       this->m_origin                == rhs.m_origin                &&
-      this->m_use                   == rhs.m_use                   &&
+///      this->m_use                   == rhs.m_use                   &&
       this->m_type                  == rhs.m_type                  &&
       this->m_hsi_pct               == rhs.m_hsi_pct               &&
       this->m_humulene_pct          == rhs.m_humulene_pct          &&
@@ -132,7 +117,7 @@ TypeLookup const Hop::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::form                 , Hop::m_form                 ,           NonPhysicalQuantity::Enum         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::beta_pct             , Hop::m_beta_pct             ,           NonPhysicalQuantity::Percentage   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::origin               , Hop::m_origin               ,           NonPhysicalQuantity::String       ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::use                  , Hop::m_use                  ,           NonPhysicalQuantity::Enum         ),
+///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::use                  , Hop::m_use                  ,           NonPhysicalQuantity::Enum         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::type                 , Hop::m_type                 ,           NonPhysicalQuantity::Enum         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amount               , Hop::m_amount               , Measurement::PqEitherMassOrVolume           ), // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amountIsWeight       , Hop::m_amountIsWeight       ,           NonPhysicalQuantity::Bool         ), // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
@@ -170,7 +155,7 @@ Hop::Hop(QString name) :
    m_form                 {std::nullopt},
    m_beta_pct             {std::nullopt},
    m_origin               {""          },
-   m_use                  {std::nullopt},
+///   m_use                  {std::nullopt},
    m_type                 {std::nullopt},
    m_time_min             {0.0         },
    m_notes                {""          },
@@ -203,7 +188,7 @@ Hop::Hop(NamedParameterBundle const & namedParameterBundle) :
    SET_OPT_ENUM_FROM_NPB(m_form      , Hop::Form, namedParameterBundle, PropertyNames::Hop::form                 ),
    SET_REGULAR_FROM_NPB (m_beta_pct             , namedParameterBundle, PropertyNames::Hop::beta_pct             ),
    SET_REGULAR_FROM_NPB (m_origin               , namedParameterBundle, PropertyNames::Hop::origin               ),
-   SET_OPT_ENUM_FROM_NPB(m_use       , Hop::Use , namedParameterBundle, PropertyNames::Hop::use                  ),
+///   SET_OPT_ENUM_FROM_NPB(m_use       , Hop::Use , namedParameterBundle, PropertyNames::Hop::use                  ),
    SET_OPT_ENUM_FROM_NPB(m_type      , Hop::Type, namedParameterBundle, PropertyNames::Hop::type                 ),
    SET_REGULAR_FROM_NPB (m_time_min             , namedParameterBundle, PropertyNames::Hop::time_min             ),
    SET_REGULAR_FROM_NPB (m_notes                , namedParameterBundle, PropertyNames::Hop::notes                ),
@@ -236,7 +221,7 @@ Hop::Hop(Hop const & other) :
    m_form                  {other.m_form                 },
    m_beta_pct              {other.m_beta_pct             },
    m_origin                {other.m_origin               },
-   m_use                   {other.m_use                  },
+///   m_use                   {other.m_use                  },
    m_type                  {other.m_type                 },
    m_time_min              {other.m_time_min             },
    m_notes                 {other.m_notes                },
@@ -273,8 +258,6 @@ std::optional<double>    Hop::beta_pct             () const { return this->m_bet
 QString                  Hop::origin               () const { return this->m_origin               ; }
 double                   Hop::amount               () const { return this->m_amount               ; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 bool                     Hop::amountIsWeight       () const { return this->m_amountIsWeight       ; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
-std::optional<Hop::Use>  Hop::use                  () const { return this->m_use                  ; }
-std::optional<int>       Hop::useAsInt             () const { return Optional::toOptInt(m_use)    ; }
 double                   Hop::time_min             () const { return this->m_time_min             ; }
 QString                  Hop::notes                () const { return this->m_notes                ; }
 std::optional<Hop::Type> Hop::type                 () const { return this->m_type                 ; }
@@ -309,8 +292,6 @@ void Hop::setOrigin               (QString                  const & val) { this-
 void Hop::setAmount               (double                   const   val) { this->setAndNotify(PropertyNames::Hop::amount               , this->m_amount               , this->enforceMin(val, "amount")                 ); return; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 void Hop::setAmountIsWeight       (bool                     const   val) { this->setAndNotify(PropertyNames::Hop::amountIsWeight       , this->m_amountIsWeight       , val); return; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 
-void Hop::setUse                  (std::optional<Hop::Use>  const   val) { this->setAndNotify(PropertyNames::Hop::use                  , this->m_use                  , val                                                             ); return; }
-void Hop::setUseAsInt             (std::optional<int>       const   val) { this->setAndNotify(PropertyNames::Hop::use                  , this->m_use                  , Optional::fromOptInt<Use>(val));                                   return; }
 void Hop::setTime_min             (double                   const   val) { this->setAndNotify(PropertyNames::Hop::time_min             , this->m_time_min             , this->enforceMin      (val, "time")                             ); return; }
 void Hop::setNotes                (QString                  const & val) { this->setAndNotify(PropertyNames::Hop::notes                , this->m_notes                , val                                                             ); return; }
 void Hop::setType                 (std::optional<Hop::Type> const   val) { this->setAndNotify(PropertyNames::Hop::type                 , this->m_type                 , val                                                             ); return; }

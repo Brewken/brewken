@@ -110,11 +110,15 @@ public:
     * \brief Export to XML
     * \param namedEntityToExport The object that we want to export to XML
     * \param out Where to write the XML
+    * \param includeRecordNameTags Normally this should be \c true but, when we're writing a sub-record as though it
+    *                              were part of the main records (eg RecipeAdditionHop::hop) then we don't want its
+    *                              fields to be enclosed in another tag pair
     * \param indentLevel Current number of indents to put before each opening tag (default 1)
     * \param indentString String to use for each indent (default two spaces)
     */
    void toXml(NamedEntity const & namedEntityToExport,
               QTextStream & out,
+              bool const includeRecordNameTags,
               int indentLevel = 1,
               char const * const indentString = "  ") const;
 

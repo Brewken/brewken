@@ -82,11 +82,11 @@
 // And, of course, the DOM specifications in particular are intentionally quite broad because DOM is a
 // programming-language-neutral API specification for APIs for accessing both XML and HTML documents.
 //
-// All of this mostly does not prevent you doing things as you can just copy-and-paste example code, and if you hit
-// a problem there's a good chance you can find how someone else already solved it by searching on Stackoverflow
-// etc.  Nonetheless, you do sometimes need to do a bit of research to understand what's going on and what your
-// options are.  We try to include such explanations in comments, which is partly why they are a bit more
-// substantial than in some other areas of the code base.
+// All of this mostly does not prevent you doing things as you can just copy-and-paste example code, and if you hit a
+// problem there's a good chance you can find how someone else already solved it by searching on Stackoverflow etc.
+// Nonetheless, you do sometimes need to do a bit of research to understand what's going on and what your options are.
+// We try to include such explanations in comments, which is partly why they are a bit more substantial than in some
+// other areas of the code base.
 //
 // Like Xerces, Xalan is pretty tried-and-tested, but there's a bit more of a learning curve as the documentation isn't
 // quite as good as that of Xerces.  Fortunately, a lot of the basics are very similar to Xerces and we're not actually
@@ -106,12 +106,12 @@ public:
    impl(XmlCoding & self,
         QString const name,
         QString const schemaResource,
-        std::initializer_list<XmlRecordDefinition> xmlRecordDefinitions) :
+        XmlRecordDefinition const & rootRecordDefinition) :
       m_self{self},
       m_initialised{false},
       m_name{name},
       m_schemaResource{schemaResource},
-      m_xmlRecordDefinitions{xmlRecordDefinitions},
+      m_rootRecordDefinition{rootRecordDefinition},
     // grammarPool(xercesc::XMLPlatformUtils::fgMemoryManager),
       m_domImplementation{nullptr},
       m_parser{nullptr} {
@@ -344,7 +344,6 @@ public:
    /**
     * \brief Validate XML file against schema, then call other functions to load its contents and store them in the DB
     *
-    * \param xmlCoding Back pointer to the containing class
     * \param documentData The contents of the XML file, which the caller should already have loaded into memory
     * \param fileName Used only for logging / error message
     * \param domErrorHandler The rules for handling any errors encountered in the file - in particular which errors
@@ -358,8 +357,7 @@ public:
     * \return true if file validated OK (including if there were "errors" that we can safely ignore)
     *         false if there was a problem that means it's not worth trying to read in the data from the file
     */
-   bool validateLoadAndStoreInDb(XmlCoding const * xmlCoding,
-                                 QByteArray const & documentData,
+   bool validateLoadAndStoreInDb(QByteArray const & documentData,
                                  QString const & fileName,
                                  BtDomErrorHandler & domErrorHandler,
                                  QTextStream & userMessage) {
@@ -420,7 +418,7 @@ public:
          }
 
          // If we got this far, the validation has succeeded, and we can now proceed to loading
-         return this->loadValidated(xmlCoding, domDocumentOwner.getDomDocument(), userMessage);
+         return this->loadValidated(domDocumentOwner.getDomDocument(), userMessage);
 
       } catch(const std::exception& se) {
          qCritical() << Q_FUNC_INFO << "Caught std::exception: " << se.what();
@@ -452,7 +450,6 @@ public:
    /**
     * \brief Read data in from a validated & loaded XML file
     *
-    * \param xmlCoding Back pointer to the containing class
     * \param domDocument Pointer to the Xerces document created by loading and validating the XML file.  Caller owns
     *                    the Xerces document and is responsible for releasing its resources (after this function
     *                    returns).
@@ -462,7 +459,7 @@ public:
     * \return true if file validated OK (including if there were "errors" that we can safely ignore)
     *         false if there was a problem that means it's not worth trying to read in the data from the file
     */
-   bool loadValidated(XmlCoding const * xmlCoding, xercesc::DOMDocument * domDocument, QTextStream & userMessage) {
+   bool loadValidated(xercesc::DOMDocument * domDocument, QTextStream & userMessage) {
 
       //
       // Some of the initial things we're doing here are just as easy to do in Xerces, but it's easiest to start
@@ -494,44 +491,31 @@ public:
          return false;
       }
 
-      return this->loadNormaliseAndStoreInDb(xmlCoding, domSupport, rootNode, userMessage);
+      return this->loadNormaliseAndStoreInDb(domSupport, rootNode, userMessage);
    }
 
 
    /**
     * \brief
-    * \param xmlCoding Back pointer to the containing class
     * \param domSupport
     * \param rootNode root node of document
     * \param userMessage Any message that we want the top-level caller to display to the user (either about an error
     *                    or, in the event of success, summarising what was read in) should be appended to this.
     * \return
     */
-   bool loadNormaliseAndStoreInDb(XmlCoding const * xmlCoding,
-                                  xalanc::DOMSupport & domSupport,
+   bool loadNormaliseAndStoreInDb(xalanc::DOMSupport & domSupport,
                                   xalanc::XalanNode * rootNode,
                                   QTextStream & userMessage) const {
 
       XQString rootNodeName{rootNode->getNodeName()};
       qDebug() << Q_FUNC_INFO << "Processing root node: " << rootNodeName;
 
-      // It's usually a coding error if we don't understand how to process the root node, because it should have been
-      // validated by the XSD.  (In the case of BeerXML, the root node is a manufactured one that we inserted, which is
-      // all the more reason we should know how to process it!)
-      // If asserts are turned off for any reason, we should just abort processing
-      Q_ASSERT(xmlCoding->isKnownXmlRecordType(rootNodeName));
-      if (!xmlCoding->isKnownXmlRecordType(rootNodeName)) {
-         qCritical() << Q_FUNC_INFO << "First node in document (" << rootNodeName << ") was not recognised!";
-         userMessage << XmlCoding::tr("Could not understand file format");
-         return false;
-      }
-
       //
       // Look at the root object first
       //
-      XmlRecordDefinition const & rootDefinition = this->m_self.getRoot();
-      XmlRecord rootRecord{this->m_self, rootDefinition};
-      qDebug() << Q_FUNC_INFO << "Looking at field definitions of root element (" << rootDefinition.m_recordName << ")";
+      XmlRecord rootRecord{this->m_self, this->m_rootRecordDefinition};
+      qDebug() <<
+         Q_FUNC_INFO << "Looking at field definitions of root element (" << this->m_rootRecordDefinition.m_recordName << ")";
 
       ImportRecordCount stats;
 
@@ -551,40 +535,12 @@ public:
       return stats.writeToUserMessage(userMessage);
    }
 
-   /**
-    * \brief For a given named entity class name (eg "Hop", "Yeast", etc) retrieve the corresponding
-    *        \c XmlRecordDefinition
-    * \param recordName must be that of one of the list of \c XmlRecordDefinition object supplied when we were
-    *                   constructed
-    */
-   XmlRecordDefinition const & getXmlRecordDefinitionByNamedEntity(QString const & namedEntityClassName) const {
-   ///   qDebug() <<
-   ///      Q_FUNC_INFO << "Searching for" << namedEntityClassName << "in" << this->m_xmlRecordDefinitions.size() <<
-   ///      "record definitions";
-      auto result = std::find_if(
-         this->m_xmlRecordDefinitions.cbegin(),
-         this->m_xmlRecordDefinitions.cend(),
-         [namedEntityClassName](XmlRecordDefinition const & recordDefn){
-            return recordDefn.m_namedEntityClassName == namedEntityClassName;
-         }
-      );
-      // It's a coding error if we didn't find the requested element (because we should only ever look for elements we know
-      // about!)
-      if (result == this->m_xmlRecordDefinitions.end()) {
-         qCritical() << Q_FUNC_INFO << "Unable to find record definition for" << namedEntityClassName;
-         Q_ASSERT(false);
-         throw std::invalid_argument{"Invalid record definition"};
-      }
-      return *result;
-   }
-
-
-   // Member variables for impl
+   // =========================================== Member variables for impl ============================================
    XmlCoding & m_self;
    bool m_initialised;
    QString const m_name;
    QString const m_schemaResource;
-   QVector<XmlRecordDefinition> const m_xmlRecordDefinitions;
+   XmlRecordDefinition const & m_rootRecordDefinition;
 
    // XMLGrammarPoolImpl is a bit lacking in documentation, probably because it used to be an "internal" class of
    // Xerces.  However, since Xerces 3.0.0 release, it is now part of the public API -- see
@@ -604,8 +560,8 @@ public:
 
 XmlCoding::XmlCoding(QString const name,
                      QString const schemaResource,
-                     std::initializer_list<XmlRecordDefinition> xmlRecordDefinitions) :
-   pimpl{std::make_unique<impl>(*this, name, schemaResource, xmlRecordDefinitions)} {
+                     XmlRecordDefinition const & rootRecordDefinition) :
+   pimpl{std::make_unique<impl>(*this, name, schemaResource, rootRecordDefinition)} {
    // As a general rule, it's not helpful to try to log anything in this constructor as the object will be created
    // before logging has been initialised.
    return;
@@ -614,37 +570,14 @@ XmlCoding::XmlCoding(QString const name,
 // See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the header file)
 XmlCoding::~XmlCoding() = default;
 
-[[nodiscard]] bool XmlCoding::isKnownXmlRecordType(QString recordName) const {
-   // We assert that we have some record definitions!
-   Q_ASSERT(!this->pimpl->m_xmlRecordDefinitions.empty());
-
-   auto result = std::find_if(
-      this->pimpl->m_xmlRecordDefinitions.begin(),
-      this->pimpl->m_xmlRecordDefinitions.end(),
-      [&recordName](XmlRecordDefinition const & recordDefn){return recordDefn.m_recordName == recordName;}
-   );
-   return result != this->pimpl->m_xmlRecordDefinitions.end();
-}
-
-///std::shared_ptr<XmlRecord> XmlCoding::getNewXmlRecord(QString recordName) const {
-///   XmlCoding::XmlRecordConstructorWrapper constructorWrapper =
-///      this->entityNameToXmlRecordDefinition.value(recordName).constructorWrapper;
-///
-///   XmlRecordDefinition::FieldDefinitions const * fieldDefinitions =
-///      this->entityNameToXmlRecordDefinition.value(recordName).fieldDefinitions;
-///
-///   return std::shared_ptr<XmlRecord>(constructorWrapper(recordName, *this, *fieldDefinitions));
-///}
-
 XmlRecordDefinition const & XmlCoding::getRoot() const {
    // The root element is the one with no corresponding named entity
-   return this->pimpl->getXmlRecordDefinitionByNamedEntity("");
+   return this->pimpl->m_rootRecordDefinition;
 }
-
 
 bool XmlCoding::validateLoadAndStoreInDb(QByteArray const & documentData,
                                          QString const & fileName,
                                          BtDomErrorHandler & domErrorHandler,
                                          QTextStream & userMessage) const {
-   return this->pimpl->validateLoadAndStoreInDb(this, documentData, fileName, domErrorHandler, userMessage);
+   return this->pimpl->validateLoadAndStoreInDb(documentData, fileName, domErrorHandler, userMessage);
 }

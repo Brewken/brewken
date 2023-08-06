@@ -123,7 +123,7 @@ int BtTreeItem::columnCount(BtTreeItem::Type itemType) const {
       case BtTreeItem::Type::FERMENTABLE:
          return FERMENTABLENUMCOLS;
       case BtTreeItem::Type::HOP:
-         return HOPNUMCOLS;
+         return static_cast<int>(BtTreeItem::HopColumn::NumberOfColumns);
       case BtTreeItem::Type::MISC:
          return MISCNUMCOLS;
       case BtTreeItem::Type::YEAST:
@@ -296,21 +296,26 @@ QVariant BtTreeItem::dataFermentable(int column) {
 
 QVariant BtTreeItem::dataHop(int column) {
    Hop * hop = qobject_cast<Hop *>(_thing);
-   switch (column) {
-      case HOPNAMECOL:
+   switch (static_cast<BtTreeItem::HopColumn>(column)) {
+      case BtTreeItem::HopColumn::Name:
          if (! hop) {
             return QVariant(QObject::tr("Hops"));
          } else {
             return QVariant(hop->name());
          }
-      case HOPFORMCOL:
+      case BtTreeItem::HopColumn::Form:
          if (hop) {
             return QVariant(Hop::formDisplayNames[hop->form()]);
          }
          break;
-      case HOPUSECOL:
+      case BtTreeItem::HopColumn::AlphaPct:
          if (hop) {
-            return QVariant(Hop::useDisplayNames[hop->use()]);
+            return QVariant(hop->alpha_pct());
+         }
+         break;
+      case BtTreeItem::HopColumn::Origin:
+         if (hop) {
+            return QVariant(hop->origin());
          }
          break;
       default :

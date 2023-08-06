@@ -35,7 +35,7 @@ void XmlMashRecord::subRecordToXml(XmlRecordDefinition::FieldDefinition const & 
       this->writeNone(subRecord, mash, out, indentLevel, indentString);
    } else {
       for (auto child : children) {
-         subRecord.toXml(*child, out, indentLevel, indentString);
+         subRecord.toXml(*child, out, true, indentLevel, indentString);
       }
    }
    return;

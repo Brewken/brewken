@@ -894,6 +894,9 @@ namespace {
          // Populate boil_steps.  We want to have a pre-boil step, a boil step, and a post-boil step as it makes the hop
          // addition stuff easier.
          //
+         // The default names here are hard-coded in English, which isn't ideal (mea culpa) but this is only a one-off
+         // data migration.  When the main code needs to add a new BoilStep, it does the right thing and uses tr().
+         //
          // For the pre-boil step, ie ramping up from mash temperature to boil temperature, we take the end temperature
          // of the last mash step as the starting point.  This will be mash_step.end_temp IF SET, and
          // mash_step.step_temp otherwise.

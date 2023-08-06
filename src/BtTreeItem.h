@@ -98,15 +98,17 @@ public:
    /*!
     * The columns being displayed for hops
     */
-   enum HOPITEM {
+   enum class HopColumn {
       //! Hop name
-      HOPNAMECOL,
+      Name,
       //! Hop form
-      HOPFORMCOL,
-      //! Hop use
-      HOPUSECOL,
+      Form,
+      //! % Alpha Acid
+      AlphaPct,
+      //! Country of origin
+      Origin,
       //! the number of columns available for hops
-      HOPNUMCOLS
+      NumberOfColumns
    };
    /*!
     * The columns being displayed for misc

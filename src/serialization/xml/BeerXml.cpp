@@ -39,6 +39,7 @@
 #include "model/Misc.h"
 #include "model/NamedEntity.h"
 #include "model/Recipe.h"
+#include "model/RecipeAdditionHop.h"
 #include "model/Salt.h"
 #include "model/Style.h"
 #include "model/Water.h"
@@ -58,8 +59,13 @@ namespace {
    // record as "1".
    BtStringConst const VERSION1{"1"};
 
+   //
+   // See comment in serialization/json/BeerJson.cpp on BEER_JSON_RECORD_DEFINITION for why we use templated variable
+   // names here.
+   //
    // We only use specialisations of this template.  GCC doesn't mind not having a definition for the default cases (as
    // it's not used) but other compilers do.
+   //
    template<class NE> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION {
       "not_used",
       nullptr,
@@ -67,23 +73,6 @@ namespace {
       XmlRecordDefinition::create<XmlRecord>,
       std::initializer_list<XmlRecordDefinition::FieldDefinition>{}
    };
-
-///   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///   // Top-level field mappings for BeerXML files
-///   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///   template<> QString const BEER_XML_RECORD_NAME<void>{"BEER_XML"};
-///   template<> XmlRecordDefinition::FieldDefinitions const BEER_XML_RECORD_FIELDS<void> {
-///      // Type                               XPath                       Q_PROPERTY              Value Decoder
-///      {XmlRecordDefinition::FieldType::ListOfRecords, "HOPS/HOP",                 BtString::NULL_STR,     nullptr},
-///      {XmlRecordDefinition::FieldType::ListOfRecords, "FERMENTABLES/FERMENTABLE", BtString::NULL_STR,     nullptr},
-///      {XmlRecordDefinition::FieldType::ListOfRecords, "YEASTS/YEAST",             BtString::NULL_STR,     nullptr},
-///      {XmlRecordDefinition::FieldType::ListOfRecords, "MISCS/MISC",               BtString::NULL_STR,     nullptr},
-///      {XmlRecordDefinition::FieldType::ListOfRecords, "WATERS/WATER",             BtString::NULL_STR,     nullptr},
-///      {XmlRecordDefinition::FieldType::ListOfRecords, "STYLES/STYLE",             BtString::NULL_STR,     nullptr},
-///      {XmlRecordDefinition::FieldType::ListOfRecords, "MASHS/MASH",               BtString::NULL_STR,     nullptr},
-///      {XmlRecordDefinition::FieldType::ListOfRecords, "RECIPES/RECIPE",           BtString::NULL_STR,     nullptr},
-///      {XmlRecordDefinition::FieldType::ListOfRecords, "EQUIPMENTS/EQUIPMENT",     BtString::NULL_STR,     nullptr},
-///   };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for <HOP>...</HOP> BeerXML records
@@ -111,51 +100,118 @@ namespace {
       {Hop::Form::WetLeaf, "Leaf<!--WetLeaf-->"  },
       {Hop::Form::Powder , "Pellet<!--Powder-->" },
    };
+   //
+   // BeerXML has the exact same fields in a <HOP>...</HOP> record regardless of whether it's a "freestanding" hop or a
+   // "recipe addition".  We need to interpret a few of the fields differently in these two circumstances.  But, since
+   // we don't want to duplicate the mapping for the common fields (ie the ones that have the same interpretation in
+   // both cases), we pull them out to BeerXml_HopBase (which is by analogy with BeerJson_HopBase).
+   //
    // The `use` field of Hop is not part of BeerJSON and becomes an optional value now that we support BeerJSON.
-   // See comment on BEER_XML_RECORD_FIELDS<Misc> for the consequences of this
+   // See comment on BEER_XML_RECORD_FIELDS<Misc> for the consequences of this...
+   //
+   std::initializer_list<XmlRecordDefinition::FieldDefinition> const BeerXml_HopBase {
+      // Type                                            XPath                    Q_PROPERTY                                 Value Decoder
+      {XmlRecordDefinition::FieldType::String          , "NAME"                 , PropertyNames::NamedEntity::name         },
+      {XmlRecordDefinition::FieldType::RequiredConstant, "VERSION"              , VERSION1                                 },
+      {XmlRecordDefinition::FieldType::Double          , "ALPHA"                , PropertyNames::Hop::alpha_pct            },
+      {XmlRecordDefinition::FieldType::String          , "NOTES"                , PropertyNames::Hop::notes                },
+      {XmlRecordDefinition::FieldType::Enum            , "TYPE"                 , PropertyNames::Hop::type                 , &BEER_XML_HOP_TYPE_MAPPER},
+      {XmlRecordDefinition::FieldType::Enum            , "FORM"                 , PropertyNames::Hop::form                 , &BEER_XML_HOP_FORM_MAPPER},
+      {XmlRecordDefinition::FieldType::Double          , "BETA"                 , PropertyNames::Hop::beta_pct             },
+      {XmlRecordDefinition::FieldType::Double          , "HSI"                  , PropertyNames::Hop::hsi_pct              },
+      {XmlRecordDefinition::FieldType::String          , "ORIGIN"               , PropertyNames::Hop::origin               },
+      {XmlRecordDefinition::FieldType::String          , "SUBSTITUTES"          , PropertyNames::Hop::substitutes          },
+      {XmlRecordDefinition::FieldType::Double          , "HUMULENE"             , PropertyNames::Hop::humulene_pct         },
+      {XmlRecordDefinition::FieldType::Double          , "CARYOPHYLLENE"        , PropertyNames::Hop::caryophyllene_pct    },
+      {XmlRecordDefinition::FieldType::Double          , "COHUMULONE"           , PropertyNames::Hop::cohumulone_pct       },
+      {XmlRecordDefinition::FieldType::Double          , "MYRCENE"              , PropertyNames::Hop::myrcene_pct          },
+      {XmlRecordDefinition::FieldType::String          , "DISPLAY_AMOUNT"       , BtString::NULL_STR                       }, // Extension tag
+      {XmlRecordDefinition::FieldType::String          , "INVENTORY"            , BtString::NULL_STR                       }, // Extension tag
+      {XmlRecordDefinition::FieldType::String          , "DISPLAY_TIME"         , BtString::NULL_STR                       }, // Extension tag
+      // ⮜⮜⮜ Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML ⮞⮞⮞
+      {XmlRecordDefinition::FieldType::String          , "PRODUCER"             , PropertyNames::Hop::producer             },
+      {XmlRecordDefinition::FieldType::String          , "PRODUCT_ID"           , PropertyNames::Hop::product_id           },
+      {XmlRecordDefinition::FieldType::String          , "YEAR"                 , PropertyNames::Hop::year                 },
+      {XmlRecordDefinition::FieldType::Double          , "TOTAL_OIL_ML_PER_100G", PropertyNames::Hop::total_oil_ml_per_100g},
+      {XmlRecordDefinition::FieldType::Double          , "FARNESENE"            , PropertyNames::Hop::farnesene_pct        },
+      {XmlRecordDefinition::FieldType::Double          , "GERANIOL"             , PropertyNames::Hop::geraniol_pct         },
+      {XmlRecordDefinition::FieldType::Double          , "B_PINENE"             , PropertyNames::Hop::b_pinene_pct         },
+      {XmlRecordDefinition::FieldType::Double          , "LINALOOL"             , PropertyNames::Hop::linalool_pct         },
+      {XmlRecordDefinition::FieldType::Double          , "LIMONENE"             , PropertyNames::Hop::limonene_pct         },
+      {XmlRecordDefinition::FieldType::Double          , "NEROL"                , PropertyNames::Hop::nerol_pct            },
+      {XmlRecordDefinition::FieldType::Double          , "PINENE"               , PropertyNames::Hop::pinene_pct           },
+      {XmlRecordDefinition::FieldType::Double          , "POLYPHENOLS"          , PropertyNames::Hop::polyphenols_pct      },
+      {XmlRecordDefinition::FieldType::Double          , "XANTHOHUMOL"          , PropertyNames::Hop::xanthohumol_pct      },
+   };
+   //
+   // The remaining bits of freestanding Hop records in BeerXML don't make a whole lot of sense (which is almost
+   // certainly why they were dropped in BeerJSON).  Essentially they relate to adding the Hop to a Recipe, except that
+   // there is no Recipe.  Since they are non-optional fields in BeerXML, we have to write something when we export, but
+   // we ignore the values on import.
+   //
+   BtStringConst const HOP_FREESTANDONG_AMOUNT{"0.123"};
+   BtStringConst const HOP_FREESTANDONG_USE   {"Boil"};
+   BtStringConst const HOP_FREESTANDONG_TIME  {"12.3"};
+   std::initializer_list<XmlRecordDefinition::FieldDefinition> const BeerXml_HopType_ExclBase {
+      // Type                                            XPath     Q_PROPERTY               Value Decoder
+      {XmlRecordDefinition::FieldType::RequiredConstant, "AMOUNT", HOP_FREESTANDONG_AMOUNT},
+      {XmlRecordDefinition::FieldType::RequiredConstant, "USE"   , HOP_FREESTANDONG_USE   },
+      {XmlRecordDefinition::FieldType::RequiredConstant, "TIME"  , HOP_FREESTANDONG_TIME  },
+   };
+   //
+   // Put the two bits together and we can parse freestanding hop records
+   //
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Hop> {
       "HOP",            // XML record name
       &Hop::typeLookup, // Type Lookup for our corresponding model object
       "Hop",            // NamedEntity class name
-      XmlRecordDefinition::create<XmlNamedEntityRecord<Hop>>,
-      {
-         // Type                                            XPath                    Q_PROPERTY                                 Value Decoder
-         {XmlRecordDefinition::FieldType::String          , "NAME"                 , PropertyNames::NamedEntity::name         },
-         {XmlRecordDefinition::FieldType::RequiredConstant, "VERSION"              , VERSION1                                 },
-         {XmlRecordDefinition::FieldType::Double          , "ALPHA"                , PropertyNames::Hop::alpha_pct        },
-         {XmlRecordDefinition::FieldType::Double          , "AMOUNT"               , PropertyNames::Hop::amount               },
-         {XmlRecordDefinition::FieldType::Enum            , "USE"                  , PropertyNames::Hop::use                  , &Hop::useStringMapping},
-         {XmlRecordDefinition::FieldType::Double          , "TIME"                 , PropertyNames::Hop::time_min             },
-         {XmlRecordDefinition::FieldType::String          , "NOTES"                , PropertyNames::Hop::notes                },
-         {XmlRecordDefinition::FieldType::Enum            , "TYPE"                 , PropertyNames::Hop::type                 , &BEER_XML_HOP_TYPE_MAPPER},
-         {XmlRecordDefinition::FieldType::Enum            , "FORM"                 , PropertyNames::Hop::form             , &BEER_XML_HOP_FORM_MAPPER},
-         {XmlRecordDefinition::FieldType::Double          , "BETA"                 , PropertyNames::Hop::beta_pct         },
-         {XmlRecordDefinition::FieldType::Double          , "HSI"                  , PropertyNames::Hop::hsi_pct              },
-         {XmlRecordDefinition::FieldType::String          , "ORIGIN"               , PropertyNames::Hop::origin           },
-         {XmlRecordDefinition::FieldType::String          , "SUBSTITUTES"          , PropertyNames::Hop::substitutes          },
-         {XmlRecordDefinition::FieldType::Double          , "HUMULENE"             , PropertyNames::Hop::humulene_pct         },
-         {XmlRecordDefinition::FieldType::Double          , "CARYOPHYLLENE"        , PropertyNames::Hop::caryophyllene_pct    },
-         {XmlRecordDefinition::FieldType::Double          , "COHUMULONE"           , PropertyNames::Hop::cohumulone_pct       },
-         {XmlRecordDefinition::FieldType::Double          , "MYRCENE"              , PropertyNames::Hop::myrcene_pct          },
-         {XmlRecordDefinition::FieldType::String          , "DISPLAY_AMOUNT"       , BtString::NULL_STR                       }, // Extension tag
-         {XmlRecordDefinition::FieldType::String          , "INVENTORY"            , BtString::NULL_STR                       }, // Extension tag
-         {XmlRecordDefinition::FieldType::String          , "DISPLAY_TIME"         , BtString::NULL_STR                       }, // Extension tag
-         // ⮜⮜⮜ Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML ⮞⮞⮞
-         {XmlRecordDefinition::FieldType::String          , "PRODUCER"             , PropertyNames::Hop::producer         },
-         {XmlRecordDefinition::FieldType::String          , "PRODUCT_ID"           , PropertyNames::Hop::product_id       },
-         {XmlRecordDefinition::FieldType::String          , "YEAR"                 , PropertyNames::Hop::year             },
-         {XmlRecordDefinition::FieldType::Double          , "TOTAL_OIL_ML_PER_100G", PropertyNames::Hop::total_oil_ml_per_100g},
-         {XmlRecordDefinition::FieldType::Double          , "FARNESENE"            , PropertyNames::Hop::farnesene_pct        },
-         {XmlRecordDefinition::FieldType::Double          , "GERANIOL"             , PropertyNames::Hop::geraniol_pct         },
-         {XmlRecordDefinition::FieldType::Double          , "B_PINENE"             , PropertyNames::Hop::b_pinene_pct         },
-         {XmlRecordDefinition::FieldType::Double          , "LINALOOL"             , PropertyNames::Hop::linalool_pct         },
-         {XmlRecordDefinition::FieldType::Double          , "LIMONENE"             , PropertyNames::Hop::limonene_pct         },
-         {XmlRecordDefinition::FieldType::Double          , "NEROL"                , PropertyNames::Hop::nerol_pct            },
-         {XmlRecordDefinition::FieldType::Double          , "PINENE"               , PropertyNames::Hop::pinene_pct           },
-         {XmlRecordDefinition::FieldType::Double          , "POLYPHENOLS"          , PropertyNames::Hop::polyphenols_pct      },
-         {XmlRecordDefinition::FieldType::Double          , "XANTHOHUMOL"          , PropertyNames::Hop::xanthohumol_pct      },
-      }
+      XmlRecordDefinition::create< XmlNamedEntityRecord< Hop > >,
+      {BeerXml_HopBase, BeerXml_HopType_ExclBase}
    };
+
+///   template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Hop> {
+///      "HOP",            // XML record name
+///      &Hop::typeLookup, // Type Lookup for our corresponding model object
+///      "Hop",            // NamedEntity class name
+///      XmlRecordDefinition::create<XmlNamedEntityRecord<Hop>>,
+///      {
+///         // Type                                            XPath                    Q_PROPERTY                                 Value Decoder
+///         {XmlRecordDefinition::FieldType::String          , "NAME"                 , PropertyNames::NamedEntity::name         },
+///         {XmlRecordDefinition::FieldType::RequiredConstant, "VERSION"              , VERSION1                                 },
+///         {XmlRecordDefinition::FieldType::Double          , "ALPHA"                , PropertyNames::Hop::alpha_pct        },
+///         {XmlRecordDefinition::FieldType::Double          , "AMOUNT"               , PropertyNames::Hop::amount               },
+///         {XmlRecordDefinition::FieldType::Enum            , "USE"                  , PropertyNames::Hop::use                  , &Hop::useStringMapping},
+///         {XmlRecordDefinition::FieldType::Double          , "TIME"                 , PropertyNames::Hop::time_min             },
+///         {XmlRecordDefinition::FieldType::String          , "NOTES"                , PropertyNames::Hop::notes                },
+///         {XmlRecordDefinition::FieldType::Enum            , "TYPE"                 , PropertyNames::Hop::type                 , &BEER_XML_HOP_TYPE_MAPPER},
+///         {XmlRecordDefinition::FieldType::Enum            , "FORM"                 , PropertyNames::Hop::form             , &BEER_XML_HOP_FORM_MAPPER},
+///         {XmlRecordDefinition::FieldType::Double          , "BETA"                 , PropertyNames::Hop::beta_pct         },
+///         {XmlRecordDefinition::FieldType::Double          , "HSI"                  , PropertyNames::Hop::hsi_pct              },
+///         {XmlRecordDefinition::FieldType::String          , "ORIGIN"               , PropertyNames::Hop::origin           },
+///         {XmlRecordDefinition::FieldType::String          , "SUBSTITUTES"          , PropertyNames::Hop::substitutes          },
+///         {XmlRecordDefinition::FieldType::Double          , "HUMULENE"             , PropertyNames::Hop::humulene_pct         },
+///         {XmlRecordDefinition::FieldType::Double          , "CARYOPHYLLENE"        , PropertyNames::Hop::caryophyllene_pct    },
+///         {XmlRecordDefinition::FieldType::Double          , "COHUMULONE"           , PropertyNames::Hop::cohumulone_pct       },
+///         {XmlRecordDefinition::FieldType::Double          , "MYRCENE"              , PropertyNames::Hop::myrcene_pct          },
+///         {XmlRecordDefinition::FieldType::String          , "DISPLAY_AMOUNT"       , BtString::NULL_STR                       }, // Extension tag
+///         {XmlRecordDefinition::FieldType::String          , "INVENTORY"            , BtString::NULL_STR                       }, // Extension tag
+///         {XmlRecordDefinition::FieldType::String          , "DISPLAY_TIME"         , BtString::NULL_STR                       }, // Extension tag
+///         // ⮜⮜⮜ Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML ⮞⮞⮞
+///         {XmlRecordDefinition::FieldType::String          , "PRODUCER"             , PropertyNames::Hop::producer         },
+///         {XmlRecordDefinition::FieldType::String          , "PRODUCT_ID"           , PropertyNames::Hop::product_id       },
+///         {XmlRecordDefinition::FieldType::String          , "YEAR"                 , PropertyNames::Hop::year             },
+///         {XmlRecordDefinition::FieldType::Double          , "TOTAL_OIL_ML_PER_100G", PropertyNames::Hop::total_oil_ml_per_100g},
+///         {XmlRecordDefinition::FieldType::Double          , "FARNESENE"            , PropertyNames::Hop::farnesene_pct        },
+///         {XmlRecordDefinition::FieldType::Double          , "GERANIOL"             , PropertyNames::Hop::geraniol_pct         },
+///         {XmlRecordDefinition::FieldType::Double          , "B_PINENE"             , PropertyNames::Hop::b_pinene_pct         },
+///         {XmlRecordDefinition::FieldType::Double          , "LINALOOL"             , PropertyNames::Hop::linalool_pct         },
+///         {XmlRecordDefinition::FieldType::Double          , "LIMONENE"             , PropertyNames::Hop::limonene_pct         },
+///         {XmlRecordDefinition::FieldType::Double          , "NEROL"                , PropertyNames::Hop::nerol_pct            },
+///         {XmlRecordDefinition::FieldType::Double          , "PINENE"               , PropertyNames::Hop::pinene_pct           },
+///         {XmlRecordDefinition::FieldType::Double          , "POLYPHENOLS"          , PropertyNames::Hop::polyphenols_pct      },
+///         {XmlRecordDefinition::FieldType::Double          , "XANTHOHUMOL"          , PropertyNames::Hop::xanthohumol_pct      },
+///      }
+///   };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for <FERMENTABLE>...</FERMENTABLE> BeerXML records
@@ -683,6 +739,49 @@ namespace {
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Field mappings for the hop part(!) of <HOP>...</HOP> BeerXML records inside <RECIPE>...</RECIPE> records
+   //
+   // In BeerXML, a <HOP>...</HOP> record inside a <RECIPE>...</RECIPE> records is a "hop addition".  We now model this
+   // internally with the RecipeAdditionHop class.  Broadly speaking, that combines a "hop part" (ie what hop are we
+   // adding) with amount and timing parts (ie how much are we adding and when).  In our internal model, the "hop part"
+   // is just the ID of the hop we want to add.  In BeerXML, it's all the same fields as in a freestanding hop.  To
+   // square this circle, we use the "Base Record" trick (descibed in serialization/json/JsonRecordDefinition.h, but
+   // equally applicable to XML processing) to treat some of the HOP fields as though they were a separate sub-record.
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   XmlRecordDefinition const BEER_XML_RECORD_DEFINITION_HOP_IN_RECIPE_ADDITION_HOP {
+      "HOP",            // XML record name
+      &Hop::typeLookup, // Type Lookup for our corresponding model object
+      "Hop",            // NamedEntity class name
+      XmlRecordDefinition::create< XmlNamedEntityRecord< Hop > >,
+      {BeerXml_HopBase}
+   };
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Field mappings for <HOP>...</HOP> BeerXML records inside <RECIPE>...</RECIPE> records
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<RecipeAdditionHop> {
+      "HOP",                          // XML record name
+      &RecipeAdditionHop::typeLookup, // Type Lookup for our corresponding model object
+      "RecipeAdditionHop",            // NamedEntity class name
+      XmlRecordDefinition::create<XmlNamedEntityRecord<Hop>>,
+      {
+// TODO         ¥¥¥¥ FINISH GETTING USE WORKING!
+         // Type                                  XPath                Q_PROPERTY                                                  Value Decoder
+         {XmlRecordDefinition::FieldType::Double, "AMOUNT"           , PropertyNames::RecipeAdditionMassOrVolume::amount         },
+         {XmlRecordDefinition::FieldType::Double, "TIME"             , PropertyNames::RecipeAddition::addAtTime_mins             },
+//         {XmlRecordDefinition::FieldType::Enum  , "USE"              , PropertyNames::RecipeAdditionHop::use                     , &Hop::useStringMapping}, // Need to handle this in code
+         {XmlRecordDefinition::FieldType::Record, ""                 , PropertyNames::RecipeAdditionHop::hop                     , &BEER_XML_RECORD_DEFINITION_HOP_IN_RECIPE_ADDITION_HOP},
+         // ⮜⮜⮜ Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML ⮞⮞⮞
+         {XmlRecordDefinition::FieldType::Bool  , "AMOUNT_IS_WEIGHT" , PropertyNames::RecipeAdditionMassOrVolume::amountIsWeight },
+         {XmlRecordDefinition::FieldType::Enum  , "STAGE"            , PropertyNames::RecipeAddition::stage                      , &RecipeAddition::stageStringMapping},
+         {XmlRecordDefinition::FieldType::Int   , "STEP"             , PropertyNames::RecipeAddition::step                       },
+         {XmlRecordDefinition::FieldType::Double, "ADD_AT_GRAVITY_SG", PropertyNames::RecipeAddition::addAtGravity_sg            },
+         {XmlRecordDefinition::FieldType::Double, "ADD_AT_ACIDITY_PH", PropertyNames::RecipeAddition::addAtAcidity_pH            },
+         {XmlRecordDefinition::FieldType::Double, "DURATION_MINS"    , PropertyNames::RecipeAddition::duration_mins              },
+      }
+   };
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for <RECIPE>...</RECIPE> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    EnumStringMapping const BEER_XML_RECIPE_STEP_TYPE_MAPPER {
@@ -771,25 +870,25 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for root of BeerXML document
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<void> {
+   XmlRecordDefinition const BEER_XML_RECORD_DEFINITION_ROOT {
       "BEER_XML", // XML record name
       nullptr,    // Type Lookup for our corresponding model object
       "",         // NamedEntity class name
       XmlRecordDefinition::create<XmlRecord>,
       {
-         // Type                                         XPath            Q_PROPERTY           Value Decoder
-         {XmlRecordDefinition::FieldType::ListOfRecords, "HOPS"        , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Hop        >},
-         {XmlRecordDefinition::FieldType::ListOfRecords, "FERMENTABLES", BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Fermentable>},
-         {XmlRecordDefinition::FieldType::ListOfRecords, "YEASTS"      , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Yeast      >},
-         {XmlRecordDefinition::FieldType::ListOfRecords, "MISCS"       , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Misc       >},
-         {XmlRecordDefinition::FieldType::ListOfRecords, "WATERS"      , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Water      >},
-         {XmlRecordDefinition::FieldType::ListOfRecords, "STYLES"      , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Style      >},
-         {XmlRecordDefinition::FieldType::ListOfRecords, "MASH_STEPS"  , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<MashStep   >},
-         {XmlRecordDefinition::FieldType::ListOfRecords, "MASHS"       , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Mash       >},
-         {XmlRecordDefinition::FieldType::ListOfRecords, "EQUIPMENTS"  , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Equipment  >},
-         {XmlRecordDefinition::FieldType::ListOfRecords, "INSTRUCTIONS", BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Instruction>},
-         {XmlRecordDefinition::FieldType::ListOfRecords, "BREWNOTES"   , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<BrewNote   >},
-         {XmlRecordDefinition::FieldType::ListOfRecords, "RECIPES"     , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Recipe     >},
+         // Type                                         XPath                       Q_PROPERTY           Value Decoder
+         {XmlRecordDefinition::FieldType::ListOfRecords, "HOPS/HOP"                , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Hop        >},
+         {XmlRecordDefinition::FieldType::ListOfRecords, "FERMENTABLES/FERMENTABLE", BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Fermentable>},
+         {XmlRecordDefinition::FieldType::ListOfRecords, "YEASTS/YEAST"            , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Yeast      >},
+         {XmlRecordDefinition::FieldType::ListOfRecords, "MISCS/MISC"              , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Misc       >},
+         {XmlRecordDefinition::FieldType::ListOfRecords, "WATERS/WATER"            , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Water      >},
+         {XmlRecordDefinition::FieldType::ListOfRecords, "STYLES/STYLE"            , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Style      >},
+         {XmlRecordDefinition::FieldType::ListOfRecords, "MASH_STEPS/MASH_STEP"    , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<MashStep   >},
+         {XmlRecordDefinition::FieldType::ListOfRecords, "MASHS/MASH"              , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Mash       >},
+         {XmlRecordDefinition::FieldType::ListOfRecords, "EQUIPMENTS/EQUIPMENT"    , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Equipment  >},
+         {XmlRecordDefinition::FieldType::ListOfRecords, "INSTRUCTIONS/INSTRUCTION", BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Instruction>},
+         {XmlRecordDefinition::FieldType::ListOfRecords, "BREWNOTES/BREWNOTE"      , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<BrewNote   >},
+         {XmlRecordDefinition::FieldType::ListOfRecords, "RECIPES/RECIPE"          , BtString::NULL_STR  , &BEER_XML_RECORD_DEFINITION<Recipe     >},
       }
    };
 
@@ -799,21 +898,7 @@ namespace {
    XmlCoding const BEER_XML_1_CODING{
       "BeerXML 1.0",
       ":/schemas/beerxml/v1/BeerXml.xsd",
-      {
-         BEER_XML_RECORD_DEFINITION<void       >, //Root
-         BEER_XML_RECORD_DEFINITION<Hop        >,
-         BEER_XML_RECORD_DEFINITION<Fermentable>,
-         BEER_XML_RECORD_DEFINITION<Yeast      >,
-         BEER_XML_RECORD_DEFINITION<Misc       >,
-         BEER_XML_RECORD_DEFINITION<Water      >,
-         BEER_XML_RECORD_DEFINITION<Style      >,
-         BEER_XML_RECORD_DEFINITION<MashStep   >,
-         BEER_XML_RECORD_DEFINITION<Mash       >,
-         BEER_XML_RECORD_DEFINITION<Equipment  >,
-         BEER_XML_RECORD_DEFINITION<Instruction>,
-         BEER_XML_RECORD_DEFINITION<BrewNote   >,
-         BEER_XML_RECORD_DEFINITION<Recipe     >,
-      }
+      BEER_XML_RECORD_DEFINITION_ROOT
    };
 
    /**
@@ -994,7 +1079,7 @@ template<class NE> void BeerXML::toXml(QList<NE const *> const & nes, QFile & ou
       std::unique_ptr<XmlRecord> xmlRecord{
          BEER_XML_RECORD_DEFINITION<NE>.makeRecord(BEER_XML_1_CODING)
       };
-      xmlRecord->toXml(*ne, out);
+      xmlRecord->toXml(*ne, out, true);
    }
    out << "</" << BEER_XML_RECORD_DEFINITION<NE>.m_recordName << "S>\n";
    return;

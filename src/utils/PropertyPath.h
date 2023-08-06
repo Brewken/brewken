@@ -121,6 +121,15 @@ S & operator<<(S & stream, PropertyPath const & propertyPath) {
    stream << propertyPath.asXPath();
    return stream;
 }
+template<class S>
+S & operator<<(S & stream, PropertyPath const * propertyPath) {
+   if (propertyPath) {
+      stream << propertyPath->asXPath();
+   } else {
+      stream << "nullptr";
+   }
+   return stream;
+}
 //! @}
 
 

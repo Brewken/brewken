@@ -122,10 +122,10 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
          //
          Q_ASSERT(std::holds_alternative<XmlRecordDefinition const *>(fieldDefinition.valueDecoder));
          Q_ASSERT(std::get              <XmlRecordDefinition const *>(fieldDefinition.valueDecoder));
-         XmlRecordDefinition const & recordDefinitionForArrayEntries{
+         XmlRecordDefinition const & childRecordDefinition{
             *std::get<XmlRecordDefinition const *>(fieldDefinition.valueDecoder)
          };
-         if (!this->loadChildRecords(domSupport, fieldDefinition, recordDefinitionForArrayEntries, nodesForCurrentXPath, userMessage)) {
+         if (!this->loadChildRecords(domSupport, fieldDefinition, childRecordDefinition, nodesForCurrentXPath, userMessage)) {
             return false;
          }
       } else if (numChildNodes > 0) {
@@ -695,7 +695,7 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
       //
       xalanc::XalanNode * childRecordNode = nodesForCurrentXPath.item(ii);
       XQString childRecordName{childRecordNode->getNodeName()};
-      Q_ASSERT(this->m_coding.isKnownXmlRecordType(childRecordName));
+      qDebug() << Q_FUNC_INFO << childRecordName;
 
       std::unique_ptr<XmlRecord> childRecord{
          constructorWrapper(this->m_coding, childRecordDefinition)
@@ -718,6 +718,7 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
 
 void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
                       QTextStream & out,
+                      bool const includeRecordNameTags,
                       int indentLevel,
                       char const * const indentString) const {
    // Callers are not allowed to supply null indent string
@@ -725,8 +726,10 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
    qDebug() <<
       Q_FUNC_INFO << "Exporting XML for" << namedEntityToExport.metaObject()->className() << "#" <<
       namedEntityToExport.key();
-   writeIndents(out, indentLevel, indentString);
-   out << "<" << this->m_recordDefinition.m_recordName << ">\n";
+   if (includeRecordNameTags) {
+      writeIndents(out, indentLevel, indentString);
+      out << "<" << this->m_recordDefinition.m_recordName << ">\n";
+   }
 
    // For the moment, we are constructing XML output without using Xerces (or similar), on the grounds that, in this
    // direction (ie to XML rather than from XML), it's a pretty simple algorithm and we don't need to validate anything
@@ -756,6 +759,10 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
          // (In BeerXML, these contained XPaths are only 1-2 elements, so numContainingTags is always 0 or 1.  If and
          // when we support a different XML coding, we might need to look at this code more closely.)
          //
+         // In certain circumstances, the XPath will be "" for essentially the same reasons as described in the "base
+         // records" comment in serialization/json/JsonRecordDefinition.h on JsonRecordDefinition::FieldType::Record.
+         // In this case, numContainingTags will be -1.
+         //
          QStringList xPathElements = fieldDefinition.xPath.split("/");
          Q_ASSERT(xPathElements.size() >= 1);
          int numContainingTags = xPathElements.size() - 1;
@@ -772,7 +779,12 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
             NamedEntity * childNamedEntity =
                fieldDefinition.propertyPath.getValue(namedEntityToExport).value<NamedEntity *>();
             if (childNamedEntity) {
-               subRecord->toXml(*childNamedEntity, out, indentLevel + numContainingTags + 1, indentString);
+               // For a "base record", having numContainingTags == -1 means the fourth parameter here is still correct!
+               subRecord->toXml(*childNamedEntity,
+                                out,
+                                numContainingTags >= 0,
+                                indentLevel + numContainingTags + 1,
+                                indentString);
             } else {
                this->writeNone(*subRecord, namedEntityToExport, out, indentLevel + numContainingTags + 1, indentString);
             }
@@ -862,8 +874,11 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
 
             case XmlRecordDefinition::FieldType::Double:
                if (Optional::removeOptionalWrapperIfPresent<double>(value, propertyIsOptional)) {
-                  // QVariant knows how to convert a number to a string
-                  valueAsText = value.toString();
+                  // QVariant knows how to convert a number to a string.  However, for a double, we want to have a bit
+                  // more control over the conversion.  In particular, we want to avoid the number coming out in
+                  // scientific notation.
+
+                  valueAsText = QString::number(value.toDouble(), 'f', QLocale::FloatingPointShortest);
                }
                break;
 
@@ -913,8 +928,10 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
       out << "<" << fieldDefinition.xPath << ">" << valueAsText << "</" << fieldDefinition.xPath << ">\n";
    }
 
-   writeIndents(out, indentLevel, indentString);
-   out << "</" << this->m_recordDefinition.m_recordName << ">\n";
+   if (includeRecordNameTags) {
+      writeIndents(out, indentLevel, indentString);
+      out << "</" << this->m_recordDefinition.m_recordName << ">\n";
+   }
    return;
 }
 

@@ -87,7 +87,8 @@ JsonXPath::JsonXPath(char const * const xPath) :
 
    for (std::sregex_iterator ii = xPath_begin; ii != xPath_end; ++ii) {
       std::string pathPart = ii->str();
-      qDebug() << Q_FUNC_INFO << "Matched" << pathPart.c_str();
+      // Normally leave this logging statement commented out as otherwise it's fills up too much of the log files
+//      qDebug() << Q_FUNC_INFO << "Matched" << pathPart.c_str();
       if (pathPart[0] == '/') {
          // This is the easy case
          this->m_pathParts.push_back(pathPart);

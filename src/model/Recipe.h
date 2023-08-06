@@ -338,7 +338,7 @@ public:
    Q_PROPERTY(QList<BrewNote *> brewNotes READ brewNotes /*WRITE*/ /*NOTIFY changed*/ STORED false)
    //! \brief The hop additions.
    Q_PROPERTY(QList<RecipeAdditionHop *> hopAdditions   READ hopAdditions   /*WRITE setHopAdditions*/   STORED false)
-   Q_PROPERTY(QVector<int>               hopAdditionIds READ hopAdditionIds WRITE setHopAdditionIds)
+   Q_PROPERTY(QVector<int>               hopAdditionIds READ hopAdditionIds /*WRITE setHopAdditionIds*/ STORED false)
    //! \brief The instructions.
    Q_PROPERTY(QList<Instruction *> instructions   READ instructions /*WRITE*/ /*NOTIFY changed*/ STORED false)
    Q_PROPERTY(QVector<int>         instructionIds READ getInstructionIds WRITE setInstructionIds)
@@ -570,7 +570,6 @@ public:
    void setBoilId        (int const id);
    void setFermentationId(int const id);
    void setFermentableIds(QVector<int> ids);
-   void setHopAdditionIds(QVector<int> ids);
    void setInstructionIds(QVector<int> ids);
    void setMiscIds       (QVector<int> ids);
    void setSaltIds       (QVector<int> ids);

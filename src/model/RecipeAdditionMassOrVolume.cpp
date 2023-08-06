@@ -53,12 +53,15 @@ RecipeAdditionMassOrVolume::RecipeAdditionMassOrVolume(QString name, int const r
 
 RecipeAdditionMassOrVolume::RecipeAdditionMassOrVolume(NamedParameterBundle const & namedParameterBundle) :
    RecipeAddition{namedParameterBundle} {
+   // Note we specify the optional seventh parameter (defaultIsFirstUnit) here as true because, eg, if we're reading in
+   // from BeerXML, the amountIsWeight flag might not be present, in which case we should assume weight.
    this->setEitherOrReqParams<MassOrVolumeAmt>(namedParameterBundle,
                                                PropertyNames::RecipeAdditionMassOrVolume::amount         ,
                                                PropertyNames::RecipeAdditionMassOrVolume::amountIsWeight ,
                                                PropertyNames::RecipeAdditionMassOrVolume::amountWithUnits,
                                                this->m_amount,
-                                               this->m_amountIsWeight);
+                                               this->m_amountIsWeight,
+                                               true);
    return;
 }
 

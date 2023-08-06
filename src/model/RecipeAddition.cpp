@@ -15,6 +15,7 @@
  =====================================================================================================================*/
 #include "model/RecipeAddition.h"
 
+#include "database/ObjectStoreWrapper.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
 #include "model/Misc.h"
@@ -33,10 +34,10 @@ EnumStringMapping const RecipeAddition::stageStringMapping {
 };
 
 EnumStringMapping const RecipeAddition::stageDisplayNames {
-   {RecipeAddition::Stage::Mash        , tr("add_to_mash"        ) },
-   {RecipeAddition::Stage::Boil        , tr("add_to_boil"        ) },
-   {RecipeAddition::Stage::Fermentation, tr("add_to_fermentation") },
-   {RecipeAddition::Stage::Packaging   , tr("add_to_package"     ) },
+   {RecipeAddition::Stage::Mash        , tr("Add to Mash"        ) },
+   {RecipeAddition::Stage::Boil        , tr("Add to Boil"        ) },
+   {RecipeAddition::Stage::Fermentation, tr("Add to Fermentation") },
+   {RecipeAddition::Stage::Packaging   , tr("Add to Package"     ) },
 };
 
 bool RecipeAddition::isEqualTo(NamedEntity const & other) const {
@@ -74,8 +75,8 @@ static_assert(std::is_base_of<NamedEntity, RecipeAddition>::value);
 
 RecipeAddition::RecipeAddition(QString name, int const recipeId, int const ingredientId) :
    NamedEntity{name, true},
-   m_recipeId       {-1},
-   m_ingredientId   {-1},
+   m_recipeId       {recipeId},
+   m_ingredientId   {ingredientId},
    m_stage          {RecipeAddition::Stage::Mash},
    m_step           {std::nullopt},
    m_addAtTime_mins {std::nullopt},
@@ -140,6 +141,11 @@ std::optional<double>      RecipeAddition::addAtTime_mins () const { return this
 std::optional<double>      RecipeAddition::addAtGravity_sg() const { return this->m_addAtGravity_sg; }
 std::optional<double>      RecipeAddition::addAtAcidity_pH() const { return this->m_addAtAcidity_pH; }
 std::optional<double>      RecipeAddition::duration_mins  () const { return this->m_duration_mins  ; }
+
+Recipe * RecipeAddition::recipe() const {
+   return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
+}
+
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
 void RecipeAddition::setRecipeId       (int                   const val) { this->setAndNotify(PropertyNames::RecipeAddition::recipeId       , this->m_recipeId       , val); return; }

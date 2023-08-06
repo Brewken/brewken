@@ -276,6 +276,15 @@ public:
    }
 
    /**
+    * \brief Similary to \c findAllMatching but returns a list of IDs
+    */
+   QVector<int> idsOfAllMatching(std::function<bool(NE const *)> const & matchFunction) const {
+      return this->ObjectStore::idsOfAllMatching(
+         [matchFunction](QObject const * obj) { return matchFunction(static_cast<NE const *>(obj)); }
+      );
+   }
+
+   /**
     * \brief Special case of \c findAllMatching that returns a list of all cached objects of a given type
     */
    QList<std::shared_ptr<NE> > getAll() {

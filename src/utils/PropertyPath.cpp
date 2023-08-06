@@ -113,16 +113,21 @@ QVariant PropertyPath::getValue(NamedEntity const & obj) const {
    QVariant retVal{};
    NamedEntity const * ne = &obj;
    for (auto const property : this->m_properties) {
+      qDebug() << Q_FUNC_INFO << "Looking at" << *property;
+
       if (property == this->m_properties.last()) {
          retVal = ne->property(**property);
          break;
       }
 
+      // Note that what we are expecting to get back inside the QVariant is `NamedEntity *`.  It's OK for us to assign
+      // this pointer to a variable of type `NamedEntity const *`, but we shouldn't expect
+      // `containedNe.canConvert<NamedEntity const *>()` to return true (because it won't).
       QVariant containedNe = ne->property(**property);
-      if (!containedNe.isValid() || !containedNe.canConvert<NamedEntity const *>()) {
+      if (!containedNe.isValid() || !containedNe.canConvert<NamedEntity *>()) {
          break;
       }
-      ne = containedNe.value<NamedEntity const *>();
+      ne = containedNe.value<NamedEntity *>();
    }
    return retVal;
 }

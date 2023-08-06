@@ -90,8 +90,8 @@ public:
 //      }
       // It's a coding error to add or remove either a null pointer...
       Q_ASSERT(whatToAddOrRemove);
-      // ...or something that is not yet stored in its corresponding ObjectStore (ie does not yet have a DB ID)
-      Q_ASSERT(whatToAddOrRemove->key() > 0);
+///      // ...or something that is not yet stored in its corresponding ObjectStore (ie does not yet have a DB ID)
+///      Q_ASSERT(whatToAddOrRemove->key() > 0);
 
       // Parent class handles storing description and making it accessible to the undo stack etc - we just have to give
       // it the text.

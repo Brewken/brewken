@@ -123,65 +123,16 @@ class XmlCoding {
    Q_DECLARE_TR_FUNCTIONS(XmlCoding)
 
 public:
-///   /**
-///    * \brief C++ does not permit you to have a function pointer to a class constructor, so this templated wrapper
-///    *        function is a "trick" that allows us to come close enough for our purposes.  Using a pointer to a
-///    *        template specialisation of this function for some subclass of XmlRecord effectively gives us a pointer to
-///    *        a create-on-the-heap constructor for that subclass, (provided it takes the same parameters as this
-///    *        function).
-///    *
-///    *        To make it easier for callers, we also typedef \b XmlCoding::XmlRecordConstructorWrapper to be a pointer to
-///    *        a function of this type.
-///    *
-///    * \param recordName passed into the constructor of T (which should be \b XmlRecord or a subclass thereof)
-///    * \param xmlCoding passed into the constructor of T (which should be \b XmlRecord or a subclass thereof)
-///    * \param fieldDefinitions passed into the constructor of T (which should be \b XmlRecord or a subclass thereof)
-///    * \return Pointer to a new instance, constructed on the heap, of an XmlRecord (or subclass thereof) suitable for
-///    *         reading in objects of type T (where T ie expected either to be some subclass of NamedEntity or void to
-///    *         signify the root element). Eg:
-///    *           XmlCoding::construct<Hop>() will construct an XmlNamedEntityRecord<Hop> object
-///    *           XmlCoding::construct<Yeast>() will construct an XmlNamedEntityRecord<Yeast> object
-///    *           XmlCoding::construct<Recipe>() will construct an XmlRecipeRecord object ‡
-///    *           XmlCoding::construct<void>() will construct an XmlRecord object ‡
-///    *         ‡ courtesy of template specialisation below
-///    *
-///    *         NB: The caller owns this object and is responsible for its deletion.
-///    */
-///   template<typename T>
-///   static XmlRecord * construct(QString const & recordName,
-///                                XmlCoding const & xmlCoding,
-///                                XmlRecordDefinition::FieldDefinitions const & fieldDefinitions) {
-///      return new XmlNamedEntityRecord<T>{recordName, xmlCoding, fieldDefinitions};
-///   }
-///
-///   /**
-///    * \brief This is just a convenience typedef representing a pointer to a template specialisation of
-///    *        \b XmlCoding::construct().
-///    */
-///   typedef XmlRecord * (*XmlRecordConstructorWrapper)(QString const & recordName,
-///                                                      XmlCoding const &,
-///                                                      XmlRecordDefinition::FieldDefinitions const &);
-///
-///   /**
-///    * Given an XML element that corresponds to a record, this is the info we need to construct an \b XmlRecord object
-///    * for this encoding.
-///    */
-///   struct XmlRecordDefinition {
-///      XmlRecordConstructorWrapper constructorWrapper;
-///      XmlRecordDefinition::FieldDefinitions const * fieldDefinitions;
-///   };
 
    /**
     * \brief Constructor
     * \param name The name of this encoding (eg "BeerXML 1.0").  Used primarily for logging.
     * \param schemaResource The name of the Qt Resource holding the XML Schema Document (XSD) for this coding
-    * \param entityNameToXmlRecordDefinition Mapping from XML tag name to the information we need to construct a
-    *                                        suitable \b XmlRecord object.  This is expected to be a static object,
-    *                                        hence the pass-by-reference.
+    * \param rootRecordDefinition
     */
    XmlCoding(QString const name,
              QString const schemaResource,
-             std::initializer_list<XmlRecordDefinition> xmlRecordDefinitions);
+             XmlRecordDefinition const & rootRecordDefinition);
 
    /**
     * \brief Destructor
@@ -189,27 +140,9 @@ public:
    ~XmlCoding();
 
    /**
-    * \brief Check whether we know how to process a record of a given (XML tag) name
-    * \param recordName
-    * \return \b true if we know how to process (ie we have the address of a function that can create a suitable
-    *         \b XmlRecord object), \b false if not
-    */
-   [[nodiscard]] bool isKnownXmlRecordType(QString recordName) const;
-
-   /**
     * \brief Get the root definition element, ie what we use to start processing a document
     */
    XmlRecordDefinition const & getRoot() const;
-
-///   /**
-///    * \brief For a given record name (eg "HOPS", "HOP", "YEASTS", etc) retrieve a new instance of the corresponding
-///    *        subclass of \b XmlRecord.  Caller is responsible for ensuring that such a subclass exists, either by
-///    *        having supplied the \b nameToXmlRecordLookup to our constructor or by calling \b isKnownXmlRecordType().
-///    * \param recordName
-///    * \return A shared pointer to a new \b XmlRecord constructed on the heap.  (The caller will be the sole owner of
-///    *         this pointer.)
-///    */
-///   std::shared_ptr<XmlRecord> getNewXmlRecord(QString recordName) const;
 
    /**
     * \brief Validate XML file against schema, load its contents into objects, and store then in the DB
@@ -233,8 +166,6 @@ public:
                                  QTextStream & userMessage) const;
 
 private:
-///   QString name;
-///   QHash<QString, XmlRecordDefinition> const entityNameToXmlRecordDefinition;
 
    // Private implementation details - see https://herbsutter.com/gotw/_100/
    class impl;

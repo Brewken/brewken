@@ -29,10 +29,15 @@
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::RecipeAdditionHop { BtStringConst const property{#property}; }
 AddPropertyName(hop)
+AddPropertyName(use                  ) // Deprecated - retained only for BeerXML
+
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
 
+/**
+ * \brief Represents the addition of a \c Hop to a \c Recipe
+ */
 class RecipeAdditionHop : public RecipeAdditionMassOrVolume, public RecipeAdditionBase<RecipeAdditionHop, Hop> {
    Q_OBJECT
 
@@ -43,6 +48,33 @@ public:
     * \brief See comment in model/NamedEntity.h
     */
    static QString const LocalisedName;
+
+   /*!
+    * \brief This is the old (BeerXML) way of specifying the stage at which the hop addition happens.  It is retained
+    *        for BeerXML but otherwise deprecated.  With the arrival of BeerJSON, we now use \c RecipeAddition::Stage
+    *        and \c RecipeAddition::Step to hold this information with more precision.
+    */
+   enum class Use {Mash,
+                   First_Wort,
+                   Boil,
+                   Aroma,
+                   Dry_Hop};
+   // This allows us to store the above enum class in a QVariant
+   Q_ENUM(Use)
+
+   /*!
+    * \brief Mapping between \c Hop::Form and string values suitable for serialisation in DB, BeerXML, etc (but \b not
+    *        used in BeerJSON)
+    *
+    *        This can also be used to obtain the number of values of \c Type, albeit at run-time rather than
+    *        compile-time.  (One day, C++ will have reflection and we won't need to do things this way.)
+    */
+   static EnumStringMapping const useStringMapping;
+
+   /*!
+    * \brief Localised names of \c Hop::Use values suitable for displaying to the end user
+    */
+   static EnumStringMapping const useDisplayNames;
 
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
@@ -57,12 +89,19 @@ public:
    virtual ~RecipeAdditionHop();
 
    //=================================================== PROPERTIES ====================================================
-   Q_PROPERTY(Hop * hop READ hop WRITE setHop)
+   /**
+    * \brief The \c Use.  This is moved from \c Hop with the introduction of BeerJSON.  It is required for BeerXML, but
+    *        \b deprecated for other use.
+    */
+   Q_PROPERTY(Use   use   READ use   WRITE setUse STORED false)
+   Q_PROPERTY(Hop * hop   READ hop   WRITE setHop             )
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
+   [[deprecated]] Use use() const;
    Hop * hop () const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
+   [[deprecated]] void setUse(Use const val);
    void setHop(Hop * const val);
 
    /**
@@ -85,5 +124,8 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 };
+
+Q_DECLARE_METATYPE(Hop)
+Q_DECLARE_METATYPE(Hop *)
 
 #endif

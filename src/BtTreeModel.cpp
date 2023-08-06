@@ -125,7 +125,7 @@ BtTreeModel::BtTreeModel(BtTreeView * parent, TypeMasks type) :
          connect(&ObjectStoreTyped<Hop>::getInstance(), &ObjectStoreTyped<Hop>::signalObjectDeleted,  this, &BtTreeModel::elementRemovedHop);
          this->itemType = BtTreeItem::Type::HOP;
          _mimeType = "application/x-brewken-ingredient";
-         m_maxColumns = BtTreeItem::HOPNUMCOLS;
+         m_maxColumns = static_cast<int>(BtTreeItem::HopColumn::NumberOfColumns);
          break;
       case MISCMASK:
          rootItem->insertChildren(items, 1, BtTreeItem::Type::MISC);
@@ -393,13 +393,15 @@ QVariant BtTreeModel::fermentableHeader(int section) const {
 }
 
 QVariant BtTreeModel::hopHeader(int section) const {
-   switch (section) {
-      case BtTreeItem::HOPNAMECOL:
+   switch (static_cast<BtTreeItem::HopColumn>(section)) {
+      case BtTreeItem::HopColumn::Name:
          return QVariant(tr("Name"));
-      case BtTreeItem::HOPFORMCOL:
+      case BtTreeItem::HopColumn::Form:
          return QVariant(tr("Type"));
-      case BtTreeItem::HOPUSECOL:
-         return QVariant(tr("Use"));
+      case BtTreeItem::HopColumn::AlphaPct:
+         return QVariant(tr("\% Alpha"));
+      case BtTreeItem::HopColumn::Origin:
+         return QVariant(tr("Origin"));
    }
 
    qWarning() << QString("BtTreeModel::getHopHeader Bad column: %1").arg(section);

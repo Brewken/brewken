@@ -765,21 +765,7 @@ namespace {
       "BeerJSON 1.0",
       *jsonVersionWeSupport, // "2.06",
       JsonSchema::Id::BEER_JSON_2_1,
-      {
-         BEER_JSON_RECORD_DEFINITION_ROOT       ,
-         BEER_JSON_RECORD_DEFINITION<Hop>        ,
-         BEER_JSON_RECORD_DEFINITION<Fermentable>,
-         BEER_JSON_RECORD_DEFINITION<Yeast>      ,
-         BEER_JSON_RECORD_DEFINITION<Misc>       ,
-         BEER_JSON_RECORD_DEFINITION<Water>      ,
-         BEER_JSON_RECORD_DEFINITION<Style>      ,
-//         BEER_JSON_RECORD_DEFINITION<MashStep>   ,
-         BEER_JSON_RECORD_DEFINITION<Mash>       ,
-         BEER_JSON_RECORD_DEFINITION<Equipment>  ,
-//         BEER_JSON_RECORD_DEFINITION<Instruction>,
-//         BEER_JSON_RECORD_DEFINITION<BrewNote>   ,
-//         BEER_JSON_RECORD_DEFINITION<Recipe>
-      }
+      BEER_JSON_RECORD_DEFINITION_ROOT
    };
 
    //=-=-=-=-=-=-=-=-

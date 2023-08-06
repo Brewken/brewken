@@ -253,7 +253,7 @@ bool XmlRecipeRecord::childrenToXml(XmlRecordDefinition::FieldDefinition const &
       this->writeNone(subRecord, recipe, out, indentLevel, indentString);
    } else {
       for (CNE * child : children) {
-         subRecord.toXml(*child, out, indentLevel, indentString);
+         subRecord.toXml(*child, out, true, indentLevel, indentString);
       }
    }
    return true;

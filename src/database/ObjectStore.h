@@ -374,7 +374,10 @@ public:
     * \brief Search for multiple objects (in the set of all cached objects of a given type) with a lambda.  Subclasses
     *        are expected to provide a public override of this function that implements a class-specific interface.
     *
-    *        NB: This is non-virtual for the same reason as \c getById
+    *        NB: This is non-virtual for the same reason as \c getById.
+    *
+    *        Outside of the database layer, we don't call this function directly.  It is called from
+    *        \c ObjectStoreTyped::findAllMatching, which in turn is called by \c ObjectStoreWrapper::findAllMatching.
     *
     * \param matchFunction Takes a pointer to object and returns \c true if it's a match or \c false otherwise.
     *
@@ -388,6 +391,11 @@ public:
     * \brief Alternate version of \c findAllMatching that uses raw pointers
     */
    QList<QObject *> findAllMatching(std::function<bool(QObject *)> const & matchFunction) const;
+
+   /**
+    * \brief Similary to \c findAllMatching but returns a list of IDs
+    */
+   QVector<int> idsOfAllMatching(std::function<bool(QObject const *)> const & matchFunction) const;
 
    /**
     * \brief Special case of \c findAllMatching that returns a list of all cached objects of a given type

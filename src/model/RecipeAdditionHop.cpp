@@ -23,6 +23,22 @@
 
 QString const RecipeAdditionHop::LocalisedName = tr("Hop Addition");
 
+EnumStringMapping const RecipeAdditionHop::useStringMapping {
+   {RecipeAdditionHop::Use::Mash      , "Mash"      },
+   {RecipeAdditionHop::Use::First_Wort, "First Wort"},
+   {RecipeAdditionHop::Use::Boil      , "Boil"      },
+   {RecipeAdditionHop::Use::Aroma     , "Aroma"     },
+   {RecipeAdditionHop::Use::Dry_Hop   , "Dry Hop"   },
+};
+
+EnumStringMapping const RecipeAdditionHop::useDisplayNames {
+   {RecipeAdditionHop::Use::Mash      , tr("Mash"      )},
+   {RecipeAdditionHop::Use::First_Wort, tr("First Wort")},
+   {RecipeAdditionHop::Use::Boil      , tr("Boil"      )},
+   {RecipeAdditionHop::Use::Aroma     , tr("Post-Boil" )},
+   {RecipeAdditionHop::Use::Dry_Hop   , tr("Dry Hop"   )},
+};
+
 ObjectStore & RecipeAdditionHop::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<RecipeAdditionHop>::getInstance();
 }
@@ -71,8 +87,38 @@ RecipeAdditionHop::RecipeAdditionHop(RecipeAdditionHop const & other) :
 
 RecipeAdditionHop::~RecipeAdditionHop() = default;
 
+//============================================= "GETTER" MEMBER FUNCTIONS ==============================================
+RecipeAdditionHop::Use  RecipeAdditionHop::use() const {
+   switch (this->stage()) {
+      case RecipeAddition::Stage::Mash:
+         return RecipeAdditionHop::Use::Mash;
+
+      case RecipeAddition::Stage::Boil:
+         if (this->isFirstWort()) {
+            return RecipeAdditionHop::Use::First_Wort;
+         }
+         if (this->isAroma()) {
+            return RecipeAdditionHop::Use::Aroma;
+         }
+         return RecipeAdditionHop::Use::Boil;
+
+      case RecipeAddition::Stage::Fermentation:
+      case RecipeAddition::Stage::Packaging:
+         return RecipeAdditionHop::Use::Dry_Hop;
+
+      // No default case as we want the compiler to warn us if we missed a case above
+   }
+
+   // This should be unreachable, but putting a return statement here prevents compiler warnings
+   return RecipeAdditionHop::Use::Boil;
+}
+
 Hop * RecipeAdditionHop::hop() const {
+   // Normally there should always be a valid Hop in a RecipeAdditionHop.  (The Recipe ID may be -1 if the addition is
+   // only just about to be added to the Recipe or has just been removed from it, but there's no great reason for the
+   // Hop ID not to be valid).
    if (this->m_ingredientId <= 0) {
+      qWarning() << Q_FUNC_INFO << "No Hop set on RecipeAdditionHop #" << this->key();
       return nullptr;
    }
    return ObjectStoreWrapper::getByIdRaw<Hop>(this->m_ingredientId);
@@ -141,11 +187,51 @@ Recipe * RecipeAdditionHop::getOwningRecipe() const {
    return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
 }
 
+//============================================= "SETTER" MEMBER FUNCTIONS ==============================================
+void RecipeAdditionHop::setUse(RecipeAdditionHop::Use const val) {
+   switch (val) {
+      case RecipeAdditionHop::Use::Mash:
+         this->setStage(RecipeAddition::Stage::Mash);
+         break;
+
+      case RecipeAdditionHop::Use::First_Wort:
+         // A first wort hop is in the ramp-up stage of the boil
+         this->setStage(RecipeAddition::Stage::Boil);
+         this->recipe()->nonOptBoil()->ensureStandardProfile();
+         this->setStep(1);
+         break;
+
+      case RecipeAdditionHop::Use::Boil:
+         this->setStage(RecipeAddition::Stage::Boil);
+         this->recipe()->nonOptBoil()->ensureStandardProfile();
+         this->setStep(2);
+         break;
+
+      case RecipeAdditionHop::Use::Aroma:
+         // An aroma hop is added during the post-boil
+         this->setStage(RecipeAddition::Stage::Boil);
+         this->recipe()->nonOptBoil()->ensureStandardProfile();
+         this->setStep(3);
+         break;
+
+      case RecipeAdditionHop::Use::Dry_Hop:
+         this->setStage(RecipeAddition::Stage::Fermentation);
+         break;
+
+      // No default case as we want the compiler to warn us if we missed a case above
+   }
+   return;
+}
+
 void RecipeAdditionHop::setHop(Hop * const val) {
    if (val) {
-      this->m_ingredientId = val->key();
+      this->setIngredientId(val->key());
+      this->setName(tr("Addition of %1").arg(val->name()));
    } else {
-      this->m_ingredientId = -1;
+      // Normally we don't want to invalidate the Hop on a RecipeAdditionHop, because it doesn't buy us anything.
+      qWarning() << Q_FUNC_INFO << "Null Hop set on RecipeAdditionHop #" << this->key();
+      this->setIngredientId(-1);
+      this->setName(tr("Invalid!"));
    }
    return;
 }

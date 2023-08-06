@@ -67,7 +67,6 @@ HopEditor::HopEditor(QWidget * parent) :
 
    BT_COMBO_BOX_INIT(HopEditor, comboBox_hopType, Hop    , type);
    BT_COMBO_BOX_INIT(HopEditor, comboBox_hopForm, Hop, form);
-   BT_COMBO_BOX_INIT(HopEditor, comboBox_hopUse , Hop    , use );
 
    this->connectSignalsAndSlots();
    return;
@@ -92,7 +91,6 @@ void HopEditor::writeFieldsToEditItem() {
 
    this->m_editItem->setType             (this->comboBox_hopType      ->getNonOptValue<Hop::Type>());
    this->m_editItem->setForm             (this->comboBox_hopForm      ->getNonOptValue<Hop::Form>());
-   this->m_editItem->setUse              (this->comboBox_hopUse       ->getOptValue   <Hop::Use >());
 
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    this->m_editItem->setAmountIsWeight       (this->checkBox_amountIsWeight       ->isChecked          ());
@@ -121,7 +119,6 @@ void HopEditor::writeLateFieldsToEditItem() {
 void HopEditor::readFieldsFromEditItem(std::optional<QString> propName) {
    if (!propName || *propName == PropertyNames::Hop::type                        ) { this->comboBox_hopType              ->setValue     (m_editItem->type                 ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::form                    ) { this->comboBox_hopForm              ->setValue     (m_editItem->form                 ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Hop::use                         ) { this->comboBox_hopUse               ->setValue     (m_editItem->use                  ()); if (propName) { return; } }
 
    if (!propName || *propName == PropertyNames::NamedEntity::name                ) { this->lineEdit_name                 ->setTextCursor(m_editItem->name                 ()); // Continues to next line
                                                                                      this->tabWidget_editor->setTabText(0, m_editItem->name());                                if (propName) { return; } }

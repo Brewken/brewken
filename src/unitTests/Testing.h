@@ -42,13 +42,9 @@ public:
    virtual ~Testing();
 
 private:
-   //! \brief Where we write database and log files etc
-   QDir tempDir;
-
-   std::shared_ptr<Equipment> equipFiveGalNoLoss;
-   std::shared_ptr<Hop>       cascade_4pct;
-   //! \brief 70% yield, no moisture, 2 SRM
-   std::shared_ptr<Fermentable> twoRow;
+   // Private implementation details - see https://herbsutter.com/gotw/_100/
+   class impl;
+   std::unique_ptr<impl> pimpl;
 
 private slots:
 

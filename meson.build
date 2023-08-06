@@ -104,8 +104,18 @@
 #    meson dist
 # This will build a .tar.xz file and create a corresponding .tar.xz.sha256sum file for it.
 #
+# STEP 5 (OPTIONAL): Build code documentation
+# -------------------------------------------
+# To build Doxygen-generated HTML code documentation (from the comments in the source files) to the mbuild/doc
+# directory, use:
+#    meson compile doc
+# Then open the file mbuild/doc/html/index.html in a web browser.
 #
-# STEP 5 (OPTIONAL): Build distributable packages
+# NOTE that as, at 2023-08-05, there are quite a lot of things that Doxygen is unable to parse in the code, which means
+#      the generated documentation, whilst extensive, is missing quite a few classes (even though they have Doxygen
+#      comments).  It would be good to fix this, but I fear it is not trivial... :-/
+#
+# STEP 6 (OPTIONAL): Build distributable packages
 # -----------------------------------------------
 # To build binary packages:
 #    ../bt package             ⭐⭐⭐ This is the bit that is not yet working on all platforms ⭐⭐⭐
@@ -1264,6 +1274,9 @@ exportedVariables = {
    #
    'CONFIG_SHARED_LIBRARY_PATHS' : '["' + '", "'.join(sharedLibraryPaths) + '"]',
 
+   # This is used by the Doxygen configuration file (see docs/Doxyfile.meson.in)
+   'CONFIG_BUILD_DIR' : meson.project_build_root(),
+
 }
 
 # We need to set TargetDir in config.xml for the Qt IFW installer
@@ -1580,3 +1593,25 @@ test('Test type lookups',                    testRunner, args : ['testTypeLookup
 test('Test inventory',                       testRunner, args : ['testInventory'])
 # Need a bit longer than the default 30 second timeout for the log rotation test on some platforms
 test('Test log rotation',                    testRunner, args : ['testLogRotation'], timeout : 60)
+
+#===
+
+
+doxygen = find_program('doxygen', required : false)
+if not doxygen.found()
+   warning('Doxygen not found - continuing without Doxygen support')
+else
+##   src_doxygen = files(
+##      # source files
+##      join_paths(meson.source_root(), 'src'),
+##   )
+   doxyfile = configure_file(input : 'doc/Doxyfile.meson.in',
+                             output : 'Doxyfile',
+                             configuration : exportedVariables,
+                             install : false)
+   custom_target('doc',
+                 command: [doxygen, doxyfile],
+                 input: doxyfile,
+                 output: 'html',
+                 install: false)
+endif

@@ -52,7 +52,7 @@ public:
    JsonCoding(char const * const name,
               char const * const version,
               JsonSchema::Id const schemaId,
-              std::initializer_list<JsonRecordDefinition> jsonRecordDefinitions);
+              JsonRecordDefinition const & rootRecordDefinition);
 
    /**
     * \brief Destructor

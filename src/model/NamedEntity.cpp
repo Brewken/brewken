@@ -350,10 +350,15 @@ void NamedEntity::setEitherOrReqParams(NamedParameterBundle const & namedParamet
                                        BtStringConst const & isFirstUnitParameterName,
                                        BtStringConst const & combinedWithUnitsParameterName,
                                        double & quantityReturn,
-                                       bool & isFirstUnitReturn) {
+                                       bool & isFirstUnitReturn,
+                                       std::optional<bool> const defaultIsFirstUnit) {
    if (namedParameterBundle.contains(quantityParameterName)) {
       quantityReturn    = namedParameterBundle.val<double>(quantityParameterName   );
-      isFirstUnitReturn = namedParameterBundle.val<bool  >(isFirstUnitParameterName);
+      if (defaultIsFirstUnit) {
+         isFirstUnitReturn = namedParameterBundle.val<bool>(isFirstUnitParameterName, *defaultIsFirstUnit);
+      } else {
+         isFirstUnitReturn = namedParameterBundle.val<bool>(isFirstUnitParameterName);
+      }
    } else {
       auto const combinedWithUnits = namedParameterBundle.val<T>(combinedWithUnitsParameterName);
       // It is the caller's responsibility to have converted to canonical units -- ie a coding error if this did not
@@ -378,13 +383,15 @@ template void NamedEntity::setEitherOrReqParams<MassOrVolumeAmt>(NamedParameterB
                                                                  BtStringConst const & isFirstUnitParameterName,
                                                                  BtStringConst const & combinedWithUnitsParameterName,
                                                                  double & quantityReturn,
-                                                                 bool & isFirstUnitReturn);
+                                                                 bool & isFirstUnitReturn,
+                                                                 std::optional<bool> const defaultIsFirstUnit);
 template void NamedEntity::setEitherOrReqParams<MassOrVolumeConcentrationAmt>(NamedParameterBundle const & namedParameterBundle,
                                                                               BtStringConst const & quantityParameterName,
                                                                               BtStringConst const & isFirstUnitParameterName,
                                                                               BtStringConst const & combinedWithUnitsParameterName,
                                                                               double & quantityReturn,
-                                                                              bool & isFirstUnitReturn);
+                                                                              bool & isFirstUnitReturn,
+                                                                              std::optional<bool> const defaultIsFirstUnit);
 
 template<typename T>
 void NamedEntity::setEitherOrOptParams(NamedParameterBundle const & namedParameterBundle,

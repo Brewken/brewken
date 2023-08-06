@@ -433,7 +433,8 @@ protected:
                              BtStringConst const & isFirstUnitParameterName,
                              BtStringConst const & combinedWithUnitsParameterName,
                              double & quantityReturn,
-                             bool & isFirstUnitReturn);
+                             bool & isFirstUnitReturn,
+                             std::optional<bool> const defaultIsFirstUnit = std::nullopt);
 
    /**
     * \brief As \c setEitherOrReqParams but for when the attribute is optional

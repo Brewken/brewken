@@ -204,6 +204,8 @@ public:
    std::optional<double> addAtAcidity_pH() const;
    std::optional<double> duration_mins  () const;
 
+   Recipe *              recipe         () const;
+
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setRecipeId       (int                   const val);
    void setIngredientId   (int                   const val);

@@ -40,12 +40,12 @@ public:
         char const * name,
         char const * const version,
         JsonSchema::Id const schemaId,
-        std::initializer_list<JsonRecordDefinition> jsonRecordDefinitions) :
+        JsonRecordDefinition const & rootRecordDefinition) :
       m_self{self},
       m_name{name},
       m_version{version},
       m_schemaId{schemaId},
-      m_jsonRecordDefinitions{jsonRecordDefinitions} {
+      m_rootRecordDefinition{rootRecordDefinition} {
       return;
    }
 
@@ -54,47 +54,20 @@ public:
     */
    ~impl() = default;
 
-   /**
-    * \brief For a given named entity class name (eg "Hop", "Yeast", etc) retrieve the corresponding
-    *        \c JsonRecordDefinition
-    * \param recordName must be that of one of the list of \c JsonRecordDefinition object supplied when we were
-    *                   constructed
-    */
-   JsonRecordDefinition const & getJsonRecordDefinitionByNamedEntity(QString const & namedEntityClassName) const {
-   ///   qDebug() <<
-   ///      Q_FUNC_INFO << "Searching for" << namedEntityClassName << "in" << this->m_jsonRecordDefinitions.size() <<
-   ///      "record definitions";
-      auto result = std::find_if(
-         this->m_jsonRecordDefinitions.cbegin(),
-         this->m_jsonRecordDefinitions.cend(),
-         [namedEntityClassName](JsonRecordDefinition const & recordDefn){
-            return recordDefn.m_namedEntityClassName == namedEntityClassName;
-         }
-      );
-      // It's a coding error if we didn't find the requested element (because we should only ever look for elements we know
-      // about!)
-      if (result == this->m_jsonRecordDefinitions.end()) {
-         qCritical() << Q_FUNC_INFO << "Unable to find record definition for" << namedEntityClassName;
-         Q_ASSERT(false);
-         throw std::invalid_argument{"Invalid record definition"};
-      }
-      return *result;
-   }
-
    // Member variables for impl
    JsonCoding & m_self;
    QString const m_name;
    QString const m_version;
    JsonSchema::Id const m_schemaId;
-   QVector<JsonRecordDefinition> const m_jsonRecordDefinitions;
+   JsonRecordDefinition const & m_rootRecordDefinition;
 
 };
 
 JsonCoding::JsonCoding(char const * name,
                        char const * const version,
                        JsonSchema::Id const schemaId,
-                       std::initializer_list<JsonRecordDefinition> jsonRecordDefinitions) :
-   pimpl{std::make_unique<impl>(*this, name, version, schemaId, jsonRecordDefinitions)} {
+                       JsonRecordDefinition const & rootRecordDefinition) :
+   pimpl{std::make_unique<impl>(*this, name, version, schemaId, rootRecordDefinition)} {
    // As a general rule, it's not helpful to try to log anything in this constructor as the object will be created
    // before logging has been initialised.
    return;
@@ -104,21 +77,9 @@ JsonCoding::JsonCoding(char const * name,
 // file)
 JsonCoding::~JsonCoding() = default;
 
-[[nodiscard]] bool JsonCoding::isKnownJsonRecordDefinition(QString recordName) const {
-   // We assert that we have some record definitions!
-   Q_ASSERT(!this->pimpl->m_jsonRecordDefinitions.empty());
-
-   auto result = std::find_if(
-      this->pimpl->m_jsonRecordDefinitions.begin(),
-      this->pimpl->m_jsonRecordDefinitions.end(),
-      [&recordName](JsonRecordDefinition const & recordDefn){return recordDefn.m_recordName == recordName;}
-   );
-   return result != this->pimpl->m_jsonRecordDefinitions.end();
-}
-
 JsonRecordDefinition const & JsonCoding::getRoot() const {
    // The root element is the one with no corresponding named entity
-   return this->pimpl->getJsonRecordDefinitionByNamedEntity("");
+   return this->pimpl->m_rootRecordDefinition;
 }
 
 bool JsonCoding::validateLoadAndStoreInDb(boost::json::value & inputDocument,
@@ -170,9 +131,8 @@ bool JsonCoding::validateLoadAndStoreInDb(boost::json::value & inputDocument,
    //
    // Look at the root object first
    //
-   JsonRecordDefinition const & rootDefinition = this->getRoot();
-   JsonRecord rootRecord{*this, rootRecordData, rootDefinition};
-   qDebug() << Q_FUNC_INFO << "Looking at field definitions of root element (" << rootDefinition.m_recordName << ")";
+   JsonRecord rootRecord{*this, rootRecordData, this->pimpl->m_rootRecordDefinition};
+   qDebug() << Q_FUNC_INFO << "Looking at field definitions of root element (" << this->pimpl->m_rootRecordDefinition.m_recordName << ")";
 
    ImportRecordCount stats;
 

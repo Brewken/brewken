@@ -106,5 +106,5 @@ S & operator<<(S & stream, XmlRecordDefinition::FieldType const fieldType) {
 // Instantiate the above template function for the types that are going to use it
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
 //
-template QDebug & operator<<(QDebug & stream, XmlRecordDefinition::FieldType const fieldType);
+template QDebug      & operator<<(QDebug      & stream, XmlRecordDefinition::FieldType const fieldType);
 template QTextStream & operator<<(QTextStream & stream, XmlRecordDefinition::FieldType const fieldType);

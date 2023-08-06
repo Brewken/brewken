@@ -220,6 +220,11 @@ namespace ObjectStoreWrapper {
       return ObjectStoreTyped<NE>::getInstance().findAllMatching(matchFunction);
    }
 
+   template<class NE>
+   QVector<int> idsOfAllMatching(std::function<bool(NE const *)> const & matchFunction) {
+      return ObjectStoreTyped<NE>::getInstance().idsOfAllMatching(matchFunction);
+   }
+
    /**
     * \brief Given two IDs of some subclass of \c NamedEntity, return \c true if the corresponding objects are equal (or
     *        if both IDs are invalid), and \c false otherwise

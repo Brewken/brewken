@@ -84,10 +84,10 @@ public:
    QList<std::shared_ptr<DerivedStep>> steps() const {
       //
       // The StepOwnerBase (Mash, Boil, etc) owns its Steps (MashSteps, BoilSteps, etc).  But, for the moment at least,
-      // it's the DerivedStep that knows which StepOwnerBase it's in (and in what order) rather than the StepOwnerBase which
-      // knows which Steps it has, so we have to ask.  The only exception to this is if the StepOwnerBase is not yet
-      // stored in the DB, in which case there is not yet any StepOwnerBase ID to give the Steps, so we store an internal
-      // list of them.
+      // it's the DerivedStep that knows which StepOwnerBase it's in (and in what order) rather than the StepOwnerBase
+      // which knows which Steps it has, so we have to ask.  The only exception to this is if the StepOwnerBase is not
+      // yet stored in the DB, in which case there is not yet any StepOwnerBase ID to give the Steps, so we store an
+      // internal list of them.
       //
       int const myId = this->derived().key();
 
@@ -112,7 +112,14 @@ public:
       return steps;
    }
 
-   std::shared_ptr<DerivedStep> addStep(std::shared_ptr<DerivedStep> step) {
+   /**
+    * \brief Inserts a new step at the specified position.  If there is already a step in that position, it (and all
+    *        subsequent ones) will be bumped one place down the list.
+    *
+    * \param step
+    * \param number counted from 1
+    */
+   std::shared_ptr<DerivedStep> insertStep(std::shared_ptr<DerivedStep> step, int const stepNumber) {
       if (this->derived().key() > 0) {
          qDebug() <<
             Q_FUNC_INFO << "Add" << DerivedStep::staticMetaObject.className() << "#" << step->key() << "to" <<
@@ -120,7 +127,15 @@ public:
          step->setOwnerId(this->derived().key());
       }
 
-      step->setStepNumber(this->steps().size() + 1);
+      // We could skip over prior steps, but the lists are so short it's not worth the extra code IMHO
+      for (auto existingStep : this->steps()) {
+         int const existingStepNumber = existingStep->stepNumber();
+         if (existingStepNumber >= stepNumber) {
+            existingStep->setStepNumber(existingStepNumber + 1);
+         }
+      }
+
+      step->setStepNumber(stepNumber);
 
       // DerivedStep needs to be in the DB for us to add it to the Derived
       if (step->key() < 0) {
@@ -144,12 +159,56 @@ public:
          qDebug() <<
             Q_FUNC_INFO << "Adding" << DerivedStep::staticMetaObject.className() << "#" << step->key() << "to" <<
             Derived::staticMetaObject.className() << "#" << this->derived().key();
-         this->m_stepIds.append(step->key());
+         this->m_stepIds.insert(stepNumber - 1, step->key());
       }
 
       emit this->derived().stepsChanged();
 
       return step;
+   }
+
+   /**
+    * \brief Adds a new step at the end of the current list
+    */
+   std::shared_ptr<DerivedStep> addStep(std::shared_ptr<DerivedStep> step) {
+      return this->insertStep(step, this->steps().size() + 1);
+///      if (this->derived().key() > 0) {
+///         qDebug() <<
+///            Q_FUNC_INFO << "Add" << DerivedStep::staticMetaObject.className() << "#" << step->key() << "to" <<
+///            Derived::staticMetaObject.className() << "#" << this->derived().key();
+///         step->setOwnerId(this->derived().key());
+///      }
+///
+///      step->setStepNumber(this->steps().size() + 1);
+///
+///      // DerivedStep needs to be in the DB for us to add it to the Derived
+///      if (step->key() < 0) {
+///         qDebug() <<
+///            Q_FUNC_INFO << "Inserting" << DerivedStep::staticMetaObject.className() << "in DB for" <<
+///            Derived::staticMetaObject.className() << "#" << this->derived().key();
+///         ObjectStoreWrapper::insert(step);
+///      }
+///
+///      Q_ASSERT(step->key() > 0);
+///
+///      //
+///      // If the Derived itself is not yet stored in the DB then it needs to hang on to its list of DerivedSteps so that,
+///      // when the Derived does get stored, it can tell all the DerivedSteps what their Derived ID is (see doSetKey()).
+///      //
+///      // (Conversely, if the Derived is in the DB, then we don't need to do anything further.  We can get all our
+///      // DerivedSteps any time by just asking the relevant ObjectStore for all DerivedSteps with Derived ID the same as
+///      // ours.)
+///      //
+///      if (this->derived().key() < 0) {
+///         qDebug() <<
+///            Q_FUNC_INFO << "Adding" << DerivedStep::staticMetaObject.className() << "#" << step->key() << "to" <<
+///            Derived::staticMetaObject.className() << "#" << this->derived().key();
+///         this->m_stepIds.append(step->key());
+///      }
+///
+///      emit this->derived().stepsChanged();
+///
+///      return step;
    }
 
    std::shared_ptr<DerivedStep> removeStep(std::shared_ptr<DerivedStep> step) {
@@ -190,6 +249,7 @@ public:
    }
 
    void setStepsDowncast(QList<std::shared_ptr<NamedEntity>> const & val) {
+      this->removeAllSteps();
       QList<std::shared_ptr<DerivedStep>> steps = NamedEntity::upcastList<DerivedStep>(val);
       for (auto step : steps) {
          this->addStep(step);

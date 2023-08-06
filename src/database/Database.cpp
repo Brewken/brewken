@@ -433,7 +433,7 @@ public:
                );
             } else {
                dbUpgradeMessageBox.setDetailedText(
-                  tr("Pre-upgrade database backup is in: \n%1").arg(backupDir)
+                  tr("Pre-upgrade database backup is in:\n%1").arg(backupDir)
                );
             }
             dbUpgradeMessageBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Abort);

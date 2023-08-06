@@ -124,17 +124,18 @@ public:
    void setPreBoilSize_l(std::optional<double> const   val);
    void setBoilTime_mins(double                const   val);
 
-///   // Relational getters and setters
-///   QList<std::shared_ptr<BoilStep>> boilSteps() const;
-///   QList<std::shared_ptr<NamedEntity>> boilStepsDowncast() const;
-///   void setBoilStepsDowncast(QList<std::shared_ptr<NamedEntity>> const & val);
+   //============================================= OTHER MEMBER FUNCTIONS ==============================================
 
-///   virtual Recipe * getOwningRecipe() const;
-///
-///   /**
-///    * \brief A Boil owns its BoilSteps so needs to delete those if it itself is being deleted
-///    */
-///   virtual void hardDeleteOwnedEntities();
+   /**
+    * \brief Ensures that the boil has a "standard" structure of 3 steps:
+    *          - Pre-boil ramping up from mash temperature
+    *          - Boil proper at or around 100°C
+    *          - Post-boil cooling to 30°C (or primary fermentation temperature if known)
+    *
+    *        This is useful when reading BeerXML files which mark hop additions as "First Wort" or "Aroma", meaning
+    *        during the pre-boil or post-boil respectively.
+    */
+   void ensureStandardProfile();
 
 public slots:
    void acceptStepChange(QMetaProperty, QVariant);

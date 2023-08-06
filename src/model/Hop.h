@@ -36,10 +36,12 @@
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Hop { BtStringConst const property{#property}; }
-AddPropertyName(alpha_pct            )
 AddPropertyName(amount               ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 AddPropertyName(amountIsWeight       ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 AddPropertyName(amountWithUnits      ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
+AddPropertyName(time_min             ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
+
+AddPropertyName(alpha_pct            )
 AddPropertyName(beta_pct             )
 AddPropertyName(b_pinene_pct         )
 AddPropertyName(caryophyllene_pct    )
@@ -60,10 +62,8 @@ AddPropertyName(polyphenols_pct      )
 AddPropertyName(producer             )
 AddPropertyName(product_id           )
 AddPropertyName(substitutes          )
-AddPropertyName(time_min             )
 AddPropertyName(total_oil_ml_per_100g)
 AddPropertyName(type                 )
-AddPropertyName(use                  )
 AddPropertyName(xanthohumol_pct      )
 AddPropertyName(year                 )
 #undef AddPropertyName
@@ -142,32 +142,6 @@ public:
     */
    static EnumStringMapping const typeDisplayNames;
 
-   /*!
-    * \brief The way the hop is used.
-    *        NOTE that this is not stored in BeerJSON, and is deprecated in favour of \c RecipeAddition::Stage
-    */
-   enum class Use {Mash,
-                   First_Wort,
-                   Boil,
-                   Aroma,
-                   Dry_Hop};
-   // This allows us to store the above enum class in a QVariant
-   Q_ENUM(Use)
-
-   /*!
-    * \brief Mapping between \c Hop::Form and string values suitable for serialisation in DB, BeerXML, etc (but \b not
-    *        used in BeerJSON)
-    *
-    *        This can also be used to obtain the number of values of \c Type, albeit at run-time rather than
-    *        compile-time.  (One day, C++ will have reflection and we won't need to do things this way.)
-    */
-   static EnumStringMapping const useStringMapping;
-
-   /*!
-    * \brief Localised names of \c Hop::Use values suitable for displaying to the end user
-    */
-   static EnumStringMapping const useDisplayNames;
-
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
     *        info.
@@ -198,13 +172,6 @@ public:
    Q_PROPERTY(double                amount                READ amount                WRITE setAmount               )
    //! \brief Whether the amount is weight (kg), or volume (L).  ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
    Q_PROPERTY(bool                  amountIsWeight        READ amountIsWeight        WRITE setAmountIsWeight       )
-   /**
-    * \brief The \c Use.  This becomes an optional field with the introduction of BeerJSON.  (It is required in BeerXML.)
-    *
-    *        See comment in \c model/Fermentable.h for \c grainGroup property for why this has to be
-    *        \c std::optional<int>, not \c std::optional<Use>
-    */
-   Q_PROPERTY(std::optional<int>    use                   READ useAsInt              WRITE setUseAsInt             )
    //! \brief The time in minutes that the hop is used.
    Q_PROPERTY(double                time_min              READ time_min              WRITE setTime_min             )
    //! \brief The notes.
@@ -265,8 +232,6 @@ public:
    QString               origin    () const;
    [[deprecated]] double                amount               () const;
    [[deprecated]] bool                  amountIsWeight       () const; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-   [[deprecated]] std::optional<Use>    use                  () const; // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
-   std::optional<int>    useAsInt             () const; // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
    [[deprecated]] double                time_min             () const;
    QString               notes                () const;
    std::optional<Type>   type                 () const;
@@ -303,9 +268,7 @@ public:
    void setOrigin    (QString               const & val);
    [[deprecated]] void setAmount               (double                const   val);
    [[deprecated]] void setAmountIsWeight       (bool                  const   val); // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-   void setUse                  (std::optional<Use>    const   val); // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
-   void setUseAsInt             (std::optional<int>    const   val); // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
-   void setTime_min             (double                const   val);
+   [[deprecated]] void setTime_min             (double                const   val);
    void setNotes                (QString               const & val);
    void setType                 (std::optional<Type>   const   val);
    void setTypeAsInt            (std::optional<int>    const   val);
@@ -347,7 +310,7 @@ private:
    std::optional<Form  > m_form      ;
    std::optional<double> m_beta_pct  ;
    QString               m_origin    ;
-   std::optional<Use>    m_use                  ; // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
+///   std::optional<Use>    m_use                  ; // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
    std::optional<Type>   m_type                 ;
    double                m_amount               ; // Primarily valid in "Use Of" instance
    bool                  m_amountIsWeight       ; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
@@ -377,6 +340,6 @@ private:
    void setDefaults();
 };
 
-Q_DECLARE_METATYPE( QList<Hop*> )
+Q_DECLARE_METATYPE(QList<Hop *>)
 
 #endif
