@@ -37,13 +37,13 @@ namespace {
    void setAmountsEtc([[maybe_unused]] CNE & ingredient, [[maybe_unused]] NamedParameterBundle const & npb) {
       return;
    }
-   template<> void setAmountsEtc(Hop & hop, NamedParameterBundle const & npb) {
-      // For Hop, assume amount is weight unless otherwise specified because base BeerXML does not include the
-      // possibility of fermentables being measured by volume.  (It is an extension we have added as a result of
-      // implementing support for BeerJSON.)
-      hop.setAmount        (npb.val<double>(PropertyNames::Hop::amount        ));
-      hop.setAmountIsWeight(npb.val<bool  >(PropertyNames::Hop::amountIsWeight, true));
-      hop.setTime_min      (npb.val<double>(PropertyNames::Hop::time_min ));
+   template<> void setAmountsEtc(RecipeAdditionHop & hopAddition, NamedParameterBundle const & npb) {
+///      // For Hop, assume amount is weight unless otherwise specified because base BeerXML does not include the
+///      // possibility of fermentables being measured by volume.  (It is an extension we have added as a result of
+///      // implementing support for BeerJSON.)
+///      hop.setAmount        (npb.val<double>(PropertyNames::Hop::amount        ));
+///      hop.setAmountIsWeight(npb.val<bool  >(PropertyNames::Hop::amountIsWeight, true));
+///      hop.setTime_min      (npb.val<double>(PropertyNames::Hop::time_min ));
       return;
    }
    template<> void setAmountsEtc(Fermentable & fermentable, NamedParameterBundle const & npb) {

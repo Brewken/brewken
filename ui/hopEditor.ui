@@ -191,32 +191,6 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="SmartLabel" name="label_time">
-         <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
-         </property>
-         <property name="text">
-          <string>Time</string>
-         </property>
-         <property name="buddy">
-          <cstring>lineEdit_time</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="SmartLineEdit" name="lineEdit_time">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="toolTip">
-          <string>Time</string>
-         </property>
-        </widget>
-       </item>
        <item row="4" column="2">
         <widget class="QLabel" name="label_product_id">
          <property name="text">
@@ -944,14 +918,12 @@
   <tabstop>lineEdit_name</tabstop>
   <tabstop>lineEdit_alpha</tabstop>
   <tabstop>lineEdit_inventory</tabstop>
-  <tabstop>comboBox_hopUse</tabstop>
   <tabstop>comboBox_hopType</tabstop>
   <tabstop>comboBox_hopForm</tabstop>
   <tabstop>lineEdit_origin</tabstop>
   <tabstop>lineEdit_year</tabstop>
   <tabstop>lineEdit_producer</tabstop>
   <tabstop>lineEdit_product_id</tabstop>
-  <tabstop>lineEdit_time</tabstop>
   <tabstop>lineEdit_beta</tabstop>
   <tabstop>lineEdit_humulene</tabstop>
   <tabstop>lineEdit_caryophyllene</tabstop>

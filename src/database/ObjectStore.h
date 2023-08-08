@@ -62,6 +62,16 @@ class ObjectStore : public QObject {
 
 public:
    /**
+    * \brief ObjectStore can be in three states - not yet initialised, initialised OK, or error initialising
+    */
+   enum class State {
+      NotYetInitialised,
+      InitialisedOk,
+      ErrorInitialising
+   };
+
+
+   /**
     * \brief The different field types that can be stored directly in an object's DB table.
     *
     *        Note that older versions of the code did a lot of special handling for boolean because SQLite has no native
@@ -99,6 +109,7 @@ public:
       FieldType                 const fieldType;
       BtStringConst             const columnName;   // Shouldn't ever be empty in practice
       BtStringConst             const propertyName; // Can be empty in a junction table (see below)
+      // TODO: We should combine the following two into a variant, as they are never both needed at the same time
       EnumStringMapping const * const enumMapping;  // Only needed if fieldType is Enum
       TableDefinition   const * const foreignKeyTo;
       //! Constructor
@@ -206,6 +217,13 @@ public:
                JunctionTableDefinitions const & junctionTables = JunctionTableDefinitions{});
 
    ~ObjectStore();
+
+   /**
+    * \brief Gets the state of the ObjectStore.  If it's \c ErrorInitialising, we probably need to terminate the
+    *        program.  (This is because, if we were unable to read some or all data from the database during startup,
+    *        we're very likely to hit all sorts of null pointer errors if we try to soldier on.
+    */
+   State state() const;
 
    /**
     * \brief This will log info about every object the store knows about.  Usually only needed for debugging double-free
@@ -324,6 +342,11 @@ public:
     * \return shared pointer to the hard-deleted object, which the caller now owns
     */
    std::shared_ptr<QObject> defaultHardDelete(int id);
+
+   /**
+    * \brief Returns the number of objects in this store
+    */
+   size_t size() const;
 
    /**
     * \brief Return \c true if an object with the supplied ID is stored in the cache or \c false otherwise

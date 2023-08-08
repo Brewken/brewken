@@ -1073,6 +1073,22 @@ namespace {
          //
          {QString("ALTER TABLE hop DROP COLUMN amount")},
          //
+         // Bring the addition times across from the hop table.  Do this before setting stage etc, as it's similar to
+         // the queries we've just done.
+         //
+         {QString("UPDATE hop_in_recipe "
+                  "SET add_at_time_mins = h.time "
+                  "FROM ("
+                     "SELECT id, "
+                            "time "
+                     "FROM hop"
+                  ") AS h "
+                  "WHERE hop_in_recipe.hop_id = h.id")},
+         //
+         // And, as above, drop the time column on the hop table now we pulled the data across.
+         //
+         {QString("ALTER TABLE hop DROP COLUMN time")},
+         //
          // We need to map from old Hop::Use {Mash, First_Wort, Boil, Aroma, Dry_Hop} to new RecipeAddition::Stage
          // {Mash, Boil, Fermentation, Packaging}.
          //

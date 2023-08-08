@@ -247,7 +247,7 @@ namespace {
          {ObjectStore::FieldType::String, "notes"                , PropertyNames::Hop::notes                           },
          {ObjectStore::FieldType::String, "origin"               , PropertyNames::Hop::origin                      },
          {ObjectStore::FieldType::String, "substitutes"          , PropertyNames::Hop::substitutes                     },
-         {ObjectStore::FieldType::Double, "time"                 , PropertyNames::Hop::time_min                        },
+///         {ObjectStore::FieldType::Double, "time"                 , PropertyNames::Hop::time_min                        },
          {ObjectStore::FieldType::Enum  , "htype"                , PropertyNames::Hop::type                            , &Hop::typeStringMapping},
 ///         {ObjectStore::FieldType::Enum  , "use"                  , PropertyNames::Hop::use                             , &Hop::useStringMapping},
          // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -266,17 +266,17 @@ namespace {
          {ObjectStore::FieldType::Double, "xanthohumol_pct"      , PropertyNames::Hop::xanthohumol_pct                 },
       }
    };
-   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Hop> {
-      {
-         "hop_children",
-         {
-            {ObjectStore::FieldType::Int, "id"                                                                            },
-            {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Hop>},
-            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, nullptr, &PRIMARY_TABLE<Hop>},
-         },
-         ObjectStore::MAX_ONE_ENTRY
-      }
-   };
+///   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Hop> {
+///      {
+///         "hop_children",
+///         {
+///            {ObjectStore::FieldType::Int, "id"                                                                            },
+///            {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       nullptr, &PRIMARY_TABLE<Hop>},
+///            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, nullptr, &PRIMARY_TABLE<Hop>},
+///         },
+///         ObjectStore::MAX_ONE_ENTRY
+///      }
+///   };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Instruction
@@ -882,7 +882,13 @@ ObjectStoreTyped<NE> & ObjectStoreTyped<NE>::getInstance() {
    return ostSingleton<NE>;
 }
 
-// We have to make sure that each version of the above function gets instantiated
+//
+// We have to make sure that each version of the above function gets instantiated.  NOTE: This is the 1st of 3 places we
+// need to add any new ObjectStoreTyped
+//
+// You might think the use in InitialiseAllObjectStores below is sufficient for this, but the GCC linker thinks
+// otherwise.
+//
 template ObjectStoreTyped<Boil                > & ObjectStoreTyped<Boil                >::getInstance();
 template ObjectStoreTyped<BoilStep            > & ObjectStoreTyped<BoilStep            >::getInstance();
 template ObjectStoreTyped<BrewNote            > & ObjectStoreTyped<BrewNote            >::getInstance();
@@ -906,8 +912,45 @@ template ObjectStoreTyped<Style               > & ObjectStoreTyped<Style        
 template ObjectStoreTyped<Water               > & ObjectStoreTyped<Water               >::getInstance();
 template ObjectStoreTyped<Yeast               > & ObjectStoreTyped<Yeast               >::getInstance();
 
+bool InitialiseAllObjectStores(QString & errorMessage) {
+   // It's deliberate that we don't stop after the first error.  If there is a problem, it's quite useful to know how
+   // extensive it is.
+   QStringList errors;
+   // NOTE: This is the 2nd of 3 places we need to add any new ObjectStoreTyped
+   if (ObjectStoreTyped<Boil                >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Boil"                ; }
+   if (ObjectStoreTyped<BoilStep            >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "BoilStep"            ; }
+   if (ObjectStoreTyped<BrewNote            >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "BrewNote"            ; }
+   if (ObjectStoreTyped<Equipment           >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Equipment"           ; }
+   if (ObjectStoreTyped<Fermentable         >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Fermentable"         ; }
+   if (ObjectStoreTyped<Fermentation        >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Fermentation"        ; }
+   if (ObjectStoreTyped<FermentationStep    >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "FermentationStep"    ; }
+   if (ObjectStoreTyped<Hop                 >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Hop"                 ; }
+   if (ObjectStoreTyped<Instruction         >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Instruction"         ; }
+   if (ObjectStoreTyped<InventoryFermentable>::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "InventoryFermentable"; }
+   if (ObjectStoreTyped<InventoryHop        >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "InventoryHop"        ; }
+   if (ObjectStoreTyped<InventoryMisc       >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "InventoryMisc"       ; }
+   if (ObjectStoreTyped<InventoryYeast      >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "InventoryYeast"      ; }
+   if (ObjectStoreTyped<Mash                >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Mash"                ; }
+   if (ObjectStoreTyped<MashStep            >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "MashStep"            ; }
+   if (ObjectStoreTyped<Misc                >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Misc"                ; }
+   if (ObjectStoreTyped<Recipe              >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Recipe"              ; }
+   if (ObjectStoreTyped<RecipeAdditionHop   >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "RecipeAdditionHop"   ; }
+   if (ObjectStoreTyped<Salt                >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Salt"                ; }
+   if (ObjectStoreTyped<Style               >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Style"               ; }
+   if (ObjectStoreTyped<Water               >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Water"               ; }
+   if (ObjectStoreTyped<Yeast               >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Yeast"               ; }
+
+   if (errors.size() > 0) {
+      errorMessage = QObject::tr("There were errors loading the following object store(s): %1").arg(errors.join(", "));
+      return false;
+   }
+
+   return true;
+}
+
 namespace {
    QVector<ObjectStore const *> AllObjectStores {
+      // NOTE: This is the 3rd of 3 places we need to add any new ObjectStoreTyped
       &ostSingleton<Boil                >,
       &ostSingleton<BoilStep            >,
       &ostSingleton<BrewNote            >,

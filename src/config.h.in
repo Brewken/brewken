@@ -47,4 +47,7 @@ constexpr char const * CONFIG_RUN_SYSTEM          = "@CONFIG_RUN_SYSTEM@";
 constexpr char const * CONFIG_CXX_COMPILER_ID     = "@CONFIG_CXX_COMPILER_ID@";
 constexpr char const * CONFIG_BUILD_TIMESTAMP     = "@CONFIG_BUILD_TIMESTAMP@";
 
+// Support info
+constexpr char const * CONFIG_HOMEPAGE_URL        = "@CONFIG_HOMEPAGE_URL@";
+
 #endif

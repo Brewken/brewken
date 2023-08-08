@@ -113,7 +113,8 @@ QVariant PropertyPath::getValue(NamedEntity const & obj) const {
    QVariant retVal{};
    NamedEntity const * ne = &obj;
    for (auto const property : this->m_properties) {
-      qDebug() << Q_FUNC_INFO << "Looking at" << *property;
+      // Normally keep the next line commented out otherwise it generates too many lines in the log file
+//      qDebug() << Q_FUNC_INFO << "Looking at" << *property;
 
       if (property == this->m_properties.last()) {
          retVal = ne->property(**property);
@@ -128,6 +129,10 @@ QVariant PropertyPath::getValue(NamedEntity const & obj) const {
          break;
       }
       ne = containedNe.value<NamedEntity *>();
+      if (!ne) {
+         qDebug() << Q_FUNC_INFO << "Property" << *property << "returned nullptr";
+         break;
+      }
    }
    return retVal;
 }

@@ -121,7 +121,7 @@ TypeLookup const Hop::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::type                 , Hop::m_type                 ,           NonPhysicalQuantity::Enum         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amount               , Hop::m_amount               , Measurement::PqEitherMassOrVolume           ), // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amountIsWeight       , Hop::m_amountIsWeight       ,           NonPhysicalQuantity::Bool         ), // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::time_min             , Hop::m_time_min             , Measurement::PhysicalQuantity::Time         ),
+///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::time_min             , Hop::m_time_min             , Measurement::PhysicalQuantity::Time         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::notes                , Hop::m_notes                ,           NonPhysicalQuantity::String       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::hsi_pct              , Hop::m_hsi_pct              ,           NonPhysicalQuantity::Percentage   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::substitutes          , Hop::m_substitutes          ,           NonPhysicalQuantity::String       ),
@@ -157,7 +157,7 @@ Hop::Hop(QString name) :
    m_origin               {""          },
 ///   m_use                  {std::nullopt},
    m_type                 {std::nullopt},
-   m_time_min             {0.0         },
+///   m_time_min             {0.0         },
    m_notes                {""          },
    m_hsi_pct              {0.0         },
    m_substitutes          {""          },
@@ -190,7 +190,7 @@ Hop::Hop(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_origin               , namedParameterBundle, PropertyNames::Hop::origin               ),
 ///   SET_OPT_ENUM_FROM_NPB(m_use       , Hop::Use , namedParameterBundle, PropertyNames::Hop::use                  ),
    SET_OPT_ENUM_FROM_NPB(m_type      , Hop::Type, namedParameterBundle, PropertyNames::Hop::type                 ),
-   SET_REGULAR_FROM_NPB (m_time_min             , namedParameterBundle, PropertyNames::Hop::time_min             ),
+///   SET_REGULAR_FROM_NPB (m_time_min             , namedParameterBundle, PropertyNames::Hop::time_min             ),
    SET_REGULAR_FROM_NPB (m_notes                , namedParameterBundle, PropertyNames::Hop::notes                ),
    SET_REGULAR_FROM_NPB (m_hsi_pct              , namedParameterBundle, PropertyNames::Hop::hsi_pct              ),
    SET_REGULAR_FROM_NPB (m_substitutes          , namedParameterBundle, PropertyNames::Hop::substitutes          ),
@@ -223,7 +223,7 @@ Hop::Hop(Hop const & other) :
    m_origin                {other.m_origin               },
 ///   m_use                   {other.m_use                  },
    m_type                  {other.m_type                 },
-   m_time_min              {other.m_time_min             },
+///   m_time_min              {other.m_time_min             },
    m_notes                 {other.m_notes                },
    m_hsi_pct               {other.m_hsi_pct              },
    m_substitutes           {other.m_substitutes          },
@@ -258,7 +258,7 @@ std::optional<double>    Hop::beta_pct             () const { return this->m_bet
 QString                  Hop::origin               () const { return this->m_origin               ; }
 double                   Hop::amount               () const { return this->m_amount               ; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 bool                     Hop::amountIsWeight       () const { return this->m_amountIsWeight       ; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
-double                   Hop::time_min             () const { return this->m_time_min             ; }
+/// double                   Hop::time_min             () const { return this->m_time_min             ; }
 QString                  Hop::notes                () const { return this->m_notes                ; }
 std::optional<Hop::Type> Hop::type                 () const { return this->m_type                 ; }
 std::optional<int>       Hop::typeAsInt            () const { return Optional::toOptInt(m_type)   ; }
@@ -292,7 +292,7 @@ void Hop::setOrigin               (QString                  const & val) { this-
 void Hop::setAmount               (double                   const   val) { this->setAndNotify(PropertyNames::Hop::amount               , this->m_amount               , this->enforceMin(val, "amount")                 ); return; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 void Hop::setAmountIsWeight       (bool                     const   val) { this->setAndNotify(PropertyNames::Hop::amountIsWeight       , this->m_amountIsWeight       , val); return; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 
-void Hop::setTime_min             (double                   const   val) { this->setAndNotify(PropertyNames::Hop::time_min             , this->m_time_min             , this->enforceMin      (val, "time")                             ); return; }
+///void Hop::setTime_min             (double                   const   val) { this->setAndNotify(PropertyNames::Hop::time_min             , this->m_time_min             , this->enforceMin      (val, "time")                             ); return; }
 void Hop::setNotes                (QString                  const & val) { this->setAndNotify(PropertyNames::Hop::notes                , this->m_notes                , val                                                             ); return; }
 void Hop::setType                 (std::optional<Hop::Type> const   val) { this->setAndNotify(PropertyNames::Hop::type                 , this->m_type                 , val                                                             ); return; }
 void Hop::setTypeAsInt            (std::optional<int>       const   val) { this->setAndNotify(PropertyNames::Hop::type                 , this->m_type                 , Optional::fromOptInt<Type>(val));                                  return; }

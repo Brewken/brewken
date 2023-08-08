@@ -40,7 +40,7 @@ HopEditor::HopEditor(QWidget * parent) :
    SMART_FIELD_INIT(HopEditor, label_name                 , lineEdit_name                 , Hop, PropertyNames::NamedEntity::name            );
    SMART_FIELD_INIT(HopEditor, label_alpha                , lineEdit_alpha                , Hop, PropertyNames::Hop::alpha_pct            , 1);
    SMART_FIELD_INIT(HopEditor, label_inventory            , lineEdit_inventory            , Hop, PropertyNames::Hop::amount               );
-   SMART_FIELD_INIT(HopEditor, label_time                 , lineEdit_time                 , Hop, PropertyNames::Hop::time_min             , 0);
+///   SMART_FIELD_INIT(HopEditor, label_time                 , lineEdit_time                 , Hop, PropertyNames::Hop::time_min             , 0);
    SMART_FIELD_INIT(HopEditor, label_beta                 , lineEdit_beta                 , Hop, PropertyNames::Hop::beta_pct             , 1);
    SMART_FIELD_INIT(HopEditor, label_HSI                  , lineEdit_HSI                  , Hop, PropertyNames::Hop::hsi_pct              , 0);
    SMART_FIELD_INIT(HopEditor, label_origin               , lineEdit_origin               , Hop, PropertyNames::Hop::origin                  );
@@ -78,7 +78,7 @@ void HopEditor::writeFieldsToEditItem() {
    // .:TBD:. Need to add inventory here I think
    this->m_editItem->setName             (this->lineEdit_name         ->text                  ());
    this->m_editItem->setAlpha_pct        (this->lineEdit_alpha        ->getNonOptValue<double>());
-   this->m_editItem->setTime_min         (this->lineEdit_time         ->getNonOptCanonicalQty ());
+///   this->m_editItem->setTime_min         (this->lineEdit_time         ->getNonOptCanonicalQty ());
    this->m_editItem->setBeta_pct         (this->lineEdit_beta         ->getNonOptValue<double>());
    this->m_editItem->setHsi_pct          (this->lineEdit_HSI          ->getNonOptValue<double>());
    this->m_editItem->setOrigin           (this->lineEdit_origin       ->text                  ());
@@ -124,7 +124,7 @@ void HopEditor::readFieldsFromEditItem(std::optional<QString> propName) {
                                                                                      this->tabWidget_editor->setTabText(0, m_editItem->name());                                if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::origin                  ) { this->lineEdit_origin               ->setTextCursor(m_editItem->origin               ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::alpha_pct               ) { this->lineEdit_alpha                ->setAmount    (m_editItem->alpha_pct            ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Hop::time_min                    ) { this->lineEdit_time                 ->setAmount    (m_editItem->time_min             ()); if (propName) { return; } }
+///   if (!propName || *propName == PropertyNames::Hop::time_min                    ) { this->lineEdit_time                 ->setAmount    (m_editItem->time_min             ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::beta_pct                ) { this->lineEdit_beta                 ->setAmount    (m_editItem->beta_pct             ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::hsi_pct                     ) { this->lineEdit_HSI                  ->setAmount    (m_editItem->hsi_pct              ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::humulene_pct                ) { this->lineEdit_humulene             ->setAmount    (m_editItem->humulene_pct         ()); if (propName) { return; } }

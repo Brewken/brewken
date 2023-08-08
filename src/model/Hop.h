@@ -39,7 +39,7 @@
 AddPropertyName(amount               ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 AddPropertyName(amountIsWeight       ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 AddPropertyName(amountWithUnits      ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
-AddPropertyName(time_min             ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
+///AddPropertyName(time_min             ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 
 AddPropertyName(alpha_pct            )
 AddPropertyName(beta_pct             )
@@ -172,8 +172,8 @@ public:
    Q_PROPERTY(double                amount                READ amount                WRITE setAmount               )
    //! \brief Whether the amount is weight (kg), or volume (L).  ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
    Q_PROPERTY(bool                  amountIsWeight        READ amountIsWeight        WRITE setAmountIsWeight       )
-   //! \brief The time in minutes that the hop is used.
-   Q_PROPERTY(double                time_min              READ time_min              WRITE setTime_min             )
+///   //! \brief The time in minutes that the hop is used.
+///   Q_PROPERTY(double                time_min              READ time_min              WRITE setTime_min             )
    //! \brief The notes.
    Q_PROPERTY(QString               notes                 READ notes                 WRITE setNotes                )
    /**
@@ -232,7 +232,7 @@ public:
    QString               origin    () const;
    [[deprecated]] double                amount               () const;
    [[deprecated]] bool                  amountIsWeight       () const; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-   [[deprecated]] double                time_min             () const;
+///   [[deprecated]] double                time_min             () const;
    QString               notes                () const;
    std::optional<Type>   type                 () const;
    std::optional<int>    typeAsInt            () const;
@@ -268,7 +268,7 @@ public:
    void setOrigin    (QString               const & val);
    [[deprecated]] void setAmount               (double                const   val);
    [[deprecated]] void setAmountIsWeight       (bool                  const   val); // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-   [[deprecated]] void setTime_min             (double                const   val);
+///   [[deprecated]] void setTime_min             (double                const   val);
    void setNotes                (QString               const & val);
    void setType                 (std::optional<Type>   const   val);
    void setTypeAsInt            (std::optional<int>    const   val);
@@ -314,7 +314,7 @@ private:
    std::optional<Type>   m_type                 ;
    double                m_amount               ; // Primarily valid in "Use Of" instance
    bool                  m_amountIsWeight       ; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-   double                m_time_min             ;
+///   double                m_time_min             ;
    QString               m_notes                ;
    std::optional<double> m_hsi_pct              ;
    QString               m_substitutes          ;

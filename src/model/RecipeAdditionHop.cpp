@@ -76,6 +76,7 @@ RecipeAdditionHop::RecipeAdditionHop(NamedParameterBundle const & namedParameter
    //
    m_stage = namedParameterBundle.val<RecipeAddition::Stage>(PropertyNames::RecipeAddition::stage,
                                                              RecipeAddition::Stage::Boil);
+///   qDebug() << Q_FUNC_INFO << "RecipeAdditionHop #" << this->key() << ": Recipe #" << this->m_recipeId << ", Hop #" << this->m_ingredientId;
    return;
 }
 
@@ -121,6 +122,8 @@ Hop * RecipeAdditionHop::hop() const {
       qWarning() << Q_FUNC_INFO << "No Hop set on RecipeAdditionHop #" << this->key();
       return nullptr;
    }
+
+///   qDebug() << Q_FUNC_INFO << "RecipeAdditionHop #" << this->key() << ": Recipe #" << this->m_recipeId << ", Hop #" << this->m_ingredientId << "@" << ObjectStoreWrapper::getByIdRaw<Hop>(this->m_ingredientId);
    return ObjectStoreWrapper::getByIdRaw<Hop>(this->m_ingredientId);
 }
 

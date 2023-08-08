@@ -537,7 +537,8 @@ public:
     */
    impl(TypeLookup               const & typeLookup,
         TableDefinition          const & primaryTable,
-        JunctionTableDefinitions const & junctionTables) : typeLookup{typeLookup},
+        JunctionTableDefinitions const & junctionTables) : m_state{ObjectStore::State::NotYetInitialised},
+                                                           typeLookup{typeLookup},
                                                            primaryTable{primaryTable},
                                                            junctionTables{junctionTables},
                                                            allObjects{},
@@ -1135,6 +1136,7 @@ public:
       return primaryKeyInDb;
    }
 
+   ObjectStore::State m_state;
    TypeLookup const & typeLookup;
    TableDefinition const & primaryTable;
    JunctionTableDefinitions const & junctionTables;
@@ -1182,6 +1184,10 @@ ObjectStore::~ObjectStore() {
    //   Q_FUNC_INFO << "Destruct of object store for primary table" << this->pimpl->primaryTable.tableName <<
    //   "(containing" << this->pimpl->allObjects.size() << "objects)";
    return;
+}
+
+ObjectStore::State ObjectStore::state() const {
+   return this->pimpl->m_state;
 }
 
 void ObjectStore::logDiagnostics() const {
@@ -1239,6 +1245,10 @@ bool ObjectStore::addTableConstraints(Database & database, QSqlDatabase & connec
 }
 
 void ObjectStore::loadAll(Database * database) {
+   // Assume we failed until we succeed!  (This saves us having to remember to set the error state in every error
+   // branch.  Instead, we just have to set the all OK state at the end of this function.)
+   this->pimpl->m_state = ObjectStore::State::ErrorInitialising;
+
    if (database) {
       this->pimpl->database = database;
    } else {
@@ -1419,7 +1429,8 @@ void ObjectStore::loadAll(Database * database) {
       while (sqlQuery.next()) {
          int thisPrimaryKey = sqlQuery.value(*GetJunctionTableDefinitionThisPrimaryKeyColumn(junctionTable)).toInt();
          int otherPrimaryKey = sqlQuery.value(*GetJunctionTableDefinitionOtherPrimaryKeyColumn(junctionTable)).toInt();
-         qDebug() << Q_FUNC_INFO << "Interim store of" << thisPrimaryKey << "<->" << otherPrimaryKey;
+         // Usually keep the next line commented out otherwise it generates a lot of lines in the logs
+//         qDebug() << Q_FUNC_INFO << "Interim store of" << thisPrimaryKey << "<->" << otherPrimaryKey;
 
          if (thisPrimaryKey != previousPrimaryKey) {
             thisToOtherKeys.insert(thisPrimaryKey, QVector<int>{});
@@ -1504,7 +1515,17 @@ void ObjectStore::loadAll(Database * database) {
    }
 
    dbTransaction.commit();
+
+   qInfo() << Q_FUNC_INFO << "Read" << this->size() << "objects from DB table" << this->pimpl->primaryTable.tableName;
+
+   // If we made it this far, everything must have loaded in OK (otherwise we'd have bailed out above).
+   this->pimpl->m_state = ObjectStore::State::InitialisedOk;
+
    return;
+}
+
+size_t ObjectStore::size() const {
+   return this->pimpl->allObjects.size();
 }
 
 bool ObjectStore::contains(int id) const {

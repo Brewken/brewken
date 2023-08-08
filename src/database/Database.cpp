@@ -441,7 +441,12 @@ public:
             int ret = dbUpgradeMessageBox.exec();
             if (ret == QMessageBox::Abort) {
                qDebug() << Q_FUNC_INFO << "User clicked \"Abort\".  Exiting.";
+               // Ask the application nicely to quit
                QCoreApplication::quit();
+               // If it didn't, we have to insist!
+               QCoreApplication::exit(1);
+               // If insisting doesn't work, there's one final option
+               exit(1);
             }
          }
 

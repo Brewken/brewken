@@ -475,6 +475,7 @@ protected:
       auto row = this->rows[index.row()];
       auto const columnIndex = static_cast<ColumnIndex>(index.column());
       auto const & columnInfo = this->get_ColumnInfo(columnIndex);
+///      qDebug() << Q_FUNC_INFO << row->metaObject()->className() << "#" << row->key() << "/" << columnInfo.propertyPath;
 ///      qDebug().noquote() << Q_FUNC_INFO << "role = " << role << Logging::getStackTrace();
 
 ///      QVariant modelData = row->property(*columnInfo.propertyName);
@@ -482,7 +483,7 @@ protected:
       if (!modelData.isValid()) {
          // It's a programming error if we couldn't read a property modelData
          qCritical() <<
-            Q_FUNC_INFO << "Unable to read" << row->metaObject()->className() << "property" <<
+            Q_FUNC_INFO << "Unable to read" << row->metaObject()->className() << "#" << row->key() << "property" <<
             columnInfo.propertyPath;
          Q_ASSERT(false); // Stop here on debug builds
       }

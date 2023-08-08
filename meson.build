@@ -1261,7 +1261,7 @@ exportedVariables = {
    # Installers often want the name of the organisation supplying the product, so we need something to put there
    'CONFIG_ORGANIZATION_NAME' : 'The ' + capitalisedProjectName + ' Team',
 
-   # Similarly, installers often want a URL link
+   # Similarly, installers often want a URL link.  We also use this in the program, to tell users where to get support.
    'CONFIG_HOMEPAGE_URL' : 'https://github.com/' + capitalisedProjectName + '/' + projectName,
 
    #

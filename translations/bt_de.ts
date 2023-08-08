@@ -778,12 +778,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%% Alpha</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Origin</source>
         <translation type="unfinished">Ursprung</translation>
+    </message>
+    <message>
+        <source>% Alpha</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1050,7 +1050,7 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Pre-upgrade database backup is in: 
+        <source>Pre-upgrade database backup is in:
 %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2277,6 +2277,20 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Remove %1 from recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Loading Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>See logs for more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The program may not work if you ignore this error.
+
+If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4099,23 +4113,23 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
 <context>
     <name>RecipeAddition</name>
     <message>
-        <source>add_to_mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>add_to_boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>add_to_fermentation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>add_to_package</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Recipe Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Boil</source>
+        <translation type="unfinished">Dem Sud hinzufügen</translation>
+    </message>
+    <message>
+        <source>Add to Fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Package</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4144,6 +4158,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     <message>
         <source>Dry Hop</source>
         <translation type="unfinished">Stopfhopfen</translation>
+    </message>
+    <message>
+        <source>Addition of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

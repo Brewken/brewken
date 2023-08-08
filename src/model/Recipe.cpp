@@ -369,7 +369,9 @@ public:
 
       QList<RecipeAdditionHop *> hopAdditions = this->m_self.hopAdditions();
       for (auto hopAddition : hopAdditions) {
-         connect(hopAddition->hop(), &NamedEntity::changed, &this->m_self, &Recipe::acceptChangeToContainedObject);
+         if (hopAddition->hop()) {
+            connect(hopAddition->hop(), &NamedEntity::changed, &this->m_self, &Recipe::acceptChangeToContainedObject);
+         }
       }
 
       QList<Yeast *> yeasts = this->m_self.yeasts();
@@ -2401,7 +2403,7 @@ void Recipe::recalcIBU() {
    // Bitterness due to hops...
    m_ibus.clear();
    for (auto const hopAddition : this->hopAdditions()) {
-      double tmp = ibuFromHopAddition(hopAddition);
+      double tmp = this->ibuFromHopAddition(hopAddition);
       m_ibus.append(tmp);
       ibus += tmp;
    }
@@ -2867,7 +2869,13 @@ double Recipe::ibuFromHopAddition(RecipeAdditionHop const * hopAddition) {
       Q_FUNC_INFO
    );
 
-   if (hopAddition == nullptr) {
+   if (!hopAddition) {
+      qWarning() << Q_FUNC_INFO << "Null RecipeAdditionHop in Recipe #" << this->key();
+      return 0.0;
+   }
+
+   if (!hopAddition->hop()) {
+      qWarning() << Q_FUNC_INFO << "Null Hop in RecipeAdditionHop #" << hopAddition->key() << "in Recipe #" << this->key();
       return 0.0;
    }
 

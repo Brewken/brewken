@@ -489,6 +489,65 @@ def installDependencies():
          #
 
          #
+         # For almost everything apart form Boost (see below) we can rely on the distro packages.  A few notes:
+         #  - We need CMake even for the Meson build because meson uses CMake as one of its library-finding tools
+         #  - The pandoc package helps us create man pages from markdown input
+         #  - The build-essential and debhelper packages are for creating Debian packages
+         #  - The rpm and rpmlint packages are for creating RPM packages
+         #
+         log.info('Ensuring libraries and frameworks are installed')
+         abortOnRunFail(subprocess.run(['sudo', 'apt-get', 'update']))
+         abortOnRunFail(
+            subprocess.run(
+               ['sudo', 'apt', 'install', '-y', 'build-essential',
+                                                'cmake',
+                                                'coreutils',
+                                                'debhelper',
+                                                'git',
+                                                'libqt5multimedia5-plugins',
+                                                'libqt5sql5-psql',
+                                                'libqt5sql5-sqlite',
+                                                'libqt5svg5-dev',
+                                                'libxalan-c-dev',
+                                                'libxerces-c-dev',
+                                                'lintian',
+                                                'meson',
+                                                'ninja-build',
+                                                'pandoc',
+                                                'python3',
+                                                'qtbase5-dev',
+                                                'qtmultimedia5-dev',
+                                                'qttools5-dev',
+                                                'qttools5-dev-tools',
+                                                'rpm',
+                                                'rpmlint']
+            )
+         )
+
+         #
+         # Thanks to the build-essential package (installed if necessary above), we know there is now _some_ version of
+         # g++ on the system.  We actually need g++ 10 or newer because g++ 9 does not includes the <concepts> header.
+         # So, on older releases (eg Ubuntu 20.04), we need to install a newer g++ (which will sit alongside the system
+         # default one).
+         #
+         minGppVersion = packaging.version.parse('10.1.0')
+         gppVersionOutput = abortOnRunFail(
+            subprocess.run(['g++', '--version'], encoding = "utf-8", capture_output = True)
+         )
+         # We only want the first line of the output from `g++ --version`.  The rest is just the copyright notice.
+         gppVersionLine = str(gppVersionOutput.stdout).split('\n', 1)[0]
+         log.debug('"g++ --version" returned ' + str(gppVersionOutput.stdout))
+         # The version line will be something along the lines of "g++ (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0", so we
+         # split on spaces and take the last field.
+         gppVersionRaw = gppVersionLine.split(' ')[-1]
+         gppVersionFound = packaging.version.parse(gppVersionRaw)
+         log.debug('Parsed as ' + str(gppVersionFound) + '.')
+         if (gppVersionFound < minGppVersion):
+            log.info('Installing g++ 10 as current version is ' + str(gppVersionFound))
+            abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', '-y', 'g++-10']))
+
+
+         #
          # We need a recent version of Boost, ie Boost 1.79 or newer, to use Boost.JSON.  For Windows and Mac this is
          # fine if you are installing from MSYS2 (https://packages.msys2.org/package/mingw-w64-x86_64-boost) or
          # Homebrew (https://formulae.brew.sh/formula/boost) respectively.  Unfortunately, as of late-2022, many
@@ -611,42 +670,6 @@ def installDependencies():
                      ['sudo', 'chmod', '--recursive', 'a+rw', tmpDirName]
                   )
                )
-
-         #
-         # Almost everything else we can rely on the distro packages.  A few notes:
-         #  - We need CMake even for the Meson build because meson uses CMake as one of its library-finding tools
-         #  - The pandoc package helps us create man pages from markdown input
-         #  - The build-essential and debhelper packages are for creating Debian packages
-         #  - The rpm and rpmlint packages are for creating RPM packages
-         #
-         log.info('Ensuring other libraries and frameworks are installed')
-         abortOnRunFail(subprocess.run(['sudo', 'apt-get', 'update']))
-         abortOnRunFail(
-            subprocess.run(
-               ['sudo', 'apt', 'install', '-y', 'build-essential',
-                                                'cmake',
-                                                'coreutils',
-                                                'debhelper',
-                                                'git',
-                                                'libqt5multimedia5-plugins',
-                                                'libqt5sql5-psql',
-                                                'libqt5sql5-sqlite',
-                                                'libqt5svg5-dev',
-                                                'libxalan-c-dev',
-                                                'libxerces-c-dev',
-                                                'lintian',
-                                                'meson',
-                                                'ninja-build',
-                                                'pandoc',
-                                                'python3',
-                                                'qtbase5-dev',
-                                                'qtmultimedia5-dev',
-                                                'qttools5-dev',
-                                                'qttools5-dev-tools',
-                                                'rpm',
-                                                'rpmlint']
-            )
-         )
 
          #
          # Ubuntu 20.04 packages only have Meson 0.53.2, and we need 0.60.0 or later.  In this case it means we have to

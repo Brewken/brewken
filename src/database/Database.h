@@ -135,6 +135,12 @@ public:
                                   QString const & database="brewken",
                                   QString const & username="brewken",
                                   QString const & password="brewken");
+
+   /**
+    * \brief This returns \c true if the \c Database object connected to the DB and was able to check the schema version
+    *        (and do any necessary upgrades to it).  It does \b not mean that we yet read any substantive data out of
+    *        the database, because that's done by the layer above us (\c ObjectStore, \c ObjectStoreTyped).
+    */
    bool loadSuccessful();
 
    //! \brief Figures out what databases we are copying to and from, opens what

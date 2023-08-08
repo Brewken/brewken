@@ -106,6 +106,8 @@ message(STATUS "Building ${PROJECT_NAME} version ${PROJECT_VERSION}")
 message(STATUS "PROJECT_SOURCE_DIR is ${PROJECT_SOURCE_DIR}")
 # Sometimes we do need the capitalised version of the project name
 set(capitalisedProjectName Brewken)
+# We use this in the program, to tell users where to get support.
+set CONFIG_HOMEPAGE_URL "https://github.com/${capitalisedProjectName}/${projectName}"
 
 #=======================================================================================================================
 #======================================================= Options =======================================================

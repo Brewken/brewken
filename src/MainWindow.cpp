@@ -608,8 +608,53 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), pimpl{std::make_u
    */
 
    // If the database doesn't load, we bail
-   if (! Database::instance().loadSuccessful() )
+   if (!Database::instance().loadSuccessful() ) {
+      qCritical() << Q_FUNC_INFO << "Could not load database";
+
+      // Ask the application nicely to quit
+      QCoreApplication::quit();
+      // If it didn't, we ask more firmly
+      QCoreApplication::exit(1);
+      // If the framework won't play ball, we invoke a higher power.
       exit(1);
+   }
+
+   // Now let's ensure all the data is read in from the DB
+   QString errorMessage{};
+   if (!InitialiseAllObjectStores(errorMessage)) {
+      bool bail = true;
+      if (Application::isInteractive()) {
+         // Can't use QErrorMessage here as it's not flexible enough for what we need
+         QMessageBox dataLoadErrorMessageBox;
+         dataLoadErrorMessageBox.setWindowTitle(tr("Error Loading Data"));
+         dataLoadErrorMessageBox.setText(errorMessage);
+         dataLoadErrorMessageBox.setInformativeText(
+            tr("The program may not work if you ignore this error.\n\n"
+               "See logs for more details.\n\n"
+               "If you need help, please open an issue "
+               "at %1").arg(CONFIG_HOMEPAGE_URL)
+         );
+         dataLoadErrorMessageBox.setStandardButtons(QMessageBox::Ignore | QMessageBox::Close);
+         dataLoadErrorMessageBox.setDefaultButton(QMessageBox::Close);
+         int ret = dataLoadErrorMessageBox.exec();
+         if (ret == QMessageBox::Close) {
+            qDebug() << Q_FUNC_INFO << "User clicked \"Close\".  Exiting.";
+         } else {
+            qWarning() <<
+               Q_FUNC_INFO << "User clicked \"Ignore\" after errors loading data.  PROGRAM MAY NOT FUNCTION CORRECTLY!";
+            bail = false;
+         }
+      }
+      if (bail) {
+         // Either the user clicked Close, or we're not interactive.  Either way, we quit in the same way as above.
+         qDebug() << Q_FUNC_INFO << "Exiting...";
+         QCoreApplication::quit();
+         qDebug() << Q_FUNC_INFO << "Still Exiting...";
+         QCoreApplication::exit(1);
+         qDebug() << Q_FUNC_INFO << "Really Exiting now...";
+         exit(1);
+      }
+   }
 
    // Set the window title.
    setWindowTitle( QString("Brewken - %1").arg(CONFIG_VERSION_STRING) );
