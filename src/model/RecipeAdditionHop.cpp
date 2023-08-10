@@ -184,10 +184,27 @@ bool RecipeAdditionHop::isAroma() const {
    return true;
 }
 
-
-
 Recipe * RecipeAdditionHop::getOwningRecipe() const {
    return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
+}
+
+NamedEntity * RecipeAdditionHop::ensureExists(BtStringConst const & property) {
+   if (property == PropertyNames::RecipeAdditionHop::hop) {
+      // It's a coding error if a RecipeAdditionHop doesn't have a Hop by the time we're accessing it via the property
+      // system.
+      Hop * hop = this->hop();
+      if (!hop) {
+         qCritical() << Q_FUNC_INFO << "No Hop set on RecipeAdditionHop #" << this->key();
+         // Stop here on debug builds
+         Q_ASSERT(false);
+      }
+      return hop;
+   }
+   // It's a coding error if we're asked to "create" a relational property we don't know about
+   qCritical() << Q_FUNC_INFO << "Don't know how to ensure property" << property << "exists";
+   // Stop here on debug builds
+   Q_ASSERT(false);
+   return nullptr;
 }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================

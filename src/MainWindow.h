@@ -50,6 +50,7 @@
 
 class BrewNoteWidget;
 class OptionDialog;
+class PropertyPath;
 class Recipe;
 
 class RecipeAdditionHop;
@@ -107,6 +108,17 @@ public:
    //! \brief Doing updates via this method makes them undoable (and redoable).  This is the simplified version
    //         which suffices for modifications to most individual non-relational attributes.
    void doOrRedoUpdate(NamedEntity & updatee,
+                       TypeInfo const & typeInfo,
+                       QVariant newValue,
+                       QString const & description,
+                       QUndoCommand * parent = nullptr);
+
+   /**
+    * \brief This version of \c doOrRedoUpdate is needed when updating a property that has (or might have) a non-trivial
+    *        \c PropertyPath
+    */
+   void doOrRedoUpdate(NamedEntity & updatee,
+                       PropertyPath const & propertyPath,
                        TypeInfo const & typeInfo,
                        QVariant newValue,
                        QString const & description,

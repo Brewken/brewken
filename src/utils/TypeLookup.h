@@ -270,9 +270,9 @@ template<auto MembFnPtr> using MemberFunctionReturnType_t = typename MemberFunct
 template<class S>
 S & operator<<(S & stream, TypeInfo const & typeInfo) {
    stream <<
-      "TypeInfo " << (typeInfo.isOptional() ? "" : "non-") << "optional \"" << typeInfo.typeIndex.name() <<
-      "\" fieldType:" << typeInfo.fieldType << ", property name:" << *typeInfo.propertyName << ", typeLookup:" <<
-      typeInfo.typeLookup;
+      "«TypeInfo " << (typeInfo.isOptional() ? "optional" : "non-optional") << " \"" << typeInfo.typeIndex.name() <<
+      "\"; fieldType:" << typeInfo.fieldType << "; property name:" << *typeInfo.propertyName << "; typeLookup:" <<
+      typeInfo.typeLookup << "»";
    return stream;
 }
 

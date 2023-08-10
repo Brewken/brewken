@@ -63,6 +63,8 @@ public:
     */
    PropertyPath(std::initializer_list<std::reference_wrapper<BtStringConst const>> listOfProperties);
 
+   PropertyPath(PropertyPath const & other);
+
    ~PropertyPath();
 
    QString asXPath() const;

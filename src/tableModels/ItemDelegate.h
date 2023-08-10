@@ -228,21 +228,26 @@ public:
 
          if (fieldType == NonPhysicalQuantity::Enum) {
             BtComboBox * comboBox = qobject_cast<BtComboBox *>(editor);
+            QVariant enumValue;
             if (typeInfo.isOptional()) {
-               model->setData(index, QVariant::fromValue(comboBox->getOptIntValue()), Qt::EditRole);
+               enumValue = QVariant::fromValue(comboBox->getOptIntValue());
             } else {
-               model->setData(index, QVariant::fromValue(comboBox->getNonOptIntValue()), Qt::EditRole);
+               enumValue = QVariant::fromValue(comboBox->getNonOptIntValue());
             }
+            qDebug() << Q_FUNC_INFO << "enumValue = " << enumValue; ///////////////////////////////////////////////////
+            model->setData(index, enumValue, Qt::EditRole);
             return;
          }
 
          if (fieldType == NonPhysicalQuantity::Bool) {
             BtBoolComboBox * boolComboBox = qobject_cast<BtBoolComboBox *>(editor);
+            QVariant boolValue;
             if (typeInfo.isOptional()) {
-               model->setData(index, QVariant::fromValue(boolComboBox->getOptBoolValue()), Qt::EditRole);
+               boolValue = QVariant::fromValue(boolComboBox->getOptBoolValue());
             } else {
-               model->setData(index, QVariant::fromValue(boolComboBox->getNonOptBoolValue()), Qt::EditRole);
+               boolValue = QVariant::fromValue(boolComboBox->getNonOptBoolValue());
             }
+            model->setData(index, boolValue, Qt::EditRole);
             return;
          }
 

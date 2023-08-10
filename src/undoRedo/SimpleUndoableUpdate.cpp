@@ -25,17 +25,34 @@ SimpleUndoableUpdate::SimpleUndoableUpdate(NamedEntity & updatee,
                                            QVariant newValue,
                                            QString const & description,
                                            QUndoCommand * parent) :
-   QUndoCommand{parent},
-   updatee     {updatee},
-   typeInfo    {typeInfo},
-   oldValue    {updatee.property(*typeInfo.propertyName)},
-   newValue    {newValue} {
+   SimpleUndoableUpdate(updatee,
+                        typeInfo.propertyName,
+                        typeInfo,
+                        newValue,
+                        description,
+                        parent) {
+   return;
+}
 
-// Uncomment this log message if the assert below is tripping, as it will usually help find the bug quickly
+
+SimpleUndoableUpdate::SimpleUndoableUpdate(NamedEntity & updatee,
+                                           PropertyPath const propertyPath,
+                                           TypeInfo const & typeInfo,
+                                           QVariant newValue,
+                                           QString const & description,
+                                           QUndoCommand * parent) :
+   QUndoCommand  {parent},
+   m_updatee     {updatee},
+   m_propertyPath{propertyPath},
+   m_typeInfo    {typeInfo},
+   m_oldValue    {m_propertyPath.getValue(m_updatee)},
+   m_newValue    {newValue} {
+   // Uncomment this log message if the assert below is tripping, as it will usually help find the bug quickly
 //   qDebug().noquote() <<
-//      Q_FUNC_INFO << "Type Info:" << this->typeInfo << ", Old Value:" << oldValue << ", Stack trace:" <<
-//      Logging::getStackTrace();
-   Q_ASSERT(this->oldValue.isValid() && "Trying to update non-existent property");
+//      Q_FUNC_INFO << this->m_updatee.metaObject()->className() << "#" << this->m_updatee.key() << "; Property path:" <<
+//      this->m_propertyPath << "; Type Info:" << this->m_typeInfo << "; New Value:" << this->m_newValue << "; Old Value:" <<
+//      this->m_oldValue << "; Stack trace:" << Logging::getStackTrace();
+   Q_ASSERT(this->m_oldValue.isValid() && "Trying to update non-existent property");
 
    this->setText(description);
    return;
@@ -59,14 +76,14 @@ void SimpleUndoableUpdate::undo() {
 
 bool SimpleUndoableUpdate::undoOrRedo(bool const isUndo) {
    // This is where we call the setter for propertyName on updatee, via the magic of the Qt Property System
-   bool success = this->updatee.setProperty(*this->typeInfo.propertyName, isUndo ? this->oldValue : this->newValue);
+   bool success = this->m_propertyPath.setValue(this->m_updatee, isUndo ? this->m_oldValue : this->m_newValue);
 
    // It's a coding error if we tried to update a non-existent property
    if (!success) {
       qCritical() <<
          Q_FUNC_INFO << "Could not" << (isUndo ? "undo" : "(re)do") << " update of " <<
-         this->updatee.metaObject()->className() << "property" << this->typeInfo.propertyName << "with" <<
-         (isUndo ? this->oldValue : this->newValue) << "(" << this->typeInfo << ")";
+         this->m_updatee.metaObject()->className() << "propertyPath" << this->m_propertyPath << "with" <<
+         (isUndo ? this->m_oldValue : this->m_newValue) << "(" << this->m_typeInfo << ")";
       qCritical().noquote() << Q_FUNC_INFO << Logging::getStackTrace();
    }
    Q_ASSERT(success && "Trying to update non-existent property");

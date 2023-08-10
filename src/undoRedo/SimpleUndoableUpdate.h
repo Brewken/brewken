@@ -26,6 +26,7 @@
 #include "model/NamedEntity.h"
 #include "utils/BtStringConst.h"
 #include "utils/OptionalHelpers.h"
+#include "utils/PropertyPath.h"
 #include "utils/TypeTraits.h"
 #include "utils/TypeLookup.h"
 
@@ -50,6 +51,13 @@ public:
     * \param parent This is for grouping updates together.  We don't currently use it.
     */
    SimpleUndoableUpdate(NamedEntity & updatee,
+                        TypeInfo const & typeInfo,
+                        QVariant newValue,
+                        QString const & description,
+                        QUndoCommand * parent = nullptr);
+
+   SimpleUndoableUpdate(NamedEntity & updatee,
+                        PropertyPath const propertyPath,
                         TypeInfo const & typeInfo,
                         QVariant newValue,
                         QString const & description,
@@ -110,16 +118,21 @@ private:
     */
    bool undoOrRedo(bool const isUndo);
 
-   NamedEntity & updatee;
+   //================================================ MEMBER VARIABLES =================================================
+
+   NamedEntity & m_updatee;
+
+   // This needs to be a value not a reference because sometimes we construct it from typeInfo.propertyName
+   PropertyPath const m_propertyPath;
 
    /**
     * \brief Because \c QVariant isn't fantastic at handling null values (although it looks like this may be improved
     *        in Qt 6), we need to know a bit about the type we are storing.
     */
-   TypeInfo const & typeInfo;
+   TypeInfo const & m_typeInfo;
 
-   QVariant oldValue;
-   QVariant newValue;
+   QVariant m_oldValue;
+   QVariant m_newValue;
 };
 
 /**

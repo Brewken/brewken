@@ -118,6 +118,7 @@ public:
 
    virtual Recipe * getOwningRecipe() const;
 
+   virtual NamedEntity * ensureExists(BtStringConst const & property);
 
 protected:
    // Note that we don't override isEqualTo, as we don't have any non-inherited member variables

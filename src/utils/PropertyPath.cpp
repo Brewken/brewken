@@ -36,6 +36,12 @@ PropertyPath::PropertyPath(std::initializer_list<std::reference_wrapper<BtString
    return;
 }
 
+PropertyPath::PropertyPath(PropertyPath const & other) :
+   m_properties{other.m_properties},
+   m_path      {other.m_path      } {
+   return;
+}
+
 PropertyPath::~PropertyPath() = default;
 
 QString PropertyPath::asXPath() const {

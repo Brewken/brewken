@@ -728,6 +728,7 @@ protected:
       }
 
       MainWindow::instance().doOrRedoUpdate(*row,
+                                            columnInfo.propertyPath,
                                             typeInfo,
                                             processedValue,
                                             NE::tr("Change %1 %2").arg(NE::staticMetaObject.className()).arg(columnInfo.columnName));
