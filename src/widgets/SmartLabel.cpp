@@ -70,7 +70,7 @@ void SmartLabel::init(char const * const   editorName,
                       char const * const   labelFqName,
                       [[maybe_unused]] SmartField *         smartField,
                       TypeInfo     const & typeInfo) {
-   qDebug() << Q_FUNC_INFO << labelFqName << ":" << typeInfo;
+//   qDebug() << Q_FUNC_INFO << labelFqName << ":" << typeInfo;
 
    this->pimpl->m_labelFqName = labelFqName;
    this->pimpl->m_settings    = std::make_unique<SmartAmountSettings>(editorName, labelName, typeInfo, nullptr);

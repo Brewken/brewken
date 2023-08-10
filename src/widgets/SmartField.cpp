@@ -201,7 +201,7 @@ template<> void SmartField::init<SmartLabel>([[maybe_unused]] char const * const
                                              TypeInfo                      const & typeInfo,
                                              std::optional<unsigned int>   const   precision,
                                              QString                       const & maximalDisplayString) {
-   qDebug() << Q_FUNC_INFO << fieldFqName << ":" << typeInfo;
+//   qDebug() << Q_FUNC_INFO << fieldFqName << ":" << typeInfo;
 
    // It's a coding error to call this version of init with a NonPhysicalQuantity
    Q_ASSERT(typeInfo.fieldType && !std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType));
@@ -225,7 +225,7 @@ template<> void SmartField::init<QLabel>(char const *                const   edi
                                          TypeInfo                    const & typeInfo,
                                          std::optional<unsigned int> const   precision,
                                          QString                     const & maximalDisplayString) {
-   qDebug() << Q_FUNC_INFO << fieldFqName << ":" << typeInfo;
+//   qDebug() << Q_FUNC_INFO << fieldFqName << ":" << typeInfo;
 
    // It's a coding error to call this version of init with a PhysicalQuantity
    Q_ASSERT(typeInfo.fieldType && std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType));
@@ -245,7 +245,7 @@ void SmartField::initFixed(char const *                const   editorName,
                            Measurement::Unit           const & fixedDisplayUnit,
                            std::optional<unsigned int> const   precision,
                            QString                     const & maximalDisplayString) {
-   qDebug() << Q_FUNC_INFO << fieldFqName << ":" << typeInfo;
+//   qDebug() << Q_FUNC_INFO << fieldFqName << ":" << typeInfo;
 
    // It's a coding error to call this version of init with a NonPhysicalQuantity
    Q_ASSERT(typeInfo.fieldType && !std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType));

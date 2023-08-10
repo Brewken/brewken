@@ -167,7 +167,8 @@ public:
    void doObserveRecipe(Recipe * rec) requires IsTableModel<Caller> && ObservesRecipe<Caller> {
       if (this->derived().recObs) {
          qDebug() <<
-            Q_FUNC_INFO << "Unobserve Recipe #" << this->derived().recObs->key() << "(" << this->derived().recObs->name() << ")";
+            Q_FUNC_INFO << "Unobserve Recipe #" << this->derived().recObs->key() << "(" <<
+            this->derived().recObs->name() << ")";
          this->derived().disconnect(this->derived().recObs, nullptr, &this->derived(), nullptr);
          this->removeAll();
       }
@@ -175,7 +176,8 @@ public:
       this->derived().recObs = rec;
       if (this->derived().recObs) {
          qDebug() <<
-            Q_FUNC_INFO << "Observe Recipe #" << this->derived().recObs->key() << "(" << this->derived().recObs->name() << ")";
+            Q_FUNC_INFO << "Observe Recipe #" << this->derived().recObs->key() << "(" <<
+            this->derived().recObs->name() << ")";
          this->derived().connect(this->derived().recObs, &NamedEntity::changed, &this->derived(), &Derived::changed);
 
          // TBD: Commented out version doesn't compile on GCC
@@ -402,6 +404,7 @@ protected:
       int size = this->rows.size();
       if (size + tmp.size()) {
          this->derived().beginInsertRows(QModelIndex(), size, size + tmp.size() - 1);
+
          this->rows.append(tmp);
 
          for (auto item : tmp) {
@@ -457,10 +460,21 @@ protected:
    /**
     * \brief Child classes should call this from their \c data() member function (overriding
     *        \c QAbstractTableModel::data()) to read data for any column that does not require special handling
+    *
+    * NOTE: The debug logging in this function is commented out because the function gets called A LOT.  I tend to
+    *       uncomment these lines only when working on a problem in this area of the code, otherwise the log file fills
+    *       up too quickly!
     */
    QVariant readDataFromModel(QModelIndex const & index, int const role) const {
       //
       // We assume we are always being called from the Derived::data() member function (eg HopTableModel::data(), etc).
+      // Often the call stack is along the following lines (albeit with some of the functions optimised away in
+      // reality):
+      //    HopTableModel::data()
+      //    QSortFilterProxyModel::data()
+      //    ItemDelegate<HopItemDelegate, HopTableModel>::readDataFromModel()
+      //    HopItemDelegate::setEditorData()
+      //    QAbstractItemView::edit()
       //
       // Per https://doc.qt.io/qt-6/qt.html#ItemDataRole-enum, there are a dozen or so different "roles" that we can
       // get called for, mostly from the Qt framework itself.  If we don't have anything special to say for a particular
@@ -478,7 +492,6 @@ protected:
 ///      qDebug() << Q_FUNC_INFO << row->metaObject()->className() << "#" << row->key() << "/" << columnInfo.propertyPath;
 ///      qDebug().noquote() << Q_FUNC_INFO << "role = " << role << Logging::getStackTrace();
 
-///      QVariant modelData = row->property(*columnInfo.propertyName);
       QVariant modelData = columnInfo.propertyPath.getValue(*row);
       if (!modelData.isValid()) {
          // It's a programming error if we couldn't read a property modelData
@@ -504,7 +517,6 @@ protected:
       // QString.
       //
       TypeInfo const & typeInfo = columnInfo.typeInfo;
-///      qDebug() << Q_FUNC_INFO << columnInfo.columnFqName << "TypeInfo is" << typeInfo;
 
       // First handle the cases where ItemDelegate::readDataFromModel wants "raw" data
       if (std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType)) {
@@ -643,6 +655,15 @@ protected:
                          QVariant const & value,
                          int const role,
                          std::optional<Measurement::PhysicalQuantity> physicalQuantity = std::nullopt) const {
+      //
+      // This gets called from a stack along the following lines:
+      //
+      //    RecipeAdditionHopTableModel::setData()
+      //    QSortFilterProxyModel::setData()
+      //    ItemDelegate<HopItemDelegate, HopTableModel>::writeDataToModel()
+      //    HopItemDelegate::setModelData()
+      //    QAbstractItemView::commitData()
+      //
       if (role != Qt::EditRole) {
 //         qCritical().noquote() << Q_FUNC_INFO << "Unexpected role: " << role << Logging::getStackTrace();
          return false;
@@ -680,21 +701,22 @@ protected:
 
          Measurement::Amount amount =
             Measurement::qStringToSI(value.toString(),
-                                       *physicalQuantity,
-                                       columnInfo.getForcedSystemOfMeasurement(),
-                                       columnInfo.getForcedRelativeScale());
+                                     *physicalQuantity,
+                                     columnInfo.getForcedSystemOfMeasurement(),
+                                     columnInfo.getForcedRelativeScale());
          if (typeInfo.typeIndex == typeid(double)) {
-            processedValue = QVariant::fromValue<double>(amount.quantity());
+            processedValue = Optional::variantFromRaw(amount.quantity(), typeInfo.isOptional());
          } else {
             // Comments above in readDataFromModel apply equally here.  You can cast between MassOrVolumeAmt and
             // Measurement::Amount, but not between QVariant<MassOrVolumeAmt> and QVariant<Measurement::Amount>, so
             // we have to do the casting before we wrap.
-            if (       typeInfo.typeIndex == typeid(MassOrVolumeAmt             )) {
-               processedValue = QVariant::fromValue(static_cast<MassOrVolumeAmt             >(amount));
+            if (typeInfo.typeIndex == typeid(MassOrVolumeAmt)) {
+               processedValue = Optional::variantFromRaw(static_cast<MassOrVolumeAmt>(amount), typeInfo.isOptional());
             } else if (typeInfo.typeIndex == typeid(MassOrVolumeConcentrationAmt)) {
-               processedValue = QVariant::fromValue(static_cast<MassOrVolumeConcentrationAmt>(amount));
-            } else if (typeInfo.typeIndex == typeid(Measurement::Amount         )) {
-               processedValue = QVariant::fromValue(                                          amount );
+               processedValue = Optional::variantFromRaw(static_cast<MassOrVolumeConcentrationAmt>(amount),
+                                                         typeInfo.isOptional());
+            } else if (typeInfo.typeIndex == typeid(Measurement::Amount)) {
+               processedValue = Optional::variantFromRaw(amount, typeInfo.isOptional());
             } else {
                // It's a coding error if we get here
                qCritical() <<

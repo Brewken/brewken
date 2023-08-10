@@ -251,9 +251,10 @@ Measurement::Amount Measurement::qStringToSI(QString qstr,
                                              Measurement::PhysicalQuantity const physicalQuantity,
                                              std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
                                              std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
-   qDebug() <<
-      Q_FUNC_INFO << "Input" << qstr << "of" << physicalQuantity << "; forcedSystemOfMeasurement=" <<
-      forcedSystemOfMeasurement << "; forcedScale=" << forcedScale;
+   // Commented out this log statement as it otherwise takes up a lot of log space
+//   qDebug() <<
+//      Q_FUNC_INFO << "Input" << qstr << "of" << physicalQuantity << "; forcedSystemOfMeasurement=" <<
+//      forcedSystemOfMeasurement << "; forcedScale=" << forcedScale;
 
    //
    // If the caller told us that the SystemOfMeasurement and/or RelativeScale on the input (qstr) are "forced" then that

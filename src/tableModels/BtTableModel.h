@@ -238,10 +238,11 @@ public:
    /**
     * \brief This per-column struct / mini-class holds basic info about each column in the table.  It also plays a
     *        slightly similar role as \c SmartLabel.  However, there are several important differences, including that
-    *        \c ColumnInfo is \b not a \c QWidget and therefore not a signal emitter.  (As mentioned below, it is
-    *        \c QHeaderView that sends us the signal about the user having right-clicked on a column header.  We then
-    *        act on the pop-up menu selections directly, rather than \c SmartLabel sending a signal that
-    *        \c SmartLineEdit (and sometimes others) pick up.
+    *        \c ColumnInfo is \b not a \c QWidget and therefore not a signal emitter.
+    *
+    *        As mentioned below, it is \c QHeaderView that sends us the signal about the user having right-clicked on a
+    *        column header.  We then act on the pop-up menu selections directly, rather than \c SmartLabel sending a
+    *        signal that \c SmartLineEdit (and sometimes others) pick up.
     *
     *        NOTE that you usually want to use the TABLE_MODEL_HEADER macro when constructing
     */

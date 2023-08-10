@@ -70,12 +70,14 @@ private:
       // https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0634r3.html is implemented.
       auto const columnIndex = static_cast<typename NeTableModel::ColumnIndex>(index.column());
       //
-      // In theory we can get `QAbstractItemModel const *` from `index.model()` and downcast it via QAbstractTableModel
-      // to NeTableModel (ie HopTableModel, FermentableTableModel, etc).  In practice, this is a bit painful, eg
-      // qobject_cast will return nullptr because it cannot handle the multiple inheritance of the HopTableModel etc
-      // classes, and there are problems with using other casts that I didn't get to the bottom of.  Since the table
-      // model is known at object construction time, and is not going to change, it's simpler and safer to just grab it
-      // in the constructor.
+      // Although we can get `QAbstractItemModel const *` from `index.model()`, this is an NeSortFilterProxyModel
+      // (HopSortFilterProxyModel, FermentableSortFilterProxyModel, etc) rather than NeTableModel (ie HopTableModel,
+      // FermentableTableModel, etc).  (The NeTableModel keeps rows in an arbitrary
+      // order, and NeSortFilterProxyModel / QSortFilterProxyModel sits on top of it to do the mapping between "base"
+      // order and "sorted" order depending on which column is being used for sorting and whether its an ascending or
+      // descending sort.)
+      //
+      // So, for the purposes of getting column info, we need to grab a pointer to the NeTableModel in the constructor.
       //
       BtTableModel::ColumnInfo const & columnInfo = m_tableModel.get_ColumnInfo(columnIndex);
       Q_ASSERT(index.column() >= 0);
@@ -151,9 +153,13 @@ public:
       BtTableModel::ColumnInfo const & columnInfo = this->getColumnInfo(index);
       TypeInfo const & typeInfo = columnInfo.typeInfo;
 
+      // Note that we need index.model(), not m_tableModel, as the former (eg a an HopSortFilterProxyModel) adds sorting
+      // to the latter (eg HopTableModel).
+      QAbstractItemModel const * model = index.model();
       // Because index is a run-time value, we need to pull the model data out in a QVariant.  We can use the Qt
       // Property system as we do elsewhere.
-      QVariant modelData = m_tableModel.data(index, Qt::EditRole);
+      QVariant modelData = model->data(index, Qt::EditRole);
+
 
       if (std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType)) {
          auto const fieldType = std::get<NonPhysicalQuantity>(*typeInfo.fieldType);
@@ -200,6 +206,13 @@ public:
    /**
     * \brief Subclass should call this from its override of \c QItemDelegate::setModelData.
     *        Gets data from the editor widget and stores it in the specified model at the item index.
+    *
+    * \param editor
+    * \param model This is needed on this function (and \c QItemDelegate::setModelData etc) because the function needs
+    *              to be able to modify the model, so the \b \c const pointer to \c QAbstractItemModel returned from
+    *              \c index.model() (which is what is used in \c readDataFromModel / \c QItemDelegate::setEditorData) is
+    *              not sufficient.
+    * \param index
     */
    void writeDataToModel(QWidget * editor,
                          QAbstractItemModel * model,

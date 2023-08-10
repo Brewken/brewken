@@ -96,7 +96,8 @@ namespace {
       std::call_once(initFlag_Lookups, &Measurement::Unit::initialiseLookups);
 
       auto matches = unitNameLookup.values(NameLookupKey{physicalQuantity, name.toLower()});
-      qDebug() << Q_FUNC_INFO << name << "has" << matches.length() << "case-insensitive match(es)";
+      // Commented out this log statement as it otherwise takes up a lot of log space
+//      qDebug() << Q_FUNC_INFO << name << "has" << matches.length() << "case-insensitive match(es)";
 
       if (caseInensitiveMatching) {
          return matches;

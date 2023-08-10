@@ -65,7 +65,9 @@ bool SimpleUndoableUpdate::undoOrRedo(bool const isUndo) {
    if (!success) {
       qCritical() <<
          Q_FUNC_INFO << "Could not" << (isUndo ? "undo" : "(re)do") << " update of " <<
-         this->updatee.metaObject()->className() << "property" << this->typeInfo.propertyName;
+         this->updatee.metaObject()->className() << "property" << this->typeInfo.propertyName << "with" <<
+         (isUndo ? this->oldValue : this->newValue) << "(" << this->typeInfo << ")";
+      qCritical().noquote() << Q_FUNC_INFO << Logging::getStackTrace();
    }
    Q_ASSERT(success && "Trying to update non-existent property");
    return success;
