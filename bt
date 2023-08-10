@@ -543,9 +543,19 @@ def installDependencies():
          gppVersionFound = packaging.version.parse(gppVersionRaw)
          log.debug('Parsed as ' + str(gppVersionFound) + '.')
          if (gppVersionFound < minGppVersion):
-            log.info('Installing g++ 10 as current version is ' + str(gppVersionFound))
-            abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', '-y', 'g++-10']))
-
+            log.info('Installing gcc/g++ 10 as current version is ' + str(gppVersionFound))
+            abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', '-y', 'gcc-10', 'g++-10']))
+            #
+            # Now we have to tell the system to use the version 10 compiler by default.  This is a little bit high-
+            # handed, but we need a way for the automated "old Linux" build to work and I can't find another way to make
+            # both Meson and CMake use the version 10 compiler rather than the system default one.
+            #
+            # This is relatively easily reversible for anyone setting up a local build.
+            #
+            log.info('Running "update-alternatives" command to set gcc/g++ 10 as default compiler')
+            abortOnRunFail(subprocess.run([
+               'sudo', 'update-alternatives', '--install', '/usr/bin/gcc', 'gcc', '/usr/bin/gcc-10', '60', '--slave', '/usr/bin/g++', 'g++', '/usr/bin/g++-10'
+            ]))
 
          #
          # We need a recent version of Boost, ie Boost 1.79 or newer, to use Boost.JSON.  For Windows and Mac this is
