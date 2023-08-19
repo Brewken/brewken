@@ -30,17 +30,18 @@
 #include "measurement/Unit.h"
 #include "model/Hop.h"
 
+// TODO: Need a separate editor for inventory
+
 HopEditor::HopEditor(QWidget * parent) :
    QDialog(parent),
-   EditorBase<Hop, HopEditor>() {
+   EditorBase<HopEditor, Hop>() {
    setupUi(this);
 
    this->tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);
 
    SMART_FIELD_INIT(HopEditor, label_name                 , lineEdit_name                 , Hop, PropertyNames::NamedEntity::name            );
    SMART_FIELD_INIT(HopEditor, label_alpha                , lineEdit_alpha                , Hop, PropertyNames::Hop::alpha_pct            , 1);
-   SMART_FIELD_INIT(HopEditor, label_inventory            , lineEdit_inventory            , Hop, PropertyNames::Hop::amount               );
-///   SMART_FIELD_INIT(HopEditor, label_time                 , lineEdit_time                 , Hop, PropertyNames::Hop::time_min             , 0);
+///   SMART_FIELD_INIT(HopEditor, label_inventory            , lineEdit_inventory            , Hop, PropertyNames::Hop::amount               );
    SMART_FIELD_INIT(HopEditor, label_beta                 , lineEdit_beta                 , Hop, PropertyNames::Hop::beta_pct             , 1);
    SMART_FIELD_INIT(HopEditor, label_HSI                  , lineEdit_HSI                  , Hop, PropertyNames::Hop::hsi_pct              , 0);
    SMART_FIELD_INIT(HopEditor, label_origin               , lineEdit_origin               , Hop, PropertyNames::Hop::origin                  );
@@ -63,9 +64,9 @@ HopEditor::HopEditor(QWidget * parent) :
    SMART_FIELD_INIT(HopEditor, label_polyphenols          , lineEdit_polyphenols          , Hop, PropertyNames::Hop::polyphenols_pct      , 2);
    SMART_FIELD_INIT(HopEditor, label_xanthohumol          , lineEdit_xanthohumol          , Hop, PropertyNames::Hop::xanthohumol_pct      , 2);
 
-   SMART_CHECK_BOX_INIT(HopEditor, checkBox_amountIsWeight           , label_amountIsWeight           , lineEdit_inventory , Hop, amountIsWeight           );
+///   SMART_CHECK_BOX_INIT(HopEditor, checkBox_amountIsWeight           , label_amountIsWeight           , lineEdit_inventory , Hop, amountIsWeight           );
 
-   BT_COMBO_BOX_INIT(HopEditor, comboBox_hopType, Hop    , type);
+   BT_COMBO_BOX_INIT(HopEditor, comboBox_hopType, Hop, type);
    BT_COMBO_BOX_INIT(HopEditor, comboBox_hopForm, Hop, form);
 
    this->connectSignalsAndSlots();
@@ -78,7 +79,6 @@ void HopEditor::writeFieldsToEditItem() {
    // .:TBD:. Need to add inventory here I think
    this->m_editItem->setName             (this->lineEdit_name         ->text                  ());
    this->m_editItem->setAlpha_pct        (this->lineEdit_alpha        ->getNonOptValue<double>());
-///   this->m_editItem->setTime_min         (this->lineEdit_time         ->getNonOptCanonicalQty ());
    this->m_editItem->setBeta_pct         (this->lineEdit_beta         ->getNonOptValue<double>());
    this->m_editItem->setHsi_pct          (this->lineEdit_HSI          ->getNonOptValue<double>());
    this->m_editItem->setOrigin           (this->lineEdit_origin       ->text                  ());
@@ -93,7 +93,7 @@ void HopEditor::writeFieldsToEditItem() {
    this->m_editItem->setForm             (this->comboBox_hopForm      ->getNonOptValue<Hop::Form>());
 
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   this->m_editItem->setAmountIsWeight       (this->checkBox_amountIsWeight       ->isChecked          ());
+///   this->m_editItem->setAmountIsWeight       (this->checkBox_amountIsWeight       ->isChecked          ());
    this->m_editItem->setProducer             (this->lineEdit_producer             ->text               ());
    this->m_editItem->setProduct_id           (this->lineEdit_product_id           ->text               ());
    this->m_editItem->setYear                 (this->lineEdit_year                 ->text               ());
@@ -112,7 +112,7 @@ void HopEditor::writeFieldsToEditItem() {
 
 void HopEditor::writeLateFieldsToEditItem() {
    // Do this late to make sure we've the row in the inventory table
-   this->m_editItem->setInventoryAmount(lineEdit_inventory->toCanonical().quantity());
+///   this->m_editItem->setInventoryAmount(lineEdit_inventory->toCanonical().quantity());
    return;
 }
 
@@ -124,7 +124,6 @@ void HopEditor::readFieldsFromEditItem(std::optional<QString> propName) {
                                                                                      this->tabWidget_editor->setTabText(0, m_editItem->name());                                if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::origin                  ) { this->lineEdit_origin               ->setTextCursor(m_editItem->origin               ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::alpha_pct               ) { this->lineEdit_alpha                ->setAmount    (m_editItem->alpha_pct            ()); if (propName) { return; } }
-///   if (!propName || *propName == PropertyNames::Hop::time_min                    ) { this->lineEdit_time                 ->setAmount    (m_editItem->time_min             ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::beta_pct                ) { this->lineEdit_beta                 ->setAmount    (m_editItem->beta_pct             ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::hsi_pct                     ) { this->lineEdit_HSI                  ->setAmount    (m_editItem->hsi_pct              ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::humulene_pct                ) { this->lineEdit_humulene             ->setAmount    (m_editItem->humulene_pct         ()); if (propName) { return; } }
@@ -133,9 +132,9 @@ void HopEditor::readFieldsFromEditItem(std::optional<QString> propName) {
    if (!propName || *propName == PropertyNames::Hop::myrcene_pct                 ) { this->lineEdit_myrcene              ->setAmount    (m_editItem->myrcene_pct          ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::substitutes                 ) { this->textEdit_substitutes          ->setPlainText (m_editItem->substitutes          ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::notes                       ) { this->textEdit_notes                ->setPlainText (m_editItem->notes                ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::NamedEntityWithInventory::inventory) { this->lineEdit_inventory            ->setAmount    (m_editItem->inventory            ()); if (propName) { return; } }
+///   if (!propName || *propName == PropertyNames::NamedEntityWithInventory::inventory) { this->lineEdit_inventory            ->setAmount    (m_editItem->inventory            ()); if (propName) { return; } }
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   if (!propName || *propName == PropertyNames::Hop::amountIsWeight              ) { this->checkBox_amountIsWeight       ->setChecked   (m_editItem->amountIsWeight       ()); if (propName) { return; } }
+///   if (!propName || *propName == PropertyNames::Hop::amountIsWeight              ) { this->checkBox_amountIsWeight       ->setChecked   (m_editItem->amountIsWeight       ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::producer                ) { this->lineEdit_producer             ->setText      (m_editItem->producer             ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::product_id              ) { this->lineEdit_product_id           ->setText      (m_editItem->product_id           ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::year                    ) { this->lineEdit_year                 ->setText      (m_editItem->year                 ()); if (propName) { return; } }

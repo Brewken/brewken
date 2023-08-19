@@ -20,6 +20,9 @@
 #include <memory>
 
 #include "model/Hop.h"
+
+#include "model/IngredientAmount.h"
+
 #include "model/RecipeAdditionBase.h"
 #include "model/RecipeAdditionMassOrVolume.h"
 #include "model/Recipe.h"
@@ -38,10 +41,14 @@ AddPropertyName(use                  ) // Deprecated - retained only for BeerXML
 /**
  * \brief Represents the addition of a \c Hop to a \c Recipe
  */
-class RecipeAdditionHop : public RecipeAdditionMassOrVolume, public RecipeAdditionBase<RecipeAdditionHop, Hop> {
+class RecipeAdditionHop : public RecipeAddition,
+                          public RecipeAdditionBase<RecipeAdditionHop, Hop>,
+                          public IngredientAmount<RecipeAdditionHop, Hop> {
    Q_OBJECT
 
    RECIPE_ADDITION_DECL(Hop)
+
+   INGREDIENT_AMOUNT_DECL(RecipeAdditionHop, Hop)
 
 public:
    /**
@@ -95,6 +102,11 @@ public:
     */
    Q_PROPERTY(Use   use   READ use   WRITE setUse STORED false)
    Q_PROPERTY(Hop * hop   READ hop   WRITE setHop             )
+
+   //! \brief The amount in kilograms, liters or count (ie "number of ...") -- see \c IngredientAmount
+   Q_PROPERTY(double quantity                READ quantity    WRITE setQuantity)
+   //! \brief Whether we are measuring in kilograms, liters or count (ie "number of ...") -- see \c IngredientAmount
+   Q_PROPERTY(Ingredient::Measure measure    READ measure     WRITE setMeasure )
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    [[deprecated]] Use use() const;

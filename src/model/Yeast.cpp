@@ -149,7 +149,7 @@ TypeLookup const Yeast::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Yeast::amountWithUnits    , Yeast::amountWithUnits            , Measurement::PqEitherMassOrVolume           ),
    },
    // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
-   &NamedEntityWithInventory::typeLookup
+   {&NamedEntityWithInventory::typeLookup}
 };
 static_assert(std::is_base_of<NamedEntityWithInventory, Yeast>::value);
 

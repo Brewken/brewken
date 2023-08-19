@@ -29,17 +29,17 @@
 #include <QStringList>
 #include <QSqlRecord>
 
-#include "model/NamedEntityWithInventory.h"
+#include "model/Ingredient.h"
+#include "model/IngredientAmount.h"
 #include "utils/EnumStringMapping.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Hop { BtStringConst const property{#property}; }
-AddPropertyName(amount               ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
-AddPropertyName(amountIsWeight       ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
-AddPropertyName(amountWithUnits      ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
-///AddPropertyName(time_min             ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
+///AddPropertyName(amount               ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
+///AddPropertyName(amountIsWeight       ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
+///AddPropertyName(amountWithUnits      ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 
 AddPropertyName(alpha_pct            )
 AddPropertyName(beta_pct             )
@@ -75,8 +75,11 @@ AddPropertyName(year                 )
  * \class Hop
  *
  * \brief Model class for a hop record in the database.
+ *
+ * TODO TODO TODO TODO TODO TODO TODO TODO TODO Sort out inventory!
  */
-class Hop : public NamedEntityWithInventory {
+///class Hop : public NamedEntityWithInventory {
+class Hop : public Ingredient {
    Q_OBJECT
 
 public:
@@ -143,6 +146,14 @@ public:
    static EnumStringMapping const typeDisplayNames;
 
    /**
+    * \brief This is where we centrally define how \c Hop objects can be measured.  Essentially, mass is used in almost
+    *        all cases, but volume is useful for \c Hop::Form::Extract
+    */
+   static constexpr Ingredient::Measures validMeasures = Ingredient::Measure::Mass_Kilograms |
+                                                         Ingredient::Measure::Volume_Liters;
+   static constexpr Ingredient::Measure defaultMeasure = Ingredient::Measure::Mass_Kilograms;
+
+   /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
     *        info.
     */
@@ -168,12 +179,10 @@ public:
    Q_PROPERTY(std::optional<double> beta_pct     READ beta_pct     WRITE setBeta_pct             )
    //! \brief The origin.
    Q_PROPERTY(QString               origin       READ origin       WRITE setOrigin               )
-   //! \brief The amount in either kg or L, depending on \c amountIsWeight()   ⮜⮜⮜ Modified for BeerJSON support.  NB: BeerXML only supports kg. ⮞⮞⮞
-   Q_PROPERTY(double                amount                READ amount                WRITE setAmount               )
-   //! \brief Whether the amount is weight (kg), or volume (L).  ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-   Q_PROPERTY(bool                  amountIsWeight        READ amountIsWeight        WRITE setAmountIsWeight       )
-///   //! \brief The time in minutes that the hop is used.
-///   Q_PROPERTY(double                time_min              READ time_min              WRITE setTime_min             )
+///   //! \brief The amount in either kg or L, depending on \c amountIsWeight()   ⮜⮜⮜ Modified for BeerJSON support.  NB: BeerXML only supports kg. ⮞⮞⮞
+///   Q_PROPERTY(double                amount                READ amount                WRITE setAmount               )
+///   //! \brief Whether the amount is weight (kg), or volume (L).  ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+///   Q_PROPERTY(bool                  amountIsWeight        READ amountIsWeight        WRITE setAmountIsWeight       )
    //! \brief The notes.
    Q_PROPERTY(QString               notes                 READ notes                 WRITE setNotes                )
    /**
@@ -230,9 +239,8 @@ public:
    std::optional<int   > formAsInt () const;
    std::optional<double> beta_pct  () const;
    QString               origin    () const;
-   [[deprecated]] double                amount               () const;
-   [[deprecated]] bool                  amountIsWeight       () const; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-///   [[deprecated]] double                time_min             () const;
+///   [[deprecated]] double                amount               () const;
+///   [[deprecated]] bool                  amountIsWeight       () const; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
    QString               notes                () const;
    std::optional<Type>   type                 () const;
    std::optional<int>    typeAsInt            () const;
@@ -266,9 +274,8 @@ public:
    void setFormAsInt (std::optional<int   > const   val);
    void setBeta_pct  (std::optional<double> const   val);
    void setOrigin    (QString               const & val);
-   [[deprecated]] void setAmount               (double                const   val);
-   [[deprecated]] void setAmountIsWeight       (bool                  const   val); // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-///   [[deprecated]] void setTime_min             (double                const   val);
+///   [[deprecated]] void setAmount               (double                const   val);
+///   [[deprecated]] void setAmountIsWeight       (bool                  const   val); // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
    void setNotes                (QString               const & val);
    void setType                 (std::optional<Type>   const   val);
    void setTypeAsInt            (std::optional<int>    const   val);
@@ -297,7 +304,7 @@ public:
 //   void setAmountWithUnits      (MassOrVolumeAmt       const   val);
 
    // Insert boiler-plate declarations for inventory
-   INVENTORY_COMMON_HEADER_DECLS
+///   INVENTORY_COMMON_HEADER_DECLS
 
    virtual Recipe * getOwningRecipe() const;
 
@@ -310,11 +317,9 @@ private:
    std::optional<Form  > m_form      ;
    std::optional<double> m_beta_pct  ;
    QString               m_origin    ;
-///   std::optional<Use>    m_use                  ; // ⮜⮜⮜ Modified for BeerJSON support ⮞⮞⮞
    std::optional<Type>   m_type                 ;
-   double                m_amount               ; // Primarily valid in "Use Of" instance
-   bool                  m_amountIsWeight       ; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-///   double                m_time_min             ;
+///   double                m_amount               ; // Primarily valid in "Use Of" instance
+///   bool                  m_amountIsWeight       ; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
    QString               m_notes                ;
    std::optional<double> m_hsi_pct              ;
    QString               m_substitutes          ;

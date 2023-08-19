@@ -154,7 +154,7 @@ TypeLookup const Fermentable::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::betaGlucanWithUnits, Fermentable::betaGlucanWithUnits        , Measurement::PqEitherMassOrVolumeConcentration),
    },
    // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
-   &NamedEntityWithInventory::typeLookup
+   {&NamedEntityWithInventory::typeLookup}
 };
 static_assert(std::is_base_of<NamedEntityWithInventory, Fermentable>::value);
 

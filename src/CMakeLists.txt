@@ -127,6 +127,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/model/Fermentation.cpp
     ${repoDir}/src/model/FermentationStep.cpp
     ${repoDir}/src/model/Hop.cpp
+    ${repoDir}/src/model/Ingredient.cpp
     ${repoDir}/src/model/Instruction.cpp
     ${repoDir}/src/model/Inventory.cpp
     ${repoDir}/src/model/Mash.cpp

@@ -36,7 +36,7 @@ class Hop;
  *        See comment on EditorBase::connectSignalsAndSlots for why we need to have \c public, not \c private
  *        inheritance from the Ui base.
  */
-class HopEditor : public QDialog, public Ui::hopEditor, public EditorBase<Hop, HopEditor> {
+class HopEditor : public QDialog, public Ui::hopEditor, public EditorBase<HopEditor, Hop> {
    Q_OBJECT
 
    EDITOR_COMMON_DECL(Hop)

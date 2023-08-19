@@ -340,12 +340,18 @@ void PrintAndPreviewDialog::updatePreview() {
             pDoc += brewDayFormatter->buildHtml();
          }
       } else if (verticalTabWidget->currentIndex() == 1) {
-         InventoryFormatter::HtmlGenerationFlags flags  = static_cast<InventoryFormatter::HtmlGenerationFlags>(
-            checkBox_inventoryFermentables->isChecked() * InventoryFormatter::FERMENTABLES   +
-            checkBox_inventoryHops->isChecked()         * InventoryFormatter::HOPS           +
-            checkBox_inventoryYeast->isChecked()        * InventoryFormatter::YEAST          +
-            checkBox_inventoryMicellaneous->isChecked() * InventoryFormatter::MISCELLANEOUS
-         );
+///         InventoryFormatter::HtmlGenerationFlags flags  = static_cast<InventoryFormatter::HtmlGenerationFlag::HtmlGenerationFlags>(
+///            checkBox_inventoryFermentables->isChecked() * InventoryFormatter::HtmlGenerationFlag::FERMENTABLES   +
+///            checkBox_inventoryHops->isChecked()         * InventoryFormatter::HtmlGenerationFlag::HOPS           +
+///            checkBox_inventoryYeast->isChecked()        * InventoryFormatter::HtmlGenerationFlag::YEAST          +
+///            checkBox_inventoryMicellaneous->isChecked() * InventoryFormatter::HtmlGenerationFlag::MISCELLANEOUS
+///         );
+         InventoryFormatter::HtmlGenerationFlags flags;
+         if (checkBox_inventoryFermentables->isChecked()) { flags |= InventoryFormatter::HtmlGenerationFlag::FERMENTABLES ; }
+         if (checkBox_inventoryHops->isChecked()        ) { flags |= InventoryFormatter::HtmlGenerationFlag::HOPS         ; }
+         if (checkBox_inventoryYeast->isChecked()       ) { flags |= InventoryFormatter::HtmlGenerationFlag::YEAST        ; }
+         if (checkBox_inventoryMicellaneous->isChecked()) { flags |= InventoryFormatter::HtmlGenerationFlag::MISCELLANEOUS; }
+
          pDoc = InventoryFormatter::createInventoryHtml(flags);
       }
       // adding the generated HTML to the QTexBrowser.
@@ -511,12 +517,18 @@ void PrintAndPreviewDialog::printDocument(QPrinter * printer) {
 
       hDoc += recipeFormatter->buildHtmlFooter();
    } else if (verticalTabWidget->currentIndex() == 1) {
-      InventoryFormatter::HtmlGenerationFlags flags = static_cast<InventoryFormatter::HtmlGenerationFlags>(
-         checkBox_inventoryFermentables->isChecked() * InventoryFormatter::FERMENTABLES   +
-         checkBox_inventoryHops->isChecked()         * InventoryFormatter::HOPS           +
-         checkBox_inventoryYeast->isChecked()        * InventoryFormatter::YEAST          +
-         checkBox_inventoryMicellaneous->isChecked() * InventoryFormatter::MISCELLANEOUS
-      );
+///      InventoryFormatter::HtmlGenerationFlags flags = static_cast<InventoryFormatter::HtmlGenerationFlags>(
+///         checkBox_inventoryFermentables->isChecked() * InventoryFormatter::FERMENTABLES   +
+///         checkBox_inventoryHops->isChecked()         * InventoryFormatter::HOPS           +
+///         checkBox_inventoryYeast->isChecked()        * InventoryFormatter::YEAST          +
+///         checkBox_inventoryMicellaneous->isChecked() * InventoryFormatter::MISCELLANEOUS
+///      );
+      InventoryFormatter::HtmlGenerationFlags flags;
+      if (checkBox_inventoryFermentables->isChecked()) { flags |= InventoryFormatter::HtmlGenerationFlag::FERMENTABLES ; }
+      if (checkBox_inventoryHops->isChecked()        ) { flags |= InventoryFormatter::HtmlGenerationFlag::HOPS         ; }
+      if (checkBox_inventoryYeast->isChecked()       ) { flags |= InventoryFormatter::HtmlGenerationFlag::YEAST        ; }
+      if (checkBox_inventoryMicellaneous->isChecked()) { flags |= InventoryFormatter::HtmlGenerationFlag::MISCELLANEOUS; }
+
       hDoc += InventoryFormatter::createInventoryHtml(flags);
    }
 

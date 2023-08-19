@@ -31,7 +31,7 @@
 
 MiscEditor::MiscEditor(QWidget * parent) :
    QDialog(parent),
-   EditorBase<Misc, MiscEditor>() {
+   EditorBase<MiscEditor, Misc>() {
    setupUi(this);
 
    tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);

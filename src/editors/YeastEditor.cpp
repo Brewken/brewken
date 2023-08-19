@@ -32,7 +32,7 @@
 
 YeastEditor::YeastEditor(QWidget * parent) :
    QDialog(parent),
-   EditorBase<Yeast, YeastEditor>() {
+   EditorBase<YeastEditor, Yeast>() {
    setupUi(this);
 
    this->tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);

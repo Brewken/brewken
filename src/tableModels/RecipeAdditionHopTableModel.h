@@ -46,7 +46,7 @@ template <> struct TableModelTraits<RecipeAdditionHopTableModel> {
       Alpha    ,
       Year     ,
       Amount   ,
-      Inventory,
+//      Inventory,
       Stage    ,
       Time     ,
    };

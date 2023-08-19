@@ -91,7 +91,7 @@ TypeLookup const Salt::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Salt::amountWithUnits, Salt::amountWithUnits, Measurement::PqEitherMassOrVolume  ),
    },
    // Parent class lookup
-   &NamedEntity::typeLookup
+   {&NamedEntity::typeLookup}
 };
 
 Salt::Salt(QString name) :

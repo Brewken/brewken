@@ -48,37 +48,49 @@ bool TypeInfo::isOptional() const {
 
 TypeLookup::TypeLookup(char       const * const                                 className,
                        std::initializer_list<TypeLookup::LookupMap::value_type> initializerList,
-                       TypeLookup const * const                                 parentClassLookup) :
-   className{className},
-   lookupMap{initializerList},
-   parentClassLookup{parentClassLookup} {
+                       std::initializer_list<TypeLookup const *>                parentClassLookups) :
+   m_className{className},
+   m_lookupMap{initializerList},
+   m_parentClassLookups{parentClassLookups} {
    return;
 }
 
-TypeInfo const & TypeLookup::getType(BtStringConst const & propertyName) const {
+TypeInfo const * TypeLookup::typeInfoFor(BtStringConst const & propertyName) const {
    auto match = std::find_if(
-      this->lookupMap.begin(),
-      this->lookupMap.end(),
+      this->m_lookupMap.begin(),
+      this->m_lookupMap.end(),
       [& propertyName](auto const & record) { return propertyName == *record.first; }
    );
 
-   if (match != this->lookupMap.end()) {
-      return match->second;
+   if (match != this->m_lookupMap.end()) {
+      return &match->second;
    }
 
-   if (this->parentClassLookup) {
-      return this->parentClassLookup->getType(propertyName);
+   for (auto parentClassLookup : this->m_parentClassLookups) {
+      auto result = parentClassLookup->typeInfoFor(propertyName);
+      if (result) {
+         return result;
+      }
+   }
+
+   return nullptr;
+}
+
+TypeInfo const & TypeLookup::getType(BtStringConst const & propertyName) const {
+   auto result = this->typeInfoFor(propertyName);
+   if (result) {
+      return *result;
    }
 
    // It's a coding error if we tried to look up a property that we don't know about
-   qCritical() << Q_FUNC_INFO << "Can't find type info for property" << *propertyName << "of class" << this->className;
+   qCritical() << Q_FUNC_INFO << "Can't find type info for property" << *propertyName << "of class" << this->m_className;
    qCritical().noquote() << Q_FUNC_INFO << "Stack trace:" << Logging::getStackTrace();
    Q_ASSERT(false);
    throw std::bad_typeid();
 }
 
-bool TypeLookup::isOptional(BtStringConst const & propertyName) const {
-   // This call to getType() will throw std::bad_typeid if there's no info for propertyName, so we don't have to handle
-   // that case here
-   return this->getType(propertyName).isOptional();
-}
+///bool TypeLookup::isOptional(BtStringConst const & propertyName) const {
+///   // This call to getType() will throw std::bad_typeid if there's no info for propertyName, so we don't have to handle
+///   // that case here
+///   return this->getType(propertyName).isOptional();
+///}

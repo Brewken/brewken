@@ -27,8 +27,9 @@
  * \param Derived = the derived class, eg \c RecipeAdditionHop
  * \param Ingredient = the ingredient class, eg \c Hop
  */
+template<class Derived> class RecipeAdditionPhantom;
 template<class Derived, class Ingredient>
-class RecipeAdditionBase : public CuriouslyRecurringTemplateBase<Derived> {
+class RecipeAdditionBase : public CuriouslyRecurringTemplateBase<RecipeAdditionPhantom, Derived> {
 
 protected:
    RecipeAdditionBase() {

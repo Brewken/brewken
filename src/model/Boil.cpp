@@ -54,7 +54,7 @@ TypeLookup const Boil::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Boil::boilStepsDowncast, Boil::boilStepsDowncast),
    },
    // Parent class lookup
-   &NamedEntity::typeLookup
+   {&NamedEntity::typeLookup}
 };
 
 //==================================================== CONSTRUCTORS ====================================================

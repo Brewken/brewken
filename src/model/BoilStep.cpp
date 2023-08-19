@@ -47,9 +47,10 @@ TypeLookup const BoilStep::typeLookup {
    {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BoilStep::chillingType, BoilStep::m_chillingType, NonPhysicalQuantity::Enum),
    },
-   // Parent class lookup
-   &StepExtended::typeLookup
+   // Parent class lookup.  NB: StepExtended not NamedEntity!
+   {&StepExtended::typeLookup}
 };
+static_assert(std::is_base_of<StepExtended, BoilStep>::value);
 
 //==================================================== CONSTRUCTORS ====================================================
 

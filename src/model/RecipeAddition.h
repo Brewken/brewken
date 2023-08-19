@@ -70,16 +70,13 @@ AddPropertyName(duration_mins  )
  *        with 4.4% alpha acid).  This is, however, outside the scope of the BeerJSON work, and will be something we
  *        come back to as a future enhancement.  In the meantime, we have:
  *
- *                 NamedEntity
- *                 /    |     \
- *                /     |      \
- *             Hop   Recipe   RecipeAddition
- *                               \
- *                                \
- *                              RecipeAdditionMassOrVolume
- *                                  \
- *                                   \
- *                                 RecipeAdditionHop
+ *                     NamedEntity
+ *                     /    |     \
+ *                    /     |      \
+ *           Ingredient   Recipe   RecipeAddition     IngredientAmount<RecipeAdditionHop, Hop>
+ *               |                       \            /
+ *               |                        \          /
+ *              Hop                   RecipeAdditionHop
  */
 class RecipeAddition : public NamedEntity {
    Q_OBJECT

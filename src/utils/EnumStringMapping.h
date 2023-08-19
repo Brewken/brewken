@@ -73,7 +73,8 @@ struct EnumAndItsString {
  *        NOTE: We can get the number of values in the mapping by calling \c size (inherited from \c QVector).  By
  *              virtue of the fact that we always start our enums at 0 and don't skip any values, this also tells us
  *              the number of values in the enum (subject to the assumption that every value in the enum was given a
- *              mapping entry).
+ *              mapping entry).  Use \c FlagEnumStringMapping for enums such as \c Ingredient::Measure where this is not
+ *              the case.
  */
 class EnumStringMapping : public QVector<EnumAndItsString> {
 public:
@@ -82,8 +83,9 @@ public:
     *        checking.
     *
     * \param args \b must be in enum order.  This is a small burden but it rather simplifies the code.
+    * \param isRegularEnum Shouldn't normally need to be specified, other than by subclass constructor
     */
-   EnumStringMapping(std::initializer_list<EnumAndItsString> args);
+   EnumStringMapping(std::initializer_list<EnumAndItsString> args, bool const isRegularEnum = true);
 
    /**
     * \brief Convert data that \b might not be a valid string representation of an enum to the \c int value of that
@@ -165,6 +167,13 @@ public:
       std::optional<int> result = this->stringToEnumAsInt(stringValue);
       return result ? std::optional<E>{static_cast<E>(*result)} : std::optional<E>{std::nullopt};
    }
+};
+
+class FlagEnumStringMapping : public EnumStringMapping {
+public:
+   FlagEnumStringMapping(std::initializer_list<EnumAndItsString> args);
+   std::optional<QString> enumAsIntToString(int const enumValue) const;
+
 };
 
 #endif

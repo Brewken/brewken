@@ -67,6 +67,8 @@ namespace {
     */
    struct PreInstruction {
       PreInstruction(QString text, QString title, double  time) : text{text}, title{title}, time{time} { return; }
+      // Since we'll, amongst other things, be storing PreInstruction in a QVector, it needs to be default-constructable
+      PreInstruction() : text{""}, title{""}, time{0.0} { return; }
       ~PreInstruction() = default;
 
       QString text;
@@ -517,7 +519,7 @@ public:
                // NB: No default case as we want compiler to warn us if we missed a value above
             }
 
-            str = str.arg(Measurement::displayAmount(hopAddition->amountWithUnits()))
+            str = str.arg(Measurement::displayAmount(hopAddition->amount()))
                      .arg(hop->name())
                      .arg(Measurement::displayAmount(Measurement::Amount{hopAddition->duration_mins().value_or(0.0), Measurement::Units::minutes}));
 
@@ -848,7 +850,7 @@ TypeLookup const Recipe::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::boilTime_min  , Recipe::boilTime_min      , Measurement::PhysicalQuantity::Time          ),
    },
    // Parent class lookup
-   &NamedEntity::typeLookup
+   {&NamedEntity::typeLookup}
 };
 
 Recipe::Recipe(QString name) :
@@ -1428,7 +1430,7 @@ QString Recipe::nextAddToBoil(double & time) {
       double const addAtTime_mins = *hopAddition->addAtTime_mins();
       if (addAtTime_mins < time && addAtTime_mins > max) {
          ret = tr("Add %1 %2 to boil at %3.")
-               .arg(Measurement::displayAmount(hopAddition->amountWithUnits()))
+               .arg(Measurement::displayAmount(hopAddition->amount()))
                .arg(hopAddition->hop()->name())
                .arg(Measurement::displayAmount(Measurement::Amount{addAtTime_mins, Measurement::Units::minutes}));
 
@@ -2884,10 +2886,10 @@ double Recipe::ibuFromHopAddition(RecipeAdditionHop const * hopAddition) {
 
    double AArating = hopAddition->hop()->alpha_pct() / 100.0;
    // .:TBD.JSON:.  What to do if hopAddition is measured by volume?
-   if (!hopAddition->amountIsWeight()) {
+   if (hopAddition->measure() != Ingredient::Measure::Mass_Kilograms) {
       qCritical() << Q_FUNC_INFO << "Using Hop volume as weight - THIS IS PROBABLY WRONG!";
    }
-   double grams = hopAddition->amount() * 1000.0;
+   double grams = hopAddition->quantity() * 1000.0;
    double minutes = hopAddition->addAtTime_mins().value_or(0.0);
    // Assume 100% utilization until further notice
    double hopUtilization = 1.0;
@@ -2973,7 +2975,7 @@ QList<QString> Recipe::getReagents(QList<RecipeAdditionHop *> hopAdditions, bool
    for (auto hopAddition : hopAdditions) {
       if (firstWort && (hopAddition->isFirstWort())) {
          QString tmp = QString("%1 %2,")
-               .arg(Measurement::displayAmount(hopAddition->amountWithUnits()))
+               .arg(Measurement::displayAmount(hopAddition->amount()))
                .arg(hopAddition->hop()->name());
          reagents.append(tmp);
       }

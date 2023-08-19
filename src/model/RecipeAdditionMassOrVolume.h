@@ -36,6 +36,8 @@ AddPropertyName(amountWithUnits          )
 /**
  * \brief Extends \c RecipeAddition for ammounts that can be either mass or volume (\c RecipeAdditionHop and
  *        \c RecipeAdditionFermentable)
+ *
+ * DEPRECATED - USE IngredientAmount instead
  */
 class RecipeAdditionMassOrVolume : public RecipeAddition {
    Q_OBJECT

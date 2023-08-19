@@ -65,6 +65,13 @@ public:
 
    PropertyPath(PropertyPath const & other);
 
+   /**
+    * \brief Since we have a user-defined copy constructor, the rule of three says we need a user-defined copy
+    *        assignment operator.  This does get used, eg when we're copying XmlRecordDefinition::FieldDefinition
+    *        records into a vector to allow us to share such records between two XmlRecordDefinition instances.
+    */
+   PropertyPath & operator=(PropertyPath const & other);
+
    ~PropertyPath();
 
    QString asXPath() const;

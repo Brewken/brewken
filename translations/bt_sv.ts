@@ -2020,6 +2020,25 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
+    <name>Ingredient</name>
+    <message>
+        <source>Ingredient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass</source>
+        <translation type="unfinished">Massa</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="unfinished">Volym</translation>
+    </message>
+    <message>
+        <source>Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Instruction</name>
     <message>
         <source>Instruction</source>
@@ -2316,11 +2335,9 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>See logs for more details.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The program may not work if you ignore this error.
+
+See logs for more details.
 
 If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
@@ -3826,6 +3843,10 @@ Program will now exit.</source>
     </message>
     <message>
         <source>ListOfRecords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There were errors loading the following object store(s): %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6468,7 +6489,7 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Tid</translation>
+        <translation type="vanished">Tid</translation>
     </message>
     <message>
         <source>Type</source>
@@ -6564,11 +6585,11 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Amount in Inventory</source>
-        <translation>Antal i Lager</translation>
+        <translation type="vanished">Antal i Lager</translation>
     </message>
     <message>
         <source>Amount in inventory</source>
-        <translation>Antal i Lager</translation>
+        <translation type="vanished">Antal i Lager</translation>
     </message>
     <message>
         <source>Main</source>
@@ -6724,15 +6745,15 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Kontrollera om mängden är listad i kg istället för L.</translation>
+        <translation type="obsolete">Kontrollera om mängden är listad i kg istället för L.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation type="unfinished">Mängden är i vikt?</translation>
+        <translation type="obsolete">Mängden är i vikt?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished">Markera denna om värdet indikerar vikt istället för volym</translation>
+        <translation type="obsolete">Markera denna om värdet indikerar vikt istället för volym</translation>
     </message>
 </context>
 <context>

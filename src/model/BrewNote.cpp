@@ -98,7 +98,7 @@ TypeLookup const BrewNote::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::volumeIntoFerm_l , BrewNote::m_volumeIntoFerm_l , Measurement::PhysicalQuantity::Volume     ),
    },
    // Parent class lookup
-   &NamedEntity::typeLookup
+   {&NamedEntity::typeLookup}
 };
 
 // Initializers

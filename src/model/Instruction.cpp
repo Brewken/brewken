@@ -93,7 +93,7 @@ TypeLookup const Instruction::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Instruction::timerValue, Instruction::m_timerValue),
    },
    // Parent class lookup
-   &NamedEntity::typeLookup
+   {&NamedEntity::typeLookup}
 };
 
 Instruction::Instruction(QString name) :

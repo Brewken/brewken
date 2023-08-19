@@ -72,8 +72,9 @@
  *        Finally, derived class needs to have the following QPushButton members (typically defined in the .ui file):
  *           pushButton_new, pushButton_save, pushButton_cancel
  */
-template<class NE, class Derived>
-class EditorBase : public CuriouslyRecurringTemplateBase<Derived> {
+template<class Derived> class EditorPhantom;
+template<class Derived, class NE>
+class EditorBase : public CuriouslyRecurringTemplateBase<EditorPhantom, Derived> {
 public:
    EditorBase() :
       m_editItem{nullptr} {

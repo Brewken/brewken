@@ -71,8 +71,6 @@ EnumStringMapping const Hop::typeDisplayNames {
    {Hop::Type::AromaBitteringAndFlavor, tr("Aroma, Bittering & Flavor")},
 };
 
-
-
 bool Hop::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    Hop const & rhs = static_cast<Hop const &>(other);
@@ -119,8 +117,8 @@ TypeLookup const Hop::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::origin               , Hop::m_origin               ,           NonPhysicalQuantity::String       ),
 ///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::use                  , Hop::m_use                  ,           NonPhysicalQuantity::Enum         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::type                 , Hop::m_type                 ,           NonPhysicalQuantity::Enum         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amount               , Hop::m_amount               , Measurement::PqEitherMassOrVolume           ), // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amountIsWeight       , Hop::m_amountIsWeight       ,           NonPhysicalQuantity::Bool         ), // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
+///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amount               , Hop::m_amount               , Measurement::PqEitherMassOrVolume           ), // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
+///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amountIsWeight       , Hop::m_amountIsWeight       ,           NonPhysicalQuantity::Bool         ), // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 ///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::time_min             , Hop::m_time_min             , Measurement::PhysicalQuantity::Time         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::notes                , Hop::m_notes                ,           NonPhysicalQuantity::String       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::hsi_pct              , Hop::m_hsi_pct              ,           NonPhysicalQuantity::Percentage   ),
@@ -145,12 +143,12 @@ TypeLookup const Hop::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::year                 , Hop::m_year                 ,           NonPhysicalQuantity::String       ),
    },
    // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
-   &NamedEntityWithInventory::typeLookup
+   {&Ingredient::typeLookup}
 };
-static_assert(std::is_base_of<NamedEntityWithInventory, Hop>::value);
+static_assert(std::is_base_of<Ingredient, Hop>::value);
 
 Hop::Hop(QString name) :
-   NamedEntityWithInventory{name, true},
+   Ingredient{name},
    m_alpha_pct            {0.0         },
    m_form                 {std::nullopt},
    m_beta_pct             {std::nullopt},
@@ -183,7 +181,7 @@ Hop::Hop(QString name) :
 }
 
 Hop::Hop(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntityWithInventory{namedParameterBundle},
+   Ingredient{namedParameterBundle},
    SET_REGULAR_FROM_NPB (m_alpha_pct            , namedParameterBundle, PropertyNames::Hop::alpha_pct            ),
    SET_OPT_ENUM_FROM_NPB(m_form      , Hop::Form, namedParameterBundle, PropertyNames::Hop::form                 ),
    SET_REGULAR_FROM_NPB (m_beta_pct             , namedParameterBundle, PropertyNames::Hop::beta_pct             ),
@@ -216,7 +214,7 @@ Hop::Hop(NamedParameterBundle const & namedParameterBundle) :
 }
 
 Hop::Hop(Hop const & other) :
-   NamedEntityWithInventory{other                        },
+   Ingredient{other                        },
    m_alpha_pct             {other.m_alpha_pct            },
    m_form                  {other.m_form                 },
    m_beta_pct              {other.m_beta_pct             },
@@ -256,8 +254,8 @@ std::optional<Hop::Form> Hop::form                 () const { return this->m_for
 std::optional<int>       Hop::formAsInt            () const { return Optional::toOptInt(m_form)   ; }
 std::optional<double>    Hop::beta_pct             () const { return this->m_beta_pct             ; }
 QString                  Hop::origin               () const { return this->m_origin               ; }
-double                   Hop::amount               () const { return this->m_amount               ; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
-bool                     Hop::amountIsWeight       () const { return this->m_amountIsWeight       ; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
+///double                   Hop::amount               () const { return this->m_amount               ; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
+///bool                     Hop::amountIsWeight       () const { return this->m_amountIsWeight       ; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 /// double                   Hop::time_min             () const { return this->m_time_min             ; }
 QString                  Hop::notes                () const { return this->m_notes                ; }
 std::optional<Hop::Type> Hop::type                 () const { return this->m_type                 ; }
@@ -289,8 +287,8 @@ void Hop::setForm                 (std::optional<Hop::Form> const   val) { this-
 void Hop::setFormAsInt            (std::optional<int>       const   val) { this->setAndNotify(PropertyNames::Hop::form                 , this->m_form                 , Optional::fromOptInt<Form>(val)                 ); return; }
 void Hop::setBeta_pct             (std::optional<double>    const   val) { this->setAndNotify(PropertyNames::Hop::beta_pct             , this->m_beta_pct             , this->enforceMinAndMax(val, "beta",  0.0, 100.0)); return; }
 void Hop::setOrigin               (QString                  const & val) { this->setAndNotify(PropertyNames::Hop::origin               , this->m_origin               , val                                             ); return; }
-void Hop::setAmount               (double                   const   val) { this->setAndNotify(PropertyNames::Hop::amount               , this->m_amount               , this->enforceMin(val, "amount")                 ); return; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
-void Hop::setAmountIsWeight       (bool                     const   val) { this->setAndNotify(PropertyNames::Hop::amountIsWeight       , this->m_amountIsWeight       , val); return; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
+///void Hop::setAmount               (double                   const   val) { this->setAndNotify(PropertyNames::Hop::amount               , this->m_amount               , this->enforceMin(val, "amount")                 ); return; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
+///void Hop::setAmountIsWeight       (bool                     const   val) { this->setAndNotify(PropertyNames::Hop::amountIsWeight       , this->m_amountIsWeight       , val); return; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 
 ///void Hop::setTime_min             (double                   const   val) { this->setAndNotify(PropertyNames::Hop::time_min             , this->m_time_min             , this->enforceMin      (val, "time")                             ); return; }
 void Hop::setNotes                (QString                  const & val) { this->setAndNotify(PropertyNames::Hop::notes                , this->m_notes                , val                                                             ); return; }
@@ -323,4 +321,4 @@ Recipe * Hop::getOwningRecipe() const {
 }
 
 // Insert the boiler-plate stuff for inventory
-INVENTORY_COMMON_CODE(Hop)
+///INVENTORY_COMMON_CODE(Hop)

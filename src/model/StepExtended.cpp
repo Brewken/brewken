@@ -41,7 +41,7 @@ TypeLookup const StepExtended::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::StepExtended::endGravity_sg  , StepExtended::m_endGravity_sg  , Measurement::PhysicalQuantity::Density    ),
    },
    // Parent class lookup
-   &Step::typeLookup
+   {&Step::typeLookup}
 };
 
 //==================================================== CONSTRUCTORS ====================================================

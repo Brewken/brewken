@@ -101,7 +101,7 @@ TypeLookup const Misc::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::productId     , Misc::m_productId     ,           NonPhysicalQuantity::String  ),
    },
    // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
-   &NamedEntityWithInventory::typeLookup
+   {&NamedEntityWithInventory::typeLookup}
 };
 static_assert(std::is_base_of<NamedEntityWithInventory, Misc>::value);
 

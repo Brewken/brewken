@@ -45,8 +45,9 @@ template <> struct TableModelTraits<HopTableModel> {
       Form     ,
       Year     ,
       Alpha    ,
-      Inventory,
-      IsWeight ,
+      // TODO Work out how to reinstate inventory
+//      Inventory,
+//      IsWeight ,
    };
 };
 

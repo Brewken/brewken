@@ -500,8 +500,8 @@ void Testing::recipeCalcTest_allGrain() {
    cascadeHopAddition->setHop(this->pimpl->m_cascade_4pct.get());
    cascadeHopAddition->setStage(RecipeAddition::Stage::Boil);
    cascadeHopAddition->setAddAtTime_mins(60);
-   cascadeHopAddition->setAmount(0.085);
-   cascadeHopAddition->setAmountIsWeight(true);
+   cascadeHopAddition->setQuantity(0.085);
+   cascadeHopAddition->setMeasure(Ingredient::Measure::Mass_Kilograms);
    rec->add(cascadeHopAddition);
 
    // Add grain
@@ -538,7 +538,7 @@ void Testing::recipeCalcTest_allGrain() {
    // Ground-truth IBUs (mg/L of isomerized alpha acid)
    //   ~40 IBUs
    double ibus =
-      this->pimpl->m_cascade_4pct->amount()*1e6     // Hops in mg
+      cascadeHopAddition->quantity()*1e6     // Hops in mg
       * this->pimpl->m_cascade_4pct->alpha_pct()/100.0 // AA ratio
       * 0.235 // Tinseth utilization (60 min @ 12 Plato)
       / rec->batchSize_l();

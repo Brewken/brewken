@@ -96,9 +96,8 @@ TypeLookup const Water::typeLookup {
 
    },
    // Parent class lookup
-   &NamedEntity::typeLookup
+   {&NamedEntity::typeLookup}
 };
-
 
 Water::Water(QString name) :
    NamedEntity         {name, true},

@@ -40,7 +40,7 @@ class Fermentable;
  *        See comment on EditorBase::connectSignalsAndSlots for why we need to have \c public, not \c private
  *        inheritance from the Ui base.
  */
-class FermentableEditor : public QDialog, public Ui::fermentableEditor, public EditorBase<Fermentable, FermentableEditor> {
+class FermentableEditor : public QDialog, public Ui::fermentableEditor, public EditorBase<FermentableEditor, Fermentable> {
    Q_OBJECT
 
    EDITOR_COMMON_DECL(Fermentable)

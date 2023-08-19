@@ -32,7 +32,7 @@ TypeLookup const NamedEntityWithInventory::typeLookup {
 
    },
    // Parent class lookup
-   &NamedEntity::typeLookup
+   {&NamedEntity::typeLookup}
 };
 static_assert(std::is_base_of<NamedEntity, NamedEntityWithInventory>::value);
 

@@ -2024,6 +2024,25 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
+    <name>Ingredient</name>
+    <message>
+        <source>Ingredient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass</source>
+        <translation type="unfinished">Gewicht</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="unfinished">Volume</translation>
+    </message>
+    <message>
+        <source>Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Instruction</name>
     <message>
         <source>Instruction</source>
@@ -2324,11 +2343,9 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>See logs for more details.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The program may not work if you ignore this error.
+
+See logs for more details.
 
 If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
@@ -3840,6 +3857,10 @@ Program will now exit.</source>
     </message>
     <message>
         <source>ListOfRecords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There were errors loading the following object store(s): %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6477,7 +6498,7 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Tijd</translation>
+        <translation type="vanished">Tijd</translation>
     </message>
     <message>
         <source>Type</source>
@@ -6573,11 +6594,11 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Amount in Inventory</source>
-        <translation>Hoeveelheid in de Inventaris</translation>
+        <translation type="vanished">Hoeveelheid in de Inventaris</translation>
     </message>
     <message>
         <source>Amount in inventory</source>
-        <translation>Hoeveelheid in de inventaris</translation>
+        <translation type="vanished">Hoeveelheid in de inventaris</translation>
     </message>
     <message>
         <source>Main</source>
@@ -6733,15 +6754,11 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Controleer of de hoeveelheid vermeld staat in kg i.p.v. L.</translation>
+        <translation type="obsolete">Controleer of de hoeveelheid vermeld staat in kg i.p.v. L.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation type="unfinished">Hoeveelheid is gewicht?</translation>
-    </message>
-    <message>
-        <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Hoeveelheid is gewicht?</translation>
     </message>
 </context>
 <context>

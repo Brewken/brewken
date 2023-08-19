@@ -57,8 +57,9 @@ HopTableModel::HopTableModel(QTableView * parent, bool editable) :
          TABLE_MODEL_HEADER(Hop, Form     , tr("Form"       ), PropertyNames::Hop::form                                , EnumInfo{Hop::formStringMapping, Hop::formDisplayNames}),
          TABLE_MODEL_HEADER(Hop, Year     , tr("Year"       ), PropertyNames::Hop::year                               ),
          TABLE_MODEL_HEADER(Hop, Alpha    , tr("Alpha %"    ), PropertyNames::Hop::alpha_pct                           , PrecisionInfo{1}),
-         TABLE_MODEL_HEADER(Hop, Inventory, tr("Inventory"  ), PropertyNames::NamedEntityWithInventory::inventoryWithUnits),
-         TABLE_MODEL_HEADER(Hop, IsWeight , tr("Amount Type"), PropertyNames::Hop::amountIsWeight                          , BoolInfo{tr("Volume")              , tr("Weight")             }),
+      // TODO Work out how to reinstate inventory
+//         TABLE_MODEL_HEADER(Hop, Inventory, tr("Inventory"  ), PropertyNames::NamedEntityWithInventory::inventoryWithUnits),
+//         TABLE_MODEL_HEADER(Hop, IsWeight , tr("Amount Type"), PropertyNames::Hop::amountIsWeight                          , BoolInfo{tr("Volume")              , tr("Weight")             }),
       }
    },
    TableModelBase<HopTableModel, Hop>{},
@@ -94,8 +95,9 @@ QVariant HopTableModel::data(const QModelIndex & index, int role) const {
       case HopTableModel::ColumnIndex::Form:
       case HopTableModel::ColumnIndex::Year:
       case HopTableModel::ColumnIndex::Alpha:
-      case HopTableModel::ColumnIndex::Inventory:
-      case HopTableModel::ColumnIndex::IsWeight:
+      // TODO Work out how to reinstate inventory
+//      case HopTableModel::ColumnIndex::Inventory:
+//      case HopTableModel::ColumnIndex::IsWeight:
          return this->readDataFromModel(index, role);
 
       // No default case as we want the compiler to warn us if we missed one
@@ -115,9 +117,10 @@ Qt::ItemFlags HopTableModel::flags(const QModelIndex & index) const {
    if (columnIndex == HopTableModel::ColumnIndex::Name) {
       return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
    }
-   if (columnIndex == HopTableModel::ColumnIndex::Inventory) {
-      return Qt::ItemIsEnabled | Qt::ItemIsEditable;
-   }
+   // TODO Work out how to reinstate inventory
+//   if (columnIndex == HopTableModel::ColumnIndex::Inventory) {
+//      return Qt::ItemIsEnabled | Qt::ItemIsEditable;
+//   }
    return Qt::ItemIsSelectable |
           (this->m_editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
 }
@@ -137,13 +140,15 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
       case HopTableModel::ColumnIndex::Form:
       case HopTableModel::ColumnIndex::Year:
       case HopTableModel::ColumnIndex::Alpha:
-      case HopTableModel::ColumnIndex::IsWeight:
+      // TODO Work out how to reinstate inventory
+//      case HopTableModel::ColumnIndex::IsWeight:
          retVal = this->writeDataToModel(index, value, role);
          break;
 
-      case HopTableModel::ColumnIndex::Inventory:
-         retVal = this->writeDataToModel(index, value, role, Measurement::PhysicalQuantity::Mass);
-         break;
+      // TODO Work out how to reinstate inventory
+//      case HopTableModel::ColumnIndex::Inventory:
+//         retVal = this->writeDataToModel(index, value, role, Measurement::PhysicalQuantity::Mass);
+//         break;
 
       // No default case as we want the compiler to warn us if we missed one
    }

@@ -1957,6 +1957,25 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
+    <name>Ingredient</name>
+    <message>
+        <source>Ingredient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass</source>
+        <translation type="unfinished">Hmotnost</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="unfinished">Objem</translation>
+    </message>
+    <message>
+        <source>Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Instruction</name>
     <message>
         <source>Instruction</source>
@@ -2249,11 +2268,9 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>See logs for more details.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The program may not work if you ignore this error.
+
+See logs for more details.
 
 If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
@@ -3775,6 +3792,10 @@ Program will now exit.</source>
     </message>
     <message>
         <source>ListOfRecords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There were errors loading the following object store(s): %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6420,7 +6441,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Čas</translation>
+        <translation type="vanished">Čas</translation>
     </message>
     <message>
         <source>Type</source>
@@ -6516,11 +6537,11 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Amount in Inventory</source>
-        <translation>Množství na skladě</translation>
+        <translation type="vanished">Množství na skladě</translation>
     </message>
     <message>
         <source>Amount in inventory</source>
-        <translation>Množství na skladě</translation>
+        <translation type="vanished">Množství na skladě</translation>
     </message>
     <message>
         <source>Main</source>
@@ -6676,15 +6697,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Zaškrtněte, pokud se množství přísady vyjadřuje v kg místo l.</translation>
-    </message>
-    <message>
-        <source>Amount is weight?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Zaškrtněte, pokud se množství přísady vyjadřuje v kg místo l.</translation>
     </message>
 </context>
 <context>

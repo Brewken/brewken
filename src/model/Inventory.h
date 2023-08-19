@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Inventory.h is part of Brewken, and is copyright the following authors 2021-2023:
+ *  is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -22,6 +22,10 @@
 #include <QObject>
 
 #include "model/NamedParameterBundle.h"
+#include "model/IngredientAmount.h"
+
+#include "model/Hop.h"
+
 
 class ObjectStore;
 class TypeLookup;
@@ -30,8 +34,9 @@ class TypeLookup;
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Inventory { BtStringConst const property{#property}; }
-AddPropertyName(id)
-AddPropertyName(amount)
+AddPropertyName(id)      // Deprecated.  Use PropertyNames::NamedEntity::key instead
+AddPropertyName(amount)  // Deprecated.  Use PropertyNames::IngredientAmount::quantity instead
+AddPropertyName(ingredientId)
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -59,7 +64,7 @@ AddPropertyName(amount)
  *            clunky, but not a lot.  And there are a few tricks in the cpp file that still allow us to do some
  *            templating.
  */
-class Inventory : public QObject {
+class Inventory : public NamedEntity {
    Q_OBJECT
 
 public:
@@ -78,7 +83,112 @@ public:
    Inventory(NamedParameterBundle const & namedParameterBundle);
    Inventory(Inventory const & other);
 
-   ~Inventory();
+   virtual ~Inventory();
+
+   //=================================================== PROPERTIES ====================================================
+   Q_PROPERTY(int    ingredientId     READ ingredientId     WRITE setIngredientId    )
+
+   //============================================ "GETTER" MEMBER FUNCTIONS ============================================
+   int ingredientId() const;
+
+   //============================================ "SETTER" MEMBER FUNCTIONS ============================================
+   void setIngredientId(int const val);
+
+
+   //============================================= OTHER MEMBER FUNCTIONS ==============================================
+
+   /**
+    * \brief This doesn't actually do anything, but using ObjectStoreTyped means we have to provide an implementation,
+    *        as it's needed for \c ObjectStoreTyped::softDelete().
+    */
+   void setDeleted(bool var);
+
+   /**
+    * \brief This doesn't actually do anything, but using ObjectStoreTyped means we have to provide an implementation,
+    *        as it's needed for \c ObjectStoreTyped::softDelete().
+    */
+   void setDisplay(bool var);
+
+   /**
+    * \brief Returns the name of the ingredient class (eg Hop, Fermentable, Misc, Yeast) to which this Inventory class
+    *        relates.  Subclasses need to provide the (trivial) implementation of this.  Primarily useful for logging
+    *        and debugging.
+    */
+   virtual char const * getIngredientClass() const = 0;
+
+   /**
+    * TBD: This is needed because NamedEntity has it, but I'd like to refactor it out at some point.
+    */
+   virtual Recipe * getOwningRecipe() const;
+
+   /**
+    * \brief We need this for ObjectStoreTyped to call
+    */
+   void hardDeleteOwnedEntities();
+
+protected:
+   virtual bool isEqualTo(NamedEntity const & other) const;
+
+   int m_ingredientId;
+};
+
+/**
+ * \brief Inventory of \c Hop
+ */
+class InventoryHop : public Inventory, public IngredientAmount<InventoryHop, Hop> {
+
+   INGREDIENT_AMOUNT_DECL(InventoryHop, Hop)
+
+   /**
+    * \brief See comment in model/NamedEntity.h
+    */
+   static QString const LocalisedName;
+
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
+
+   InventoryHop();
+   InventoryHop(NamedParameterBundle const & namedParameterBundle);
+   InventoryHop(InventoryHop const & other);
+
+   virtual ~InventoryHop();
+
+public:
+   virtual char const * getIngredientClass() const;
+   Hop * hop() const ;
+
+protected:
+   virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
+
+};
+
+
+
+//////////////////////////////////////////////// OLD OLD OLD OLD OLD OLD ////////////////////////////////////////////////
+class OldInventory : public QObject {
+   Q_OBJECT
+
+public:
+   /**
+    * \brief See comment in model/NamedEntity.h
+    */
+   static QString const LocalisedName;
+
+   /**
+    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+    *        info.
+    */
+   static TypeLookup const typeLookup;
+
+   OldInventory();
+   OldInventory(NamedParameterBundle const & namedParameterBundle);
+   OldInventory(OldInventory const & other);
+
+   ~OldInventory();
 
    Q_PROPERTY(int    id     READ getId     WRITE setId    )
    Q_PROPERTY(double amount READ getAmount WRITE setAmount)
@@ -138,10 +248,9 @@ private:
    std::unique_ptr<impl> pimpl;
 };
 // Thankfully C++11 allows us to inherit constructors using "using"
-class InventoryHop         : public Inventory { using Inventory::Inventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
-class InventoryFermentable : public Inventory { using Inventory::Inventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
-class InventoryMisc        : public Inventory { using Inventory::Inventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
-class InventoryYeast       : public Inventory { using Inventory::Inventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
+class InventoryFermentable : public OldInventory { using OldInventory::OldInventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
+class InventoryMisc        : public OldInventory { using OldInventory::OldInventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
+class InventoryYeast       : public OldInventory { using OldInventory::OldInventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
 
 namespace InventoryUtils {
    /**

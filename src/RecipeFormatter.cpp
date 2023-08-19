@@ -554,7 +554,7 @@ public:
          hTable += QString("<tr><td>%1</td><td>%2%</td><td>%3</td><td>%4</td><td>%5</td><td>%6</td><td>%7</td></tr>")
                .arg(hopAddition->hop()->name())
                .arg(Measurement::displayQuantity(hopAddition->hop()->alpha_pct(), 1) )
-               .arg(Measurement::displayAmount(hopAddition->amountWithUnits()))
+               .arg(Measurement::displayAmount(hopAddition->amount()))
                .arg(RecipeAddition::stageDisplayNames[hopAddition->stage()])
                // TBD: If we end up having hop additions that are not time based (which is technically allowed now we're
                //      following the BeerJSON model instead of the BeerXML one) then we'll need to rework this a bit
@@ -589,7 +589,7 @@ public:
 
             names.append(hopAddition->name());
             alphas.append(QString("%1%").arg(Measurement::displayQuantity(hopAddition->hop()->alpha_pct(), 1)));
-            amounts.append(Measurement::displayAmount(hopAddition->amountWithUnits()));
+            amounts.append(Measurement::displayAmount(hopAddition->amount()));
             stages.append(RecipeAddition::stageDisplayNames[hopAddition->stage()]);
             times.append(Measurement::displayAmount(Measurement::Amount{hopAddition->addAtTime_mins().value_or(0.0), Measurement::Units::minutes}));
             forms.append(Hop::formDisplayNames[hopAddition->hop()->form()]);

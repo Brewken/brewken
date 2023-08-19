@@ -37,7 +37,7 @@ class Style;
  *        See comment on EditorBase::connectSignalsAndSlots for why we need to have \c public, not \c private
  *        inheritance from the Ui base.
  */
-class StyleEditor : public QDialog, public Ui::styleEditor, public EditorBase<Style, StyleEditor> {
+class StyleEditor : public QDialog, public Ui::styleEditor, public EditorBase<StyleEditor, Style> {
    Q_OBJECT
 
    EDITOR_COMMON_DECL(Style)

@@ -211,18 +211,6 @@ namespace {
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // Database field mappings for InventoryHop
-   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> ObjectStore::TableDefinition const PRIMARY_TABLE<InventoryHop> {
-      "hop_in_inventory",
-      {
-         {ObjectStore::FieldType::Int,    "id",               PropertyNames::Inventory::id    },
-         {ObjectStore::FieldType::Double, "amount",           PropertyNames::Inventory::amount},
-      }
-   };
-   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<InventoryHop> {};
-
-   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Hop
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<Hop> {
@@ -233,7 +221,7 @@ namespace {
          {ObjectStore::FieldType::Bool  , "display"              , PropertyNames::NamedEntity::display                 },
          {ObjectStore::FieldType::Bool  , "deleted"              , PropertyNames::NamedEntity::deleted                 },
          {ObjectStore::FieldType::String, "folder"               , PropertyNames::NamedEntity::folder                  },
-         {ObjectStore::FieldType::Int   , "inventory_id"         , PropertyNames::NamedEntityWithInventory::inventoryId, nullptr,           &PRIMARY_TABLE<InventoryHop>},
+///         {ObjectStore::FieldType::Int   , "inventory_id"         , PropertyNames::NamedEntityWithInventory::inventoryId, nullptr,           &PRIMARY_TABLE<InventoryHop>},
          {ObjectStore::FieldType::Double, "alpha"                , PropertyNames::Hop::alpha_pct                   },
 ///         {ObjectStore::FieldType::Double, "amount"               , PropertyNames::Hop::amount                          },
 ///         {ObjectStore::FieldType::Bool  , "amount_is_weight"     , PropertyNames::Hop::amountIsWeight                  },
@@ -277,6 +265,21 @@ namespace {
 ///         ObjectStore::MAX_ONE_ENTRY
 ///      }
 ///   };
+
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Database field mappings for InventoryHop
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> ObjectStore::TableDefinition const PRIMARY_TABLE<InventoryHop> {
+      "hop_in_inventory",
+      {
+         {ObjectStore::FieldType::Int   , "id"      , PropertyNames::NamedEntity::key                     },
+         {ObjectStore::FieldType::Int   , "hop_id"  , PropertyNames::Inventory::ingredientId   , nullptr,          &PRIMARY_TABLE<Hop>},
+         {ObjectStore::FieldType::Double, "quantity", PropertyNames::IngredientAmount::quantity},
+         {ObjectStore::FieldType::Enum  , "measure" , PropertyNames::IngredientAmount::measure , &Ingredient::measureStringMapping},
+      }
+   };
+   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<InventoryHop> {};
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Instruction
@@ -803,8 +806,8 @@ namespace {
          {ObjectStore::FieldType::Int   , "recipe_id"        , PropertyNames::RecipeAddition::recipeId                  , nullptr                                 , &PRIMARY_TABLE<Recipe>},
          {ObjectStore::FieldType::Int   , "hop_id"           , PropertyNames::RecipeAddition::ingredientId              , nullptr                                 , &PRIMARY_TABLE<Hop>   },
          {ObjectStore::FieldType::Enum  , "stage"            , PropertyNames::RecipeAddition::stage                     , &RecipeAddition::stageStringMapping},
-         {ObjectStore::FieldType::Double, "amount"           , PropertyNames::RecipeAdditionMassOrVolume::amount        },
-         {ObjectStore::FieldType::Bool  , "amount_is_weight" , PropertyNames::RecipeAdditionMassOrVolume::amountIsWeight},
+         {ObjectStore::FieldType::Double, "quantity"         , PropertyNames::IngredientAmount::quantity                },
+         {ObjectStore::FieldType::Enum  , "measure"          , PropertyNames::IngredientAmount::measure                 , &Ingredient::measureStringMapping  },
          {ObjectStore::FieldType::Int   , "step"             , PropertyNames::RecipeAddition::step                      },
          {ObjectStore::FieldType::Double, "add_at_time_mins" , PropertyNames::RecipeAddition::addAtTime_mins            },
          {ObjectStore::FieldType::Double, "add_at_gravity_sg", PropertyNames::RecipeAddition::addAtGravity_sg           },

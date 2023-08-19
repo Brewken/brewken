@@ -23,6 +23,7 @@
 #include <typeindex>
 #include <typeinfo>
 #include <type_traits>
+#include <vector>
 
 #include "BtFieldType.h"
 #include "utils/BtStringConst.h"
@@ -172,14 +173,18 @@ public:
     * \param initializerList The mappings for this \c TypeLookup.  Eg for the \c TypeLookup for \c Hop, this would be
     *                        the type mappings for PropertyNames::Hop::... properties (but not the
     *                        PropertyNames::NamedEntity::... properties
-    * \param parentClassLookup Pointer to the \c TypeLookup for the parent class, or \c nullptr if there is none.  Eg
-    *                          for the \c TypeLookup for \c Hop,
-    *                          this should point to the \c TypeLookup for \c NamedEntity because \c Hop inherits from
-    *                          \c NamedEntity.
+    * \param parentClassLookup Pointer(s) to the \c TypeLookup for the parent class(es), or \c {} if there is none.
+    *                          Usually there is a single pointer; multiple pointers are only needed to handle multiple
+    *                          inheritance.
+    *
+    *                          Eg for the \c TypeLookup for \c Hop, this should point to the \c TypeLookup for
+    *                          \c Ingredient because \c Hop inherits directly from \c Ingredient.  (And, in turn the
+    *                          \c parentClassLookup of the \c TypeLookup for \c Ingredient should point to
+    *                          \c NamedEntity.)
     */
    TypeLookup(char       const * const                     className,
               std::initializer_list<LookupMap::value_type> initializerList,
-              TypeLookup const * const                     parentClassLookup = nullptr);
+              std::initializer_list<TypeLookup const *>    parentClassLookups = {});
 
    /**
     * \brief Get the type ID (and whether it's an enum) for a given property name
@@ -190,12 +195,17 @@ public:
     * TODO: Delete this.  Callers should use getType().isOptional().
     * \brief Returns whether the attribute for a given property name is optional (ie std::optional<T> rather than T)
     */
-   [[deprecated]] bool isOptional(BtStringConst const & propertyName) const;
+///   [[deprecated]] bool isOptional(BtStringConst const & propertyName) const;
 
 private:
-   char       const * const className;
-   LookupMap          const lookupMap;
-   TypeLookup const * const parentClassLookup;
+   /**
+    * \brief Used by \c getType when doing parent class lookup
+    */
+   TypeInfo const * typeInfoFor(BtStringConst const & propertyName) const;
+
+   char const * const m_className;
+   LookupMap const m_lookupMap;
+   std::vector<TypeLookup const *> const m_parentClassLookups;
 };
 
 /**
@@ -288,7 +298,7 @@ S & operator<<(S & stream, TypeInfo const * typeInfo) {
 
 template<class S>
 S & operator<<(S & stream, TypeLookup const & typeLookup) {
-   stream << "TypeLookup for " << typeLookup.className;
+   stream << "TypeLookup for " << typeLookup.m_className;
    return stream;
 }
 

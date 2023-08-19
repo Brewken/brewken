@@ -40,7 +40,7 @@ class Equipment;
  *        See comment on EditorBase::connectSignalsAndSlots for why we need to have \c public, not \c private
  *        inheritance from the Ui base.
  */
-class EquipmentEditor : public QDialog, public Ui::equipmentEditor, public EditorBase<Equipment, EquipmentEditor> {
+class EquipmentEditor : public QDialog, public Ui::equipmentEditor, public EditorBase<EquipmentEditor, Equipment> {
    Q_OBJECT
 
    EDITOR_COMMON_DECL(Equipment)

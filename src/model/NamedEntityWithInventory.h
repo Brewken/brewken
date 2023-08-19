@@ -45,6 +45,8 @@ AddPropertyName(inventoryWithUnits)
  *           - By mass, volume or count for Misc, Yeast
  *
  *           - By mass for salt, though NB BeerJSON does not support salt
+ *
+ * Running out of names for things as we already used Amount, Quantity.  IngredientAmount
  */
 class NamedEntityWithInventory : public NamedEntity {
    Q_OBJECT

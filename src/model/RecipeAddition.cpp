@@ -68,10 +68,9 @@ TypeLookup const RecipeAddition::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::addAtAcidity_pH, RecipeAddition::m_addAtAcidity_pH, Measurement::PhysicalQuantity::Acidity),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::duration_mins  , RecipeAddition::m_duration_mins  , Measurement::PhysicalQuantity::Time   ),
    },
-   // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
-   &NamedEntity::typeLookup
+   // Parent class lookup.
+   {&NamedEntity::typeLookup}
 };
-static_assert(std::is_base_of<NamedEntity, RecipeAddition>::value);
 
 RecipeAddition::RecipeAddition(QString name, int const recipeId, int const ingredientId) :
    NamedEntity{name, true},

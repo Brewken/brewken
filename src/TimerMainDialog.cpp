@@ -265,7 +265,7 @@ void TimerMainDialog::on_loadRecipesButton_clicked() {
    for (RecipeAdditionHop * hopAddition : recipe->hopAdditions()) {
       if (hopAddition->stage() == RecipeAddition::Stage::Boil &&
           hopAddition->addAtTime_mins()) {
-         QString note = tr("%1 of %2").arg(Measurement::displayAmount(hopAddition->amountWithUnits())).arg(hopAddition->hop()->name());
+         QString note = tr("%1 of %2").arg(Measurement::displayAmount(hopAddition->amount())).arg(hopAddition->hop()->name());
          int addAtTime_seconds = *hopAddition->addAtTime_mins() * 60;
          for (TimerWidget * td : *this->timers) {
             if (td->getTime() == addAtTime_seconds) {

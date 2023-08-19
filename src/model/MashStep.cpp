@@ -79,9 +79,10 @@ TypeLookup const MashStep::typeLookup {
       // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::MashStep::liquorToGristRatio_lKg, MashStep::m_liquorToGristRatio_lKg, Measurement::PhysicalQuantity::SpecificVolume),
    },
-   // Parent class lookup
-   &Step::typeLookup
+   // Parent class lookup.  NB: Step not NamedEntity!
+   {&Step::typeLookup}
 };
+static_assert(std::is_base_of<Step, MashStep>::value);
 
 //==================================================== CONSTRUCTORS ====================================================
 

@@ -130,9 +130,12 @@ struct TableModelTraits;
  *                                                    // all items being removed.  (Better in latter case than repeated
  *                                                    // calls to removed() because avoids rounding errors on running
  *                                                    // totals.)
+ *
+ *        Note that we use TableModelTraits as the phantom class for CuriouslyRecurringTemplateBase since it fits the
+ *        bill.
  */
 template<class Derived, class NE>
-class TableModelBase : public CuriouslyRecurringTemplateBase<Derived> {
+class TableModelBase : public CuriouslyRecurringTemplateBase<TableModelTraits, Derived> {
 public:
    // This gets round the fact that we would not be able to access Derived::ColumnIndex directly
    //
@@ -489,15 +492,13 @@ protected:
       auto row = this->rows[index.row()];
       auto const columnIndex = static_cast<ColumnIndex>(index.column());
       auto const & columnInfo = this->get_ColumnInfo(columnIndex);
-///      qDebug() << Q_FUNC_INFO << row->metaObject()->className() << "#" << row->key() << "/" << columnInfo.propertyPath;
-///      qDebug().noquote() << Q_FUNC_INFO << "role = " << role << Logging::getStackTrace();
 
       QVariant modelData = columnInfo.propertyPath.getValue(*row);
       if (!modelData.isValid()) {
          // It's a programming error if we couldn't read a property modelData
          qCritical() <<
             Q_FUNC_INFO << "Unable to read" << row->metaObject()->className() << "#" << row->key() << "property" <<
-            columnInfo.propertyPath;
+            columnInfo.propertyPath << "(Got" << modelData << ")";
          Q_ASSERT(false); // Stop here on debug builds
       }
 
@@ -622,18 +623,19 @@ protected:
          } else if (typeInfo.typeIndex == typeid(double)) {
             Q_ASSERT(modelData.canConvert<double>());
             double rawValue = modelData.value<double>();
-            // This is one of the points where it's important that NamedEntity classes always store data in canonical
-            // units.  For any properties where that's _not_ the case, we need to ensure we're passing
-            // Measurement::Amount, ie the units are always included.
-            Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(*typeInfo.fieldType));
-            auto const physicalQuantity = std::get<Measurement::PhysicalQuantity>(*typeInfo.fieldType);
-            Measurement::Amount amount{rawValue, Measurement::Unit::getCanonicalUnit(physicalQuantity)};
-            return QVariant(
-               Measurement::displayAmount(amount,
-                                          precision,
-                                          columnInfo.getForcedSystemOfMeasurement(),
-                                          columnInfo.getForcedRelativeScale())
-            );
+            if (std::holds_alternative<Measurement::PhysicalQuantity>(*typeInfo.fieldType)) {
+               // This is one of the points where it's important that NamedEntity classes always store data in canonical
+               // units.  For any properties where that's _not_ the case, we need to ensure we're passing
+               // Measurement::Amount, ie the units are always included.
+               auto const physicalQuantity = std::get<Measurement::PhysicalQuantity>(*typeInfo.fieldType);
+               Measurement::Amount amount{rawValue, Measurement::Unit::getCanonicalUnit(physicalQuantity)};
+               return QVariant(
+                  Measurement::displayAmount(amount,
+                                             precision,
+                                             columnInfo.getForcedSystemOfMeasurement(),
+                                             columnInfo.getForcedRelativeScale())
+               );
+            }
          }
       }
 

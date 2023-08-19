@@ -40,7 +40,7 @@ class Mash;
  *
  * \brief View/controller dialog for editing mash steps.
  */
-class MashStepEditor : public QDialog, public Ui::mashStepEditor, public EditorBase<MashStep, MashStepEditor> {
+class MashStepEditor : public QDialog, public Ui::mashStepEditor, public EditorBase<MashStepEditor, MashStep> {
    Q_OBJECT
 
    EDITOR_COMMON_DECL(MashStep)

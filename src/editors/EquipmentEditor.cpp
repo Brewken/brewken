@@ -49,7 +49,7 @@
 
 EquipmentEditor::EquipmentEditor(QWidget* parent/*, bool singleEquipEditor*/) :
    QDialog(parent),
-   EditorBase<Equipment, EquipmentEditor>() {
+   EditorBase<EquipmentEditor, Equipment>() {
    this->setupUi(this);
 
    this->tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);

@@ -96,7 +96,7 @@ void ScaleRecipeTool::scale(Equipment* equip, double newEff) {
 
    for (auto hopAddition : this->recObs->hopAdditions()) {
       // We assume volumes and masses get scaled the same way
-      hopAddition->setAmount(hopAddition->amount() * volRatio);
+      hopAddition->setQuantity(hopAddition->quantity() * volRatio);
    }
 
    for (auto misc : this->recObs->miscs()) {

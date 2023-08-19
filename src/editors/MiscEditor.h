@@ -39,7 +39,7 @@ class Misc;
  *        See comment on EditorBase::connectSignalsAndSlots for why we need to have \c public, not \c private
  *        inheritance from the Ui base.
  */
-class MiscEditor : public QDialog, public Ui::miscEditor, public EditorBase<Misc, MiscEditor> {
+class MiscEditor : public QDialog, public Ui::miscEditor, public EditorBase<MiscEditor, Misc> {
    Q_OBJECT
 
    EDITOR_COMMON_DECL(Misc)

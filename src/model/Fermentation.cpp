@@ -44,7 +44,7 @@ TypeLookup const Fermentation::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentation::fermentationStepsDowncast, Fermentation::fermentationStepsDowncast),
    },
    // Parent class lookup
-   &NamedEntity::typeLookup
+   {&NamedEntity::typeLookup}
 };
 
 //==================================================== CONSTRUCTORS ====================================================

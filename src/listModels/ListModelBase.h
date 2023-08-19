@@ -39,8 +39,9 @@
  *
  *        Derived classes need to implement lessThan to provide the right per-column logic for this.
  */
+template<class Derived> class ListModelPhantom;
 template<class Derived, class NE>
-class ListModelBase : public CuriouslyRecurringTemplateBase<Derived> {
+class ListModelBase : public CuriouslyRecurringTemplateBase<ListModelPhantom, Derived> {
 public:
    ListModelBase() :
       m_items{},

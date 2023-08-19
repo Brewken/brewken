@@ -48,10 +48,12 @@ TypeLookup const RecipeAdditionHop::typeLookup {
    {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionHop::hop, RecipeAdditionHop::hop),
    },
-   // Parent class lookup.  NB: RecipeAdditionMassOrVolume not NamedEntity!
-   &RecipeAdditionMassOrVolume::typeLookup
+   // Parent class lookup.  NB: RecipeAddition not NamedEntity!
+   {&RecipeAddition::typeLookup,
+    std::addressof(IngredientAmount<RecipeAdditionHop, Hop>::typeLookup)}
 };
-static_assert(std::is_base_of<RecipeAdditionMassOrVolume, RecipeAdditionHop>::value);
+static_assert(std::is_base_of<RecipeAddition, RecipeAdditionHop>::value);
+static_assert(std::is_base_of<IngredientAmount<RecipeAdditionHop, Hop>, RecipeAdditionHop>::value);
 
 //
 // This is a compile-time check that HasTypeLookup is working properly.  It doesn't particularly belong here, but I
@@ -62,13 +64,13 @@ static_assert(!HasTypeLookup<QString>);
 
 
 RecipeAdditionHop::RecipeAdditionHop(QString name, int const recipeId, int const hopId) :
-   RecipeAdditionMassOrVolume{name, recipeId, hopId},
+   RecipeAddition{name, recipeId, hopId},
    RecipeAdditionBase<RecipeAdditionHop, Hop>{} {
    return;
 }
 
 RecipeAdditionHop::RecipeAdditionHop(NamedParameterBundle const & namedParameterBundle) :
-   RecipeAdditionMassOrVolume{namedParameterBundle},
+   RecipeAddition{namedParameterBundle},
    RecipeAdditionBase<RecipeAdditionHop, Hop>{} {
    //
    // If the addition stage is not specified then we assume it is boil, as this is the first stage at which it is usual
@@ -81,7 +83,7 @@ RecipeAdditionHop::RecipeAdditionHop(NamedParameterBundle const & namedParameter
 }
 
 RecipeAdditionHop::RecipeAdditionHop(RecipeAdditionHop const & other) :
-   RecipeAdditionMassOrVolume{other},
+   RecipeAddition{other},
    RecipeAdditionBase<RecipeAdditionHop, Hop>{} {
    return;
 }
@@ -255,3 +257,6 @@ void RecipeAdditionHop::setHop(Hop * const val) {
    }
    return;
 }
+
+// Boilerplate code for IngredientAmount
+INGREDIENT_AMOUNT_COMMON_CODE(RecipeAdditionHop)

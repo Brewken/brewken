@@ -31,7 +31,7 @@
 
 FermentableEditor::FermentableEditor(QWidget* parent) :
    QDialog(parent),
-   EditorBase<Fermentable, FermentableEditor>() {
+   EditorBase<FermentableEditor, Fermentable>() {
    setupUi(this);
 
    this->tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);

@@ -24,7 +24,7 @@
 
 MashStepEditor::MashStepEditor(QWidget* parent) :
    QDialog{parent},
-   EditorBase<MashStep, MashStepEditor>() {
+   EditorBase<MashStepEditor, MashStep>() {
    this->setupUi(this);
 
    SMART_FIELD_INIT(MashStepEditor, label_name           , lineEdit_name           , MashStep, PropertyNames::NamedEntity::name               );

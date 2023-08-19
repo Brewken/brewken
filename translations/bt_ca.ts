@@ -2032,6 +2032,25 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
+    <name>Ingredient</name>
+    <message>
+        <source>Ingredient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass</source>
+        <translation type="unfinished">Massa</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="unfinished">Volum</translation>
+    </message>
+    <message>
+        <source>Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Instruction</name>
     <message>
         <source>Instruction</source>
@@ -2324,11 +2343,9 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>See logs for more details.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The program may not work if you ignore this error.
+
+See logs for more details.
 
 If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
@@ -3862,6 +3879,10 @@ Program will now exit.</source>
     </message>
     <message>
         <source>ListOfRecords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There were errors loading the following object store(s): %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6515,7 +6536,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Temps</translation>
+        <translation type="vanished">Temps</translation>
     </message>
     <message>
         <source>Type</source>
@@ -6611,11 +6632,11 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Amount in Inventory</source>
-        <translation>Existències</translation>
+        <translation type="vanished">Existències</translation>
     </message>
     <message>
         <source>Amount in inventory</source>
-        <translation>Quantitat en estoc</translation>
+        <translation type="vanished">Quantitat en estoc</translation>
     </message>
     <message>
         <source>Main</source>
@@ -6771,15 +6792,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Marcar si la quantitat es mesura en Kg en comptes de L.</translation>
-    </message>
-    <message>
-        <source>Amount is weight?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Marcar si la quantitat es mesura en Kg en comptes de L.</translation>
     </message>
 </context>
 <context>

@@ -48,8 +48,9 @@
  *
  *        We assume/require that \c DerivedStep inherits from \c Step.
  */
+template<class Derived> class StepOwnerPhantom;
 template<class Derived, class DerivedStep>
-class StepOwnerBase : public CuriouslyRecurringTemplateBase<Derived> {
+class StepOwnerBase : public CuriouslyRecurringTemplateBase<StepOwnerPhantom, Derived> {
 public:
 
    StepOwnerBase() : m_stepIds{} {

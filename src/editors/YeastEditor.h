@@ -39,7 +39,7 @@ class Yeast;
  *        See comment on EditorBase::connectSignalsAndSlots for why we need to have \c public, not \c private
  *        inheritance from the Ui base.
  */
-class YeastEditor : public QDialog, public Ui::yeastEditor, public EditorBase<Yeast, YeastEditor> {
+class YeastEditor : public QDialog, public Ui::yeastEditor, public EditorBase<YeastEditor, Yeast> {
    Q_OBJECT
 
    EDITOR_COMMON_DECL(Yeast)

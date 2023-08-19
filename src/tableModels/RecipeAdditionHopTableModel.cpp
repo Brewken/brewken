@@ -64,9 +64,9 @@ RecipeAdditionHopTableModel::RecipeAdditionHopTableModel(QTableView * parent, bo
                                                                                          PropertyNames::Hop::alpha_pct                              }}, PrecisionInfo{1}),
          TABLE_MODEL_HEADER(RecipeAdditionHop, Year     , tr("Year"     ), PropertyPath{{PropertyNames::RecipeAdditionHop::hop,
                                                                                          PropertyNames::Hop::year                                   }}),
-         TABLE_MODEL_HEADER(RecipeAdditionHop, Amount   , tr("Amount"   ), PropertyNames::RecipeAdditionMassOrVolume::amountWithUnits                 ),
-         TABLE_MODEL_HEADER(RecipeAdditionHop, Inventory, tr("Inventory"), PropertyPath{{PropertyNames::RecipeAdditionHop::hop,
-                                                                                         PropertyNames::NamedEntityWithInventory::inventoryWithUnits}}),
+         TABLE_MODEL_HEADER(RecipeAdditionHop, Amount   , tr("Amount"   ), PropertyNames::IngredientAmount::quantity                 ),
+//         TABLE_MODEL_HEADER(RecipeAdditionHop, Inventory, tr("Inventory"), PropertyPath{{PropertyNames::RecipeAdditionHop::hop,
+//                                                                                         PropertyNames::NamedEntityWithInventory::inventoryWithUnits}}),
          TABLE_MODEL_HEADER(RecipeAdditionHop, Stage    , tr("Stage"    ), PropertyNames::RecipeAddition::stage                                       , EnumInfo{RecipeAddition::stageStringMapping, RecipeAddition::stageDisplayNames}),
          TABLE_MODEL_HEADER(RecipeAdditionHop, Time     , tr("Time"     ), PropertyNames::RecipeAddition::addAtTime_mins                              , PrecisionInfo{1}),
       }
@@ -106,7 +106,7 @@ QVariant RecipeAdditionHopTableModel::data(const QModelIndex & index, int role) 
       case RecipeAdditionHopTableModel::ColumnIndex::Alpha    :
       case RecipeAdditionHopTableModel::ColumnIndex::Year     :
       case RecipeAdditionHopTableModel::ColumnIndex::Amount   :
-      case RecipeAdditionHopTableModel::ColumnIndex::Inventory:
+//      case RecipeAdditionHopTableModel::ColumnIndex::Inventory:
       case RecipeAdditionHopTableModel::ColumnIndex::Stage    :
       case RecipeAdditionHopTableModel::ColumnIndex::Time     :
          return this->readDataFromModel(index, role);
@@ -135,9 +135,9 @@ Qt::ItemFlags RecipeAdditionHopTableModel::flags(const QModelIndex & index) cons
    if (columnIndex == RecipeAdditionHopTableModel::ColumnIndex::Name) {
       return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
    }
-   if (columnIndex == RecipeAdditionHopTableModel::ColumnIndex::Inventory) {
-      return Qt::ItemIsEnabled | Qt::NoItemFlags;
-   }
+//   if (columnIndex == RecipeAdditionHopTableModel::ColumnIndex::Inventory) {
+//      return Qt::ItemIsEnabled | Qt::NoItemFlags;
+//   }
    return Qt::ItemIsSelectable |
           (this->m_editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
 }
@@ -150,8 +150,7 @@ bool RecipeAdditionHopTableModel::setData(const QModelIndex & index, const QVari
    bool retVal = false;
 
    auto row = this->rows[index.row()];
-   Measurement::PhysicalQuantity physicalQuantity =
-      row->amountIsWeight() ? Measurement::PhysicalQuantity::Mass: Measurement::PhysicalQuantity::Volume;
+   Measurement::PhysicalQuantity physicalQuantity = row->physicalQuantity();
 
    auto const columnIndex = static_cast<RecipeAdditionHopTableModel::ColumnIndex>(index.column());
    switch (columnIndex) {
@@ -165,7 +164,7 @@ bool RecipeAdditionHopTableModel::setData(const QModelIndex & index, const QVari
          break;
 
       case RecipeAdditionHopTableModel::ColumnIndex::Amount   :
-      case RecipeAdditionHopTableModel::ColumnIndex::Inventory:
+//      case RecipeAdditionHopTableModel::ColumnIndex::Inventory:
          retVal = this->writeDataToModel(index, value, role, physicalQuantity);
          break;
 

@@ -38,7 +38,7 @@ bool RecipeAdditionHopSortFilterProxyModel::isLessThan(RecipeAdditionHopTableMod
          return Measurement::extractRawFromString<double>( leftItem.toString()) <
                 Measurement::extractRawFromString<double>(rightItem.toString());
 
-      case RecipeAdditionHopTableModel::ColumnIndex::Inventory:
+//      case RecipeAdditionHopTableModel::ColumnIndex::Inventory:
       case RecipeAdditionHopTableModel::ColumnIndex::Amount:
          return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Mass) <
                 Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Mass);

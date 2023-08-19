@@ -1949,6 +1949,25 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
+    <name>Ingredient</name>
+    <message>
+        <source>Ingredient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass</source>
+        <translation type="unfinished">Masse</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="unfinished">Volum</translation>
+    </message>
+    <message>
+        <source>Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Instruction</name>
     <message>
         <source>Instruction</source>
@@ -2241,11 +2260,9 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>See logs for more details.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The program may not work if you ignore this error.
+
+See logs for more details.
 
 If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
@@ -3771,6 +3788,10 @@ Program will now exit.</source>
     </message>
     <message>
         <source>ListOfRecords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There were errors loading the following object store(s): %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6417,7 +6438,7 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Tid</translation>
+        <translation type="vanished">Tid</translation>
     </message>
     <message>
         <source>Type</source>
@@ -6513,11 +6534,11 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Amount in Inventory</source>
-        <translation>Mengde i varebeholdning</translation>
+        <translation type="vanished">Mengde i varebeholdning</translation>
     </message>
     <message>
         <source>Amount in inventory</source>
-        <translation>Mengde i varebeholdning</translation>
+        <translation type="vanished">Mengde i varebeholdning</translation>
     </message>
     <message>
         <source>Main</source>
@@ -6673,15 +6694,11 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Sjekk etter om mengde listet opp er i kg i stedet for L.</translation>
+        <translation type="obsolete">Sjekk etter om mengde listet opp er i kg i stedet for L.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation type="unfinished">Mengde er i vekt?</translation>
-    </message>
-    <message>
-        <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Mengde er i vekt?</translation>
     </message>
 </context>
 <context>

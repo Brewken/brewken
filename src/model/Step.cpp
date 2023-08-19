@@ -50,7 +50,7 @@ TypeLookup const Step::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::endAcidity_pH  , Step::m_endAcidity_pH  , Measurement::PhysicalQuantity::Acidity    ),
    },
    // Parent class lookup
-   &NamedEntity::typeLookup
+   {&NamedEntity::typeLookup}
 };
 
 //==================================================== CONSTRUCTORS ====================================================

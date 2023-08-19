@@ -25,8 +25,9 @@
  * \brief  Additional base class for \c MashStep, \c BoilStep, \c FermentationStep to provide strongly-typed functions
  *         using CRTP.
  */
+template<class Derived> class StepPhantom;
 template<class Derived, class Owner>
-class StepBase : public CuriouslyRecurringTemplateBase<Derived> {
+class StepBase : public CuriouslyRecurringTemplateBase<StepPhantom, Derived> {
 protected:
 
    /**

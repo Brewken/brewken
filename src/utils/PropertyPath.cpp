@@ -42,6 +42,15 @@ PropertyPath::PropertyPath(PropertyPath const & other) :
    return;
 }
 
+PropertyPath & PropertyPath::operator=(PropertyPath const & other) {
+   if (this != &other) {
+      m_properties = other.m_properties;
+      m_path       = other.m_path      ;
+   }
+   return *this;
+}
+
+
 PropertyPath::~PropertyPath() = default;
 
 QString PropertyPath::asXPath() const {
@@ -124,6 +133,12 @@ QVariant PropertyPath::getValue(NamedEntity const & obj) const {
 
       if (property == this->m_properties.last()) {
          retVal = ne->property(**property);
+         if (!retVal.isValid()) {
+            auto mo = ne->metaObject();
+            qWarning() <<
+               Q_FUNC_INFO << "Property" << *property << "on" << mo->className() << "#" << ne->key() <<
+               "not readable.  Property Index =" << mo->indexOfProperty(**property);
+         }
          break;
       }
 

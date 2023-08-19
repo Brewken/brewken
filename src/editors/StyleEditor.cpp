@@ -28,7 +28,7 @@
 
 StyleEditor::StyleEditor(QWidget* parent) :
    QDialog{parent},
-   EditorBase<Style, StyleEditor>() {
+   EditorBase<StyleEditor, Style>() {
    setupUi(this);
 
    this->tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);

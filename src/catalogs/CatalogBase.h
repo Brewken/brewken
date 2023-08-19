@@ -88,8 +88,9 @@
  *
  *        † Not the greatest name, but `new` is a reserved word and `create` is already taken by QWidget
  */
+template<class Derived> class CatalogPhantom;
 template<class Derived, class NE, class NeTableModel, class NeSortFilterProxyModel, class NeEditor>
-class CatalogBase : public CuriouslyRecurringTemplateBase<Derived> {
+class CatalogBase : public CuriouslyRecurringTemplateBase<CatalogPhantom, Derived> {
 public:
 
    CatalogBase(MainWindow * parent) :

@@ -2028,6 +2028,25 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
+    <name>Ingredient</name>
+    <message>
+        <source>Ingredient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass</source>
+        <translation type="unfinished">Massa</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="unfinished">Volume</translation>
+    </message>
+    <message>
+        <source>Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Instruction</name>
     <message>
         <source>Instruction</source>
@@ -2320,11 +2339,9 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>See logs for more details.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The program may not work if you ignore this error.
+
+See logs for more details.
 
 If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
@@ -3834,6 +3851,10 @@ Program will now exit.</source>
     </message>
     <message>
         <source>ListOfRecords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There were errors loading the following object store(s): %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6484,7 +6505,7 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Tempo</translation>
+        <translation type="vanished">Tempo</translation>
     </message>
     <message>
         <source>Type</source>
@@ -6580,11 +6601,11 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Amount in Inventory</source>
-        <translation>Quantità in Magazzino</translation>
+        <translation type="vanished">Quantità in Magazzino</translation>
     </message>
     <message>
         <source>Amount in inventory</source>
-        <translation>Quantità in Magazzino</translation>
+        <translation type="vanished">Quantità in Magazzino</translation>
     </message>
     <message>
         <source>Main</source>
@@ -6740,15 +6761,11 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Controllare se l&apos;importo indicato è in kg invece di L.</translation>
-    </message>
-    <message>
-        <source>Amount is weight?</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Controllare se l&apos;importo indicato è in kg invece di L.</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished">Controlla se la data quantità è peso invece di volume</translation>
+        <translation type="obsolete">Controlla se la data quantità è peso invece di volume</translation>
     </message>
 </context>
 <context>

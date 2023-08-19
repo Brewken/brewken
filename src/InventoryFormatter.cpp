@@ -28,6 +28,7 @@
 #include "measurement/Measurement.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
+#include "model/Inventory.h"
 #include "model/Misc.h"
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
@@ -86,11 +87,14 @@ namespace {
    QString createInventoryTableHop() {
       QString result;
 
-      auto inventory = ObjectStoreWrapper::findAllMatching<Hop>(
-         [](std::shared_ptr<Hop> hh) { return (hh->getParent() == nullptr && hh->inventory() > 0.0); }
+///      auto inventory = ObjectStoreWrapper::findAllMatching<Hop>(
+///         [](std::shared_ptr<Hop> hh) { return (hh->getParent() == nullptr && hh->inventory() > 0.0); }
+///      );
+      auto hopInventory = ObjectStoreWrapper::findAllMatching<InventoryHop>(
+         [](std::shared_ptr<InventoryHop> val) { return val->quantity() > 0.0; }
       );
-      if (!inventory.empty()) {
 
+      if (!hopInventory.empty()) {
          result += QString("<h2>%1</h2>").arg(QObject::tr("Hops"));
          result += "<table id=\"hops\">";
          result += QString("<tr>"
@@ -102,16 +106,26 @@ namespace {
                         .arg(QObject::tr("Alpha %"))
                         .arg(QObject::tr("Amount"));
 
-         for (auto hop : inventory) {
+///         for (auto hop : inventory) {
+///            result += QString("<tr>"
+///                              "<td>%1</td>"
+///                              "<td>%2</td>"
+///                              "<td>%3</td>"
+///                              "</tr>")
+///                           .arg(hop->name())
+///                           .arg(hop->alpha_pct())
+///                           .arg(Measurement::displayAmount(Measurement::Amount{hop->inventory(),
+///                                                                               Measurement::Units::kilograms}));
+///         }
+         for (auto ii : hopInventory) {
             result += QString("<tr>"
                               "<td>%1</td>"
                               "<td>%2</td>"
                               "<td>%3</td>"
                               "</tr>")
-                           .arg(hop->name())
-                           .arg(hop->alpha_pct())
-                           .arg(Measurement::displayAmount(Measurement::Amount{hop->inventory(),
-                                                                               Measurement::Units::kilograms}));
+                           .arg(ii->hop()->name())
+                           .arg(ii->hop()->alpha_pct())
+                           .arg(Measurement::displayAmount(ii->amount()));
          }
          result += "</table>";
       }
@@ -202,10 +216,10 @@ namespace {
    QString createInventoryBody(InventoryFormatter::HtmlGenerationFlags flags) {
       // Only generate users selection of Ingredient inventory.
       QString result =
-         ((InventoryFormatter::FERMENTABLES  & flags) ? createInventoryTableFermentable() : "") +
-         ((InventoryFormatter::HOPS          & flags) ? createInventoryTableHop() : "") +
-         ((InventoryFormatter::MISCELLANEOUS & flags) ? createInventoryTableMiscellaneous() : "") +
-         ((InventoryFormatter::YEAST         & flags) ? createInventoryTableYeast() : "");
+         ((flags & InventoryFormatter::HtmlGenerationFlag::FERMENTABLES ) ? createInventoryTableFermentable() : "") +
+         ((flags & InventoryFormatter::HtmlGenerationFlag::HOPS         ) ? createInventoryTableHop() : "") +
+         ((flags & InventoryFormatter::HtmlGenerationFlag::MISCELLANEOUS) ? createInventoryTableMiscellaneous() : "") +
+         ((flags & InventoryFormatter::HtmlGenerationFlag::YEAST        ) ? createInventoryTableYeast() : "");
 
       // If user selects no printout or if there are no inventory for the selected ingredients
       if (result.size() == 0) {
@@ -224,15 +238,15 @@ namespace {
 
 }
 
-InventoryFormatter::HtmlGenerationFlags InventoryFormatter::operator|(InventoryFormatter::HtmlGenerationFlags a,
-                                                                      InventoryFormatter::HtmlGenerationFlags b) {
-   return static_cast<HtmlGenerationFlags>(static_cast<int>(a) | static_cast<int>(b));
-}
-
-bool InventoryFormatter::operator&(InventoryFormatter::HtmlGenerationFlags a,
-                                   InventoryFormatter::HtmlGenerationFlags b) {
-   return (static_cast<int>(a) & static_cast<int>(b));
-}
+///InventoryFormatter::HtmlGenerationFlags InventoryFormatter::operator|(InventoryFormatter::HtmlGenerationFlags a,
+///                                                                      InventoryFormatter::HtmlGenerationFlags b) {
+///   return static_cast<HtmlGenerationFlags>(static_cast<int>(a) | static_cast<int>(b));
+///}
+///
+///bool InventoryFormatter::operator&(InventoryFormatter::HtmlGenerationFlags a,
+///                                   InventoryFormatter::HtmlGenerationFlags b) {
+///   return (static_cast<int>(a) & static_cast<int>(b));
+///}
 
 QString InventoryFormatter::createInventoryHtml(HtmlGenerationFlags flags) {
    return createInventoryHeader() +

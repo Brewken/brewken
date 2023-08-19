@@ -40,7 +40,7 @@ TypeLookup const RecipeAdditionMassOrVolume::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionMassOrVolume::amountWithUnits, RecipeAdditionMassOrVolume::amountWithUnits, Measurement::PqEitherMassOrVolume),
    },
    // Parent class lookup.  NB: RecipeAddition not NamedEntity!
-   &RecipeAddition::typeLookup
+   {&RecipeAddition::typeLookup}
 };
 static_assert(std::is_base_of<RecipeAddition, RecipeAdditionMassOrVolume>::value);
 

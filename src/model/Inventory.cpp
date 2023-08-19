@@ -31,22 +31,140 @@ namespace {
 
    template<class Ing> ObjectStore & getInventoryObjectStore();
    template<> ObjectStore & getInventoryObjectStore<Fermentable>() { return ObjectStoreTyped<InventoryFermentable>::getInstance(); }
-   template<> ObjectStore & getInventoryObjectStore<Hop>()         { return ObjectStoreTyped<InventoryHop>::getInstance();         }
+///   template<> ObjectStore & getInventoryObjectStore<Hop>()         { return ObjectStoreTyped<InventoryHop>::getInstance();         }
    template<> ObjectStore & getInventoryObjectStore<Misc>()        { return ObjectStoreTyped<InventoryMisc>::getInstance();        }
    template<> ObjectStore & getInventoryObjectStore<Yeast>()       { return ObjectStoreTyped<InventoryYeast>::getInstance();       }
 
-   template<class Ing> std::shared_ptr<Inventory> newInventory();
-   template<> std::shared_ptr<Inventory> newInventory<Fermentable>() { return std::static_pointer_cast<Inventory>(std::make_shared<InventoryFermentable>()); }
-   template<> std::shared_ptr<Inventory> newInventory<Hop>()         { return std::static_pointer_cast<Inventory>(std::make_shared<InventoryHop>());         }
-   template<> std::shared_ptr<Inventory> newInventory<Misc>()        { return std::static_pointer_cast<Inventory>(std::make_shared<InventoryMisc>());        }
-   template<> std::shared_ptr<Inventory> newInventory<Yeast>()       { return std::static_pointer_cast<Inventory>(std::make_shared<InventoryYeast>());       }
+   template<class Ing> std::shared_ptr<OldInventory> newInventory();
+///   template<> std::shared_ptr<Inventory> newInventory<Hop>()         { return std::static_pointer_cast<Inventory>(std::make_shared<InventoryHop>());         }
+   template<> std::shared_ptr<OldInventory> newInventory<Fermentable>() { return std::static_pointer_cast<OldInventory>(std::make_shared<InventoryFermentable>()); }
+   template<> std::shared_ptr<OldInventory> newInventory<Misc>()        { return std::static_pointer_cast<OldInventory>(std::make_shared<InventoryMisc>());        }
+   template<> std::shared_ptr<OldInventory> newInventory<Yeast>()       { return std::static_pointer_cast<OldInventory>(std::make_shared<InventoryYeast>());       }
 
 }
+
+
+QString const Inventory::LocalisedName = tr("Inventory");
+
+bool Inventory::isEqualTo(NamedEntity const & other) const {
+   // Base class (NamedEntity) will have ensured this cast is valid
+   Inventory const & rhs = static_cast<Inventory const &>(other);
+   return (
+      this->m_ingredientId == rhs.m_ingredientId
+   );
+}
+
+TypeLookup const Inventory::typeLookup {
+   "Inventory",
+   {
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Inventory::ingredientId, Inventory::m_ingredientId),
+   },
+   {&NamedEntity::typeLookup}
+};
+
+Inventory::Inventory() :
+   NamedEntity{""},
+   m_ingredientId{-1} {
+   return;
+}
+
+Inventory::Inventory(NamedParameterBundle const & namedParameterBundle) :
+   NamedEntity{namedParameterBundle},
+   SET_REGULAR_FROM_NPB (m_ingredientId, namedParameterBundle, PropertyNames::Inventory::ingredientId) {
+   return;
+}
+
+Inventory::Inventory(Inventory const & other) :
+   NamedEntity   {other               },
+   m_ingredientId{other.m_ingredientId} {
+   return;
+}
+
+Inventory::~Inventory() = default;
+
+//============================================ "GETTER" MEMBER FUNCTIONS ============================================
+int Inventory::ingredientId() const { return this->m_ingredientId; }
+
+//============================================ "SETTER" MEMBER FUNCTIONS ============================================
+void Inventory::setIngredientId(int const val) { this->setAndNotify(PropertyNames::Inventory::ingredientId, this->m_ingredientId, val); return;}
+
+void Inventory::setDeleted([[maybe_unused]] bool var) {
+   // See comment in header.  This is not currently implemented and it's therefore a coding error if it gets called
+   Q_ASSERT(false);
+   return;
+}
+
+void Inventory::setDisplay([[maybe_unused]] bool var) {
+   // See comment in header.  This is not currently implemented and it's therefore a coding error if it gets called
+   Q_ASSERT(false);
+   return;
+}
+
+Recipe * Inventory::getOwningRecipe() const {
+   // See comment in header.  This is not currently implemented and it's therefore a coding error if it gets called
+   Q_ASSERT(false);
+   return nullptr;
+}
+
+void Inventory::hardDeleteOwnedEntities() {
+   qDebug() << Q_FUNC_INFO << this->metaObject()->className() << "owns no other entities";
+   return;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+QString const InventoryHop::LocalisedName = tr("Hop Inventory");
+
+bool InventoryHop::isEqualTo(NamedEntity const & other) const {
+   // Base class (NamedEntity) will have ensured this cast is valid
+   InventoryHop const & rhs = static_cast<InventoryHop const &>(other);
+   return (
+      this->m_quantity     == rhs.m_quantity &&
+      this->m_measure      == rhs.m_measure  &&
+      // Parent classes have to be equal too
+      this->Inventory::isEqualTo(other)
+   );
+}
+
+TypeLookup const InventoryHop::typeLookup {
+   "InventoryHop",
+   {
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::IngredientAmount::quantity, InventoryHop::m_quantity),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::IngredientAmount::measure , InventoryHop::m_measure ),
+   },
+   // Parent class lookup.  NB: Inventory not NamedEntity!
+   {&Inventory::typeLookup}
+};
+static_assert(std::is_base_of<Inventory, InventoryHop>::value);
+
+InventoryHop::InventoryHop(NamedParameterBundle const & namedParameterBundle) :
+   Inventory                          {namedParameterBundle},
+   IngredientAmount<InventoryHop, Hop>{namedParameterBundle} {
+   return;
+}
+
+InventoryHop::InventoryHop(InventoryHop const & other) :
+   Inventory                          {other},
+   IngredientAmount<InventoryHop, Hop>{other} {
+   return;
+}
+
+InventoryHop::~InventoryHop() = default;
+
+Hop * InventoryHop::hop() const {
+   return ObjectStoreWrapper::getByIdRaw<Hop>(this->m_ingredientId);
+}
+
+
+// Boilerplate code for IngredientAmount
+INGREDIENT_AMOUNT_COMMON_CODE(InventoryHop)
+
+//////////////////////////////////////////////// OLD OLD OLD OLD OLD OLD ////////////////////////////////////////////////
+
 
 //
 // This private implementation class holds all private non-virtual members of Inventory
 //
-class Inventory::impl {
+class OldInventory::impl {
 public:
 
    //
@@ -78,54 +196,54 @@ public:
    double amount;
 };
 
-QString const Inventory::LocalisedName = tr("Inventory");
+QString const OldInventory::LocalisedName = tr("Inventory");
 
-Inventory::Inventory() : pimpl{std::make_unique<impl>()} {
+TypeLookup const OldInventory::typeLookup {
+   "Inventory",
+   {
+      // Note that we need Enums to be treated as ints for the purposes of type lookup
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Inventory::amount               , OldInventory::impl::amount, Measurement::PqEitherMassOrVolume),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Inventory::id                   , OldInventory::impl::id    ),
+   },
+   // Parent class lookup
+   // Note that OldInventory does _not_ inherit from NamedEntity, so this is intentionally empty list
+   {}
+};
+
+OldInventory::OldInventory() : pimpl{std::make_unique<impl>()} {
    return;
 }
 
-Inventory::Inventory(NamedParameterBundle const & namedParameterBundle) :
+OldInventory::OldInventory(NamedParameterBundle const & namedParameterBundle) :
    pimpl{std::make_unique<impl>(namedParameterBundle)} {
    return;
 }
 
-TypeLookup const Inventory::typeLookup {
-   "Inventory",
-   {
-      // Note that we need Enums to be treated as ints for the purposes of type lookup
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Inventory::amount               , Inventory::impl::amount, Measurement::PqEitherMassOrVolume),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Inventory::id                   , Inventory::impl::id    ),
-   },
-   // Parent class lookup
-   // Note that Inventory does _not_ inherit from NamedEntity, so this is intentionally null
-   nullptr
-};
-
 // Strictly speaking a QObject is not allowed to be copied, which would mean that since we do not use any state in the
 // QObject from which we inherit, we allow Inventory to be copied and just default-initialise the QObject base class in
 // the copy.  Hopefully this will never come back to bite us...
-Inventory::Inventory(Inventory const & other) :
+OldInventory::OldInventory(OldInventory const & other) :
    QObject{},
    pimpl{std::make_unique<impl>(*other.pimpl)} {
    return;
 }
 
-Inventory::~Inventory() = default;
+OldInventory::~OldInventory() = default;
 
-int    Inventory::getId() const      { return this->pimpl->id; }
-double Inventory::getAmount() const  { return this->pimpl->amount; }
+int    OldInventory::getId() const      { return this->pimpl->id; }
+double OldInventory::getAmount() const  { return this->pimpl->amount; }
 
-void Inventory::setId(int id) {
+void OldInventory::setId(int id) {
    this->pimpl->id = id;
    return;
 }
 
-void Inventory::setKey(int id) {
+void OldInventory::setKey(int id) {
    this->setId(id);
    return;
 }
 
-void Inventory::setAmount(double amount) {
+void OldInventory::setAmount(double amount) {
    this->pimpl->amount = amount;
    // If we're already stored in the object store, tell it about the property change so that it can write it to the
    // database.  (We don't pass the new value as it will get read out of the object via propertyName.)
@@ -136,19 +254,19 @@ void Inventory::setAmount(double amount) {
    return;
 }
 
-void Inventory::setDeleted([[maybe_unused]] bool var) {
+void OldInventory::setDeleted([[maybe_unused]] bool var) {
    // See comment in header.  This is not currently implemented and it's therefore a coding error if it gets called
    Q_ASSERT(false);
    return;
 }
 
-void Inventory::setDisplay([[maybe_unused]] bool var) {
+void OldInventory::setDisplay([[maybe_unused]] bool var) {
    // See comment in header.  This is not currently implemented and it's therefore a coding error if it gets called
    Q_ASSERT(false);
    return;
 }
 
-void Inventory::hardDeleteOwnedEntities() {
+void OldInventory::hardDeleteOwnedEntities() {
    qDebug() << Q_FUNC_INFO << this->metaObject()->className() << "owns no other entities";
    return;
 }
@@ -177,7 +295,7 @@ void InventoryUtils::setAmount(Ing & ing, double amount) {
    int invId = ing.inventoryId();
    if (invId > 0) {
       // The easy case: set an amount in an existing inventory entry
-      auto inventory = std::static_pointer_cast<Inventory>(inventoryObjectStore.getById(invId));
+      auto inventory = std::static_pointer_cast<OldInventory>(inventoryObjectStore.getById(invId));
       inventory->setAmount(amount);
       return;
    }
@@ -216,7 +334,7 @@ void InventoryUtils::setAmount(Ing & ing, double amount) {
 // Instantiate the above template for all the classes we care about.
 // This is just a trick to avoid having the template definition in the header file.
 template void InventoryUtils::setAmount(Fermentable & ing, double amount);
-template void InventoryUtils::setAmount(Hop & ing,         double amount);
+///template void InventoryUtils::setAmount(Hop & ing,         double amount);
 template void InventoryUtils::setAmount(Misc & ing,        double amount);
 template void InventoryUtils::setAmount(Yeast & ing,       double amount);
 
@@ -225,7 +343,7 @@ double InventoryUtils::getAmount(Ing const & ing) {
    ObjectStore & inventoryObjectStore = getInventoryObjectStore<Ing>();
    int invId = ing.inventoryId();
    if (invId > 0) {
-      auto inventory = std::static_pointer_cast<Inventory>(inventoryObjectStore.getById(invId));
+      auto inventory = std::static_pointer_cast<OldInventory>(inventoryObjectStore.getById(invId));
       return inventory->getAmount();
    }
 
@@ -233,6 +351,6 @@ double InventoryUtils::getAmount(Ing const & ing) {
    return 0.0;
 }
 template double InventoryUtils::getAmount(Fermentable const & ing);
-template double InventoryUtils::getAmount(Hop const & ing        );
+///template double InventoryUtils::getAmount(Hop const & ing        );
 template double InventoryUtils::getAmount(Misc const & ing       );
 template double InventoryUtils::getAmount(Yeast const & ing      );

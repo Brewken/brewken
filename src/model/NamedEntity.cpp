@@ -70,6 +70,9 @@ NamedEntity::NamedEntity(NamedParameterBundle const & namedParameterBundle) :
    return;
 }
 
+// Strictly speaking a QObject is not allowed to be copied, which would mean that since we do not use any state in the
+// QObject from which we inherit, we allow NamedEntity to be copied and just default-initialise the QObject base class
+// in the copy.  Hopefully this will never come back to bite us...
 NamedEntity::NamedEntity(NamedEntity const & other) :
    QObject        {nullptr        }, // QObject doesn't have a copy constructor, so just make a new one
    m_key          {-1             }, // We don't want to copy the other object's key/ID
@@ -115,7 +118,7 @@ TypeLookup const NamedEntity::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::parentKey, NamedEntity::parentKey                             ),
    },
    // Parent class lookup - none as we're top of the tree
-   nullptr
+   {}
 };
 
 NamedEntity::~NamedEntity() = default;

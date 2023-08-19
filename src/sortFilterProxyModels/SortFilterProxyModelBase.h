@@ -32,8 +32,9 @@
  *
  *        Derived classes need to implement lessThan to provide the right per-column logic for this.
  */
+template<class Derived> class SortFilterProxyModelPhantom;
 template<class Derived, class NeTableModel, class NeListModel>
-class SortFilterProxyModelBase : public CuriouslyRecurringTemplateBase<Derived> {
+class SortFilterProxyModelBase : public CuriouslyRecurringTemplateBase<SortFilterProxyModelPhantom, Derived> {
 public:
    SortFilterProxyModelBase(bool filter) :
       m_filter{filter} {

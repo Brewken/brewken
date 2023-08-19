@@ -548,9 +548,6 @@ namespace {
       // refer to it.  Temporarily putting the recipe_id on boil, without a foreign key constraint, makes this a lot
       // simpler.  Same applied to fermentation.)
       //
-      // As of this schema, we start using SQLite's "STRICT" option on newly-created tables.  One day, it would be nice
-      // to back-apply it to existing tables, but that would require dropping and recreating all the tables...
-      //
       QString createBoilSql;
       QTextStream createBoilSqlStream(&createBoilSql);
       createBoilSqlStream <<
@@ -1036,8 +1033,8 @@ namespace {
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN display           %1").arg(db.getDbNativeTypeName<bool   >())},
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN deleted           %1").arg(db.getDbNativeTypeName<bool   >())},
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN folder            %1").arg(db.getDbNativeTypeName<QString>())},
-         {QString("ALTER TABLE hop_in_recipe ADD COLUMN amount            %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE hop_in_recipe ADD COLUMN amount_is_weight  %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE hop_in_recipe ADD COLUMN quantity          %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE hop_in_recipe ADD COLUMN measure           %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN stage             %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN step              %1").arg(db.getDbNativeTypeName<int    >())},
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN add_at_time_mins  %1").arg(db.getDbNativeTypeName<double >())},
@@ -1055,14 +1052,14 @@ namespace {
          // the same query should work on both databases.
          //
          {QString("UPDATE hop_in_recipe "
-                  "SET amount = h.amount, "
-                     "amount_is_weight = ? "
+                  "SET quantity = h.amount, "
+                      "measure = 'mass_in_kilograms' "
                   "FROM ("
                      "SELECT id, "
                             "amount "
                      "FROM hop"
                   ") AS h "
-                  "WHERE hop_in_recipe.hop_id = h.id"), {QVariant{true}}},
+                  "WHERE hop_in_recipe.hop_id = h.id")},
          //
          // Now we brought the amounts across, we can drop them on the hop table.
          //
@@ -1193,9 +1190,49 @@ namespace {
          {QString("ALTER TABLE misc        DROP COLUMN display_scale")},
          {QString("ALTER TABLE yeast       DROP COLUMN display_unit")},
          {QString("ALTER TABLE yeast       DROP COLUMN display_scale")},
-      };
+         //
+         // Now we sort out inventory.  We move the hop ID and by-volume/by-mass info from the hop table to the
+         // inventory table.
+         //
+         {QString("ALTER TABLE hop_in_inventory RENAME COLUMN amount TO quantity")},
+         {QString("ALTER TABLE hop_in_inventory ADD COLUMN hop_id %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE hop_in_inventory ADD COLUMN measure %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("UPDATE hop_in_inventory "
+                  "SET hop_id = h.id "
+                  "FROM ("
+                     "SELECT id, "
+                            "inventory_id "
+                     "FROM hop"
+                  ") AS h "
+                  "WHERE hop_in_inventory.id = h.inventory_id")},
+         // At this point, all hop amounts will be weights, because prior versions of the DB did not support measuring
+         // hop by volume.
+         {QString("UPDATE hop_in_inventory "
+                  "SET measure = 'mass_in_kilograms'")},
+         // Now we transferred info across, we don't need the inventory_id column on hop
+         {QString("ALTER TABLE hop         DROP COLUMN inventory_id")},
+         //
+         // We would like hop_in_inventory.hop_id to be a foreign key to hop.id.  SQLite only lets you create foreign
+         // key constraints at the time that you create the table, so this is a bit of a palava.
+         //
+         {QString("CREATE TABLE tmp_hop_in_inventory ( "
+                    "id        %1, "
+                    "hop_id    %2, "
+                    "quantity  %3, "
+                    "measure   %4, "
+                    "FOREIGN KEY(hop_id)   REFERENCES hop(id)"
+                 ");").arg(db.getDbNativePrimaryKeyDeclaration(),
+                           db.getDbNativeTypeName<int    >(),
+                           db.getDbNativeTypeName<double >(),
+                           db.getDbNativeTypeName<QString>())},
+         {QString("INSERT INTO tmp_hop_in_inventory (id, hop_id, quantity, measure) "
+                  "SELECT id, hop_id, quantity, measure "
+                  "FROM hop_in_inventory")},
+         {QString("DROP TABLE hop_in_inventory")},
+         {QString("ALTER TABLE tmp_hop_in_inventory "
+                  "RENAME TO hop_in_inventory")},
 
-      // TODO: Can we move to SQLite Strict here?
+      };
 
       return executeSqlQueries(q, migrationQueries);
    }
