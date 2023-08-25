@@ -150,10 +150,12 @@ bool RecipeAdditionHopTableModel::setData(const QModelIndex & index, const QVari
    bool retVal = false;
 
    auto row = this->rows[index.row()];
-   Measurement::PhysicalQuantity physicalQuantity = row->physicalQuantity();
+   Measurement::PhysicalQuantity physicalQuantity = row->getMeasure();
 
    auto const columnIndex = static_cast<RecipeAdditionHopTableModel::ColumnIndex>(index.column());
-   qDebug() << Q_FUNC_INFO << "columnIndex" << static_cast<int>(columnIndex) << ", value" << value << ", physicalQuantity" << physicalQuantity;
+//   qDebug() <<
+//      Q_FUNC_INFO << "columnIndex" << static_cast<int>(columnIndex) << ", value" << value << ", physicalQuantity" <<
+//      physicalQuantity;
    switch (columnIndex) {
       case RecipeAdditionHopTableModel::ColumnIndex::Name     :
       case RecipeAdditionHopTableModel::ColumnIndex::Form     :

@@ -31,9 +31,9 @@
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::IngredientAmount { BtStringConst const property{#property}; }
 AddPropertyName(amount  )
-AddPropertyName(measure ) // Only quantity and measure should be used in database mappings
-AddPropertyName(quantity) // Only quantity and measure should be used in database mappings
-AddPropertyName(unit    )
+AddPropertyName(measure )
+AddPropertyName(quantity) // Only quantity and unit should be used in database mappings
+AddPropertyName(unit    ) // Only quantity and unit should be used in database mappings
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -66,7 +66,7 @@ AddPropertyName(unit    )
  *
  *              Q_PROPERTY(Measurement::Amount           amount    READ amount     WRITE setAmount  )
  *              Q_PROPERTY(double                        quantity  READ quantity   WRITE setQuantity)
- *              Q_PROPERTY(Measurement::Unit *           unit      READ unit       WRITE setUnit    )
+ *              Q_PROPERTY(Measurement::Unit const *     unit      READ unit       WRITE setUnit    )
  *              Q_PROPERTY(Measurement::PhysicalQuantity measure   READ measure    WRITE setMeasure )
  *
  *        (We cannot insert these lines with the \c INGREDIENT_AMOUNT_DECL macro because the Qt Meta Object Compiler aka
@@ -101,30 +101,28 @@ template<class Derived> class IngredientAmountPhantom;
 template<class Derived, class IngredientClass>
 class IngredientAmount : public CuriouslyRecurringTemplateBase<IngredientAmountPhantom, Derived> {
 
-public:
+protected:
 
    // Note that, because this is static, it cannot be initialised inside the class definition
    static TypeLookup const typeLookup;
-
-   Measurement::Amount amount() const {
-      return this->m_amount;
-   }
-
-   Measurement::PhysicalQuantity physicalQuantity() const {
-      return this->m_amount.unit->getPhysicalQuantity();
-   }
-
-protected:
 
    IngredientAmount() :
       m_amount{0.0, Measurement::Unit::getCanonicalUnit(IngredientClass::defaultMeasure)} {
       return;
    }
 
-   IngredientAmount(NamedParameterBundle const & namedParameterBundle) /* :
-   TODO Sort this bit out!
-      SET_REGULAR_FROM_NPB(m_quantity, namedParameterBundle, PropertyNames::IngredientAmount::quantity),
-      SET_REGULAR_FROM_NPB(m_measure , namedParameterBundle, PropertyNames::IngredientAmount::measure ) */ {
+   IngredientAmount(NamedParameterBundle const & namedParameterBundle) {
+
+      if (namedParameterBundle.contains(PropertyNames::IngredientAmount::quantity)) {
+         this->m_amount.quantity = namedParameterBundle.val<double>(PropertyNames::IngredientAmount::quantity);
+         this->m_amount.unit     = namedParameterBundle.val<Measurement::Unit const *>(
+            PropertyNames::IngredientAmount::unit,
+            &Measurement::Unit::getCanonicalUnit(IngredientClass::defaultMeasure)
+         );
+         return;
+      }
+
+      this->m_amount = namedParameterBundle.val<Measurement::Amount>(PropertyNames::IngredientAmount::amount);
       return;
    }
 
@@ -134,6 +132,12 @@ protected:
    }
 
    ~IngredientAmount() = default;
+
+public:
+
+   Measurement::Amount amount() const {
+      return this->m_amount;
+   }
 
    Measurement::Amount getAmount() const {
       return this->m_amount;
@@ -148,7 +152,10 @@ protected:
    }
 
    Measurement::PhysicalQuantity getMeasure () const {
-      return this->m_amount.unit->getPhysicalQuantity();
+      if (this->m_amount.unit) {
+         return this->m_amount.unit->getPhysicalQuantity();
+      }
+      return IngredientClass::defaultMeasure;
    }
 
    void doSetAmount(Measurement::Amount const & val) {
@@ -185,6 +192,7 @@ protected:
       return;
    }
 
+protected:
    Measurement::ConstrainedAmount<decltype(IngredientClass::validMeasures), IngredientClass::validMeasures> m_amount;
 };
 

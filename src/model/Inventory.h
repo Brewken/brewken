@@ -136,9 +136,11 @@ protected:
  * \brief Inventory of \c Hop
  */
 class InventoryHop : public Inventory, public IngredientAmount<InventoryHop, Hop> {
+   Q_OBJECT
 
    INGREDIENT_AMOUNT_DECL(InventoryHop, Hop)
 
+public:
    /**
     * \brief See comment in model/NamedEntity.h
     */
@@ -155,6 +157,12 @@ class InventoryHop : public Inventory, public IngredientAmount<InventoryHop, Hop
    InventoryHop(InventoryHop const & other);
 
    virtual ~InventoryHop();
+
+   //! See model/IngredientAmount.h for these ones
+   Q_PROPERTY(Measurement::Amount           amount    READ amount     WRITE setAmount  )
+   Q_PROPERTY(double                        quantity  READ quantity   WRITE setQuantity)
+   Q_PROPERTY(Measurement::Unit const *     unit      READ unit       WRITE setUnit    )
+   Q_PROPERTY(Measurement::PhysicalQuantity measure   READ measure    WRITE setMeasure )
 
 public:
    virtual char const * getIngredientClass() const;

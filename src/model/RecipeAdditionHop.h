@@ -103,10 +103,11 @@ public:
    Q_PROPERTY(Use   use   READ use   WRITE setUse STORED false)
    Q_PROPERTY(Hop * hop   READ hop   WRITE setHop             )
 
-   //! \brief The amount in kilograms, liters or count (ie "number of ...") -- see \c IngredientAmount
-   Q_PROPERTY(double quantity                READ quantity    WRITE setQuantity)
-   //! \brief Whether we are measuring in kilograms, liters or count (ie "number of ...") -- see \c IngredientAmount
-   Q_PROPERTY(Measurement::PhysicalQuantity measure    READ measure     WRITE setMeasure )
+   //! See model/IngredientAmount.h for these ones
+   Q_PROPERTY(Measurement::Amount           amount    READ amount     WRITE setAmount  )
+   Q_PROPERTY(double                        quantity  READ quantity   WRITE setQuantity)
+   Q_PROPERTY(Measurement::Unit const *     unit      READ unit       WRITE setUnit    )
+   Q_PROPERTY(Measurement::PhysicalQuantity measure   READ measure    WRITE setMeasure )
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    [[deprecated]] Use use() const;

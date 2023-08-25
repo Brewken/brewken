@@ -1891,19 +1891,19 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Inventory</source>
-        <translation>Lager</translation>
+        <translation type="vanished">Lager</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Mängdbeteckning</translation>
+        <translation type="obsolete">Mängdbeteckning</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Volym</translation>
+        <translation type="obsolete">Volym</translation>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Vikt</translation>
+        <translation type="obsolete">Vikt</translation>
     </message>
     <message>
         <source>Year</source>
@@ -2027,15 +2027,11 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Mass</source>
-        <translation type="unfinished">Massa</translation>
+        <translation type="obsolete">Massa</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Volym</translation>
-    </message>
-    <message>
-        <source>Count</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Volym</translation>
     </message>
 </context>
 <context>
@@ -2049,6 +2045,13 @@ If you didn&apos;t yet do this, click Abort.</source>
     <name>Inventory</name>
     <message>
         <source>Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>InventoryHop</name>
+    <message>
+        <source>Hop Inventory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2771,6 +2774,13 @@ If you need help, please open an issue at %1</source>
     <name>NamedEntityWithInventory</name>
     <message>
         <source>Named Entity With Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OldInventory</name>
+    <message>
+        <source>Inventory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3849,6 +3859,26 @@ Program will now exit.</source>
         <source>There were errors loading the following object store(s): %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass or Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass, Volume or Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass or Volume Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(№)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -4222,10 +4252,6 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>Amount</source>
         <translation type="unfinished">Mängd</translation>
-    </message>
-    <message>
-        <source>Inventory</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Amount Type</source>

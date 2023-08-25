@@ -1832,19 +1832,19 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Inventory</source>
-        <translation>Ευρετήριο ειδών</translation>
+        <translation type="vanished">Ευρετήριο ειδών</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Μονάδα μέτρησης</translation>
+        <translation type="obsolete">Μονάδα μέτρησης</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Όγκος</translation>
+        <translation type="obsolete">Όγκος</translation>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Βάρος</translation>
+        <translation type="obsolete">Βάρος</translation>
     </message>
     <message>
         <source>Year</source>
@@ -1968,15 +1968,11 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Mass</source>
-        <translation type="unfinished">Μάζα</translation>
+        <translation type="obsolete">Μάζα</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Όγκος</translation>
-    </message>
-    <message>
-        <source>Count</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Όγκος</translation>
     </message>
 </context>
 <context>
@@ -1991,6 +1987,13 @@ If you didn&apos;t yet do this, click Abort.</source>
     <message>
         <source>Inventory</source>
         <translation type="unfinished">Ευρετήριο ειδών</translation>
+    </message>
+</context>
+<context>
+    <name>InventoryHop</name>
+    <message>
+        <source>Hop Inventory</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2709,6 +2712,13 @@ If you need help, please open an issue at %1</source>
     <message>
         <source>Named Entity With Inventory</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OldInventory</name>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Ευρετήριο ειδών</translation>
     </message>
 </context>
 <context>
@@ -3802,6 +3812,26 @@ Program will now exit.</source>
         <source>There were errors loading the following object store(s): %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass or Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass, Volume or Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass or Volume Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(№)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -4178,7 +4208,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Ευρετήριο ειδών</translation>
+        <translation type="obsolete">Ευρετήριο ειδών</translation>
     </message>
     <message>
         <source>Amount Type</source>

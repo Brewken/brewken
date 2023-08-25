@@ -1828,19 +1828,19 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Inventory</source>
-        <translation>Sklad</translation>
+        <translation type="vanished">Sklad</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Druh množství</translation>
+        <translation type="obsolete">Druh množství</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Objem</translation>
+        <translation type="obsolete">Objem</translation>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Hmotnost</translation>
+        <translation type="obsolete">Hmotnost</translation>
     </message>
     <message>
         <source>Year</source>
@@ -1964,15 +1964,11 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Mass</source>
-        <translation type="unfinished">Hmotnost</translation>
+        <translation type="obsolete">Hmotnost</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Objem</translation>
-    </message>
-    <message>
-        <source>Count</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Objem</translation>
     </message>
 </context>
 <context>
@@ -1987,6 +1983,13 @@ If you didn&apos;t yet do this, click Abort.</source>
     <message>
         <source>Inventory</source>
         <translation type="unfinished">Sklad</translation>
+    </message>
+</context>
+<context>
+    <name>InventoryHop</name>
+    <message>
+        <source>Hop Inventory</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2705,6 +2708,13 @@ If you need help, please open an issue at %1</source>
     <message>
         <source>Named Entity With Inventory</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OldInventory</name>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Sklad</translation>
     </message>
 </context>
 <context>
@@ -3798,6 +3808,26 @@ Program will now exit.</source>
         <source>There were errors loading the following object store(s): %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass or Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass, Volume or Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass or Volume Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(№)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -4174,7 +4204,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Sklad</translation>
+        <translation type="obsolete">Sklad</translation>
     </message>
     <message>
         <source>Amount Type</source>
