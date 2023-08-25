@@ -81,14 +81,14 @@ ObjectStore & Salt::getObjectStoreTypedInstance() const {
 TypeLookup const Salt::typeLookup {
    "Salt",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::amount        , Salt::m_amount          , Measurement::PqEitherMassOrVolume      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::amount        , Salt::m_amount          , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume      ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::amountIsWeight, Salt::m_amountIsWeight  ,         NonPhysicalQuantity::Bool      ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::isAcid        , Salt::m_is_acid         ,         NonPhysicalQuantity::Bool      ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::percentAcid   , Salt::m_percent_acid    ,         NonPhysicalQuantity::Percentage),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::type          , Salt::m_type            ,         NonPhysicalQuantity::Enum      ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::whenToAdd     , Salt::m_whenToAdd       ,         NonPhysicalQuantity::Enum      ),
 
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Salt::amountWithUnits, Salt::amountWithUnits, Measurement::PqEitherMassOrVolume  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Salt::amountWithUnits, Salt::amountWithUnits, Measurement::ChoiceOfPhysicalQuantity::Mass_Volume  ),
    },
    // Parent class lookup
    {&NamedEntity::typeLookup}
@@ -198,8 +198,8 @@ void Salt::setPercentAcid(double val) {
 }
 
 void Salt::setAmountWithUnits(MassOrVolumeAmt const   val) {
-   this->setAndNotify(PropertyNames::Salt::amount        , this->m_amount        , val.quantity());
-   this->setAndNotify(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, val.isMass()  );
+   this->setAndNotify(PropertyNames::Salt::amount        , this->m_amount        , val.quantity);
+   this->setAndNotify(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, val.isMass());
    return;
 }
 

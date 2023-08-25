@@ -100,16 +100,16 @@ public:
    std::pair<double, QString> displayableAmount(Measurement::Amount const & amount,
                                                 std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) const {
       // Special cases
-      if (amount.unit()->getPhysicalQuantity() != this->physicalQuantity) {
-         return std::pair(amount.quantity(), "");
+      if (amount.unit->getPhysicalQuantity() != this->physicalQuantity) {
+         return std::pair(amount.quantity, "");
       }
 
-      auto siAmount = amount.unit()->toCanonical(amount.quantity());
+      auto siAmount = amount.unit->toCanonical(amount.quantity);
 
       // If there is only one unit in this unit system, then the scale to unit mapping will be empty as there's nothing
       // to choose from
       if (this->scaleToUnit.size() == 0) {
-         return std::pair(this->defaultUnit->fromCanonical(siAmount.quantity()), this->defaultUnit->name);
+         return std::pair(this->defaultUnit->fromCanonical(siAmount.quantity), this->defaultUnit->name);
       }
 
       // Conversely, if we have a non-empty mapping then it's a coding error if it only has one entry!
@@ -120,7 +120,7 @@ public:
          // It's a coding error to specify a forced scale that is not in the UnitSystem
          Q_ASSERT(this->scaleToUnit.contains(*forcedScale));
          Measurement::Unit const * bb = this->scaleToUnit.value(*forcedScale);
-         return std::pair(bb->fromCanonical(siAmount.quantity()), bb->name);
+         return std::pair(bb->fromCanonical(siAmount.quantity), bb->name);
       }
 
       // Search for the smallest measure in this system that's not too big to show the supplied value
@@ -128,7 +128,7 @@ public:
       // (e.g., mg, g, kg).
       Measurement::Unit const * last  = nullptr;
       for (auto it : this->scaleToUnit) {
-         if (last != nullptr && qAbs(siAmount.quantity()) < it->toCanonical(it->boundary()).quantity()) {
+         if (last != nullptr && qAbs(siAmount.quantity) < it->toCanonical(it->boundary()).quantity) {
             // Stop looping as we've found a unit that's too big to use (so we'll return the last one, ie the one smaller,
             // below)
             break;
@@ -138,7 +138,7 @@ public:
 
       // It is a programming error if the map was empty (ie we didn't go through the loop at all)
       Q_ASSERT(last != nullptr);
-      return std::pair(last->fromCanonical(siAmount.quantity()), last->name);
+      return std::pair(last->fromCanonical(siAmount.quantity), last->name);
    }
 
    // Member variables for impl
@@ -214,7 +214,7 @@ Measurement::Amount Measurement::UnitSystem::qstringToSI(QString qstr, Unit cons
    Measurement::Amount siAmount = unitToUse->toCanonical(amt);
 //   qDebug() <<
 //      Q_FUNC_INFO << this->uniqueName << ": " << qstr << "is" << amt << " " << unitToUse->name << "=" <<
-//      siAmount.quantity() << "in" << siAmount.unit()->name;
+//      siAmount.quantity << "in" << siAmount.unit->name;
 
    return siAmount;
 }
@@ -230,7 +230,7 @@ QString Measurement::UnitSystem::displayAmount(Measurement::Amount const & amoun
    auto result = this->pimpl->displayableAmount(amount, forcedScale);
 
    if (result.second.isEmpty()) {
-      return QString("%L1").arg(this->amountDisplay(Measurement::Amount{result.first, *amount.unit()}, forcedScale),
+      return QString("%L1").arg(this->amountDisplay(Measurement::Amount{result.first, *amount.unit}, forcedScale),
                                 fieldWidth,
                                 format,
                                 precision);
@@ -285,7 +285,7 @@ Measurement::UnitSystem const & Measurement::UnitSystem::getInstance(SystemOfMea
       qCritical() <<
          Q_FUNC_INFO << "Unable to find a UnitSystem for SystemOfMeasurement" <<
          Measurement::getDisplayName(systemOfMeasurement) << "and PhysicalQuantity" <<
-         Measurement::getDisplayName(physicalQuantity);
+         Measurement::physicalQuantityStringMapping[physicalQuantity];
       Q_ASSERT(false); // Stop here on a debug build
    }
 
@@ -347,9 +347,8 @@ template QTextStream & operator<<(QTextStream & stream, Measurement::UnitSystem:
 //---------------------------------------------------------------------------------------------------------------------
 namespace Measurement::UnitSystems {
    //
-   // NB: For the mass_Xxxx and volume_Xxxx unit systems, to make Measurement::Mixed2PhysicalQuantities work, we rely on
-   //     systemOfMeasurementName being identical for identical systems of measurement (because, for reasons explained
-   //     in comments in measurement/PhysicalQuantity.h, we don't explicitly model system of measurement).
+   // NB: For the mass_Xxxx and volume_Xxxx unit systems, to make Measurement::MixedPhysicalQuantities work, we rely on
+   //     them sharing systemOfMeasurement. TODO: This will need to change for PhysicalQuantity::Count
    //
    UnitSystem const mass_Metric{PhysicalQuantity::Mass,
                                 &Measurement::Units::kilograms,
@@ -407,6 +406,11 @@ namespace Measurement::UnitSystems {
                                      {UnitSystem::RelativeScale::ExtraLarge, &Measurement::Units::imperial_gallons    },
                                      {UnitSystem::RelativeScale::Huge,       &Measurement::Units::imperial_barrels    }},
                                     &Measurement::Units::imperial_quarts};
+
+   UnitSystem const count_NumberOf{PhysicalQuantity::Count,
+                                   &Measurement::Units::numberOf,
+                                   "count_NumberOf",
+                                   Measurement::SystemOfMeasurement::UniversalStandard};
 
    UnitSystem const temperature_MetricIsCelsius{PhysicalQuantity::Temperature,
                                                 &Measurement::Units::celsius,

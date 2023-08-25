@@ -138,7 +138,7 @@ void FermentableEditor::writeFieldsToEditItem() {
 void FermentableEditor::writeLateFieldsToEditItem() {
    // Since inventory amount isn't really an attribute of the Fermentable, it's best to store it after we know the
    // Fermentable has a DB record.
-   this->m_editItem->setInventoryAmount(lineEdit_inventory->toCanonical().quantity());
+   this->m_editItem->setInventoryAmount(lineEdit_inventory->toCanonical().quantity);
    return;
 }
 

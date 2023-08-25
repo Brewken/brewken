@@ -115,42 +115,42 @@ void RecipeExtrasWidget::updateTasteRating() {
 
 void RecipeExtrasWidget::updatePrimaryAge() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, primaryAge_days), lineEdit_primaryAge->toCanonical().quantity(), tr("Change Primary Age"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, primaryAge_days), lineEdit_primaryAge->toCanonical().quantity, tr("Change Primary Age"));
 }
 
 void RecipeExtrasWidget::updatePrimaryTemp() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, primaryTemp_c), lineEdit_primaryTemp->toCanonical().quantity(), tr("Change Primary Temp"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, primaryTemp_c), lineEdit_primaryTemp->toCanonical().quantity, tr("Change Primary Temp"));
 }
 
 void RecipeExtrasWidget::updateSecondaryAge() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, secondaryAge_days), lineEdit_secAge->toCanonical().quantity(), tr("Change Secondary Age"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, secondaryAge_days), lineEdit_secAge->toCanonical().quantity, tr("Change Secondary Age"));
 }
 
 void RecipeExtrasWidget::updateSecondaryTemp() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, secondaryTemp_c), lineEdit_secTemp->toCanonical().quantity(), tr("Change Secondary Temp"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, secondaryTemp_c), lineEdit_secTemp->toCanonical().quantity, tr("Change Secondary Temp"));
 }
 
 void RecipeExtrasWidget::updateTertiaryAge() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, tertiaryAge_days), lineEdit_tertAge->toCanonical().quantity(), tr("Change Tertiary Age"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, tertiaryAge_days), lineEdit_tertAge->toCanonical().quantity, tr("Change Tertiary Age"));
 }
 
 void RecipeExtrasWidget::updateTertiaryTemp() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, tertiaryTemp_c), lineEdit_tertTemp->toCanonical().quantity(), tr("Change Tertiary Temp"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, tertiaryTemp_c), lineEdit_tertTemp->toCanonical().quantity, tr("Change Tertiary Temp"));
 }
 
 void RecipeExtrasWidget::updateAge() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, age_days), lineEdit_age->toCanonical().quantity(), tr("Change Age"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, age_days), lineEdit_age->toCanonical().quantity, tr("Change Age"));
 }
 
 void RecipeExtrasWidget::updateAgeTemp() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, ageTemp_c), lineEdit_ageTemp->toCanonical().quantity(), tr("Change Age Temp"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, ageTemp_c), lineEdit_ageTemp->toCanonical().quantity, tr("Change Age Temp"));
 }
 
 void RecipeExtrasWidget::updateDate(QDate const & date) {
@@ -174,7 +174,7 @@ void RecipeExtrasWidget::updateCarbonation() {
 
    MainWindow::instance().doOrRedoUpdate(*recipe,
                                          TYPE_INFO(Recipe, carbonation_vols),
-                                         lineEdit_carbVols->toCanonical().quantity(),
+                                         lineEdit_carbVols->toCanonical().quantity,
                                          tr("Change Carbonation"));
 }
 

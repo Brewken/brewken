@@ -1920,7 +1920,7 @@ void MainWindow::updateRecipeBatchSize() {
 
    this->doOrRedoUpdate(*this->recipeObs,
                         TYPE_INFO(Recipe, batchSize_l),
-                        lineEdit_batchSize->toCanonical().quantity(),
+                        lineEdit_batchSize->toCanonical().quantity,
                         tr("Change Batch Size"));
 }
 
@@ -1931,7 +1931,7 @@ void MainWindow::updateRecipeBoilSize() {
 
    this->doOrRedoUpdate(*this->recipeObs,
                         TYPE_INFO(Recipe, boilSize_l),
-                        lineEdit_boilSize->toCanonical().quantity(),
+                        lineEdit_boilSize->toCanonical().quantity,
                         tr("Change Boil Size"));
 }
 
@@ -1941,7 +1941,7 @@ void MainWindow::updateRecipeBoilTime() {
    }
 
    Equipment* kit = recipeObs->equipment();
-   double boilTime = Measurement::qStringToSI(lineEdit_boilTime->text(), Measurement::PhysicalQuantity::Time).quantity();
+   double boilTime = Measurement::qStringToSI(lineEdit_boilTime->text(), Measurement::PhysicalQuantity::Time).quantity;
 
    // Here, we rely on a signal/slot connection to propagate the equipment changes to recipeObs->boilTime_min and maybe
    // recipeObs->boilSize_l

@@ -106,7 +106,7 @@ public:
    //! \brief The amount in kilograms, liters or count (ie "number of ...") -- see \c IngredientAmount
    Q_PROPERTY(double quantity                READ quantity    WRITE setQuantity)
    //! \brief Whether we are measuring in kilograms, liters or count (ie "number of ...") -- see \c IngredientAmount
-   Q_PROPERTY(Ingredient::Measure measure    READ measure     WRITE setMeasure )
+   Q_PROPERTY(Measurement::PhysicalQuantity measure    READ measure     WRITE setMeasure )
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    [[deprecated]] Use use() const;

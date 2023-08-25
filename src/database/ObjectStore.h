@@ -26,6 +26,7 @@
 #include <QString>
 #include <QVector>
 
+#include "measurement/Unit.h"
 #include "model/NamedEntity.h"
 #include "utils/BtStringConst.h"
 #include "utils/EnumStringMapping.h"
@@ -87,7 +88,8 @@ public:
       Double,
       String,
       Date,
-      Enum,          // Stored as a string in the DB
+      Enum,   // Stored as a string in the DB
+      Unit,   // Stored as a string in the DB
    };
 
    /**
@@ -109,22 +111,18 @@ public:
       FieldType                 const fieldType;
       BtStringConst             const columnName;   // Shouldn't ever be empty in practice
       BtStringConst             const propertyName; // Can be empty in a junction table (see below)
-      // TODO: We should combine the following two into a variant, as they are never both needed at the same time
-      EnumStringMapping const * const enumMapping;  // Only needed if fieldType is Enum
-      TableDefinition   const * const foreignKeyTo;
+      using ValueDecoder =
+         std::variant<std::monostate,
+                      EnumStringMapping              const *,  // FieldType::Enum
+                      TableDefinition                const *,  // FieldType::Int (when foreign key)
+                      Measurement::UnitStringMapping const *>; // FieldType::Unit
+      ValueDecoder valueDecoder;
+
       //! Constructor
-      TableField(FieldType                 const   fieldType,
-                 char              const * const   columnName   = nullptr,
-                 BtStringConst             const & propertyName = BtString::NULL_STR,
-                 EnumStringMapping const * const   enumMapping  = nullptr,
-                 TableDefinition   const * const   foreignKeyTo = nullptr) :
-         fieldType{fieldType},
-         columnName{columnName},
-         propertyName{propertyName},
-         enumMapping{enumMapping},
-         foreignKeyTo{foreignKeyTo} {
-         return;
-      }
+      TableField(FieldType             const   fieldType,
+                 char          const * const   columnName   = nullptr,
+                 BtStringConst         const & propertyName = BtString::NULL_STR,
+                 ValueDecoder          const   valueDecoder = ValueDecoder{});
    };
 
    /**

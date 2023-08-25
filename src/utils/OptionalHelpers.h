@@ -165,7 +165,7 @@ namespace Optional {
          // The return value is not really meaningful here, but by convention the default is \c true
          return true;
       }
-      quantity = constrainedAmount->quantity();
+      quantity = constrainedAmount->quantity;
       return constrainedAmount->isFirst();
    }
 
@@ -197,8 +197,6 @@ namespace Optional {
     * \return \c true if \c input is empty or blank (ie contains only whitespace), \c false otherwise
     */
    [[nodiscard]] bool isEmptyOrBlank(QString const & input);
-
-
 }
 
 /**

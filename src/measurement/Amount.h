@@ -28,8 +28,10 @@ namespace Measurement {
     *        know what units we're getting back from a function (eg \c qstringToSI), it helps reduce bugs to have
     *        quantity and units together in a single struct.
     */
-   class Amount {
-   public:
+   struct Amount {
+      double       quantity;
+      Unit const * unit;
+
       //! Regular constructor
       Amount(double const quantity, Unit const & unit);
 
@@ -50,17 +52,6 @@ namespace Measurement {
 
       //! Move assignment.
       Amount & operator=(Amount && other);
-
-      double       quantity() const;
-      Unit const * unit    () const;
-
-   private:
-      void setQuantity(double const   val);
-      void setUnit    (Unit   const & val);
-
-   protected:
-      double       m_quantity;
-      Unit const * m_unit;
    };
 
 }

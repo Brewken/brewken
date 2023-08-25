@@ -48,7 +48,7 @@ TypeLookup const RecipeAdditionHop::typeLookup {
    {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionHop::hop, RecipeAdditionHop::hop),
    },
-   // Parent class lookup.  NB: RecipeAddition not NamedEntity!
+   // Parent classes lookup.  NB: RecipeAddition not NamedEntity!
    {&RecipeAddition::typeLookup,
     std::addressof(IngredientAmount<RecipeAdditionHop, Hop>::typeLookup)}
 };
@@ -65,13 +65,15 @@ static_assert(!HasTypeLookup<QString>);
 
 RecipeAdditionHop::RecipeAdditionHop(QString name, int const recipeId, int const hopId) :
    RecipeAddition{name, recipeId, hopId},
-   RecipeAdditionBase<RecipeAdditionHop, Hop>{} {
+   RecipeAdditionBase<RecipeAdditionHop, Hop>{},
+   IngredientAmount<RecipeAdditionHop, Hop>{} {
    return;
 }
 
 RecipeAdditionHop::RecipeAdditionHop(NamedParameterBundle const & namedParameterBundle) :
    RecipeAddition{namedParameterBundle},
-   RecipeAdditionBase<RecipeAdditionHop, Hop>{} {
+   RecipeAdditionBase<RecipeAdditionHop, Hop>{},
+   IngredientAmount<RecipeAdditionHop, Hop>{namedParameterBundle} {
    //
    // If the addition stage is not specified then we assume it is boil, as this is the first stage at which it is usual
    // to add hops.
@@ -84,7 +86,8 @@ RecipeAdditionHop::RecipeAdditionHop(NamedParameterBundle const & namedParameter
 
 RecipeAdditionHop::RecipeAdditionHop(RecipeAdditionHop const & other) :
    RecipeAddition{other},
-   RecipeAdditionBase<RecipeAdditionHop, Hop>{} {
+   RecipeAdditionBase<RecipeAdditionHop, Hop>{},
+   IngredientAmount<RecipeAdditionHop, Hop>{other} {
    return;
 }
 

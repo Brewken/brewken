@@ -118,8 +118,7 @@ bool InventoryHop::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    InventoryHop const & rhs = static_cast<InventoryHop const &>(other);
    return (
-      this->m_quantity     == rhs.m_quantity &&
-      this->m_measure      == rhs.m_measure  &&
+      this->m_amount == rhs.m_amount &&
       // Parent classes have to be equal too
       this->Inventory::isEqualTo(other)
    );
@@ -128,11 +127,11 @@ bool InventoryHop::isEqualTo(NamedEntity const & other) const {
 TypeLookup const InventoryHop::typeLookup {
    "InventoryHop",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::IngredientAmount::quantity, InventoryHop::m_quantity),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::IngredientAmount::measure , InventoryHop::m_measure ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::IngredientAmount::quantity, InventoryHop::m_amount),
    },
-   // Parent class lookup.  NB: Inventory not NamedEntity!
-   {&Inventory::typeLookup}
+   // Parent classes lookup.  NB: Inventory not NamedEntity!
+   {&Inventory::typeLookup,
+    std::addressof(IngredientAmount<InventoryHop, Hop>::typeLookup)}
 };
 static_assert(std::is_base_of<Inventory, InventoryHop>::value);
 
@@ -202,7 +201,7 @@ TypeLookup const OldInventory::typeLookup {
    "Inventory",
    {
       // Note that we need Enums to be treated as ints for the purposes of type lookup
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Inventory::amount               , OldInventory::impl::amount, Measurement::PqEitherMassOrVolume),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Inventory::amount               , OldInventory::impl::amount, Measurement::ChoiceOfPhysicalQuantity::Mass_Volume),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Inventory::id                   , OldInventory::impl::id    ),
    },
    // Parent class lookup

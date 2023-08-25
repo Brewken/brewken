@@ -397,12 +397,12 @@ std::optional<Measurement::Amount> SmartField::getOptCanonicalAmt() const {
 }
 
 double SmartField::getNonOptCanonicalQty() const {
-   return this->getNonOptCanonicalAmt().quantity();
+   return this->getNonOptCanonicalAmt().quantity;
 }
 
 std::optional<double> SmartField::getOptCanonicalQty() const {
    auto amount = this->getOptCanonicalAmt();
-   return amount ? std::optional<double>{amount->quantity()} : std::optional<double>{std::nullopt};
+   return amount ? std::optional<double>{amount->quantity} : std::optional<double>{std::nullopt};
 }
 
 // We can't do the same trick on get-value-as as we do for set-amount because we can't overload base on return type,
@@ -422,7 +422,7 @@ template<typename T> T SmartField::getNonOptValue(bool * const ok) const {
       return Measurement::extractRawFromString<T>(rawText, ok);
    }
 
-   return static_cast<T>(this->pimpl->toCanonical(rawText, this->getScaleInfo(), ok).quantity());
+   return static_cast<T>(this->pimpl->toCanonical(rawText, this->getScaleInfo(), ok).quantity);
 }
 // Instantiate the above template function for the types that are going to use it
 template int          SmartField::getNonOptValue<int         >(bool * const ok) const;
@@ -464,7 +464,7 @@ template<typename T> std::optional<T> SmartField::getOptValue(bool * const ok) c
 
    return std::make_optional<T>(
       static_cast<T>(
-         this->pimpl->toCanonical(rawText, this->getScaleInfo(), ok).quantity()
+         this->pimpl->toCanonical(rawText, this->getScaleInfo(), ok).quantity
       )
    );
 }
@@ -491,7 +491,7 @@ void SmartField::correctEnteredText(SmartAmounts::ScaleInfo previousScaleInfo) {
    // amount (aka to SI) and then into the unit we want.
    Measurement::Amount amountAsCanonical = this->pimpl->toCanonical(enteredText, previousScaleInfo);
 
-   QString const correctedText = this->displayAmount(amountAsCanonical.quantity(), this->pimpl->m_precision);
+   QString const correctedText = this->displayAmount(amountAsCanonical.quantity, this->pimpl->m_precision);
    qDebug() <<
       Q_FUNC_INFO << this->pimpl->m_fieldFqName << "Interpreted" << enteredText << "as" << amountAsCanonical <<
       "and corrected to" << correctedText;

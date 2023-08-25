@@ -51,9 +51,9 @@ PrimingDialog::~PrimingDialog() = default;
 
 void PrimingDialog::calculate() {
 
-   double const beer_l      = lineEdit_beerVol->toCanonical().quantity();
-   double const temp_c      = lineEdit_temp   ->toCanonical().quantity();
-   double const desiredVols = lineEdit_vols   ->toCanonical().quantity();
+   double const beer_l      = lineEdit_beerVol->toCanonical().quantity;
+   double const temp_c      = lineEdit_temp   ->toCanonical().quantity;
+   double const desiredVols = lineEdit_vols   ->toCanonical().quantity;
    qDebug() <<
       Q_FUNC_INFO << "Beer volume (liters):" << beer_l << ", Temp (°C):" << temp_c << ", Desired Volumes:" <<
       desiredVols;

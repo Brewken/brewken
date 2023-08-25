@@ -35,9 +35,9 @@ public:
       if (std::holds_alternative<NonPhysicalQuantity>(*this->m_typeInfo.fieldType)) {
          // It's a coding error to have a fixedDisplayUnit for a NonPhysicalQuantity
          Q_ASSERT(!this->m_fixedDisplayUnit);
-      } else if (std::holds_alternative<Measurement::Mixed2PhysicalQuantities>(*this->m_typeInfo.fieldType)) {
+      } else if (std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*this->m_typeInfo.fieldType)) {
          // If there is a choice of physical quantities (eg MassOrVolume) then start off with the first one
-         this->m_currentPhysicalQuantity = std::get<0>(std::get<Measurement::Mixed2PhysicalQuantities>(*this->m_typeInfo.fieldType));
+         this->m_currentPhysicalQuantity = Measurement::defaultPhysicalQuantity(std::get<Measurement::ChoiceOfPhysicalQuantity>(*this->m_typeInfo.fieldType));
       } else {
          Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(*this->m_typeInfo.fieldType));
          this->m_currentPhysicalQuantity = std::get<Measurement::PhysicalQuantity>(*this->m_typeInfo.fieldType);
@@ -52,7 +52,7 @@ public:
    char const * const        m_editorName      ;
    char const * const        m_labelOrFieldName;
    TypeInfo     const &      m_typeInfo        ;
-   // If m_typeInfo.fieldType is a Mixed2PhysicalQuantities (eg PqEitherMassOrVolume), this is where we store which of
+   // If m_typeInfo.fieldType is a ChoiceOfPhysicalQuantity (eg Mass_Volume), this is where we store which of
    // the two PhysicalQuantity values (eg Mass or Volume) is currently set.  If m_typeInfo.fieldType is a
    // PhysicalQuantity, then this will just be a copy of it.
    std::optional<Measurement::PhysicalQuantity> m_currentPhysicalQuantity;
@@ -140,7 +140,7 @@ Measurement::UnitSystem const & SmartAmountSettings::getUnitSystem(SmartAmounts:
 }
 
 Measurement::UnitSystem const & SmartAmountSettings::getDisplayUnitSystem() const {
-   // It's a coding error to call this for NonPhysicalQuantity, and we assert we never have a Mixed2PhysicalQuantities
+   // It's a coding error to call this for NonPhysicalQuantity, and we assert we never have a ChoiceOfPhysicalQuantity
    // for a SmartLabel that has no associated SmartField.
    Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo.fieldType));
    return SmartAmounts::getUnitSystem(this->pimpl->m_editorName,
@@ -163,15 +163,15 @@ void SmartAmountSettings::selectPhysicalQuantity(Measurement::PhysicalQuantity c
    Q_ASSERT(!std::holds_alternative<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo.fieldType));
 
    // It's a coding error to try to select a PhysicalQuantity that was not specified in the constructor
-   auto const & tupleOfPqs = std::get<Measurement::Mixed2PhysicalQuantities>(*this->pimpl->m_typeInfo.fieldType);
-   Q_ASSERT(std::get<0>(tupleOfPqs) == physicalQuantity ||
-            std::get<1>(tupleOfPqs) == physicalQuantity);
+   auto const choiceOfPhysicalQuantity = std::get<Measurement::ChoiceOfPhysicalQuantity>(*this->pimpl->m_typeInfo.fieldType);
+   Q_ASSERT(Measurement::isValid(choiceOfPhysicalQuantity, physicalQuantity));
 
    this->pimpl->m_currentPhysicalQuantity = physicalQuantity;
 
    return;
 }
 
+// TODO: We need to rethink this for the case where there are 3 options
 void SmartAmountSettings::selectPhysicalQuantity(bool const isFirst) {
    // It's a coding error to call this for NonPhysicalQuantity
    Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo.fieldType));
@@ -179,9 +179,9 @@ void SmartAmountSettings::selectPhysicalQuantity(bool const isFirst) {
    // It's a coding error to call this if we only hold one PhysicalQuantity
    Q_ASSERT(!std::holds_alternative<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo.fieldType));
 
-   auto const & tupleOfPqs = std::get<Measurement::Mixed2PhysicalQuantities>(*this->pimpl->m_typeInfo.fieldType);
-   this->pimpl->m_currentPhysicalQuantity = isFirst ? std::get<0>(tupleOfPqs) : std::get<1>(tupleOfPqs);
-
+   auto const choiceOfPhysicalQuantity = std::get<Measurement::ChoiceOfPhysicalQuantity>(*this->pimpl->m_typeInfo.fieldType);
+   auto const & possibilities = Measurement::allPossibilities(choiceOfPhysicalQuantity);
+   this->pimpl->m_currentPhysicalQuantity = isFirst ? possibilities[0] : possibilities[1];
    return;
 }
 

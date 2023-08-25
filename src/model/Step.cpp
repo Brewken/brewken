@@ -39,15 +39,15 @@ bool Step::isEqualTo(NamedEntity const & other) const {
 TypeLookup const Step::typeLookup {
    "Step",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::stepTime_min   , Step::m_stepTime_min   , Measurement::PhysicalQuantity::Time       ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::endTemp_c      , Step::m_endTemp_c      , Measurement::PhysicalQuantity::Temperature),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::stepNumber     , Step::m_stepNumber     ,           NonPhysicalQuantity::Count      ), // Not exactly a count, but close enough
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::stepTime_min   , Step::m_stepTime_min   , Measurement::PhysicalQuantity::Time          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::endTemp_c      , Step::m_endTemp_c      , Measurement::PhysicalQuantity::Temperature   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::stepNumber     , Step::m_stepNumber     ,           NonPhysicalQuantity::OrdinalNumeral),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::ownerId        , Step::m_ownerId        ),
       // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::description    , Step::m_description    ,           NonPhysicalQuantity::String     ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::rampTime_mins  , Step::m_rampTime_mins  , Measurement::PhysicalQuantity::Time       ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::startAcidity_pH, Step::m_startAcidity_pH, Measurement::PhysicalQuantity::Acidity    ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::endAcidity_pH  , Step::m_endAcidity_pH  , Measurement::PhysicalQuantity::Acidity    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::description    , Step::m_description    ,           NonPhysicalQuantity::String        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::rampTime_mins  , Step::m_rampTime_mins  , Measurement::PhysicalQuantity::Time          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::startAcidity_pH, Step::m_startAcidity_pH, Measurement::PhysicalQuantity::Acidity       ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::endAcidity_pH  , Step::m_endAcidity_pH  , Measurement::PhysicalQuantity::Acidity       ),
    },
    // Parent class lookup
    {&NamedEntity::typeLookup}

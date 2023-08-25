@@ -151,13 +151,13 @@ public:
    }
 
    void updateCalculatedFields() {
-      double og = this->input_og->toCanonical().quantity();
-      double fg = this->input_fg->toCanonical().quantity();
+      double og = this->input_og->toCanonical().quantity;
+      double fg = this->input_fg->toCanonical().quantity;
       if (this->enableAdvancedInputs->isChecked()) {
          // User wants temperature correction
-         double calibrationTempInC = this->input_calibration_temperature->toCanonical().quantity();
-         double ogReadTempInC          = this->input_og_temperature->toCanonical().quantity();
-         double fgReadTempInC          = this->input_fg_temperature->toCanonical().quantity();
+         double calibrationTempInC = this->input_calibration_temperature->toCanonical().quantity;
+         double ogReadTempInC          = this->input_og_temperature->toCanonical().quantity;
+         double fgReadTempInC          = this->input_fg_temperature->toCanonical().quantity;
          if (0.0 == calibrationTempInC || 0.0 == ogReadTempInC) {
             og = 0.0;
             this->corrected_og->setText("? sg");
@@ -261,7 +261,7 @@ public:
                                  this->enableAdvancedInputs->isChecked(),
                                  PersistentSettings::Sections::alcoholTool);
       PersistentSettings::insert(hydrometerCalibrationTemperatureInC,
-                                 this->input_calibration_temperature->toCanonical().quantity(),
+                                 this->input_calibration_temperature->toCanonical().quantity,
                                  PersistentSettings::Sections::alcoholTool);
       return;
    }

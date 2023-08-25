@@ -86,10 +86,10 @@ void StrikeWaterDialog::calculate() {
 }
 
 double StrikeWaterDialog::computeInitialInfusion() {
-   double grainTemp   = this->grainTempVal      ->toCanonical().quantity();
-   double targetMash  = this->targetMashVal     ->toCanonical().quantity();
-   double waterVolume = this->waterVolumeVal    ->toCanonical().quantity();
-   double grainWeight = this->grainWeightInitVal->toCanonical().quantity();
+   double grainTemp   = this->grainTempVal      ->toCanonical().quantity;
+   double targetMash  = this->targetMashVal     ->toCanonical().quantity;
+   double waterVolume = this->waterVolumeVal    ->toCanonical().quantity;
+   double grainWeight = this->grainWeightInitVal->toCanonical().quantity;
 
    if (grainWeight == 0.0) {
       return 0.0;
@@ -99,11 +99,11 @@ double StrikeWaterDialog::computeInitialInfusion() {
 }
 
 double StrikeWaterDialog::computeMashInfusion() {
-   double mashVol       = this->mashVolVal      ->toCanonical().quantity();
-   double grainWeight   = this->grainWeightVal  ->toCanonical().quantity();
-   double actualMash    = this->actualMashVal   ->toCanonical().quantity();
-   double targetMashInf = this->targetMashInfVal->toCanonical().quantity();
-   double infusionWater = this->infusionWaterVal->toCanonical().quantity();
+   double mashVol       = this->mashVolVal      ->toCanonical().quantity;
+   double grainWeight   = this->grainWeightVal  ->toCanonical().quantity;
+   double actualMash    = this->actualMashVal   ->toCanonical().quantity;
+   double targetMashInf = this->targetMashInfVal->toCanonical().quantity;
+   double infusionWater = this->infusionWaterVal->toCanonical().quantity;
 
    return mashInfusionSi(actualMash, targetMashInf, grainWeight, infusionWater, mashVol);
 }

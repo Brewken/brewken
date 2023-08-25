@@ -580,8 +580,7 @@ protected:
             return QVariant(Measurement::displayQuantity(modelData.toDouble(), precision, nonPhysicalQuantity));
          }
       } else {
-         // Most of the handling for Measurement::Mixed2PhysicalQuantities and Measurement::PhysicalQuantity is the
-         // same.
+         // Most of the handling for Measurement::MixedPhysicalQuantities and Measurement::PhysicalQuantity is the same.
          unsigned int precision = 3;
          if (columnInfo.extras) {
             Q_ASSERT(std::holds_alternative<BtTableModel::PrecisionInfo>(*columnInfo.extras));
@@ -589,8 +588,28 @@ protected:
             precision = boolInfo.precision;
          }
 
-         if (std::holds_alternative<Measurement::Mixed2PhysicalQuantities>(*typeInfo.fieldType) ||
-             typeInfo.typeIndex == typeid(Measurement::Amount)) {
+         // A field marked Measurement::ChoiceOfPhysicalQuantity can, for now, be a double or Measurement::Amount (or
+         // a subclass thereof).  If it's a double, we can't return a Measurement::Amount without consulting another
+         // field, so we don't.  If it's a Measurement::Amount, it's handled properly in the `else` below.
+         if (typeInfo.typeIndex == typeid(double)) {
+            Q_ASSERT(modelData.canConvert<double>());
+            double rawValue = modelData.value<double>();
+            if (std::holds_alternative<Measurement::PhysicalQuantity>(*typeInfo.fieldType)) {
+               // This is one of the points where it's important that NamedEntity classes always store data in canonical
+               // units.  For any properties where that's _not_ the case, we need to ensure we're passing
+               // Measurement::Amount, ie the units are always included.
+               auto const physicalQuantity = std::get<Measurement::PhysicalQuantity>(*typeInfo.fieldType);
+               Measurement::Amount amount{rawValue, Measurement::Unit::getCanonicalUnit(physicalQuantity)};
+               return QVariant(
+                  Measurement::displayAmount(amount,
+                                             precision,
+                                             columnInfo.getForcedSystemOfMeasurement(),
+                                             columnInfo.getForcedRelativeScale())
+               );
+            }
+//            qDebug() << Q_FUNC_INFO << "Raw value:" << rawValue << ", modelData:" << modelData;
+         } else if (std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*typeInfo.fieldType) ||
+                    typeInfo.typeIndex == typeid(Measurement::Amount)) {
             //
             // This is pretty useful for handling mass-or-volume amounts etc
             //
@@ -601,6 +620,9 @@ protected:
             if (typeInfo.typeIndex == typeid(MassOrVolumeAmt)) {
                Q_ASSERT(modelData.canConvert<MassOrVolumeAmt>());
                amount = modelData.value<MassOrVolumeAmt>();
+            } else if (typeInfo.typeIndex == typeid(MassVolumeOrCountAmt)) {
+               Q_ASSERT(modelData.canConvert<MassVolumeOrCountAmt>());
+               amount = modelData.value<MassVolumeOrCountAmt>();
             } else if (typeInfo.typeIndex == typeid(MassOrVolumeConcentrationAmt)) {
                Q_ASSERT(modelData.canConvert<MassOrVolumeConcentrationAmt>());
                amount = modelData.value<MassOrVolumeConcentrationAmt>();
@@ -620,22 +642,6 @@ protected:
                                           columnInfo.getForcedSystemOfMeasurement(),
                                           columnInfo.getForcedRelativeScale())
             );
-         } else if (typeInfo.typeIndex == typeid(double)) {
-            Q_ASSERT(modelData.canConvert<double>());
-            double rawValue = modelData.value<double>();
-            if (std::holds_alternative<Measurement::PhysicalQuantity>(*typeInfo.fieldType)) {
-               // This is one of the points where it's important that NamedEntity classes always store data in canonical
-               // units.  For any properties where that's _not_ the case, we need to ensure we're passing
-               // Measurement::Amount, ie the units are always included.
-               auto const physicalQuantity = std::get<Measurement::PhysicalQuantity>(*typeInfo.fieldType);
-               Measurement::Amount amount{rawValue, Measurement::Unit::getCanonicalUnit(physicalQuantity)};
-               return QVariant(
-                  Measurement::displayAmount(amount,
-                                             precision,
-                                             columnInfo.getForcedSystemOfMeasurement(),
-                                             columnInfo.getForcedRelativeScale())
-               );
-            }
          }
       }
 
@@ -649,7 +655,7 @@ protected:
     *        \c QAbstractTableModel::setData()) to write data for any column that does not require special handling
     *
     * \param physicalQuantity Needs to be supplied if and only if the column type is
-    *                         \c Measurement::Mixed2PhysicalQuantities
+    *                         \c Measurement::MixedPhysicalQuantities
     *
     * \return \c true if successful, \c false otherwise
     */
@@ -692,11 +698,11 @@ protected:
             // It's a coding error if physicalQuantity was supplied - because it's known in advance from the field type
             Q_ASSERT(!physicalQuantity);
             // Might seem a bit odd to overwrite the parameter here, but it allows us to share most of the code for
-            // PhysicalQuantity and Mixed2PhysicalQuantities
+            // PhysicalQuantity and ChoiceOfPhysicalQuantity
             physicalQuantity = std::get<Measurement::PhysicalQuantity>(*typeInfo.fieldType);
          } else {
             // This should be the only possibility left
-            Q_ASSERT(std::holds_alternative<Measurement::Mixed2PhysicalQuantities>(*typeInfo.fieldType));
+            Q_ASSERT(std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*typeInfo.fieldType));
             // It's a coding error if physicalQuantity was not supplied
             Q_ASSERT(physicalQuantity);
          }
@@ -707,7 +713,7 @@ protected:
                                      columnInfo.getForcedSystemOfMeasurement(),
                                      columnInfo.getForcedRelativeScale());
          if (typeInfo.typeIndex == typeid(double)) {
-            processedValue = Optional::variantFromRaw(amount.quantity(), typeInfo.isOptional());
+            processedValue = Optional::variantFromRaw(amount.quantity, typeInfo.isOptional());
          } else {
             // Comments above in readDataFromModel apply equally here.  You can cast between MassOrVolumeAmt and
             // Measurement::Amount, but not between QVariant<MassOrVolumeAmt> and QVariant<Measurement::Amount>, so

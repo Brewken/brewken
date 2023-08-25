@@ -375,7 +375,7 @@ void EquipmentEditor::updateCalcBoilVolume() {
       this->lineEdit_kettleBoilSize->setAmount(this->calcBatchSize());
       this->lineEdit_kettleBoilSize->setEnabled(false);
    } else {
-      this->lineEdit_kettleBoilSize->setAmount(this->lineEdit_fermenterBatchSize->toCanonical().quantity());
+      this->lineEdit_kettleBoilSize->setAmount(this->lineEdit_fermenterBatchSize->toCanonical().quantity);
       this->lineEdit_kettleBoilSize->setEnabled(true);
    }
    return;

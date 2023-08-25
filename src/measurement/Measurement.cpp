@@ -55,8 +55,8 @@ namespace {
       Measurement::UnitSystem const * unitSystem = Measurement::UnitSystem::getInstanceByUniqueName(unitSystemName);
       if (nullptr == unitSystem) {
          qWarning() <<
-            Q_FUNC_INFO << "Unrecognised unit system," << unitSystemName << "for" <<
-            Measurement::getDisplayName(physicalQuantity) << ", defaulting to" << defaultUnitSystem.uniqueName << "(" <<
+            Q_FUNC_INFO << "Unrecognised unit system," << unitSystemName << "for" << physicalQuantity <<
+            ", defaulting to" << defaultUnitSystem.uniqueName << "(" <<
             Measurement::getDisplayName(defaultUnitSystem.systemOfMeasurement) << ")";
          unitSystem = &defaultUnitSystem;
       }
@@ -121,7 +121,8 @@ template<> [[nodiscard]] double       Measurement::extractRawFromString<double> 
 
 
 void Measurement::loadDisplayScales() {
-   for (Measurement::PhysicalQuantity const physicalQuantity : Measurement::allPhysicalQuantites) {
+   for (auto const & ii : Measurement::physicalQuantityStringMapping) {
+      auto const physicalQuantity = static_cast<Measurement::PhysicalQuantity>(ii.native);
       loadDisplayScale(physicalQuantity,
                        Measurement::getSettingsName(physicalQuantity),
                        Measurement::Unit::getCanonicalUnit(physicalQuantity).getUnitSystem());
@@ -130,7 +131,8 @@ void Measurement::loadDisplayScales() {
 }
 
 void Measurement::saveDisplayScales() {
-   for (Measurement::PhysicalQuantity const physicalQuantity : Measurement::allPhysicalQuantites) {
+   for (auto const & ii : Measurement::physicalQuantityStringMapping) {
+      auto const physicalQuantity = static_cast<Measurement::PhysicalQuantity>(ii.native);
       PersistentSettings::insert(Measurement::getSettingsName(physicalQuantity),
                                  Measurement::getDisplayUnitSystem(physicalQuantity).uniqueName);
    }
@@ -141,9 +143,7 @@ void Measurement::setDisplayUnitSystem(Measurement::PhysicalQuantity physicalQua
                                        Measurement::UnitSystem const & unitSystem) {
    // It's a coding error if we try to store a UnitSystem against a PhysicalQuantity to which it does not relate!
    Q_ASSERT(physicalQuantity == unitSystem.getPhysicalQuantity());
-   qDebug() <<
-      Q_FUNC_INFO << "Setting UnitSystem for" << Measurement::getDisplayName(physicalQuantity) << "to" <<
-      unitSystem.uniqueName;
+   qDebug() << Q_FUNC_INFO << "Setting UnitSystem for" << physicalQuantity << "to" << unitSystem.uniqueName;
    physicalQuantityToDisplayUnitSystem.insert(physicalQuantity, &unitSystem);
    return;
 }
@@ -163,9 +163,7 @@ Measurement::UnitSystem const & Measurement::getDisplayUnitSystem(Measurement::P
    Measurement::UnitSystem const * unitSystem = physicalQuantityToDisplayUnitSystem.value(physicalQuantity, nullptr);
    if (nullptr == unitSystem) {
       // This is a coding error
-      qCritical() <<
-         Q_FUNC_INFO << "Unable to find display unit system for physical quantity" <<
-         Measurement::getDisplayName(physicalQuantity);
+      qCritical() << Q_FUNC_INFO << "Unable to find display unit system for physical quantity" << physicalQuantity;
       Q_ASSERT(false);
    }
    return *unitSystem;
@@ -190,13 +188,13 @@ QString Measurement::displayAmount(Measurement::Amount const & amount,
                                    std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
                                    std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
    // Check for insane values.
-   if (Algorithms::isNan(amount.quantity()) || Algorithms::isInf(amount.quantity())) {
+   if (Algorithms::isNan(amount.quantity) || Algorithms::isInf(amount.quantity)) {
       return "-";
    }
 
    // If the caller told us (via forced system of measurement) what UnitSystem to use, use that, otherwise get whatever
    // one we're using generally for related physical property.
-   PhysicalQuantity const physicalQuantity = amount.unit()->getPhysicalQuantity();
+   PhysicalQuantity const physicalQuantity = amount.unit->getPhysicalQuantity();
    Measurement::UnitSystem const & displayUnitSystem =
       forcedSystemOfMeasurement ? UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity) :
                                   Measurement::getDisplayUnitSystem(physicalQuantity);
@@ -208,13 +206,13 @@ double Measurement::amountDisplay(Measurement::Amount const & amount,
                                   std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
 
    // Check for insane values.
-   if (Algorithms::isNan(amount.quantity()) || Algorithms::isInf(amount.quantity())) {
+   if (Algorithms::isNan(amount.quantity) || Algorithms::isInf(amount.quantity)) {
       return -1.0;
    }
 
    // If the caller told us (via forced system of measurement) what UnitSystem to use, use that, otherwise get whatever
    // one we're using generally for related physical property.
-   PhysicalQuantity const physicalQuantity = amount.unit()->getPhysicalQuantity();
+   PhysicalQuantity const physicalQuantity = amount.unit->getPhysicalQuantity();
    Measurement::UnitSystem const & displayUnitSystem =
       forcedSystemOfMeasurement ? UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity) :
                                   Measurement::getDisplayUnitSystem(physicalQuantity);

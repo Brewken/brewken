@@ -94,7 +94,7 @@ namespace Measurement {
        * \param type
        * \param defaultUnit
        * \param uniqueName
-       * \param systemOfMeasurementName
+       * \param systemOfMeasurement
        * \param scaleToUnitEntries Will be empty if there is only one unit in this unit system
        * \param thickness Used only for volume and mass unit systems, otherwise will be null
        */
@@ -252,6 +252,8 @@ namespace Measurement {
       extern UnitSystem const volume_Imperial;
       extern UnitSystem const volume_UsCustomary;
       extern UnitSystem const volume_Metric;
+
+      extern UnitSystem const count_NumberOf;
 
       extern UnitSystem const temperature_MetricIsCelsius;
       extern UnitSystem const temperature_UsCustomaryIsFahrenheit;

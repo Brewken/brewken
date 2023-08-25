@@ -232,7 +232,7 @@ template<HasTypeLookup T> struct TypeLookupOf<T *> : std::integral_constant<Type
  *        which it is stored, and, if appropriate, the BtFieldType for the property eg:
  *           PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::notes    , Hop::m_notes                                     ),
  *           PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::alpha_pct, Hop::m_alpha_pct, NonPhysicalQuantity::Percentage),
- *           PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amount_kg, Hop::m_amount_kg, Measurment::Mass               ),
+ *           PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amount_kg, Hop::m_amount_kg, Measurement::Mass              ),
  *        The macro and the templates above etc then do the necessary.
  *
  *        Note that the introduction of __VA_OPT__ in C++20 makes dealing with the optional third argument a LOT less

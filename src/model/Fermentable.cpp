@@ -107,7 +107,7 @@ TypeLookup const Fermentable::typeLookup {
    "Fermentable",
    {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::type                     , Fermentable::m_type                     ,           NonPhysicalQuantity::Enum           ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::amount                   , Fermentable::m_amount                   , Measurement::PqEitherMassOrVolume             ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::amount                   , Fermentable::m_amount                   , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume             ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::amountIsWeight           , Fermentable::m_amountIsWeight           ,           NonPhysicalQuantity::Bool           ), // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::yield_pct                , Fermentable::m_yield_pct                ,           NonPhysicalQuantity::Percentage     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::color_srm                , Fermentable::m_color_srm                , Measurement::PhysicalQuantity::Color          ),
@@ -140,18 +140,18 @@ TypeLookup const Fermentable::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::friability_pct           , Fermentable::m_friability_pct           ,           NonPhysicalQuantity::Percentage     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::di_ph                    , Fermentable::m_di_ph                    , Measurement::PhysicalQuantity::Acidity        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::viscosity_cP             , Fermentable::m_viscosity_cP             , Measurement::PhysicalQuantity::Viscosity      ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::dmsP                     , Fermentable::m_dmsP                     , Measurement::PqEitherMassOrVolumeConcentration),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::dmsP                     , Fermentable::m_dmsP                     , Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::dmsPIsMassPerVolume      , Fermentable::m_dmsPIsMassPerVolume      ,           NonPhysicalQuantity::Bool           ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::fan                      , Fermentable::m_fan                      , Measurement::PqEitherMassOrVolumeConcentration),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::fan                      , Fermentable::m_fan                      , Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::fanIsMassPerVolume       , Fermentable::m_fanIsMassPerVolume       ,           NonPhysicalQuantity::Bool           ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::fermentability_pct       , Fermentable::m_fermentability_pct       ,           NonPhysicalQuantity::Percentage     ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::betaGlucan               , Fermentable::m_betaGlucan               , Measurement::PqEitherMassOrVolumeConcentration),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::betaGlucan               , Fermentable::m_betaGlucan               , Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::betaGlucanIsMassPerVolume, Fermentable::m_betaGlucanIsMassPerVolume,           NonPhysicalQuantity::Bool           ),
 
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::amountWithUnits    , Fermentable::amountWithUnits            , Measurement::PqEitherMassOrVolume             ),
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::dmsPWithUnits      , Fermentable::dmsPWithUnits              , Measurement::PqEitherMassOrVolumeConcentration),
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::fanWithUnits       , Fermentable::fanWithUnits               , Measurement::PqEitherMassOrVolumeConcentration),
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::betaGlucanWithUnits, Fermentable::betaGlucanWithUnits        , Measurement::PqEitherMassOrVolumeConcentration),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::amountWithUnits    , Fermentable::amountWithUnits            , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::dmsPWithUnits      , Fermentable::dmsPWithUnits              , Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::fanWithUnits       , Fermentable::fanWithUnits               , Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::betaGlucanWithUnits, Fermentable::betaGlucanWithUnits        , Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc),
    },
    // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
    {&NamedEntityWithInventory::typeLookup}
@@ -413,7 +413,7 @@ void Fermentable::setBetaGlucan               (std::optional<double>     const  
 void Fermentable::setBetaGlucanIsMassPerVolume(bool                      const   val) { this->setAndNotify(PropertyNames::Fermentable::betaGlucanIsMassPerVolume, this->m_betaGlucanIsMassPerVolume, val                                  ); return; }
 
 void Fermentable::setAmountWithUnits          (MassOrVolumeAmt           const   val) {
-   this->setAndNotify(PropertyNames::Fermentable::amount        , this->m_amount        , val.quantity());
+   this->setAndNotify(PropertyNames::Fermentable::amount        , this->m_amount        , val.quantity);
    this->setAndNotify(PropertyNames::Fermentable::amountIsWeight, this->m_amountIsWeight, val.isMass()  );
    return;
 }

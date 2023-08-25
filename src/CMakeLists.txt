@@ -111,7 +111,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/MashWizard.cpp
     ${repoDir}/src/measurement/Amount.cpp
     ${repoDir}/src/measurement/ColorMethods.cpp
-    ${repoDir}/src/measurement/ConstrainedAmount.cpp
     ${repoDir}/src/measurement/IbuMethods.cpp
     ${repoDir}/src/measurement/Measurement.cpp
     ${repoDir}/src/measurement/PhysicalQuantity.cpp

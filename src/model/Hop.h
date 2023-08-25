@@ -149,9 +149,8 @@ public:
     * \brief This is where we centrally define how \c Hop objects can be measured.  Essentially, mass is used in almost
     *        all cases, but volume is useful for \c Hop::Form::Extract
     */
-   static constexpr Ingredient::Measures validMeasures = Ingredient::Measure::Mass_Kilograms |
-                                                         Ingredient::Measure::Volume_Liters;
-   static constexpr Ingredient::Measure defaultMeasure = Ingredient::Measure::Mass_Kilograms;
+   static constexpr auto validMeasures  = Measurement::ChoiceOfPhysicalQuantity::Mass_Volume;
+   static constexpr auto defaultMeasure = Measurement::PhysicalQuantity::Mass;
 
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more

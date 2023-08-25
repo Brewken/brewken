@@ -34,10 +34,10 @@ bool RecipeAdditionMassOrVolume::isEqualTo(NamedEntity const & other) const {
 TypeLookup const RecipeAdditionMassOrVolume::typeLookup {
    "RecipeAdditionMassOrVolume",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAdditionMassOrVolume::amount        , RecipeAdditionMassOrVolume::m_amount        , Measurement::PqEitherMassOrVolume),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAdditionMassOrVolume::amount        , RecipeAdditionMassOrVolume::m_amount        , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAdditionMassOrVolume::amountIsWeight, RecipeAdditionMassOrVolume::m_amountIsWeight, NonPhysicalQuantity::Bool        ),
 
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionMassOrVolume::amountWithUnits, RecipeAdditionMassOrVolume::amountWithUnits, Measurement::PqEitherMassOrVolume),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionMassOrVolume::amountWithUnits, RecipeAdditionMassOrVolume::amountWithUnits, Measurement::ChoiceOfPhysicalQuantity::Mass_Volume),
    },
    // Parent class lookup.  NB: RecipeAddition not NamedEntity!
    {&RecipeAddition::typeLookup}
@@ -83,7 +83,7 @@ MassOrVolumeAmt RecipeAdditionMassOrVolume::amountWithUnits() const { return Mas
 void RecipeAdditionMassOrVolume::setAmount         (double          const val) { this->setAndNotify(PropertyNames::RecipeAdditionMassOrVolume::amount        , this->m_amount        , this->enforceMin(val, "amount")); return; }
 void RecipeAdditionMassOrVolume::setAmountIsWeight (bool            const val) { this->setAndNotify(PropertyNames::RecipeAdditionMassOrVolume::amountIsWeight, this->m_amountIsWeight,                  val           ); return; }
 void RecipeAdditionMassOrVolume::setAmountWithUnits(MassOrVolumeAmt const val){
-   this->setAndNotify(PropertyNames::RecipeAdditionMassOrVolume::amount        , this->m_amount        , val.quantity());
+   this->setAndNotify(PropertyNames::RecipeAdditionMassOrVolume::amount        , this->m_amount        , val.quantity);
    this->setAndNotify(PropertyNames::RecipeAdditionMassOrVolume::amountIsWeight, this->m_amountIsWeight, val.isMass  ());
    return;
 }

@@ -333,7 +333,7 @@ QString Measurement::Unit::convertWithoutContext(QString const & qstr, QString c
          for (auto const toUnit : toUnits) {
             // Stop at the first match.  If there's more than one match then we don't have a means to disambiguate.
             if (fromUnit->getPhysicalQuantity() == toUnit->getPhysicalQuantity()) {
-               double canonicalQuantity = fromUnit->toCanonical(fromQuantity).quantity();
+               double canonicalQuantity = fromUnit->toCanonical(fromQuantity).quantity;
                double toQuantity        = toUnit->fromCanonical(canonicalQuantity);
                return QString("%1 %2").arg(Measurement::displayQuantity(toQuantity, 3)).arg(toUnit->name);
             }
@@ -450,6 +450,7 @@ namespace Measurement::Units {
    Unit const ounces              {Measurement::UnitSystems::mass_UsCustomary,                    QObject::tr("oz"),       [](double x){return x*0.0283495231;},    [](double y){return y/0.0283495231;},    1.0,  &kilograms};
    Unit const imperial_pounds     {Measurement::UnitSystems::mass_Imperial,                       QObject::tr("lb"),       [](double x){return x*0.45359237;},      [](double y){return y/0.45359237;},      1.0,  &kilograms};
    Unit const imperial_ounces     {Measurement::UnitSystems::mass_Imperial,                       QObject::tr("oz"),       [](double x){return x*0.0283495231;},    [](double y){return y/0.0283495231;},    1.0,  &kilograms};
+
    // === Volume ===
    // Where possible, the multipliers for going to and from litres come from www.conversion-metric.org as it seems to offer the most decimal places on its conversion tables
    Unit const liters              {Measurement::UnitSystems::volume_Metric     ,                  QObject::tr("L"),        [](double x){return x;},                    [](double y){return y;},                    1.0};
@@ -470,6 +471,19 @@ namespace Measurement::Units {
    Unit const imperial_fluidOunces{Measurement::UnitSystems::volume_Imperial   ,                  QObject::tr("floz"),     [](double x){return x*0.028413075003383;},  [](double y){return y/0.028413075003383;},  1.0, &liters};
    Unit const imperial_tablespoons{Measurement::UnitSystems::volume_Imperial   ,                  QObject::tr("tbsp"),     [](double x){return x*0.0177581714;},       [](double y){return y/0.0177581714;},       1.0,  &liters};
    Unit const imperial_teaspoons  {Measurement::UnitSystems::volume_Imperial   ,                  QObject::tr("tsp"),      [](double x){return x*0.00591939047;},      [](double y){return y/0.00591939047;},      1.0,  &liters};
+
+   // === Count ===
+   // The choice of abbreviation here is a bit of a compromise, in English at least, because it's a bit unnatural to say
+   // things such as "Cinnamon sticks: 2.5 count" or "Cinnamon sticks: 2.5 number of" instead of "2.5 cinnamon sticks"
+   // or "2.5 × cinnamon sticks".  "Cinnamon sticks: 2.5" would be more natural, but I'm reluctant to have no
+   // abbreviation, as there are, arguably, circumstances where it could lead to ambiguity or confusion.  At very least
+   // if we are showing an abbreviation for "number of" then we are showing that the units haven't been forgotten.
+   Unit const numberOf            {Measurement::UnitSystems::count_NumberOf,                      QObject::tr("(№)"),      [](double x){return x;},               [](double y){return y;},                1.0};
+
+   // === Temperature ===
+   Unit const celsius             {Measurement::UnitSystems::temperature_MetricIsCelsius,         QObject::tr("C"),        [](double x){return x;},               [](double y){return y;},                1.0};
+   Unit const fahrenheit          {Measurement::UnitSystems::temperature_UsCustomaryIsFahrenheit, QObject::tr("F"),        [](double x){return (x-32)*5.0/9.0;},  [](double y){return y * 9.0/5.0 + 32;}, 1.0,  &celsius};
+
    // === Time ===
    // Added weeks because BeerJSON has it
    Unit const minutes             {Measurement::UnitSystems::time_CoordinatedUniversalTime,       QObject::tr("min"),      [](double x){return x;},                 [](double y){return y;},                 1.0};
@@ -478,9 +492,6 @@ namespace Measurement::Units {
    Unit const hours               {Measurement::UnitSystems::time_CoordinatedUniversalTime,       QObject::tr("hr"),       [](double x){return x*60.0;},            [](double y){return y/60.0;},            2.0,  &minutes};
    Unit const seconds             {Measurement::UnitSystems::time_CoordinatedUniversalTime,       QObject::tr("s"),        [](double x){return x/60.0;},            [](double y){return y*60.0;},            90.0, &minutes};
 
-   // === Temperature ===
-   Unit const celsius             {Measurement::UnitSystems::temperature_MetricIsCelsius,         QObject::tr("C"),        [](double x){return x;},               [](double y){return y;},                1.0};
-   Unit const fahrenheit          {Measurement::UnitSystems::temperature_UsCustomaryIsFahrenheit, QObject::tr("F"),        [](double x){return (x-32)*5.0/9.0;},  [](double y){return y * 9.0/5.0 + 32;}, 1.0,  &celsius};
    // === Color ===
    // Not sure how many people use Lovibond scale these days, but BeerJSON supports it, so we need to be able to read
    // it.  https://en.wikipedia.org/wiki/Beer_measurement#Colour= says "The Standard Reference Method (SRM) ... [gives]
@@ -488,6 +499,7 @@ namespace Measurement::Units {
    Unit const srm                 {Measurement::UnitSystems::color_StandardReferenceMethod,       QObject::tr("srm"),      [](double x){return x;},               [](double y){return y;},                1.0};
    Unit const ebc                 {Measurement::UnitSystems::color_EuropeanBreweryConvention,     QObject::tr("ebc"),      [](double x){return x * 12.7/25.0;},   [](double y){return y * 25.0/12.7;},    1.0,  &srm};
    Unit const lovibond            {Measurement::UnitSystems::color_Lovibond,                      QObject::tr("lovibond"), [](double x){return x;},               [](double y){return y;},                1.0,  &srm};
+
    // == Density ===
    // Brix isn't much used in beer brewing, but BeerJSON supports it, so we have it here.
    // Per https://en.wikipedia.org/wiki/Beer_measurement, Plato and Brix are "essentially ... the same ([both based on
@@ -506,13 +518,17 @@ namespace Measurement::Units {
                                    [](double y){return y == 0.0 ? 0.0 : Algorithms::SgAt20CToBrix(y);},
                                    1.0,
                                    &specificGravity};
+
    // == Diastatic power ==
    Unit const lintner             {Measurement::UnitSystems::diastaticPower_Lintner,                  QObject::tr("L"),    [](double x){return x;},               [](double y){return y;},                1.0};
    Unit const wk                  {Measurement::UnitSystems::diastaticPower_WindischKolbach,          QObject::tr("WK"),   [](double x){return (x + 16) / 3.5;},  [](double y){return 3.5 * y - 16;},     1.0,  &lintner};
+
    // == Acidity ==
    Unit const pH                  {Measurement::UnitSystems::acidity_pH,                              QObject::tr("pH"),   [](double x){return x;},               [](double y){return y;},                1.0};
+
    // == Bitterness ==
    Unit const ibu                 {Measurement::UnitSystems::bitterness_InternationalBitternessUnits, QObject::tr("IBU"),  [](double x){return x;},               [](double y){return y;},                1.0};
+
    // == Carbonation ==
    // Per http://www.uigi.com/co2_conv.html, 1 cubic metre (aka 1000 litres) of CO2 at 1 atmosphere pressure and 0°C
    // temperature weighs 1.9772 kg, so 1 litre weighs 1.9772 g at this pressure and temperature.  Not clear however
@@ -521,20 +537,25 @@ namespace Measurement::Units {
    // 1.96, so we use that.
    Unit const carbonationVolumes      {Measurement::UnitSystems::carbonation_Volumes,                 QObject::tr("vol"),  [](double x){return x;},               [](double y){return y;},                1.0};
    Unit const carbonationGramsPerLiter{Measurement::UnitSystems::carbonation_MassPerVolume,           QObject::tr("mg/L"), [](double x){return x / 1.96;},        [](double y){return y * 1.96;},         1.0,  &carbonationVolumes};
+
    // == Mass Concentration ==
    Unit const milligramsPerLiter  {Measurement::UnitSystems::concentration_MassPerVolume,             QObject::tr("mg/L"), [](double x){return x;},               [](double y){return y;},                1.0};
+
    // == Volume Concentration ==
    Unit const partsPerMillion     {Measurement::UnitSystems::concentration_PartsPer,                  QObject::tr("ppm"),  [](double x){return x;},               [](double y){return y;},                1.0};
    Unit const partsPerBillion     {Measurement::UnitSystems::concentration_PartsPer,                  QObject::tr("ppb"),  [](double x){return x * 1000.0;},      [](double y){return y/1000.0;},         1.0,  &partsPerMillion};
+
    // == Viscosity ==
    // Yes, 1 centipoise = 1 millipascal-second.  See comment in measurement/Unit.h for more info
    Unit const centipoise          {Measurement::UnitSystems::viscosity_Metric         ,               QObject::tr("cP"   ), [](double x){return x;},              [](double y){return y;},                1.0};
    Unit const millipascalSecond   {Measurement::UnitSystems::viscosity_MetricAlternate,               QObject::tr("mPa-s"), [](double x){return x;},              [](double y){return y;},                1.0,  &centipoise};
+
    // == Specific heat capacity ==
    // See comment in measurement/Unit.h for why the non-metric units are the canonical ones
    Unit const caloriesPerCelsiusPerGram{Measurement::UnitSystems::specificHeatCapacity_Calories,     QObject::tr("c/g·C"   ), [](double x){return x;},                    [](double y){return y;},                    1.0};
    Unit const joulesPerKelvinPerKg     {Measurement::UnitSystems::specificHeatCapacity_Joules  ,     QObject::tr("J/kg·K"  ), [](double x){return x / 4184.0;},           [](double y){return y * 4184.0;},           1.0, &caloriesPerCelsiusPerGram};
    Unit const btuPerFahrenheitPerPound {Measurement::UnitSystems::specificHeatCapacity_Btus    ,     QObject::tr("BTU/lb·F"), [](double x){return x;},                    [](double y){return y;},                    1.0, &caloriesPerCelsiusPerGram};
+
    // == Specific Volume ==
    Unit const litresPerKilogram     {Measurement::UnitSystems::specificVolume_Metric     ,           QObject::tr("L/kg"   ),  [](double x){return x;},                    [](double y){return y;},                    1.0};
    Unit const litresPerGram         {Measurement::UnitSystems::specificVolume_Metric     ,           QObject::tr("L/g"    ),  [](double x){return x * 1000;},             [](double y){return y / 1000;},             1.0, &litresPerKilogram};
@@ -544,5 +565,88 @@ namespace Measurement::Units {
    Unit const us_quartsPerPound     {Measurement::UnitSystems::specificVolume_UsCustomary,           QObject::tr("qt/lb"  ),  [](double x){return x * 2.08635111294;},    [](double y){return y / 2.08635111294;},    1.0, &litresPerKilogram};
    Unit const us_gallonsPerOunce    {Measurement::UnitSystems::specificVolume_UsCustomary,           QObject::tr("gal/oz" ),  [](double x){return x * 0.521587778236;},   [](double y){return y / 0.521587778236;},   1.0, &litresPerKilogram};
    Unit const cubicFeetPerPound     {Measurement::UnitSystems::specificVolume_UsCustomary,           QObject::tr("ft^3/lb"),  [](double x){return x * 62.4279605755126;}, [](double y){return y / 62.4279605755126;}, 1.0, &litresPerKilogram};
+
+   ObjectAddressStringMapping<Unit> const unitStringMapping {
+      {
+         // === Mass ===
+         {kilograms                     , "kilograms"                },
+         {grams                         , "grams"                    },
+         {milligrams                    , "milligrams"               },
+         {pounds                        , "pounds"                   },
+         {ounces                        , "ounces"                   },
+         {imperial_pounds               , "imperial_pounds"          },
+         {imperial_ounces               , "imperial_ounces"          },
+         // === Volume ===
+         {liters                        , "liters"                   },
+         {milliliters                   , "milliliters"              },
+         {us_barrels                    , "us_barrels"               },
+         {us_gallons                    , "us_gallons"               },
+         {us_quarts                     , "us_quarts"                },
+         {us_pints                      , "us_pints"                 },
+         {us_cups                       , "us_cups"                  },
+         {us_fluidOunces                , "us_fluidOunces"           },
+         {us_tablespoons                , "us_tablespoons"           },
+         {us_teaspoons                  , "us_teaspoons"             },
+         {imperial_barrels              , "imperial_barrels"         },
+         {imperial_gallons              , "imperial_gallons"         },
+         {imperial_quarts               , "imperial_quarts"          },
+         {imperial_pints                , "imperial_pints"           },
+         {imperial_cups                 , "imperial_cups"            },
+         {imperial_fluidOunces          , "imperial_fluidOunces"     },
+         {imperial_tablespoons          , "imperial_tablespoons"     },
+         {imperial_teaspoons            , "imperial_teaspoons"       },
+         // === Count ===
+         {numberOf                      , "numberOf"                 },
+         // === Temperature ===
+         {celsius                       , "celsius"                  },
+         {fahrenheit                    , "fahrenheit"               },
+         // === Time ===
+         {minutes                       , "minutes"                  },
+         {weeks                         , "weeks"                    },
+         {days                          , "days"                     },
+         {hours                         , "hours"                    },
+         {seconds                       , "seconds"                  },
+         // === Color ===
+         {srm                           , "srm"                      },
+         {ebc                           , "ebc"                      },
+         {lovibond                      , "lovibond"                 },
+         // == Density ===
+         {specificGravity               , "specificGravity"          },
+         {plato                         , "plato"                    },
+         {brix                          , "brix"                     },
+         // == Diastatic power ==
+         {lintner                       , "lintner"                  },
+         {wk                            , "wk"                       },
+         // == Acidity ==
+         {pH                            , "pH"                       },
+         // == Bitterness ==
+         {ibu                           , "ibu"                      },
+         // == Carbonation ==
+         {carbonationVolumes            , "carbonationVolumes"       },
+         {carbonationGramsPerLiter      , "carbonationGramsPerLiter" },
+         // === Concentration ===
+         // == Mass Concentration ==
+         {milligramsPerLiter            , "milligramsPerLiter"       },
+         // == Volume Concentration ==
+         {partsPerMillion               , "partsPerMillion"          },
+         {partsPerBillion               , "partsPerBillion"          },
+         // == Viscosity ==
+         {centipoise                    , "centipoise"               },
+         {millipascalSecond             , "millipascalSecond"        },
+         // == Specific Heat Capacity ==
+         {caloriesPerCelsiusPerGram     , "caloriesPerCelsiusPerGram"},
+         {joulesPerKelvinPerKg          , "joulesPerKelvinPerKg"     },
+         {btuPerFahrenheitPerPound      , "btuPerFahrenheitPerPound" },
+         // == Specific Volume ==
+         {litresPerKilogram             , "litresPerKilogram"        },
+         {litresPerGram                 , "litresPerGram"            },
+         {cubicMetersPerKilogram        , "cubicMetersPerKilogram"   },
+         {us_quartsPerPound             , "us_quartsPerPound"        },
+         {us_gallonsPerPound            , "us_gallonsPerPound"       },
+         {us_gallonsPerOunce            , "us_gallonsPerOunce"       },
+         {us_fluidOuncesPerOunce        , "us_fluidOuncesPerOunce"   },
+         {cubicFeetPerPound             , "cubicFeetPerPound"        },
+      }
+   };
 
 }

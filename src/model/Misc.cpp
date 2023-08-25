@@ -87,7 +87,7 @@ ObjectStore & Misc::getObjectStoreTypedInstance() const {
 TypeLookup const Misc::typeLookup {
    "Misc",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::amount        , Misc::m_amount        , Measurement::PqEitherMassOrVolume      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::amount        , Misc::m_amount        , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume      ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::amountIsWeight, Misc::m_amountIsWeight,           NonPhysicalQuantity::Bool    ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::notes         , Misc::m_notes         ,           NonPhysicalQuantity::String  ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::time_min      , Misc::m_time_min      , Measurement::PhysicalQuantity::Time    ),
@@ -95,7 +95,7 @@ TypeLookup const Misc::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::useFor        , Misc::m_useFor        ,           NonPhysicalQuantity::String  ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::use           , Misc::m_use           ,           NonPhysicalQuantity::Enum    ),
       // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Misc::amountWithUnits, Misc::amountWithUnits, Measurement::PqEitherMassOrVolume),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Misc::amountWithUnits, Misc::amountWithUnits, Measurement::ChoiceOfPhysicalQuantity::Mass_Volume),
 ///      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Misc::amountWithUnits, Misc::amountWithUnits, Measurement::PqEitherMassOrVolume),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::producer      , Misc::m_producer      ,           NonPhysicalQuantity::String  ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::productId     , Misc::m_productId     ,           NonPhysicalQuantity::String  ),
@@ -189,7 +189,7 @@ void Misc::setProductId     (QString                  const & val) { this->setAn
 
 
 void Misc::setAmountWithUnits(MassOrVolumeAmt const   val) {
-   this->setAndNotify(PropertyNames::Misc::amount        , this->m_amount        , val.quantity());
+   this->setAndNotify(PropertyNames::Misc::amount        , this->m_amount        , val.quantity);
    this->setAndNotify(PropertyNames::Misc::amountIsWeight, this->m_amountIsWeight, val.isMass()  );
    return;
 }

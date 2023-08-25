@@ -56,12 +56,12 @@ void OgAdjuster::setRecipe(Recipe* rec) {
 void OgAdjuster::calculate() {
 
    // Get inputs.
-   double sg          = lineEdit_sg->toCanonical().quantity();
+   double sg          = lineEdit_sg->toCanonical().quantity;
    bool   okPlato     = true;
    double plato       = Measurement::extractRawFromString<double>(lineEdit_plato->text(), &okPlato);
-   double temp_c      = lineEdit_temp->toCanonical().quantity();
-   double hydroTemp_c = lineEdit_calTemp->toCanonical().quantity();
-   double wort_l      = lineEdit_volume->toCanonical().quantity();
+   double temp_c      = lineEdit_temp->toCanonical().quantity;
+   double hydroTemp_c = lineEdit_calTemp->toCanonical().quantity;
+   double wort_l      = lineEdit_volume->toCanonical().quantity;
 
    // Make sure we got enough info.
    bool gotSG = sg != 0 && temp_c != 0 && hydroTemp_c != 0;

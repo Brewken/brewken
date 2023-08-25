@@ -148,7 +148,7 @@ Measurement::SystemOfMeasurement SmartAmounts::getSystemOfMeasurement(char const
    Measurement::PhysicalQuantity const physicalQuantity =
       std::holds_alternative<Measurement::PhysicalQuantity>(physicalQuantities) ?
          std::get<Measurement::PhysicalQuantity>(physicalQuantities) :
-         std::get<0>(std::get<Measurement::Mixed2PhysicalQuantities>(physicalQuantities));
+         Measurement::defaultPhysicalQuantity(std::get<Measurement::ChoiceOfPhysicalQuantity>(physicalQuantities));
 
    return Measurement::getDisplayUnitSystem(physicalQuantity).systemOfMeasurement;
 }

@@ -26,6 +26,8 @@
 
 #include "utils/BtStringConst.h"
 
+class EnumStringMapping;
+
 namespace Measurement {
    /**
     * \enum PhysicalQuantity lists the various types of measurable physical quantity
@@ -88,16 +90,30 @@ namespace Measurement {
     *       \c SystemOfMeasurement explicitly.
     *
     *       NOTE that there are other things that users can configure that do not belong with this group of classes
-    *       because they do not related to physical quantities, eg date & time format and language choice do not fit
-    *       well in here -- see \c NonPhysicalQuantity in \headerfile BtFieldType.h
+    *       because they do not relate to physical quantities, eg date & time format and language choice do not fit well
+    *       in here -- see \c NonPhysicalQuantity in \headerfile BtFieldType.h
     */
    enum class PhysicalQuantity {
-      Mass,           // Elsewhere we use weight instead of mass because it's more idiomatic (despite being,
-                      // strictly speaking, not the same thing)
+      // Elsewhere we use weight instead of mass because it's more idiomatic (despite being, strictly speaking, not the
+      // same thing)
+      Mass,
+
       Volume,
-      Time,           // Note this is durations of time, NOT dates or times of day  .:TBD:. Rename to TimeDuration
+
+      // This is not really a physical quantity.  However, in our domain, it makes life simpler for us to pretend that
+      // it is.  This is because "mass", "volume" and "number of" are the three canonical ways of measuring ingredients.
+      // Note that this _is_ allowed to be fractional because you might want to add 1½ cinnamon sticks or 2.5 packets of
+      // yeast.  In reality, this means we store it in a double and, typically, would want to show the number to 1
+      // decimal place.
+      Count,
+
       Temperature,
+
+      // Note this is durations of time, NOT dates or times of day  .:TBD:. Rename to TimeDuration
+      Time,
+
       Color,
+
       // Density is sometimes referred to as "gravity" as a shorthand for "specific gravity".  Strictly, what we're
       // measuring as brewers is relative density (aka "ratio of the density ... with respect to water at its densest
       // (at 4 °C)" per https://en.wikipedia.org/wiki/Relative_density) in order to find % sugar content (see
@@ -105,15 +121,20 @@ namespace Measurement {
       // So we could call this RelativeDensity or SugarConcentration or Gravity.  But I think Density is truest to the
       // idea of a measurable physical quantity described above.
       Density,
+
       DiastaticPower,
+
       Acidity,
+
       Bitterness,
+
       // Per https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/carbonation, "Carbonation is
       // measured as either ‘volumes’ or grams per litre. One volume means 1 L of CO2 in 1 L of drink.  This is
       // equivalent to 1.96 g/L (normally quoted as 2 g/L)."  Thus, although we're using similar units to measures of
       // concentration, the equivalences are different and, in practice, it's easiest to treat them as a completely
       // separate.
       Carbonation,
+
       // As explained at https://en.wikipedia.org/wiki/Concentration, there are several types of concentration,
       // including "mass concentration", which is expressed as mass-per-volume, and "volume concentration", which is
       // strictly-speaking a dimensionless number (because volume-per-volume cancels out) but is often expressed as
@@ -134,31 +155,34 @@ namespace Measurement {
       // See also https://en.wikipedia.org/wiki/Parts-per_notation.
       MassConcentration,
       VolumeConcentration,
+
       // Viscosity -- see https://en.wikipedia.org/wiki/Viscosity
       Viscosity,
+
       // Specific heat capacity -- see https://en.wikipedia.org/wiki/Specific_heat_capacity
       SpecificHeatCapacity,
+
       // Specific volume (= the reciprocal of density) -- see https://en.wikipedia.org/wiki/Specific_volume
       SpecificVolume,
+
+
       // .:TBD:. Should we add Energy for PropertyNames::Recipe::calories (in which case, should canonical measure be
       //         Joules)?
    };
 
    /**
-    * \brief Array of all possible values of \c Measurement::PhysicalQuantity.  NB: This is \b not guaranteed to be in
-    *        the same order as the values of the enum.
+    * \brief Mapping between \c Measurement::PhysicalQuantity and string values suitable for logging or serialisation in
+    *        the DB.
     *
-    *        This is the least ugly way I could think of to allow other parts of the code to iterate over all values
-    *        of enum class \c Measurement::PhysicalQuantity.  Hopefully, one day, when reflection
-    *        (https://en.cppreference.com/w/cpp/experimental/reflect) gets incorporated into C++, this will ultimately
-    *        be unnecessary.
+    *        This can also be used to obtain the number of values of \c PhysicalQuantity, albeit at run-time rather than
+    *        compile-time.  (One day, C++ will have reflection and we won't need to do things this way.)
     */
-   extern std::array<Measurement::PhysicalQuantity, 15> const allPhysicalQuantites;
+   extern EnumStringMapping const physicalQuantityStringMapping;
 
    /**
-    * \brief Return the name of a \c PhysicalQuantity suitable either for display to the user or logging
+    * \brief Localised names of \c Hop::Form values suitable for displaying to the end user
     */
-   QString getDisplayName(Measurement::PhysicalQuantity const physicalQuantity);
+   extern EnumStringMapping const physicalQuantityDisplayNames;
 
    /**
     * \brief Return the \c PersistentSettings name for looking up the display \c UnitSystem for the specified
@@ -166,39 +190,88 @@ namespace Measurement {
     */
    BtStringConst const & getSettingsName(Measurement::PhysicalQuantity const physicalQuantity);
 
-
    /**
-    * \brief In a few cases, we want to be able to handle two different ways of measuring a thing (eg Mass and Volume,
-    *        or MassConcentration and VolumeConcentration).
+    * \brief In a few cases, we want to be able to handle two or three different ways of measuring a thing (eg \c Mass,
+    *        \c Volume and \c Count; or \c MassConcentration and \c VolumeConcentration).
     *
-    *        We adopt the convention that members of the tuple are in alphabetical order.
+    *        We could try to do a lot of really clever compile-time stuff with flags and templates to cover all possible
+    *        permutations.  However, I don't think the complexity would be justified, as there are actually very few
+    *        cases:
+    *          \c Mass || \c Volume (eg measurements of \c Fermentable and \c Hop)
+    *          \c Mass || \c Volume || \c Count (eg measurements of \c Misc and \c Yeast)
+    *          \c MassConcentration || \c VolumeConcentration  (used on a few properties of \c \c Fermentable)
     *
-    *        At the moment, we don't envisage a need for having more than two ways of measuring the same thing, but it's
-    *        relatively obvious how to extend the approach here if we did need to.
-    *
-    *        Maybe a better name would be EitherOf2PhysicalQuantities of some such, but we retain Mixed for now as
-    *        that's the word we used to use when the only pair was Mass and Volume.
+    *        Since it also seems unlikely that the number of cases will grow very much, I think this enum is simpler and
+    *        sufficient (with the helper functions below).
     */
-   using Mixed2PhysicalQuantities = std::tuple<Measurement::PhysicalQuantity, Measurement::PhysicalQuantity>;
+   enum class ChoiceOfPhysicalQuantity {
+      Mass_Volume        ,
+      Mass_Volume_Count  ,
+      // Measurement::ChoiceOfPhysicalQuantity::MassConcentration_VolumeConcentration would be a bit long!
+      MassConc_VolumeConc,
+   };
+
+   /*!
+    * \brief Mapping between \c Measurement::ChoiceOfPhysicalQuantity and string values suitable for logging (or
+    *        serialisation, though this is not currently needed).
+    */
+   extern EnumStringMapping const choiceOfPhysicalQuantityStringMapping;
+
+   /*!
+    * \brief Localised names of \c Hop::Form values suitable for displaying to the end user
+    */
+   extern EnumStringMapping const choiceOfPhysicalQuantityDisplayNames;
 
    /**
-    * \brief Of course, once we have \c Mixed2PhysicalQuantities, we need a way to store either that or a
+    * \brief Of course, once we have \c Measurement::ChoiceOfPhysicalQuantity, we need a way to store either that or a
     *        \c Measurement::PhysicalQuantity.
     *
     *        (Note that, \c BtFieldType is one place we \b don't use this as we need to add a third possibility there of
     *        \c NonPhysicalQuantity.)
     */
-   using PhysicalQuantities = std::variant<Measurement::PhysicalQuantity, Mixed2PhysicalQuantities>;
+   using PhysicalQuantities = std::variant<Measurement::PhysicalQuantity, Measurement::ChoiceOfPhysicalQuantity>;
+
+   //
+   // It's also useful to be able to template on "either PhysicalQuantity or ChoiceOfPhysicalQuantity".
+   //
+   // See comment in utils/TypeTraits.h for why we need two versions of this
+   template <typename T>
+#if defined(__linux__ ) && defined(__GNUC__) && (__GNUC__ < 10)
+   // OLD SYNTAX
+   concept bool PhysicalQuantityConstTypes =
+#else
+   // NEW SYNTAX
+   concept      PhysicalQuantityConstTypes =
+#endif
+      std::same_as<T, Measurement::PhysicalQuantity const> ||
+      std::same_as<T, Measurement::ChoiceOfPhysicalQuantity const>;
+
 
    /**
-    * \brief It's more concise to have a constant for Mass & Volume
+    * \brief For each set of alternates implied by a value of \c ChoiceOfPhysicalQuantity, there needs to be a default
+    *        \c PhysicalQuantity that we assume in the absence of other information (eg to default construct a
+    *        \c ConstrainedAmount).  When we know this at compile time, we can do it all through template
+    *        specialisations.
+    *
+    *        Note that we have two template parameters, so we can handle cases where we are writing general "constrained
+    *        to a particular PhysicalQuantity or ChoiceOfPhysicalQuantity" code.
+    *
+    *        Default case is for \c PhysicalQuantity; specialisations are for all \c ChoiceOfPhysicalQuantity
+    *        possibilities.  Note that, because this is a function template, we are not allowed \b partial
+    *        specialisations.
     */
-   extern Mixed2PhysicalQuantities const PqEitherMassOrVolume;
+   template<PhysicalQuantityConstTypes PQT, PQT pqt> PhysicalQuantity defaultPhysicalQuantity();
 
    /**
-    * \brief It's more concise to have a constant for MassConcentration & VolumeConcentration
+    * \brief We also need to handle the case where things need to be resolved at run-time
     */
-   extern Mixed2PhysicalQuantities const PqEitherMassOrVolumeConcentration;
+   PhysicalQuantity defaultPhysicalQuantity(ChoiceOfPhysicalQuantity const val);
+
+   /**
+    * \brief And for generic programming, it's helpful to be able to list all the \c PhysicalQuantity values
+    *        corresponding to a \c ChoiceOfPhysicalQuantity
+    */
+   std::vector<PhysicalQuantity> const & allPossibilities(ChoiceOfPhysicalQuantity const val);
 
    /**
     * \brief We have a number of places where we have a boolean \c amountIsWeight.  This array converts such a flag to
@@ -207,41 +280,32 @@ namespace Measurement {
     */
    extern std::array<QString const, 2> descAmountIsWeight;;
 
+   /**
+    * \return \c true if \c physicalQuantity is a valid option for \c variantPhysicalQuantity, false otherwise
+    */
+   template<PhysicalQuantityConstTypes PQT, PQT pqt> bool isValid(PhysicalQuantity const physicalQuantity);
+   bool isValid(ChoiceOfPhysicalQuantity const choiceOfPhysicalQuantity, PhysicalQuantity const physicalQuantity);
 
 }
 
-/**
- * \brief Convenience function for logging
- */
-template<class S>
-S & operator<<(S & stream, Measurement::PhysicalQuantity const physicalQuantity) {
-   stream <<
-      "PhysicalQuantity #" << static_cast<int>(physicalQuantity) << ": (" <<
-      Measurement::getDisplayName(physicalQuantity) << ")";
-   return stream;
-}
 
 /**
- * \brief Convenience function for logging
+ * \brief Convenience functions for logging
  */
-template<class S>
-S & operator<<(S & stream, Measurement::Mixed2PhysicalQuantities const mixed2PhysicalQuantities) {
-   stream <<
-      "Mixed2PhysicalQuantities:" << std::get<0>(mixed2PhysicalQuantities) << std::get<1>(mixed2PhysicalQuantities);
-   return stream;
-}
+/**@{*/
+template<class S> S & operator<<(S & stream, Measurement::PhysicalQuantity         const val);
+template<class S> S & operator<<(S & stream, Measurement::ChoiceOfPhysicalQuantity const val);
 
-/**
- * \brief Convenience function for logging
- */
 template<class S>
-S & operator<<(S & stream, Measurement::PhysicalQuantities const & physicalQuantities) {
-   if (std::holds_alternative<Measurement::PhysicalQuantity>(physicalQuantities)) {
-      stream << "PhysicalQuantities:" << std::get<Measurement::PhysicalQuantity>(physicalQuantities);
+S & operator<<(S & stream, Measurement::PhysicalQuantities const & val) {
+   if (std::holds_alternative<Measurement::PhysicalQuantity>(val)) {
+      stream << "PhysicalQuantities:" << std::get<Measurement::PhysicalQuantity>(val);
    } else {
-      stream << "PhysicalQuantities:" << std::get<Measurement::Mixed2PhysicalQuantities>(physicalQuantities);
+      Q_ASSERT(std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(val));
+      stream << "PhysicalQuantities:" << std::get<Measurement::ChoiceOfPhysicalQuantity>(val);
    }
    return stream;
 }
 
+/**@}*/
 #endif

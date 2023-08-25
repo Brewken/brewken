@@ -33,6 +33,7 @@
 
 #include "measurement/Amount.h"
 #include "measurement/PhysicalQuantity.h"
+#include "utils/ObjectAddressStringMapping.h"
 
 // TODO: implement ppm, percent, ibuGalPerLb,
 
@@ -224,6 +225,10 @@ namespace Measurement {
       Unit & operator=(Unit &&) = delete;
    };
 
+
+   //! This alias makes things a bit more concise eg in \c ObjectStore
+   using UnitStringMapping = ObjectAddressStringMapping<Unit>;
+
    namespace Units {
       // === Mass ===
       extern Unit const kilograms;
@@ -233,6 +238,7 @@ namespace Measurement {
       extern Unit const ounces;
       extern Unit const imperial_pounds; // Same as pounds
       extern Unit const imperial_ounces; // Same as ounces
+
       // === Volume ===
       extern Unit const liters;
       extern Unit const milliliters;
@@ -252,15 +258,21 @@ namespace Measurement {
       extern Unit const imperial_fluidOunces;
       extern Unit const imperial_tablespoons;
       extern Unit const imperial_teaspoons;
+
+      // === Count ===
+      extern Unit const numberOf;
+
+      // === Temperature ===
+      extern Unit const celsius;
+      extern Unit const fahrenheit;
+
       // === Time ===
       extern Unit const minutes;
       extern Unit const weeks;
       extern Unit const days;
       extern Unit const hours;
       extern Unit const seconds;
-      // === Temperature ===
-      extern Unit const celsius;
-      extern Unit const fahrenheit;
+
       // === Color ===
       extern Unit const srm;
       extern Unit const ebc;
@@ -370,6 +382,14 @@ namespace Measurement {
       extern Unit const us_gallonsPerOunce    ;
       extern Unit const us_fluidOuncesPerOunce;
       extern Unit const cubicFeetPerPound     ;
+
+      //================================================================================================================
+
+      /**
+       * \brief Serialisation of \c Unit IDs suitable for database storage -- eg maps between "kilograms" (untranslated)
+       *        and \c Measurement::Units::kilograms.
+       */
+      extern UnitStringMapping const unitStringMapping;
    }
 }
 

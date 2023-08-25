@@ -32,6 +32,7 @@
 #include "database/DbTransaction.h"
 #include "Logging.h"
 #include "model/NamedParameterBundle.h"
+#include "utils/MetaTypes.h"
 #include "utils/OptionalHelpers.h"
 
 // Private implementation details that don't need access to class member variables
@@ -49,6 +50,7 @@ namespace {
          case ObjectStore::FieldType::String:  return database.getDbNativeTypeName<QString>();
          case ObjectStore::FieldType::Date:    return database.getDbNativeTypeName<QDate>();
          case ObjectStore::FieldType::Enum:    return database.getDbNativeTypeName<QString>();
+         case ObjectStore::FieldType::Unit:    return database.getDbNativeTypeName<QString>();
          // No default case needed as compiler should warn us if any options covered above
       }
       // It's a coding error if we get here!
@@ -92,7 +94,7 @@ namespace {
       queryStringAsStream << tableDefinition.tableName << " (\n";
       bool firstFieldOutput = false;
       for (auto const & fieldDefn: tableDefinition.tableFields) {
-         if (fieldDefn.foreignKeyTo != nullptr) {
+         if (std::holds_alternative<ObjectStore::TableDefinition const *>(fieldDefn.valueDecoder)) {
             qDebug() << Q_FUNC_INFO << "Skipping" << fieldDefn.columnName << "as foreign key";
             // It's (currently) a coding error if a foreign key is anything other than an integer
             Q_ASSERT(fieldDefn.fieldType == ObjectStore::FieldType::Int);
@@ -168,10 +170,12 @@ namespace {
       //
       BtSqlQuery sqlQuery{connection};
       for (auto const & fieldDefn: tableDefinition.tableFields) {
-         if (fieldDefn.fieldType == ObjectStore::FieldType::Int && fieldDefn.foreignKeyTo != nullptr) {
+         if (fieldDefn.fieldType == ObjectStore::FieldType::Int &&
+             std::holds_alternative<ObjectStore::TableDefinition const *>(fieldDefn.valueDecoder)) {
+            auto const foreignKeyTo = std::get<ObjectStore::TableDefinition const *>(fieldDefn.valueDecoder);
             // It's obviously a programming error if the foreignKeyTo table doesn't have any fields.  (We only care
             // here about the first of those fields as, by convention, that's always the primary key on the table.)
-            Q_ASSERT(fieldDefn.foreignKeyTo->tableFields.size() > 0);
+            Q_ASSERT(foreignKeyTo->tableFields.size() > 0);
 
             QString queryString = QString(
                database.getSqlToAddColumnAsForeignKey()
@@ -180,9 +184,9 @@ namespace {
             ).arg(
                *fieldDefn.columnName
             ).arg(
-               *fieldDefn.foreignKeyTo->tableName
+               *foreignKeyTo->tableName
             ).arg(
-               *fieldDefn.foreignKeyTo->tableFields[0].columnName
+               *foreignKeyTo->tableFields[0].columnName
             );
             qDebug().noquote() << Q_FUNC_INFO << "Foreign keys: " << queryString;
 
@@ -227,8 +231,9 @@ namespace {
                     QString const &                      stringValue) {
       // It's a coding error if we called this function for a non-enum field
       Q_ASSERT(fieldDefn.fieldType == ObjectStore::FieldType::Enum);
-      Q_ASSERT(fieldDefn.enumMapping != nullptr);
-      auto match = fieldDefn.enumMapping->stringToEnumAsInt(stringValue);
+      Q_ASSERT(std::holds_alternative<EnumStringMapping const *>(fieldDefn.valueDecoder));
+      auto const enumMapping = std::get<EnumStringMapping const *>(fieldDefn.valueDecoder);
+      auto match = enumMapping->stringToEnumAsInt(stringValue);
       // If we didn't find a match, it's either a coding error or someone messed with the DB data
       if (!match) {
          qCritical() <<
@@ -238,6 +243,37 @@ namespace {
          return 0;
       }
       return match.value();
+   }
+
+   /**
+    * \brief Given a string value pulled out of the DB for a \c Measurement::Unit global constant, look up and return
+    *        its address.  Caller's responsibility to handle null values etc before deciding whether to call this
+    *        function.
+    *
+    *        See comment in \c utils/ObjectAddressStringMapping.h for when and why we store units in the DB even though
+    *        we always use canonical metric units for storage.  TLDR is that when there are multiple possibilities, you
+    *        can't tell the units from the "quantity" column name, so we want to be clear and unambiguous in the
+    *        additional column.  (Eg "equipment.mash_tun_weight_kg" is already fine but "hop_in_inventory.quantity"
+    *        could be kilograms or liters, so we want "hop_in_inventory.unit" to say which rather than have a layer of
+    *        indirection behind, eg, "hop_in_inventory.measure" or some such.
+    */
+   Measurement::Unit const * stringToUnit(ObjectStore::TableDefinition const & primaryTable,
+                                          ObjectStore::TableField const &      fieldDefn,
+                                          QString const &                      stringValue) {
+      // It's a coding error if we called this function for a non-unit field
+      Q_ASSERT(fieldDefn.fieldType == ObjectStore::FieldType::Unit);
+      Q_ASSERT(std::holds_alternative<Measurement::UnitStringMapping const *>(fieldDefn.valueDecoder));
+      auto const unitMapping = std::get<Measurement::UnitStringMapping const *>(fieldDefn.valueDecoder);
+      Measurement::Unit const * match = unitMapping->stringToObjectAddress(stringValue);
+      // If we didn't find a match, it's either a coding error or someone messed with the DB data
+      if (!match) {
+         qCritical() <<
+            Q_FUNC_INFO << "Could not decode" << stringValue << "to Unit when mapping column" <<
+            fieldDefn.columnName << "to property" << fieldDefn.propertyName << "for" << primaryTable.tableName;
+         // Stop here on debug build, as the code is unlikely to be able to recover
+         Q_ASSERT(false);
+      }
+      return match;
    }
 
    //
@@ -489,6 +525,7 @@ namespace {
          case ObjectStore::FieldType::String: { return {QMetaType::QString                     }; }
          case ObjectStore::FieldType::Date  : { return {QMetaType::QDate  , QMetaType::QString }; }
          case ObjectStore::FieldType::Enum  : { return {QMetaType::QString                     }; }
+         case ObjectStore::FieldType::Unit  : { return {QMetaType::QString                     }; }
          // No default case needed as compiler should warn us if any options covered above
       }
       // It's a coding error if we get here
@@ -526,6 +563,17 @@ namespace {
       {{"yeast",       "inventory_id"    , ObjectStore::FieldType::Int }, {QMetaType::Double }},
    };
 
+}
+
+ObjectStore::TableField::TableField(ObjectStore::FieldType                 const   fieldType,
+                                    char const *                           const   columnName,
+                                    BtStringConst                          const & propertyName,
+                                    ObjectStore::TableField::ValueDecoder  const   valueDecoder) :
+   fieldType{fieldType},
+   columnName{columnName},
+   propertyName{propertyName},
+   valueDecoder{valueDecoder} {
+   return;
 }
 
 // This private implementation class holds all private non-virtual members of ObjectStore
@@ -576,7 +624,8 @@ public:
                              QVariant & propertyValue) {
 
       // It's a coding error if we don't have an enum mapping for an enum field
-      if (ObjectStore::FieldType::Enum == fieldDefn.fieldType && !fieldDefn.enumMapping) {
+      if (ObjectStore::FieldType::Enum == fieldDefn.fieldType &&
+         !std::holds_alternative<EnumStringMapping const *>(fieldDefn.valueDecoder)) {
          qCritical() <<
             Q_FUNC_INFO << "Coding Error!  No enum mapping found to map property " << fieldDefn.propertyName <<
             " to column " << fieldDefn.columnName << "for" << primaryTable.tableName;
@@ -600,13 +649,22 @@ public:
             case ObjectStore::FieldType::String: { Optional::removeOptionalWrapper<QString     >(propertyValue); return; }
             case ObjectStore::FieldType::Date:   { Optional::removeOptionalWrapper<QDate       >(propertyValue); return; }
             case ObjectStore::FieldType::Enum:   {
+               auto const enumMapping = std::get<EnumStringMapping const *>(fieldDefn.valueDecoder);
                auto val = propertyValue.value<std::optional<int> >();
                if (val.has_value()) {
-                  propertyValue = QVariant(fieldDefn.enumMapping->enumToString(val.value()));
+                  propertyValue = QVariant(enumMapping->enumToString(val.value()));
                   return;
                }
                propertyValue = QVariant();
                return;
+            }
+            case ObjectStore::FieldType::Unit: {
+               // Since Unit is stored as a pointer, it is never wrapped in std::optional, so it's a coding error if we
+               // get here
+               Q_ASSERT(false);
+               propertyValue = QVariant();
+               return;
+
             }
             // No default case needed as compiler should warn us if any options covered above
          }
@@ -643,7 +701,15 @@ public:
          case ObjectStore::FieldType::Date:   { forceVariantToType<QDate       >(propertyValue); return; }
          case ObjectStore::FieldType::Enum:   {
             // This is a non-optional enum, so we need to map it to a QString
-            propertyValue = QVariant(fieldDefn.enumMapping->enumToString(propertyValue.toInt()));
+            auto const enumMapping = std::get<EnumStringMapping const *>(fieldDefn.valueDecoder);
+            propertyValue = QVariant(enumMapping->enumToString(propertyValue.toInt()));
+            return;
+         }
+         case ObjectStore::FieldType::Unit:   {
+            auto const unitMapping = std::get<Measurement::UnitStringMapping const *>(fieldDefn.valueDecoder);
+
+            propertyValue =
+               QVariant(unitMapping->objectAddressToString(propertyValue.value<Measurement::Unit const *>()));
             return;
          }
          // No default case needed as compiler should warn us if any options covered above
@@ -763,6 +829,10 @@ public:
                }
                return;
             }
+            case ObjectStore::FieldType::Unit:   {
+               // We don't need to support optional units, so it's a coding error if we get here
+               Q_ASSERT(false);
+            }
             // No default case needed as compiler should warn us if any options covered above
          }
          // It's a coding error if we get here!
@@ -802,6 +872,21 @@ public:
             }
 
             propertyValue = QVariant(stringToEnum(primaryTable, fieldDefn, propertyValue.toString()));
+            return;
+         }
+         case ObjectStore::FieldType::Unit:   {
+            if (propertyValue.isNull()) {
+               // This is either a coding error or someone messed with the DB data.
+               qCritical() <<
+                  Q_FUNC_INFO << "Found null value for non-optional Unit when mapping column " <<
+                  fieldDefn.columnName << " to property " << fieldDefn.propertyName << "for" <<
+                  primaryTable.tableName;
+               // Not sure we can recover here, so bail on debug builds
+               Q_ASSERT(false);
+               return;
+            }
+
+            propertyValue = QVariant(stringToUnit(primaryTable, fieldDefn, propertyValue.toString()));
             return;
          }
          // No default case needed as compiler should warn us if any options covered above
@@ -927,7 +1012,7 @@ public:
          // Fix-up the QVariant if needed, including converting enums to strings
          this->unwrapAndMapAsNeeded(this->primaryTable, *fieldDefn, propertyBindValue);
 
-         if (fieldDefn->foreignKeyTo) {
+         if (std::holds_alternative<ObjectStore::TableDefinition const *>(fieldDefn->valueDecoder)) {
             //
             // If the columns if a foreign key and the caller is setting it to a non-positive value then we actually
             // need to store NULL in the DB.  (In the code we store foreign key IDs as ints, and use -1 to mean null.
@@ -1048,7 +1133,7 @@ public:
          // Fix-up the QVariant if needed, including converting enums to strings
          this->unwrapAndMapAsNeeded(this->primaryTable, fieldDefn, bindValue);
 
-         if (fieldDefn.foreignKeyTo && bindValue.toInt() <= 0) {
+         if (std::holds_alternative<ObjectStore::TableDefinition const *>(fieldDefn.valueDecoder) && bindValue.toInt() <= 0) {
             // If the field is a foreign key and the value we would otherwise put in it is not a valid key (eg we are
             // inserting a Recipe on which the Equipment has not yet been set) then the query would barf at the invalid
             // key.  So, in this case, we need to insert NULL.
@@ -1153,6 +1238,7 @@ QString ObjectStore::getDisplayName(ObjectStore::FieldType const fieldType) {
       case ObjectStore::FieldType::String: return "ObjectStore::FieldType::String";
       case ObjectStore::FieldType::Date  : return "ObjectStore::FieldType::Date"  ;
       case ObjectStore::FieldType::Enum  : return "ObjectStore::FieldType::Enum"  ;
+      case ObjectStore::FieldType::Unit  : return "ObjectStore::FieldType::Unit"  ;
       // In C++23, we'd add:
       // default: std::unreachable();
    }

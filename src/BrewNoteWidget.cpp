@@ -150,18 +150,18 @@ bool BrewNoteWidget::isBrewNote(BrewNote* note) {
    return this->bNoteObs == note;
 }
 
-void BrewNoteWidget::updateSG()                                { if (this->bNoteObs) { this->bNoteObs->setSg              (this->lineEdit_Sg         ->toCanonical().quantity());                      } return; }
-void BrewNoteWidget::updateVolumeIntoBK_l()                    { if (this->bNoteObs) { this->bNoteObs->setVolumeIntoBK_l  (this->lineEdit_volIntoBk  ->toCanonical().quantity());                      } return; }
-void BrewNoteWidget::updateStrikeTemp_c()                      { if (this->bNoteObs) { this->bNoteObs->setStrikeTemp_c    (this->lineEdit_strikeTemp ->toCanonical().quantity());                      } return; }
-void BrewNoteWidget::updateMashFinTemp_c()                     { if (this->bNoteObs) { this->bNoteObs->setMashFinTemp_c   (this->lineEdit_mashFinTemp->toCanonical().quantity());                      } return; }
-void BrewNoteWidget::updateOG()                                { if (this->bNoteObs) { this->bNoteObs->setOg              (this->lineEdit_Og         ->toCanonical().quantity());                      } return; }
-void BrewNoteWidget::updatePostBoilVolume_l()                  { if (this->bNoteObs) { this->bNoteObs->setPostBoilVolume_l(this->lineEdit_postBoilVol->toCanonical().quantity()); this->showChanges(); } return; }
-void BrewNoteWidget::updateVolumeIntoFerm_l()                  { if (this->bNoteObs) { this->bNoteObs->setVolumeIntoFerm_l(this->lineEdit_volIntoFerm->toCanonical().quantity()); this->showChanges(); } return; }
-void BrewNoteWidget::updatePitchTemp_c()                       { if (this->bNoteObs) { this->bNoteObs->setPitchTemp_c     (this->lineEdit_pitchTemp  ->toCanonical().quantity()); this->showChanges(); } return; }
-void BrewNoteWidget::updateFG()                                { if (this->bNoteObs) { this->bNoteObs->setFg              (this->lineEdit_Fg         ->toCanonical().quantity()); this->showChanges(); } return; }
-void BrewNoteWidget::updateFinalVolume_l()                     { if (this->bNoteObs) { this->bNoteObs->setFinalVolume_l   (this->lineEdit_finalVolume->toCanonical().quantity());                      } return; }
-void BrewNoteWidget::updateFermentDate(QDate const & datetime) { if (this->bNoteObs) { this->bNoteObs->setFermentDate     (datetime);                                                                  } return; }
-void BrewNoteWidget::updateNotes()                             { if (this->bNoteObs) { this->bNoteObs->setNotes           (this->btTextEdit_brewNotes->toPlainText() );                                } return; }
+void BrewNoteWidget::updateSG()                                { if (this->bNoteObs) { this->bNoteObs->setSg              (this->lineEdit_Sg         ->toCanonical().quantity);                      } return; }
+void BrewNoteWidget::updateVolumeIntoBK_l()                    { if (this->bNoteObs) { this->bNoteObs->setVolumeIntoBK_l  (this->lineEdit_volIntoBk  ->toCanonical().quantity);                      } return; }
+void BrewNoteWidget::updateStrikeTemp_c()                      { if (this->bNoteObs) { this->bNoteObs->setStrikeTemp_c    (this->lineEdit_strikeTemp ->toCanonical().quantity);                      } return; }
+void BrewNoteWidget::updateMashFinTemp_c()                     { if (this->bNoteObs) { this->bNoteObs->setMashFinTemp_c   (this->lineEdit_mashFinTemp->toCanonical().quantity);                      } return; }
+void BrewNoteWidget::updateOG()                                { if (this->bNoteObs) { this->bNoteObs->setOg              (this->lineEdit_Og         ->toCanonical().quantity);                      } return; }
+void BrewNoteWidget::updatePostBoilVolume_l()                  { if (this->bNoteObs) { this->bNoteObs->setPostBoilVolume_l(this->lineEdit_postBoilVol->toCanonical().quantity); this->showChanges(); } return; }
+void BrewNoteWidget::updateVolumeIntoFerm_l()                  { if (this->bNoteObs) { this->bNoteObs->setVolumeIntoFerm_l(this->lineEdit_volIntoFerm->toCanonical().quantity); this->showChanges(); } return; }
+void BrewNoteWidget::updatePitchTemp_c()                       { if (this->bNoteObs) { this->bNoteObs->setPitchTemp_c     (this->lineEdit_pitchTemp  ->toCanonical().quantity); this->showChanges(); } return; }
+void BrewNoteWidget::updateFG()                                { if (this->bNoteObs) { this->bNoteObs->setFg              (this->lineEdit_Fg         ->toCanonical().quantity); this->showChanges(); } return; }
+void BrewNoteWidget::updateFinalVolume_l()                     { if (this->bNoteObs) { this->bNoteObs->setFinalVolume_l   (this->lineEdit_finalVolume->toCanonical().quantity);                      } return; }
+void BrewNoteWidget::updateFermentDate(QDate const & datetime) { if (this->bNoteObs) { this->bNoteObs->setFermentDate     (datetime);                                                                } return; }
+void BrewNoteWidget::updateNotes()                             { if (this->bNoteObs) { this->bNoteObs->setNotes           (this->btTextEdit_brewNotes->toPlainText() );                              } return; }
 
 void BrewNoteWidget::changed([[maybe_unused]] QMetaProperty prop,
                              [[maybe_unused]] QVariant val) {

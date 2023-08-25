@@ -61,12 +61,12 @@ TypeLookup const RecipeAddition::typeLookup {
    {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::recipeId       , RecipeAddition::m_recipeId       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::ingredientId   , RecipeAddition::m_ingredientId   ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::stage          , RecipeAddition::m_stage          ,           NonPhysicalQuantity::Enum   ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::step           , RecipeAddition::m_step           ,           NonPhysicalQuantity::Count  ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::addAtTime_mins , RecipeAddition::m_addAtTime_mins , Measurement::PhysicalQuantity::Time   ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::addAtGravity_sg, RecipeAddition::m_addAtGravity_sg, Measurement::PhysicalQuantity::Density),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::addAtAcidity_pH, RecipeAddition::m_addAtAcidity_pH, Measurement::PhysicalQuantity::Acidity),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::duration_mins  , RecipeAddition::m_duration_mins  , Measurement::PhysicalQuantity::Time   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::stage          , RecipeAddition::m_stage          ,           NonPhysicalQuantity::Enum          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::step           , RecipeAddition::m_step           ,           NonPhysicalQuantity::OrdinalNumeral),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::addAtTime_mins , RecipeAddition::m_addAtTime_mins , Measurement::PhysicalQuantity::Time          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::addAtGravity_sg, RecipeAddition::m_addAtGravity_sg, Measurement::PhysicalQuantity::Density       ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::addAtAcidity_pH, RecipeAddition::m_addAtAcidity_pH, Measurement::PhysicalQuantity::Acidity       ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::duration_mins  , RecipeAddition::m_duration_mins  , Measurement::PhysicalQuantity::Time          ),
    },
    // Parent class lookup.
    {&NamedEntity::typeLookup}

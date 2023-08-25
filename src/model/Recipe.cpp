@@ -784,7 +784,7 @@ TypeLookup const Recipe::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::asstBrewer        , Recipe::m_asstBrewer        ,           NonPhysicalQuantity::String        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::batchSize_l       , Recipe::m_batchSize_l       , Measurement::PhysicalQuantity::Volume        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::efficiency_pct    , Recipe::m_efficiency_pct    ,           NonPhysicalQuantity::Percentage    ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::fermentationStages, Recipe::m_fermentationStages,           NonPhysicalQuantity::Count         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::fermentationStages, Recipe::m_fermentationStages,           NonPhysicalQuantity::OrdinalNumeral),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::primaryAge_days   , Recipe::m_primaryAge_days   ,           NonPhysicalQuantity::Dimensionless ), // See comment above for why Dimensionless, not Time
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::primaryTemp_c     , Recipe::m_primaryTemp_c     , Measurement::PhysicalQuantity::Temperature   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::secondaryAge_days , Recipe::m_secondaryAge_days ,           NonPhysicalQuantity::Dimensionless ), // See comment above for why Dimensionless, not Time
@@ -1311,7 +1311,7 @@ void Recipe::generateInstructions() {
          Measurement::qStringToSI(QInputDialog::getText(nullptr,
                                                         tr("Boil time"),
                                                         tr("You did not configure an equipment (which you really should), so tell me the boil time.")),
-                                  Measurement::PhysicalQuantity::Time).quantity();
+                                  Measurement::PhysicalQuantity::Time).quantity;
    }
 
    QString str = tr("Bring the wort to a boil and hold for %1.").arg(
@@ -2886,7 +2886,7 @@ double Recipe::ibuFromHopAddition(RecipeAdditionHop const * hopAddition) {
 
    double AArating = hopAddition->hop()->alpha_pct() / 100.0;
    // .:TBD.JSON:.  What to do if hopAddition is measured by volume?
-   if (hopAddition->measure() != Ingredient::Measure::Mass_Kilograms) {
+   if (hopAddition->measure() != Measurement::PhysicalQuantity::Mass) {
       qCritical() << Q_FUNC_INFO << "Using Hop volume as weight - THIS IS PROBABLY WRONG!";
    }
    double grams = hopAddition->quantity() * 1000.0;

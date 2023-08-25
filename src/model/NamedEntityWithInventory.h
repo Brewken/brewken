@@ -120,7 +120,7 @@ protected:
 double NeName::inventory() const { return InventoryUtils::getAmount(*this); } \
 MassOrVolumeAmt NeName::inventoryWithUnits() const { return MassOrVolumeAmt{InventoryUtils::getAmount(*this), this->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters}; } \
 void NeName::setInventoryAmount(double num) { InventoryUtils::setAmount(*this, num); return; } \
-void NeName::setInventoryWithUnits(MassOrVolumeAmt const  val) { this->setInventoryAmount(val.quantity()); return; }
+void NeName::setInventoryWithUnits(MassOrVolumeAmt const  val) { this->setInventoryAmount(val.quantity); return; }
 
 /**
  * \brief Derived classes should include this in their implementation file if they support measuring by mass only
@@ -129,6 +129,6 @@ void NeName::setInventoryWithUnits(MassOrVolumeAmt const  val) { this->setInvent
 double NeName::inventory() const { return InventoryUtils::getAmount(*this); } \
 MassOrVolumeAmt NeName::inventoryWithUnits() const { return MassOrVolumeAmt{InventoryUtils::getAmount(*this), Measurement::Units::kilograms}; } \
 void NeName::setInventoryAmount(double num) { InventoryUtils::setAmount(*this, num); return; } \
-void NeName::setInventoryWithUnits(MassOrVolumeAmt const  val) { this->setInventoryAmount(val.quantity()); return; }
+void NeName::setInventoryWithUnits(MassOrVolumeAmt const  val) { this->setInventoryAmount(val.quantity); return; }
 
 #endif

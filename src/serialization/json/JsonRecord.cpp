@@ -500,7 +500,7 @@ JsonRecord::~JsonRecord() = default;
                      std::optional<Measurement::Amount> canonicalValue = readMeasurementWithUnits(fieldDefinition,
                                                                                                   container);
                      if (canonicalValue) {
-                        auto rawValue = canonicalValue->quantity();
+                        auto rawValue = canonicalValue->quantity;
                         parsedValue = Optional::variantFromRaw(rawValue, propertyIsOptional);
                         parsedValueOk = true;
                      }
@@ -1127,14 +1127,14 @@ void JsonRecord::insertValue(JsonRecordDefinition::FieldDefinition const & field
                //
                // So the first thing to do is to find the right JsonMeasureableUnitsMapping
                //
-               if (unitsMapping->getPhysicalQuantity() == amount.unit()->getPhysicalQuantity()) {
+               if (unitsMapping->getPhysicalQuantity() == amount.unit->getPhysicalQuantity()) {
                   // Now we have the right PhysicalQuantity, we just need the entry for our Units
-                  auto unitName = unitsMapping->getNameForUnit(*amount.unit());
+                  auto unitName = unitsMapping->getNameForUnit(*amount.unit);
                   qDebug() << Q_FUNC_INFO << std::string(unitName).c_str();
                   recordDataAsObject[key].emplace_object();
                   auto & measurementWithUnits = recordDataAsObject[key].as_object();
                   measurementWithUnits.emplace(unitsMapping->unitField.asKey(),  unitName);
-                  measurementWithUnits.emplace(unitsMapping->valueField.asKey(), amount.quantity());
+                  measurementWithUnits.emplace(unitsMapping->valueField.asKey(), amount.quantity);
                   break;
                }
             }

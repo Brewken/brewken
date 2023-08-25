@@ -501,7 +501,7 @@ void Testing::recipeCalcTest_allGrain() {
    cascadeHopAddition->setStage(RecipeAddition::Stage::Boil);
    cascadeHopAddition->setAddAtTime_mins(60);
    cascadeHopAddition->setQuantity(0.085);
-   cascadeHopAddition->setMeasure(Ingredient::Measure::Mass_Kilograms);
+   cascadeHopAddition->setMeasure(Measurement::PhysicalQuantity::Mass);
    rec->add(cascadeHopAddition);
 
    // Add grain
@@ -640,7 +640,7 @@ void Testing::testUnitConversions() {
    testInput.clear();
    testInputAsStream << "5" << decimalSeparator << "500 gal";
    QVERIFY2(fuzzyComp(Measurement::UnitSystems::volume_UsCustomary.qstringToSI(testInput, // "5.500 gal"
-                                                                               Measurement::Units::liters).quantity(),
+                                                                               Measurement::Units::liters).quantity,
                       20.820,
                       0.001),
             "Unit conversion error (US gallons to Litres v1)");
@@ -648,7 +648,7 @@ void Testing::testUnitConversions() {
    testInput.clear();
    testInputAsStream << "5" << decimalSeparator << "500";
    QVERIFY2(fuzzyComp(Measurement::UnitSystems::volume_UsCustomary.qstringToSI(testInput, // "5.500"
-                                                                               Measurement::Units::us_gallons).quantity(),
+                                                                               Measurement::Units::us_gallons).quantity,
                       20.820,
                       0.001),
             "Unit conversion error (US gallons to Litres v2)");
@@ -662,14 +662,14 @@ void Testing::testUnitConversions() {
    auto converted = Measurement::qStringToSI(testInput, // "5.500 gal"
                                              Measurement::PhysicalQuantity::Volume);
    qDebug() << Q_FUNC_INFO << testInput << "converted to" << converted;
-   QVERIFY2(fuzzyComp(converted.quantity(), 20.820, 0.001) ||
-            fuzzyComp(converted.quantity(), 25.004, 0.001),
+   QVERIFY2(fuzzyComp(converted.quantity, 20.820, 0.001) ||
+            fuzzyComp(converted.quantity, 25.004, 0.001),
             "Unit conversion error (US or Imperial gallons to Litres v3)");
    // "9.994 P"
    testInput.clear();
    testInputAsStream << "9" << decimalSeparator << "994 P";
    QVERIFY2(fuzzyComp(Measurement::UnitSystems::density_Plato.qstringToSI(testInput, // "9.994 P"
-                                                                          Measurement::Units::specificGravity).quantity(),
+                                                                          Measurement::Units::specificGravity).quantity,
                       1.040,
                       0.001),
             "Unit conversion error (Plato to SG)");
@@ -678,7 +678,7 @@ void Testing::testUnitConversions() {
    testInputAsStream << "1" << thousandsSeparator << "083 ebc";
    QVERIFY2(
       fuzzyComp(Measurement::UnitSystems::color_StandardReferenceMethod.qstringToSI(testInput, // "1,083 ebc"
-                                                                                    Measurement::Units::srm).quantity(),
+                                                                                    Measurement::Units::srm).quantity,
                 550,
                 1),
       "Unit conversion error (EBC to SRM)"

@@ -19,6 +19,7 @@
 
 #include <QFlags>
 
+#include "measurement/Unit.h"
 #include "model/Ingredient.h"
 #include "model/NamedParameterBundle.h"
 #include "utils/CuriouslyRecurringTemplateBase.h"
@@ -29,12 +30,13 @@
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::IngredientAmount { BtStringConst const property{#property}; }
-AddPropertyName(quantity)
-AddPropertyName(measure )
+AddPropertyName(amount  )
+AddPropertyName(measure ) // Only quantity and measure should be used in database mappings
+AddPropertyName(quantity) // Only quantity and measure should be used in database mappings
+AddPropertyName(unit    )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
-
 
 /**
  * \brief Represents an amount of an ingredient.  These amounts are used in two places: in the \c RecipeAddition
@@ -62,19 +64,21 @@ AddPropertyName(measure )
  *        \c INGREDIENT_AMOUNT_COMMON_CODE macro in their .cpp file.  They also need the following lines in their class
  *        declaration:
  *
- *              //! \brief The amount in kilograms, liters or count (ie "number of ...") -- see \c IngredientAmount
- *              Q_PROPERTY(double quantity                READ quantity    WRITE setQuantity)
- *              //! \brief Whether we are measuring in kilograms, liters or count (ie "number of ...") -- see \c IngredientAmount
- *              Q_PROPERTY(Ingredient::Measure measure    READ measure     WRITE setMeasure )
- *
+ *              Q_PROPERTY(Measurement::Amount           amount    READ amount     WRITE setAmount  )
+ *              Q_PROPERTY(double                        quantity  READ quantity   WRITE setQuantity)
+ *              Q_PROPERTY(Measurement::Unit *           unit      READ unit       WRITE setUnit    )
+ *              Q_PROPERTY(Measurement::PhysicalQuantity measure   READ measure    WRITE setMeasure )
  *
  *        (We cannot insert these lines with the \c INGREDIENT_AMOUNT_DECL macro because the Qt Meta Object Compiler aka
  *        MOC does not expand macros.)
  *
  *        ADDITIONALLY, it is necessary in the class declaration of the corresponding ingredient (eg in Hop.h for hops)
  *        to add publicly accessible:
- *           static constexpr Ingredient::Measures validMeasures = ...
- *           static constexpr Ingredient::Measure defaultMeasure = ...
+ *           static constexpr Measurement::VariantPhysicalQuantity validMeasures = ...
+ *           static constexpr Measurement::PhysicalQuantity defaultMeasure = ...
+ *
+ *        TBD: Using "measure" for the \c PhysicalQuantity property is a bit of a compromise.  I didn't want to call it
+ *             "physicalQuantity" because that would look odd next to "quantity".
  *
  *        ---
  *
@@ -86,8 +90,12 @@ AddPropertyName(measure )
  *        the fields of this class onto the "owner" class at the cost of some slight ugliness/complexity in the code,
  *        which we mostly hide from the "owner" class with macros.
  *
+ *        ---
  *
- * TBD: With a bit more refactoring, we could perhaps align this class more closely with \c Measurement::Amount
+ *        We could perhaps have aligned this class more closely with \c Measurement::Amount, and used
+ *        \c Measurement::PhysicalQuantity and \c Measurement::MixedPhysicalQuantities instead of \c defaultMeasure and
+ *        \c validMeasures etc.  This would simplify some things, but be at the cost of making the class more generic
+ *        than we want it to be.  Eg, we never want to measure ingredients by temperature!
  */
 template<class Derived> class IngredientAmountPhantom;
 template<class Derived, class IngredientClass>
@@ -99,100 +107,118 @@ public:
    static TypeLookup const typeLookup;
 
    Measurement::Amount amount() const {
-      switch (this->m_measure) {
-         case Ingredient::Measure::Mass_Kilograms:
-            return Measurement::Amount{this->m_quantity, Measurement::Units::kilograms};
-
-         case Ingredient::Measure::Volume_Liters:
-            return Measurement::Amount{this->m_quantity, Measurement::Units::liters};
-
-         case Ingredient::Measure::Count:
-            qCritical() <<
-               Q_FUNC_INFO << "Cannot return amount of count for" << this->derived().metaObject()->className() <<
-               "#" << this->derived().key();
-            Q_ASSERT(false);
-            break;
-      }
-      // All possibilities should be handled above, so this should be unreachable
-      Q_ASSERT(false);
-      return Measurement::Amount{};
+      return this->m_amount;
    }
 
    Measurement::PhysicalQuantity physicalQuantity() const {
-      switch (this->m_measure) {
-         case Ingredient::Measure::Mass_Kilograms:
-            return Measurement::PhysicalQuantity::Mass;
-
-         case Ingredient::Measure::Volume_Liters:
-            return Measurement::PhysicalQuantity::Volume;
-
-         case Ingredient::Measure::Count:
-            qCritical() <<
-               Q_FUNC_INFO << "Cannot return physical quantity for count for" <<
-               this->derived().metaObject()->className() << "#" << this->derived().key();
-            Q_ASSERT(false);
-            break;
-      }
-      // All possibilities should be handled above, so this should be unreachable
-      Q_ASSERT(false);
-      return Measurement::PhysicalQuantity::Mass;
+      return this->m_amount.unit->getPhysicalQuantity();
    }
 
 protected:
 
-   /**
-    * NB: Since this is the constructor that will be called in the absence of any other being specified, it is
-    * not necessary for subclass constructors to explicitly invoke this (because the compiler will automatically
-    * ensure it is called before the subclass constructor).  This saves us having to re-specify
-    * \c validMeasures in subclass constructors.
-    */
    IngredientAmount() :
-      m_quantity{0.0},
-      m_measure{IngredientClass::defaultMeasure} {
+      m_amount{0.0, Measurement::Unit::getCanonicalUnit(IngredientClass::defaultMeasure)} {
       return;
    }
 
-   IngredientAmount(NamedParameterBundle const & namedParameterBundle) :
-      SET_REGULAR_FROM_NPB (m_quantity, namedParameterBundle, PropertyNames::IngredientAmount::quantity),
-      SET_REGULAR_FROM_NPB (m_measure , namedParameterBundle, PropertyNames::IngredientAmount::measure ) {
+   IngredientAmount(NamedParameterBundle const & namedParameterBundle) /* :
+   TODO Sort this bit out!
+      SET_REGULAR_FROM_NPB(m_quantity, namedParameterBundle, PropertyNames::IngredientAmount::quantity),
+      SET_REGULAR_FROM_NPB(m_measure , namedParameterBundle, PropertyNames::IngredientAmount::measure ) */ {
+      return;
+   }
+
+   IngredientAmount(IngredientAmount const & other) :
+      m_amount{other.m_amount} {
       return;
    }
 
    ~IngredientAmount() = default;
 
-   void doSetQuantity(double                    const val) {
-      this->derived().setAndNotify(PropertyNames::IngredientAmount::quantity, this->m_quantity, val);
+   Measurement::Amount getAmount() const {
+      return this->m_amount;
+   }
+
+   double getQuantity() const {
+      return this->m_amount.quantity;
+   }
+
+   Measurement::Unit const * getUnit() const {
+      return this->m_amount.unit;
+   }
+
+   Measurement::PhysicalQuantity getMeasure () const {
+      return this->m_amount.unit->getPhysicalQuantity();
+   }
+
+   void doSetAmount(Measurement::Amount const & val) {
+      //
+      // For the moment, we keep the database layer and update one column from one property, hence the split into two
+      // separate calls here.  If we ended up doing this sort of stuff in a lot of places, we could expand the
+      // capabilities of ObjectStore etc to handle compound types such as Measurement::Amount.
+      //
+      //
+      this->doSetQuantity(val.quantity);
+      this->doSetUnit    (val.unit    );
       return;
    }
 
-   void doSetMeasure (Ingredient::Measure const val) {
-      Q_ASSERT(val & IngredientClass::validMeasures);
-      this->derived().setAndNotify(PropertyNames::IngredientAmount::measure, this->m_measure, val);
+   void doSetQuantity(double const val) {
+      this->derived().setAndNotify(PropertyNames::IngredientAmount::quantity, this->m_amount.quantity, val);
       return;
    }
 
+   void doSetUnit(Measurement::Unit const * val) {
+      // It's a coding error to provide an amount that is not in canonical units
+      Q_ASSERT(val->isCanonical());
+      this->derived().setAndNotify(PropertyNames::IngredientAmount::unit, this->m_amount.unit, val);
+      return;
+   }
 
-   double              m_quantity;
-   Ingredient::Measure m_measure ;
+   void doSetMeasure (Measurement::PhysicalQuantity const val) {
+      // Since Q_ASSERT is a macro, it gets confused by some templated expressions, so we have to have this separate
+      // variable
+      bool const measureIsValid = Measurement::isValid<decltype(IngredientClass::validMeasures),
+                                                       IngredientClass::validMeasures>(val);
+      Q_ASSERT(measureIsValid);
+      this->doSetUnit(&Measurement::Unit::getCanonicalUnit(val));
+      return;
+   }
+
+   Measurement::ConstrainedAmount<decltype(IngredientClass::validMeasures), IngredientClass::validMeasures> m_amount;
 };
 
 template<class Derived, class IngredientClass>
 TypeLookup const IngredientAmount<Derived, IngredientClass>::typeLookup {
    "IngredientAmount",
    {
-      // We can't use the PROPERTY_TYPE_LOOKUP_ENTRY macro here, because it doesn't know how to handle templated
-      // references such as `IngredientAmount<Derived, IngredientClass>::m_quantity` (which would get treated as two
-      // macro parameters).  So we have to put the raw code instead.
+      //
+      // We can't use the PROPERTY_TYPE_LOOKUP_ENTRY or PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV macros here, because macros
+      // don't know how to handle templated references such as `IngredientAmount<Derived, IngredientClass>::m_quantity`
+      // and try to treat them as two macro parameters).  So we have to put the raw code instead.
+      //
+      // (We can't get around this by writing `using IngredientAmountType = IngredientAmount<Derived, IngredientClass>`
+      // because Derived and IngredientClass aren't defined until the template is instantiated.)
+      //
+      // This does show the advantage of being able to use the macros elsewhere! :)
+      //
       {&PropertyNames::IngredientAmount::quantity,
-       TypeInfo::construct<decltype(IngredientAmount<Derived, IngredientClass>::m_quantity)>(
+       TypeInfo::construct<decltype(IngredientAmount<Derived, IngredientClass>::m_amount.quantity)>(
           PropertyNames::IngredientAmount::quantity,
-          TypeLookupOf<decltype(IngredientAmount<Derived, IngredientClass>::m_quantity)>::value
+          TypeLookupOf<decltype(IngredientAmount<Derived, IngredientClass>::m_amount.quantity)>::value,
+          IngredientClass::validMeasures
+       )},
+      {&PropertyNames::IngredientAmount::unit,
+       TypeInfo::construct<decltype(IngredientAmount<Derived, IngredientClass>::m_amount.unit)>(
+          PropertyNames::IngredientAmount::unit,
+          TypeLookupOf<decltype(IngredientAmount<Derived, IngredientClass>::m_amount.unit)>::value
        )},
       {&PropertyNames::IngredientAmount::measure,
-       TypeInfo::construct<decltype(IngredientAmount<Derived, IngredientClass>::m_measure)>(
+       TypeInfo::construct<MemberFunctionReturnType_t<&IngredientAmount::getMeasure>>(
           PropertyNames::IngredientAmount::measure,
-          TypeLookupOf<decltype(IngredientAmount<Derived, IngredientClass>::m_measure)>::value
-       )},
+          TypeLookupOf<MemberFunctionReturnType_t<&IngredientAmount::getMeasure>>::value,
+          NonPhysicalQuantity::Enum
+       )}
    },
    // Parent class lookup: none as we are at the top of this arm of the inheritance tree
    {}
@@ -213,11 +239,15 @@ TypeLookup const IngredientAmount<Derived, IngredientClass>::typeLookup {
                                                                                             \
    public:                                                                                  \
    /*=========================== IA "GETTER" MEMBER FUNCTIONS ===========================*/ \
-   double              quantity() const;                                                    \
-   Ingredient::Measure measure () const;                                                    \
+   Measurement::Amount           amount  () const;                                          \
+   double                        quantity() const;                                          \
+   Measurement::Unit const *     unit    () const;                                          \
+   Measurement::PhysicalQuantity measure () const;                                          \
    /*=========================== IA "SETTER" MEMBER FUNCTIONS ===========================*/ \
-   void setQuantity(double              const val);                                         \
-   void setMeasure (Ingredient::Measure const val);                                         \
+   void setAmount  (Measurement::Amount           const & val);                             \
+   void setQuantity(double                        const   val);                             \
+   void setUnit    (Measurement::Unit const *     const   val);                             \
+   void setMeasure (Measurement::PhysicalQuantity const   val);                             \
 
 
 /**
@@ -230,11 +260,14 @@ TypeLookup const IngredientAmount<Derived, IngredientClass>::typeLookup {
  */
 #define INGREDIENT_AMOUNT_COMMON_CODE(Derived) \
    /*============================ "GETTER" MEMBER FUNCTIONS ============================*/ \
-   double              Derived::quantity() const { return this->m_quantity; }              \
-   Ingredient::Measure Derived::measure () const { return this->m_measure ; }              \
+   Measurement::Amount           Derived::amount  () const { return this->getAmount  (); } \
+   double                        Derived::quantity() const { return this->getQuantity(); } \
+   Measurement::Unit const *     Derived::unit    () const { return this->getUnit    (); } \
+   Measurement::PhysicalQuantity Derived::measure () const { return this->getMeasure (); } \
    /*============================ "SETTER" MEMBER FUNCTIONS ============================*/ \
-   void Derived::setQuantity(double              const val) { this->doSetQuantity(val); return; } \
-   void Derived::setMeasure (Ingredient::Measure const val) { this->doSetMeasure (val); return; } \
-
+   void Derived::setAmount  (Measurement::Amount           const & val) { this->doSetAmount  (val); return; } \
+   void Derived::setQuantity(double                        const   val) { this->doSetQuantity(val); return; } \
+   void Derived::setUnit    (Measurement::Unit const *     const   val) { this->doSetUnit    (val); return; } \
+   void Derived::setMeasure (Measurement::PhysicalQuantity const   val) { this->doSetMeasure (val); return; } \
 
 #endif

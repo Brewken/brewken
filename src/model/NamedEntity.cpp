@@ -366,14 +366,14 @@ void NamedEntity::setEitherOrReqParams(NamedParameterBundle const & namedParamet
       auto const combinedWithUnits = namedParameterBundle.val<T>(combinedWithUnitsParameterName);
       // It is the caller's responsibility to have converted to canonical units -- ie a coding error if this did not
       // happen.  Asserting without the diagnostic info is not much use, so we do the check first, then the assert.
-      auto const * suppliedUnit = combinedWithUnits.unit();
+      auto const * suppliedUnit = combinedWithUnits.unit;
       if (!suppliedUnit->isCanonical()) {
          qCritical() <<
             Q_FUNC_INFO << this->name() << "CODING ERROR:" << combinedWithUnitsParameterName << "supplied in" <<
             suppliedUnit << "instead of" << suppliedUnit->getCanonical();
          Q_ASSERT(false);
       } else {
-         quantityReturn    = combinedWithUnits.quantity();
+         quantityReturn    = combinedWithUnits.quantity;
          isFirstUnitReturn = combinedWithUnits.isFirst();
       }
    }
@@ -420,14 +420,14 @@ void NamedEntity::setEitherOrOptParams(NamedParameterBundle const & namedParamet
 
    // It is the caller's responsibility to have converted to canonical units -- ie a coding error if this did not
    // happen.  Asserting without the diagnostic info is not much use, so we do the check first, then the assert.
-   auto const * suppliedUnit = combinedWithUnits->unit();
+   auto const * suppliedUnit = combinedWithUnits->unit;
    if (!suppliedUnit->isCanonical()) {
       qCritical() <<
          Q_FUNC_INFO << this->name() << "CODING ERROR:" << combinedWithUnitsParameterName << "supplied in" <<
          suppliedUnit << "instead of" << suppliedUnit->getCanonical();
       Q_ASSERT(false);
    }
-   quantityReturn    = combinedWithUnits->quantity();
+   quantityReturn    = combinedWithUnits->quantity;
    isFirstUnitReturn = combinedWithUnits->isFirst();
 
    return;

@@ -119,34 +119,34 @@ ObjectStore & Yeast::getObjectStoreTypedInstance() const {
 TypeLookup const Yeast::typeLookup {
    "Yeast",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::type                     , Yeast::m_type                     ,           NonPhysicalQuantity::Enum         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::form                     , Yeast::m_form                     ,           NonPhysicalQuantity::Enum         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::amount                   , Yeast::m_amount                   , Measurement::PqEitherMassOrVolume           ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::amountIsWeight           , Yeast::m_amountIsWeight           ,           NonPhysicalQuantity::Bool         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::laboratory               , Yeast::m_laboratory               ,           NonPhysicalQuantity::String       ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::productID                , Yeast::m_productID                ,           NonPhysicalQuantity::String       ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::minTemperature_c         , Yeast::m_minTemperature_c         , Measurement::PhysicalQuantity::Temperature  ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::maxTemperature_c         , Yeast::m_maxTemperature_c         , Measurement::PhysicalQuantity::Temperature  ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::flocculation             , Yeast::m_flocculation             ,           NonPhysicalQuantity::Enum         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::attenuation_pct          , Yeast::m_attenuation_pct          ,           NonPhysicalQuantity::Percentage   ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::notes                    , Yeast::m_notes                    ,           NonPhysicalQuantity::String       ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::bestFor                  , Yeast::m_bestFor                  ,           NonPhysicalQuantity::String       ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::timesCultured            , Yeast::m_timesCultured            ,           NonPhysicalQuantity::Count        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::maxReuse                 , Yeast::m_maxReuse                 ,           NonPhysicalQuantity::Count        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::addToSecondary           , Yeast::m_addToSecondary           ,           NonPhysicalQuantity::Bool         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::type                     , Yeast::m_type                     ,           NonPhysicalQuantity::Enum          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::form                     , Yeast::m_form                     ,           NonPhysicalQuantity::Enum          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::amount                   , Yeast::m_amount                   , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume            ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::amountIsWeight           , Yeast::m_amountIsWeight           ,           NonPhysicalQuantity::Bool          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::laboratory               , Yeast::m_laboratory               ,           NonPhysicalQuantity::String        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::productID                , Yeast::m_productID                ,           NonPhysicalQuantity::String        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::minTemperature_c         , Yeast::m_minTemperature_c         , Measurement::PhysicalQuantity::Temperature   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::maxTemperature_c         , Yeast::m_maxTemperature_c         , Measurement::PhysicalQuantity::Temperature   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::flocculation             , Yeast::m_flocculation             ,           NonPhysicalQuantity::Enum          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::attenuation_pct          , Yeast::m_attenuation_pct          ,           NonPhysicalQuantity::Percentage    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::notes                    , Yeast::m_notes                    ,           NonPhysicalQuantity::String        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::bestFor                  , Yeast::m_bestFor                  ,           NonPhysicalQuantity::String        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::timesCultured            , Yeast::m_timesCultured            ,           NonPhysicalQuantity::OrdinalNumeral),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::maxReuse                 , Yeast::m_maxReuse                 ,           NonPhysicalQuantity::OrdinalNumeral),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::addToSecondary           , Yeast::m_addToSecondary           ,           NonPhysicalQuantity::Bool          ),
       // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::alcoholTolerance_pct     , Yeast::m_alcoholTolerance_pct     ,           NonPhysicalQuantity::Percentage   ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::attenuationMin_pct       , Yeast::m_attenuationMin_pct       ,           NonPhysicalQuantity::Percentage   ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::attenuationMax_pct       , Yeast::m_attenuationMax_pct       ,           NonPhysicalQuantity::Percentage   ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::phenolicOffFlavorPositive, Yeast::m_phenolicOffFlavorPositive,           NonPhysicalQuantity::Bool         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::glucoamylasePositive     , Yeast::m_glucoamylasePositive     ,           NonPhysicalQuantity::Bool         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::killerProducingK1Toxin   , Yeast::m_killerProducingK1Toxin   ,           NonPhysicalQuantity::Bool         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::killerProducingK2Toxin   , Yeast::m_killerProducingK2Toxin   ,           NonPhysicalQuantity::Bool         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::killerProducingK28Toxin  , Yeast::m_killerProducingK28Toxin  ,           NonPhysicalQuantity::Bool         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::killerProducingKlusToxin , Yeast::m_killerProducingKlusToxin ,           NonPhysicalQuantity::Bool         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::killerNeutral            , Yeast::m_killerNeutral            ,           NonPhysicalQuantity::Bool         ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::alcoholTolerance_pct     , Yeast::m_alcoholTolerance_pct     ,           NonPhysicalQuantity::Percentage    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::attenuationMin_pct       , Yeast::m_attenuationMin_pct       ,           NonPhysicalQuantity::Percentage    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::attenuationMax_pct       , Yeast::m_attenuationMax_pct       ,           NonPhysicalQuantity::Percentage    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::phenolicOffFlavorPositive, Yeast::m_phenolicOffFlavorPositive,           NonPhysicalQuantity::Bool          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::glucoamylasePositive     , Yeast::m_glucoamylasePositive     ,           NonPhysicalQuantity::Bool          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::killerProducingK1Toxin   , Yeast::m_killerProducingK1Toxin   ,           NonPhysicalQuantity::Bool          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::killerProducingK2Toxin   , Yeast::m_killerProducingK2Toxin   ,           NonPhysicalQuantity::Bool          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::killerProducingK28Toxin  , Yeast::m_killerProducingK28Toxin  ,           NonPhysicalQuantity::Bool          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::killerProducingKlusToxin , Yeast::m_killerProducingKlusToxin ,           NonPhysicalQuantity::Bool          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::killerNeutral            , Yeast::m_killerNeutral            ,           NonPhysicalQuantity::Bool          ),
 
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Yeast::amountWithUnits    , Yeast::amountWithUnits            , Measurement::PqEitherMassOrVolume           ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Yeast::amountWithUnits    , Yeast::amountWithUnits            , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume            ),
    },
    // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
    {&NamedEntityWithInventory::typeLookup}
@@ -312,7 +312,7 @@ void Yeast::setKillerProducingKlusToxin (std::optional<bool>         const   val
 void Yeast::setKillerNeutral            (std::optional<bool>         const   val) { this->setAndNotify(PropertyNames::Yeast::killerNeutral            , m_killerNeutral            , val); return; }
 
 void Yeast::setAmountWithUnits (MassOrVolumeAmt     const   val) {
-   this->setAndNotify(PropertyNames::Yeast::amount        , this->m_amount        , val.quantity());
+   this->setAndNotify(PropertyNames::Yeast::amount        , this->m_amount        , val.quantity);
    this->setAndNotify(PropertyNames::Yeast::amountIsWeight, this->m_amountIsWeight, val.isMass()  );
    return;
 }

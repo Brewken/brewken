@@ -660,7 +660,6 @@ commonSourceFiles = files([
    'src/MashWizard.cpp',
    'src/measurement/Amount.cpp',
    'src/measurement/ColorMethods.cpp',
-   'src/measurement/ConstrainedAmount.cpp',
    'src/measurement/IbuMethods.cpp',
    'src/measurement/Measurement.cpp',
    'src/measurement/PhysicalQuantity.cpp',

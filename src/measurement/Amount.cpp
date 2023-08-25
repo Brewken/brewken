@@ -22,11 +22,11 @@
 
 namespace Measurement {
 
-   Amount::Amount(double const quantity, Unit const & unit) : m_quantity{quantity}, m_unit{&unit} {
+   Amount::Amount(double const quantity, Unit const & unit) : quantity{quantity}, unit{&unit} {
       return;
    }
 
-   Amount::Amount() : m_quantity{-1.0}, m_unit{nullptr} {
+   Amount::Amount() : quantity{-1.0}, unit{nullptr} {
       return;
    }
 
@@ -41,46 +41,39 @@ namespace Measurement {
 
    //! Move assignment.
    Amount & Amount::operator=(Amount && other) = default;
-
-   double       Amount::quantity() const { return this->m_quantity; }
-   Unit const * Amount::unit()     const { return this->m_unit    ; }
-
-   void Amount::setQuantity(double const   val) { this->m_quantity =  val; return; }
-   void Amount::setUnit    (Unit   const & val) { this->m_unit     = &val; return; }
-
 }
 
 bool operator<(Measurement::Amount const & lhs, Measurement::Amount const & rhs) {
    // Amounts in the same units are trivial to compare
-   if (lhs.unit() == rhs.unit()) {
-      return lhs.quantity() < rhs.quantity();
+   if (lhs.unit == rhs.unit) {
+      return lhs.quantity < rhs.quantity;
    }
 
    // It's a coding error if we try to compare two things that aren't a measure of the same physical quantity (because
    // it's meaningless to compare a temperature to a mass, etc
-   Q_ASSERT(lhs.unit()->getPhysicalQuantity() == rhs.unit()->getPhysicalQuantity());
+   Q_ASSERT(lhs.unit->getPhysicalQuantity() == rhs.unit->getPhysicalQuantity());
 
-   return lhs.unit()->toCanonical(lhs.quantity()).quantity() < rhs.unit()->toCanonical(lhs.quantity()).quantity();
+   return lhs.unit->toCanonical(lhs.quantity).quantity < rhs.unit->toCanonical(lhs.quantity).quantity;
 }
 
 bool operator==(Measurement::Amount const & lhs, Measurement::Amount const & rhs) {
    // Amounts in the same units are trivial to compare
-   if (lhs.unit() == rhs.unit()) {
-      return lhs.quantity() == rhs.quantity();
+   if (lhs.unit == rhs.unit) {
+      return lhs.quantity == rhs.quantity;
    }
 
    // It's a coding error if we try to compare two things that aren't a measure of the same physical quantity (because
    // it's meaningless to compare a temperature to a mass, etc
-   Q_ASSERT(lhs.unit()->getPhysicalQuantity() == rhs.unit()->getPhysicalQuantity());
+   Q_ASSERT(lhs.unit->getPhysicalQuantity() == rhs.unit->getPhysicalQuantity());
 
-   return lhs.unit()->toCanonical(lhs.quantity()).quantity() == rhs.unit()->toCanonical(lhs.quantity()).quantity();
+   return lhs.unit->toCanonical(lhs.quantity).quantity == rhs.unit->toCanonical(lhs.quantity).quantity;
 }
 
 template<class S>
 S & operator<<(S & stream, Measurement::Amount const amount) {
    // QDebug puts extra spaces around each thing you output but QTextStream does not (I think), so, to get the right gap
    // between the quantity and the unit, we need to be a bit heavy-handed.
-   stream << QString("%1 %2").arg(amount.quantity()).arg(amount.unit()->name);
+   stream << QString("%1 %2").arg(amount.quantity).arg(amount.unit->name);
    return stream;
 }
 

@@ -149,9 +149,9 @@ void HydrometerTool::retranslateUi() {
 
 void HydrometerTool::convert() {
    double correctedGravity = Algorithms::correctSgForTemperature(
-      lineEdit_inputSg       ->toCanonical().quantity(),       // measured gravity
-      lineEdit_inputTemp     ->toCanonical().quantity(),     // temperature at time of reading in Celsius
-      lineEdit_calibratedTemp->toCanonical().quantity() // calibration temperature of hydrometer in Celsius
+      lineEdit_inputSg       ->toCanonical().quantity,       // measured gravity
+      lineEdit_inputTemp     ->toCanonical().quantity,     // temperature at time of reading in Celsius
+      lineEdit_calibratedTemp->toCanonical().quantity // calibration temperature of hydrometer in Celsius
    );
 
    lineEdit_outputSg->setAmount(correctedGravity);

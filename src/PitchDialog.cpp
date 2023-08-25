@@ -88,8 +88,8 @@ void PitchDialog::calculate() {
    double rate_MpermLP = (2-0.75) * ((double)slider_pitchRate->value()) / 100.0 + 0.75;
 
    // This isn't right.
-   double og = lineEdit_OG->toCanonical().quantity();
-   double vol_l = lineEdit_vol->toCanonical().quantity();
+   double og = lineEdit_OG->toCanonical().quantity;
+   double vol_l = lineEdit_vol->toCanonical().quantity;
 
    // I somewhat aribtrarily defined "SI" for density to be specific gravity.
    // Since these calcs need plato, convert

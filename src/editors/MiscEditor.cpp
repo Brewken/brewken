@@ -72,7 +72,7 @@ void MiscEditor::writeFieldsToEditItem() {
 void MiscEditor::writeLateFieldsToEditItem() {
    // Since inventory amount isn't really an attribute of the Misc, it's best to store it after we know the
    // Misc has a DB record.
-   this->m_editItem->setInventoryAmount(lineEdit_inventory->toCanonical().quantity());
+   this->m_editItem->setInventoryAmount(lineEdit_inventory->toCanonical().quantity);
    return;
 }
 

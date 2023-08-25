@@ -34,7 +34,7 @@ bool MiscSortFilterProxyModel::isLessThan(MiscTableModel::ColumnIndex const colu
          return leftItem.toString() < rightItem.toString();
 
        case MiscTableModel::ColumnIndex::Inventory:
-         if (Measurement::qStringToSI(leftItem.toString(), Measurement::PhysicalQuantity::Mass).quantity() == 0.0 &&
+         if (Measurement::qStringToSI(leftItem.toString(), Measurement::PhysicalQuantity::Mass).quantity == 0.0 &&
              this->sortOrder() == Qt::AscendingOrder) {
             return false;
          }
