@@ -160,21 +160,8 @@ S & operator<<(S & stream, NamedParameterBundle const & namedParameterBundle) {
    static_cast<void const *>(&namedParameterBundle) << " {";
 
    for (auto const & [key, value] : namedParameterBundle.m_parameters) {
-      stream << key << "->" << value.toString() << " ";
+      stream << key << "->" << value.typeName() << ":" << value.toString() << " ";
    }
-
-///   // QHash::constKeyValueBegin() and similar functions were not introduced until Qt 5.10, and
-///   // QKeyValueIterator::operator->() was not introduced until Qt 5.15.  For the moment, we are still supporting
-///   // Qt 5.9.5, so we need to do things differently for that.
-///#if QT_VERSION < QT_VERSION_CHECK(5,15,0)
-///   for (auto ii = namedParameterBundle.cbegin(); ii != namedParameterBundle.cend(); ++ii) {
-///      stream << ii.key() << "->" << ii.value().toString() << " ";
-///   }
-///#else
-///   for (auto ii = namedParameterBundle.constKeyValueBegin(); ii != namedParameterBundle.constKeyValueEnd(); ++ii) {
-///      stream << ii->first << "->" << ii->second.toString() << " ";
-///   }
-///#endif
 
    stream << "}";
    return stream;

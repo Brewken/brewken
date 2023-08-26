@@ -41,6 +41,11 @@ namespace Measurement {
 
    //! Move assignment.
    Amount & Amount::operator=(Amount && other) = default;
+
+   bool Amount::isValid() const {
+      return (this->unit && this->quantity >= 0.0);
+   }
+
 }
 
 bool operator<(Measurement::Amount const & lhs, Measurement::Amount const & rhs) {

@@ -52,6 +52,9 @@ namespace Measurement {
 
       //! Move assignment.
       Amount & operator=(Amount && other);
+
+      //! Checks for an uninitialised (or badly initialised) amount
+      bool isValid() const;
    };
 
 }

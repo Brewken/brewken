@@ -64,7 +64,7 @@ RecipeAdditionHopTableModel::RecipeAdditionHopTableModel(QTableView * parent, bo
                                                                                          PropertyNames::Hop::alpha_pct                              }}, PrecisionInfo{1}),
          TABLE_MODEL_HEADER(RecipeAdditionHop, Year     , tr("Year"     ), PropertyPath{{PropertyNames::RecipeAdditionHop::hop,
                                                                                          PropertyNames::Hop::year                                   }}),
-         TABLE_MODEL_HEADER(RecipeAdditionHop, Amount   , tr("Amount"   ), PropertyNames::IngredientAmount::quantity                 ),
+         TABLE_MODEL_HEADER(RecipeAdditionHop, Amount   , tr("Amount"   ), PropertyNames::IngredientAmount::amount                                    , PrecisionInfo{1}),
 //         TABLE_MODEL_HEADER(RecipeAdditionHop, Inventory, tr("Inventory"), PropertyPath{{PropertyNames::RecipeAdditionHop::hop,
 //                                                                                         PropertyNames::NamedEntityWithInventory::inventoryWithUnits}}),
          TABLE_MODEL_HEADER(RecipeAdditionHop, Stage    , tr("Stage"    ), PropertyNames::RecipeAddition::stage                                       , EnumInfo{RecipeAddition::stageStringMapping, RecipeAddition::stageDisplayNames}),

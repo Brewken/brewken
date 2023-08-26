@@ -616,23 +616,47 @@ protected:
             // Note that, although we can downcast MassOrVolumeAmt to Measurement::Amount, QVariant doesn't know about
             // this.  So a QVariant holding MassOrVolumeAmt will return false from canConvert<Measurement::Amount>().
             //
+            // Similarly, since QVariant doesn't understand type aliases, it will treat two aliases to the same type as
+            // though they were different types.
+            //
+            // In certain cases (eg on the templated IngredientAmount class) we pass Measurement::Amount through the
+            // property system, even though the underlying type is an instance of the Measurement::ConstrainedAmount
+            // template such as type alias MassOrVolumeAmt or type alias MassVolumeOrCountAmt.
+            //
+            // TBD: In the long run, we might get rid of the MassOrVolumeAmt etc type aliases
+            //
+//            qDebug() << Q_FUNC_INFO << "Type Info:" << typeInfo << "; modelData" << modelData;
             Measurement::Amount amount;
-            if (typeInfo.typeIndex == typeid(MassOrVolumeAmt)) {
-               Q_ASSERT(modelData.canConvert<MassOrVolumeAmt>());
-               amount = modelData.value<MassOrVolumeAmt>();
-            } else if (typeInfo.typeIndex == typeid(MassVolumeOrCountAmt)) {
-               Q_ASSERT(modelData.canConvert<MassVolumeOrCountAmt>());
-               amount = modelData.value<MassVolumeOrCountAmt>();
-            } else if (typeInfo.typeIndex == typeid(MassOrVolumeConcentrationAmt)) {
-               Q_ASSERT(modelData.canConvert<MassOrVolumeConcentrationAmt>());
-               amount = modelData.value<MassOrVolumeConcentrationAmt>();
-            } else if (typeInfo.typeIndex == typeid(Measurement::Amount)) {
-               Q_ASSERT(modelData.canConvert<Measurement::Amount>());
+            if (modelData.canConvert<Measurement::Amount>()) {
                amount = modelData.value<Measurement::Amount>();
+            } else if (modelData.canConvert<MassOrVolumeAmt>()) {
+               amount = modelData.value<MassOrVolumeAmt>();
+            } else if (modelData.canConvert<MassVolumeOrCountAmt>()) {
+               amount = modelData.value<MassVolumeOrCountAmt>();
+            } else if (modelData.canConvert<MassOrVolumeConcentrationAmt>()) {
+               amount = modelData.value<MassOrVolumeConcentrationAmt>();
+///            if (typeInfo.typeIndex == typeid(MassOrVolumeAmt)) {
+///               Q_ASSERT(modelData.canConvert<MassOrVolumeAmt>());
+///               amount = modelData.value<MassOrVolumeAmt>();
+///            } else if (typeInfo.typeIndex == typeid(MassVolumeOrCountAmt)) {
+///               Q_ASSERT(modelData.canConvert<MassVolumeOrCountAmt>());
+///               amount = modelData.value<MassVolumeOrCountAmt>();
+///            } else if (typeInfo.typeIndex == typeid(MassOrVolumeConcentrationAmt)) {
+///               Q_ASSERT(modelData.canConvert<MassOrVolumeConcentrationAmt>());
+///               amount = modelData.value<MassOrVolumeConcentrationAmt>();
+///            } else if (typeInfo.typeIndex == typeid(Measurement::Amount)) {
+///               Q_ASSERT(modelData.canConvert<Measurement::Amount>());
+///               amount = modelData.value<Measurement::Amount>();
             } else {
                // It's a coding error if we get here
                qCritical() <<
                   Q_FUNC_INFO << columnInfo.columnFqName << "Don't know how to parse" << columnInfo.propertyPath <<
+                  "TypeInfo:" << typeInfo << ", modelData:" << modelData;
+               Q_ASSERT(false);
+            }
+            if (!amount.isValid()) {
+               qCritical() <<
+                  Q_FUNC_INFO << columnInfo.columnFqName << "Invalid amount for" << columnInfo.propertyPath <<
                   "TypeInfo:" << typeInfo << ", modelData:" << modelData;
                Q_ASSERT(false);
             }

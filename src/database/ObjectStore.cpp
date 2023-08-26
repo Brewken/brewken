@@ -886,7 +886,9 @@ public:
                return;
             }
 
-            propertyValue = QVariant(stringToUnit(primaryTable, fieldDefn, propertyValue.toString()));
+            propertyValue = QVariant::fromValue<Measurement::Unit const *>(
+               stringToUnit(primaryTable, fieldDefn, propertyValue.toString())
+            );
             return;
          }
          // No default case needed as compiler should warn us if any options covered above

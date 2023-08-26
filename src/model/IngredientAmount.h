@@ -72,6 +72,11 @@ AddPropertyName(unit    ) // Only quantity and unit should be used in database m
  *        (We cannot insert these lines with the \c INGREDIENT_AMOUNT_DECL macro because the Qt Meta Object Compiler aka
  *        MOC does not expand macros.)
  *
+ *        Note that, because the Qt MOC doesn't understand templating or type aliases, it is simpler to keep the type of
+ *        the \c amount property as \c Measurement::Amount.  The casting to and from the templated
+ *        \c Measurement::ConstrainedAmount subclass is safe because \c Measurement::ConstrainedAmount does not add any
+ *        data members to \c Measurement::Amount, and so has the same layout in memory.
+ *
  *        ADDITIONALLY, it is necessary in the class declaration of the corresponding ingredient (eg in Hop.h for hops)
  *        to add publicly accessible:
  *           static constexpr Measurement::VariantPhysicalQuantity validMeasures = ...
@@ -112,7 +117,6 @@ protected:
    }
 
    IngredientAmount(NamedParameterBundle const & namedParameterBundle) {
-
       if (namedParameterBundle.contains(PropertyNames::IngredientAmount::quantity)) {
          this->m_amount.quantity = namedParameterBundle.val<double>(PropertyNames::IngredientAmount::quantity);
          this->m_amount.unit     = namedParameterBundle.val<Measurement::Unit const *>(
@@ -135,11 +139,10 @@ protected:
 
 public:
 
-   Measurement::Amount amount() const {
-      return this->m_amount;
-   }
+   using AmountType = Measurement::ConstrainedAmount<decltype(IngredientClass::validMeasures),
+                                                     IngredientClass::validMeasures>;
 
-   Measurement::Amount getAmount() const {
+   AmountType getAmount() const {
       return this->m_amount;
    }
 
@@ -158,7 +161,7 @@ public:
       return IngredientClass::defaultMeasure;
    }
 
-   void doSetAmount(Measurement::Amount const & val) {
+   void doSetAmount(AmountType const & val) {
       //
       // For the moment, we keep the database layer and update one column from one property, hence the split into two
       // separate calls here.  If we ended up doing this sort of stuff in a lot of places, we could expand the
@@ -193,7 +196,7 @@ public:
    }
 
 protected:
-   Measurement::ConstrainedAmount<decltype(IngredientClass::validMeasures), IngredientClass::validMeasures> m_amount;
+   AmountType m_amount;
 };
 
 template<class Derived, class IngredientClass>
@@ -210,6 +213,12 @@ TypeLookup const IngredientAmount<Derived, IngredientClass>::typeLookup {
       //
       // This does show the advantage of being able to use the macros elsewhere! :)
       //
+      {&PropertyNames::IngredientAmount::amount,
+       TypeInfo::construct<decltype(IngredientAmount<Derived, IngredientClass>::m_amount)>(
+          PropertyNames::IngredientAmount::amount,
+          TypeLookupOf<decltype(IngredientAmount<Derived, IngredientClass>::m_amount)>::value,
+          IngredientClass::validMeasures
+       )},
       {&PropertyNames::IngredientAmount::quantity,
        TypeInfo::construct<decltype(IngredientAmount<Derived, IngredientClass>::m_amount.quantity)>(
           PropertyNames::IngredientAmount::quantity,
@@ -243,7 +252,7 @@ TypeLookup const IngredientAmount<Derived, IngredientClass>::typeLookup {
    /* Note that a friend statement can either apply to all instances of              */ \
    /* IngredientAmount or to one specialisation.  It cannot apply to a partial       */ \
    /* specialisation.  Hence why we need to specify IngredientClass here.            */ \
-   friend class IngredientAmount<Derived, IngredientClass>; \
+   friend class IngredientAmount<Derived, IngredientClass>;                             \
                                                                                             \
    public:                                                                                  \
    /*=========================== IA "GETTER" MEMBER FUNCTIONS ===========================*/ \
@@ -266,7 +275,7 @@ TypeLookup const IngredientAmount<Derived, IngredientClass>::typeLookup {
  *        We implement the "getter" functions inline in the macros because they are trivial, but do the setters in
  *        the CRTP base above as there's a bit more to them.
  */
-#define INGREDIENT_AMOUNT_COMMON_CODE(Derived) \
+#define INGREDIENT_AMOUNT_COMMON_CODE(Derived, IngredientClass) \
    /*============================ "GETTER" MEMBER FUNCTIONS ============================*/ \
    Measurement::Amount           Derived::amount  () const { return this->getAmount  (); } \
    double                        Derived::quantity() const { return this->getQuantity(); } \

@@ -155,7 +155,7 @@ Hop * InventoryHop::hop() const {
 
 
 // Boilerplate code for IngredientAmount
-INGREDIENT_AMOUNT_COMMON_CODE(InventoryHop)
+INGREDIENT_AMOUNT_COMMON_CODE(InventoryHop, Hop)
 
 //////////////////////////////////////////////// OLD OLD OLD OLD OLD OLD ////////////////////////////////////////////////
 

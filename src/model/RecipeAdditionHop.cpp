@@ -262,4 +262,4 @@ void RecipeAdditionHop::setHop(Hop * const val) {
 }
 
 // Boilerplate code for IngredientAmount
-INGREDIENT_AMOUNT_COMMON_CODE(RecipeAdditionHop)
+INGREDIENT_AMOUNT_COMMON_CODE(RecipeAdditionHop, Hop)
