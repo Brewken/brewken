@@ -672,22 +672,22 @@ namespace {
 
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // Field mappings for hop_additions BeerJSON records TODO
+   // Field mappings for hop_additions BeerJSON records
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // This is the same across Fermentable, Hop, Misc
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_IngredientAdditionType_ExclBase {
-      // Type                                                       XPath                      Q_PROPERTY                                                  Value Decoder
-      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "timing/time"            , PropertyNames::RecipeAddition::addAtTime_mins             ,  &BEER_JSON_TIME_UNIT_MAPPER          },
-      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "timing/duration"        , PropertyNames::RecipeAddition::duration_mins              ,  &BEER_JSON_TIME_UNIT_MAPPER          },
-      {JsonRecordDefinition::FieldType::Bool                      , "timing/continuous"      , BtString::NULL_STR                                        }, // Not supported -- see comment in model/RecipeAddition.h
-      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "timing/specific_gravity", PropertyNames::RecipeAddition::addAtGravity_sg            ,  &BEER_JSON_DENSITY_UNIT_MAPPER       },
-      {JsonRecordDefinition::FieldType::SingleUnitValue           , "timing/pH"              , PropertyNames::RecipeAddition::addAtAcidity_pH            ,  &BEER_JSON_ACIDITY_UNIT              },
-      {JsonRecordDefinition::FieldType::Int                       , "timing/step"            , PropertyNames::RecipeAddition::step                       },
-      {JsonRecordDefinition::FieldType::Enum                      , "timing/use"             , PropertyNames::RecipeAddition::stage                      ,  &RecipeAddition::stageStringMapping  },
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "amount"                 , PropertyNames::RecipeAdditionMassOrVolume::amountWithUnits,  &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
+      // Type                                                       XPath                      Q_PROPERTY                                       Value Decoder
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "timing/time"            , PropertyNames::RecipeAddition::addAtTime_mins ,  &BEER_JSON_TIME_UNIT_MAPPER          },
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "timing/duration"        , PropertyNames::RecipeAddition::duration_mins  ,  &BEER_JSON_TIME_UNIT_MAPPER          },
+      {JsonRecordDefinition::FieldType::Bool                      , "timing/continuous"      , BtString::NULL_STR                            }, // Not supported -- see comment in model/RecipeAddition.h
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "timing/specific_gravity", PropertyNames::RecipeAddition::addAtGravity_sg,  &BEER_JSON_DENSITY_UNIT_MAPPER       },
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "timing/pH"              , PropertyNames::RecipeAddition::addAtAcidity_pH,  &BEER_JSON_ACIDITY_UNIT              },
+      {JsonRecordDefinition::FieldType::Int                       , "timing/step"            , PropertyNames::RecipeAddition::step           },
+      {JsonRecordDefinition::FieldType::Enum                      , "timing/use"             , PropertyNames::RecipeAddition::stage          ,  &RecipeAddition::stageStringMapping  },
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "amount"                 , PropertyNames::IngredientAmount::amount       ,  &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
    };
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_HopAdditionType_Base {
-      // Type                                                       XPath                      Q_PROPERTY           Value Decoder
+      // Type                                                       XPath                      Q_PROPERTY                              Value Decoder
       {JsonRecordDefinition::FieldType::Record                    , ""                       , PropertyNames::RecipeAdditionHop::hop,  &BEER_JSON_RECORD_DEFINITION_HOP_IN_ADDITION},
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<RecipeAdditionHop> {

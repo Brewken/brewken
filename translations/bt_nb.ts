@@ -4232,13 +4232,6 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
 </context>
 <context>
-    <name>RecipeAdditionMassOrVolume</name>
-    <message>
-        <source>Recipe Addition (Mass or Volume)</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>RecipeExtrasWidget</name>
     <message>
         <source>Change Brewer</source>

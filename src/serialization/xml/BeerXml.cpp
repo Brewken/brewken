@@ -766,18 +766,18 @@ namespace {
       XmlRecordDefinition::create<XmlNamedEntityRecord<Hop>>,
       {
 // TODO         ¥¥¥¥ FINISH GETTING USE WORKING!
-         // Type                                  XPath                Q_PROPERTY                                                  Value Decoder
-         {XmlRecordDefinition::FieldType::Double, "AMOUNT"           , PropertyNames::RecipeAdditionMassOrVolume::amount         },
-         {XmlRecordDefinition::FieldType::Double, "TIME"             , PropertyNames::RecipeAddition::addAtTime_mins             },
-//         {XmlRecordDefinition::FieldType::Enum  , "USE"              , PropertyNames::RecipeAdditionHop::use                     , &Hop::useStringMapping}, // Need to handle this in code
-         {XmlRecordDefinition::FieldType::Record, ""                 , PropertyNames::RecipeAdditionHop::hop                     , &BEER_XML_RECORD_DEFINITION_HOP_IN_RECIPE_ADDITION_HOP},
+         // Type                                  XPath                Q_PROPERTY                                      Value Decoder
+         {XmlRecordDefinition::FieldType::Double, "AMOUNT"           , PropertyNames::IngredientAmount::amount       },
+         {XmlRecordDefinition::FieldType::Double, "TIME"             , PropertyNames::RecipeAddition::addAtTime_mins },
+//         {XmlRecordDefinition::FieldType::Enum  , "USE"              , PropertyNames::RecipeAdditionHop::use         , &Hop::useStringMapping}, // Need to handle this in code
+         {XmlRecordDefinition::FieldType::Record, ""                 , PropertyNames::RecipeAdditionHop::hop         , &BEER_XML_RECORD_DEFINITION_HOP_IN_RECIPE_ADDITION_HOP},
          // ⮜⮜⮜ Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML ⮞⮞⮞
-         {XmlRecordDefinition::FieldType::Bool  , "AMOUNT_IS_WEIGHT" , PropertyNames::RecipeAdditionMassOrVolume::amountIsWeight },
-         {XmlRecordDefinition::FieldType::Enum  , "STAGE"            , PropertyNames::RecipeAddition::stage                      , &RecipeAddition::stageStringMapping},
-         {XmlRecordDefinition::FieldType::Int   , "STEP"             , PropertyNames::RecipeAddition::step                       },
-         {XmlRecordDefinition::FieldType::Double, "ADD_AT_GRAVITY_SG", PropertyNames::RecipeAddition::addAtGravity_sg            },
-         {XmlRecordDefinition::FieldType::Double, "ADD_AT_ACIDITY_PH", PropertyNames::RecipeAddition::addAtAcidity_pH            },
-         {XmlRecordDefinition::FieldType::Double, "DURATION_MINS"    , PropertyNames::RecipeAddition::duration_mins              },
+         {XmlRecordDefinition::FieldType::Unit  , "UNIT"             , PropertyNames::IngredientAmount::unit         , &Measurement::Units::unitStringMapping},
+         {XmlRecordDefinition::FieldType::Enum  , "STAGE"            , PropertyNames::RecipeAddition::stage          , &RecipeAddition::stageStringMapping},
+         {XmlRecordDefinition::FieldType::Int   , "STEP"             , PropertyNames::RecipeAddition::step           },
+         {XmlRecordDefinition::FieldType::Double, "ADD_AT_GRAVITY_SG", PropertyNames::RecipeAddition::addAtGravity_sg},
+         {XmlRecordDefinition::FieldType::Double, "ADD_AT_ACIDITY_PH", PropertyNames::RecipeAddition::addAtAcidity_pH},
+         {XmlRecordDefinition::FieldType::Double, "DURATION_MINS"    , PropertyNames::RecipeAddition::duration_mins  },
       }
    };
 

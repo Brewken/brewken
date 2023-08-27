@@ -20,6 +20,7 @@
 #include <memory>
 #include <variant>
 
+#include "measurement/Unit.h"
 #include "serialization/xml/XQString.h"
 #include "serialization/SerializationRecordDefinition.h"
 #include "utils/EnumStringMapping.h"
@@ -60,7 +61,7 @@ public:
       RequiredConstant,  // A fixed value we have to write out in the record (used for BeerXML VERSION tag)
       Record          ,  // Single contained record
       ListOfRecords   ,  // Zero, one or more contained records
-///      INVALID // TBD: Do we need this?
+      Unit            ,  // Stored as a string in the DB.  Only used in extension tags
    };
 
    /**
@@ -74,8 +75,9 @@ public:
                                  // If fieldType == RequiredConstant, then this is actually the constant value
       using ValueDecoder =
          std::variant<std::monostate,
-                      EnumStringMapping   const *,  // FieldType::Enum
-                      XmlRecordDefinition const *>; // FieldType::Array
+                      EnumStringMapping              const *,  // FieldType::Enum
+                      Measurement::UnitStringMapping const *,  // FieldType::Unit
+                      XmlRecordDefinition            const *>; // FieldType::Array
       ValueDecoder valueDecoder;
       FieldDefinition(FieldType    type,
                       XQString     xPath,

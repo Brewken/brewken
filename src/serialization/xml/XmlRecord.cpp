@@ -26,6 +26,7 @@
 
 #include "serialization/xml/XmlCoding.h"
 #include "utils/OptionalHelpers.h"
+#include "utils/ObjectAddressStringMapping.h"
 
 //
 // Variables and constant definitions that we need only in this file
@@ -175,6 +176,10 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                // Anything else is a coding error at the caller
                Q_ASSERT((XmlRecordDefinition::FieldType::Enum == fieldDefinition.type) ==
                         std::holds_alternative<EnumStringMapping const *>(fieldDefinition.valueDecoder));
+
+               // Same applies for a unit field
+               Q_ASSERT((XmlRecordDefinition::FieldType::Unit == fieldDefinition.type) ==
+                        std::holds_alternative<Measurement::UnitStringMapping const *>(fieldDefinition.valueDecoder));
 
                //
                // We're going to need to know whether this field is "optional" in our internal data model.  If it is,
@@ -362,6 +367,30 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                         } else {
                            auto const rawValue = match.value();
                            parsedValue = Optional::variantFromRaw(rawValue, propertyIsOptional);
+                           parsedValueOk = true;
+                        }
+                     }
+                     break;
+
+                  case XmlRecordDefinition::FieldType::Unit:
+                     // It's definitely a coding error if there is no mapping for a field declared as Unit
+                     Q_ASSERT(std::holds_alternative<Measurement::UnitStringMapping const *>(fieldDefinition.valueDecoder));
+                     Q_ASSERT(std::get              <Measurement::UnitStringMapping const *>(fieldDefinition.valueDecoder));
+                     {
+                        auto const unitMapping =
+                           std::get<Measurement::UnitStringMapping const *>(fieldDefinition.valueDecoder);
+                        auto match = unitMapping->stringToObjectAddress(value);
+                        if (!match) {
+                           // This is probably a coding error as the XSD parsing should already have verified that the
+                           // contents of the node are one of the expected values.
+                           qWarning() <<
+                              Q_FUNC_INFO << "Ignoring " << this->m_recordDefinition.m_namedEntityClassName << " node " <<
+                              fieldDefinition.xPath << "=" << value << " as value not recognised";
+                        } else {
+                           // We don't currently support Qt Properties holding optional Unit
+                           Q_ASSERT(!propertyIsOptional);
+                           // parsedValue = Optional::variantFromRaw(match, propertyIsOptional);
+                           parsedValue = QVariant::fromValue<Measurement::Unit const *>(match);
                            parsedValueOk = true;
                         }
                      }
@@ -899,8 +928,25 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
                   auto match =
                      std::get<EnumStringMapping const *>(fieldDefinition.valueDecoder)->enumAsIntToString(value.toInt());
                   // It's a coding error if we couldn't find a string representation for the enum
-                  Q_ASSERT(match);
+                  Q_ASSERT(match && !match->isEmpty());
                   valueAsText = *match;
+               }
+               break;
+
+            case XmlRecordDefinition::FieldType::Unit:
+               // It's definitely a coding error if there is no mapping for a field declared as Unit!
+               Q_ASSERT(std::holds_alternative<Measurement::UnitStringMapping const *>(fieldDefinition.valueDecoder));
+               Q_ASSERT(std::get              <Measurement::UnitStringMapping const *>(fieldDefinition.valueDecoder));
+               // We don't currently support Qt Properties holding optional Unit
+               Q_ASSERT(!propertyIsOptional);
+               //if (Optional::removeOptionalWrapperIfPresent<Measurement::Unit const *>(value, propertyIsOptional)) {
+               {
+                  auto const unitMapping =
+                     std::get<Measurement::UnitStringMapping const *>(fieldDefinition.valueDecoder);
+                  auto match = unitMapping->objectAddressToString(value.value<Measurement::Unit const *>());
+                  // It's a coding error if we couldn't find a string representation for the unit
+                  Q_ASSERT(!match.isEmpty());
+                  valueAsText = match;
                }
                break;
 

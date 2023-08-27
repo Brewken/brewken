@@ -20,11 +20,9 @@
 #include <memory>
 
 #include "model/Hop.h"
-
 #include "model/IngredientAmount.h"
-
+#include "model/RecipeAddition.h"
 #include "model/RecipeAdditionBase.h"
-#include "model/RecipeAdditionMassOrVolume.h"
 #include "model/Recipe.h"
 
 //======================================================================================================================
@@ -103,11 +101,12 @@ public:
    Q_PROPERTY(Use   use   READ use   WRITE setUse STORED false)
    Q_PROPERTY(Hop * hop   READ hop   WRITE setHop             )
 
-   //! See model/IngredientAmount.h for these ones
+   // See model/IngredientAmount.h
    Q_PROPERTY(Measurement::Amount           amount    READ amount     WRITE setAmount  )
    Q_PROPERTY(double                        quantity  READ quantity   WRITE setQuantity)
    Q_PROPERTY(Measurement::Unit const *     unit      READ unit       WRITE setUnit    )
    Q_PROPERTY(Measurement::PhysicalQuantity measure   READ measure    WRITE setMeasure )
+   Q_PROPERTY(bool                          isWeight  READ isWeight   WRITE setIsWeight)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    [[deprecated]] Use use() const;

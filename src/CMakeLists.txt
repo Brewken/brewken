@@ -137,7 +137,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/model/NamedParameterBundle.cpp
     ${repoDir}/src/model/RecipeAddition.cpp
     ${repoDir}/src/model/RecipeAdditionHop.cpp
-    ${repoDir}/src/model/RecipeAdditionMassOrVolume.cpp
     ${repoDir}/src/model/Recipe.cpp
     ${repoDir}/src/model/Salt.cpp
     ${repoDir}/src/model/Step.cpp

@@ -31,6 +31,7 @@
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::IngredientAmount { BtStringConst const property{#property}; }
 AddPropertyName(amount  )
+AddPropertyName(isWeight) // Deprecated.  Used only for BeerXML support
 AddPropertyName(measure )
 AddPropertyName(quantity) // Only quantity and unit should be used in database mappings
 AddPropertyName(unit    ) // Only quantity and unit should be used in database mappings
@@ -68,9 +69,12 @@ AddPropertyName(unit    ) // Only quantity and unit should be used in database m
  *              Q_PROPERTY(double                        quantity  READ quantity   WRITE setQuantity)
  *              Q_PROPERTY(Measurement::Unit const *     unit      READ unit       WRITE setUnit    )
  *              Q_PROPERTY(Measurement::PhysicalQuantity measure   READ measure    WRITE setMeasure )
+ *              Q_PROPERTY(bool                          isWeight  READ isWeight   WRITE setIsWeight)
  *
- *        (We cannot insert these lines with the \c INGREDIENT_AMOUNT_DECL macro because the Qt Meta Object Compiler aka
- *        MOC does not expand macros.)
+ *        Note that we cannot insert these lines with the \c INGREDIENT_AMOUNT_DECL (or another macro) because the Qt
+ *        Meta Object Compiler aka MOC does not expand non-Qt macros (or at least does not do so before processing
+ *        Q_PROPERTY).  The end-result of trying to insert these lines with our own macro would be a run-time error that
+ *        the property does not exist.
  *
  *        Note that, because the Qt MOC doesn't understand templating or type aliases, it is simpler to keep the type of
  *        the \c amount property as \c Measurement::Amount.  The casting to and from the templated
@@ -161,6 +165,11 @@ public:
       return IngredientClass::defaultMeasure;
    }
 
+   //! This is only for BeerXML support
+   bool getIsWeight() const {
+      return (this->getMeasure() == Measurement::PhysicalQuantity::Mass);
+   }
+
    void doSetAmount(AmountType const & val) {
       //
       // For the moment, we keep the database layer and update one column from one property, hence the split into two
@@ -192,6 +201,14 @@ public:
                                                        IngredientClass::validMeasures>(val);
       Q_ASSERT(measureIsValid);
       this->doSetUnit(&Measurement::Unit::getCanonicalUnit(val));
+      return;
+   }
+
+   //! This is only for BeerXML support
+   void doSetIsWeight(bool const val) {
+      // In BeerXML, amount not being weight implies that it's volume.  Obviously that's not more generally true, hence
+      // this property / function only being for BeerXML support.
+      this->doSetMeasure(val ? Measurement::PhysicalQuantity::Mass : Measurement::PhysicalQuantity::Volume);
       return;
    }
 
@@ -255,17 +272,31 @@ TypeLookup const IngredientAmount<Derived, IngredientClass>::typeLookup {
    friend class IngredientAmount<Derived, IngredientClass>;                             \
                                                                                             \
    public:                                                                                  \
+   /*==================================== PROPERTIES ====================================*/ \
+   Q_PROPERTY(Measurement::Amount           amount    READ amount     WRITE setAmount  )    \
+   Q_PROPERTY(double                        quantity  READ quantity   WRITE setQuantity)    \
+   Q_PROPERTY(Measurement::Unit const *     unit      READ unit       WRITE setUnit    )    \
+   Q_PROPERTY(Measurement::PhysicalQuantity measure   READ measure    WRITE setMeasure )    \
+   Q_PROPERTY(bool                          isWeight  READ isWeight   WRITE setIsWeight)    \
    /*=========================== IA "GETTER" MEMBER FUNCTIONS ===========================*/ \
    Measurement::Amount           amount  () const;                                          \
    double                        quantity() const;                                          \
    Measurement::Unit const *     unit    () const;                                          \
    Measurement::PhysicalQuantity measure () const;                                          \
+   bool                          isWeight() const;                                          \
    /*=========================== IA "SETTER" MEMBER FUNCTIONS ===========================*/ \
    void setAmount  (Measurement::Amount           const & val);                             \
    void setQuantity(double                        const   val);                             \
    void setUnit    (Measurement::Unit const *     const   val);                             \
    void setMeasure (Measurement::PhysicalQuantity const   val);                             \
+   void setIsWeight(bool                          const   val);                             \
 
+#define INGREDIENT_AMOUNT_PROPERTIES \
+   Q_PROPERTY(Measurement::Amount           amount    READ amount     WRITE setAmount  )  \
+   Q_PROPERTY(double                        quantity  READ quantity   WRITE setQuantity)  \
+   Q_PROPERTY(Measurement::Unit const *     unit      READ unit       WRITE setUnit    )  \
+   Q_PROPERTY(Measurement::PhysicalQuantity measure   READ measure    WRITE setMeasure )  \
+   Q_PROPERTY(bool                          isWeight  READ isWeight   WRITE setIsWeight)  \
 
 /**
  * \brief Derived classes should include this in their .cpp file
@@ -281,10 +312,12 @@ TypeLookup const IngredientAmount<Derived, IngredientClass>::typeLookup {
    double                        Derived::quantity() const { return this->getQuantity(); } \
    Measurement::Unit const *     Derived::unit    () const { return this->getUnit    (); } \
    Measurement::PhysicalQuantity Derived::measure () const { return this->getMeasure (); } \
+   bool                          Derived::isWeight() const { return this->getIsWeight(); } \
    /*============================ "SETTER" MEMBER FUNCTIONS ============================*/ \
    void Derived::setAmount  (Measurement::Amount           const & val) { this->doSetAmount  (val); return; } \
    void Derived::setQuantity(double                        const   val) { this->doSetQuantity(val); return; } \
    void Derived::setUnit    (Measurement::Unit const *     const   val) { this->doSetUnit    (val); return; } \
    void Derived::setMeasure (Measurement::PhysicalQuantity const   val) { this->doSetMeasure (val); return; } \
+   void Derived::setIsWeight(bool                          const   val) { this->doSetIsWeight(val); return; } \
 
 #endif

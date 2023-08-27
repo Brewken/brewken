@@ -4243,13 +4243,6 @@ O volume final do fermentador primário é %1.</translation>
     </message>
 </context>
 <context>
-    <name>RecipeAdditionMassOrVolume</name>
-    <message>
-        <source>Recipe Addition (Mass or Volume)</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>RecipeExtrasWidget</name>
     <message>
         <source>Change Brewer</source>

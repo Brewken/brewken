@@ -19,6 +19,7 @@
 
 #include <vector>
 
+#include <QDebug>
 #include <QString>
 
 /**
