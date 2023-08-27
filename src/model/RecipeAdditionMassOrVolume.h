@@ -67,7 +67,7 @@ public:
    Q_PROPERTY(double          amount           READ amount           WRITE setAmount         )
    // Normally you aren't going to need to change this if it can be obtained from the Hop/Fermentable/etc you're adding
    Q_PROPERTY(bool            amountIsWeight   READ amountIsWeight   WRITE setAmountIsWeight )
-   Q_PROPERTY(MassOrVolumeAmt amountWithUnits  READ amountWithUnits  WRITE setAmountWithUnits)
+   Q_PROPERTY(Measurement::Amount amountWithUnits  READ amountWithUnits  WRITE setAmountWithUnits)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    double          amount         () const;

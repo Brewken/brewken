@@ -516,12 +516,12 @@ JsonRecord::~JsonRecord() = default;
                   // and unit
                   Q_ASSERT(container->is_object());
                   {
-                     // Logic similar to that for MeasurementWithUnits.  We rely on the NamedEntity subclass
-                     // (Fermentable, Yeast, Misc, etc) to know what to do with the MassOrVolumeAmt
+                     // Logic similar to that for MeasurementWithUnits.  See comment in utils/MetaTypes.h for why we use
+                     // Measurement::Amount rather than MassOrVolumeAmt.
                      std::optional<Measurement::Amount> canonicalValue = readOneOfMeasurementsWithUnits(fieldDefinition,
                                                                                                         container);
                      if (canonicalValue) {
-                        auto rawValue = static_cast<MassOrVolumeAmt>(canonicalValue.value());
+                        auto rawValue = canonicalValue.value();
                         parsedValue = Optional::variantFromRaw(rawValue, propertyIsOptional);
                         parsedValueOk = true;
                      }
@@ -1100,21 +1100,15 @@ void JsonRecord::insertValue(JsonRecordDefinition::FieldDefinition const & field
          break;
 
       case JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits:
-         // .:TODO:. For the moment, I'm assuming we only use this for mass or volume.  IF that's correct then we
-         // should rename JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits.  If not, we need to tweak a
-         // couple of things here.
-         if (Optional::removeOptionalWrapperIfPresent<MassOrVolumeAmt>(value, propertyIsOptional)) {
+         // See comment in utils/MetaTypes.h for why we use Measurement::Amount rather than MassOrVolumeAmt.
+         if (Optional::removeOptionalWrapperIfPresent<Measurement::Amount>(value, propertyIsOptional)) {
             // It's definitely a coding error if there is no list of unit decoder mappings for a field declared to
             // require such
             Q_ASSERT(
                nullptr != std::get<ListOfJsonMeasureableUnitsMappings const *>(fieldDefinition.valueDecoder)
             );
 
-            //
-            // This is mostly (TBD exclusively?) used to handle amounts of things that can be measured by mass or
-            // volume - Yeast, Misc, Fermentable, etc
-            //
-            MassOrVolumeAmt amount = value.value<MassOrVolumeAmt>();
+            Measurement::Amount amount = value.value<Measurement::Amount>();
 
             //
             // Logic is similar to MeasurementWithUnits above, except we already have the canonical units

@@ -347,11 +347,11 @@ QMetaProperty NamedEntity::metaProperty(char const * const name) const {
    return this->metaObject()->property(this->metaObject()->indexOfProperty(name));
 }
 
-template<typename T>
 void NamedEntity::setEitherOrReqParams(NamedParameterBundle const & namedParameterBundle,
                                        BtStringConst const & quantityParameterName,
                                        BtStringConst const & isFirstUnitParameterName,
                                        BtStringConst const & combinedWithUnitsParameterName,
+                                       Measurement::PhysicalQuantity const firstUnitPhysicalQuantity,
                                        double & quantityReturn,
                                        bool & isFirstUnitReturn,
                                        std::optional<bool> const defaultIsFirstUnit) {
@@ -363,7 +363,7 @@ void NamedEntity::setEitherOrReqParams(NamedParameterBundle const & namedParamet
          isFirstUnitReturn = namedParameterBundle.val<bool>(isFirstUnitParameterName);
       }
    } else {
-      auto const combinedWithUnits = namedParameterBundle.val<T>(combinedWithUnitsParameterName);
+      auto const combinedWithUnits = namedParameterBundle.val<Measurement::Amount>(combinedWithUnitsParameterName);
       // It is the caller's responsibility to have converted to canonical units -- ie a coding error if this did not
       // happen.  Asserting without the diagnostic info is not much use, so we do the check first, then the assert.
       auto const * suppliedUnit = combinedWithUnits.unit;
@@ -374,33 +374,17 @@ void NamedEntity::setEitherOrReqParams(NamedParameterBundle const & namedParamet
          Q_ASSERT(false);
       } else {
          quantityReturn    = combinedWithUnits.quantity;
-         isFirstUnitReturn = combinedWithUnits.isFirst();
+         isFirstUnitReturn = combinedWithUnits.unit->getPhysicalQuantity() == firstUnitPhysicalQuantity;
       }
    }
    return;
 }
-// Instantiate the above template function for the types that are going to use them
-// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
-template void NamedEntity::setEitherOrReqParams<MassOrVolumeAmt>(NamedParameterBundle const & namedParameterBundle,
-                                                                 BtStringConst const & quantityParameterName,
-                                                                 BtStringConst const & isFirstUnitParameterName,
-                                                                 BtStringConst const & combinedWithUnitsParameterName,
-                                                                 double & quantityReturn,
-                                                                 bool & isFirstUnitReturn,
-                                                                 std::optional<bool> const defaultIsFirstUnit);
-template void NamedEntity::setEitherOrReqParams<MassOrVolumeConcentrationAmt>(NamedParameterBundle const & namedParameterBundle,
-                                                                              BtStringConst const & quantityParameterName,
-                                                                              BtStringConst const & isFirstUnitParameterName,
-                                                                              BtStringConst const & combinedWithUnitsParameterName,
-                                                                              double & quantityReturn,
-                                                                              bool & isFirstUnitReturn,
-                                                                              std::optional<bool> const defaultIsFirstUnit);
 
-template<typename T>
 void NamedEntity::setEitherOrOptParams(NamedParameterBundle const & namedParameterBundle,
                                        BtStringConst const & quantityParameterName,
                                        BtStringConst const & isFirstUnitParameterName,
                                        BtStringConst const & combinedWithUnitsParameterName,
+                                       Measurement::PhysicalQuantity const firstUnitPhysicalQuantity,
                                        std::optional<double> & quantityReturn,
                                        bool & isFirstUnitReturn) {
    if (namedParameterBundle.contains(quantityParameterName)) {
@@ -409,7 +393,7 @@ void NamedEntity::setEitherOrOptParams(NamedParameterBundle const & namedParamet
       return;
    }
 
-   auto const combinedWithUnits = namedParameterBundle.val<std::optional<T>>(combinedWithUnitsParameterName);
+   auto const combinedWithUnits = namedParameterBundle.val<std::optional<Measurement::Amount>>(combinedWithUnitsParameterName);
    if (!combinedWithUnits) {
       // Strictly the isFirstUnitReturn is meaningless / ignored in this case, but we use true as the "default" value
       // by convention.  (Other than increased complexity, having it std::optional<bool> wouldn't buy us much.)
@@ -420,32 +404,17 @@ void NamedEntity::setEitherOrOptParams(NamedParameterBundle const & namedParamet
 
    // It is the caller's responsibility to have converted to canonical units -- ie a coding error if this did not
    // happen.  Asserting without the diagnostic info is not much use, so we do the check first, then the assert.
-   auto const * suppliedUnit = combinedWithUnits->unit;
-   if (!suppliedUnit->isCanonical()) {
+   if (!combinedWithUnits->unit->isCanonical()) {
       qCritical() <<
          Q_FUNC_INFO << this->name() << "CODING ERROR:" << combinedWithUnitsParameterName << "supplied in" <<
-         suppliedUnit << "instead of" << suppliedUnit->getCanonical();
+         combinedWithUnits->unit << "instead of" << combinedWithUnits->unit->getCanonical();
       Q_ASSERT(false);
    }
    quantityReturn    = combinedWithUnits->quantity;
-   isFirstUnitReturn = combinedWithUnits->isFirst();
+   isFirstUnitReturn = combinedWithUnits->unit->getPhysicalQuantity() == firstUnitPhysicalQuantity;
 
    return;
 }
-// Instantiate the above template function for the types that are going to use them
-template void NamedEntity::setEitherOrOptParams<MassOrVolumeAmt>(NamedParameterBundle const & namedParameterBundle,
-                                                                 BtStringConst const & quantityParameterName,
-                                                                 BtStringConst const & isFirstUnitParameterName,
-                                                                 BtStringConst const & combinedWithUnitsParameterName,
-                                                                 std::optional<double> & quantityReturn,
-                                                                 bool & isFirstUnitReturn);
-template void NamedEntity::setEitherOrOptParams<MassOrVolumeConcentrationAmt>(NamedParameterBundle const & namedParameterBundle,
-                                                                              BtStringConst const & quantityParameterName,
-                                                                              BtStringConst const & isFirstUnitParameterName,
-                                                                              BtStringConst const & combinedWithUnitsParameterName,
-                                                                              std::optional<double> & quantityReturn,
-                                                                              bool & isFirstUnitReturn);
-
 
 void NamedEntity::prepareForPropertyChange(BtStringConst const & propertyName) {
    //

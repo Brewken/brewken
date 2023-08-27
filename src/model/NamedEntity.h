@@ -422,16 +422,14 @@ protected:
     *        reading from BeerJSON, we'll get a combined quantity-and-units parameter,
     *        eg \c PropertyNames::Fermentable::amountWithUnits.
     *
-    *        This templated function does the generic work for initialising such either-or parameters from a
+    *        This function does the generic work for initialising such either-or parameters from a
     *        \c NamedParameterBundle.
-    *
-    *        Valid instantiations of this template are with \c MassOrVolumeAmt and \c MassOrVolumeConcentrationAmt.
     */
-   template<typename T>
    void setEitherOrReqParams(NamedParameterBundle const & namedParameterBundle,
                              BtStringConst const & quantityParameterName,
                              BtStringConst const & isFirstUnitParameterName,
                              BtStringConst const & combinedWithUnitsParameterName,
+                             Measurement::PhysicalQuantity const firstUnitPhysicalQuantity,
                              double & quantityReturn,
                              bool & isFirstUnitReturn,
                              std::optional<bool> const defaultIsFirstUnit = std::nullopt);
@@ -439,11 +437,11 @@ protected:
    /**
     * \brief As \c setEitherOrReqParams but for when the attribute is optional
     */
-   template<typename T>
    void setEitherOrOptParams(NamedParameterBundle const & namedParameterBundle,
                              BtStringConst const & quantityParameterName,
                              BtStringConst const & isFirstUnitParameterName,
                              BtStringConst const & combinedWithUnitsParameterName,
+                             Measurement::PhysicalQuantity const firstUnitPhysicalQuantity,
                              std::optional<double> & quantityReturn,
                              bool & isFirstUnitReturn);
 

@@ -285,7 +285,7 @@ public:
     * .:TBD JSON:. Check what else we need to do to tie in to Mixed2PhysicalQuantities, plus look at how we force weight
     * for BeerXML.
     */
-   Q_PROPERTY(MassOrVolumeAmt    amountWithUnits   READ amountWithUnits   WRITE setAmountWithUnits)
+   Q_PROPERTY(Measurement::Amount    amountWithUnits   READ amountWithUnits   WRITE setAmountWithUnits)
 
    /**
     * \brief Percentage of malt that is "glassy".  For a malt, % "glassy" + % "half glassy" + % "mealy" = 100%.
@@ -411,7 +411,7 @@ public:
     */
    Q_PROPERTY(std::optional<double>                       dmsP                  READ dmsP                  WRITE setDmsP               )
    Q_PROPERTY(bool                                        dmsPIsMassPerVolume   READ dmsPIsMassPerVolume   WRITE setDmsPIsMassPerVolume)
-   Q_PROPERTY(std::optional<MassOrVolumeConcentrationAmt> dmsPWithUnits         READ dmsPWithUnits         WRITE setDmsPWithUnits      )
+   Q_PROPERTY(std::optional<Measurement::Amount> dmsPWithUnits         READ dmsPWithUnits         WRITE setDmsPWithUnits      )
 
    /**
     * \brief Free Amino Nitrogen (FAN) is a measure of the concentration of nitrogen-containing compounds -- including
@@ -427,7 +427,7 @@ public:
     */
    Q_PROPERTY(std::optional<double>                       fan                  READ fan                  WRITE setFan               )
    Q_PROPERTY(bool                                        fanIsMassPerVolume   READ fanIsMassPerVolume   WRITE setFanIsMassPerVolume)
-   Q_PROPERTY(std::optional<MassOrVolumeConcentrationAmt> fanWithUnits         READ fanWithUnits         WRITE setFanWithUnits      )
+   Q_PROPERTY(std::optional<Measurement::Amount> fanWithUnits         READ fanWithUnits         WRITE setFanWithUnits      )
 
    /**
     * \brief Fermentability is used in Extracts to indicate a baseline typical apparent attenuation for a typical medium
@@ -451,7 +451,7 @@ public:
     */
    Q_PROPERTY(std::optional<double>                         betaGlucan                  READ betaGlucan                  WRITE setBetaGlucan               )
    Q_PROPERTY(bool                                          betaGlucanIsMassPerVolume   READ betaGlucanIsMassPerVolume   WRITE setBetaGlucanIsMassPerVolume)
-   Q_PROPERTY(std::optional<MassOrVolumeConcentrationAmt>   betaGlucanWithUnits         READ betaGlucanWithUnits         WRITE setBetaGlucanWithUnits      )
+   Q_PROPERTY(std::optional<Measurement::Amount>   betaGlucanWithUnits         READ betaGlucanWithUnits         WRITE setBetaGlucanWithUnits      )
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    Type    type                                       () const;
@@ -498,10 +498,10 @@ public:
    bool                      betaGlucanIsMassPerVolume() const;
 
    // Combined getters (all added for BeerJSON support)
-   MassOrVolumeAmt                             amountWithUnits    () const;
-   std::optional<MassOrVolumeConcentrationAmt> dmsPWithUnits      () const;
-   std::optional<MassOrVolumeConcentrationAmt> fanWithUnits       () const;
-   std::optional<MassOrVolumeConcentrationAmt> betaGlucanWithUnits() const;
+   Measurement::Amount                             amountWithUnits    () const;
+   std::optional<Measurement::Amount> dmsPWithUnits      () const;
+   std::optional<Measurement::Amount> fanWithUnits       () const;
+   std::optional<Measurement::Amount> betaGlucanWithUnits() const;
 
    // Calculated getters.
    double  equivSucrose_kg       () const;
@@ -553,10 +553,10 @@ public:
    void setBetaGlucanIsMassPerVolume(bool                      const   val);
 
    // Combined setters (all added for BeerJSON support)
-   void setAmountWithUnits    (MassOrVolumeAmt                             const   val);
-   void setDmsPWithUnits      (std::optional<MassOrVolumeConcentrationAmt> const   val);
-   void setFanWithUnits       (std::optional<MassOrVolumeConcentrationAmt> const   val);
-   void setBetaGlucanWithUnits(std::optional<MassOrVolumeConcentrationAmt> const   val);
+   void setAmountWithUnits    (Measurement::Amount                             const   val);
+   void setDmsPWithUnits      (std::optional<Measurement::Amount> const   val);
+   void setFanWithUnits       (std::optional<Measurement::Amount> const   val);
+   void setBetaGlucanWithUnits(std::optional<Measurement::Amount> const   val);
 
    // Insert boiler-plate declarations for inventory
    INVENTORY_COMMON_HEADER_DECLS
@@ -602,12 +602,12 @@ private:
    std::optional<double>     m_friability_pct           ;
    std::optional<double>     m_di_ph                    ;
    std::optional<double>     m_viscosity_cP             ;
-   std::optional<double>     m_dmsP                     ;
+   std::optional<double>     m_dmsP                     ; // MassOrVolumeConcentrationAmt
    bool                      m_dmsPIsMassPerVolume      ;
-   std::optional<double>     m_fan                      ;
+   std::optional<double>     m_fan                      ; // MassOrVolumeConcentrationAmt
    bool                      m_fanIsMassPerVolume       ;
    std::optional<double>     m_fermentability_pct       ;
-   std::optional<double>     m_betaGlucan               ;
+   std::optional<double>     m_betaGlucan               ; // MassOrVolumeConcentrationAmt
    bool                      m_betaGlucanIsMassPerVolume;
 };
 

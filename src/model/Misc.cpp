@@ -133,12 +133,13 @@ Misc::Misc(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_producer            , namedParameterBundle, PropertyNames::Misc::producer ),
    SET_REGULAR_FROM_NPB (m_productId           , namedParameterBundle, PropertyNames::Misc::productId) {
 
-   this->setEitherOrReqParams<MassOrVolumeAmt>(namedParameterBundle,
-                                               PropertyNames::Misc::amount,
-                                               PropertyNames::Misc::amountIsWeight,
-                                               PropertyNames::Misc::amountWithUnits,
-                                               this->m_amount,
-                                               this->m_amountIsWeight);
+   this->setEitherOrReqParams(namedParameterBundle,
+                              PropertyNames::Misc::amount,
+                              PropertyNames::Misc::amountIsWeight,
+                              PropertyNames::Misc::amountWithUnits,
+                              Measurement::PhysicalQuantity::Mass,
+                              this->m_amount,
+                              this->m_amountIsWeight);
    return;
 }
 
@@ -172,7 +173,7 @@ QString                  Misc::notes         () const { return                  
 QString                  Misc::producer      () const { return                    m_producer      ; }
 QString                  Misc::productId     () const { return                    m_productId     ; }
 
-MassOrVolumeAmt Misc::amountWithUnits() const { return MassOrVolumeAmt{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
+Measurement::Amount Misc::amountWithUnits() const { return Measurement::Amount{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
 
 //============================"SET" METHODS=====================================
 void Misc::setType          (Type                     const   val) { this->setAndNotify( PropertyNames::Misc::type          , this->m_type          , val); }
@@ -188,9 +189,9 @@ void Misc::setProducer      (QString                  const & val) { this->setAn
 void Misc::setProductId     (QString                  const & val) { this->setAndNotify(PropertyNames::Misc::productId      , this->m_productId     , val); }
 
 
-void Misc::setAmountWithUnits(MassOrVolumeAmt const   val) {
+void Misc::setAmountWithUnits(Measurement::Amount const   val) {
    this->setAndNotify(PropertyNames::Misc::amount        , this->m_amount        , val.quantity);
-   this->setAndNotify(PropertyNames::Misc::amountIsWeight, this->m_amountIsWeight, val.isMass()  );
+   this->setAndNotify(PropertyNames::Misc::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
    return;
 }
 

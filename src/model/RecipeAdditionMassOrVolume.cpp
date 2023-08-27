@@ -55,13 +55,14 @@ RecipeAdditionMassOrVolume::RecipeAdditionMassOrVolume(NamedParameterBundle cons
    RecipeAddition{namedParameterBundle} {
    // Note we specify the optional seventh parameter (defaultIsFirstUnit) here as true because, eg, if we're reading in
    // from BeerXML, the amountIsWeight flag might not be present, in which case we should assume weight.
-   this->setEitherOrReqParams<MassOrVolumeAmt>(namedParameterBundle,
-                                               PropertyNames::RecipeAdditionMassOrVolume::amount         ,
-                                               PropertyNames::RecipeAdditionMassOrVolume::amountIsWeight ,
-                                               PropertyNames::RecipeAdditionMassOrVolume::amountWithUnits,
-                                               this->m_amount,
-                                               this->m_amountIsWeight,
-                                               true);
+   this->setEitherOrReqParams(namedParameterBundle,
+                              PropertyNames::RecipeAdditionMassOrVolume::amount         ,
+                              PropertyNames::RecipeAdditionMassOrVolume::amountIsWeight ,
+                              PropertyNames::RecipeAdditionMassOrVolume::amountWithUnits,
+                              Measurement::PhysicalQuantity::Mass,
+                              this->m_amount,
+                              this->m_amountIsWeight,
+                              true);
    return;
 }
 
@@ -84,6 +85,6 @@ void RecipeAdditionMassOrVolume::setAmount         (double          const val) {
 void RecipeAdditionMassOrVolume::setAmountIsWeight (bool            const val) { this->setAndNotify(PropertyNames::RecipeAdditionMassOrVolume::amountIsWeight, this->m_amountIsWeight,                  val           ); return; }
 void RecipeAdditionMassOrVolume::setAmountWithUnits(MassOrVolumeAmt const val){
    this->setAndNotify(PropertyNames::RecipeAdditionMassOrVolume::amount        , this->m_amount        , val.quantity);
-   this->setAndNotify(PropertyNames::RecipeAdditionMassOrVolume::amountIsWeight, this->m_amountIsWeight, val.isMass  ());
+   this->setAndNotify(PropertyNames::RecipeAdditionMassOrVolume::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
    return;
 }

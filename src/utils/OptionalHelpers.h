@@ -23,6 +23,7 @@
 #include <QVariant>
 
 #include "Logging.h"
+#include "measurement/PhysicalQuantity.h"
 #include "utils/TypeTraits.h"
 
 // Note that we cannot include utils/TypeLookup.h because it includes this header
@@ -156,17 +157,20 @@ namespace Optional {
     * \param constrainedAmount Input
     * \param quantity Output (along with return value)
     *
-    * \return isFirstUnit
+    * \return \true if the unit of the quantity is of type physicalQuantity (or if there was no quantity); false otherwise
     */
    template<typename T>
-   bool eitherOr(std::optional<T> const & constrainedAmount, std::optional<double> & quantity) {
+   bool eitherOr(std::optional<T> const & constrainedAmount,
+                 std::optional<double> & quantity,
+                 Measurement::PhysicalQuantity const physicalQuantity) {
       if (!constrainedAmount) {
          quantity = std::nullopt;
-         // The return value is not really meaningful here, but by convention the default is \c true
+         // The return value is not strictly meaningful here, but, for the moment, it's simpler to keep the return type
+         // bool
          return true;
       }
       quantity = constrainedAmount->quantity;
-      return constrainedAmount->isFirst();
+      return (constrainedAmount->unit->getPhysicalQuantity() == physicalQuantity);
    }
 
    /**

@@ -54,14 +54,23 @@ Q_DECLARE_METATYPE(std::optional<QDate       >)
 Q_DECLARE_METATYPE(std::optional<QString     >)
 Q_DECLARE_METATYPE(std::optional<unsigned int>)
 
-// Need these to be able to use MassOrVolumeAmt and MassOrVolumeConcentrationAmt in Qt Properties system
-Q_DECLARE_METATYPE(MassOrVolumeAmt               )
-Q_DECLARE_METATYPE(std::optional<MassOrVolumeAmt>)
-Q_DECLARE_METATYPE(MassVolumeOrCountAmt)
-Q_DECLARE_METATYPE(std::optional<MassVolumeOrCountAmt>)
-Q_DECLARE_METATYPE(MassOrVolumeConcentrationAmt               )
-Q_DECLARE_METATYPE(std::optional<MassOrVolumeConcentrationAmt>)
-
+//
+// We need to be able to pass Measurement::Amount through the Qt Properties system.  Note that we do *not* pass
+// Measurement::ConstrainedAmount classes such as MassOrVolumeAmt, MassVolumeOrCountAmt or MassOrVolumeConcentrationAmt.
+// This is because the Qt Meta Object Compiler (MOC) that parses Q_DECLARE_METATYPE doesn't understand new types and so,
+// eg, would not know that:
+//    MassOrVolumeAmt
+// is the same as:
+//    Measurement::ConstrainedAmount<Measurement::ChoiceOfPhysicalQuantity const,
+//                                   Measurement::ChoiceOfPhysicalQuantity::Mass_Volume>
+// This is a problem with templated classes such as IngredientAmount, where we want to be able to refer to
+// Measurement::ConstrainedAmount classes using the template parameters of IngredientAmount.
+//
+// So, for any Measurement::ConstrainedAmount class, we always declare its Qt Property in terms of Measurement::Amount,
+// and we then rely on caller/getter/setter to do any necessary casting.  These casts are safe because
+// Measurement::ConstrainedAmount classes only constrain the behaviour of Measurement::Amount and do not add or change
+// any member variables.
+//
 Q_DECLARE_METATYPE(Measurement::Amount               )
 Q_DECLARE_METATYPE(std::optional<Measurement::Amount>)
 
@@ -77,6 +86,14 @@ Q_DECLARE_METATYPE(Measurement::Unit const *)
  * \brief Just to keep us on our toes, there is an additional requirement that certain new types be registered at
  *        run-time, otherwise you'll get a "Unable to handle unregistered datatype" error and eg \c QObject::property
  *        will return a \c QVariant that is not valid (ie for which \c isValid() returns \c false).
+ *
+ *        The Qt doco (https://doc.qt.io/qt-6/qmetatype.html#qRegisterMetaType-2) says:
+ *
+ *           To use the type T in QMetaType, QVariant, or with the QObject::property() API, registration is not
+ *           necessary.
+ *              To use the type T in queued signal and slot connections, qRegisterMetaType<T>() must be called before
+ *           the first connection is established. That is typically done in the constructor of the class that uses T,
+ *           or in the main() function.
  *
  *        Again, we choose to do all this run-time registration in one place, viz this function, which should be called
  *        from \c main before invoking \c Application::run().

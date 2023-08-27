@@ -232,7 +232,7 @@ public:
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 
    //! \brief Amounts of a \c Yeast can be measured by mass or by volume (depending usually on its \c Form)
-   Q_PROPERTY(MassOrVolumeAmt        amountWithUnits           READ amountWithUnits           WRITE setAmountWithUnits          )
+   Q_PROPERTY(Measurement::Amount        amountWithUnits           READ amountWithUnits           WRITE setAmountWithUnits          )
    //! \brief The recommended limit of abv by the culture producer before attenuation stops.
    Q_PROPERTY(std::optional<double>  alcoholTolerance_pct      READ alcoholTolerance_pct      WRITE setAlcoholTolerance_pct     )
    Q_PROPERTY(std::optional<double>  attenuationMin_pct        READ attenuationMin_pct        WRITE setAttenuationMin_pct       )

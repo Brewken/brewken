@@ -81,18 +81,8 @@ namespace Measurement {
       /**
        * \brief Returns \c true if the unit is of type \c PQ1, \c false otherwise
        */
-      bool isFirst() const {
+      [[deprecated]] bool isFirst() const {
          return this->Measurement::Amount::unit->getPhysicalQuantity() == Measurement::defaultPhysicalQuantity<PQT, pqt>();
-      }
-
-      //! Deprecated
-      bool isMass() const {
-         return this->Measurement::Amount::unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass;
-      }
-
-      //! Deprecated
-      bool isMassConcentration() const {
-         return this->Measurement::Amount::unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::MassConcentration;
       }
 
    private:

@@ -112,12 +112,13 @@ Salt::Salt(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_percent_acid, namedParameterBundle, PropertyNames::Salt::percentAcid),
    SET_REGULAR_FROM_NPB (m_is_acid     , namedParameterBundle, PropertyNames::Salt::isAcid     ) {
 
-   this->setEitherOrReqParams<MassOrVolumeAmt>(namedParameterBundle,
-                                               PropertyNames::Salt::amount,
-                                               PropertyNames::Salt::amountIsWeight,
-                                               PropertyNames::Salt::amountWithUnits,
-                                               this->m_amount,
-                                               this->m_amountIsWeight);
+   this->setEitherOrReqParams(namedParameterBundle,
+                              PropertyNames::Salt::amount,
+                              PropertyNames::Salt::amountIsWeight,
+                              PropertyNames::Salt::amountWithUnits,
+                              Measurement::PhysicalQuantity::Mass,
+                              this->m_amount,
+                              this->m_amountIsWeight);
    return;
 }
 
@@ -142,7 +143,10 @@ bool            Salt::isAcid        () const { return this->m_is_acid         ; 
 bool            Salt::amountIsWeight() const { return this->m_amountIsWeight; }
 double          Salt::percentAcid   () const { return this->m_percent_acid    ; }
 
-MassOrVolumeAmt                             Salt::amountWithUnits    () const { return MassOrVolumeAmt{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
+MassOrVolumeAmt Salt::amountWithUnits() const {
+   return MassOrVolumeAmt{this->m_amount,
+                          this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters};
+}
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
 void Salt::setAmount(double val) {
@@ -199,7 +203,7 @@ void Salt::setPercentAcid(double val) {
 
 void Salt::setAmountWithUnits(MassOrVolumeAmt const   val) {
    this->setAndNotify(PropertyNames::Salt::amount        , this->m_amount        , val.quantity);
-   this->setAndNotify(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, val.isMass());
+   this->setAndNotify(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
    return;
 }
 

@@ -572,7 +572,8 @@ protected:
             unsigned int precision = 3;
             if (columnInfo.extras) {
                Q_ASSERT(std::holds_alternative<BtTableModel::PrecisionInfo>(*columnInfo.extras));
-               BtTableModel::PrecisionInfo const & precisionInfo = std::get<BtTableModel::PrecisionInfo>(*columnInfo.extras);
+               BtTableModel::PrecisionInfo const & precisionInfo =
+                  std::get<BtTableModel::PrecisionInfo>(*columnInfo.extras);
                precision = precisionInfo.precision;
             }
             // We assert that percentages are numbers and therefore either are double or convertible to double
@@ -607,7 +608,6 @@ protected:
                                              columnInfo.getForcedRelativeScale())
                );
             }
-//            qDebug() << Q_FUNC_INFO << "Raw value:" << rawValue << ", modelData:" << modelData;
          } else if (std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*typeInfo.fieldType) ||
                     typeInfo.typeIndex == typeid(Measurement::Amount)) {
             //
@@ -625,28 +625,9 @@ protected:
             //
             // TBD: In the long run, we might get rid of the MassOrVolumeAmt etc type aliases
             //
-//            qDebug() << Q_FUNC_INFO << "Type Info:" << typeInfo << "; modelData" << modelData;
             Measurement::Amount amount;
             if (modelData.canConvert<Measurement::Amount>()) {
                amount = modelData.value<Measurement::Amount>();
-            } else if (modelData.canConvert<MassOrVolumeAmt>()) {
-               amount = modelData.value<MassOrVolumeAmt>();
-            } else if (modelData.canConvert<MassVolumeOrCountAmt>()) {
-               amount = modelData.value<MassVolumeOrCountAmt>();
-            } else if (modelData.canConvert<MassOrVolumeConcentrationAmt>()) {
-               amount = modelData.value<MassOrVolumeConcentrationAmt>();
-///            if (typeInfo.typeIndex == typeid(MassOrVolumeAmt)) {
-///               Q_ASSERT(modelData.canConvert<MassOrVolumeAmt>());
-///               amount = modelData.value<MassOrVolumeAmt>();
-///            } else if (typeInfo.typeIndex == typeid(MassVolumeOrCountAmt)) {
-///               Q_ASSERT(modelData.canConvert<MassVolumeOrCountAmt>());
-///               amount = modelData.value<MassVolumeOrCountAmt>();
-///            } else if (typeInfo.typeIndex == typeid(MassOrVolumeConcentrationAmt)) {
-///               Q_ASSERT(modelData.canConvert<MassOrVolumeConcentrationAmt>());
-///               amount = modelData.value<MassOrVolumeConcentrationAmt>();
-///            } else if (typeInfo.typeIndex == typeid(Measurement::Amount)) {
-///               Q_ASSERT(modelData.canConvert<Measurement::Amount>());
-///               amount = modelData.value<Measurement::Amount>();
             } else {
                // It's a coding error if we get here
                qCritical() <<
@@ -742,13 +723,10 @@ protected:
             // Comments above in readDataFromModel apply equally here.  You can cast between MassOrVolumeAmt and
             // Measurement::Amount, but not between QVariant<MassOrVolumeAmt> and QVariant<Measurement::Amount>, so
             // we have to do the casting before we wrap.
-            if (typeInfo.typeIndex == typeid(MassOrVolumeAmt)) {
-               processedValue = Optional::variantFromRaw(static_cast<MassOrVolumeAmt>(amount), typeInfo.isOptional());
-            } else if (typeInfo.typeIndex == typeid(MassOrVolumeConcentrationAmt)) {
-               processedValue = Optional::variantFromRaw(static_cast<MassOrVolumeConcentrationAmt>(amount),
+            if (std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*typeInfo.fieldType) ||
+                typeInfo.typeIndex == typeid(Measurement::Amount)) {
+               processedValue = Optional::variantFromRaw(static_cast<Measurement::Amount>(amount),
                                                          typeInfo.isOptional());
-            } else if (typeInfo.typeIndex == typeid(Measurement::Amount)) {
-               processedValue = Optional::variantFromRaw(amount, typeInfo.isOptional());
             } else {
                // It's a coding error if we get here
                qCritical() <<
@@ -759,11 +737,13 @@ protected:
          }
       }
 
-      MainWindow::instance().doOrRedoUpdate(*row,
-                                            columnInfo.propertyPath,
-                                            typeInfo,
-                                            processedValue,
-                                            NE::tr("Change %1 %2").arg(NE::staticMetaObject.className()).arg(columnInfo.columnName));
+      MainWindow::instance().doOrRedoUpdate(
+         *row,
+         columnInfo.propertyPath,
+         typeInfo,
+         processedValue,
+         NE::tr("Change %1 %2").arg(NE::staticMetaObject.className()).arg(columnInfo.columnName)
+      );
 
       return true;
    }

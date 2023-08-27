@@ -313,7 +313,7 @@ void Yeast::setKillerNeutral            (std::optional<bool>         const   val
 
 void Yeast::setAmountWithUnits (MassOrVolumeAmt     const   val) {
    this->setAndNotify(PropertyNames::Yeast::amount        , this->m_amount        , val.quantity);
-   this->setAndNotify(PropertyNames::Yeast::amountIsWeight, this->m_amountIsWeight, val.isMass()  );
+   this->setAndNotify(PropertyNames::Yeast::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
    return;
 }
 

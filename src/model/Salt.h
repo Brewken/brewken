@@ -125,7 +125,7 @@ public:
    //! \brief Is this an acid or salt?
    Q_PROPERTY(bool      isAcid         READ isAcid         WRITE setIsAcid          )
 
-   Q_PROPERTY(MassOrVolumeAmt    amountWithUnits   READ amountWithUnits   WRITE setAmountWithUnits)
+   Q_PROPERTY(Measurement::Amount    amountWithUnits   READ amountWithUnits   WRITE setAmountWithUnits)
 
    double          amount()         const;
    Salt::WhenToAdd whenToAdd()      const;

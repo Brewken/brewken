@@ -16,10 +16,6 @@
 #include "utils/MetaTypes.h"
 
 void registerMetaTypes() {
-   qRegisterMetaType<MassOrVolumeAmt                            >();
-   qRegisterMetaType<std::optional<MassOrVolumeAmt>             >();
-   qRegisterMetaType<MassOrVolumeConcentrationAmt               >();
-   qRegisterMetaType<std::optional<MassOrVolumeConcentrationAmt>>();
    qRegisterMetaType<Measurement::Amount                        >();
    qRegisterMetaType<std::optional<Measurement::Amount>         >();
 

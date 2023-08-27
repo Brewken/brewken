@@ -143,7 +143,7 @@ public:
    /**
     * \brief Amounts of a \c Misc can be measured by mass or by volume (depending usually on what it is)
     */
-   Q_PROPERTY(MassOrVolumeAmt    amountWithUnits   READ amountWithUnits   WRITE setAmountWithUnits)
+   Q_PROPERTY(Measurement::Amount    amountWithUnits   READ amountWithUnits   WRITE setAmountWithUnits)
    Q_PROPERTY(QString            producer          READ producer          WRITE setProducer       )
    Q_PROPERTY(QString            productId         READ productId         WRITE setProductId      )
 
@@ -157,7 +157,7 @@ public:
    QString            useFor         () const;
    QString            notes          () const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   MassOrVolumeAmt    amountWithUnits() const;
+   Measurement::Amount    amountWithUnits() const;
    QString            producer       () const;
    QString            productId      () const;
 
@@ -171,7 +171,7 @@ public:
    void setUseFor         (QString            const & val);
    void setNotes          (QString            const & val);
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   void setAmountWithUnits(MassOrVolumeAmt    const   val);
+   void setAmountWithUnits(Measurement::Amount    const   val);
    void setProducer       (QString            const & val);
    void setProductId      (QString            const & val);
 

@@ -32,7 +32,7 @@ AddPropertyName(inventoryWithUnits)
 
 
 /**
- * \class NamedEntityWithInventory
+ * \class NamedEntityWithInventory  TODO This is replaced (soon) with \c Ingredient
  *
  * \brief Extends \c NamedEntity to provide functionality for storing in Inventory
  *
@@ -80,7 +80,7 @@ public:
     *
     *        NOTE: This property \b cannot be used to change between mass and volume.
     */
-   Q_PROPERTY(MassOrVolumeAmt    inventoryWithUnits   READ inventoryWithUnits   WRITE setInventoryWithUnits)
+   Q_PROPERTY(Measurement::Amount    inventoryWithUnits   READ inventoryWithUnits   WRITE setInventoryWithUnits)
 
    /**
     * \brief Override \c NamedEntity::makeChild() as we have additional work to do for objects with inventory.
@@ -93,11 +93,11 @@ public:
 
    virtual double inventory() const = 0;
    int inventoryId() const;
-   virtual MassOrVolumeAmt inventoryWithUnits() const = 0;
+   virtual Measurement::Amount inventoryWithUnits() const = 0;
 
    virtual void setInventoryAmount(double amount) = 0;
    void setInventoryId(int key);
-   virtual void setInventoryWithUnits(MassOrVolumeAmt const val) = 0;
+   virtual void setInventoryWithUnits(Measurement::Amount const val) = 0;
 
 protected:
    int m_inventory_id;
@@ -108,9 +108,9 @@ protected:
  */
 #define    INVENTORY_COMMON_HEADER_DECLS \
    virtual double inventory() const; \
-   virtual MassOrVolumeAmt inventoryWithUnits() const; \
+   virtual Measurement::Amount inventoryWithUnits() const; \
    virtual void setInventoryAmount(double amount); \
-   virtual void setInventoryWithUnits(MassOrVolumeAmt const val);
+   virtual void setInventoryWithUnits(Measurement::Amount const val);
 
 /**
  * \brief Derived classes should include this in their implementation file if they support measuring by volume and by
@@ -118,17 +118,17 @@ protected:
  */
 #define INVENTORY_COMMON_CODE(NeName) \
 double NeName::inventory() const { return InventoryUtils::getAmount(*this); } \
-MassOrVolumeAmt NeName::inventoryWithUnits() const { return MassOrVolumeAmt{InventoryUtils::getAmount(*this), this->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters}; } \
+Measurement::Amount NeName::inventoryWithUnits() const { return Measurement::Amount{InventoryUtils::getAmount(*this), this->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters}; } \
 void NeName::setInventoryAmount(double num) { InventoryUtils::setAmount(*this, num); return; } \
-void NeName::setInventoryWithUnits(MassOrVolumeAmt const  val) { this->setInventoryAmount(val.quantity); return; }
+void NeName::setInventoryWithUnits(Measurement::Amount const  val) { this->setInventoryAmount(val.quantity); return; }
 
 /**
  * \brief Derived classes should include this in their implementation file if they support measuring by mass only
  */
 #define INVENTORY_COMMON_CODE_MO(NeName) \
 double NeName::inventory() const { return InventoryUtils::getAmount(*this); } \
-MassOrVolumeAmt NeName::inventoryWithUnits() const { return MassOrVolumeAmt{InventoryUtils::getAmount(*this), Measurement::Units::kilograms}; } \
+Measurement::Amount NeName::inventoryWithUnits() const { return Measurement::Amount{InventoryUtils::getAmount(*this), Measurement::Units::kilograms}; } \
 void NeName::setInventoryAmount(double num) { InventoryUtils::setAmount(*this, num); return; } \
-void NeName::setInventoryWithUnits(MassOrVolumeAmt const  val) { this->setInventoryAmount(val.quantity); return; }
+void NeName::setInventoryWithUnits(Measurement::Amount const  val) { this->setInventoryAmount(val.quantity); return; }
 
 #endif

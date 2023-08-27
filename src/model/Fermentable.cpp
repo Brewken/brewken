@@ -240,10 +240,34 @@ Fermentable::Fermentable(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_viscosity_cP                       , namedParameterBundle, PropertyNames::Fermentable::viscosity_cP                     ),
    SET_REGULAR_FROM_NPB (m_fermentability_pct                 , namedParameterBundle, PropertyNames::Fermentable::fermentability_pct               ) {
 
-   this->setEitherOrReqParams<MassOrVolumeAmt             >(namedParameterBundle, PropertyNames::Fermentable::amount    , PropertyNames::Fermentable::amountIsWeight           , PropertyNames::Fermentable::amountWithUnits    , this->m_amount    , this->m_amountIsWeight           );
-   this->setEitherOrOptParams<MassOrVolumeConcentrationAmt>(namedParameterBundle, PropertyNames::Fermentable::dmsP      , PropertyNames::Fermentable::dmsPIsMassPerVolume      , PropertyNames::Fermentable::dmsPWithUnits      , this->m_dmsP      , this->m_dmsPIsMassPerVolume      );
-   this->setEitherOrOptParams<MassOrVolumeConcentrationAmt>(namedParameterBundle, PropertyNames::Fermentable::fan       , PropertyNames::Fermentable::fanIsMassPerVolume       , PropertyNames::Fermentable::fanWithUnits       , this->m_fan       , this->m_fanIsMassPerVolume       );
-   this->setEitherOrOptParams<MassOrVolumeConcentrationAmt>(namedParameterBundle, PropertyNames::Fermentable::betaGlucan, PropertyNames::Fermentable::betaGlucanIsMassPerVolume, PropertyNames::Fermentable::betaGlucanWithUnits, this->m_betaGlucan, this->m_betaGlucanIsMassPerVolume);
+   this->setEitherOrReqParams(namedParameterBundle,
+                              PropertyNames::Fermentable::amount    ,
+                              PropertyNames::Fermentable::amountIsWeight           ,
+                              PropertyNames::Fermentable::amountWithUnits    ,
+                              Measurement::PhysicalQuantity::Mass,
+                              this->m_amount    ,
+                              this->m_amountIsWeight           );
+   this->setEitherOrOptParams(namedParameterBundle,
+                              PropertyNames::Fermentable::dmsP      ,
+                              PropertyNames::Fermentable::dmsPIsMassPerVolume      ,
+                              PropertyNames::Fermentable::dmsPWithUnits      ,
+                              Measurement::PhysicalQuantity::MassConcentration,
+                              this->m_dmsP      ,
+                              this->m_dmsPIsMassPerVolume      );
+   this->setEitherOrOptParams(namedParameterBundle,
+                              PropertyNames::Fermentable::fan       ,
+                              PropertyNames::Fermentable::fanIsMassPerVolume       ,
+                              PropertyNames::Fermentable::fanWithUnits       ,
+                              Measurement::PhysicalQuantity::MassConcentration,
+                              this->m_fan       ,
+                              this->m_fanIsMassPerVolume       );
+   this->setEitherOrOptParams(namedParameterBundle,
+                              PropertyNames::Fermentable::betaGlucan,
+                              PropertyNames::Fermentable::betaGlucanIsMassPerVolume,
+                              PropertyNames::Fermentable::betaGlucanWithUnits,
+                              Measurement::PhysicalQuantity::MassConcentration,
+                              this->m_betaGlucan,
+                              this->m_betaGlucanIsMassPerVolume);
    return;
 }
 
@@ -340,10 +364,10 @@ std::optional<double>                  Fermentable::betaGlucan               () 
 bool                                   Fermentable::betaGlucanIsMassPerVolume() const { return                    this->m_betaGlucanIsMassPerVolume; }
 
 // Combined getters (all added for BeerJSON support)
-MassOrVolumeAmt                             Fermentable::amountWithUnits    () const { return MassOrVolumeAmt{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
-std::optional<MassOrVolumeConcentrationAmt> Fermentable::dmsPWithUnits      () const { return Optional::eitherOr<MassOrVolumeConcentrationAmt>(this->m_dmsP      , this->m_dmsPIsMassPerVolume      , Measurement::Units::milligramsPerLiter, Measurement::Units::partsPerMillion); }
-std::optional<MassOrVolumeConcentrationAmt> Fermentable::fanWithUnits       () const { return Optional::eitherOr<MassOrVolumeConcentrationAmt>(this->m_fan       , this->m_fanIsMassPerVolume       , Measurement::Units::milligramsPerLiter, Measurement::Units::partsPerMillion); }
-std::optional<MassOrVolumeConcentrationAmt> Fermentable::betaGlucanWithUnits() const { return Optional::eitherOr<MassOrVolumeConcentrationAmt>(this->m_betaGlucan, this->m_betaGlucanIsMassPerVolume, Measurement::Units::milligramsPerLiter, Measurement::Units::partsPerMillion); }
+Measurement::Amount                             Fermentable::amountWithUnits    () const { return MassOrVolumeAmt{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
+std::optional<Measurement::Amount> Fermentable::dmsPWithUnits      () const { return Optional::eitherOr<MassOrVolumeConcentrationAmt>(this->m_dmsP      , this->m_dmsPIsMassPerVolume      , Measurement::Units::milligramsPerLiter, Measurement::Units::partsPerMillion); }
+std::optional<Measurement::Amount> Fermentable::fanWithUnits       () const { return Optional::eitherOr<MassOrVolumeConcentrationAmt>(this->m_fan       , this->m_fanIsMassPerVolume       , Measurement::Units::milligramsPerLiter, Measurement::Units::partsPerMillion); }
+std::optional<Measurement::Amount> Fermentable::betaGlucanWithUnits() const { return Optional::eitherOr<MassOrVolumeConcentrationAmt>(this->m_betaGlucan, this->m_betaGlucanIsMassPerVolume, Measurement::Units::milligramsPerLiter, Measurement::Units::partsPerMillion); }
 
 
 bool Fermentable::isExtract() const {
@@ -412,28 +436,28 @@ void Fermentable::setFermentability_pct       (std::optional<double>     const  
 void Fermentable::setBetaGlucan               (std::optional<double>     const   val) { this->setAndNotify(PropertyNames::Fermentable::betaGlucan               , this->m_betaGlucan               , val                                  ); return; }
 void Fermentable::setBetaGlucanIsMassPerVolume(bool                      const   val) { this->setAndNotify(PropertyNames::Fermentable::betaGlucanIsMassPerVolume, this->m_betaGlucanIsMassPerVolume, val                                  ); return; }
 
-void Fermentable::setAmountWithUnits          (MassOrVolumeAmt           const   val) {
+void Fermentable::setAmountWithUnits          (Measurement::Amount           const   val) {
    this->setAndNotify(PropertyNames::Fermentable::amount        , this->m_amount        , val.quantity);
-   this->setAndNotify(PropertyNames::Fermentable::amountIsWeight, this->m_amountIsWeight, val.isMass()  );
+   this->setAndNotify(PropertyNames::Fermentable::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
    return;
 }
-void Fermentable::setDmsPWithUnits      (std::optional<MassOrVolumeConcentrationAmt> const   val) {
+void Fermentable::setDmsPWithUnits      (std::optional<Measurement::Amount> const   val) {
    std::optional<double> quantity = std::nullopt; // Gets set by Optional::eitherOr
-   bool const isMassPerVolume = Optional::eitherOr(val, quantity);
+   bool const isMassPerVolume = Optional::eitherOr(val, quantity, Measurement::PhysicalQuantity::MassConcentration);
    this->setAndNotify(PropertyNames::Fermentable::dmsP               , this->m_dmsP               , quantity       );
    this->setAndNotify(PropertyNames::Fermentable::dmsPIsMassPerVolume, this->m_dmsPIsMassPerVolume, isMassPerVolume);
    return;
 }
-void Fermentable::setFanWithUnits       (std::optional<MassOrVolumeConcentrationAmt> const   val) {
+void Fermentable::setFanWithUnits       (std::optional<Measurement::Amount> const   val) {
    std::optional<double> quantity = std::nullopt; // Gets set by Optional::eitherOr
-   bool const isMassPerVolume = Optional::eitherOr(val, quantity);
+   bool const isMassPerVolume = Optional::eitherOr(val, quantity, Measurement::PhysicalQuantity::MassConcentration);
    this->setAndNotify(PropertyNames::Fermentable::fan               , this->m_fan               , quantity       );
    this->setAndNotify(PropertyNames::Fermentable::fanIsMassPerVolume, this->m_fanIsMassPerVolume, isMassPerVolume);
    return;
 }
-void Fermentable::setBetaGlucanWithUnits(std::optional<MassOrVolumeConcentrationAmt> const   val) {
+void Fermentable::setBetaGlucanWithUnits(std::optional<Measurement::Amount> const   val) {
    std::optional<double> quantity = std::nullopt; // Gets set by Optional::eitherOr
-   bool const isMassPerVolume = Optional::eitherOr(val, quantity);
+   bool const isMassPerVolume = Optional::eitherOr(val, quantity, Measurement::PhysicalQuantity::MassConcentration);
    this->setAndNotify(PropertyNames::Fermentable::betaGlucan               , this->m_betaGlucan               , quantity       );
    this->setAndNotify(PropertyNames::Fermentable::betaGlucanIsMassPerVolume, this->m_betaGlucanIsMassPerVolume, isMassPerVolume);
    return;
