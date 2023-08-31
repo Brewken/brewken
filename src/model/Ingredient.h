@@ -19,6 +19,7 @@
 
 #include "model/NamedEntity.h"
 #include "utils/EnumStringMapping.h"
+#include "utils/TypeTraits.h"
 
 class NamedParameterBundle;
 
@@ -50,6 +51,28 @@ public:
 
    virtual ~Ingredient();
 
+   //=================================================== PROPERTIES ====================================================
+   /**
+    * \brief For the moment, we have a single "total amount" inventory for a given \c Ingredient instance (eg \c Hop etc
+    *        instance).  This property and its associated accessors allow the total to be read and modified without
+    *        directly obtaining an \c Inventory object (eg \c InventoryHop object etc).
+    */
+   Q_PROPERTY(Measurement::Amount totalInventory   READ totalInventory   WRITE setTotalInventory)
+
+   //============================================ "GETTER" MEMBER FUNCTIONS ============================================
+   virtual Measurement::Amount totalInventory() const = 0;
+
+   //============================================ "SETTER" MEMBER FUNCTIONS ============================================
+   virtual void setTotalInventory(Measurement::Amount const & val) = 0;
+
 };
+
+/**
+ * \brief For templates that require a parameter to be a subclass of \c Ingredient, this makes the concept requirement
+ *        slightly more concise.
+ *
+ *        See comment in utils/TypeTraits.h for definition of CONCEPT_FIX_UP (and why, for now, we need it).
+ */
+template <typename T> concept CONCEPT_FIX_UP IsIngredient = std::is_base_of_v<Ingredient, T>;
 
 #endif

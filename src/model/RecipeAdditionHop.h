@@ -30,7 +30,7 @@
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::RecipeAdditionHop { BtStringConst const property{#property}; }
 AddPropertyName(hop)
-AddPropertyName(use                  ) // Deprecated - retained only for BeerXML
+AddPropertyName(use) // Deprecated - retained only for BeerXML
 
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================

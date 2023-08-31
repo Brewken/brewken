@@ -20,7 +20,6 @@
 #include <QFlags>
 
 #include "measurement/Unit.h"
-#include "model/Ingredient.h"
 #include "model/NamedParameterBundle.h"
 #include "utils/CuriouslyRecurringTemplateBase.h"
 #include "utils/EnumStringMapping.h"
@@ -272,12 +271,6 @@ TypeLookup const IngredientAmount<Derived, IngredientClass>::typeLookup {
    friend class IngredientAmount<Derived, IngredientClass>;                             \
                                                                                             \
    public:                                                                                  \
-   /*==================================== PROPERTIES ====================================*/ \
-   Q_PROPERTY(Measurement::Amount           amount    READ amount     WRITE setAmount  )    \
-   Q_PROPERTY(double                        quantity  READ quantity   WRITE setQuantity)    \
-   Q_PROPERTY(Measurement::Unit const *     unit      READ unit       WRITE setUnit    )    \
-   Q_PROPERTY(Measurement::PhysicalQuantity measure   READ measure    WRITE setMeasure )    \
-   Q_PROPERTY(bool                          isWeight  READ isWeight   WRITE setIsWeight)    \
    /*=========================== IA "GETTER" MEMBER FUNCTIONS ===========================*/ \
    Measurement::Amount           amount  () const;                                          \
    double                        quantity() const;                                          \
@@ -291,20 +284,10 @@ TypeLookup const IngredientAmount<Derived, IngredientClass>::typeLookup {
    void setMeasure (Measurement::PhysicalQuantity const   val);                             \
    void setIsWeight(bool                          const   val);                             \
 
-#define INGREDIENT_AMOUNT_PROPERTIES \
-   Q_PROPERTY(Measurement::Amount           amount    READ amount     WRITE setAmount  )  \
-   Q_PROPERTY(double                        quantity  READ quantity   WRITE setQuantity)  \
-   Q_PROPERTY(Measurement::Unit const *     unit      READ unit       WRITE setUnit    )  \
-   Q_PROPERTY(Measurement::PhysicalQuantity measure   READ measure    WRITE setMeasure )  \
-   Q_PROPERTY(bool                          isWeight  READ isWeight   WRITE setIsWeight)  \
-
 /**
  * \brief Derived classes should include this in their .cpp file
  *
  *        Note we have to be careful about comment formats in macro definitions.
- *
- *        We implement the "getter" functions inline in the macros because they are trivial, but do the setters in
- *        the CRTP base above as there's a bit more to them.
  */
 #define INGREDIENT_AMOUNT_COMMON_CODE(Derived, IngredientClass) \
    /*============================ "GETTER" MEMBER FUNCTIONS ============================*/ \

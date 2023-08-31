@@ -1,5 +1,5 @@
 /*======================================================================================================================
- *  is part of Brewken, and is copyright the following authors 2021-2023:
+ * model/Inventory.h is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -21,12 +21,13 @@
 
 #include <QObject>
 
+#include "database/ObjectStoreWrapper.h"
 #include "model/NamedParameterBundle.h"
-#include "model/IngredientAmount.h"
+#include "model/Ingredient.h"
+#include "model/NamedEntity.h"
 
-#include "model/Hop.h"
 
-
+class Hop;
 class ObjectStore;
 class TypeLookup;
 
@@ -87,12 +88,33 @@ public:
 
    //=================================================== PROPERTIES ====================================================
    Q_PROPERTY(int    ingredientId     READ ingredientId     WRITE setIngredientId    )
+   /**
+    * These properties are defined here with virtual accessors.  Child classes actually get the implementations by
+    * inheriting from \c IngredientAmount.
+    */
+   Q_PROPERTY(Measurement::Amount           amount    READ amount     WRITE setAmount  )
+   Q_PROPERTY(double                        quantity  READ quantity   WRITE setQuantity)
+   Q_PROPERTY(Measurement::Unit const *     unit      READ unit       WRITE setUnit    )
+   Q_PROPERTY(Measurement::PhysicalQuantity measure   READ measure    WRITE setMeasure )
+   Q_PROPERTY(bool                          isWeight  READ isWeight   WRITE setIsWeight)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    int ingredientId() const;
 
+   virtual Measurement::Amount           amount  () const = 0;
+   virtual double                        quantity() const = 0;
+   virtual Measurement::Unit const *     unit    () const = 0;
+   virtual Measurement::PhysicalQuantity measure () const = 0;
+   virtual bool                          isWeight() const = 0;
+
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setIngredientId(int const val);
+
+   virtual void setAmount  (Measurement::Amount           const & val) = 0;
+   virtual void setQuantity(double                        const   val) = 0;
+   virtual void setUnit    (Measurement::Unit const *     const   val) = 0;
+   virtual void setMeasure (Measurement::PhysicalQuantity const   val) = 0;
+   virtual void setIsWeight(bool                          const   val) = 0;
 
 
    //============================================= OTHER MEMBER FUNCTIONS ==============================================
@@ -133,49 +155,46 @@ protected:
 };
 
 /**
- * \brief Inventory of \c Hop
+ * \brief For templates that require a parameter to be a subclass of \c Inventory, this makes the concept requirement
+ *        slightly more concise.
+ *
+ *        See comment in utils/TypeTraits.h for definition of CONCEPT_FIX_UP (and why, for now, we need it).
  */
-class InventoryHop : public Inventory, public IngredientAmount<InventoryHop, Hop> {
-   Q_OBJECT
+template <typename T> concept CONCEPT_FIX_UP IsInventory = std::is_base_of_v<Inventory, T>;
 
-   INGREDIENT_AMOUNT_DECL(InventoryHop, Hop)
+/**
+ * \return A suitable \c Inventory subclass object for the supplied \c Ingredient subclass object.  If the former does
+ *         not exist, it will be created.
+ *
+ *         NOTE that, provided the relevant ¥¥¥
+ */
+template<IsInventory Inv, IsIngredient Ing>
+Inv * getInventory(Ing const & ing) {
+   auto ingredientId = ing.key();
 
-public:
-   /**
-    * \brief See comment in model/NamedEntity.h
-    */
-   static QString const LocalisedName;
+   //
+   // At the moment, we assume there is at most on Inventory object per ingredient object.  In time we would like to
+   // extend this to manage, eg, different purchases/batches as separate Inventory items, but that's for another day.
+   //
+   Inv * result = ObjectStoreWrapper::findFirstMatching<Inv>(
+      [ingredientId](Inv const * inventory) {
+         return inventory->ingredientId() == ingredientId;
+      }
+   );
+   if (result) {
+      return result;
+   }
 
-   /**
-    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
-    *        info.
-    */
-   static TypeLookup const typeLookup;
-
-   InventoryHop();
-   InventoryHop(NamedParameterBundle const & namedParameterBundle);
-   InventoryHop(InventoryHop const & other);
-
-   virtual ~InventoryHop();
-
-   //=================================================== PROPERTIES ====================================================
-   // See model/IngredientAmount.h
-   Q_PROPERTY(Measurement::Amount           amount    READ amount     WRITE setAmount  )
-   Q_PROPERTY(double                        quantity  READ quantity   WRITE setQuantity)
-   Q_PROPERTY(Measurement::Unit const *     unit      READ unit       WRITE setUnit    )
-   Q_PROPERTY(Measurement::PhysicalQuantity measure   READ measure    WRITE setMeasure )
-   Q_PROPERTY(bool                          isWeight  READ isWeight   WRITE setIsWeight)
-
-public:
-   virtual char const * getIngredientClass() const;
-   Hop * hop() const ;
-
-protected:
-   virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual ObjectStore & getObjectStoreTypedInstance() const;
-
-};
-
+   std::shared_ptr<Inv> newInventory = std::make_shared<Inv>();
+   newInventory->setIngredientId(ingredientId);
+   // Even though the Inventory base class does not have a setQuantity member function, we know that all its
+   // subclasses will, so this line will be fine when this template function is instantiated.
+   newInventory->setQuantity(0.0);
+   // After this next call, the object store will have a copy of the shared pointer, so it is OK that it subsequently
+   // goes out of scope here.
+   ObjectStoreWrapper::insert<Inv>(newInventory);
+   return newInventory.get();
+}
 
 
 //////////////////////////////////////////////// OLD OLD OLD OLD OLD OLD ////////////////////////////////////////////////

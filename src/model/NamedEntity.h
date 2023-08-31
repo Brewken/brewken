@@ -91,41 +91,10 @@ AddPropertyName(parentKey)
  *        I know \b NamedEntity isn't the snappiest name, but it's the best we've come up with so far.  If you look at
  *        older versions of the code, you'll see that this class has previously been called \b Ingredient and
  *        \b BeerXMLElement.  The current name tries to best reflect what the class represents.  Although some of this
- *        class's subclasses (eg \b Hop, \b Fermentable, \b Yeast) are ingredients in the normal sense of the word,
- *        others (eg \b Instruction, \b Equipment, \b Style, \b Mash) are not really.  Equally, the fact that derived
- *        classes can be instantiated from BeerXML is not their defining characteristic.
- *
- *        NOTE: One of the things that can be confusing about our class and DB structure is that we are often
- *        doubling-up two different concepts: a global "variety" record/object and a recipe-specific "use of"
- *        record/object.  Eg, there might be one global "variety" record/object for Fuggle hops, with information about
- *        origin, average alpha acid etc.  Then, each time this type of hop is used in a recipe, there will be a
- *        related record with information about quantity used, actual alpha acid, etc PLUS a COPY of all the information
- *        in the variety record.  The "use of" and "variety" records are stored in the same DB table and the
- *        relationship between them is tracked via parent_id/child_id - where "variety" is the parent and "use of" is
- *        the child.
- *           This structure exists for historical reasons because the code was originally modelled on the BeerXML data
- *        structure (which doesn't really distinguish between "variety" and "use of") and, in the beginning, did not use
- *        a relational database (operating directly on BeerXML files instead).
- *           If we were starting today from a blank sheet of paper, you might, quite reasonably, argue that we should
- *        have separate DB tables and classes for "variety" and "use of" -- eg HopVariety and HopUse (or HopAddition).
- *        However, given where we actually are at the moment, it would be a very considerable amount of work to get to
- *        such a structure -- and it feels like we have a lot more important issues to which we should devote our
- *        efforts.
- *           Moreover, such a would actually remove some potentially valuable flexibility from the code.  It is open to
- *        debate exactly which fields belong in the "variety" record, which ones belong in the "use of" record, and
- *        which ones should be should be in both, and we might want to leave it open (within reason) for different users
- *        to do different things.  Eg, for hops, BeerJSON requires name and alpha acid in both types of records, allows
- *        (but does not require) producer, product ID, origin, year, form (ie leaf/pellet/etc) and beta acid in either
- *        type, but only allows oil content and inventory information in the "variety" record.  This isn't wrong per se,
- *        but it means that, if you want separate BeerJSON inventory records for Fuggle 2021 harvest and Fuggle 2022
- *        harvest, then you need two separate Fuggle variety records, which might not be what you want.  (This also then
- *        makes you think there should be three types of Hop record, but I'm not going to go there!)
- *           So, for the moment at least, we (mostly) retain the idea that a single class/table for both "variety" and
- *        "use of" objects/records.  You just have to be mindful of this when looking at the code and the DB -- eg
- *        the amount field of a Hop can be either inventory or how much to add to a recipe, depending on whether it's a
- *        "variety" or "use of" record.
- *        .:TODO:. It would be good to make explicit which member variables (and their getters/setters) are valid ONLY
- *        for "use of".
+ *        class's subclasses (eg \b Hop, \b Fermentable, \b Yeast) are ingredients in the normal sense of the word (and
+ *        this is now reflected in the \c Ingredient abstract class), others (eg \b Instruction, \b Equipment, \b Style,
+ *        \b Mash) are not really.  Equally, the fact that derived classes can be instantiated from BeerXML is not their
+ *        defining characteristic.
  *
  *        NOTE: Although we can template individual member functions, we cannot make this a template class (eg to use
  *        https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) because the Qt Meta-Object Compiler (moc)
@@ -150,8 +119,6 @@ AddPropertyName(parentKey)
  *          - Mostly the order of enum values should not matter, eg for serialisation where we generally to convert to
  *            strings.  \b However, the .ui files and the .conf file still contain a lot of instances where the order
  *            and/or the int value of an enum do matter, so it's best to avoid changing this, for now at least.
- *
- * .:TODO:. It would be nice to have a canonical serialisation of enums
  */
 class NamedEntity : public QObject {
    Q_OBJECT
@@ -244,14 +211,11 @@ public:
     */
    bool operator!=(NamedEntity const & other) const;
 
-   //
-   // TODO We should replace the following with the spaceship operator once compiler support for C++20 is more widespread
-   //
+
    /**
-    * \brief As you might expect, this ensures we order \b NamedEntity objects by name
-    */
-   bool operator<(NamedEntity const & other) const;
-   bool operator>(NamedEntity const & other) const;
+   * \brief As you might expect, this ensures we order \b NamedEntity objects by name
+   */
+   auto operator<=>(NamedEntity const & other) const;
 
    // Everything that inherits from NamedEntity has a name, delete, display and a folder
    // TBD: Not everything _should_ have a folder -- eg MashStep does not make use of it

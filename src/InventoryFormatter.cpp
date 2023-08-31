@@ -29,6 +29,7 @@
 #include "model/Fermentable.h"
 #include "model/Hop.h"
 #include "model/Inventory.h"
+#include "model/InventoryHop.h"
 #include "model/Misc.h"
 #include "model/Yeast.h"
 #include "PersistentSettings.h"

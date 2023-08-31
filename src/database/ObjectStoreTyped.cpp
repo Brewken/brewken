@@ -29,6 +29,7 @@
 #include "model/Hop.h"
 #include "model/Instruction.h"
 #include "model/Inventory.h"
+#include "model/InventoryHop.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Misc.h"

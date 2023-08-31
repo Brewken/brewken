@@ -46,22 +46,12 @@ class Style;
 //    - You cannot have explicit instantiations, explicit specializations, or partial specializations of concepts
 // An alternative would be to use a traits struct, which has fewer limitations, but is somewhat more clunky.
 //
-// See comment in utils/TypeTraits.h for why we need two versions of this
-#if defined(__linux__ ) && defined(__GNUC__) && (__GNUC__ < 10)
-// OLD SYNTAX
-template <typename T> concept bool IsTableModel   = std::is_base_of_v<BtTableModel, T>;
-template <typename T> concept bool HasInventory   = std::is_base_of_v<BtTableModelInventory, T>;
-template <typename T> concept bool HasNoInventory = std::negation_v<std::is_base_of<BtTableModelInventory, T>>;
-template <typename T> concept bool ObservesRecipe       = std::is_base_of_v<BtTableModelRecipeObserver, T>;
-template <typename T> concept bool DoesNotObserveRecipe = std::negation_v<std::is_base_of<BtTableModelRecipeObserver, T>>;
-#else
-// NEW SYNTAX
-template <typename T> concept      IsTableModel   = std::is_base_of_v<BtTableModel, T>;
-template <typename T> concept      HasInventory   = std::is_base_of_v<BtTableModelInventory, T>;
-template <typename T> concept      HasNoInventory = std::negation_v<std::is_base_of<BtTableModelInventory, T>>;
-template <typename T> concept      ObservesRecipe       = std::is_base_of_v<BtTableModelRecipeObserver, T>;
-template <typename T> concept      DoesNotObserveRecipe = std::negation_v<std::is_base_of<BtTableModelRecipeObserver, T>>;
-#endif
+// See comment in utils/TypeTraits.h for definition of CONCEPT_FIX_UP (and why, for now, we need it)
+template <typename T> concept CONCEPT_FIX_UP IsTableModel   = std::is_base_of_v<BtTableModel, T>;
+template <typename T> concept CONCEPT_FIX_UP HasInventory   = std::is_base_of_v<BtTableModelInventory, T>;
+template <typename T> concept CONCEPT_FIX_UP HasNoInventory = std::negation_v<std::is_base_of<BtTableModelInventory, T>>;
+template <typename T> concept CONCEPT_FIX_UP ObservesRecipe       = std::is_base_of_v<BtTableModelRecipeObserver, T>;
+template <typename T> concept CONCEPT_FIX_UP DoesNotObserveRecipe = std::negation_v<std::is_base_of<BtTableModelRecipeObserver, T>>;
 
 //
 // NOTE: At several places below in TableModelBase, we would like to have two versions of a member function depending on

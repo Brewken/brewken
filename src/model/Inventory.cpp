@@ -18,12 +18,15 @@
 #include "database/ObjectStoreWrapper.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
+#include "model/InventoryHop.h"
 #include "model/Misc.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Yeast.h"
 #include "utils/TypeLookup.h"
 
 namespace {
+
+//////////////////////////////////////////////// OLD OLD OLD OLD OLD OLD ////////////////////////////////////////////////
 
    //
    // A set of template functions and specialisations that sort of allow us to treat InventoryHop as Inventory<Hop>, etc
@@ -111,8 +114,29 @@ void Inventory::hardDeleteOwnedEntities() {
    return;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////
-QString const InventoryHop::LocalisedName = tr("Hop Inventory");
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Inventory sub classes
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//QString const InventoryFermentable::LocalisedName = tr("Fermentable Inventory");
+QString const InventoryHop        ::LocalisedName = tr("Hop Inventory");
+//QString const InventoryMisc       ::LocalisedName = tr("Misc Inventory");
+//QString const InventoryYeast      ::LocalisedName = tr("Yeast Inventory");
+
+char const * InventoryFermentable::getIngredientClass() const { return "Fermentable"; }
+char const * InventoryHop        ::getIngredientClass() const { return "Hop";         }
+char const * InventoryMisc       ::getIngredientClass() const { return "Misc";        }
+char const * InventoryYeast      ::getIngredientClass() const { return "Yeast";       }
+
+ObjectStore & InventoryFermentable::getObjectStoreTypedInstance() const { return ObjectStoreTyped<InventoryFermentable>::getInstance(); }
+ObjectStore & InventoryHop        ::getObjectStoreTypedInstance() const { return ObjectStoreTyped<InventoryHop        >::getInstance(); }
+ObjectStore & InventoryMisc       ::getObjectStoreTypedInstance() const { return ObjectStoreTyped<InventoryMisc       >::getInstance(); }
+ObjectStore & InventoryYeast      ::getObjectStoreTypedInstance() const { return ObjectStoreTyped<InventoryYeast      >::getInstance(); }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// InventoryHop
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool InventoryHop::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -127,13 +151,19 @@ bool InventoryHop::isEqualTo(NamedEntity const & other) const {
 TypeLookup const InventoryHop::typeLookup {
    "InventoryHop",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::IngredientAmount::quantity, InventoryHop::m_amount),
+      // All our properties are defined in our base classes
    },
    // Parent classes lookup.  NB: Inventory not NamedEntity!
    {&Inventory::typeLookup,
     std::addressof(IngredientAmount<InventoryHop, Hop>::typeLookup)}
 };
 static_assert(std::is_base_of<Inventory, InventoryHop>::value);
+
+InventoryHop::InventoryHop() :
+   Inventory(),
+   IngredientAmount<InventoryHop, Hop>() {
+   return;
+}
 
 InventoryHop::InventoryHop(NamedParameterBundle const & namedParameterBundle) :
    Inventory                          {namedParameterBundle},
@@ -152,7 +182,6 @@ InventoryHop::~InventoryHop() = default;
 Hop * InventoryHop::hop() const {
    return ObjectStoreWrapper::getByIdRaw<Hop>(this->m_ingredientId);
 }
-
 
 // Boilerplate code for IngredientAmount
 INGREDIENT_AMOUNT_COMMON_CODE(InventoryHop, Hop)
@@ -271,15 +300,6 @@ void OldInventory::hardDeleteOwnedEntities() {
 }
 
 
-char const * InventoryFermentable::getIngredientClass() const { return "Fermentable"; }
-char const * InventoryHop::getIngredientClass()         const { return "Hop";         }
-char const * InventoryMisc::getIngredientClass()        const { return "Misc";        }
-char const * InventoryYeast::getIngredientClass()       const { return "Yeast";       }
-
-ObjectStore & InventoryFermentable::getObjectStoreTypedInstance() const { return ObjectStoreTyped<InventoryFermentable>::getInstance(); }
-ObjectStore & InventoryHop::getObjectStoreTypedInstance()         const { return ObjectStoreTyped<InventoryHop        >::getInstance(); }
-ObjectStore & InventoryMisc::getObjectStoreTypedInstance()        const { return ObjectStoreTyped<InventoryMisc       >::getInstance(); }
-ObjectStore & InventoryYeast::getObjectStoreTypedInstance()       const { return ObjectStoreTyped<InventoryYeast      >::getInstance(); }
 
 template<class Ing>
 void InventoryUtils::setAmount(Ing & ing, double amount) {

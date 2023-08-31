@@ -26,6 +26,7 @@
 
 #include "database/ObjectStoreWrapper.h"
 #include "model/Inventory.h"
+#include "model/InventoryHop.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
@@ -321,4 +322,4 @@ Recipe * Hop::getOwningRecipe() const {
 }
 
 // Insert the boiler-plate stuff for inventory
-///INVENTORY_COMMON_CODE(Hop)
+INGREDIENT_BASE_COMMON_CODE(Hop)

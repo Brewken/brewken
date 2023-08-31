@@ -30,8 +30,11 @@
 #include <QSqlRecord>
 
 #include "model/Ingredient.h"
+#include "model/IngredientBase.h"
 #include "model/IngredientAmount.h"
 #include "utils/EnumStringMapping.h"
+
+class InventoryHop;
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
@@ -78,9 +81,10 @@ AddPropertyName(year                 )
  *
  * TODO TODO TODO TODO TODO TODO TODO TODO TODO Sort out inventory!
  */
-///class Hop : public NamedEntityWithInventory {
-class Hop : public Ingredient {
+class Hop : public Ingredient, public IngredientBase<Hop> {
    Q_OBJECT
+
+   INGREDIENT_BASE_DECL(Hop)
 
 public:
    /**
@@ -151,6 +155,8 @@ public:
     */
    static constexpr auto validMeasures  = Measurement::ChoiceOfPhysicalQuantity::Mass_Volume;
    static constexpr auto defaultMeasure = Measurement::PhysicalQuantity::Mass;
+
+   using InventoryClass = InventoryHop;
 
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more

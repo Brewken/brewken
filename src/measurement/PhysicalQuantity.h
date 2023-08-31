@@ -26,6 +26,7 @@
 #include <QString>
 
 #include "utils/BtStringConst.h"
+#include "utils/TypeTraits.h"
 
 class EnumStringMapping;
 
@@ -235,18 +236,11 @@ namespace Measurement {
    //
    // It's also useful to be able to template on "either PhysicalQuantity or ChoiceOfPhysicalQuantity".
    //
-   // See comment in utils/TypeTraits.h for why we need two versions of this
+   // See comment in utils/TypeTraits.h for definition of CONCEPT_FIX_UP (and why, for now, we need it)
    template <typename T>
-#if defined(__linux__ ) && defined(__GNUC__) && (__GNUC__ < 10)
-   // OLD SYNTAX
-   concept bool PhysicalQuantityConstTypes =
-#else
-   // NEW SYNTAX
-   concept      PhysicalQuantityConstTypes =
-#endif
+   concept CONCEPT_FIX_UP PhysicalQuantityConstTypes =
       std::same_as<T, Measurement::PhysicalQuantity const> ||
       std::same_as<T, Measurement::ChoiceOfPhysicalQuantity const>;
-
 
    /**
     * \brief For each set of alternates implied by a value of \c ChoiceOfPhysicalQuantity, there needs to be a default

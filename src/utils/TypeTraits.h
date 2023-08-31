@@ -17,6 +17,7 @@
 #define UTILS_TYPETRAITS_H
 #pragma once
 
+#include <optional>
 #include <type_traits>
 
 /**
@@ -67,18 +68,20 @@ template <typename T> struct is_non_optional_enum : public std::is_enum<T>{};
 //
 // This bit requires C++20 or later.  It makes the specialisations of TypeInfo::construct() below a bit less clunky
 // Older versions of GCC (eg as shipped with Ubuntu 20.04 LTS) have a sort of pre-release support for concepts so we
-// have to use non-standard syntax there
+// have to use non-standard syntax there.
+//
+// Rather than define every concept twice - once for old compilers and once for new ones, we use the preprocessor to
+// add in the extra word ("bool") if and only if we're using an old compiler.
 //
 #if defined(__linux__ ) && defined(__GNUC__) && (__GNUC__ < 10)
-template <typename T> concept bool IsRequiredEnum  = std::is_enum<T>::value;
-template <typename T> concept bool IsRequiredOther = !std::is_enum<T>::value && !is_optional<T>::value;
-template <typename T> concept bool IsOptionalEnum  = is_optional_enum<T>::value;
-template <typename T> concept bool IsOptionalOther = !is_optional_enum<T>::value && is_optional<T>::value;
+#define CONCEPT_FIX_UP bool
 #else
-template <typename T> concept IsRequiredEnum  = std::is_enum<T>::value;
-template <typename T> concept IsRequiredOther = !std::is_enum<T>::value && !is_optional<T>::value;
-template <typename T> concept IsOptionalEnum  = is_optional_enum<T>::value;
-template <typename T> concept IsOptionalOther = !is_optional_enum<T>::value && is_optional<T>::value;
+#define CONCEPT_FIX_UP
 #endif
+
+template <typename T> concept CONCEPT_FIX_UP IsRequiredEnum  = std::is_enum<T>::value;
+template <typename T> concept CONCEPT_FIX_UP IsRequiredOther = !std::is_enum<T>::value && !is_optional<T>::value;
+template <typename T> concept CONCEPT_FIX_UP IsOptionalEnum  = is_optional_enum<T>::value;
+template <typename T> concept CONCEPT_FIX_UP IsOptionalOther = !is_optional_enum<T>::value && is_optional<T>::value;
 
 #endif

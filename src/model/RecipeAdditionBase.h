@@ -25,10 +25,10 @@
  *        \c RecipeAdditionFermentable, \c RecipeAdditionMisc, \c RecipeAdditionYeast.
  *
  * \param Derived = the derived class, eg \c RecipeAdditionHop
- * \param Ingredient = the ingredient class, eg \c Hop
+ * \param IngredientClass = the ingredient class, eg \c Hop
  */
 template<class Derived> class RecipeAdditionPhantom;
-template<class Derived, class Ingredient>
+template<class Derived, class IngredientClass>
 class RecipeAdditionBase : public CuriouslyRecurringTemplateBase<RecipeAdditionPhantom, Derived> {
 
 protected:
@@ -42,7 +42,7 @@ public:
    /**
     * \brief Create \c RecipeAddition##NeName objects for a given \c Recipe from \c NeName objects
     */
-   static QList<std::shared_ptr<Derived>> create(Recipe & recipe, QList<Ingredient *> ingredients) {
+   static QList<std::shared_ptr<Derived>> create(Recipe & recipe, QList<IngredientClass *> ingredients) {
       QList<std::shared_ptr<Derived>> listOfAdditions;
       for (auto ingredient : ingredients) {
          auto addition = std::make_shared<Derived>(recipe, *ingredient);
@@ -60,17 +60,15 @@ public:
 /**
  * \brief Derived classes should include this in their header file, right after Q_OBJECT
  *
- *        We use NeName here rather than Ingredient or IngredientName for consistency with all our other CRTP macros.
- *
  *        Note we have to be careful about comment formats in macro definitions
  */
-#define RECIPE_ADDITION_DECL(NeName) \
+#define RECIPE_ADDITION_DECL(Ingrd) \
    /* This allows RecipeAdditionBase to call protected and private members of Derived */     \
-   friend class RecipeAdditionBase<RecipeAddition##NeName, NeName>;                          \
+   friend class RecipeAdditionBase<RecipeAddition##Ingrd, Ingrd>;                            \
                                                                                              \
    public:                                                                                   \
-   RecipeAddition##NeName(Recipe & recipe, NeName & ne) :                                    \
-     RecipeAddition##NeName{QString(tr("Add %1").arg(ne.name())), recipe.key(), ne.key()} {  \
+   RecipeAddition##Ingrd(Recipe & recipe, Ingrd & ne) :                                      \
+     RecipeAddition##Ingrd{QString(tr("Add %1").arg(ne.name())), recipe.key(), ne.key()} {   \
      return;                                                                                 \
    }                                                                                         \
 

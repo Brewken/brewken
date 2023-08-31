@@ -19,7 +19,9 @@
  =====================================================================================================================*/
 #include "model/NamedEntity.h"
 
+#include <compare>
 #include <typeinfo>
+#include <string>
 
 #include <QDebug>
 #include <QMetaProperty>
@@ -216,8 +218,12 @@ bool NamedEntity::operator!=(NamedEntity const & other) const {
    return !(*this == other);
 }
 
-bool NamedEntity::operator<(const NamedEntity & other) const { return (this->m_name < other.m_name); }
-bool NamedEntity::operator>(const NamedEntity & other) const { return (this->m_name > other.m_name); }
+auto NamedEntity::operator<=>(NamedEntity const & other) const {
+   // The spaceship operator is not defined for two QString objects, but it is defined for a pair of std::u16string,
+   // which is close to the same thing (in that QString stores "a string of 16-bit QChars, where each QChar corresponds
+   // to one UTF-16 code unit".
+   return this->m_name.toStdU16String() <=> other.m_name.toStdU16String();
+}
 
 bool NamedEntity::deleted() const {
    return this->m_deleted;

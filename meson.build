@@ -865,6 +865,7 @@ mocHeaders = files([
    'src/model/Ingredient.h',
    'src/model/Instruction.h',
    'src/model/Inventory.h',
+   'src/model/InventoryHop.h', # NB: Function definitions in model/Inventory.cpp
    'src/model/Mash.h',
    'src/model/MashStep.h',
    'src/model/Misc.h',
