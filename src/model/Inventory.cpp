@@ -92,19 +92,18 @@ int Inventory::ingredientId() const { return this->m_ingredientId; }
 void Inventory::setIngredientId(int const val) { this->setAndNotify(PropertyNames::Inventory::ingredientId, this->m_ingredientId, val); return;}
 
 void Inventory::setDeleted([[maybe_unused]] bool var) {
-   // See comment in header.  This is not currently implemented and it's therefore a coding error if it gets called
-   Q_ASSERT(false);
+   // See comment in header.  This is currently a no-op.
    return;
 }
 
 void Inventory::setDisplay([[maybe_unused]] bool var) {
-   // See comment in header.  This is not currently implemented and it's therefore a coding error if it gets called
-   Q_ASSERT(false);
+   // See comment in header.  This is currently a no-op.
    return;
 }
 
 Recipe * Inventory::getOwningRecipe() const {
    // See comment in header.  This is not currently implemented and it's therefore a coding error if it gets called
+   qCritical().noquote() << Q_FUNC_INFO << "Call stack is:" << Logging::getStackTrace();
    Q_ASSERT(false);
    return nullptr;
 }

@@ -879,13 +879,16 @@ void Testing::pstdintTest() {
 
 
 void Testing::testInventory() {
-   bool setOk = this->pimpl->m_cascade_4pct->setProperty(*PropertyNames::NamedEntityWithInventory::inventory, 123.45);
+   Measurement::Amount amountOfHop{123.45, Measurement::Units::kilograms};
+   bool setOk = this->pimpl->m_cascade_4pct->setProperty(*PropertyNames::Ingredient::totalInventory,
+                                                         QVariant::fromValue<Measurement::Amount>(amountOfHop));
    QVERIFY2(setOk, "Error setting hop inventory property");
-   QVariant inventoryRaw = this->pimpl->m_cascade_4pct->property(*PropertyNames::NamedEntityWithInventory::inventory);
-   QVERIFY2(inventoryRaw.canConvert<double>(), "Error retrieving hop inventory property");
-   double inventory = inventoryRaw.toDouble();
+   QVariant inventoryRaw = this->pimpl->m_cascade_4pct->property(*PropertyNames::Ingredient::totalInventory);
+   QVERIFY2(inventoryRaw.canConvert<Measurement::Amount>(), "Error retrieving hop inventory property");
+   Measurement::Amount inventory = inventoryRaw.value<Measurement::Amount>();
 
-   QVERIFY2(fuzzyComp(inventory, 123.45,  0.00000001), "Wrong hop inventory amount");
+   QVERIFY2(fuzzyComp(inventory.quantity, 123.45,  0.00000001), "Wrong hop inventory amount");
+   QVERIFY2(inventory.unit == &Measurement::Units::kilograms, "Wrong hop inventory units");
 
    return;
 }
