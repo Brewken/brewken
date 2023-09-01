@@ -325,11 +325,11 @@ sharedLibraryPaths = []
 # Note that if you change the minimum Qt version, you need to make corresponding changes to the .github/workflows/*.yml
 # files so that GitHub uses the appropriate version of Qt for the automated builds.
 #
-# For the moment, max version we can have here is 5.9.5, because that's what Ubuntu 18.04 topped out at
+# For the moment, max version we can have here is 5.12.8, because that's what Ubuntu 20.04 topped out at
 
 # Tell meson which Qt modules we need
 qtCommonDependencies = dependency('qt5',
-                                  version : '>=5.9.5',
+                                  version : '>=5.12.8',
                                   modules : ['Core',
                                              'Gui',          # Needed for QColor on Mac?
                                              'Multimedia',
@@ -343,9 +343,9 @@ qtCommonDependencies = dependency('qt5',
                                   static : true)
 # The Qt Gui module is only needed for the main program.  (We don't want the tests to try to load it or it could barf
 # in a GitHub action that does not have a display running.)
-qtMainExeDependencies = dependency('qt5', version : '>=5.9.5', modules: ['Gui'])
+qtMainExeDependencies = dependency('qt5', version : '>=5.12.8', modules: ['Gui'])
 # The Qt Test module is only needed for the unit tests
-qtTestRunnerDependencies = dependency('qt5', version : '>=5.9.5', modules: ['Test'])
+qtTestRunnerDependencies = dependency('qt5', version : '>=5.12.8', modules: ['Test'])
 
 #===================================================== Find Boost ======================================================
 # Boost is a collection of separate libraries, some, but not all, of which are header-only.  We only specify the Boost

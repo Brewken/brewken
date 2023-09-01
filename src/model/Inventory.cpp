@@ -24,6 +24,12 @@
 #include "model/Yeast.h"
 #include "utils/TypeLookup.h"
 
+// If we're compiling with CMake, the AUTOMOC property will run the Qt meta-object compiler (MOC) on InventoryHop.h (to
+// produce moc_InventoryHop.cpp) but will not link the resulting code (because there is not a corresponding
+// InventoryHop.cpp.  If we include the results of the MOC here, it guarantees they get linked into the final
+// executable.
+#include "moc_InventoryHop.cpp"
+
 namespace {
 
 //////////////////////////////////////////////// OLD OLD OLD OLD OLD OLD ////////////////////////////////////////////////

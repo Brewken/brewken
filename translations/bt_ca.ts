@@ -2763,10 +2763,6 @@ If you need help, please open an issue at %1</source>
 <context>
     <name>NE</name>
     <message>
-        <source>Change %1 %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add %1 to recipe</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3039,35 +3035,6 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Could not open the file %1 for writing! please try again with a new filename or diretory</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QApplication</name>
-    <message>
-        <source>Brewken is already running!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Another instance of Brewken is already running.
-
-Running two copies of the program at once may lead to data loss.
-
-Press OK to quit.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Application terminates</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The application encountered a fatal error.
-Error message:
-%1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The application encountered a fatal error.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3781,11 +3748,11 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation type="unfinished">Afegeix a la recepta</translation>
+        <translation type="obsolete">Afegeix a la recepta</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished">Nou</translation>
+        <translation type="obsolete">Nou</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
@@ -3802,34 +3769,6 @@ Log file may contain more details.</source>
     <message>
         <source>Remove selected ingredient</source>
         <translation type="obsolete">Borra l&apos;ingredient seleccionat</translation>
-    </message>
-    <message>
-        <source>%1 name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 Catalog / Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add selected %1 to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit selected %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected %1</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Specific Volume</source>
@@ -5902,11 +5841,11 @@ El volum final al primari és de %1.</translation>
     <name>editorClass</name>
     <message>
         <source>No</source>
-        <translation type="unfinished">No</translation>
+        <translation type="obsolete">No</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Sí</translation>
+        <translation type="obsolete">Sí</translation>
     </message>
 </context>
 <context>

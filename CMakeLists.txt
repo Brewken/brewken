@@ -393,9 +393,9 @@ message(STATUS "Doing ${CMAKE_BUILD_TYPE} build (DO_RELEASE_BUILD = ${DO_RELEASE
 # Note that if you change the minimum Qt version, you need to make corresponding changes to the .github/workflows/*.yml
 # files so that GitHub uses the appropriate version of Qt for the automated builds.
 #
-# For the moment, max version we can have here is 5.9.5, because that's what Ubuntu 18.04 topped out at
+# For the moment, max version we can have here is 5.12.8, because that's what Ubuntu 20.04 topped out at
 #
-set(QT5_MIN_VERSION 5.9.5)
+set(QT5_MIN_VERSION 5.12.8)
 
 # Set the AUTOMOC property on all targets.  This tells CMake to automatically handle the Qt Meta-Object Compiler (moc)
 # preprocessor (ie the thing that handles Qt's C++ extensions), without having to use commands such as QT4_WRAP_CPP(),
@@ -1041,7 +1041,7 @@ if(APPLE)
 
    # Sets the NSHumanReadableCopyright bundle property key, which is "a human-readable copyright notice for the bundle".
    set(MACOSX_BUNDLE_COPYRIGHT
-       "Copyright 2009-2022.  Distributed under the terms of the GNU General Public License (version 3).")
+       "Copyright 2009-2023.  Distributed under the terms of the GNU General Public License (version 3).")
 
 else()
    add_executable(${fileName_executable}
@@ -1198,113 +1198,113 @@ add_test(NAME testTypeLookups             COMMAND bin/${fileName_unitTestRunner}
 add_test(NAME testInventory               COMMAND bin/${fileName_unitTestRunner} testInventory              )
 add_test(NAME testLogRotation             COMMAND bin/${fileName_unitTestRunner} testLogRotation            )
 
-#=======================================================================================================================
-#============================================== Debian-friendly ChangeLog ==============================================
-#=======================================================================================================================
-#
-# This is to create a compressed changelog in a Debian-friendly format
-#
-# NB: Even though this is a target you build (with make changelog) before doing make package, this section needs to
-#     appear below the stuff for make package so that we can reuse variables such as CPACK_DEBIAN_PACKAGE_MAINTAINER
-#
-# Our change log (CHANGES.markdown) uses markdown format, with the following raw structure:
-#    ## v1.2.3
-#
-#    Optional one-line description of the release.
-#
-#    ### New Features
-#
-#    * Blah blah blah
-#    * etc
-#
-#    ### Bug Fixes
-#
-#    * Blah blah blah
-#    * etc
-#
-#    ### Incompatibilities
-#
-#    None
-#
-#    ### Release Timestamp
-#    Sun, 06 Feb 2022 12:02:58 +0100
-#
-# However, per https://www.debian.org/doc/debian-policy/ch-source.html#debian-changelog-debian-changelog, Debian
-# change logs need to be in the following format:
-#    package (version) distribution(s); urgency=urgency
-#      [optional blank line(s), stripped]
-#      * change details
-#      more change details
-#      [blank line(s), included in output of dpkg-parsechangelog]
-#      * even more change details
-#      [optional blank line(s), stripped]
-#     -- maintainer name <email address>[two spaces]  date
-#
-# We are being a bit fast-and-loose in hard-coding the same maintainer name for each release, but I don't thing it's a
-# huge issue.
-#
-# Note that, to keep us on our toes, Debian change log lines are not supposed to be more than 80 characters long.  This
-# is non-trivial, but the ghastly bit of awk below gets us most of the way there.
-#
-if(UNIX AND NOT APPLE)
-   # Note that, whilst using VERBATIM below makes things a lot less painful, we still have to double-escape things -
-   # once for CMake and once for bash.  (Where something is single-escaped it probably means either that CMake needs the
-   # escape and the bash command does not, or vice versa.)  Also, we have more invocations of sed that we strictly need
-   # because it makes things slightly easier to follow and debug.
-   string(
-      CONCAT changeLogProcessCommands
-      "cat ${filesToInstall_changeLogUncompressed} | "
-      # Skip over the introductory headings and paragraphs of CHANGES.markdown until we get to the first version line
-      "sed -n '/^## v/,$p' | "
-      # We want to change the release timestamp to maintainer + timestamp, but we don't want to create too long a line
-      # before we do the fold command below, so use "÷÷maintainer÷÷" as a placeholder for
-      # " -- ${CPACK_DEBIAN_PACKAGE_MAINTAINER}  "
-      "sed -z 's/\\n### Release Timestamp\\n\\([^\\n]*\\)\\n/\\n÷÷maintainer÷÷\\1\\n/g' | "
-      # Join continued lines in bullet lists
-      "sed -z 's/\\n  / /g' | "
-      # Change the version to package (version) etc.  Stick a '÷' on the front of the line to protect it from
-      # modification below
-      "sed 's/^## v\\(.*\\)$/÷${PROJECT_NAME} (\\1-1) unstable\; urgency=low/' | "
-      # Change bullets to sub-bullets
-      "sed 's/^\\* /    - /' | "
-      # Change headings to bullets
-      "sed 's/^### /  * /' | "
-      # Change any lines that don't start with space OR a ÷ character to be bullets
-      "sed 's/^\\([^ ÷]\\)/  * \\1/' | "
-      # Split any long lines.  Make the width less than 80 so we've got a margin go insert spaces at the start of
-      # bullet continuation lines.
-      "fold -s --width=72 | "
-      # With a lot of help from awk, reindent the lines that were split off from a long bullet line so that they align
-      # with that previous line.
-      "awk 'BEGIN { inBullet=0 } "
-      "{"
-         "if (!inBullet) {"
-            "inBullet=match($0, \"^( +)[^ ] \", spaces)\;"
-            "print\;"
-         "} else {"
-            "bulletContinues=match($0, \"^[^ ]\")\;"
-            "if (!bulletContinues) {"
-               "inBullet=match($0, \"^( +)[^ ] \", spaces)\;"
-               "print\;"
-            "} else {"
-               "print spaces[1] \"  \" $0\;"
-            "}"
-         "}"
-      "}' | "
-      # Fix the "÷÷maintainer÷÷" placeholders
-      "sed 's/÷÷maintainer÷÷/ -- ${CPACK_DEBIAN_PACKAGE_MAINTAINER}  /' | "
-      # Remove the protective '÷' from the start of any other lines
-      "sed 's/^÷//' | "
-      "gzip --best -n --to-stdout > ${filesToInstall_changeLogCompressed}"
-   )
-   add_custom_command(
-      TARGET ${fileName_executable} POST_BUILD
-      COMMAND bash -c ${changeLogProcessCommands}
-      VERBATIM
-      COMMENT "Processing ${filesToInstall_changeLogUncompressed} to ${filesToInstall_changeLogCompressed}"
-      MAIN_DEPENDENCY ${filesToInstall_changeLogUncompressed}
-   )
-endif()
+####=======================================================================================================================
+####============================================== Debian-friendly ChangeLog ==============================================
+####=======================================================================================================================
+####
+#### This is to create a compressed changelog in a Debian-friendly format
+####
+#### NB: Even though this is a target you build (with make changelog) before doing make package, this section needs to
+####     appear below the stuff for make package so that we can reuse variables such as CPACK_DEBIAN_PACKAGE_MAINTAINER
+####
+#### Our change log (CHANGES.markdown) uses markdown format, with the following raw structure:
+####    ## v1.2.3
+####
+####    Optional one-line description of the release.
+####
+####    ### New Features
+####
+####    * Blah blah blah
+####    * etc
+####
+####    ### Bug Fixes
+####
+####    * Blah blah blah
+####    * etc
+####
+####    ### Incompatibilities
+####
+####    None
+####
+####    ### Release Timestamp
+####    Sun, 06 Feb 2022 12:02:58 +0100
+####
+#### However, per https://www.debian.org/doc/debian-policy/ch-source.html#debian-changelog-debian-changelog, Debian
+#### change logs need to be in the following format:
+####    package (version) distribution(s); urgency=urgency
+####      [optional blank line(s), stripped]
+####      * change details
+####      more change details
+####      [blank line(s), included in output of dpkg-parsechangelog]
+####      * even more change details
+####      [optional blank line(s), stripped]
+####     -- maintainer name <email address>[two spaces]  date
+####
+#### We are being a bit fast-and-loose in hard-coding the same maintainer name for each release, but I don't thing it's a
+#### huge issue.
+####
+#### Note that, to keep us on our toes, Debian change log lines are not supposed to be more than 80 characters long.  This
+#### is non-trivial, but the ghastly bit of awk below gets us most of the way there.
+####
+###if(UNIX AND NOT APPLE)
+###   # Note that, whilst using VERBATIM below makes things a lot less painful, we still have to double-escape things -
+###   # once for CMake and once for bash.  (Where something is single-escaped it probably means either that CMake needs the
+###   # escape and the bash command does not, or vice versa.)  Also, we have more invocations of sed that we strictly need
+###   # because it makes things slightly easier to follow and debug.
+###   string(
+###      CONCAT changeLogProcessCommands
+###      "cat ${filesToInstall_changeLogUncompressed} | "
+###      # Skip over the introductory headings and paragraphs of CHANGES.markdown until we get to the first version line
+###      "sed -n '/^## v/,$p' | "
+###      # We want to change the release timestamp to maintainer + timestamp, but we don't want to create too long a line
+###      # before we do the fold command below, so use "÷÷maintainer÷÷" as a placeholder for
+###      # " -- ${CPACK_DEBIAN_PACKAGE_MAINTAINER}  "
+###      "sed -z 's/\\n### Release Timestamp\\n\\([^\\n]*\\)\\n/\\n÷÷maintainer÷÷\\1\\n/g' | "
+###      # Join continued lines in bullet lists
+###      "sed -z 's/\\n  / /g' | "
+###      # Change the version to package (version) etc.  Stick a '÷' on the front of the line to protect it from
+###      # modification below
+###      "sed 's/^## v\\(.*\\)$/÷${PROJECT_NAME} (\\1-1) unstable\; urgency=low/' | "
+###      # Change bullets to sub-bullets
+###      "sed 's/^\\* /    - /' | "
+###      # Change headings to bullets
+###      "sed 's/^### /  * /' | "
+###      # Change any lines that don't start with space OR a ÷ character to be bullets
+###      "sed 's/^\\([^ ÷]\\)/  * \\1/' | "
+###      # Split any long lines.  Make the width less than 80 so we've got a margin go insert spaces at the start of
+###      # bullet continuation lines.
+###      "fold -s --width=72 | "
+###      # With a lot of help from awk, reindent the lines that were split off from a long bullet line so that they align
+###      # with that previous line.
+###      "awk 'BEGIN { inBullet=0 } "
+###      "{"
+###         "if (!inBullet) {"
+###            "inBullet=match($0, \"^( +)[^ ] \", spaces)\;"
+###            "print\;"
+###         "} else {"
+###            "bulletContinues=match($0, \"^[^ ]\")\;"
+###            "if (!bulletContinues) {"
+###               "inBullet=match($0, \"^( +)[^ ] \", spaces)\;"
+###               "print\;"
+###            "} else {"
+###               "print spaces[1] \"  \" $0\;"
+###            "}"
+###         "}"
+###      "}' | "
+###      # Fix the "÷÷maintainer÷÷" placeholders
+###      "sed 's/÷÷maintainer÷÷/ -- ${CPACK_DEBIAN_PACKAGE_MAINTAINER}  /' | "
+###      # Remove the protective '÷' from the start of any other lines
+###      "sed 's/^÷//' | "
+###      "gzip --best -n --to-stdout > ${filesToInstall_changeLogCompressed}"
+###   )
+###   add_custom_command(
+###      TARGET ${fileName_executable} POST_BUILD
+###      COMMAND bash -c ${changeLogProcessCommands}
+###      VERBATIM
+###      COMMENT "Processing ${filesToInstall_changeLogUncompressed} to ${filesToInstall_changeLogCompressed}"
+###      MAIN_DEPENDENCY ${filesToInstall_changeLogUncompressed}
+###   )
+###endif()
 
 #=================================Installs=====================================
 
@@ -1938,23 +1938,23 @@ set_property(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                                              ${packagesTarBz2Files}
                                              ${packagesChecksumFiles})
 
-if(UNIX AND NOT APPLE)
-   add_custom_target(
-      package_lint
-      # Running lintian does a very strict check on the Debian package.  You can find a list of all the error and
-      # warning codes at https://lintian.debian.org/tags.
-      #
-      # Some of the warnings are things that only matter for packages that actually ship with Debian itself - ie they
-      # won't stop the package working but are not strictly within the standards that the Debian project sets for the
-      # packages included in the distro.
-      #
-      # Still, we try to fix as many warnings as possible.  As at 2022-08-11 we currently have one warning that we do
-      # not ship a man page.  We should get to this at some point.
-      COMMAND lintian --no-tag-display-limit *.deb
-      # Running rpmlint is the equivalent exercise for RPMs.  Most common error and warning codes are listed at
-      # https://fedoraproject.org/wiki/Common_Rpmlint_issues
-      COMMAND rpmlint --config ${repoDir}/packaging/linux *.rpm
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMENT "Running lintian and on deb package and rpmlint on rpm package.  Warnings about man pages are expected!"
-   )
-endif()
+###if(UNIX AND NOT APPLE)
+###   add_custom_target(
+###      package_lint
+###      # Running lintian does a very strict check on the Debian package.  You can find a list of all the error and
+###      # warning codes at https://lintian.debian.org/tags.
+###      #
+###      # Some of the warnings are things that only matter for packages that actually ship with Debian itself - ie they
+###      # won't stop the package working but are not strictly within the standards that the Debian project sets for the
+###      # packages included in the distro.
+###      #
+###      # Still, we try to fix as many warnings as possible.  As at 2022-08-11 we currently have one warning that we do
+###      # not ship a man page.  We should get to this at some point.
+###      COMMAND lintian --no-tag-display-limit *.deb
+###      # Running rpmlint is the equivalent exercise for RPMs.  Most common error and warning codes are listed at
+###      # https://fedoraproject.org/wiki/Common_Rpmlint_issues
+###      COMMAND rpmlint --config ${repoDir}/packaging/linux *.rpm
+###      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+###      COMMENT "Running lintian and on deb package and rpmlint on rpm package.  Warnings about man pages are expected!"
+###   )
+###endif()
