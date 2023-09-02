@@ -16,8 +16,21 @@
 #include "utils/MetaTypes.h"
 
 void registerMetaTypes() {
-   qRegisterMetaType<Measurement::Amount                        >();
-   qRegisterMetaType<std::optional<Measurement::Amount>         >();
+   //
+   // Not all of these are needed, but it's simpler to register everything we mention in the header.
+   //
+   qRegisterMetaType<std::optional<bool        >          >();
+   qRegisterMetaType<std::optional<double      >          >();
+   qRegisterMetaType<std::optional<int         >          >();
+   qRegisterMetaType<std::optional<QDate       >          >();
+   qRegisterMetaType<std::optional<QString     >          >();
+   qRegisterMetaType<std::optional<unsigned int>          >();
+
+   qRegisterMetaType<Measurement::Amount                  >();
+   qRegisterMetaType<std::optional<Measurement::Amount>   >();
+   qRegisterMetaType<Measurement::PhysicalQuantity        >();
+   qRegisterMetaType<Measurement::ChoiceOfPhysicalQuantity>();
+   qRegisterMetaType<Measurement::Unit const *            >();
 
    return;
 }

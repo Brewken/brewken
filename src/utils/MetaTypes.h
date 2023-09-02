@@ -22,7 +22,9 @@
 #include <QDate>
 #include <QString>
 
-#include "measurement/ConstrainedAmount.h" // For MassOrVolumeAmt and MassOrVolumeConcentrationAmt;
+#include "measurement/Amount.h"
+#include "measurement/PhysicalQuantity.h"
+#include "measurement/Unit.h"
 
 //
 // It is useful in various places to be able to store member variables in QVariant objects.
@@ -96,7 +98,8 @@ Q_DECLARE_METATYPE(Measurement::Unit const *)
  *           or in the main() function.
  *
  *        Again, we choose to do all this run-time registration in one place, viz this function, which should be called
- *        from \c main before invoking \c Application::run().
+ *        from \c main before invoking \c Application::run().  Of course, for the unit tests to work properly, it
+ *        \b also needs to be called from the constructor of \c Testing.
  */
 void registerMetaTypes();
 

@@ -22,6 +22,9 @@
 #include <QDebug>
 #include <QString>
 
+#include "Logging.h"
+#include "utils/MetaTypes.h"
+
 /**
  * \brief For global const objects, such as \c Unit, \c UnitSystem and so on, this provides a mechanism to map them
  *        to or from a string ID suitable for storing in the DB.  Eg for a recipe addition amount or inventory amount
@@ -103,7 +106,9 @@ public:
 
       if (match == this->m_map.end()) {
          // This is very probably a coding error
-         qCritical() << Q_FUNC_INFO << "Could not find string for " << objectAddress;
+         qCritical() <<
+            Q_FUNC_INFO << "Could not find string for " << objectAddress << "(in " << this->m_map.size() << "entries)";
+         qCritical().noquote() << Q_FUNC_INFO << Logging::getStackTrace();
          Q_ASSERT(false);
          return "";
       }

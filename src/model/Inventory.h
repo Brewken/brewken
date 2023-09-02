@@ -25,7 +25,7 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Ingredient.h"
 #include "model/NamedEntity.h"
-
+#include "utils/MetaTypes.h"
 
 class Hop;
 class ObjectStore;
@@ -165,8 +165,6 @@ template <typename T> concept CONCEPT_FIX_UP IsInventory = std::is_base_of_v<Inv
 /**
  * \return A suitable \c Inventory subclass object for the supplied \c Ingredient subclass object.  If the former does
  *         not exist, it will be created.
- *
- *         NOTE that, provided the relevant ¥¥¥
  */
 template<IsInventory Inv, IsIngredient Ing>
 Inv * getInventory(Ing const & ing) {
@@ -176,13 +174,13 @@ Inv * getInventory(Ing const & ing) {
    // At the moment, we assume there is at most on Inventory object per ingredient object.  In time we would like to
    // extend this to manage, eg, different purchases/batches as separate Inventory items, but that's for another day.
    //
-   Inv * result = ObjectStoreWrapper::findFirstMatching<Inv>(
-      [ingredientId](Inv const * inventory) {
+   auto result = ObjectStoreWrapper::findFirstMatching<Inv>(
+      [ingredientId](std::shared_ptr<Inv> inventory) {
          return inventory->ingredientId() == ingredientId;
       }
    );
    if (result) {
-      return result;
+      return result->get();
    }
 
    std::shared_ptr<Inv> newInventory = std::make_shared<Inv>();

@@ -25,6 +25,7 @@
 #include <QSqlRecord>
 #include <QSqlRecord>
 
+#include "measurement/ConstrainedAmount.h"
 #include "model/NamedEntity.h"
 #include "utils/EnumStringMapping.h"
 

@@ -632,6 +632,15 @@ public:
          Q_ASSERT(false);
       }
 
+      // Similarly, it's a coding error if we don't have a unit name mapping for a unit field
+      if (ObjectStore::FieldType::Unit == fieldDefn.fieldType &&
+         !std::holds_alternative<Measurement::UnitStringMapping const *>(fieldDefn.valueDecoder)) {
+         qCritical() <<
+            Q_FUNC_INFO << "Coding Error!  No unit name mapping found to map property " << fieldDefn.propertyName <<
+            " to column " << fieldDefn.columnName << "for" << primaryTable.tableName;
+         Q_ASSERT(false);
+      }
+
       if (this->typeLookup.getType(fieldDefn.propertyName).isOptional()) {
          //
          // This is an optional field, so we are converting a QVariant holding std::optional<T> to a QVariant holding
@@ -1932,7 +1941,7 @@ std::optional< std::shared_ptr<QObject> > ObjectStore::findFirstMatching(
    std::function<bool(std::shared_ptr<QObject>)> const & matchFunction
 ) const {
    auto result = std::find_if(this->pimpl->allObjects.cbegin(), this->pimpl->allObjects.cend(), matchFunction);
-   if (result == this->pimpl->allObjects.end()) {
+   if (result == this->pimpl->allObjects.cend()) {
       return std::nullopt;
    }
    return *result;
@@ -1946,7 +1955,7 @@ std::optional< QObject * > ObjectStore::findFirstMatching(std::function<bool(QOb
       [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(obj.get());}
    };
    auto result = std::find_if(this->pimpl->allObjects.cbegin(), this->pimpl->allObjects.cend(), wrapperMatchFunction);
-   if (result == this->pimpl->allObjects.end()) {
+   if (result == this->pimpl->allObjects.cend()) {
       return std::nullopt;
    }
    return result->get();

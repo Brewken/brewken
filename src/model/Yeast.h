@@ -27,6 +27,7 @@
 #include <QString>
 #include <QStringList>
 
+#include "measurement/ConstrainedAmount.h"
 #include "model/NamedEntityWithInventory.h"
 #include "utils/EnumStringMapping.h"
 

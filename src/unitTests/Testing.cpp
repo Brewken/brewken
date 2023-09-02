@@ -308,6 +308,9 @@ public:
 Testing::Testing() :
    QObject(),
    pimpl{std::make_unique<impl>(*this)} {
+
+   registerMetaTypes();
+
    //
    // Create a unique temporary directory using the current thread ID as part of a subdirectory name inside whatever
    // system-standard temp directory Qt proposes to us.  (We also put the application name in the subdirectory name so
@@ -879,6 +882,7 @@ void Testing::pstdintTest() {
 
 
 void Testing::testInventory() {
+   qDebug() << Q_FUNC_INFO << "Starting";
    Measurement::Amount amountOfHop{123.45, Measurement::Units::kilograms};
    bool setOk = this->pimpl->m_cascade_4pct->setProperty(*PropertyNames::Ingredient::totalInventory,
                                                          QVariant::fromValue<Measurement::Amount>(amountOfHop));
