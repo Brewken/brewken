@@ -45,9 +45,32 @@ AddSettingName(unitSystem_weight              )
 #undef AddSettingName
 
 namespace {
+
+   /**
+    * \brief Construct a vector of \c To from a vector of \c From
+    */
+   template <typename To, typename From>
+   std::vector<To> copyCast(std::vector<From> const & from) {
+      // In theory we can set the size of the To vector in its constructor to be the same as the size of the From
+      // vector, but GCC gives us compiler warnings about narrowing conversions from std::vector<From>::size_type to
+      // std::vector<To>::size_type.  In practice, these vectors are so short that it's not buying us much to do this,
+      // so we prefer to avoid the compiler warning.
+      std::vector<To> to{};
+      std::transform(from.cbegin(), from.cend(), std::back_inserter(to), [](From const & value) {
+         return static_cast<To>(value);
+      });
+      return to;
+   }
+
+   // TBD: It would be nice to be able to make these constexpr, but we need to wait for compilers to catch up.  Eg,
+   //      need GCC version 12 for this but, as of 2023-09-03, Ubuntu 22.04 is on GCC 11.4.0.
    std::vector<Measurement::PhysicalQuantity> const allOf_Mass_Volume        {Measurement::PhysicalQuantity::Mass             , Measurement::PhysicalQuantity::Volume             };
    std::vector<Measurement::PhysicalQuantity> const allOf_Mass_Volume_Count  {Measurement::PhysicalQuantity::Mass             , Measurement::PhysicalQuantity::Volume             , Measurement::PhysicalQuantity::Count};
    std::vector<Measurement::PhysicalQuantity> const allOf_MassConc_VolumeConc{Measurement::PhysicalQuantity::MassConcentration, Measurement::PhysicalQuantity::VolumeConcentration};
+
+   std::vector<int> const allOfAsInt_Mass_Volume         = copyCast<int, Measurement::PhysicalQuantity>(allOf_Mass_Volume        );
+   std::vector<int> const allOfAsInt_Mass_Volume_Count   = copyCast<int, Measurement::PhysicalQuantity>(allOf_Mass_Volume_Count  );
+   std::vector<int> const allOfAsInt_MassConc_VolumeConc = copyCast<int, Measurement::PhysicalQuantity>(allOf_MassConc_VolumeConc);
 }
 
 EnumStringMapping const Measurement::physicalQuantityStringMapping {
@@ -70,7 +93,7 @@ EnumStringMapping const Measurement::physicalQuantityStringMapping {
 };
 
 EnumStringMapping const Measurement::physicalQuantityDisplayNames {
-   {Measurement::PhysicalQuantity::Mass                , QObject::tr("Mass"                  )},
+   {Measurement::PhysicalQuantity::Mass                , QObject::tr("Weight (Mass)"         )},
    {Measurement::PhysicalQuantity::Volume              , QObject::tr("Volume"                )},
    {Measurement::PhysicalQuantity::Count               , QObject::tr("Count"                 )},
    {Measurement::PhysicalQuantity::Temperature         , QObject::tr("Temperature"           )},
@@ -198,9 +221,9 @@ bool Measurement::isValid(Measurement::ChoiceOfPhysicalQuantity const choiceOfPh
 }
 
 std::vector<Measurement::PhysicalQuantity> const & Measurement::allPossibilities(
-   Measurement::ChoiceOfPhysicalQuantity const choiceOfPhysicalQuantity
+   Measurement::ChoiceOfPhysicalQuantity const val
 ) {
-   switch (choiceOfPhysicalQuantity) {
+   switch (val) {
       case Measurement::ChoiceOfPhysicalQuantity::Mass_Volume        : return allOf_Mass_Volume        ;
       case Measurement::ChoiceOfPhysicalQuantity::Mass_Volume_Count  : return allOf_Mass_Volume_Count  ;
       case Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc: return allOf_MassConc_VolumeConc;
@@ -209,6 +232,21 @@ std::vector<Measurement::PhysicalQuantity> const & Measurement::allPossibilities
    Q_ASSERT(false);
    // But we have to return something
    return allOf_Mass_Volume;
+}
+
+std::vector<int> const & Measurement::allPossibilitiesAsInt(
+   Measurement::ChoiceOfPhysicalQuantity const val
+) {
+   // It's a bit ugly having this as almost copy-and-paste of allPossibilities, but we'll live with it for now.
+   switch (val) {
+      case Measurement::ChoiceOfPhysicalQuantity::Mass_Volume        : return allOfAsInt_Mass_Volume        ;
+      case Measurement::ChoiceOfPhysicalQuantity::Mass_Volume_Count  : return allOfAsInt_Mass_Volume_Count  ;
+      case Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc: return allOfAsInt_MassConc_VolumeConc;
+   }
+   // Should be unreachable
+   Q_ASSERT(false);
+   // But we have to return something
+   return allOfAsInt_Mass_Volume;
 }
 
 

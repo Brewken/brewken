@@ -28,6 +28,9 @@ template<class Derived>
 class IngredientBase : public CuriouslyRecurringTemplateBase<IngredientBasePhantom, Derived> {
 
 protected:
+   // Note that, because this is static, it cannot be initialised inside the class definition
+   static TypeLookup const typeLookup;
+
    /**
     * \brief
     */
@@ -44,6 +47,28 @@ protected:
    }
 
 };
+
+template<class Derived>
+TypeLookup const IngredientBase<Derived>::typeLookup {
+   "IngredientBase",
+   {
+      //
+      // See comment in model/IngredientAmount.h for why we can't use the PROPERTY_TYPE_LOOKUP_ENTRY or
+      // PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV macros here.
+      //
+      // See comment in model/Ingredient.cpp for why we can't do PropertyNames::Ingredient::totalInventory there.
+      //
+      {&PropertyNames::Ingredient::totalInventory,
+       TypeInfo::construct<MemberFunctionReturnType_t<&IngredientBase::getTotalInventory>>(
+          PropertyNames::Ingredient::totalInventory,
+          TypeLookupOf<MemberFunctionReturnType_t<&IngredientBase::getTotalInventory>>::value,
+          Derived::validMeasures
+       )}
+   },
+   // Parent class lookup: none as we are at the top of this arm of the inheritance tree
+   {}
+};
+
 
 /**
  * \brief Derived classes should include this in their header file, right after Q_OBJECT

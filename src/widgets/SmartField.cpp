@@ -78,20 +78,19 @@ public:
 
       if (precision) {
          // It's a coding error to specify precision for a field that's not a (possibly optional) double (or a float,
-         // but we don't use float).  However, we allow precision of 0 for a type that is stored as an int or unsigned
-         // int, because that's what we're going to set it to anyway.
+         // but we don't use float) or an Amount.  However, we allow precision of 0 for a type that is stored as an int
+         // or unsigned int, because that's what we're going to set it to anyway.
          Q_ASSERT(this->m_self.getTypeInfo().typeIndex == typeid(double) ||
                   this->m_self.getTypeInfo().typeIndex == typeid(std::optional<double>) ||
+                  this->m_self.getTypeInfo().typeIndex == typeid(Measurement::Amount) ||
+                  this->m_self.getTypeInfo().typeIndex == typeid(std::optional<Measurement::Amount>) ||
                   (0 == *precision && this->m_self.getTypeInfo().typeIndex == typeid(int         )) ||
                   (0 == *precision && this->m_self.getTypeInfo().typeIndex == typeid(unsigned int)) );
 
-         if (this->m_self.getTypeInfo().typeIndex == typeid(double) ||
-             this->m_self.getTypeInfo().typeIndex == typeid(std::optional<double>)) {
-            // It's a coding error if precision is not some plausible value.  For the moment at least, we assert there
-            // are no envisageable circumstances where we need to show more than 3 decimal places
-            Q_ASSERT(*precision <= 3);
-            this->m_precision = *precision;
-         }
+         // It's a coding error if precision is not some plausible value.  For the moment at least, we assert there
+         // are no envisageable circumstances where we need to show more than 3 decimal places
+         Q_ASSERT(*precision <= 3);
+         this->m_precision = *precision;
       }
       // For integers, there are no decimal places to show
       if (this->m_self.getTypeInfo().typeIndex == typeid(int) ||
@@ -201,7 +200,7 @@ template<> void SmartField::init<SmartLabel>([[maybe_unused]] char const * const
                                              TypeInfo                      const & typeInfo,
                                              std::optional<unsigned int>   const   precision,
                                              QString                       const & maximalDisplayString) {
-//   qDebug() << Q_FUNC_INFO << fieldFqName << ":" << typeInfo;
+//   qDebug() << Q_FUNC_INFO << fieldFqName << ":" << typeInfo << ", precision=" << precision;
 
    // It's a coding error to call this version of init with a NonPhysicalQuantity
    Q_ASSERT(typeInfo.fieldType && !std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType));
@@ -225,7 +224,7 @@ template<> void SmartField::init<QLabel>(char const *                const   edi
                                          TypeInfo                    const & typeInfo,
                                          std::optional<unsigned int> const   precision,
                                          QString                     const & maximalDisplayString) {
-//   qDebug() << Q_FUNC_INFO << fieldFqName << ":" << typeInfo;
+//   qDebug() << Q_FUNC_INFO << fieldFqName << ":" << typeInfo << ", precision=" << precision;
 
    // It's a coding error to call this version of init with a PhysicalQuantity
    Q_ASSERT(typeInfo.fieldType && std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType));
@@ -262,16 +261,6 @@ void SmartField::initFixed(char const *                const   editorName,
   return this->pimpl->m_initialised;
 }
 
-//BtFieldType const SmartField::getFieldType() const {
-//   Q_ASSERT(this->pimpl->m_initialised);
-//   return *this->getTypeInfo().fieldType;
-//}
-//
-//TypeInfo const & SmartField::getTypeInfo() const {
-//   Q_ASSERT(this->pimpl->m_initialised);
-//   return *this->pimpl->m_typeInfo;
-//}
-
 [[nodiscard]] SmartAmountSettings & SmartField::settings() {
    // Note that this can be called from within this class before we have set the this->pimpl->m_initialised flag
    if (this->pimpl->m_smartBuddyLabel) {
@@ -289,9 +278,9 @@ char const * SmartField::getFqFieldName() const {
    return this->pimpl->m_fieldFqName;
 }
 
-// Note that, because partial specialisation of _functions_ is not allowed, we actually have two overloads of setAmount
+// Note that, because partial specialisation of _functions_ is not allowed, we actually have two overloads of setQuantity
 // This shouldn't make any difference to callers.
-template<typename T, typename> void SmartField::setAmount(std::optional<T> amount) {
+template<typename T, typename> void SmartField::setQuantity(std::optional<T> quantity) {
    Q_ASSERT(this->pimpl->m_initialised);
 
    if (this->getTypeInfo().typeIndex != typeid(T)) {
@@ -302,19 +291,19 @@ template<typename T, typename> void SmartField::setAmount(std::optional<T> amoun
       Q_ASSERT(false);
    }
 
-   if (!amount) {
+   if (!quantity) {
       this->setRawText("");
       return;
    }
 
-   this->setAmount<T>(*amount);
+   this->setQuantity<T>(*quantity);
    return;
 }
 
-template<typename T, typename> void SmartField::setAmount(T amount) {
+template<typename T, typename> void SmartField::setQuantity(T quantity) {
    Q_ASSERT(this->pimpl->m_initialised);
    // Usually leave this debug log commented out unless trouble-shooting as it generates a lot of logging
-//   qDebug() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << "amount =" << amount;
+//   qDebug() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << "quantity =" << quantity;
 
    if (this->getTypeInfo().typeIndex != typeid(T)) {
       // This is a coding error
@@ -334,7 +323,7 @@ template<typename T, typename> void SmartField::setAmount(T amount) {
 
       this->setRawText(
          // This handles showing the % symbol after the number
-         Measurement::displayQuantity(amount, this->pimpl->m_precision, nonPhysicalQuantity)
+         Measurement::displayQuantity(quantity, this->pimpl->m_precision, nonPhysicalQuantity)
       );
    } else {
       // The field is measuring a physical quantity
@@ -343,21 +332,35 @@ template<typename T, typename> void SmartField::setAmount(T amount) {
 //         Q_FUNC_INFO << this->pimpl->m_fieldFqName << "forcedSystemOfMeasurement:" <<
 //         this->getForcedSystemOfMeasurement() << ", forcedRelativeScale:" <<
 //         this->getForcedRelativeScale();
-      this->setRawText(this->displayAmount(amount, this->pimpl->m_precision));
+      this->setRawText(this->displayAmount(quantity, this->pimpl->m_precision));
    }
 
    return;
 }
 
+void SmartField::setAmount(Measurement::Amount const & amount) {
+   Q_ASSERT(this->pimpl->m_initialised);
+
+   // It's a coding error if we're trying to set an Amount on a field that does not hold some PhysicalQuantity
+   Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType));
+
+   // For the moment, I'm going to say this function should _only_ be called for ChoiceOfPhysicalQuantity
+   Q_ASSERT(std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*this->getTypeInfo().fieldType));
+
+   this->setRawText(this->displayAmount(amount, this->pimpl->m_precision));
+   return;
+}
+
+
 // Instantiate the above template functions for the types that are going to use it
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
 // saves having to put a bunch of std::string stuff there.)
-template void SmartField::setAmount(std::optional<int         > amount);
-template void SmartField::setAmount(std::optional<unsigned int> amount);
-template void SmartField::setAmount(std::optional<double      > amount);
-template void SmartField::setAmount(int          amount);
-template void SmartField::setAmount(unsigned int amount);
-template void SmartField::setAmount(double       amount);
+template void SmartField::setQuantity(std::optional<int         > amount);
+template void SmartField::setQuantity(std::optional<unsigned int> amount);
+template void SmartField::setQuantity(std::optional<double      > amount);
+template void SmartField::setQuantity(int          amount);
+template void SmartField::setQuantity(unsigned int amount);
+template void SmartField::setQuantity(double       amount);
 
 void SmartField::setPrecision(unsigned int const precision) {
    this->pimpl->m_precision = precision;
@@ -375,10 +378,6 @@ Measurement::Amount SmartField::getNonOptCanonicalAmt() const {
    // It's a coding error to call this for an optional value
    Q_ASSERT(!this->getTypeInfo().isOptional());
    return this->pimpl->toCanonical(this->getRawText(), this->getScaleInfo());
-}
-
-Measurement::Amount SmartField::toCanonical() const {
-   return this->getNonOptCanonicalAmt();
 }
 
 std::optional<Measurement::Amount> SmartField::getOptCanonicalAmt() const {
@@ -413,7 +412,7 @@ template<typename T> T SmartField::getNonOptValue(bool * const ok) const {
    QString const rawText = this->getRawText();
    qDebug() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << ": Converting" << rawText;
 
-   // It's a coding error to call this for ann optional value.  We put the assert after the log statement to help
+   // It's a coding error to call this for an optional value.  We put the assert after the log statement to help
    // with debugging!
    Q_ASSERT(!this->getTypeInfo().isOptional());
 
@@ -516,9 +515,9 @@ void SmartField::correctEnteredText() {
       auto const type = this->getTypeInfo().typeIndex;
       bool const optional = this->getTypeInfo().isOptional();
       bool ok = false;
-      if (type == typeid(double      )) { if (optional) { this->setAmount(this->getOptValue<double      >(&ok)); } else { this->setAmount(this->getNonOptValue<double      >(&ok)); } } else
-      if (type == typeid(int         )) { if (optional) { this->setAmount(this->getOptValue<int         >(&ok)); } else { this->setAmount(this->getNonOptValue<int         >(&ok)); } } else
-      if (type == typeid(unsigned int)) { if (optional) { this->setAmount(this->getOptValue<unsigned int>(&ok)); } else { this->setAmount(this->getNonOptValue<unsigned int>(&ok)); } } else {
+      if (type == typeid(double      )) { if (optional) { this->setQuantity(this->getOptValue<double      >(&ok)); } else { this->setQuantity(this->getNonOptValue<double      >(&ok)); } } else
+      if (type == typeid(int         )) { if (optional) { this->setQuantity(this->getOptValue<int         >(&ok)); } else { this->setQuantity(this->getNonOptValue<int         >(&ok)); } } else
+      if (type == typeid(unsigned int)) { if (optional) { this->setQuantity(this->getOptValue<unsigned int>(&ok)); } else { this->setQuantity(this->getNonOptValue<unsigned int>(&ok)); } } else {
          // It's a coding error if we get here
          qCritical() <<
             Q_FUNC_INFO << this->getFqFieldName() << ": Don't know how to parse" << this->getTypeInfo();
@@ -529,7 +528,7 @@ void SmartField::correctEnteredText() {
          qWarning() <<
             Q_FUNC_INFO << this->getFqFieldName() << ": Unable to extract number from" << rawText << "for" <<
             this->getTypeInfo();
-         // setAmount will already have been called with 0 or std::nullopt as appropriate
+         // setQuantity will already have been called with 0 or std::nullopt as appropriate
       }
    }
 

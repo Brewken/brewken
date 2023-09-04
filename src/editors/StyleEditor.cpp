@@ -110,18 +110,18 @@ void StyleEditor::readFieldsFromEditItem(std::optional<QString> propName) {
    if (!propName || *propName == PropertyNames::Style::styleLetter   ) { lineEdit_styleLetter   ->setText   (m_editItem->styleLetter   ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Style::styleGuide    ) { lineEdit_styleGuide    ->setText   (m_editItem->styleGuide    ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Style::type          ) { comboBox_type          ->setValue  (m_editItem->type          ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Style::ogMin         ) { lineEdit_ogMin         ->setAmount (m_editItem->ogMin         ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Style::ogMax         ) { lineEdit_ogMax         ->setAmount (m_editItem->ogMax         ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Style::fgMin         ) { lineEdit_fgMin         ->setAmount (m_editItem->fgMin         ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Style::fgMax         ) { lineEdit_fgMax         ->setAmount (m_editItem->fgMax         ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Style::ibuMin        ) { lineEdit_ibuMin        ->setAmount (m_editItem->ibuMin        ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Style::ibuMax        ) { lineEdit_ibuMax        ->setAmount (m_editItem->ibuMax        ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Style::colorMin_srm  ) { lineEdit_colorMin      ->setAmount (m_editItem->colorMin_srm  ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Style::colorMax_srm  ) { lineEdit_colorMax      ->setAmount (m_editItem->colorMax_srm  ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Style::carbMin_vol   ) { lineEdit_carbMin       ->setAmount (m_editItem->carbMin_vol   ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Style::carbMax_vol   ) { lineEdit_carbMax       ->setAmount (m_editItem->carbMax_vol   ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Style::abvMin_pct    ) { lineEdit_abvMin        ->setAmount (m_editItem->abvMin_pct    ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Style::abvMax_pct    ) { lineEdit_abvMax        ->setAmount (m_editItem->abvMax_pct    ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Style::ogMin         ) { lineEdit_ogMin         ->setQuantity (m_editItem->ogMin         ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Style::ogMax         ) { lineEdit_ogMax         ->setQuantity (m_editItem->ogMax         ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Style::fgMin         ) { lineEdit_fgMin         ->setQuantity (m_editItem->fgMin         ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Style::fgMax         ) { lineEdit_fgMax         ->setQuantity (m_editItem->fgMax         ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Style::ibuMin        ) { lineEdit_ibuMin        ->setQuantity (m_editItem->ibuMin        ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Style::ibuMax        ) { lineEdit_ibuMax        ->setQuantity (m_editItem->ibuMax        ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Style::colorMin_srm  ) { lineEdit_colorMin      ->setQuantity (m_editItem->colorMin_srm  ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Style::colorMax_srm  ) { lineEdit_colorMax      ->setQuantity (m_editItem->colorMax_srm  ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Style::carbMin_vol   ) { lineEdit_carbMin       ->setQuantity (m_editItem->carbMin_vol   ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Style::carbMax_vol   ) { lineEdit_carbMax       ->setQuantity (m_editItem->carbMax_vol   ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Style::abvMin_pct    ) { lineEdit_abvMin        ->setQuantity (m_editItem->abvMin_pct    ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Style::abvMax_pct    ) { lineEdit_abvMax        ->setQuantity (m_editItem->abvMax_pct    ()); if (propName) { return; } }
 ///   if (!propName || *propName == PropertyNames::Style::profile       ) { textEdit_profile       ->setText   (m_editItem->profile       ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Style::ingredients   ) { textEdit_ingredients   ->setText   (m_editItem->ingredients   ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Style::examples      ) { textEdit_examples      ->setText   (m_editItem->examples      ()); if (propName) { return; } }

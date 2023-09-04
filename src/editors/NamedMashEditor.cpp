@@ -108,12 +108,12 @@ void NamedMashEditor::saveAndClose() {
 
    this->mashObs->setEquipAdjust          (true); // BeerXML won't like me, but it's just stupid not to adjust for the equipment when you're able.
    this->mashObs->setName                 (lineEdit_name      ->text());
-   this->mashObs->setGrainTemp_c          (lineEdit_grainTemp ->toCanonical().quantity);
-   this->mashObs->setSpargeTemp_c         (lineEdit_spargeTemp->toCanonical().quantity);
-   this->mashObs->setPh                   (lineEdit_spargePh  ->toCanonical().quantity);
-   this->mashObs->setTunTemp_c            (lineEdit_tunTemp   ->toCanonical().quantity);
-   this->mashObs->setTunWeight_kg         (lineEdit_tunMass   ->toCanonical().quantity);
-   this->mashObs->setMashTunSpecificHeat_calGC(lineEdit_tunSpHeat ->toCanonical().quantity);
+   this->mashObs->setGrainTemp_c          (lineEdit_grainTemp ->getNonOptCanonicalQty());
+   this->mashObs->setSpargeTemp_c         (lineEdit_spargeTemp->getNonOptCanonicalQty());
+   this->mashObs->setPh                   (lineEdit_spargePh  ->getNonOptCanonicalQty());
+   this->mashObs->setTunTemp_c            (lineEdit_tunTemp   ->getNonOptCanonicalQty());
+   this->mashObs->setTunWeight_kg         (lineEdit_tunMass   ->getNonOptCanonicalQty());
+   this->mashObs->setMashTunSpecificHeat_calGC(lineEdit_tunSpHeat ->getNonOptCanonicalQty());
 
    this->mashObs->setNotes( textEdit_notes->toPlainText() );
    return;
@@ -157,12 +157,12 @@ void NamedMashEditor::showChanges(QMetaProperty* prop) {
    qDebug() << Q_FUNC_INFO << "Updating" << (updateAll ? "all properties" : "property") << propName;
 
    if (updateAll || propName == PropertyNames::NamedEntity::name          ) {lineEdit_name      ->setText     (mashObs->name                 ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::grainTemp_c          ) {lineEdit_grainTemp ->setAmount   (mashObs->grainTemp_c          ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::spargeTemp_c         ) {lineEdit_spargeTemp->setAmount   (mashObs->spargeTemp_c         ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::ph                   ) {lineEdit_spargePh  ->setAmount   (mashObs->ph                   ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::tunTemp_c            ) {lineEdit_tunTemp   ->setAmount   (mashObs->tunTemp_c            ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::mashTunWeight_kg         ) {lineEdit_tunMass   ->setAmount   (mashObs->mashTunWeight_kg         ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::mashTunSpecificHeat_calGC) {lineEdit_tunSpHeat ->setAmount   (mashObs->mashTunSpecificHeat_calGC()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::grainTemp_c          ) {lineEdit_grainTemp ->setQuantity   (mashObs->grainTemp_c          ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::spargeTemp_c         ) {lineEdit_spargeTemp->setQuantity   (mashObs->spargeTemp_c         ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::ph                   ) {lineEdit_spargePh  ->setQuantity   (mashObs->ph                   ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::tunTemp_c            ) {lineEdit_tunTemp   ->setQuantity   (mashObs->tunTemp_c            ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::mashTunWeight_kg         ) {lineEdit_tunMass   ->setQuantity   (mashObs->mashTunWeight_kg         ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::mashTunSpecificHeat_calGC) {lineEdit_tunSpHeat ->setQuantity   (mashObs->mashTunSpecificHeat_calGC()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Mash::notes                ) {textEdit_notes     ->setPlainText(mashObs->notes                ()); if (!updateAll) { return; } }
 }
 
@@ -267,8 +267,8 @@ void NamedMashEditor::fromEquipment([[maybe_unused]] QString const & name) {
    }
    Equipment * selected = equipListModel->at(equipmentComboBox->currentIndex());
    if (selected) {
-      lineEdit_tunMass  ->setAmount(selected->mashTunWeight_kg         ());
-      lineEdit_tunSpHeat->setAmount(selected->mashTunSpecificHeat_calGC());
+      lineEdit_tunMass  ->setQuantity(selected->mashTunWeight_kg         ());
+      lineEdit_tunSpHeat->setQuantity(selected->mashTunSpecificHeat_calGC());
    }
    return;
 }

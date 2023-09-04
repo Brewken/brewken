@@ -115,42 +115,42 @@ void RecipeExtrasWidget::updateTasteRating() {
 
 void RecipeExtrasWidget::updatePrimaryAge() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, primaryAge_days), lineEdit_primaryAge->toCanonical().quantity, tr("Change Primary Age"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, primaryAge_days), lineEdit_primaryAge->getNonOptCanonicalQty(), tr("Change Primary Age"));
 }
 
 void RecipeExtrasWidget::updatePrimaryTemp() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, primaryTemp_c), lineEdit_primaryTemp->toCanonical().quantity, tr("Change Primary Temp"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, primaryTemp_c), lineEdit_primaryTemp->getNonOptCanonicalQty(), tr("Change Primary Temp"));
 }
 
 void RecipeExtrasWidget::updateSecondaryAge() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, secondaryAge_days), lineEdit_secAge->toCanonical().quantity, tr("Change Secondary Age"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, secondaryAge_days), lineEdit_secAge->getNonOptCanonicalQty(), tr("Change Secondary Age"));
 }
 
 void RecipeExtrasWidget::updateSecondaryTemp() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, secondaryTemp_c), lineEdit_secTemp->toCanonical().quantity, tr("Change Secondary Temp"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, secondaryTemp_c), lineEdit_secTemp->getNonOptCanonicalQty(), tr("Change Secondary Temp"));
 }
 
 void RecipeExtrasWidget::updateTertiaryAge() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, tertiaryAge_days), lineEdit_tertAge->toCanonical().quantity, tr("Change Tertiary Age"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, tertiaryAge_days), lineEdit_tertAge->getNonOptCanonicalQty(), tr("Change Tertiary Age"));
 }
 
 void RecipeExtrasWidget::updateTertiaryTemp() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, tertiaryTemp_c), lineEdit_tertTemp->toCanonical().quantity, tr("Change Tertiary Temp"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, tertiaryTemp_c), lineEdit_tertTemp->getNonOptCanonicalQty(), tr("Change Tertiary Temp"));
 }
 
 void RecipeExtrasWidget::updateAge() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, age_days), lineEdit_age->toCanonical().quantity, tr("Change Age"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, age_days), lineEdit_age->getNonOptCanonicalQty(), tr("Change Age"));
 }
 
 void RecipeExtrasWidget::updateAgeTemp() {
    if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, ageTemp_c), lineEdit_ageTemp->toCanonical().quantity, tr("Change Age Temp"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, ageTemp_c), lineEdit_ageTemp->getNonOptCanonicalQty(), tr("Change Age Temp"));
 }
 
 void RecipeExtrasWidget::updateDate(QDate const & date) {
@@ -174,7 +174,7 @@ void RecipeExtrasWidget::updateCarbonation() {
 
    MainWindow::instance().doOrRedoUpdate(*recipe,
                                          TYPE_INFO(Recipe, carbonation_vols),
-                                         lineEdit_carbVols->toCanonical().quantity,
+                                         lineEdit_carbVols->getNonOptCanonicalQty(),
                                          tr("Change Carbonation"));
 }
 
@@ -247,17 +247,17 @@ void RecipeExtrasWidget::showChanges(QMetaProperty* prop) {
    // "change is made" ... rinse, lather, repeat
    // Unlike other editors, this one needs to read from recipe when it gets an
    // updateAll
-   if (updateAll || propName == PropertyNames::Recipe::age_days         ) { this->lineEdit_age         ->setAmount   (recipe->age_days         ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Recipe::ageTemp_c        ) { this->lineEdit_ageTemp     ->setAmount   (recipe->ageTemp_c        ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Recipe::age_days         ) { this->lineEdit_age         ->setQuantity   (recipe->age_days         ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Recipe::ageTemp_c        ) { this->lineEdit_ageTemp     ->setQuantity   (recipe->ageTemp_c        ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Recipe::asstBrewer       ) { this->lineEdit_asstBrewer  ->setText     (recipe->asstBrewer       ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Recipe::brewer           ) { this->lineEdit_brewer      ->setText     (recipe->brewer           ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Recipe::carbonation_vols ) { this->lineEdit_carbVols    ->setAmount   (recipe->carbonation_vols ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Recipe::primaryAge_days  ) { this->lineEdit_primaryAge  ->setAmount   (recipe->primaryAge_days  ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Recipe::primaryTemp_c    ) { this->lineEdit_primaryTemp ->setAmount   (recipe->primaryTemp_c    ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Recipe::secondaryAge_days) { this->lineEdit_secAge      ->setAmount   (recipe->secondaryAge_days()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Recipe::secondaryTemp_c  ) { this->lineEdit_secTemp     ->setAmount   (recipe->secondaryTemp_c  ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Recipe::tertiaryAge_days ) { this->lineEdit_tertAge     ->setAmount   (recipe->tertiaryAge_days ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Recipe::tertiaryTemp_c   ) { this->lineEdit_tertTemp    ->setAmount   (recipe->tertiaryTemp_c   ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Recipe::carbonation_vols ) { this->lineEdit_carbVols    ->setQuantity   (recipe->carbonation_vols ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Recipe::primaryAge_days  ) { this->lineEdit_primaryAge  ->setQuantity   (recipe->primaryAge_days  ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Recipe::primaryTemp_c    ) { this->lineEdit_primaryTemp ->setQuantity   (recipe->primaryTemp_c    ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Recipe::secondaryAge_days) { this->lineEdit_secAge      ->setQuantity   (recipe->secondaryAge_days()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Recipe::secondaryTemp_c  ) { this->lineEdit_secTemp     ->setQuantity   (recipe->secondaryTemp_c  ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Recipe::tertiaryAge_days ) { this->lineEdit_tertAge     ->setQuantity   (recipe->tertiaryAge_days ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Recipe::tertiaryTemp_c   ) { this->lineEdit_tertTemp    ->setQuantity   (recipe->tertiaryTemp_c   ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Recipe::tasteRating      ) { this->spinBox_tasteRating  ->setValue    (recipe->tasteRating      ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Recipe::date             ) { this->dateEdit_date        ->setDate     (recipe->date             ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Recipe::notes            ) { this->btTextEdit_notes     ->setPlainText(recipe->notes            ()); if (!updateAll) { return; } }

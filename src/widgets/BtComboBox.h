@@ -25,6 +25,8 @@
 #include "utils/EnumStringMapping.h"
 #include "utils/TypeLookup.h"
 
+class SmartLineEdit;
+
 /**
  * \class BtComboBox extends \c QComboBox to handle strongly-typed enums more directly
  *
@@ -52,13 +54,21 @@ public:
     * \param nameMapping        String serialisations for the enum values
     * \param displayNameMapping Localised displayable names for the enum values
     * \param typeInfo           Mainly used to determine whether this is an optional enum
+    * \param restrictTo         If specified, then, instead of offering all the enum values in \c nameMapping /
+    *                           \c displayNameMapping, the combo box should show only the values in the supplied list.
+    *                           This is useful eg for offering a choice of \c Measurement::PhysicalQuantity values for a
+    *                           \c Measurement::ChoiceOfPhysicalQuantity value.
+    * \param controlledField    If specified, then this is the field whose \c Measurement::PhysicalQuantity is
+    *                           shown and controlled by this combo box.
     */
    void init(char const * const editorName,
              char const * const comboBoxName,
              char const * const comboBoxFqName,
              EnumStringMapping const & nameMapping,
              EnumStringMapping const & displayNameMapping,
-             TypeInfo          const & typeInfo);
+             TypeInfo          const & typeInfo,
+             std::vector<int>  const * restrictTo = nullptr,
+             SmartLineEdit *           controlledField = nullptr);
 
    /**
     *
@@ -132,6 +142,9 @@ public:
 
    [[nodiscard]] int getNonOptIntValue() const;
 
+public slots:
+   void onIndexChanged(int const index);
+
 private:
 
    // Private implementation details - see https://herbsutter.com/gotw/_100/
@@ -172,24 +185,37 @@ private:
  *        and writing it as:
  *           "foo" "bar" "humbug"
  */
-#define BT_COMBO_BOX_INIT(editorClass, comboBoxName, modelClass, propertyName) \
-   this->comboBoxName->init(#editorClass, \
-                            #comboBoxName, \
-                            #editorClass "->" #comboBoxName, \
-                            modelClass::propertyName##StringMapping, \
-                            modelClass::propertyName##DisplayNames, \
+#define BT_COMBO_BOX_INIT(editorClass, comboBoxName, modelClass, propertyName)                      \
+   this->comboBoxName->init(#editorClass,                                                           \
+                            #comboBoxName,                                                          \
+                            #editorClass "->" #comboBoxName,                                        \
+                            modelClass::propertyName##StringMapping,                                \
+                            modelClass::propertyName##DisplayNames,                                 \
                             modelClass::typeLookup.getType(PropertyNames::modelClass::propertyName))
+
+/**
+ * \brief Alternate version of \c BT_COMBO_BOX_INIT for when we have Measurement::ChoiceOfPhysicalQuantity
+ */
+#define BT_COMBO_BOX_INIT_COPQ(editorClass, comboBoxName, modelClass, fqPropertyName, controlledField) \
+   this->comboBoxName->init(#editorClass,                                                   \
+                            #comboBoxName,                                                  \
+                            #editorClass "->" #comboBoxName,                                \
+                            Measurement::physicalQuantityStringMapping,                     \
+                            Measurement::physicalQuantityDisplayNames,                      \
+                            modelClass::typeLookup.getType(fqPropertyName),                 \
+                            &Measurement::allPossibilitiesAsInt(modelClass::validMeasures), \
+                            controlledField)
 
 /**
  * \brief Alternate version of \c BT_COMBO_BOX_INIT for when the variable we are initialising is not a member variable
  *        (eg see FermentableItemDelegate::createEditor)
  */
-#define BT_COMBO_BOX_INIT_NOMV(functionName, comboBoxName, modelClass, propertyName) \
-   comboBoxName->init(#functionName, \
-                      #comboBoxName, \
-                      #functionName "..." #comboBoxName, \
-                      modelClass::propertyName##StringMapping, \
-                      modelClass::propertyName##DisplayNames, \
+#define BT_COMBO_BOX_INIT_NOMV(functionName, comboBoxName, modelClass, propertyName)          \
+   comboBoxName->init(#functionName,                                                          \
+                      #comboBoxName,                                                          \
+                      #functionName "..." #comboBoxName,                                      \
+                      modelClass::propertyName##StringMapping,                                \
+                      modelClass::propertyName##DisplayNames,                                 \
                       modelClass::typeLookup.getType(PropertyNames::modelClass::propertyName))
 
 #endif

@@ -27,6 +27,17 @@ namespace Measurement {
     *        5.5 US gallons is \b quantity 5.5 and \b unit \c Measurement::Units::us_gallons.  Even where we think we
     *        know what units we're getting back from a function (eg \c qstringToSI), it helps reduce bugs to have
     *        quantity and units together in a single struct.
+    *
+    *        NOTE: Although, in everyday conversation, "quantity" and "amount" are often used interchangeably, in this
+    *              code base it is useful to us to make the distinction between:
+    *
+    *                 \b quantity = a numerical value without units; the units not being present because either:
+    *                                  - there are no units, or
+    *                                  - the units are stored in another field, or
+    *                                  - the units are "fixed" for a certain field (eg it's always a percentage or it's
+    *                                    always kilograms)
+    *
+    *                 \b amount = a quantity plus units -- ie an instance of \c Amount
     */
    struct Amount {
       double       quantity;

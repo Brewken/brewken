@@ -217,31 +217,39 @@ public:
    char const * getFqFieldName() const;
 
    /**
-    * \brief Version of \c setAmount, for an optional amount.
+    * \brief Version of \c setQuantity, for an optional quantity.
     *
     *        It looks a bit funky disabling this specialisation for a T that is optional, but the point is that we don't
     *        want the compiler to ever create a \c std::optional<std::optional<T>> type.  (Eg, we don't want to write
-    *        `\c setAmount<std::optional<T>>(\c std::nullopt)` when we mean
-    *        `\c setAmount<T>(\c std::optional<T>{std::nullopt})`.
+    *        `\c setQuantity<std::optional<T>>(\c std::nullopt)` when we mean
+    *        `\c setQuantity<T>(\c std::optional<T>{std::nullopt})`.
     *
     *        Note that, if you are explicitly providing std::nullopt as the parameter, you need to provide type
-    *        information, eg myField->setAmount<double>(std::nullopt);
+    *        information, eg myField->setQuantity<double>(std::nullopt);
     *
-    * \param amount is the amount to display
+    * \param quantity is the quantity to display
     */
-   template<typename T, typename = std::enable_if_t<is_non_optional<T>::value> > void setAmount(std::optional<T> amount);
+   template<typename T, typename = std::enable_if_t<is_non_optional<T>::value> > void setQuantity(std::optional<T> quantity);
 
    /**
-    * \brief Set the amount for a non-optional numeric field
+    * \brief Set the quantity for a non-optional numeric field
     *
-    * \param amount is the amount to display
+    * \param quantity is the quantity to display
     */
-   template<typename T, typename = std::enable_if_t<is_non_optional<T>::value> > void setAmount(T amount);
+   template<typename T, typename = std::enable_if_t<is_non_optional<T>::value> > void setQuantity(T quantity);
+
+   /**
+    * \brief Usually a field is set via \c setQuantity because the units can be obtained from \c TypeInfo.  However, in
+    *        certain circumstances, we need the caller to be able to supply both quantity and units, ie an Amount.  In
+    *        particular, when the field type is \c Measurement::ChoiceOfPhysicalQuantity, it is not sufficient to call
+    *        \c setQuantity as we will not be able determine units from field type.
+    */
+   void setAmount(Measurement::Amount const & amount);
 
    /**
     * \brief Normally, you set precision once when \c init is called via \c SMART_FIELD_INIT or similar.  However, if
     *        you really want to modify it on the fly, eg to have different precision for different units, this is what
-    *        you call.  Note that you should call this before calling \c setAmount.
+    *        you call.  Note that you should call this before calling \c setQuantity.
     */
    void setPrecision(unsigned int const precision);
    [[nodiscard]] unsigned int getPrecision() const;
@@ -252,13 +260,6 @@ public:
     *        our field type \c is \c NonPhysicalQuantity.)
     */
    Measurement::Amount getNonOptCanonicalAmt() const;
-
-   /**
-    * \brief See \c getNonOptCanonicalAmt
-    */
-   // Uncomment next line to find all the places we need to change calls
-//   [[deprecated("Replaced by getNonOptCanonicalAmt, for more consistent naming")]]
-   Measurement::Amount toCanonical() const;
 
    /**
     * \brief As \c getNonOptCanonicalAmt but for optional fields

@@ -22,7 +22,8 @@ QString const Ingredient::LocalisedName = tr("Ingredient");
 TypeLookup const Ingredient::typeLookup {
    "Ingredient",
    {
-      // Empty list - for now at least
+      // Empty list - for now at least.  (We can't do PropertyNames::Ingredient::totalInventory here because the
+      // BtFieldType value for it depends on the Ingredient subclass.  Hence, it is instead done in IngredientBase.
    },
    // Parent class lookup
    {&NamedEntity::typeLookup}

@@ -2722,6 +2722,10 @@ If you need help, please open an issue at %1</source>
         <source>Add %1 to recipe</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Change %1 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NamedEntity</name>
@@ -2995,6 +2999,35 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Could not open the file %1 for writing! please try again with a new filename or diretory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QApplication</name>
+    <message>
+        <source>Brewken is already running!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Another instance of Brewken is already running.
+
+Running two copies of the program at once may lead to data loss.
+
+Press OK to quit.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Application terminates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The application encountered a fatal error.
+Error message:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The application encountered a fatal error.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3704,11 +3737,11 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation type="obsolete">Добавить в рецепт</translation>
+        <translation type="unfinished">Добавить в рецепт</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="obsolete">Новый</translation>
+        <translation type="unfinished">Новый</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
@@ -3808,6 +3841,34 @@ Program will now exit.</source>
     </message>
     <message>
         <source>(№)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Catalog / Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add selected %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit selected %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5785,11 +5846,11 @@ The final volume in the primary is %1.</source>
     <name>editorClass</name>
     <message>
         <source>No</source>
-        <translation type="obsolete">Нет</translation>
+        <translation type="unfinished">Нет</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="obsolete">Да</translation>
+        <translation type="unfinished">Да</translation>
     </message>
 </context>
 <context>

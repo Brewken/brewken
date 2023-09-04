@@ -202,24 +202,24 @@ bool EquipmentEditor::validateBeforeSave() {
 
    // Now zero out / unset anything we said we would
    if (qFuzzyIsNull(lineEdit_hltVolume->getNonOptCanonicalQty())) {
-      lineEdit_hltVolume      ->setAmount(0.0);
-      lineEdit_hltLoss        ->setAmount(0.0);
-      lineEdit_hltWeight      ->setAmount<double>(std::nullopt);
-      lineEdit_hltSpecificHeat->setAmount<double>(std::nullopt);
+      lineEdit_hltVolume      ->setQuantity(0.0);
+      lineEdit_hltLoss        ->setQuantity(0.0);
+      lineEdit_hltWeight      ->setQuantity<double>(std::nullopt);
+      lineEdit_hltSpecificHeat->setQuantity<double>(std::nullopt);
    }
    if (qFuzzyIsNull(lineEdit_lauterTunVolume->getNonOptCanonicalQty())) {
-      lineEdit_lauterTunVolume       ->setAmount(0.0);
-      lineEdit_lauterTunDeadspaceLoss->setAmount(0.0);
-      lineEdit_lauterTunWeight       ->setAmount<double>(std::nullopt);
-      lineEdit_lauterTunSpecificHeat ->setAmount<double>(std::nullopt);
+      lineEdit_lauterTunVolume       ->setQuantity(0.0);
+      lineEdit_lauterTunDeadspaceLoss->setQuantity(0.0);
+      lineEdit_lauterTunWeight       ->setQuantity<double>(std::nullopt);
+      lineEdit_lauterTunSpecificHeat ->setQuantity<double>(std::nullopt);
    }
    if (qFuzzyIsNull(lineEdit_packagingVesselVolume->getNonOptCanonicalQty())) {
-      lineEdit_packagingVesselVolume->setAmount(0.0);
-      lineEdit_packagingVesselLoss  ->setAmount(0.0);
+      lineEdit_packagingVesselVolume->setQuantity(0.0);
+      lineEdit_packagingVesselLoss  ->setQuantity(0.0);
    }
    if (qFuzzyIsNull(lineEdit_agingVesselVolume->getNonOptCanonicalQty())) {
-      lineEdit_agingVesselVolume->setAmount(0.0);
-      lineEdit_agingVesselLoss  ->setAmount(0.0);
+      lineEdit_agingVesselVolume->setQuantity(0.0);
+      lineEdit_agingVesselLoss  ->setQuantity(0.0);
    }
 
    return true;
@@ -288,21 +288,21 @@ void EquipmentEditor::readFieldsFromEditItem(std::optional<QString> propName) {
 
    if (!propName || *propName == PropertyNames::NamedEntity::name    ) { this->lineEdit_name          ->setTextCursor(m_editItem->name          ()); // Continues to next line
                                                                          /* this->tabWidget_editor->setTabText(0, m_editItem->name()); */                 if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::kettleBoilSize_l           ) { this->lineEdit_kettleBoilSize          ->setAmount    (m_editItem->kettleBoilSize_l           ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::fermenterBatchSize_l       ) { this->lineEdit_fermenterBatchSize      ->setAmount    (m_editItem->fermenterBatchSize_l       ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::mashTunVolume_l            ) { this->lineEdit_mashTunVolume           ->setAmount    (m_editItem->mashTunVolume_l            ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::mashTunWeight_kg           ) { this->lineEdit_mashTunWeight           ->setAmount    (m_editItem->mashTunWeight_kg           ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::mashTunSpecificHeat_calGC  ) { this->lineEdit_mashTunSpecificHeat     ->setAmount    (m_editItem->mashTunSpecificHeat_calGC  ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::boilTime_min               ) { this->lineEdit_boilTime                ->setAmount    (m_editItem->boilTime_min               ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::kettleEvaporationPerHour_l ) { this->lineEdit_kettleEvaporationPerHour->setAmount    (m_editItem->kettleEvaporationPerHour_l ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::topUpKettle_l              ) { this->lineEdit_topUpKettle             ->setAmount    (m_editItem->topUpKettle_l              ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::topUpWater_l               ) { this->lineEdit_topUpWater              ->setAmount    (m_editItem->topUpWater_l               ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::kettleTrubChillerLoss_l    ) { this->lineEdit_kettleTrubChillerLoss   ->setAmount    (m_editItem->kettleTrubChillerLoss_l    ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::lauterTunDeadspaceLoss_l   ) { this->lineEdit_lauterTunDeadspaceLoss  ->setAmount    (m_editItem->lauterTunDeadspaceLoss_l   ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::kettleBoilSize_l           ) { this->lineEdit_kettleBoilSize          ->setQuantity    (m_editItem->kettleBoilSize_l           ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::fermenterBatchSize_l       ) { this->lineEdit_fermenterBatchSize      ->setQuantity    (m_editItem->fermenterBatchSize_l       ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::mashTunVolume_l            ) { this->lineEdit_mashTunVolume           ->setQuantity    (m_editItem->mashTunVolume_l            ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::mashTunWeight_kg           ) { this->lineEdit_mashTunWeight           ->setQuantity    (m_editItem->mashTunWeight_kg           ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::mashTunSpecificHeat_calGC  ) { this->lineEdit_mashTunSpecificHeat     ->setQuantity    (m_editItem->mashTunSpecificHeat_calGC  ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::boilTime_min               ) { this->lineEdit_boilTime                ->setQuantity    (m_editItem->boilTime_min               ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::kettleEvaporationPerHour_l ) { this->lineEdit_kettleEvaporationPerHour->setQuantity    (m_editItem->kettleEvaporationPerHour_l ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::topUpKettle_l              ) { this->lineEdit_topUpKettle             ->setQuantity    (m_editItem->topUpKettle_l              ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::topUpWater_l               ) { this->lineEdit_topUpWater              ->setQuantity    (m_editItem->topUpWater_l               ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::kettleTrubChillerLoss_l    ) { this->lineEdit_kettleTrubChillerLoss   ->setQuantity    (m_editItem->kettleTrubChillerLoss_l    ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::lauterTunDeadspaceLoss_l   ) { this->lineEdit_lauterTunDeadspaceLoss  ->setQuantity    (m_editItem->lauterTunDeadspaceLoss_l   ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Equipment::kettleNotes                ) { this->textEdit_kettleNotes             ->setText      (m_editItem->kettleNotes                ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::mashTunGrainAbsorption_LKg ) { this->lineEdit_mashTunGrainAbsorption  ->setAmount    (m_editItem->mashTunGrainAbsorption_LKg ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::boilingPoint_c             ) { this->lineEdit_boilingPoint            ->setAmount    (m_editItem->boilingPoint_c             ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::hopUtilization_pct         ) { this->lineEdit_hopUtilization          ->setAmount    (m_editItem->hopUtilization_pct         ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::mashTunGrainAbsorption_LKg ) { this->lineEdit_mashTunGrainAbsorption  ->setQuantity    (m_editItem->mashTunGrainAbsorption_LKg ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::boilingPoint_c             ) { this->lineEdit_boilingPoint            ->setQuantity    (m_editItem->boilingPoint_c             ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::hopUtilization_pct         ) { this->lineEdit_hopUtilization          ->setQuantity    (m_editItem->hopUtilization_pct         ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Equipment::calcBoilVolume             ) { this->checkBox_calcBoilVolume          ->setChecked   (m_editItem->calcBoilVolume             ()); if (propName) { return; } }
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    if (!propName || *propName == PropertyNames::Equipment::hltType                    ) { this->lineEdit_hltType                 ->setTextCursor(m_editItem->hltType                    ()); if (propName) { return; } }
@@ -312,22 +312,22 @@ void EquipmentEditor::readFieldsFromEditItem(std::optional<QString> propName) {
    if (!propName || *propName == PropertyNames::Equipment::fermenterType              ) { this->lineEdit_fermenterType           ->setTextCursor(m_editItem->fermenterType              ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Equipment::agingVesselType            ) { this->lineEdit_agingVesselType         ->setTextCursor(m_editItem->agingVesselType            ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Equipment::packagingVesselType        ) { this->lineEdit_packagingVesselType     ->setTextCursor(m_editItem->packagingVesselType        ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::hltVolume_l                ) { this->lineEdit_hltVolume               ->setAmount    (m_editItem->hltVolume_l                ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::lauterTunVolume_l          ) { this->lineEdit_lauterTunVolume         ->setAmount    (m_editItem->lauterTunVolume_l          ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::agingVesselVolume_l        ) { this->lineEdit_agingVesselVolume       ->setAmount    (m_editItem->agingVesselVolume_l        ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::packagingVesselVolume_l    ) { this->lineEdit_packagingVesselVolume   ->setAmount    (m_editItem->packagingVesselVolume_l    ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::hltLoss_l                  ) { this->lineEdit_hltLoss                 ->setAmount    (m_editItem->hltLoss_l                  ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::mashTunLoss_l              ) { this->lineEdit_mashTunLoss             ->setAmount    (m_editItem->mashTunLoss_l              ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::fermenterLoss_l            ) { this->lineEdit_fermenterLoss           ->setAmount    (m_editItem->fermenterLoss_l            ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::agingVesselLoss_l          ) { this->lineEdit_agingVesselLoss         ->setAmount    (m_editItem->agingVesselLoss_l          ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::packagingVesselLoss_l      ) { this->lineEdit_packagingVesselLoss     ->setAmount    (m_editItem->packagingVesselLoss_l      ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::kettleOutflowPerMinute_l   ) { this->lineEdit_kettleOutflowPerMinute  ->setAmount    (m_editItem->kettleOutflowPerMinute_l   ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::hltWeight_kg               ) { this->lineEdit_hltWeight               ->setAmount    (m_editItem->hltWeight_kg               ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::lauterTunWeight_kg         ) { this->lineEdit_lauterTunWeight         ->setAmount    (m_editItem->lauterTunWeight_kg         ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::kettleWeight_kg            ) { this->lineEdit_kettleWeight            ->setAmount    (m_editItem->kettleWeight_kg            ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::hltSpecificHeat_calGC      ) { this->lineEdit_hltSpecificHeat         ->setAmount    (m_editItem->hltSpecificHeat_calGC      ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::lauterTunSpecificHeat_calGC) { this->lineEdit_lauterTunSpecificHeat   ->setAmount    (m_editItem->lauterTunSpecificHeat_calGC()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Equipment::kettleSpecificHeat_calGC   ) { this->lineEdit_kettleSpecificHeat      ->setAmount    (m_editItem->kettleSpecificHeat_calGC   ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::hltVolume_l                ) { this->lineEdit_hltVolume               ->setQuantity    (m_editItem->hltVolume_l                ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::lauterTunVolume_l          ) { this->lineEdit_lauterTunVolume         ->setQuantity    (m_editItem->lauterTunVolume_l          ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::agingVesselVolume_l        ) { this->lineEdit_agingVesselVolume       ->setQuantity    (m_editItem->agingVesselVolume_l        ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::packagingVesselVolume_l    ) { this->lineEdit_packagingVesselVolume   ->setQuantity    (m_editItem->packagingVesselVolume_l    ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::hltLoss_l                  ) { this->lineEdit_hltLoss                 ->setQuantity    (m_editItem->hltLoss_l                  ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::mashTunLoss_l              ) { this->lineEdit_mashTunLoss             ->setQuantity    (m_editItem->mashTunLoss_l              ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::fermenterLoss_l            ) { this->lineEdit_fermenterLoss           ->setQuantity    (m_editItem->fermenterLoss_l            ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::agingVesselLoss_l          ) { this->lineEdit_agingVesselLoss         ->setQuantity    (m_editItem->agingVesselLoss_l          ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::packagingVesselLoss_l      ) { this->lineEdit_packagingVesselLoss     ->setQuantity    (m_editItem->packagingVesselLoss_l      ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::kettleOutflowPerMinute_l   ) { this->lineEdit_kettleOutflowPerMinute  ->setQuantity    (m_editItem->kettleOutflowPerMinute_l   ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::hltWeight_kg               ) { this->lineEdit_hltWeight               ->setQuantity    (m_editItem->hltWeight_kg               ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::lauterTunWeight_kg         ) { this->lineEdit_lauterTunWeight         ->setQuantity    (m_editItem->lauterTunWeight_kg         ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::kettleWeight_kg            ) { this->lineEdit_kettleWeight            ->setQuantity    (m_editItem->kettleWeight_kg            ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::hltSpecificHeat_calGC      ) { this->lineEdit_hltSpecificHeat         ->setQuantity    (m_editItem->hltSpecificHeat_calGC      ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::lauterTunSpecificHeat_calGC) { this->lineEdit_lauterTunSpecificHeat   ->setQuantity    (m_editItem->lauterTunSpecificHeat_calGC()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Equipment::kettleSpecificHeat_calGC   ) { this->lineEdit_kettleSpecificHeat      ->setQuantity    (m_editItem->kettleSpecificHeat_calGC   ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Equipment::hltNotes                   ) { this->textEdit_hltNotes                ->setText      (m_editItem->hltNotes                   ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Equipment::mashTunNotes               ) { this->textEdit_mashTunNotes            ->setText      (m_editItem->mashTunNotes               ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Equipment::lauterTunNotes             ) { this->textEdit_lauterTunNotes          ->setText      (m_editItem->lauterTunNotes             ()); if (propName) { return; } }
@@ -372,10 +372,10 @@ void EquipmentEditor::hideOrShowOptionalVessels() {
 
 void EquipmentEditor::updateCalcBoilVolume() {
    if (this->checkBox_calcBoilVolume->isChecked()) {
-      this->lineEdit_kettleBoilSize->setAmount(this->calcBatchSize());
+      this->lineEdit_kettleBoilSize->setQuantity(this->calcBatchSize());
       this->lineEdit_kettleBoilSize->setEnabled(false);
    } else {
-      this->lineEdit_kettleBoilSize->setAmount(this->lineEdit_fermenterBatchSize->toCanonical().quantity);
+      this->lineEdit_kettleBoilSize->setQuantity(this->lineEdit_fermenterBatchSize->getNonOptCanonicalQty());
       this->lineEdit_kettleBoilSize->setEnabled(true);
    }
    return;
@@ -396,7 +396,7 @@ void EquipmentEditor::resetAbsorption() {
       return;
    }
 
-   lineEdit_mashTunGrainAbsorption->setAmount(PhysicalConstants::grainAbsorption_Lkg);
+   lineEdit_mashTunGrainAbsorption->setQuantity(PhysicalConstants::grainAbsorption_Lkg);
    return;
 }
 

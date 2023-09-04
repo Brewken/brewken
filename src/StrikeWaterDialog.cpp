@@ -80,16 +80,16 @@ void StrikeWaterDialog::calculate() {
   double strikeWaterTemp = computeInitialInfusion();
   double volumeToAdd     = computeMashInfusion();
 
-  this->initialResultTxt->setAmount(strikeWaterTemp);
-  this->mashResultTxt   ->setAmount(volumeToAdd);
+  this->initialResultTxt->setQuantity(strikeWaterTemp);
+  this->mashResultTxt   ->setQuantity(volumeToAdd);
   return;
 }
 
 double StrikeWaterDialog::computeInitialInfusion() {
-   double grainTemp   = this->grainTempVal      ->toCanonical().quantity;
-   double targetMash  = this->targetMashVal     ->toCanonical().quantity;
-   double waterVolume = this->waterVolumeVal    ->toCanonical().quantity;
-   double grainWeight = this->grainWeightInitVal->toCanonical().quantity;
+   double grainTemp   = this->grainTempVal      ->getNonOptCanonicalQty();
+   double targetMash  = this->targetMashVal     ->getNonOptCanonicalQty();
+   double waterVolume = this->waterVolumeVal    ->getNonOptCanonicalQty();
+   double grainWeight = this->grainWeightInitVal->getNonOptCanonicalQty();
 
    if (grainWeight == 0.0) {
       return 0.0;
@@ -99,11 +99,11 @@ double StrikeWaterDialog::computeInitialInfusion() {
 }
 
 double StrikeWaterDialog::computeMashInfusion() {
-   double mashVol       = this->mashVolVal      ->toCanonical().quantity;
-   double grainWeight   = this->grainWeightVal  ->toCanonical().quantity;
-   double actualMash    = this->actualMashVal   ->toCanonical().quantity;
-   double targetMashInf = this->targetMashInfVal->toCanonical().quantity;
-   double infusionWater = this->infusionWaterVal->toCanonical().quantity;
+   double mashVol       = this->mashVolVal      ->getNonOptCanonicalQty();
+   double grainWeight   = this->grainWeightVal  ->getNonOptCanonicalQty();
+   double actualMash    = this->actualMashVal   ->getNonOptCanonicalQty();
+   double targetMashInf = this->targetMashInfVal->getNonOptCanonicalQty();
+   double infusionWater = this->infusionWaterVal->getNonOptCanonicalQty();
 
    return mashInfusionSi(actualMash, targetMashInf, grainWeight, infusionWater, mashVol);
 }

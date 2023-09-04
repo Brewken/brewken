@@ -185,13 +185,13 @@ void WaterEditor::showChanges(QMetaProperty const * prop) {
    }
 
    if (updateAll || propName == PropertyNames::NamedEntity::name      ) { this->lineEdit_name->setText  (this->pimpl->observedWater->name()           ); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Water::calcium_ppm     ) { this->lineEdit_ca  ->setAmount(this->pimpl->observedWater->calcium_ppm()    ); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Water::magnesium_ppm   ) { this->lineEdit_mg  ->setAmount(this->pimpl->observedWater->magnesium_ppm()  ); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Water::sulfate_ppm     ) { this->lineEdit_so4 ->setAmount(this->pimpl->observedWater->sulfate_ppm()    ); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Water::sodium_ppm      ) { this->lineEdit_na  ->setAmount(this->pimpl->observedWater->sodium_ppm()     ); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Water::chloride_ppm    ) { this->lineEdit_cl  ->setAmount(this->pimpl->observedWater->chloride_ppm()   ); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Water::bicarbonate_ppm ) { this->lineEdit_alk ->setAmount(this->pimpl->observedWater->bicarbonate_ppm()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Water::ph              ) { this->lineEdit_ph  ->setAmount(this->pimpl->observedWater->ph()             ); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::calcium_ppm     ) { this->lineEdit_ca  ->setQuantity(this->pimpl->observedWater->calcium_ppm()    ); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::magnesium_ppm   ) { this->lineEdit_mg  ->setQuantity(this->pimpl->observedWater->magnesium_ppm()  ); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::sulfate_ppm     ) { this->lineEdit_so4 ->setQuantity(this->pimpl->observedWater->sulfate_ppm()    ); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::sodium_ppm      ) { this->lineEdit_na  ->setQuantity(this->pimpl->observedWater->sodium_ppm()     ); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::chloride_ppm    ) { this->lineEdit_cl  ->setQuantity(this->pimpl->observedWater->chloride_ppm()   ); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::bicarbonate_ppm ) { this->lineEdit_alk ->setQuantity(this->pimpl->observedWater->bicarbonate_ppm()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::ph              ) { this->lineEdit_ph  ->setQuantity(this->pimpl->observedWater->ph()             ); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Water::alkalinityAsHCO3) {
       bool typeless = this->pimpl->observedWater->alkalinityAsHCO3();
       this->comboBox_alk->setCurrentIndex(comboBox_alk->findText(typeless ? "HCO3" : "CaCO3"));
@@ -221,15 +221,15 @@ void WaterEditor::inputFieldModified() {
       //         feels wrong that we just set both from the same input, but probably needs some more profound thought
       //         about what exactly correct behaviour should be.
       if      (signalSender == this->comboBox_alk)         {this->pimpl->editedWater->setAlkalinityAsHCO3(this->comboBox_alk ->currentText() == QString("HCO3"));}
-      else if (signalSender == this->lineEdit_alk)         {this->pimpl->editedWater->setBicarbonate_ppm (this->lineEdit_alk ->toCanonical().quantity);  // NB continues on next line!
-                                                            this->pimpl->editedWater->setAlkalinity_ppm  (this->lineEdit_alk ->toCanonical().quantity);        }
-      else if (signalSender == this->lineEdit_ca)          {this->pimpl->editedWater->setCalcium_ppm     (this->lineEdit_ca  ->toCanonical().quantity);        }
-      else if (signalSender == this->lineEdit_cl)          {this->pimpl->editedWater->setChloride_ppm    (this->lineEdit_cl  ->toCanonical().quantity);        }
-      else if (signalSender == this->lineEdit_mg)          {this->pimpl->editedWater->setMagnesium_ppm   (this->lineEdit_mg  ->toCanonical().quantity);        }
-      else if (signalSender == this->lineEdit_na)          {this->pimpl->editedWater->setSodium_ppm      (this->lineEdit_na  ->toCanonical().quantity);        }
+      else if (signalSender == this->lineEdit_alk)         {this->pimpl->editedWater->setBicarbonate_ppm (this->lineEdit_alk ->getNonOptCanonicalQty());  // NB continues on next line!
+                                                            this->pimpl->editedWater->setAlkalinity_ppm  (this->lineEdit_alk ->getNonOptCanonicalQty());        }
+      else if (signalSender == this->lineEdit_ca)          {this->pimpl->editedWater->setCalcium_ppm     (this->lineEdit_ca  ->getNonOptCanonicalQty());        }
+      else if (signalSender == this->lineEdit_cl)          {this->pimpl->editedWater->setChloride_ppm    (this->lineEdit_cl  ->getNonOptCanonicalQty());        }
+      else if (signalSender == this->lineEdit_mg)          {this->pimpl->editedWater->setMagnesium_ppm   (this->lineEdit_mg  ->getNonOptCanonicalQty());        }
+      else if (signalSender == this->lineEdit_na)          {this->pimpl->editedWater->setSodium_ppm      (this->lineEdit_na  ->getNonOptCanonicalQty());        }
       else if (signalSender == this->lineEdit_name)        {this->pimpl->editedWater->setName            (this->lineEdit_name->text());                          }
-      else if (signalSender == this->lineEdit_ph)          {this->pimpl->editedWater->setPh              (this->lineEdit_ph  ->toCanonical().quantity);        }
-      else if (signalSender == this->lineEdit_so4)         {this->pimpl->editedWater->setSulfate_ppm     (this->lineEdit_so4 ->toCanonical().quantity);        }
+      else if (signalSender == this->lineEdit_ph)          {this->pimpl->editedWater->setPh              (this->lineEdit_ph  ->getNonOptCanonicalQty());        }
+      else if (signalSender == this->lineEdit_so4)         {this->pimpl->editedWater->setSulfate_ppm     (this->lineEdit_so4 ->getNonOptCanonicalQty());        }
       else if (signalSender == this->plainTextEdit_notes)  {this->pimpl->editedWater->setNotes           (this->plainTextEdit_notes->toPlainText());             }
       else {
          // If we get here, it's probably a coding error

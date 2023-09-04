@@ -267,13 +267,14 @@ namespace Measurement {
     *        corresponding to a \c ChoiceOfPhysicalQuantity
     */
    std::vector<PhysicalQuantity> const & allPossibilities(ChoiceOfPhysicalQuantity const val);
+   std::vector<int> const & allPossibilitiesAsInt(ChoiceOfPhysicalQuantity const val);
 
    /**
     * \brief We have a number of places where we have a boolean \c amountIsWeight.  This array converts such a flag to
     *        a localised displayable string, relying on the fact that static_cast<int>(false) == 0 and
     *        static_cast<int>(true) == 1.
     */
-   extern std::array<QString const, 2> descAmountIsWeight;;
+   [[deprecated]] extern std::array<QString const, 2> descAmountIsWeight;;
 
    /**
     * \return \c true if \c physicalQuantity is a valid option for \c variantPhysicalQuantity, false otherwise

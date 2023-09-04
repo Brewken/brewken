@@ -41,14 +41,14 @@ class Recipe;
 class RecipeAdditionHopTableModel;
 template <> struct TableModelTraits<RecipeAdditionHopTableModel> {
    enum class ColumnIndex {
-      Name     ,
-      Form     ,
-      Alpha    ,
-      Year     ,
-      Amount   ,
-//      Inventory,
-      Stage    ,
-      Time     ,
+      Name          ,
+      Form          ,
+      Alpha         ,
+      Year          ,
+      Amount        ,
+      TotalInventory,
+      Stage         ,
+      Time          ,
    };
 };
 

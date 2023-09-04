@@ -1591,12 +1591,12 @@ void MainWindow::showChanges(QMetaProperty* prop) {
 
    // May St. Stevens preserve me
    this->lineEdit_name      ->setText  (this->recipeObs->name          ());
-   this->lineEdit_batchSize ->setAmount(this->recipeObs->batchSize_l   ());
+   this->lineEdit_batchSize ->setQuantity(this->recipeObs->batchSize_l   ());
    // TODO: One day we'll want to do some work to properly handle no-boil recipes....
    double const boilSize = recipeObs->boil() ? (*recipeObs->boil())->preBoilSize_l().value_or(0.0) : 0.0;
-   this->lineEdit_boilSize  ->setAmount(boilSize);
-   this->lineEdit_efficiency->setAmount(this->recipeObs->efficiency_pct());
-   this->lineEdit_boilTime  ->setAmount(this->recipeObs->boilTime_min  ());
+   this->lineEdit_boilSize  ->setQuantity(boilSize);
+   this->lineEdit_efficiency->setQuantity(this->recipeObs->efficiency_pct());
+   this->lineEdit_boilTime  ->setQuantity(this->recipeObs->boilTime_min  ());
    this->lineEdit_name      ->setCursorPosition(0);
    this->lineEdit_batchSize ->setCursorPosition(0);
    this->lineEdit_boilSize  ->setCursorPosition(0);
@@ -1623,7 +1623,7 @@ void MainWindow::showChanges(QMetaProperty* prop) {
    else
       lineEdit_calcBoilSize->setStyleSheet(highSS);
 */
-   this->lineEdit_boilSg->setAmount(this->recipeObs->boilGrav());
+   this->lineEdit_boilSg->setQuantity(this->recipeObs->boilGrav());
 
    Style const * style = this->recipeObs->style();
    if (style) {
@@ -1920,7 +1920,7 @@ void MainWindow::updateRecipeBatchSize() {
 
    this->doOrRedoUpdate(*this->recipeObs,
                         TYPE_INFO(Recipe, batchSize_l),
-                        lineEdit_batchSize->toCanonical().quantity,
+                        lineEdit_batchSize->getNonOptCanonicalQty(),
                         tr("Change Batch Size"));
 }
 
@@ -1931,7 +1931,7 @@ void MainWindow::updateRecipeBoilSize() {
 
    this->doOrRedoUpdate(*this->recipeObs,
                         TYPE_INFO(Recipe, boilSize_l),
-                        lineEdit_boilSize->toCanonical().quantity,
+                        lineEdit_boilSize->getNonOptCanonicalQty(),
                         tr("Change Boil Size"));
 }
 

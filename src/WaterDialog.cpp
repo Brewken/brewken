@@ -130,7 +130,7 @@ WaterDialog::WaterDialog(QWidget* parent) :
    // foreach( SmartDigitWidget* i, m_ppm_digits ) {
    for (int ii = 0; ii < Water::ionStringMapping.size(); ++ii) {
       m_ppm_digits[ii]->setLimits(0.0,1000.0);
-      m_ppm_digits[ii]->setAmount(0.0);
+      m_ppm_digits[ii]->setQuantity(0.0);
       m_ppm_digits[ii]->setMessages(tr("Too low for target profile."),
                                    tr("In range for target profile."),
                                    tr("Too high for target profile."));
@@ -138,12 +138,12 @@ WaterDialog::WaterDialog(QWidget* parent) :
    // we can be a bit more specific with pH
    btDigit_ph->setLowLim(5.0);
    btDigit_ph->setHighLim(5.5);
-   btDigit_ph->setAmount(7.0);
+   btDigit_ph->setQuantity(7.0);
 
    // since all the things are now digits, lets get the totals configured
    for (int ii = static_cast<int>(Salt::Type::CaCl2); ii < static_cast<int>(Salt::Type::NaHCO3); ++ii ) {
       m_total_digits[ii]->setConstantColor(SmartDigitWidget::ColorType::Black);
-      m_total_digits[ii]->setAmount(0.0);
+      m_total_digits[ii]->setQuantity(0.0);
    }
    // and now let's see what the table does.
    m_salt_table_model = new SaltTableModel(tableView_salts);
@@ -374,7 +374,7 @@ void WaterDialog::newTotals() {
    // .:TBD:. It seems the ordering of Salt::Type is important.  Would be good to decouple this!
    for (int ii = static_cast<int>(Salt::Type::CaCl2); ii < static_cast<int>(Salt::Type::LacticAcid); ++ii ) {
       Salt::Type type = static_cast<Salt::Type>(ii);
-      m_total_digits[ii]->setAmount(m_salt_table_model->total(type));
+      m_total_digits[ii]->setQuantity(m_salt_table_model->total(type));
    }
 
    // the total_* method return the numerator, we supply the denominator and
@@ -392,15 +392,15 @@ void WaterDialog::newTotals() {
       for (int ii = 0; ii < Water::ionStringMapping.size(); ++ii) {
          Water::Ion ion = static_cast<Water::Ion>(ii);
          double mPPM = modifier * this->m_base->ppm(ion);
-         m_ppm_digits[ii]->setAmount( m_salt_table_model->total(ion) / allTheWaters + mPPM);
+         m_ppm_digits[ii]->setQuantity( m_salt_table_model->total(ion) / allTheWaters + mPPM);
 
       }
-      btDigit_ph->setAmount(calculateMashpH());
+      btDigit_ph->setQuantity(calculateMashpH());
 
    } else {
       for (int ii = 0; ii < Water::ionStringMapping.size(); ++ii) {
          Water::Ion ion = static_cast<Water::Ion>(ii);
-         m_ppm_digits[ii]->setAmount( m_salt_table_model->total(ion) / allTheWaters);
+         m_ppm_digits[ii]->setQuantity( m_salt_table_model->total(ion) / allTheWaters);
       }
    }
    return;

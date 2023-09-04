@@ -67,12 +67,12 @@ void MashEditor::saveAndClose() {
 
    this->mashObs->setEquipAdjust(true); // BeerXML won't like me, but it's just stupid not to adjust for the equipment when you're able.
    this->mashObs->setName                 (this->lineEdit_name      ->text()                  );
-   this->mashObs->setGrainTemp_c          (this->lineEdit_grainTemp ->toCanonical().quantity);
-   this->mashObs->setSpargeTemp_c         (this->lineEdit_spargeTemp->toCanonical().quantity);
-   this->mashObs->setPh                   (this->lineEdit_spargePh  ->toCanonical().quantity);
-   this->mashObs->setTunTemp_c            (this->lineEdit_tunTemp   ->toCanonical().quantity);
-   this->mashObs->setTunWeight_kg         (this->lineEdit_tunMass   ->toCanonical().quantity);
-   this->mashObs->setMashTunSpecificHeat_calGC(this->lineEdit_tunSpHeat ->toCanonical().quantity);
+   this->mashObs->setGrainTemp_c          (this->lineEdit_grainTemp ->getNonOptCanonicalQty());
+   this->mashObs->setSpargeTemp_c         (this->lineEdit_spargeTemp->getNonOptCanonicalQty());
+   this->mashObs->setPh                   (this->lineEdit_spargePh  ->getNonOptCanonicalQty());
+   this->mashObs->setTunTemp_c            (this->lineEdit_tunTemp   ->getNonOptCanonicalQty());
+   this->mashObs->setTunWeight_kg         (this->lineEdit_tunMass   ->getNonOptCanonicalQty());
+   this->mashObs->setMashTunSpecificHeat_calGC(this->lineEdit_tunSpHeat ->getNonOptCanonicalQty());
    this->mashObs->setNotes                (this->textEdit_notes     ->toPlainText()           );
 
    if (isNew) {
@@ -92,8 +92,8 @@ void MashEditor::fromEquipment() {
       return;
    }
 
-   lineEdit_tunMass  ->setAmount(this->m_equip->mashTunWeight_kg         ());
-   lineEdit_tunSpHeat->setAmount(this->m_equip->mashTunSpecificHeat_calGC());
+   lineEdit_tunMass  ->setQuantity(this->m_equip->mashTunWeight_kg         ());
+   lineEdit_tunSpHeat->setQuantity(this->m_equip->mashTunSpecificHeat_calGC());
    return;
 }
 
@@ -166,12 +166,12 @@ void MashEditor::showChanges(QMetaProperty* prop) {
    qDebug() << Q_FUNC_INFO << "Updating" << (updateAll ? "all" : "property") << propName;
 
    if (updateAll || propName == PropertyNames::NamedEntity::name           ) {this->lineEdit_name      ->setText     (mashObs->name                 ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::grainTemp_c           ) {this->lineEdit_grainTemp ->setAmount   (mashObs->grainTemp_c          ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::spargeTemp_c          ) {this->lineEdit_spargeTemp->setAmount   (mashObs->spargeTemp_c         ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::ph                    ) {this->lineEdit_spargePh  ->setAmount   (mashObs->ph                   ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::tunTemp_c             ) {this->lineEdit_tunTemp   ->setAmount   (mashObs->tunTemp_c            ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::mashTunWeight_kg          ) {this->lineEdit_tunMass   ->setAmount   (mashObs->mashTunWeight_kg         ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::mashTunSpecificHeat_calGC ) {this->lineEdit_tunSpHeat ->setAmount   (mashObs->mashTunSpecificHeat_calGC()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::grainTemp_c           ) {this->lineEdit_grainTemp ->setQuantity   (mashObs->grainTemp_c          ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::spargeTemp_c          ) {this->lineEdit_spargeTemp->setQuantity   (mashObs->spargeTemp_c         ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::ph                    ) {this->lineEdit_spargePh  ->setQuantity   (mashObs->ph                   ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::tunTemp_c             ) {this->lineEdit_tunTemp   ->setQuantity   (mashObs->tunTemp_c            ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::mashTunWeight_kg          ) {this->lineEdit_tunMass   ->setQuantity   (mashObs->mashTunWeight_kg         ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::mashTunSpecificHeat_calGC ) {this->lineEdit_tunSpHeat ->setQuantity   (mashObs->mashTunSpecificHeat_calGC()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Mash::notes                 ) {this->textEdit_notes     ->setPlainText(mashObs->notes                ()); if (!updateAll) { return; } }
    return;
 }

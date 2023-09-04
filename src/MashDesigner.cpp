@@ -160,8 +160,8 @@ void MashDesigner::saveStep() {
    this->mashStep->setName(this->lineEdit_name->text());
    this->mashStep->setType(static_cast<MashStep::Type>(comboBox_type->currentIndex()));
    // Bound the target temperature to what can be achieved
-   this->mashStep->setStepTemp_c(this->bound_temp_c(this->lineEdit_temp->toCanonical().quantity));
-   this->mashStep->setStepTime_min(lineEdit_time->toCanonical().quantity);
+   this->mashStep->setStepTemp_c(this->bound_temp_c(this->lineEdit_temp->getNonOptCanonicalQty()));
+   this->mashStep->setStepTime_min(lineEdit_time->getNonOptCanonicalQty());
 
    // finish a few things -- this may be premature optimization
    if (isInfusion()) {
@@ -175,7 +175,7 @@ void MashDesigner::saveStep() {
 }
 
 double MashDesigner::stepTemp_c() {
-   return lineEdit_temp->toCanonical().quantity;
+   return lineEdit_temp->getNonOptCanonicalQty();
 }
 
 bool MashDesigner::heating() {
@@ -592,7 +592,7 @@ void MashDesigner::saveTargetTemp() {
    double temp = this->bound_temp_c(this->stepTemp_c());
 
    // be nice and reset the field so it displays in proper units
-   this->lineEdit_temp->setAmount(temp);
+   this->lineEdit_temp->setQuantity(temp);
    if (this->mashStep) {
       this->mashStep->setStepTemp_c(temp);
    }

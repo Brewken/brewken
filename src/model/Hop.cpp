@@ -143,8 +143,9 @@ TypeLookup const Hop::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::product_id           , Hop::m_product_id           ,           NonPhysicalQuantity::String       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::year                 , Hop::m_year                 ,           NonPhysicalQuantity::String       ),
    },
-   // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
-   {&Ingredient::typeLookup}
+   // Parent classes lookup
+   {&Ingredient::typeLookup,
+    &IngredientBase<Hop>::typeLookup}
 };
 static_assert(std::is_base_of<Ingredient, Hop>::value);
 

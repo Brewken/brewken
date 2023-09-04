@@ -53,16 +53,16 @@ MashStepEditor::~MashStepEditor() = default;
 void MashStepEditor::readFieldsFromEditItem(std::optional<QString> propName) {
    if (!propName || *propName == PropertyNames::NamedEntity::name               ) { this->lineEdit_name        ->setTextCursor(m_editItem->name                  ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::MashStep::type                  ) { this->comboBox_mashStepType->setValue     (m_editItem->type                  ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::MashStep::infuseAmount_l        ) { this->lineEdit_amount      ->setAmount    (m_editItem->amount_l              ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::MashStep::infuseTemp_c          ) { this->lineEdit_infuseTemp  ->setAmount    (m_editItem->infuseTemp_c          ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::MashStep::stepTemp_c            ) { this->lineEdit_stepTemp    ->setAmount    (m_editItem->stepTemp_c            ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::    Step::stepTime_min          ) { this->lineEdit_stepTime    ->setAmount    (m_editItem->stepTime_min          ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::    Step::rampTime_mins         ) { this->lineEdit_rampTime    ->setAmount    (m_editItem->rampTime_mins         ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::    Step::endTemp_c             ) { this->lineEdit_endTemp     ->setAmount    (m_editItem->endTemp_c             ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::MashStep::infuseAmount_l        ) { this->lineEdit_amount      ->setQuantity    (m_editItem->amount_l              ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::MashStep::infuseTemp_c          ) { this->lineEdit_infuseTemp  ->setQuantity    (m_editItem->infuseTemp_c          ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::MashStep::stepTemp_c            ) { this->lineEdit_stepTemp    ->setQuantity    (m_editItem->stepTemp_c            ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::    Step::stepTime_min          ) { this->lineEdit_stepTime    ->setQuantity    (m_editItem->stepTime_min          ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::    Step::rampTime_mins         ) { this->lineEdit_rampTime    ->setQuantity    (m_editItem->rampTime_mins         ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::    Step::endTemp_c             ) { this->lineEdit_endTemp     ->setQuantity    (m_editItem->endTemp_c             ()); if (propName) { return; } }
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   if (!propName || *propName == PropertyNames::MashStep::liquorToGristRatio_lKg) { this->lineEdit_thickness   ->setAmount    (m_editItem->liquorToGristRatio_lKg()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::    Step::startAcidity_pH       ) { this->lineEdit_startAcidity->setAmount    (m_editItem->startAcidity_pH       ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::    Step::endAcidity_pH         ) { this->lineEdit_endAcidity  ->setAmount    (m_editItem->endAcidity_pH         ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::MashStep::liquorToGristRatio_lKg) { this->lineEdit_thickness   ->setQuantity    (m_editItem->liquorToGristRatio_lKg()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::    Step::startAcidity_pH       ) { this->lineEdit_startAcidity->setQuantity    (m_editItem->startAcidity_pH       ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::    Step::endAcidity_pH         ) { this->lineEdit_endAcidity  ->setQuantity    (m_editItem->endAcidity_pH         ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::    Step::description           ) { this->textEdit_description ->setPlainText (m_editItem->description           ()); if (propName) { return; } }
    return;
 }

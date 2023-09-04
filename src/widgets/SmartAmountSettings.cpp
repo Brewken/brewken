@@ -185,7 +185,7 @@ void SmartAmountSettings::selectPhysicalQuantity(bool const isFirst) {
    return;
 }
 
-[[nodiscard]] QString SmartAmountSettings::displayAmount(double amount, unsigned int precision) const {
+[[nodiscard]] QString SmartAmountSettings::displayAmount(double quantity, unsigned int precision) const {
    // It's a coding error to call this for NonPhysicalQuantity
    Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo.fieldType));
 
@@ -193,7 +193,28 @@ void SmartAmountSettings::selectPhysicalQuantity(bool const isFirst) {
    // methods make a single call w/o having to do the logic for finding the
    // unit and scale.
    return Measurement::displayAmount(
-      Measurement::Amount{amount, Measurement::Unit::getCanonicalUnit(*this->pimpl->m_currentPhysicalQuantity)},
+      Measurement::Amount{quantity, Measurement::Unit::getCanonicalUnit(*this->pimpl->m_currentPhysicalQuantity)},
+      precision,
+      this->getForcedSystemOfMeasurement(),
+      this->getForcedRelativeScale()
+   );
+}
+
+[[nodiscard]] QString SmartAmountSettings::displayAmount(Measurement::Amount const & amount,
+                                                         unsigned int precision) {
+   // It's a coding error to call this for NonPhysicalQuantity
+   Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo.fieldType));
+
+   // For now, I"m saying it's also a coding error to call this for a fixed physical quantity
+   Q_ASSERT(std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*this->pimpl->m_typeInfo.fieldType));
+
+   // Since we're given units, that tells us whether we're measuring by mass, volume, etc
+   this->selectPhysicalQuantity(amount.unit->getPhysicalQuantity());
+
+   qDebug() << Q_FUNC_INFO << "Precision:" << precision;
+
+   return Measurement::displayAmount(
+      amount,
       precision,
       this->getForcedSystemOfMeasurement(),
       this->getForcedRelativeScale()

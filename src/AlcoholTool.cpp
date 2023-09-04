@@ -151,13 +151,13 @@ public:
    }
 
    void updateCalculatedFields() {
-      double og = this->input_og->toCanonical().quantity;
-      double fg = this->input_fg->toCanonical().quantity;
+      double og = this->input_og->getNonOptCanonicalQty();
+      double fg = this->input_fg->getNonOptCanonicalQty();
       if (this->enableAdvancedInputs->isChecked()) {
          // User wants temperature correction
-         double calibrationTempInC = this->input_calibration_temperature->toCanonical().quantity;
-         double ogReadTempInC          = this->input_og_temperature->toCanonical().quantity;
-         double fgReadTempInC          = this->input_fg_temperature->toCanonical().quantity;
+         double calibrationTempInC = this->input_calibration_temperature->getNonOptCanonicalQty();
+         double ogReadTempInC          = this->input_og_temperature->getNonOptCanonicalQty();
+         double fgReadTempInC          = this->input_fg_temperature->getNonOptCanonicalQty();
          if (0.0 == calibrationTempInC || 0.0 == ogReadTempInC) {
             og = 0.0;
             this->corrected_og->setText("? sg");
@@ -247,7 +247,7 @@ public:
       // not to do the conversion twice (ie 20°C -> 68°F ... 68°C -> 154°F) as both SmartLineEdit::setAmount() and
       // Measurement::amountDisplay() take SI unit and convert them to whatever the user has chosen to display.  So you
       // just need SmartLineEdit::setAmount().
-      this->input_calibration_temperature->setAmount(
+      this->input_calibration_temperature->setQuantity(
          PersistentSettings::value(hydrometerCalibrationTemperatureInC,
                                     20.0,
                                     PersistentSettings::Sections::alcoholTool).toDouble()
@@ -261,7 +261,7 @@ public:
                                  this->enableAdvancedInputs->isChecked(),
                                  PersistentSettings::Sections::alcoholTool);
       PersistentSettings::insert(hydrometerCalibrationTemperatureInC,
-                                 this->input_calibration_temperature->toCanonical().quantity,
+                                 this->input_calibration_temperature->getNonOptCanonicalQty(),
                                  PersistentSettings::Sections::alcoholTool);
       return;
    }

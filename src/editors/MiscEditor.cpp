@@ -72,7 +72,7 @@ void MiscEditor::writeFieldsToEditItem() {
 void MiscEditor::writeLateFieldsToEditItem() {
    // Since inventory amount isn't really an attribute of the Misc, it's best to store it after we know the
    // Misc has a DB record.
-   this->m_editItem->setInventoryAmount(lineEdit_inventory->toCanonical().quantity);
+   this->m_editItem->setInventoryAmount(lineEdit_inventory->getNonOptCanonicalQty());
    return;
 }
 
@@ -81,8 +81,8 @@ void MiscEditor::readFieldsFromEditItem(std::optional<QString> propName) {
                                                                                        this->tabWidget_editor->setTabText(0, m_editItem->name());                  if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Misc::type                         ) { this->comboBox_type          ->setValue     (m_editItem->type          ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Misc::use                          ) { this->comboBox_use           ->setValue     (m_editItem->use           ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::NamedEntityWithInventory::inventory) { this->lineEdit_inventory     ->setAmount    (m_editItem->inventory     ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Misc::time_min                     ) { this->lineEdit_time          ->setAmount    (m_editItem->time_min      ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::NamedEntityWithInventory::inventory) { this->lineEdit_inventory     ->setQuantity    (m_editItem->inventory     ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Misc::time_min                     ) { this->lineEdit_time          ->setQuantity    (m_editItem->time_min      ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Misc::amountIsWeight               ) { this->checkBox_amountIsWeight->setChecked   (m_editItem->amountIsWeight()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Misc::useFor                       ) { this->textEdit_useFor        ->setPlainText (m_editItem->useFor        ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Misc::notes                        ) { this->textEdit_notes         ->setPlainText (m_editItem->notes         ()); if (propName) { return; } }
