@@ -76,8 +76,9 @@ void BtComboBox::init(char const * const        editorName        ,
    Q_ASSERT(typeInfo.isEnum() ||
             (typeInfo.fieldType && holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*typeInfo.fieldType)));
 
-   // If we are dealing with Measurement::ChoiceOfPhysicalQuantity, then there needs to be a controlled field
-   Q_ASSERT(typeInfo.isEnum() == (controlledField == nullptr));
+   // If we are dealing with Measurement::ChoiceOfPhysicalQuantity, then there usually needs to be a controlled field
+   // UNLESS we are in a table model.
+//   Q_ASSERT(typeInfo.isEnum() == (controlledField == nullptr));
 
    this->pimpl->m_editorName         =  editorName        ;
    this->pimpl->m_comboBoxName       =  comboBoxName      ;

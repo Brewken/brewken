@@ -32,13 +32,14 @@ bool RecipeAdditionHopSortFilterProxyModel::isLessThan(RecipeAdditionHopTableMod
       case RecipeAdditionHopTableModel::ColumnIndex::Form:
       case RecipeAdditionHopTableModel::ColumnIndex::Year:
       case RecipeAdditionHopTableModel::ColumnIndex::Stage:
+      case RecipeAdditionHopTableModel::ColumnIndex::AmountType:
          return leftItem.toString() < rightItem.toString();
 
       case RecipeAdditionHopTableModel::ColumnIndex::Alpha:
          return Measurement::extractRawFromString<double>( leftItem.toString()) <
                 Measurement::extractRawFromString<double>(rightItem.toString());
 
-//      case RecipeAdditionHopTableModel::ColumnIndex::Inventory:
+      case RecipeAdditionHopTableModel::ColumnIndex::TotalInventory:
       case RecipeAdditionHopTableModel::ColumnIndex::Amount:
          return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Mass) <
                 Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Mass);

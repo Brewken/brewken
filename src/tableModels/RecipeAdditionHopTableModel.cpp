@@ -56,19 +56,21 @@ RecipeAdditionHopTableModel::RecipeAdditionHopTableModel(QTableView * parent, bo
          //
          // Note that we have to use PropertyNames::NamedEntityWithInventory::inventoryWithUnits because
          // PropertyNames::NamedEntityWithInventory::inventory is not implemented
-         TABLE_MODEL_HEADER(RecipeAdditionHop, Name          , tr("Name"     ), PropertyPath{{PropertyNames::RecipeAdditionHop::hop,
-                                                                                              PropertyNames::NamedEntity::name         }}),
-         TABLE_MODEL_HEADER(RecipeAdditionHop, Form          , tr("Form"     ), PropertyPath{{PropertyNames::RecipeAdditionHop::hop,
-                                                                                              PropertyNames::Hop::form                 }}, EnumInfo{Hop::formStringMapping, Hop::formDisplayNames}),
-         TABLE_MODEL_HEADER(RecipeAdditionHop, Alpha         , tr("Alpha %"  ), PropertyPath{{PropertyNames::RecipeAdditionHop::hop,
-                                                                                              PropertyNames::Hop::alpha_pct            }}, PrecisionInfo{1}),
-         TABLE_MODEL_HEADER(RecipeAdditionHop, Year          , tr("Year"     ), PropertyPath{{PropertyNames::RecipeAdditionHop::hop,
-                                                                                              PropertyNames::Hop::year                 }}),
-         TABLE_MODEL_HEADER(RecipeAdditionHop, Amount        , tr("Amount"   ), PropertyNames::IngredientAmount::amount                  , PrecisionInfo{1}),
-         TABLE_MODEL_HEADER(RecipeAdditionHop, TotalInventory, tr("Inventory"), PropertyPath{{PropertyNames::RecipeAdditionHop::hop,
-                                                                                              PropertyNames::Ingredient::totalInventory}}),
-         TABLE_MODEL_HEADER(RecipeAdditionHop, Stage         , tr("Stage"    ), PropertyNames::RecipeAddition::stage                     , EnumInfo{RecipeAddition::stageStringMapping, RecipeAddition::stageDisplayNames}),
-         TABLE_MODEL_HEADER(RecipeAdditionHop, Time          , tr("Time"     ), PropertyNames::RecipeAddition::addAtTime_mins            , PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(RecipeAdditionHop, Name          , tr("Name"       ), PropertyPath{{PropertyNames::RecipeAdditionHop::hop,
+                                                                                                PropertyNames::NamedEntity::name         }}),
+         TABLE_MODEL_HEADER(RecipeAdditionHop, Form          , tr("Form"       ), PropertyPath{{PropertyNames::RecipeAdditionHop::hop,
+                                                                                                PropertyNames::Hop::form                 }}, EnumInfo{Hop::formStringMapping, Hop::formDisplayNames}),
+         TABLE_MODEL_HEADER(RecipeAdditionHop, Alpha         , tr("Alpha %"    ), PropertyPath{{PropertyNames::RecipeAdditionHop::hop,
+                                                                                                PropertyNames::Hop::alpha_pct            }}, PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(RecipeAdditionHop, Year          , tr("Year"       ), PropertyPath{{PropertyNames::RecipeAdditionHop::hop,
+                                                                                                PropertyNames::Hop::year                 }}),
+         TABLE_MODEL_HEADER(RecipeAdditionHop, Amount        , tr("Amount"     ), PropertyNames::IngredientAmount::amount                  , PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(RecipeAdditionHop, AmountType    , tr("Amount Type"), PropertyNames::IngredientAmount::amount                  , Hop::validMeasures),
+         // In this table, inventory is read-only, so there is intentionally no TotalInventoryType column
+         TABLE_MODEL_HEADER(RecipeAdditionHop, TotalInventory, tr("Inventory"  ), PropertyPath{{PropertyNames::RecipeAdditionHop::hop,
+                                                                                                PropertyNames::Ingredient::totalInventory}}),
+         TABLE_MODEL_HEADER(RecipeAdditionHop, Stage         , tr("Stage"      ), PropertyNames::RecipeAddition::stage                     , EnumInfo{RecipeAddition::stageStringMapping, RecipeAddition::stageDisplayNames}),
+         TABLE_MODEL_HEADER(RecipeAdditionHop, Time          , tr("Time"       ), PropertyNames::RecipeAddition::addAtTime_mins            , PrecisionInfo{1}),
       }
    },
    TableModelBase<RecipeAdditionHopTableModel, RecipeAdditionHop>{},
@@ -106,6 +108,7 @@ QVariant RecipeAdditionHopTableModel::data(const QModelIndex & index, int role) 
       case RecipeAdditionHopTableModel::ColumnIndex::Alpha         :
       case RecipeAdditionHopTableModel::ColumnIndex::Year          :
       case RecipeAdditionHopTableModel::ColumnIndex::Amount        :
+      case RecipeAdditionHopTableModel::ColumnIndex::AmountType    :
       case RecipeAdditionHopTableModel::ColumnIndex::TotalInventory:
       case RecipeAdditionHopTableModel::ColumnIndex::Stage         :
       case RecipeAdditionHopTableModel::ColumnIndex::Time          :
@@ -157,16 +160,17 @@ bool RecipeAdditionHopTableModel::setData(const QModelIndex & index, const QVari
 //      Q_FUNC_INFO << "columnIndex" << static_cast<int>(columnIndex) << ", value" << value << ", physicalQuantity" <<
 //      physicalQuantity;
    switch (columnIndex) {
-      case RecipeAdditionHopTableModel::ColumnIndex::Name     :
-      case RecipeAdditionHopTableModel::ColumnIndex::Form     :
-      case RecipeAdditionHopTableModel::ColumnIndex::Alpha    :
-      case RecipeAdditionHopTableModel::ColumnIndex::Year     :
+      case RecipeAdditionHopTableModel::ColumnIndex::Name      :
+      case RecipeAdditionHopTableModel::ColumnIndex::Form      :
+      case RecipeAdditionHopTableModel::ColumnIndex::Alpha     :
+      case RecipeAdditionHopTableModel::ColumnIndex::Year      :
       case RecipeAdditionHopTableModel::ColumnIndex::TotalInventory:
       case RecipeAdditionHopTableModel::ColumnIndex::Stage    :
       case RecipeAdditionHopTableModel::ColumnIndex::Time     :
          retVal = this->writeDataToModel(index, value, role);
          break;
 
+      case RecipeAdditionHopTableModel::ColumnIndex::AmountType:
       case RecipeAdditionHopTableModel::ColumnIndex::Amount   :
          retVal = this->writeDataToModel(index, value, role, physicalQuantity);
          break;

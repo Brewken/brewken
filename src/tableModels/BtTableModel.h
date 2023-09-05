@@ -287,8 +287,15 @@ public:
 
       /**
        * \brief Extra info, dependent on the type of value in the column
+       *
+       *        Note that we use a \c Measurement::ChoiceOfPhysicalQuantity value for an "amount type" column for
+       *        selecting a physical quantity for a paired column (with the same property path).
        */
-      std::optional<std::variant<EnumInfo, BoolInfo, PrecisionInfo>> extras;
+      using Extras = std::optional<std::variant<EnumInfo,
+                                                BoolInfo,
+                                                PrecisionInfo,
+                                                Measurement::ChoiceOfPhysicalQuantity>>;
+      Extras extras;
 
       ColumnInfo(char const * const   tableModelName,
                  char const * const   columnName    ,
@@ -297,7 +304,7 @@ public:
                  QString      const   label         ,
                  TypeLookup   const & typeLookup    ,
                  PropertyPath         propertyPath  ,
-                 std::optional<std::variant<EnumInfo, BoolInfo, PrecisionInfo>> extras = std::nullopt) :
+                 Extras       const   extras = std::nullopt) :
          tableModelName{tableModelName                      },
          columnName    {columnName                          },
          columnFqName  {columnFqName                        },
