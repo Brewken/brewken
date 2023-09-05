@@ -707,6 +707,8 @@ protected:
       // created the right type of QVariant for us, including handling whether or not it is optional.
       QVariant processedValue;
       if (std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType)) {
+         // It's a coding error if physicalQuantity was supplied for a field that is not a PhysicalQuantity
+         Q_ASSERT(!physicalQuantity);
          processedValue = value;
       } else  {
          // For physical quantities, we need to handle any conversions to and from canonical amounts, as well as deal
@@ -714,6 +716,17 @@ protected:
          //
          // ItemDelegate::writeDataToModel should have just given us a raw string
          Q_ASSERT(value.canConvert(QVariant::String));
+
+         //
+         // For cases where we have an Amount and a drop-down chooser to select PhysicalQuantity (eg between Mass and
+         // Volume), we have two columns with the same type.  The one that actually holds the amount is relatively
+         // straightforward because that's what we're already holding in `value`.  The one that holds the drop-down
+         // chooser also needs access to the amount, so it needs to get it from the model (which happens below).
+         //
+         bool const isPhysicalQuantityChooser =
+           std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*typeInfo.fieldType) &&
+           columnInfo.extras &&
+           std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*columnInfo.extras);
 
          if (std::holds_alternative<Measurement::PhysicalQuantity>(*typeInfo.fieldType)) {
             // It's a coding error if physicalQuantity was supplied - because it's known in advance from the field type
@@ -724,23 +737,27 @@ protected:
          } else {
             // This should be the only possibility left
             Q_ASSERT(std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*typeInfo.fieldType));
-            // It's a coding error if physicalQuantity was not supplied
-            Q_ASSERT(physicalQuantity);
+            // It's a coding error if physicalQuantity was not supplied for a non-Amount quantity column.  Equally it's
+            // a coding error to supply it for the drop-down chooser column or for an Amount column.
+            if (typeInfo.typeIndex == typeid(double)) {
+               // For a double representing a ChoiceOfPhysicalQuantity, we need to be passed in the current
+               // PhysicalQuantity because we don't know how to obtain it generically.
+               Q_ASSERT(physicalQuantity);
+            } else {
+               Q_ASSERT(!physicalQuantity);
+               if (!isPhysicalQuantityChooser) {
+                  // If this is an Amount field, we just ask the model for the current amount and look at what
+                  // PhysicalQuantity that is.
+                  // As above, overwriting the physicalQuantity parameter here simplifies the code below
+                  physicalQuantity =
+                     QVariant(columnInfo.propertyPath.getValue(*row)).value<Measurement::Amount>().unit->getPhysicalQuantity();
+               }
+            }
          }
-
-         //
-         // For cases where we have an Amount and a drop-down chooser to select PhysicalQuantity (eg between Mass and
-         // Volume), we have two columns with the same type.  The one that actually holds the amount is relatively
-         // straightforward because that's what we're already holding in `value`.  The one that holds the drop-down
-         // chooser also needs access to the amount, so it needs to get it from the model.
-         //
-         bool const isPhysicalQuantityChooser =
-           std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*typeInfo.fieldType) &&
-           columnInfo.extras &&
-           std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*columnInfo.extras);
 
          // For the moment, I'm assuming any ChoiceOfPhysicalQuantity amount is never optional.  If we change our minds
          // about that in future then we'd need some additional logic here and in several other places.
+         Q_ASSERT(isPhysicalQuantityChooser || physicalQuantity);
          Measurement::Amount amount{
             isPhysicalQuantityChooser ?
             // Drop-down
@@ -773,10 +790,9 @@ protected:
                   // units because, by convention, we only store things in canonical units in the model and the DB.
                   //
                   Q_ASSERT(value.canConvert<int>());
-                  Measurement::PhysicalQuantity const physicalQuantity =
-                     static_cast<Measurement::PhysicalQuantity>(value.value<int>());
-                  Measurement::Unit const & newUnit = Measurement::Unit::getCanonicalUnit(physicalQuantity);
-
+                  Measurement::Unit const & newUnit = Measurement::Unit::getCanonicalUnit(
+                     static_cast<Measurement::PhysicalQuantity>(value.value<int>())
+                  );
                   amount.unit = &newUnit;
                }
 

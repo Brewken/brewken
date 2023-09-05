@@ -31,18 +31,16 @@ bool HopSortFilterProxyModel::isLessThan(HopTableModel::ColumnIndex const column
       case HopTableModel::ColumnIndex::Name:
       case HopTableModel::ColumnIndex::Form:
       case HopTableModel::ColumnIndex::Year:
-      // TODO Work out how to reinstate inventory
-//      case HopTableModel::ColumnIndex::IsWeight:
+      case HopTableModel::ColumnIndex::TotalInventoryType:
          return leftItem.toString() < rightItem.toString();
 
       case HopTableModel::ColumnIndex::Alpha:
          return Measurement::extractRawFromString<double>( leftItem.toString()) <
                 Measurement::extractRawFromString<double>(rightItem.toString());
 
-      // TODO Work out how to reinstate inventory
-//      case HopTableModel::ColumnIndex::Inventory:
-//         return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Mass) <
-//                Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Mass);
+      case HopTableModel::ColumnIndex::TotalInventory:
+         return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Mass) <
+                Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Mass);
 
       // No default case as we want the compiler to warn us if we missed one
    }

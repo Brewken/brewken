@@ -51,15 +51,12 @@ HopTableModel::HopTableModel(QTableView * parent, bool editable) :
       parent,
       editable,
       {
-         // Note that we have to use PropertyNames::NamedEntityWithInventory::inventoryWithUnits because
-         // PropertyNames::NamedEntityWithInventory::inventory is not implemented
-         TABLE_MODEL_HEADER(Hop, Name     , tr("Name"       ), PropertyNames::NamedEntity::name                           ),
-         TABLE_MODEL_HEADER(Hop, Form     , tr("Form"       ), PropertyNames::Hop::form                                , EnumInfo{Hop::formStringMapping, Hop::formDisplayNames}),
-         TABLE_MODEL_HEADER(Hop, Year     , tr("Year"       ), PropertyNames::Hop::year                               ),
-         TABLE_MODEL_HEADER(Hop, Alpha    , tr("Alpha %"    ), PropertyNames::Hop::alpha_pct                           , PrecisionInfo{1}),
-      // TODO Work out how to reinstate inventory
-//         TABLE_MODEL_HEADER(Hop, Inventory, tr("Inventory"  ), PropertyNames::NamedEntityWithInventory::inventoryWithUnits),
-//         TABLE_MODEL_HEADER(Hop, IsWeight , tr("Amount Type"), PropertyNames::Hop::amountIsWeight                          , BoolInfo{tr("Volume")              , tr("Weight")             }),
+         TABLE_MODEL_HEADER(Hop, Name              , tr("Name"       ), PropertyNames::NamedEntity::name         ),
+         TABLE_MODEL_HEADER(Hop, Form              , tr("Form"       ), PropertyNames::Hop::form                 , EnumInfo{Hop::formStringMapping, Hop::formDisplayNames}),
+         TABLE_MODEL_HEADER(Hop, Year              , tr("Year"       ), PropertyNames::Hop::year                 ),
+         TABLE_MODEL_HEADER(Hop, Alpha             , tr("Alpha %"    ), PropertyNames::Hop::alpha_pct            , PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(Hop, TotalInventory    , tr("Inventory"  ), PropertyNames::Ingredient::totalInventory, PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(Hop, TotalInventoryType, tr("Amount Type"), PropertyNames::Ingredient::totalInventory, Hop::validMeasures),
       }
    },
    TableModelBase<HopTableModel, Hop>{},
@@ -91,13 +88,12 @@ QVariant HopTableModel::data(const QModelIndex & index, int role) const {
 
    auto const columnIndex = static_cast<HopTableModel::ColumnIndex>(index.column());
    switch (columnIndex) {
-      case HopTableModel::ColumnIndex::Name:
-      case HopTableModel::ColumnIndex::Form:
-      case HopTableModel::ColumnIndex::Year:
-      case HopTableModel::ColumnIndex::Alpha:
-      // TODO Work out how to reinstate inventory
-//      case HopTableModel::ColumnIndex::Inventory:
-//      case HopTableModel::ColumnIndex::IsWeight:
+      case HopTableModel::ColumnIndex::Name              :
+      case HopTableModel::ColumnIndex::Form              :
+      case HopTableModel::ColumnIndex::Year              :
+      case HopTableModel::ColumnIndex::Alpha             :
+      case HopTableModel::ColumnIndex::TotalInventory    :
+      case HopTableModel::ColumnIndex::TotalInventoryType:
          return this->readDataFromModel(index, role);
 
       // No default case as we want the compiler to warn us if we missed one
@@ -117,10 +113,9 @@ Qt::ItemFlags HopTableModel::flags(const QModelIndex & index) const {
    if (columnIndex == HopTableModel::ColumnIndex::Name) {
       return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
    }
-   // TODO Work out how to reinstate inventory
-//   if (columnIndex == HopTableModel::ColumnIndex::Inventory) {
-//      return Qt::ItemIsEnabled | Qt::ItemIsEditable;
-//   }
+   if (columnIndex == HopTableModel::ColumnIndex::TotalInventory) {
+      return Qt::ItemIsEnabled | Qt::ItemIsEditable;
+   }
    return Qt::ItemIsSelectable |
           (this->m_editable ? Qt::ItemIsEditable : Qt::NoItemFlags) | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
 }
@@ -130,25 +125,20 @@ bool HopTableModel::setData(const QModelIndex & index, const QVariant & value, i
       return false;
    }
 
-   // .:TODO:. Need to bring the mass/volume logic across eg from Misc to account for liquid hop extract.
-
    bool retVal = false;
 ///   auto row = this->rows[index.row()];
    auto const columnIndex = static_cast<HopTableModel::ColumnIndex>(index.column());
    switch (columnIndex) {
-      case HopTableModel::ColumnIndex::Name:
-      case HopTableModel::ColumnIndex::Form:
-      case HopTableModel::ColumnIndex::Year:
-      case HopTableModel::ColumnIndex::Alpha:
-      // TODO Work out how to reinstate inventory
-//      case HopTableModel::ColumnIndex::IsWeight:
+      case HopTableModel::ColumnIndex::Name              :
+      case HopTableModel::ColumnIndex::Form              :
+      case HopTableModel::ColumnIndex::Year              :
+      case HopTableModel::ColumnIndex::Alpha             :
+      case HopTableModel::ColumnIndex::TotalInventory    :
+      case HopTableModel::ColumnIndex::TotalInventoryType:
          retVal = this->writeDataToModel(index, value, role);
          break;
 
-      // TODO Work out how to reinstate inventory
-//      case HopTableModel::ColumnIndex::Inventory:
-//         retVal = this->writeDataToModel(index, value, role, Measurement::PhysicalQuantity::Mass);
-//         break;
+      // We don't need to pass in a PhysicalQuantity for any of the columns
 
       // No default case as we want the compiler to warn us if we missed one
    }

@@ -153,27 +153,23 @@ bool RecipeAdditionHopTableModel::setData(const QModelIndex & index, const QVari
    bool retVal = false;
 
    auto row = this->rows[index.row()];
-   Measurement::PhysicalQuantity physicalQuantity = row->getMeasure();
+///   Measurement::PhysicalQuantity physicalQuantity = row->getMeasure();
 
    auto const columnIndex = static_cast<RecipeAdditionHopTableModel::ColumnIndex>(index.column());
-//   qDebug() <<
-//      Q_FUNC_INFO << "columnIndex" << static_cast<int>(columnIndex) << ", value" << value << ", physicalQuantity" <<
-//      physicalQuantity;
    switch (columnIndex) {
-      case RecipeAdditionHopTableModel::ColumnIndex::Name      :
-      case RecipeAdditionHopTableModel::ColumnIndex::Form      :
-      case RecipeAdditionHopTableModel::ColumnIndex::Alpha     :
-      case RecipeAdditionHopTableModel::ColumnIndex::Year      :
+      case RecipeAdditionHopTableModel::ColumnIndex::Name          :
+      case RecipeAdditionHopTableModel::ColumnIndex::Form          :
+      case RecipeAdditionHopTableModel::ColumnIndex::Alpha         :
+      case RecipeAdditionHopTableModel::ColumnIndex::Year          :
+      case RecipeAdditionHopTableModel::ColumnIndex::Amount        :
+      case RecipeAdditionHopTableModel::ColumnIndex::AmountType    :
       case RecipeAdditionHopTableModel::ColumnIndex::TotalInventory:
-      case RecipeAdditionHopTableModel::ColumnIndex::Stage    :
-      case RecipeAdditionHopTableModel::ColumnIndex::Time     :
+      case RecipeAdditionHopTableModel::ColumnIndex::Stage         :
+      case RecipeAdditionHopTableModel::ColumnIndex::Time          :
          retVal = this->writeDataToModel(index, value, role);
          break;
 
-      case RecipeAdditionHopTableModel::ColumnIndex::AmountType:
-      case RecipeAdditionHopTableModel::ColumnIndex::Amount   :
-         retVal = this->writeDataToModel(index, value, role, physicalQuantity);
-         break;
+      // We don't need to pass in a PhysicalQuantity for any of the columns
 
       // No default case as we want the compiler to warn us if we missed one
    }

@@ -41,13 +41,12 @@ class Recipe;
 class HopTableModel;
 template <> struct TableModelTraits<HopTableModel> {
    enum class ColumnIndex {
-      Name     ,
-      Form     ,
-      Year     ,
-      Alpha    ,
-      // TODO Work out how to reinstate inventory
-//      Inventory,
-//      IsWeight ,
+      Name              ,
+      Form              ,
+      Year              ,
+      Alpha             ,
+      TotalInventory    ,
+      TotalInventoryType,
    };
 };
 
