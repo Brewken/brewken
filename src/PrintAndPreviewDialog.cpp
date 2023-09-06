@@ -17,6 +17,7 @@
 #include "PrintAndPreviewDialog.h"
 
 #include <QDebug>
+#include <QFileDialog>
 #include <QFont>
 #include <QList>
 #include <QMessageBox>

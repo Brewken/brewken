@@ -380,12 +380,13 @@ JsonRecord::~JsonRecord() = default;
             // our internal data model.  If it is, then, for whatever underlying type T it is, we need the parsedValue
             // QVariant to hold std::optional<T> instead of just T.
             //
-///            // NB: propertyName is not actually a property name when fieldType is RequiredConstant
             // NB: propertyPath is not actually a property path when fieldType is RequiredConstant
             //
             bool const propertyIsOptional {
-               (fieldDefinition.type == JsonRecordDefinition::FieldType::RequiredConstant) ?
-                  false : fieldDefinition.propertyPath.getTypeInfo(*this->m_recordDefinition.m_typeLookup).isOptional()
+               (fieldDefinition.type == JsonRecordDefinition::FieldType::RequiredConstant ||
+                fieldDefinition.propertyPath.isNull()) ?
+                  false :
+                  fieldDefinition.propertyPath.getTypeInfo(*this->m_recordDefinition.m_typeLookup).isOptional()
             };
 
             //

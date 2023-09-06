@@ -17,6 +17,7 @@
 #include "ImportExport.h"
 
 #include <QFile>
+#include <QFileDialog>
 #include <QMessageBox>
 #include <QObject>
 
@@ -57,10 +58,12 @@ namespace {
       // also has the advantage that we remember the same directory for both reading and writing.
       //
       static QString fileChooserDirectory{QDir::homePath()};
-      QFileDialog fileChooser{&MainWindow::instance(),
-                              importOrExport == ImportOrExport::IMPORT ? QObject::tr("Open") : QObject::tr("Save"),
-                              fileChooserDirectory,
-                              QObject::tr("BeerJSON files (*.json);;BeerXML files (*.xml)")};
+      QFileDialog fileChooser{
+         &MainWindow::instance(),
+         importOrExport == ImportOrExport::IMPORT ? QObject::tr("Open") : QObject::tr("Save"),
+         fileChooserDirectory,
+         QObject::tr("BeerJSON and BeerXML files (*.json *.xml);;BeerJSON files (*.json);;BeerXML files (*.xml)")
+      };
       fileChooser.setViewMode(QFileDialog::List);
       if (importOrExport == ImportOrExport::IMPORT) {
          fileChooser.setAcceptMode(QFileDialog::AcceptOpen);

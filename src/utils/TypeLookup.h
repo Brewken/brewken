@@ -191,12 +191,6 @@ public:
     */
    TypeInfo const & getType(BtStringConst const & propertyName) const;
 
-   /**
-    * TODO: Delete this.  Callers should use getType().isOptional().
-    * \brief Returns whether the attribute for a given property name is optional (ie std::optional<T> rather than T)
-    */
-///   [[deprecated]] bool isOptional(BtStringConst const & propertyName) const;
-
 private:
    /**
     * \brief Used by \c getType when doing parent class lookup

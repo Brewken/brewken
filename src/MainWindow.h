@@ -32,7 +32,6 @@
 #include <memory> // For PImpl
 
 #include <QCloseEvent>
-#include <QFileDialog>
 #include <QMainWindow>
 #include <QPalette>
 #include <QPrintDialog>

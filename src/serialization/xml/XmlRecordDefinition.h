@@ -99,13 +99,10 @@ public:
     *        (We maybe could have called this function xmlRecordConstructorWrapper but it makes things rather long-
     *        winded in the definitions.)
     */
-   template<typename JRT>
+   template<typename XRT>
    static std::unique_ptr<XmlRecord> create(XmlCoding           const & xmlCoding,
-///                                            boost::xml::value         & recordData,
                                             XmlRecordDefinition const & recordDefinition) {
-      return std::make_unique<JRT>(xmlCoding,
-///                                   recordData,
-                                   recordDefinition);
+      return std::make_unique<XRT>(xmlCoding, recordDefinition);
    }
 
    /**
@@ -113,8 +110,7 @@ public:
     *        \b XmlRecordDefinition::create().
     */
    typedef std::unique_ptr<XmlRecord> (*XmlRecordConstructorWrapper)(XmlCoding const & xmlCoding,
-///                                                                       boost::xml::value & recordData,
-                                                                       XmlRecordDefinition const & recordDefinition);
+                                                                     XmlRecordDefinition const & recordDefinition);
 
    /**
     * \brief Constructor
@@ -150,9 +146,7 @@ public:
     * \brief This is the simplest way to get the right type of \c XmlRecord for this \c XmlRecordDefinition.  It
     *        ensures you get the right subclass (if any) of \c XmlRecord.
     */
-   std::unique_ptr<XmlRecord> makeRecord(XmlCoding const & xmlCoding
-///   , boost::xml::value & recordData
-   ) const;
+   std::unique_ptr<XmlRecord> makeRecord(XmlCoding const & xmlCoding) const;
 
 public:
    XmlRecordConstructorWrapper xmlRecordConstructorWrapper;

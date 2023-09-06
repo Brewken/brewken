@@ -228,7 +228,7 @@ public:
 
    impl(MainWindow & self) :
       m_self{self},
-      fileOpener{},
+///      fileOpener{},
       m_undoStack{std::make_unique<QUndoStack>(&m_self)},
       m_fermTableModel    {nullptr},
       m_hopAdditionsTableModel     {nullptr},
@@ -502,7 +502,7 @@ public:
    //================================================ MEMBER VARIABLES =================================================
 
    MainWindow & m_self;
-   QFileDialog* fileOpener;
+///   QFileDialog* fileOpener;
 
    // Undo / Redo, using the Qt Undo framework
    std::unique_ptr<QUndoStack> m_undoStack;

@@ -82,9 +82,7 @@ XmlRecordDefinition::XmlRecordDefinition(
    return;
 }
 
-std::unique_ptr<XmlRecord> XmlRecordDefinition::makeRecord(XmlCoding const & xmlCoding
-///, boost::xml::value & recordData
-                                                           ) const {
+std::unique_ptr<XmlRecord> XmlRecordDefinition::makeRecord(XmlCoding const & xmlCoding) const {
    return this->xmlRecordConstructorWrapper(xmlCoding, *this);
 }
 

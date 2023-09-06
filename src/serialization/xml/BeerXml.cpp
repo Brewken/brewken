@@ -544,7 +544,8 @@ namespace {
       "MASH_STEP",           // XML record name
       &MashStep::typeLookup, // Type Lookup for our corresponding model object
       "MashStep",            // NamedEntity class name
-      XmlRecordDefinition::create<XmlNamedEntityRecord<MashStep>>,
+//      XmlRecordDefinition::create<XmlNamedEntityRecord<MashStep>>,
+      XmlRecordDefinition::create<XmlMashStepRecord>,
       {
          // Type                                            XPath                        Q_PROPERTY                                       Value Decoder
          {XmlRecordDefinition::FieldType::String          , "NAME"                     , PropertyNames::NamedEntity::name               },
@@ -577,7 +578,8 @@ namespace {
       "MASH",            // XML record name
       &Mash::typeLookup, // Type Lookup for our corresponding model object
       "Mash",            // NamedEntity class name
-      XmlRecordDefinition::create<XmlNamedEntityRecord<Mash>>,
+//      XmlRecordDefinition::create<XmlNamedEntityRecord<Mash>>,
+      XmlRecordDefinition::create<XmlMashRecord>,
       {
          // Type                                            XPath                   Q_PROPERTY                                      Value Decoder
          {XmlRecordDefinition::FieldType::String          , "NAME"                , PropertyNames::NamedEntity::name              },
@@ -801,7 +803,8 @@ namespace {
       "RECIPE",            // XML record name
       &Recipe::typeLookup, // Type Lookup for our corresponding model object
       "Recipe",            // NamedEntity class name
-      XmlRecordDefinition::create<XmlNamedEntityRecord<Recipe>>,
+//      XmlRecordDefinition::create<XmlNamedEntityRecord<Recipe>>,
+      XmlRecordDefinition::create<XmlRecipeRecord>,
       {
          // Type                                            XPath                       Q_PROPERTY                                 Value Decoder
          {XmlRecordDefinition::FieldType::String          , "NAME"                    , PropertyNames::NamedEntity::name         },

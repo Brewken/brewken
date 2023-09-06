@@ -172,32 +172,4 @@ private:
    std::unique_ptr<impl> pimpl;
 };
 
-// TODO: Work out where to move this to!
-///// Specialisations for classes that aren't handled by XmlNamedEntityRecord
-///template<> inline
-///XmlRecord * XmlCoding::construct<void>(QString const & recordName,
-///                                       XmlCoding const & xmlCoding,
-///                                       XmlRecordDefinition::FieldDefinitions const & fieldDefinitions) {
-///   return new XmlRecord{recordName, xmlCoding, fieldDefinitions, nullptr, ""};
-///}
-///template<> inline
-///XmlRecord * XmlCoding::construct<Mash>(QString const & recordName,
-///                                       XmlCoding const & xmlCoding,
-///                                       XmlRecordDefinition::FieldDefinitions const & fieldDefinitions) {
-///   return new XmlMashRecord{recordName, xmlCoding, fieldDefinitions};
-///}
-///template<> inline
-///XmlRecord * XmlCoding::construct<MashStep>(QString const & recordName,
-///                                           XmlCoding const & xmlCoding,
-///                                           XmlRecordDefinition::FieldDefinitions const & fieldDefinitions) {
-///   return new XmlMashStepRecord{recordName, xmlCoding, fieldDefinitions};
-///}
-///template<> inline
-///XmlRecord * XmlCoding::construct<Recipe>(QString const & recordName,
-///                                         XmlCoding const & xmlCoding,
-///                                         XmlRecordDefinition::FieldDefinitions const & fieldDefinitions) {
-///   return new XmlRecipeRecord{recordName, xmlCoding, fieldDefinitions};
-///}
-
-
 #endif
