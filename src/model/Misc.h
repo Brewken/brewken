@@ -203,6 +203,7 @@ private:
    QString            m_productId     ;
 };
 
-Q_DECLARE_METATYPE( QList<Misc*> )
+Q_DECLARE_METATYPE(QList<                Misc *>)
+Q_DECLARE_METATYPE(QList<std::shared_ptr<Misc> >)
 
 #endif

@@ -47,6 +47,7 @@ TypeLookup const RecipeAdditionHop::typeLookup {
    "RecipeAdditionHop",
    {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionHop::hop, RecipeAdditionHop::hop),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionHop::use, RecipeAdditionHop::use),
    },
    // Parent classes lookup.  NB: RecipeAddition not NamedEntity!
    {&RecipeAddition::typeLookup,

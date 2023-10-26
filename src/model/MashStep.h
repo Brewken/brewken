@@ -195,4 +195,6 @@ private:
    std::optional<double> m_liquorToGristRatio_lKg;
 };
 
+Q_DECLARE_METATYPE(QList<std::shared_ptr<MashStep> >)
+
 #endif

@@ -18,6 +18,7 @@
 #pragma once
 
 #include <memory>
+#include <utility> // For std::in_place_type_t
 #include <variant>
 
 #include <QVector>
@@ -325,6 +326,7 @@ public:
     *                   this object type are "optional" (ie wrapped in \c std::optional)
     * \param namedEntityClassName The class name of the \c NamedEntity to which this record relates, eg "Fermentable",
     *                             or empty string if there is none
+    * \param listUpcaster is a pointer to \c NamedEntity::upcastListToVariant for the class to which this record relates
     * \param jsonRecordConstructorWrapper
     * \param fieldDefinitions A list of fields we expect to find in this record (other fields will be ignored) and how
     *                         to parse them.
@@ -332,8 +334,29 @@ public:
    JsonRecordDefinition(char                     const * const recordName,
                         TypeLookup               const * const typeLookup,
                         char                     const * const namedEntityClassName,
+                        QVariant                             (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
                         JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
                         std::initializer_list<FieldDefinition> fieldDefinitions);
+
+   /**
+    * \brief Of course we want to be able to deduce some of the parameters to the constructor rather than laboriously
+    *        specify "the same but for this model class" each time.  The trick is that we must have one constructor
+    *        parameter that depends on the type.  This is what std::in_place_type_t does for us.
+    */
+   template<typename T>
+   JsonRecordDefinition(std::in_place_type_t<T>,
+                        char                     const * const recordName,
+                        char                     const * const namedEntityClassName,
+                        JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
+                        std::initializer_list<FieldDefinition> fieldDefinitions) :
+      JsonRecordDefinition(recordName,
+                           &T::typeLookup,
+                           namedEntityClassName,
+                           NamedEntity::upcastListToVariant<T>,
+                           jsonRecordConstructorWrapper,
+                           fieldDefinitions) {
+      return;
+   }
 
    /**
     * \brief Alternate Constructor allowing a list of lists of fields
@@ -341,11 +364,26 @@ public:
     *                         and how to parse them.  Effectively the constructor just concatenates all the lists.
     *                         See comments fin BeerJson.cpp for why we want to do this.
     */
-   JsonRecordDefinition(char                                              const * const recordName,
-                        TypeLookup                                        const * const typeLookup,
-                        char                                              const * const namedEntityClassName,
-                        JsonRecordConstructorWrapper                                    jsonRecordConstructorWrapper,
+   JsonRecordDefinition(char                     const * const recordName,
+                        TypeLookup               const * const typeLookup,
+                        char                     const * const namedEntityClassName,
+                        QVariant                             (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
+                        JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
                         std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists);
+   template<typename T>
+   JsonRecordDefinition(std::in_place_type_t<T>,
+                        char                     const * const recordName,
+                        char                     const * const namedEntityClassName,
+                        JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
+                        std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists) :
+      JsonRecordDefinition(recordName,
+                           &T::typeLookup,
+                           namedEntityClassName,
+                           NamedEntity::upcastListToVariant<T>,
+                           jsonRecordConstructorWrapper,
+                           fieldDefinitionLists) {
+      return;
+   }
 
    /**
     * \brief This is the simplest way to get the right type of \c JsonRecord for this \c JsonRecordDefinition.  It

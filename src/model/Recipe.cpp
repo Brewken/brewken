@@ -369,7 +369,7 @@ public:
          connect(fermentable, &NamedEntity::changed, &this->m_self, &Recipe::acceptChangeToContainedObject);
       }
 
-      QList<RecipeAdditionHop *> hopAdditions = this->m_self.hopAdditions();
+      auto hopAdditions = this->m_self.hopAdditions();
       for (auto hopAddition : hopAdditions) {
          if (hopAddition->hop()) {
             connect(hopAddition->hop(), &NamedEntity::changed, &this->m_self, &Recipe::acceptChangeToContainedObject);
@@ -1720,6 +1720,16 @@ void Recipe::setBoil        (std::optional<std::shared_ptr<Boil>> val) { this->p
 void Recipe::setFermentation(std::shared_ptr<Fermentation> val) { this->pimpl->setStepOwner<Fermentation>(val, this->m_fermentationId, PropertyNames::Recipe::fermentation); return; }
 void Recipe::setFermentation(Fermentation *                val) { this->pimpl->setStepOwner<Fermentation>(val, this->m_fermentationId, PropertyNames::Recipe::fermentation); return; }
 
+void Recipe::setHopAdditions(QList<std::shared_ptr<RecipeAdditionHop>> val) {
+   qDebug() << Q_FUNC_INFO << "Adding" << val.size() << "RecipeAdditionHop entries" << "¥¥";
+   for (auto ii : val) {
+      qDebug() << Q_FUNC_INFO << "Setting Recipe ID #" << this->key() << "on RecipeAdditionHop #" << ii->key() << "¥¥";
+      ii->setRecipeId(this->key());
+   }
+   return;
+}
+
+
 ///void Recipe::setMash(Mash * var) {
 ///   if (var->key() == this->m_mashId) {
 ///      return;
@@ -2234,7 +2244,8 @@ template<> QList< std::shared_ptr<RecipeAdditionHop> > Recipe::getAll<RecipeAddi
    return this->pimpl->allMy<RecipeAdditionHop>();
 }
 
-QList<RecipeAdditionHop *>  Recipe::hopAdditions() const { return this->pimpl->allMyRaw<RecipeAdditionHop>(); }
+///QList<RecipeAdditionHop *>  Recipe::hopAdditions() const { return this->pimpl->allMyRaw<RecipeAdditionHop>(); }
+QList<std::shared_ptr<RecipeAdditionHop>> Recipe::hopAdditions() const { return this->pimpl->allMy<RecipeAdditionHop>(); }
 QVector<int>         Recipe::hopAdditionIds()      const { return this->pimpl->allMyIds<RecipeAdditionHop>();                 }
 QList<Fermentable *> Recipe::fermentables()      const { return this->pimpl->getAllMyRaw<Fermentable>(); }
 QVector<int>         Recipe::getFermentableIds() const { return this->pimpl->fermentableIds;             }
@@ -2405,7 +2416,7 @@ void Recipe::recalcIBU() {
    // Bitterness due to hops...
    m_ibus.clear();
    for (auto const hopAddition : this->hopAdditions()) {
-      double tmp = this->ibuFromHopAddition(hopAddition);
+      double tmp = this->ibuFromHopAddition(*hopAddition);
       m_ibus.append(tmp);
       ibus += tmp;
    }
@@ -2859,7 +2870,7 @@ void Recipe::recalcOgFg() {
 
 //====================================Helpers===========================================
 
-double Recipe::ibuFromHopAddition(RecipeAdditionHop const * hopAddition) {
+double Recipe::ibuFromHopAddition(RecipeAdditionHop const & hopAddition) {
    Equipment * equip = this->equipment();
    double ibus = 0.0;
    double fwhAdjust = Localization::toDouble(
@@ -2871,26 +2882,26 @@ double Recipe::ibuFromHopAddition(RecipeAdditionHop const * hopAddition) {
       Q_FUNC_INFO
    );
 
-   if (!hopAddition) {
-      qWarning() << Q_FUNC_INFO << "Null RecipeAdditionHop in Recipe #" << this->key();
-      return 0.0;
-   }
-
-   if (!hopAddition->hop()) {
-      qWarning() << Q_FUNC_INFO << "Null Hop in RecipeAdditionHop #" << hopAddition->key() << "in Recipe #" << this->key();
-      return 0.0;
-   }
+///   if (!hopAddition) {
+///      qWarning() << Q_FUNC_INFO << "Null RecipeAdditionHop in Recipe #" << this->key();
+///      return 0.0;
+///   }
+///
+///   if (!hopAddition->hop()) {
+///      qWarning() << Q_FUNC_INFO << "Null Hop in RecipeAdditionHop #" << hopAddition->key() << "in Recipe #" << this->key();
+///      return 0.0;
+///   }
 
    // It's a coding error to ask one recipe about another's hop additions!
-   Q_ASSERT(hopAddition->recipeId() == this->key());
+   Q_ASSERT(hopAddition.recipeId() == this->key());
 
-   double AArating = hopAddition->hop()->alpha_pct() / 100.0;
+   double AArating = hopAddition.hop()->alpha_pct() / 100.0;
    // .:TBD.JSON:.  What to do if hopAddition is measured by volume?
-   if (hopAddition->measure() != Measurement::PhysicalQuantity::Mass) {
+   if (hopAddition.measure() != Measurement::PhysicalQuantity::Mass) {
       qCritical() << Q_FUNC_INFO << "Using Hop volume as weight - THIS IS PROBABLY WRONG!";
    }
-   double grams = hopAddition->quantity() * 1000.0;
-   double minutes = hopAddition->addAtTime_mins().value_or(0.0);
+   double grams = hopAddition.quantity() * 1000.0;
+   double minutes = hopAddition.addAtTime_mins().value_or(0.0);
    // Assume 100% utilization until further notice
    double hopUtilization = 1.0;
    // Assume 60 min boil until further notice
@@ -2907,11 +2918,11 @@ double Recipe::ibuFromHopAddition(RecipeAdditionHop const * hopAddition) {
       boilTime = static_cast<int>(equip->boilTime_min().value_or(Equipment::default_boilTime_min));
    }
 
-   if (hopAddition->isFirstWort()) {
+   if (hopAddition.isFirstWort()) {
       ibus = fwhAdjust * IbuMethods::getIbus(AArating, grams, m_finalVolumeNoLosses_l, m_og, boilTime);
-   } else if (hopAddition->stage() == RecipeAddition::Stage::Boil) {
+   } else if (hopAddition.stage() == RecipeAddition::Stage::Boil) {
       ibus = IbuMethods::getIbus(AArating, grams, m_finalVolumeNoLosses_l, m_og, minutes);
-   } else if (hopAddition->stage() == RecipeAddition::Stage::Mash && mashHopAdjust > 0.0) {
+   } else if (hopAddition.stage() == RecipeAddition::Stage::Mash && mashHopAdjust > 0.0) {
       ibus = mashHopAdjust * IbuMethods::getIbus(AArating, grams, m_finalVolumeNoLosses_l, m_og, boilTime);
    }
 
@@ -2922,7 +2933,7 @@ double Recipe::ibuFromHopAddition(RecipeAdditionHop const * hopAddition) {
    //
    // - http://www.realbeer.com/hops/FAQ.html
    // - https://groups.google.com/forum/#!topic"brewtarget.h"lp/mv2qvWBC4sU
-   auto const hopForm = hopAddition->hop()->form();
+   auto const hopForm = hopAddition.hop()->form();
    if (hopForm) {
       switch (*hopForm) {
          case Hop::Form::Plug:
@@ -2969,7 +2980,7 @@ QList<QString> Recipe::getReagents(QList<Fermentable *> ferms) {
 }
 
 
-QList<QString> Recipe::getReagents(QList<RecipeAdditionHop *> hopAdditions, bool firstWort) {
+QList<QString> Recipe::getReagents(QList<std::shared_ptr<RecipeAdditionHop>> hopAdditions, bool firstWort) {
    QList<QString> reagents;
 
    for (auto hopAddition : hopAdditions) {
@@ -3121,8 +3132,10 @@ double Recipe::targetCollectedWortVol_l() {
    double boilSize_liters = this->pimpl->boilSizeInLitersOr(0.0);
    qDebug() << Q_FUNC_INFO << "Boil size:" << boilSize_liters;
 
-   if (equipment()) {
-      return boilSize_liters - equipment()->topUpKettle_l().value_or(Equipment::default_topUpKettle_l) - postMashAdditionVolume_l;
+   if (this->equipment()) {
+      return boilSize_liters - this->equipment()->getLauteringDeadspaceLoss_l()
+                             - this->equipment()->topUpKettle_l().value_or(Equipment::default_topUpKettle_l)
+                             - postMashAdditionVolume_l;
    } else {
       return boilSize_liters - postMashAdditionVolume_l;
    }

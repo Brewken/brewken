@@ -39,7 +39,7 @@ namespace {
    }
    template<> void setAmountsEtc(RecipeAdditionHop & hopAddition, NamedParameterBundle const & npb) {
 ///      // For Hop, assume amount is weight unless otherwise specified because base BeerXML does not include the
-///      // possibility of fermentables being measured by volume.  (It is an extension we have added as a result of
+///      // possibility of hops being measured by volume.  (It is an extension we have added as a result of
 ///      // implementing support for BeerJSON.)
 ///      hop.setAmount        (npb.val<double>(PropertyNames::Hop::amount        ));
 ///      hop.setAmountIsWeight(npb.val<bool  >(PropertyNames::Hop::amountIsWeight, true));
@@ -236,7 +236,30 @@ XmlRecord::ProcessingResult XmlRecipeRecord::normaliseAndStoreInDb(std::shared_p
    return XmlRecord::ProcessingResult::Succeeded;
 }
 
-template<typename CNE>
+///template<typename CNE>
+///bool XmlRecipeRecord::childrenToXml(XmlRecordDefinition::FieldDefinition const & fieldDefinition,
+///                                    XmlRecord const & subRecord,
+///                                    Recipe const & recipe,
+///                                    QTextStream & out,
+///                                    int indentLevel,
+///                                    char const * const indentString,
+///                                    BtStringConst const & propertyNameForGetter,
+///                                    RecipeChildGetter<CNE> getter) const {
+///   if (fieldDefinition.propertyPath.asXPath() != propertyNameForGetter) {
+///      return false;
+///   }
+///   QList<CNE *> children = std::invoke(getter, recipe);
+///   if (children.size() == 0) {
+///      this->writeNone(subRecord, recipe, out, indentLevel, indentString);
+///   } else {
+///      for (CNE * child : children) {
+///         subRecord.toXml(*child, out, true, indentLevel, indentString);
+///      }
+///   }
+///   return true;
+///}
+
+template<typename RecipeChildGetter>
 bool XmlRecipeRecord::childrenToXml(XmlRecordDefinition::FieldDefinition const & fieldDefinition,
                                     XmlRecord const & subRecord,
                                     Recipe const & recipe,
@@ -244,15 +267,15 @@ bool XmlRecipeRecord::childrenToXml(XmlRecordDefinition::FieldDefinition const &
                                     int indentLevel,
                                     char const * const indentString,
                                     BtStringConst const & propertyNameForGetter,
-                                    RecipeChildGetter<CNE> getter) const {
+                                    RecipeChildGetter getter) const {
    if (fieldDefinition.propertyPath.asXPath() != propertyNameForGetter) {
       return false;
    }
-   QList<CNE *> children = std::invoke(getter, recipe);
+   auto children = std::invoke(getter, recipe);
    if (children.size() == 0) {
       this->writeNone(subRecord, recipe, out, indentLevel, indentString);
    } else {
-      for (CNE * child : children) {
+      for (auto child : children) {
          subRecord.toXml(*child, out, true, indentLevel, indentString);
       }
    }

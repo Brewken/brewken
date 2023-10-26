@@ -185,5 +185,6 @@ private:
 };
 
 Q_DECLARE_METATYPE(Mash *)
+Q_DECLARE_METATYPE(QList<std::shared_ptr<Mash> >)
 
 #endif

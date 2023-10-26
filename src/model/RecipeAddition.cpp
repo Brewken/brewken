@@ -114,21 +114,21 @@ RecipeAddition::RecipeAddition(RecipeAddition const & other) :
 
 RecipeAddition::~RecipeAddition() = default;
 
-[[nodiscard]] bool RecipeAddition::lessThanByTime(RecipeAddition const * const lhs, RecipeAddition const * const rhs) {
+[[nodiscard]] bool RecipeAddition::lessThanByTime(RecipeAddition const & lhs, RecipeAddition const & rhs) {
 
-   if (lhs->m_stage != rhs->m_stage) {
-      return lhs->m_stage < rhs->m_stage;
+   if (lhs.m_stage != rhs.m_stage) {
+      return lhs.m_stage < rhs.m_stage;
    }
 
-   if (lhs->m_step != rhs->m_step) {
-      return lhs->m_step < rhs->m_step;
+   if (lhs.m_step != rhs.m_step) {
+      return lhs.m_step < rhs.m_step;
    }
 
-   if (lhs->m_addAtTime_mins != rhs->m_addAtTime_mins) {
-      return lhs->m_addAtTime_mins < rhs->m_addAtTime_mins;
+   if (lhs.m_addAtTime_mins != rhs.m_addAtTime_mins) {
+      return lhs.m_addAtTime_mins < rhs.m_addAtTime_mins;
    }
 
-   return lhs->name() < rhs->name();
+   return lhs.name() < rhs.name();
 }
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================

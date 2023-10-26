@@ -43,30 +43,42 @@ XmlRecordDefinition::FieldDefinition::FieldDefinition(FieldType    type,
    xPath{xPath},
    propertyPath{propertyPath},
    valueDecoder{valueDecoder} {
+   // An XmlRecordDefinition address should be in the valueDecoder if and only if the record type is Record or
+   // ListOfRecords.  Otherwise there's a coding error in the mappings in BeerXML.cpp.  We assert this also when we're
+   // processing an XML file, but the advantage of doing so here is that we'll get a start-up error, so bugs will be
+   // evident straight away.
+   //
+   // If this assert fires, grep for "::Record" and "::ListOfRecords" in BeerXML.cpp and see which lines are
+   // missing the final parameter.
+   Q_ASSERT((XmlRecordDefinition::FieldType::Record        == this->type ||
+             XmlRecordDefinition::FieldType::ListOfRecords == this->type) ==
+            std::holds_alternative<XmlRecordDefinition const *>(this->valueDecoder));
    return;
 }
 
 XmlRecordDefinition::XmlRecordDefinition(
-   char const * const recordName,
+   char const *       const recordName,
    TypeLookup const * const typeLookup,
-   char const * const namedEntityClassName,
+   char const *       const namedEntityClassName,
+   QVariant               (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
    XmlRecordConstructorWrapper xmlRecordConstructorWrapper,
    std::initializer_list<XmlRecordDefinition::FieldDefinition> fieldDefinitions
 ) :
-   SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName},
+   SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName, listUpcaster},
    xmlRecordConstructorWrapper{xmlRecordConstructorWrapper},
    fieldDefinitions{fieldDefinitions} {
    return;
 }
 
 XmlRecordDefinition::XmlRecordDefinition(
-   char const * const recordName,
+   char const *       const recordName,
    TypeLookup const * const typeLookup,
-   char const * const namedEntityClassName,
+   char const *       const namedEntityClassName,
+   QVariant               (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
    XmlRecordConstructorWrapper xmlRecordConstructorWrapper,
    std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists
 ) :
-   SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName},
+   SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName, listUpcaster},
    xmlRecordConstructorWrapper{xmlRecordConstructorWrapper},
    fieldDefinitions{} {
    // This is a bit clunky, but it works and the inefficiency is a one-off cost at start-up

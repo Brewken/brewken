@@ -55,14 +55,14 @@ namespace Measurement {
       //! Copy constructor
       Amount(Amount const & other);
 
-      //! Assignment operator
+      //! Copy assignment operator
       Amount & operator=(Amount const & other);
 
-      //! Move constructor.
-      Amount(Amount && other);
+      //! Move constructor
+      Amount(Amount && other) noexcept;
 
-      //! Move assignment.
-      Amount & operator=(Amount && other);
+      //! Move assignment operator
+      Amount & operator=(Amount && other) noexcept;
 
       //! Checks for an uninitialised (or badly initialised) amount
       bool isValid() const;

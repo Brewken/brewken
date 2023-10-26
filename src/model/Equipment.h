@@ -495,6 +495,7 @@ private:
    void doCalculations();
 };
 
-Q_DECLARE_METATYPE( Equipment* )
+Q_DECLARE_METATYPE(Equipment *)
+Q_DECLARE_METATYPE(QList<std::shared_ptr<Equipment> >)
 
 #endif

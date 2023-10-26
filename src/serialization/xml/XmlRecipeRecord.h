@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * serialization/xml/XmlRecipeRecord.h is part of Brewken, and is copyright the following authors 2020-2022:
+ * serialization/xml/XmlRecipeRecord.h is part of Brewken, and is copyright the following authors 2020-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -58,13 +58,22 @@ private:
 
    // As of C++ we have the moral equivalent of templated typdefs, which, here, helps make pointers to member functions
    // on Recipe less ugly
-   template <typename CNE>
-   using RecipeChildGetter = QList<CNE *> (Recipe::*)() const;
+   template <typename CNE> using RecipeChildGetterRaw    = QList<                CNE *> (Recipe::*)() const;
+   template <typename CNE> using RecipeChildGetterShared = QList<std::shared_ptr<CNE> > (Recipe::*)() const;
 
    /**
     * \brief If the supplied property names match, write all the corresponding type to XML
     */
-   template<typename CNE>
+///   template<typename CNE>
+///   bool childrenToXml(XmlRecordDefinition::FieldDefinition const & fieldDefinition,
+///                      XmlRecord const & subRecord,
+///                      Recipe const & recipe,
+///                      QTextStream & out,
+///                      int indentLevel,
+///                      char const * const indentString,
+///                      BtStringConst const & propertyNameForGetter,
+///                      RecipeChildGetterRaw<CNE> getter) const;
+   template<typename RecipeChildGetter>
    bool childrenToXml(XmlRecordDefinition::FieldDefinition const & fieldDefinition,
                       XmlRecord const & subRecord,
                       Recipe const & recipe,
@@ -72,7 +81,7 @@ private:
                       int indentLevel,
                       char const * const indentString,
                       BtStringConst const & propertyNameForGetter,
-                      RecipeChildGetter<CNE> getter) const;
+                      RecipeChildGetter getter) const;
 
 };
 #endif

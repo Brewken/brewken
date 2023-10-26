@@ -90,6 +90,12 @@ namespace Measurement {
        * \brief Checks the object is valid after a construction, assignment or move.  If not, logs an error and asserts.
        */
       void checkConstructAssignOrMoveOK(char const * const operation) {
+         if (!this->Measurement::Amount::unit) {
+            qCritical() <<
+               Q_FUNC_INFO << "Trying to" << operation << "ConstrainedAmount<" << pqt << "> with null unit";
+            Q_ASSERT(false);
+            return;
+         }
          auto const currentPhysicalQuantity = this->Measurement::Amount::unit->getPhysicalQuantity();
          if (!Measurement::isValid<PQT, pqt>(currentPhysicalQuantity)) {
             qCritical() <<

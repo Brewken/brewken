@@ -226,4 +226,6 @@ private:
    bool                m_alkalinity_as_hco3;
 };
 
+Q_DECLARE_METATYPE(QList<std::shared_ptr<Water> >)
+
 #endif

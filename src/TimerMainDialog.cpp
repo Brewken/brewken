@@ -262,7 +262,7 @@ void TimerMainDialog::on_loadRecipesButton_clicked() {
    bool timerFound = false;
    int duplicates = 0;
    int timersGenerated = 0;
-   for (RecipeAdditionHop * hopAddition : recipe->hopAdditions()) {
+   for (auto hopAddition : recipe->hopAdditions()) {
       if (hopAddition->stage() == RecipeAddition::Stage::Boil &&
           hopAddition->addAtTime_mins()) {
          QString note = tr("%1 of %2").arg(Measurement::displayAmount(hopAddition->amount())).arg(hopAddition->hop()->name());

@@ -31,16 +31,31 @@ namespace Measurement {
    }
 
    //! Copy constructor
-   Amount::Amount(Amount const & other) = default;
+   Amount::Amount(Amount const & other) :
+      quantity{other.quantity},
+      unit    {other.unit    } {
+      return;
+   }
 
-   //! Assignment operator
-   Amount & Amount::operator=(Amount const & other) = default;
+   //! Copy assignment operator
+   Amount & Amount::operator=(Amount const & other) {
+      *this = Amount{other};
+      return *this;
+   }
 
-   //! Move constructor.
-   Amount::Amount(Amount && other) = default;
+   //! Move constructor
+   Amount::Amount(Amount && other) noexcept :
+      quantity{other.quantity},
+      unit    {other.unit    } {
+      return;
+   }
 
-   //! Move assignment.
-   Amount & Amount::operator=(Amount && other) = default;
+   //! Move assignment operator
+   Amount & Amount::operator=(Amount && other) noexcept {
+      std::swap(this->quantity, other.quantity);
+      std::swap(this->unit    , other.unit    );
+      return *this;
+   }
 
    bool Amount::isValid() const {
       return (this->unit && this->quantity >= 0.0);

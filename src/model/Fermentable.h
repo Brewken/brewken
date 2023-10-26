@@ -611,7 +611,8 @@ private:
    bool                      m_betaGlucanIsMassPerVolume;
 };
 
-Q_DECLARE_METATYPE(QList<Fermentable*>)
+Q_DECLARE_METATYPE(QList<                Fermentable *>)
+Q_DECLARE_METATYPE(QList<std::shared_ptr<Fermentable> >)
 
 /**
  * \brief This function is used (as a parameter to std::sort) for sorting in the recipe formatter

@@ -112,8 +112,15 @@ bool PropertyPath::setValue(NamedEntity & obj, QVariant const & val) const {
             "; writable =" << neMetaProperty.isWritable();
 
          if (neMetaProperty.isWritable()) {
-            ne->setProperty(**property, val);
-            return true;
+            bool succeeded = ne->setProperty(**property, val);
+            if (!succeeded) {
+               // Caller needs to decide what to do, but we log a warning
+               qWarning() <<
+                  Q_FUNC_INFO << "Error trying to set" << this->m_path << "on" << obj.metaObject()->className() <<
+                  "(=" << *property << "on" << ne->metaObject()->className() << ") to" << val << "; type =" <<
+                  neMetaProperty.typeName() << "; writable =" << neMetaProperty.isWritable();
+            }
+            return succeeded;
          }
          break;
       }

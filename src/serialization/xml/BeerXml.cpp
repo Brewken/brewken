@@ -70,6 +70,7 @@ namespace {
       "not_used",
       nullptr,
       "not_used",
+      nullptr,
       XmlRecordDefinition::create<XmlRecord>,
       std::initializer_list<XmlRecordDefinition::FieldDefinition>{}
    };
@@ -162,8 +163,8 @@ namespace {
    // Put the two bits together and we can parse freestanding hop records
    //
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Hop> {
+      std::in_place_type_t<Hop>{},
       "HOP",            // XML record name
-      &Hop::typeLookup, // Type Lookup for our corresponding model object
       "Hop",            // NamedEntity class name
       XmlRecordDefinition::create< XmlNamedEntityRecord< Hop > >,
       {BeerXml_HopBase, BeerXml_HopType_ExclBase}
@@ -230,8 +231,8 @@ namespace {
       {Fermentable::Type::Honey        , "Adjunct<!--Honey-->"},
    };
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Fermentable> {
+      std::in_place_type_t<Fermentable>{},
       "FERMENTABLE",            // XML record name
-      &Fermentable::typeLookup, // Type Lookup for our corresponding model object
       "Fermentable",            // NamedEntity class name
       XmlRecordDefinition::create<XmlNamedEntityRecord<Fermentable>>,
       {
@@ -333,8 +334,8 @@ namespace {
       {Yeast::Flocculation::VeryHigh  , "Very High"              },
    };
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Yeast> {
+      std::in_place_type_t<Yeast>{},
       "YEAST",            // XML record name
-      &Yeast::typeLookup, // Type Lookup for our corresponding model object
       "Yeast",            // NamedEntity class name
       XmlRecordDefinition::create<XmlNamedEntityRecord<Yeast>>,
       {
@@ -403,8 +404,8 @@ namespace {
       {Misc::Use::Bottling , "Bottling" },
    };
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Misc> {
+      std::in_place_type_t<Misc>{},
       "MISC",            // XML record name
-      &Misc::typeLookup, // Type Lookup for our corresponding model object
       "Misc",            // NamedEntity class name
       XmlRecordDefinition::create<XmlNamedEntityRecord<Misc>>,
       {
@@ -431,8 +432,8 @@ namespace {
    // Field mappings for <WATER>...</WATER> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Water> {
+      std::in_place_type_t<Water>{},
       "WATER",            // XML record name
-      &Water::typeLookup, // Type Lookup for our corresponding model object
       "Water",            // NamedEntity class name
       XmlRecordDefinition::create<XmlNamedEntityRecord<Water>>,
       {
@@ -470,8 +471,8 @@ namespace {
       {Style::Type::Other   , "Lager"           },
    };
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Style> {
+      std::in_place_type_t<Style>{},
       "STYLE",            // XML record name
-      &Style::typeLookup, // Type Lookup for our corresponding model object
       "Style",            // NamedEntity class name
       XmlRecordDefinition::create<XmlNamedEntityRecord<Style>>,
       {
@@ -541,8 +542,8 @@ namespace {
 
    };
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<MashStep> {
+      std::in_place_type_t<MashStep>{},
       "MASH_STEP",           // XML record name
-      &MashStep::typeLookup, // Type Lookup for our corresponding model object
       "MashStep",            // NamedEntity class name
 //      XmlRecordDefinition::create<XmlNamedEntityRecord<MashStep>>,
       XmlRecordDefinition::create<XmlMashStepRecord>,
@@ -575,8 +576,8 @@ namespace {
    // Field mappings for <MASH>...</MASH> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Mash> {
+      std::in_place_type_t<Mash>{},
       "MASH",            // XML record name
-      &Mash::typeLookup, // Type Lookup for our corresponding model object
       "Mash",            // NamedEntity class name
 //      XmlRecordDefinition::create<XmlNamedEntityRecord<Mash>>,
       XmlRecordDefinition::create<XmlMashRecord>,
@@ -585,7 +586,7 @@ namespace {
          {XmlRecordDefinition::FieldType::String          , "NAME"                , PropertyNames::NamedEntity::name              },
          {XmlRecordDefinition::FieldType::RequiredConstant, "VERSION"             , VERSION1                                      },
          {XmlRecordDefinition::FieldType::Double          , "GRAIN_TEMP"          , PropertyNames::Mash::grainTemp_c              },
-         {XmlRecordDefinition::FieldType::ListOfRecords   , "MASH_STEPS/MASH_STEP", PropertyNames::Mash::mashSteps                }, // Additional logic for "MASH-STEPS" is handled in code
+         {XmlRecordDefinition::FieldType::ListOfRecords   , "MASH_STEPS/MASH_STEP", PropertyNames::Mash::mashSteps                , &BEER_XML_RECORD_DEFINITION<MashStep>}, // Additional logic for "MASH-STEPS" is handled in code
          {XmlRecordDefinition::FieldType::String          , "NOTES"               , PropertyNames::Mash::notes                    },
          {XmlRecordDefinition::FieldType::Double          , "TUN_TEMP"            , PropertyNames::Mash::tunTemp_c                },
          {XmlRecordDefinition::FieldType::Double          , "SPARGE_TEMP"         , PropertyNames::Mash::spargeTemp_c             },
@@ -604,8 +605,8 @@ namespace {
    // Field mappings for <EQUIPMENT>...</EQUIPMENT> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Equipment> {
+      std::in_place_type_t<Equipment>{},
       "EQUIPMENT",            // XML record name
-      &Equipment::typeLookup, // Type Lookup for our corresponding model object
       "Equipment",            // NamedEntity class name
       XmlRecordDefinition::create<XmlNamedEntityRecord<Equipment>>,
       {
@@ -675,8 +676,8 @@ namespace {
    // Field mappings for <INSTRUCTION>...</INSTRUCTION> BeerXML records
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Instruction> {
+      std::in_place_type_t<Instruction>{},
       "INSTRUCTION",            // XML record name
-      &Instruction::typeLookup, // Type Lookup for our corresponding model object
       "Instruction",            // NamedEntity class name
       XmlRecordDefinition::create<XmlNamedEntityRecord<Instruction>>,
       {
@@ -700,8 +701,8 @@ namespace {
    // programs.  But it seems small bother to leave it be.
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<BrewNote> {
+      std::in_place_type_t<BrewNote>{},
       "BREWNOTE",            // XML record name
-      &BrewNote::typeLookup, // Type Lookup for our corresponding model object
       "BrewNote",            // NamedEntity class name
       XmlRecordDefinition::create<XmlNamedEntityRecord<BrewNote>>,
       {
@@ -751,8 +752,8 @@ namespace {
    // equally applicable to XML processing) to treat some of the HOP fields as though they were a separate sub-record.
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    XmlRecordDefinition const BEER_XML_RECORD_DEFINITION_HOP_IN_RECIPE_ADDITION_HOP {
+      std::in_place_type_t<Hop>{},
       "HOP",            // XML record name
-      &Hop::typeLookup, // Type Lookup for our corresponding model object
       "Hop",            // NamedEntity class name
       XmlRecordDefinition::create< XmlNamedEntityRecord< Hop > >,
       {BeerXml_HopBase}
@@ -760,15 +761,20 @@ namespace {
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for <HOP>...</HOP> BeerXML records inside <RECIPE>...</RECIPE> records
+   //
+   // Note that the AMOUNT field here is quantity in kilograms (unless the extension field UNIT is present).  Because
+   // Hop::defaultMeasure is Measurement::PhysicalQuantity::Mass and our canonical Unit for Mass is
+   // Measurement::Units::kilograms, we don't have to do anything special to read in a record without the UNIT field.
+   // Everything should "just work".
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<RecipeAdditionHop> {
+      std::in_place_type_t<RecipeAdditionHop>{},
       "HOP",                          // XML record name
-      &RecipeAdditionHop::typeLookup, // Type Lookup for our corresponding model object
       "RecipeAdditionHop",            // NamedEntity class name
-      XmlRecordDefinition::create<XmlNamedEntityRecord<Hop>>,
+      XmlRecordDefinition::create<XmlNamedEntityRecord<RecipeAdditionHop>>,
       {
          // Type                                  XPath                Q_PROPERTY                                      Value Decoder
-         {XmlRecordDefinition::FieldType::Double, "AMOUNT"           , PropertyNames::IngredientAmount::amount       },
+         {XmlRecordDefinition::FieldType::Double, "AMOUNT"           , PropertyNames::IngredientAmount::quantity     },
          {XmlRecordDefinition::FieldType::Double, "TIME"             , PropertyNames::RecipeAddition::addAtTime_mins },
          {XmlRecordDefinition::FieldType::Enum  , "USE"              , PropertyNames::RecipeAdditionHop::use         , &RecipeAdditionHop::useStringMapping},
          {XmlRecordDefinition::FieldType::Record, ""                 , PropertyNames::RecipeAdditionHop::hop         , &BEER_XML_RECORD_DEFINITION_HOP_IN_RECIPE_ADDITION_HOP},
@@ -800,32 +806,33 @@ namespace {
       {Recipe::Type::Wine       , "All Grain<!-- Wine -->"    },
    };
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Recipe> {
+      std::in_place_type_t<Recipe>{},
       "RECIPE",            // XML record name
-      &Recipe::typeLookup, // Type Lookup for our corresponding model object
       "Recipe",            // NamedEntity class name
-//      XmlRecordDefinition::create<XmlNamedEntityRecord<Recipe>>,
+
+      //      XmlRecordDefinition::create<XmlNamedEntityRecord<Recipe>>,
       XmlRecordDefinition::create<XmlRecipeRecord>,
       {
-         // Type                                            XPath                       Q_PROPERTY                                 Value Decoder
+         // Type                                            XPath                       Q_PROPERTY                                   Value Decoder
          {XmlRecordDefinition::FieldType::String          , "NAME"                    , PropertyNames::NamedEntity::name         },
          {XmlRecordDefinition::FieldType::RequiredConstant, "VERSION"                 , VERSION1                                 },
          {XmlRecordDefinition::FieldType::Enum            , "TYPE"                    , PropertyNames::Recipe::type              , &BEER_XML_RECIPE_STEP_TYPE_MAPPER},
-         {XmlRecordDefinition::FieldType::Record          , "STYLE"                   , PropertyNames::Recipe::style             },
-         {XmlRecordDefinition::FieldType::Record          , "EQUIPMENT"               , PropertyNames::Recipe::equipment         },
+         {XmlRecordDefinition::FieldType::Record          , "STYLE"                   , PropertyNames::Recipe::style             , &BEER_XML_RECORD_DEFINITION<Style>},
+         {XmlRecordDefinition::FieldType::Record          , "EQUIPMENT"               , PropertyNames::Recipe::equipment         , &BEER_XML_RECORD_DEFINITION<Equipment>},
          {XmlRecordDefinition::FieldType::String          , "BREWER"                  , PropertyNames::Recipe::brewer            },
          {XmlRecordDefinition::FieldType::String          , "ASST_BREWER"             , PropertyNames::Recipe::asstBrewer        },
          {XmlRecordDefinition::FieldType::Double          , "BATCH_SIZE"              , PropertyNames::Recipe::batchSize_l       },
          {XmlRecordDefinition::FieldType::Double          , "BOIL_SIZE"               , PropertyNames::Recipe::boilSize_l        },
          {XmlRecordDefinition::FieldType::Double          , "BOIL_TIME"               , PropertyNames::Recipe::boilTime_min      },
          {XmlRecordDefinition::FieldType::Double          , "EFFICIENCY"              , PropertyNames::Recipe::efficiency_pct    },
-         {XmlRecordDefinition::FieldType::ListOfRecords   , "HOPS/HOP"                , PropertyNames::Recipe::hopAdditions      }, // Additional logic for "HOPS" is handled in xml/XmlRecipeRecord.cpp
-         {XmlRecordDefinition::FieldType::ListOfRecords   , "FERMENTABLES/FERMENTABLE", PropertyNames::Recipe::fermentables      }, // Additional logic for "FERMENTABLES" is handled in xml/XmlRecipeRecord.cpp
-         {XmlRecordDefinition::FieldType::ListOfRecords   , "MISCS/MISC"              , PropertyNames::Recipe::miscs             }, // Additional logic for "MISCS" is handled in xml/XmlRecipeRecord.cpp
-         {XmlRecordDefinition::FieldType::ListOfRecords   , "YEASTS/YEAST"            , PropertyNames::Recipe::yeasts            }, // Additional logic for "YEASTS" is handled in xml/XmlRecipeRecord.cpp
-         {XmlRecordDefinition::FieldType::ListOfRecords   , "WATERS/WATER"            , PropertyNames::Recipe::waters            }, // Additional logic for "WATERS" is handled in xml/XmlRecipeRecord.cpp
-         {XmlRecordDefinition::FieldType::Record          , "MASH"                    , PropertyNames::Recipe::mash              },
-         {XmlRecordDefinition::FieldType::ListOfRecords   , "INSTRUCTIONS/INSTRUCTION", PropertyNames::Recipe::instructions      }, // Additional logic for "INSTRUCTIONS" is handled in xml/XmlNamedEntityRecord.h
-         {XmlRecordDefinition::FieldType::ListOfRecords   , "BREWNOTES/BREWNOTE"      , PropertyNames::Recipe::brewNotes         }, // Additional logic for "BREWNOTES" is handled in xml/XmlNamedEntityRecord.h
+         {XmlRecordDefinition::FieldType::ListOfRecords   , "HOPS/HOP"                , PropertyNames::Recipe::hopAdditions      , &BEER_XML_RECORD_DEFINITION<RecipeAdditionHop>}, // Additional logic for "HOPS" is handled in xml/XmlRecipeRecord.cpp
+         {XmlRecordDefinition::FieldType::ListOfRecords   , "FERMENTABLES/FERMENTABLE", PropertyNames::Recipe::fermentables      , &BEER_XML_RECORD_DEFINITION<Fermentable>      }, // Additional logic for "FERMENTABLES" is handled in xml/XmlRecipeRecord.cpp
+         {XmlRecordDefinition::FieldType::ListOfRecords   , "MISCS/MISC"              , PropertyNames::Recipe::miscs             , &BEER_XML_RECORD_DEFINITION<Misc>             }, // Additional logic for "MISCS" is handled in xml/XmlRecipeRecord.cpp
+         {XmlRecordDefinition::FieldType::ListOfRecords   , "YEASTS/YEAST"            , PropertyNames::Recipe::yeasts            , &BEER_XML_RECORD_DEFINITION<Yeast>            }, // Additional logic for "YEASTS" is handled in xml/XmlRecipeRecord.cpp
+         {XmlRecordDefinition::FieldType::ListOfRecords   , "WATERS/WATER"            , PropertyNames::Recipe::waters            , &BEER_XML_RECORD_DEFINITION<Water>            }, // Additional logic for "WATERS" is handled in xml/XmlRecipeRecord.cpp
+         {XmlRecordDefinition::FieldType::Record          , "MASH"                    , PropertyNames::Recipe::mash              , &BEER_XML_RECORD_DEFINITION<Mash>             },
+         {XmlRecordDefinition::FieldType::ListOfRecords   , "INSTRUCTIONS/INSTRUCTION", PropertyNames::Recipe::instructions      , &BEER_XML_RECORD_DEFINITION<Instruction>      }, // Additional logic for "INSTRUCTIONS" is handled in xml/XmlNamedEntityRecord.h
+         {XmlRecordDefinition::FieldType::ListOfRecords   , "BREWNOTES/BREWNOTE"      , PropertyNames::Recipe::brewNotes         , &BEER_XML_RECORD_DEFINITION<BrewNote>         }, // Additional logic for "BREWNOTES" is handled in xml/XmlNamedEntityRecord.h
          {XmlRecordDefinition::FieldType::String          , "NOTES"                   , PropertyNames::Recipe::notes             },
          {XmlRecordDefinition::FieldType::String          , "TASTE_NOTES"             , PropertyNames::Recipe::tasteNotes        },
          {XmlRecordDefinition::FieldType::Double          , "TASTE_RATING"            , PropertyNames::Recipe::tasteRating       },
@@ -876,6 +883,7 @@ namespace {
       "BEER_XML", // XML record name
       nullptr,    // Type Lookup for our corresponding model object
       "",         // NamedEntity class name
+      nullptr,    // listUpcaster = NamedEntity::upcastListToVariant<T> for T = model class for this record type
       XmlRecordDefinition::create<XmlRecord>,
       {
          // Type                                         XPath                       Q_PROPERTY           Value Decoder

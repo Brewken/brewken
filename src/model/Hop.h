@@ -350,6 +350,7 @@ private:
    void setDefaults();
 };
 
-Q_DECLARE_METATYPE(QList<Hop *>)
+Q_DECLARE_METATYPE(QList<                Hop *>)
+Q_DECLARE_METATYPE(QList<std::shared_ptr<Hop> >)
 
 #endif

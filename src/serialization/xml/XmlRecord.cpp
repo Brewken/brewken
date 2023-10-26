@@ -108,12 +108,35 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
       // have flagged up errors if there were any present.  But it is often valid to have multiple child records (eg
       // Hops inside a Recipe).
       //
-      xalanc::NodeRefList nodesForCurrentXPath;
-      xPathEvaluator.selectNodeList(nodesForCurrentXPath,
-                                    domSupport,
-                                    rootNodeOfRecord,
-                                    fieldDefinition.xPath.getXalanString());
-      auto numChildNodes = nodesForCurrentXPath.getLength();
+
+      //
+      // If the current field is using the "Base Record" trick (descibed in serialization/json/JsonRecordDefinition.h)
+      // we will have an empty xPath.  Xalan will crash if we ask it to follow an empty xPath, so we need to manually
+      // do the no-op navigation (ie pretend that the current XML record is actually a child of itself for the purposes
+      // of reading in a new object in our model.
+      //
+      // There's a bit of extra faffing around here because the XalanC "native" type `xalanc::NodeRefList` is, to all
+      // intents and purposes, read-only outside of the XalanC library (eg here in our code).  We need it as an output
+      // from xalanc::XPathEvaluator::selectNodeList, but, once we have it populated, it's better to copy its contents
+      // into std::vector and use that.
+      //
+      std::vector<xalanc::XalanNode *> nodesForCurrentXPath;
+      if (fieldDefinition.xPath.isEmpty()) {
+         // We mark ourselves as our child - something we assert we should only be doing in the case of a Record field
+         // type.  (Even then, it's only in certain cases.)
+         Q_ASSERT(std::holds_alternative<XmlRecordDefinition const *>(fieldDefinition.valueDecoder));
+         nodesForCurrentXPath.push_back(rootNodeOfRecord);
+      } else {
+         xalanc::NodeRefList tempNodesForCurrentXPath;
+         xPathEvaluator.selectNodeList(tempNodesForCurrentXPath,
+                                       domSupport,
+                                       rootNodeOfRecord,
+                                       fieldDefinition.xPath.getXalanString());
+         for (xalanc::NodeRefList::size_type ii = 0; ii < tempNodesForCurrentXPath.getLength(); ++ii) {
+            nodesForCurrentXPath.push_back(tempNodesForCurrentXPath.item(ii));
+         }
+      }
+      auto numChildNodes = nodesForCurrentXPath.size();
       qDebug() << Q_FUNC_INFO << "Found" << numChildNodes << "node(s) for " << fieldDefinition.xPath;
       if (XmlRecordDefinition::FieldType::Record        == fieldDefinition.type ||
           XmlRecordDefinition::FieldType::ListOfRecords == fieldDefinition.type) {
@@ -127,7 +150,11 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
          XmlRecordDefinition const & childRecordDefinition{
             *std::get<XmlRecordDefinition const *>(fieldDefinition.valueDecoder)
          };
-         if (!this->loadChildRecords(domSupport, fieldDefinition, childRecordDefinition, nodesForCurrentXPath, userMessage)) {
+         if (!this->loadChildRecords(domSupport,
+                                     fieldDefinition,
+                                     childRecordDefinition,
+                                     nodesForCurrentXPath,
+                                     userMessage)) {
             return false;
          }
       } else if (numChildNodes > 0) {
@@ -140,7 +167,7 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                Q_FUNC_INFO << numChildNodes << " nodes found with path " << fieldDefinition.xPath << ".  Taking value "
                "only of the first one.";
          }
-         xalanc::XalanNode * fieldContainerNode = nodesForCurrentXPath.item(0);
+         xalanc::XalanNode * fieldContainerNode = nodesForCurrentXPath.at(0);
 
          // Normally the node for the tag will be type ELEMENT_NODE and will not have a value in and of itself.
          // To get the "contents", we need to look at the value of the child node, which, for strings and numbers etc,
@@ -508,8 +535,8 @@ XmlRecord::ProcessingResult XmlRecord::normaliseAndStoreInDb(std::shared_ptr<Nam
       // Now we're ready to store in the DB
       int id = this->storeNamedEntityInDb();
       if (id <= 0) {
-         userMessage << "Error storing" << this->m_namedEntity->metaObject()->className() <<
-         "in database.  See logs for more details";
+         userMessage << "Error storing " << this->m_namedEntity->metaObject()->className() <<
+         " in database.  See logs for more details";
          return XmlRecord::ProcessingResult::Failed;
       }
    }
@@ -650,11 +677,22 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
                // TBD: For the moment we are assuming single-item setters always take raw pointers
                valueToSet = QVariant::fromValue(processedChildren.first().get());
             } else {
-               // Multi-item setters all take a list of shared pointers
-               valueToSet = QVariant::fromValue(processedChildren);
+               // Multi-item setters for class T all take a list of shared pointers to T, so we need to upcast from our
+               // list of shared pointers to NamedEntity.
+               valueToSet = this->m_recordDefinition.m_listUpcaster(processedChildren);
             }
 
-            propertyPath.setValue(*this->m_namedEntity, valueToSet);
+            qDebug() <<
+               Q_FUNC_INFO << "Setting" << propertyPath << "property on" <<
+               this->m_recordDefinition.m_namedEntityClassName << "with" << processedChildren.size() << "value(s)";
+            if (!propertyPath.setValue(*this->m_namedEntity, valueToSet)) {
+               // It's a coding error if we could not set the property we use to pass in the child records
+               qCritical() <<
+                  Q_FUNC_INFO << "Could not write" << propertyPath << "property on" <<
+                  this->m_recordDefinition.m_namedEntityClassName;
+                  // TODO Reinstate this assert once all the RecipeAddition work is done!
+//                  Q_ASSERT(false);
+            }
          }
       }
    }
@@ -691,7 +729,7 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
 [[nodiscard]] bool XmlRecord::loadChildRecords(xalanc::DOMSupport & domSupport,
                                                XmlRecordDefinition::FieldDefinition const & parentFieldDefinition,
                                                XmlRecordDefinition const & childRecordDefinition,
-                                               xalanc::NodeRefList & nodesForCurrentXPath,
+                                               std::vector<xalanc::XalanNode *> & nodesForCurrentXPath,
                                                QTextStream & userMessage) {
    //
    // This is where we have one or more substantive records of a particular type inside the one we are
@@ -708,7 +746,7 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
    auto constructorWrapper = childRecordDefinition.xmlRecordConstructorWrapper;
    this->m_childRecordSets.push_back(XmlRecord::ChildRecordSet{&parentFieldDefinition, {}});
    XmlRecord::ChildRecordSet & childRecordSet = this->m_childRecordSets.back();
-   for (xalanc::NodeRefList::size_type ii = 0; ii < nodesForCurrentXPath.getLength(); ++ii) {
+   for (xalanc::XalanNode * childRecordNode : nodesForCurrentXPath) {
       //
       // It's a coding error if we don't recognise the type of node that we've been configured (via
       // this->fieldDefinitions) to read in.  Again, an advantage of using XPaths is that we just
@@ -725,7 +763,6 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
       //    </RECIPE>
       // Requesting the HOPS/HOP subpath of RECIPE will not return FOO or BAR
       //
-      xalanc::XalanNode * childRecordNode = nodesForCurrentXPath.item(ii);
       XQString childRecordName{childRecordNode->getNodeName()};
       qDebug() << Q_FUNC_INFO << childRecordName;
 
@@ -738,7 +775,8 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
       // higher values are for nodes that were later in the input file, so useful to log.
       //
       qDebug() <<
-         Q_FUNC_INFO << "Loading child record" << childRecordName << "with index" << childRecordNode->getIndex();
+         Q_FUNC_INFO << "Loading child record" << childRecordName << "with index" << childRecordNode->getIndex() <<
+         "for" << childRecordDefinition.m_namedEntityClassName;
       if (!childRecord->load(domSupport, childRecordNode, userMessage)) {
          return false;
       }

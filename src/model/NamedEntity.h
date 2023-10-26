@@ -538,24 +538,24 @@ protected:
    }
 
 public:
-   /**
-    * \brief In certain circumstances, we need to be able to convert a `QList<Hop *>` or `QList<Fermentable *>` etc to
-    *        QList<NamedEntity *>.  This function does that work.
-    */
-   template<typename T>
-   static QList<NamedEntity *> downcastRawList(QList<T *> const & inputList) {
-      QList<NamedEntity *> outputList;
-      outputList.reserve(inputList.size());
-      for (T * ii : inputList) {
-         outputList.append(static_cast<NamedEntity *>(ii));
-      }
-      return outputList;
-   }
+///   /**
+///    * \brief In certain circumstances, we need to be able to convert a `QList<Hop *>` or `QList<Fermentable *>` etc to
+///    *        QList<NamedEntity *>.  This function does that work.
+///    */
+///   template<typename T>
+///   static QList<NamedEntity *> downcastRawList(QList<T *> const & inputList) {
+///      QList<NamedEntity *> outputList;
+///      outputList.reserve(inputList.size());
+///      for (T * ii : inputList) {
+///         outputList.append(static_cast<NamedEntity *>(ii));
+///      }
+///      return outputList;
+///   }
+
 
    /**
-    * \brief As above but for converting `QList<shared_ptr<Hop>>` or `QList<shared_ptr<Fermentable>>` etc to
-    *        QList<shared_ptr<NamedEntity>>.  (Note we are assuming that the returned list of pointers is used only relatively
-    *        briefly by the caller, so giving back raw pointers is unproblematic.)
+    * \brief Converts `QList<shared_ptr<Hop>>` or `QList<shared_ptr<Fermentable>>` etc to
+    *        `QList<shared_ptr<NamedEntity>>`.
     */
    template<typename T>
    static QList< std::shared_ptr<NamedEntity> > downcastList(QList< std::shared_ptr<T> > const & inputList) {
@@ -567,8 +567,12 @@ public:
       return outputList;
    }
 
+   /**
+    * \brief Converts `QList<shared_ptr<NamedEntity>>` to `QList<shared_ptr<Hop>>` or `QList<shared_ptr<Fermentable>>`
+    *        etc.
+    */
    template<typename T>
-   static QList< std::shared_ptr<T> > upcastList(QList< std::shared_ptr<NamedEntity> > const & inputList) {
+   static QList< std::shared_ptr<T> > upcastList(QList<std::shared_ptr<NamedEntity>> const & inputList) {
       QList< std::shared_ptr<T> > outputList;
       outputList.reserve(inputList.size());
       for (std::shared_ptr<NamedEntity> ii : inputList) {
@@ -576,6 +580,19 @@ public:
       }
       return outputList;
    }
+
+   /**
+    * \brief In various parts of the generic serialisation code (for XML and JSON), it is useful, for a given subclass
+    *        \c T of \c NamedEntity, to have a pointer to a function that can cast a list of base pointers to derived
+    *        ones.  This is typically because we want to pass such a list in to the property system so that it can call
+    *        a setter function.  This is fortunate because it means we can avoid having the function pointer signature
+    *        depend on T (even though it points to a templated function).
+    */
+   template<typename T>
+   static QVariant upcastListToVariant(QList< std::shared_ptr<NamedEntity> > const & inputList) {
+      return QVariant::fromValue(NamedEntity::upcastList<T>(inputList));
+   }
+
 
 private:
   QString m_folder;

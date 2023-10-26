@@ -109,7 +109,8 @@ public:
    Q_PROPERTY(bool                          isWeight  READ isWeight   WRITE setIsWeight)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-   [[deprecated]] Use use() const;
+   // Ideally this too would be marked [[deprecated]], but we do need to refer to it in RecipeAdditionHop::typeLookup
+   Use use() const;
    Hop * hop () const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
@@ -140,5 +141,6 @@ protected:
 
 Q_DECLARE_METATYPE(Hop)
 Q_DECLARE_METATYPE(Hop *)
+Q_DECLARE_METATYPE(QList<std::shared_ptr<RecipeAdditionHop> >)
 
 #endif

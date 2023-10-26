@@ -337,7 +337,8 @@ public:
    //! \brief The brew notes.
    Q_PROPERTY(QList<BrewNote *> brewNotes READ brewNotes /*WRITE*/ /*NOTIFY changed*/ STORED false)
    //! \brief The hop additions.
-   Q_PROPERTY(QList<RecipeAdditionHop *> hopAdditions   READ hopAdditions   /*WRITE setHopAdditions*/   STORED false)
+///   Q_PROPERTY(QList<RecipeAdditionHop *>                hopAdditions   READ hopAdditions   /*WRITE setHopAdditions*/    STORED false)
+   Q_PROPERTY(QList<std::shared_ptr<RecipeAdditionHop>> hopAdditions   READ hopAdditions WRITE setHopAdditions   STORED false)
    Q_PROPERTY(QVector<int>               hopAdditionIds READ hopAdditionIds /*WRITE setHopAdditionIds*/ STORED false)
    //! \brief The instructions.
    Q_PROPERTY(QList<Instruction *> instructions   READ instructions /*WRITE*/ /*NOTIFY changed*/ STORED false)
@@ -513,39 +514,39 @@ public:
 
    // Relational getters
    template<typename NE> QList<std::shared_ptr<NE>> getAll() const;
-   QList<RecipeAdditionHop *>           hopAdditions             () const;
-   QVector<int>                         hopAdditionIds           () const;
-   QList<Instruction *>                 instructions             () const;
-   QVector<int>                         getInstructionIds        () const;
-   QList<Fermentable *>                 fermentables             () const;
-   QVector<int>                         getFermentableIds        () const;
-   QList<Misc *>                        miscs                    () const;
-   QVector<int>                         getMiscIds               () const;
-   QList<Yeast *>                       yeasts                   () const;
-   QVector<int>                         getYeastIds              () const;
-   QList<Water *>                       waters                   () const;
-   QVector<int>                         getWaterIds              () const;
-   QList<Salt *>                        salts                    () const;
-   QVector<int>                         getSaltIds               () const;
-   QList<BrewNote *>                    brewNotes                () const;
-   QList<Recipe *>                      ancestors                () const;
-   std::shared_ptr<Mash>                getMash                  () const;
-   Mash *                               mash                     () const;
-   int                                  getMashId                () const;
-   Equipment *                          equipment                () const;
-   int                                  getEquipmentId           () const;
-   Style *                              style                    () const;
-   int                                  getStyleId               () const;
+   QList<std::shared_ptr<RecipeAdditionHop>> hopAdditions     () const;
+   QVector<int>                              hopAdditionIds   () const;
+   QList<Instruction *>                      instructions     () const;
+   QVector<int>                              getInstructionIds() const;
+   QList<Fermentable *>                      fermentables     () const;
+   QVector<int>                              getFermentableIds() const;
+   QList<Misc *>                             miscs            () const;
+   QVector<int>                              getMiscIds       () const;
+   QList<Yeast *>                            yeasts           () const;
+   QVector<int>                              getYeastIds      () const;
+   QList<Water *>                            waters           () const;
+   QVector<int>                              getWaterIds      () const;
+   QList<Salt *>                             salts            () const;
+   QVector<int>                              getSaltIds       () const;
+   QList<BrewNote *>                         brewNotes        () const;
+   QList<Recipe *>                           ancestors        () const;
+   std::shared_ptr<Mash>                     getMash          () const;
+   Mash *                                    mash             () const;
+   int                                       getMashId        () const;
+   Equipment *                               equipment        () const;
+   int                                       getEquipmentId   () const;
+   Style *                                   style            () const;
+   int                                       getStyleId       () const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   std::optional<std::shared_ptr<Boil>> boil                     () const;
+   std::optional<std::shared_ptr<Boil>>      boil             () const;
    //! \brief This will create a \c Boil object if it doesn't exist
-   std::shared_ptr<Boil>                nonOptBoil               ();
-   int                                  getBoilId                () const;
-   std::shared_ptr<Fermentation>        getFermentation          () const;
-   Fermentation *                       fermentation             () const;
-   int                                  getFermentationId        () const;
+   std::shared_ptr<Boil>                     nonOptBoil       ();
+   int                                       getBoilId        () const;
+   std::shared_ptr<Fermentation>             getFermentation  () const;
+   Fermentation *                            fermentation     () const;
+   int                                       getFermentationId() const;
 
-   int                                  getAncestorId            () const;
+   int                                       getAncestorId    () const;
 
    // Relational setters
    void setEquipment   (Equipment *                   val);
@@ -556,7 +557,7 @@ public:
    void setBoil        (std::optional<std::shared_ptr<Boil>> val);
    void setFermentation(std::shared_ptr<Fermentation> val);
    void setFermentation(Fermentation *                val);
-///   void setHopAdditions(QList<RecipeAdditionHop *>    val);
+   void setHopAdditions(QList<std::shared_ptr<RecipeAdditionHop>> val);
 
    /**
     * \brief These calls are intended for use by the ObjectStore when pulling data from the database.  As such they do
@@ -585,14 +586,14 @@ public:
 
    // Helpers
    //! \brief Get the ibus from a given \c hop.
-   double ibuFromHopAddition(RecipeAdditionHop const * hop);
+   double ibuFromHopAddition(RecipeAdditionHop const & hop);
    // .:TBD:. Not sure reagents is the best word here...
    //! \brief Formats the fermentables for instructions
    QList<QString> getReagents(QList<Fermentable *> ferms);
    //! \brief Formats the mashsteps for instructions
    QList<QString> getReagents(QList< std::shared_ptr<MashStep> >);
    //! \brief Formats the hops for instructions
-   QList<QString> getReagents(QList<RecipeAdditionHop *> hopAdditions, bool firstWort);
+   QList<QString> getReagents(QList<std::shared_ptr<RecipeAdditionHop>> hopAdditions, bool firstWort);
    //! \brief Formats the salts for instructions
    QStringList getReagents(QList<Salt *> salts, Salt::WhenToAdd wanted);
    QHash<QString, double> calcTotalPoints();
@@ -774,6 +775,8 @@ private:
    //void setDefaults();
 ///   bool isValidType(const QString & str);
 };
+
+Q_DECLARE_METATYPE(QList<std::shared_ptr<Recipe> >)
 
 /**
  * \brief Non-member functions for \c Recipe

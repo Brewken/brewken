@@ -673,8 +673,8 @@ JsonRecord::~JsonRecord() = default;
       // Now we're ready to store in the DB
       int id = this->storeNamedEntityInDb();
       if (id <= 0) {
-         userMessage << "Error storing" << this->m_namedEntity->metaObject()->className() <<
-         "in database.  See logs for more details";
+         userMessage << "Error storing " << this->m_namedEntity->metaObject()->className() <<
+         " in database.  See logs for more details";
          return JsonRecord::ProcessingResult::Failed;
       }
    }
@@ -814,7 +814,12 @@ JsonRecord::~JsonRecord() = default;
                valueToSet = QVariant::fromValue(processedChildren);
             }
 
-            propertyPath.setValue(*this->m_namedEntity, valueToSet);
+            if (!propertyPath.setValue(*this->m_namedEntity, valueToSet)) {
+               qCritical() <<
+                  Q_FUNC_INFO << "Could not write" << propertyPath << "property on" <<
+                  this->m_recordDefinition.m_namedEntityClassName;
+                  Q_ASSERT(false);
+            }
          }
 
 

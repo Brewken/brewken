@@ -126,7 +126,12 @@ public:
    /**
    * \brief This function is used (as a parameter to std::sort) for sorting in the recipe formatter
    */
-   [[nodiscard]] static bool lessThanByTime(RecipeAddition const * const lhs, RecipeAddition const * const rhs);
+   [[nodiscard]] static bool lessThanByTime(RecipeAddition const & lhs, RecipeAddition const & rhs);
+
+   template<typename RA>
+   [[nodiscard]] static bool lessThanByTime(std::shared_ptr<RA> const lhs, std::shared_ptr<RA> const rhs) {
+      return lessThanByTime(*lhs, *rhs);
+   }
 
    //=================================================== PROPERTIES ====================================================
 

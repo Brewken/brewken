@@ -17,6 +17,12 @@
 #define SERIALIZATION_SERIALIZATIONRECORDDEFINITION_H
 #pragma once
 
+#include <memory>
+
+#include <QList>
+#include <QVariant>
+
+#include "model/NamedEntity.h"
 #include "utils/BtStringConst.h"
 #include "utils/TypeLookup.h"
 
@@ -29,10 +35,12 @@ class SerializationRecordDefinition {
 public:
    SerializationRecordDefinition(char       const * const recordName,
                                  TypeLookup const * const typeLookup,
-                                 char       const * const namedEntityClassName) :
-      m_recordName{recordName},
-      m_typeLookup{typeLookup},
-      m_namedEntityClassName{namedEntityClassName} {
+                                 char       const * const namedEntityClassName,
+                                 QVariant               (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &)) :
+      m_recordName          {recordName},
+      m_typeLookup          {typeLookup},
+      m_namedEntityClassName{namedEntityClassName},
+      m_listUpcaster        {listUpcaster} {
       return;
    }
    ~SerializationRecordDefinition() = default;
@@ -44,6 +52,9 @@ public:
    // The name of the class of object contained in this type of record, eg "Hop", "Yeast", etc.
    // Blank for the root record (which is just a container and doesn't have a NamedEntity).
    BtStringConst const m_namedEntityClassName;
+
+   QVariant (*m_listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &);
+
 };
 
 #endif

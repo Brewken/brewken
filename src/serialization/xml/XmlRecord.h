@@ -17,6 +17,8 @@
 #define SERIALIZATION_XML_XMLRECORD_H
 #pragma once
 
+#include <vector>
+
 #include <QTextStream>
 #include <QVector>
 
@@ -131,7 +133,7 @@ private:
    bool loadChildRecords(xalanc::DOMSupport & domSupport,
                          XmlRecordDefinition::FieldDefinition const & parentFieldDefinition,
                          XmlRecordDefinition const & childRecordDefinition,
-                         xalanc::NodeRefList & nodesForCurrentXPath,
+                         std::vector<xalanc::XalanNode *> & nodesForCurrentXPath,
                          QTextStream & userMessage);
 
 protected:

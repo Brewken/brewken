@@ -125,10 +125,10 @@ namespace {
       return wrappedText;
    }
 
-   QList<RecipeAdditionHop *> sortHopAdditionsByTime(Recipe * rec) {
-      QList<RecipeAdditionHop *> sorted = rec->hopAdditions();
+   QList<std::shared_ptr<RecipeAdditionHop>> sortHopAdditionsByTime(Recipe * rec) {
+      QList<std::shared_ptr<RecipeAdditionHop>> sorted = rec->hopAdditions();
 
-      std::sort(sorted.begin(), sorted.end(), RecipeAddition::lessThanByTime);
+      std::sort(sorted.begin(), sorted.end(), RecipeAddition::lessThanByTime<RecipeAdditionHop>);
       return sorted;
    }
 
@@ -522,7 +522,7 @@ public:
          return "";
       }
 
-      QList<RecipeAdditionHop *> hopAdditions = sortHopAdditionsByTime(rec);
+      auto hopAdditions = sortHopAdditionsByTime(rec);
 
       int size = hopAdditions.size();
       if ( size < 1 ) {
@@ -550,7 +550,7 @@ public:
             .arg(tr("IBU"));
 
       for(int ii = 0; ii < size; ++ii) {
-         RecipeAdditionHop * hopAddition = hopAdditions[ii];
+         auto hopAddition = hopAdditions[ii];
          hTable += QString("<tr><td>%1</td><td>%2%</td><td>%3</td><td>%4</td><td>%5</td><td>%6</td><td>%7</td></tr>")
                .arg(hopAddition->hop()->name())
                .arg(Measurement::displayQuantity(hopAddition->hop()->alpha_pct(), 1) )
@@ -561,7 +561,7 @@ public:
                //      (along with other places we use `hopAddition->addAtTime_mins().value_or(0.0)`
                .arg(Measurement::displayAmount(Measurement::Amount{hopAddition->addAtTime_mins().value_or(0.0), Measurement::Units::minutes}))
                .arg(Hop::formDisplayNames[hopAddition->hop()->form()])
-               .arg(Measurement::displayQuantity(rec->ibuFromHopAddition(hopAddition), 1) );
+               .arg(Measurement::displayQuantity(rec->ibuFromHopAddition(*hopAddition), 1) );
       }
       hTable += "</table>";
       return hTable;
@@ -573,7 +573,7 @@ public:
       }
 
       QString ret = "";
-      QList<RecipeAdditionHop *> hopAdditions = sortHopAdditionsByTime(rec);
+      auto hopAdditions = sortHopAdditionsByTime(rec);
       int size = hopAdditions.size();
       if (size > 0) {
          QStringList names  {tr("Name"      )};
@@ -585,7 +585,7 @@ public:
          QStringList ibus   {tr("IBU"       )};
 
          for (int ii = 0; ii < size; ++ii) {
-            RecipeAdditionHop * hopAddition = hopAdditions[ii];
+            auto hopAddition = hopAdditions[ii];
 
             names.append(hopAddition->name());
             alphas.append(QString("%1%").arg(Measurement::displayQuantity(hopAddition->hop()->alpha_pct(), 1)));
@@ -593,7 +593,7 @@ public:
             stages.append(RecipeAddition::stageDisplayNames[hopAddition->stage()]);
             times.append(Measurement::displayAmount(Measurement::Amount{hopAddition->addAtTime_mins().value_or(0.0), Measurement::Units::minutes}));
             forms.append(Hop::formDisplayNames[hopAddition->hop()->form()]);
-            ibus.append(QString("%1").arg( Measurement::displayQuantity(rec->ibuFromHopAddition(hopAddition), 1)));
+            ibus.append(QString("%1").arg( Measurement::displayQuantity(rec->ibuFromHopAddition(*hopAddition), 1)));
          }
 
          padAllToMaxLength(names);

@@ -226,6 +226,7 @@ namespace {
       "not_used",
       nullptr,
       "not_used",
+      nullptr,
       JsonRecordDefinition::create<JsonRecord>,
       std::initializer_list<JsonRecordDefinition::FieldDefinition>{}
    };
@@ -337,8 +338,8 @@ namespace {
 
    // As mentioned above, it would be really nice to do this at compile time, but haven't yet found a nice way to do so
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Fermentable> {
+      std::in_place_type_t<Fermentable>{},
       "fermentables",
-      &Fermentable::typeLookup,
       "Fermentable",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Fermentable > >,
       {BeerJson_FermentableBase, BeerJson_FermentableType_ExclBase}
@@ -361,8 +362,8 @@ namespace {
       {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount", PropertyNames::NamedEntityWithInventory::inventoryWithUnits, &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Misc> {
+      std::in_place_type_t<Misc>{},
       "miscellaneous_ingredients",
-      &Misc::typeLookup,
       "Misc",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Misc > >,
       {BeerJson_MiscellaneousBase, BeerJson_MiscellaneousType_ExclBase}
@@ -407,8 +408,8 @@ namespace {
       // .:TODO.JSON:. Note that we'll need to look at HopAdditionType, IBUEstimateType, IBUMethodType when we use Hops in Recipes
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Hop> {
+      std::in_place_type_t<Hop>{},
       "hop_varieties",
-      &Hop::typeLookup,
       "Hop",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Hop > >,
       {BeerJson_HopBase, BeerJson_HopType_ExclBase}
@@ -418,8 +419,8 @@ namespace {
    // Field mappings for cultures BeerJSON records - see schemas/beerjson/1.0/culture.json
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Yeast> {
+      std::in_place_type_t<Yeast>{},
       "cultures",
-      &Yeast::typeLookup,
       "Yeast",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Yeast > >,
       {
@@ -456,8 +457,8 @@ namespace {
    // Field mappings for profiles BeerJSON records - see schemas/beerjson/1.0/water.json
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Water> {
+      std::in_place_type_t<Water>{},
       "profiles",
-      &Water::typeLookup,
       "Water",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Water > >,
       {
@@ -486,8 +487,8 @@ namespace {
    // Field mappings for styles BeerJSON records - see schemas/beerjson/1.0/style.json
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Style> {
+      std::in_place_type_t<Style>{},
       "styles",
-      &Style::typeLookup,
       "Style",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Style > >,
       {
@@ -525,8 +526,8 @@ namespace {
    // Field mappings for mash steps BeerJSON records
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<MashStep> {
+      std::in_place_type_t<MashStep>{},
       "MashStepType",           // JSON recordName
-      &MashStep::typeLookup,    // Type Lookup for our corresponding model object
       "MashStep",               // NamedEntity class name
       JsonRecordDefinition::create<JsonNamedEntityRecord<MashStep>>,
       {
@@ -550,8 +551,8 @@ namespace {
    // Field mappings for mashes BeerJSON records TODO
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Mash> {
+      std::in_place_type_t<Mash>{},
       "mashes",             // JSON recordName
-      &Mash::typeLookup,    // Type Lookup for our corresponding model object
       "Mash",               // NamedEntity class name
       JsonRecordDefinition::create<JsonNamedEntityRecord<Mash>>,
       {
@@ -577,8 +578,8 @@ namespace {
    // However, note that some fields are required on all vessels, in particular "loss" and "maximum_volume".
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Equipment> {
+      std::in_place_type_t<Equipment>{},
       "equipments",              // JSON recordName
-      &Equipment::typeLookup,    // Type Lookup for our corresponding model object
       "Equipment",               // NamedEntity class name
       JsonRecordDefinition::create< JsonNamedEntityRecord< Equipment > >,
       {
@@ -663,8 +664,8 @@ namespace {
    // Field mappings for the HopBase part of HopAdditionType BeerJSON records
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION_HOP_IN_ADDITION {
+      std::in_place_type_t<Hop>{},
       "hop base",
-      &Hop::typeLookup,
       "Hop",
       JsonRecordDefinition::create< JsonNamedEntityRecord< Hop > >,
       {BeerJson_HopBase}
@@ -691,8 +692,8 @@ namespace {
       {JsonRecordDefinition::FieldType::Record                    , ""                       , PropertyNames::RecipeAdditionHop::hop,  &BEER_JSON_RECORD_DEFINITION_HOP_IN_ADDITION},
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<RecipeAdditionHop> {
+      std::in_place_type_t<RecipeAdditionHop>{},
       "hop_additions",                   // JSON recordName
-      &RecipeAdditionHop::typeLookup,    // Type Lookup for our corresponding model object
       "RecipeAdditionHop",               // NamedEntity class name
       JsonRecordDefinition::create< JsonNamedEntityRecord<RecipeAdditionHop> >,
       {BeerJson_IngredientAdditionType_ExclBase, BeerJson_HopAdditionType_Base}
@@ -702,8 +703,8 @@ namespace {
    // Field mappings for recipes BeerJSON records TODO
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Recipe> {
+      std::in_place_type_t<Recipe>{},
       "recipes",              // JSON recordName
-      &Recipe::typeLookup,    // Type Lookup for our corresponding model object
       "Recipe",               // NamedEntity class name
       JsonRecordDefinition::create< JsonNamedEntityRecord<Recipe> >,
       {
@@ -737,6 +738,7 @@ namespace {
       "beerjson",
       nullptr,
       "",
+      nullptr,
       JsonRecordDefinition::create<JsonRecord>,
       {
          // Type                                             Name                         Q_PROPERTY            Value Decoder
