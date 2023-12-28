@@ -1676,11 +1676,11 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="vanished">Инвентар</translation>
+        <translation>Инвентар</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="obsolete">Тип количине</translation>
+        <translation type="unfinished">Тип количине</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -3151,10 +3151,6 @@ Error message:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Mass</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Volume</source>
         <translation type="unfinished">Запремина</translation>
     </message>
@@ -3389,10 +3385,6 @@ Log file may contain more details.</source>
         <translation type="unfinished">Отвори</translation>
     </message>
     <message>
-        <source>BeerJSON files (*.json);;BeerXML files (*.xml)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save</source>
         <translation type="unfinished">Сачувај</translation>
     </message>
@@ -3606,6 +3598,14 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BeerJSON and BeerXML files (*.json *.xml);;BeerJSON files (*.json);;BeerXML files (*.xml)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Weight (Mass)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3981,11 +3981,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="obsolete">Инвентар</translation>
+        <translation type="unfinished">Инвентар</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="obsolete">Тип количине</translation>
+        <translation type="unfinished">Тип количине</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -6221,6 +6221,22 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Total Oil ml/100g</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount in Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount in inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Тип количине</translation>
     </message>
 </context>
 <context>

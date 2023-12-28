@@ -1903,11 +1903,11 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="vanished">Existències</translation>
+        <translation>Existències</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="obsolete">Tipus de quantitat</translation>
+        <translation type="unfinished">Tipus de quantitat</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -3435,7 +3435,7 @@ Error message:
     </message>
     <message>
         <source>Mass</source>
-        <translation type="unfinished">Massa</translation>
+        <translation type="obsolete">Massa</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -3676,10 +3676,6 @@ Log file may contain more details.</source>
         <translation type="unfinished">Obre</translation>
     </message>
     <message>
-        <source>BeerJSON files (*.json);;BeerXML files (*.xml)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save</source>
         <translation type="unfinished">Desa</translation>
     </message>
@@ -3913,6 +3909,14 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BeerJSON and BeerXML files (*.json *.xml);;BeerJSON files (*.json);;BeerXML files (*.xml)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Weight (Mass)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4291,11 +4295,11 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="obsolete">Existències</translation>
+        <translation type="unfinished">Existències</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="obsolete">Tipus de quantitat</translation>
+        <translation type="unfinished">Tipus de quantitat</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -6655,7 +6659,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Amount in Inventory</source>
-        <translation type="vanished">Existències</translation>
+        <translation>Existències</translation>
     </message>
     <message>
         <source>Amount in inventory</source>
@@ -6816,6 +6820,18 @@ El volum final al primari és de %1.</translation>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
         <translation type="obsolete">Marcar si la quantitat es mesura en Kg en comptes de L.</translation>
+    </message>
+    <message>
+        <source>Total amount in inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Tipus de quantitat</translation>
     </message>
 </context>
 <context>

@@ -272,6 +272,7 @@ public:
    template<class NE> void hardDeleteAdditions() {
       qDebug() << Q_FUNC_INFO;
       for (int id : this->allMyIds<NE>()) {
+         qDebug() << Q_FUNC_INFO << "Hard deleting" << NE::staticMetaObject.className() << "#" << id;
          ObjectStoreWrapper::hardDelete<NE>(id);
       }
    }
@@ -2414,8 +2415,11 @@ void Recipe::recalcIBU() {
    double ibus = 0.0;
 
    // Bitterness due to hops...
+   //
+   // Note that, normally, we don't want to take a reference to a smart pointer.  However, in this context, it's safe
+   // (because the hop additions aren't going to change while we look at them) and it gets rid of a compiler warning.
    m_ibus.clear();
-   for (auto const hopAddition : this->hopAdditions()) {
+   for (auto const & hopAddition : this->hopAdditions()) {
       double tmp = this->ibuFromHopAddition(*hopAddition);
       m_ibus.append(tmp);
       ibus += tmp;

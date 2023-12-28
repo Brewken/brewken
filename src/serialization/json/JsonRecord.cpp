@@ -711,13 +711,14 @@ JsonRecord::~JsonRecord() = default;
       //
       if (JsonRecord::ProcessingResult::FoundDuplicate == processingResult) {
          qDebug() <<
-            Q_FUNC_INFO << "(Late found) duplicate" << this->m_recordDefinition.m_namedEntityClassName <<
-            (this->m_includeInStats ? " will" : " won't") << " be included in stats";
+            Q_FUNC_INFO << "(Late found) duplicate" << this->m_recordDefinition.m_namedEntityClassName << "(" <<
+            this->m_recordDefinition.m_localisedEntityName << ")" << (this->m_includeInStats ? " will" : " won't") <<
+            " be included in stats";
          if (this->m_includeInStats) {
-            stats.skipped(*this->m_recordDefinition.m_namedEntityClassName);
+            stats.skipped(this->m_recordDefinition.m_localisedEntityName);
          }
       } else if (JsonRecord::ProcessingResult::Succeeded == processingResult && this->m_includeInStats) {
-         stats.processedOk(*this->m_recordDefinition.m_namedEntityClassName);
+         stats.processedOk(this->m_recordDefinition.m_localisedEntityName);
       }
 
       //

@@ -1895,11 +1895,11 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="vanished">Inventaris</translation>
+        <translation>Inventaris</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="obsolete">Hoeveelheid Type</translation>
+        <translation type="unfinished">Hoeveelheid Type</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -3441,7 +3441,7 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Mass</source>
-        <translation type="unfinished">Gewicht</translation>
+        <translation type="obsolete">Gewicht</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -3666,10 +3666,6 @@ Log file may contain more details.</source>
         <translation type="unfinished">Open</translation>
     </message>
     <message>
-        <source>BeerJSON files (*.json);;BeerXML files (*.xml)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save</source>
         <translation type="unfinished">Opslaan</translation>
     </message>
@@ -3891,6 +3887,14 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BeerJSON and BeerXML files (*.json *.xml);;BeerJSON files (*.json);;BeerXML files (*.xml)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Weight (Mass)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4269,11 +4273,11 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="obsolete">Inventaris</translation>
+        <translation type="unfinished">Inventaris</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="obsolete">Hoeveelheid Type</translation>
+        <translation type="unfinished">Hoeveelheid Type</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -6617,7 +6621,7 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Amount in Inventory</source>
-        <translation type="vanished">Hoeveelheid in de Inventaris</translation>
+        <translation>Hoeveelheid in de Inventaris</translation>
     </message>
     <message>
         <source>Amount in inventory</source>
@@ -6782,6 +6786,18 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Amount is weight?</source>
         <translation type="obsolete">Hoeveelheid is gewicht?</translation>
+    </message>
+    <message>
+        <source>Total amount in inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Hoeveelheid Type</translation>
     </message>
 </context>
 <context>

@@ -354,8 +354,8 @@ protected:
     *        being compared are of the same class (eg we are not comparing a Hop with a Yeast) and that the names match,
     *        so subclasses do not need to repeat these tests.
     *
-    *        We do not currently anticipate sub-sub-classes of \b NamedEntity but if one ever were created, it should
-    *        call its parent's implementation of this function before doing its own class-specific tests.
+    *        A sub-sub-class of \c NamedEntity (eg \c RecipeAdditionHop) should call its parent's implementation of this
+    *        function before doing its own class-specific tests.
     * \return \b true if this object is, in all the ways that matter, equal to \b other
     */
    virtual bool isEqualTo(NamedEntity const & other) const = 0;
@@ -643,6 +643,12 @@ S & operator<<(S & stream, NamedEntity const * namedEntity) {
    } else {
       stream << "Null";
    }
+   return stream;
+}
+
+template<class S>
+S & operator<<(S & stream, std::shared_ptr<NamedEntity> namedEntity) {
+   stream << namedEntity.get();
    return stream;
 }
 

@@ -1899,11 +1899,11 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="vanished">Magazzino</translation>
+        <translation>Magazzino</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="obsolete">Tipo di Quantità</translation>
+        <translation type="unfinished">Tipo di Quantità</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -3419,7 +3419,7 @@ Error message:
     </message>
     <message>
         <source>Mass</source>
-        <translation type="unfinished">Massa</translation>
+        <translation type="obsolete">Massa</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -3660,10 +3660,6 @@ Log file may contain more details.</source>
         <translation type="unfinished">Apri</translation>
     </message>
     <message>
-        <source>BeerJSON files (*.json);;BeerXML files (*.xml)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save</source>
         <translation type="unfinished">Salva</translation>
     </message>
@@ -3881,6 +3877,14 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BeerJSON and BeerXML files (*.json *.xml);;BeerJSON files (*.json);;BeerXML files (*.xml)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Weight (Mass)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4259,11 +4263,11 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="obsolete">Magazzino</translation>
+        <translation type="unfinished">Magazzino</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="obsolete">Tipo di Quantità</translation>
+        <translation type="unfinished">Tipo di Quantità</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -6620,7 +6624,7 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Amount in Inventory</source>
-        <translation type="vanished">Quantità in Magazzino</translation>
+        <translation>Quantità in Magazzino</translation>
     </message>
     <message>
         <source>Amount in inventory</source>
@@ -6785,6 +6789,18 @@ Il Volume finale del primo è %1.</translation>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
         <translation type="obsolete">Controlla se la data quantità è peso invece di volume</translation>
+    </message>
+    <message>
+        <source>Total amount in inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Tipo di Quantità</translation>
     </message>
 </context>
 <context>

@@ -80,6 +80,9 @@ public:
                       Measurement::UnitStringMapping const *,  // FieldType::Unit
                       XmlRecordDefinition            const *>; // FieldType::Array
       ValueDecoder valueDecoder;
+      /**
+       * Defining a constructor allows us to control the default value of valueDecoder
+       */
       FieldDefinition(FieldType    type,
                       XQString     xPath,
                       PropertyPath propertyPath,
@@ -116,7 +119,7 @@ public:
    /**
     * \brief Constructor
     * \param recordName The name of the XML object for this type of record, eg "fermentables" for a list of
-    *                   fermentables in BeerJSON.
+    *                   fermentables in BeerXML.
     * \param typeLookup The \c TypeLookup object that, amongst other things allows us to tell whether Qt properties on
     *                   this object type are "optional" (ie wrapped in \c std::optional)
     * \param namedEntityClassName The class name of the \c NamedEntity to which this record relates, eg "Fermentable",
@@ -126,9 +129,10 @@ public:
     * \param fieldDefinitions A list of fields we expect to find in this record (other fields will be ignored) and how
     *                         to parse them.
     */
-   XmlRecordDefinition(char                     const * const recordName,
-                       TypeLookup               const * const typeLookup,
-                       char                     const * const namedEntityClassName,
+   XmlRecordDefinition(char                   const * const   recordName,
+                       TypeLookup             const * const   typeLookup,
+                       char                   const * const   namedEntityClassName,
+                       QString                        const & localisedEntityName,
                        QVariant                             (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
                        XmlRecordConstructorWrapper            xmlRecordConstructorWrapper,
                        std::initializer_list<FieldDefinition> fieldDefinitions);
@@ -142,12 +146,12 @@ public:
    template<typename T>
    XmlRecordDefinition(std::in_place_type_t<T>,
                        char                     const * const recordName,
-                       char                     const * const namedEntityClassName,
                        XmlRecordConstructorWrapper            xmlRecordConstructorWrapper,
                        std::initializer_list<FieldDefinition> fieldDefinitions) :
       XmlRecordDefinition(recordName,
                           &T::typeLookup,
-                          namedEntityClassName,
+                          T::staticMetaObject.className(),
+                          T::LocalisedName,
                           NamedEntity::upcastListToVariant<T>,
                           xmlRecordConstructorWrapper,
                           fieldDefinitions) {
@@ -163,18 +167,19 @@ public:
    XmlRecordDefinition(char                     const * const recordName,
                        TypeLookup               const * const typeLookup,
                        char                     const * const namedEntityClassName,
+                       QString                        const & localisedEntityName,
                        QVariant                             (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
                        XmlRecordConstructorWrapper            xmlRecordConstructorWrapper,
                        std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists);
    template<typename T>
    XmlRecordDefinition(std::in_place_type_t<T>,
                        char                     const * const recordName,
-                       char                     const * const namedEntityClassName,
                        XmlRecordConstructorWrapper            xmlRecordConstructorWrapper,
                        std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists) :
       XmlRecordDefinition(recordName,
                           &T::typeLookup,
-                          namedEntityClassName,
+                          T::staticMetaObject.className(),
+                          T::LocalisedName,
                           NamedEntity::upcastListToVariant<T>,
                           xmlRecordConstructorWrapper,
                           fieldDefinitionLists) {
@@ -199,5 +204,11 @@ public:
  */
 template<class S>
 S & operator<<(S & stream, XmlRecordDefinition::FieldType const fieldType);
+
+/**
+ * \brief Convenience function for logging
+ */
+template<class S>
+S & operator<<(S & stream, XmlRecordDefinition::FieldDefinition const & fieldDefinition);
 
 #endif

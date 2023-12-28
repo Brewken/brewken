@@ -1879,11 +1879,11 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="vanished">Készlet</translation>
+        <translation>Készlet</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="obsolete">Mennyiségi egység</translation>
+        <translation type="unfinished">Mennyiségi egység</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -3399,7 +3399,7 @@ Error message:
     </message>
     <message>
         <source>Mass</source>
-        <translation type="unfinished">Tömeg</translation>
+        <translation type="obsolete">Tömeg</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -3636,10 +3636,6 @@ Log file may contain more details.</source>
         <translation type="unfinished">Megnyitás</translation>
     </message>
     <message>
-        <source>BeerJSON files (*.json);;BeerXML files (*.xml)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save</source>
         <translation type="unfinished">Mentés</translation>
     </message>
@@ -3869,6 +3865,14 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BeerJSON and BeerXML files (*.json *.xml);;BeerJSON files (*.json);;BeerXML files (*.xml)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Weight (Mass)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4247,11 +4251,11 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="obsolete">Készlet</translation>
+        <translation type="unfinished">Készlet</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="obsolete">Mennyiségi egység</translation>
+        <translation type="unfinished">Mennyiségi egység</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -6587,7 +6591,7 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Amount in Inventory</source>
-        <translation type="vanished">Készleten lévő mennyiség</translation>
+        <translation>Készleten lévő mennyiség</translation>
     </message>
     <message>
         <source>Amount in inventory</source>
@@ -6744,6 +6748,18 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Total Oil ml/100g</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount in inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Mennyiségi egység</translation>
     </message>
 </context>
 <context>

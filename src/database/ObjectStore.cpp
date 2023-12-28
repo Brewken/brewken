@@ -583,9 +583,11 @@ public:
    /**
     * Constructor
     */
-   impl(TypeLookup               const & typeLookup,
+   impl(char const *             const   className,
+        TypeLookup               const & typeLookup,
         TableDefinition          const & primaryTable,
-        JunctionTableDefinitions const & junctionTables) : m_state{ObjectStore::State::NotYetInitialised},
+        JunctionTableDefinitions const & junctionTables) : m_className{className},
+                                                           m_state{ObjectStore::State::NotYetInitialised},
                                                            typeLookup{typeLookup},
                                                            primaryTable{primaryTable},
                                                            junctionTables{junctionTables},
@@ -768,44 +770,57 @@ public:
 ///                  propertyValue.typeName() << "(" << propertyType << ") in column" << fieldDefn.columnName <<
 ///                  ".  This is a known ugliness that we intend to fix one day.";
             } else {
-               // It's not a known exception, so it's a coding error.  However, we may still be able to recover.
-               // If we are expecting a boolean and we get a string holding "true" or "false" etc, then we know what to
-               // do.
+               //
+               // It's not a known exception, so it's a coding error.  However, we can recover in the following cases:
+               //    - If we are expecting a boolean and we get a string holding "true" or "false" etc, then we know
+               //      what to do.
+               //    - If we are expecting an int and we get a double then we can just ignore the non-integer part of
+               //      the number.
+               //    - If we are expecting an double and we got an int then we can just upcast it.
+               //
                bool recovered = false;
+               QVariant readPropertyValue = propertyValue;
                if (propertyType == QMetaType::QString && fieldDefn.fieldType == ObjectStore::FieldType::Bool) {
                   // We'll take any reasonable string representation of true/false.  For the moment, at least, I'm not
                   // worrying about optional fields here.  I think it's pretty rare, if ever, that we'd want an optional
                   // boolean.
                   QString propertyAsLcString = propertyValue.toString().trimmed().toLower();
-                  bool interpretedValue = false;
                   if (propertyAsLcString == "true" || propertyAsLcString == "t" || propertyAsLcString == "1") {
                      recovered = true;
-                     interpretedValue = true;
+                     propertyValue = QVariant(true);
                   } else if (propertyAsLcString == "false" || propertyAsLcString == "f" || propertyAsLcString == "0") {
                      recovered = true;
-                     interpretedValue = false;
+                     propertyValue = QVariant(false);
                   }
-                  if (recovered) {
-                     qWarning() <<
-                        Q_FUNC_INFO << "Recovered from unexpected type #" << propertyType << "=" <<
-                        propertyValue.typeName() << "in QVariant for property" << fieldDefn.propertyName <<
-                        ", field type" << fieldDefn.fieldType << ", value" << propertyValue << ", table" <<
-                        primaryTable.tableName << ", column" << fieldDefn.columnName << ".  Interpreted value as" <<
-                        interpretedValue;
-                     // Now we overwrite the supplied variant with what we worked out it should be, so processing can
-                     // continue.
-                     propertyValue = QVariant(interpretedValue);
-                  }
+               } else if (propertyType == QMetaType::Double && fieldDefn.fieldType == ObjectStore::FieldType::Int) {
+                  propertyValue = QVariant(propertyValue.toInt(&recovered));
+               } else if (propertyType == QMetaType::Int && fieldDefn.fieldType == ObjectStore::FieldType::Double) {
+                  propertyValue = QVariant(propertyValue.toDouble(&recovered));
                }
-               if (!recovered) {
+               if (recovered) {
+                  qWarning() <<
+                     Q_FUNC_INFO << "Recovered from unexpected type #" << propertyType << "=" <<
+                     readPropertyValue.typeName() << "in QVariant for property" << fieldDefn.propertyName <<
+                     ", field type" << fieldDefn.fieldType << ", value" << readPropertyValue << ", table" <<
+                     primaryTable.tableName << ", column" << fieldDefn.columnName << ".  Interpreted value as" <<
+                     propertyValue;
+               } else {
+                  //
+                  // Even in the case where we do not have a reasonable way to interpret the data in this column, we
+                  // should probably NOT terminate the program.  We are still discovering lots of cases where folks
+                  // using the software have old Brewtarget databases with quirky values in some columns.  It's better
+                  // from a user point of view that the software carries on working even if some (hopefully) obscure
+                  // field could not be read from the DB.
+                  //
                   qCritical() <<
                      Q_FUNC_INFO << "Unexpected type #" << propertyType << "=" << propertyValue.typeName() <<
                      "in QVariant for property" << fieldDefn.propertyName << ", field type" << fieldDefn.fieldType <<
                      ", value" << propertyValue << ", table" << primaryTable.tableName << ", column" <<
                      fieldDefn.columnName;
-                  qCritical().noquote() << Q_FUNC_INFO << "Call stack is:" << Logging::getStackTrace();
-                  // Stop here on debug build
-                  Q_ASSERT(false);
+                  // If, during development or debugging, you want to have the program stop when it cannot interpret
+                  // one of the DB fields, then uncomment the following two lines.
+///                  qCritical().noquote() << Q_FUNC_INFO << "Call stack is:" << Logging::getStackTrace();
+///                  Q_ASSERT(false);
                }
 
             }
@@ -1232,6 +1247,7 @@ public:
       return primaryKeyInDb;
    }
 
+   char const * const m_className;
    ObjectStore::State m_state;
    TypeLookup const & typeLookup;
    TableDefinition const & primaryTable;
@@ -1259,10 +1275,11 @@ QString ObjectStore::getDisplayName(ObjectStore::FieldType const fieldType) {
    Q_ASSERT(false);
 }
 
-ObjectStore::ObjectStore(TypeLookup               const & typeLookup,
+ObjectStore::ObjectStore(char const *             const   className,
+                         TypeLookup               const & typeLookup,
                          TableDefinition          const & primaryTable,
                          JunctionTableDefinitions const & junctionTables) :
-   pimpl{ std::make_unique<impl>(typeLookup, primaryTable, junctionTables) } {
+   pimpl{ std::make_unique<impl>(className, typeLookup, primaryTable, junctionTables) } {
    qDebug() << Q_FUNC_INFO << "Construct of object store for primary table" << this->pimpl->primaryTable.tableName;
    // We have seen a circumstance where primaryTable.tableName is null, which shouldn't be possible.  This is some
    // diagnostic to try to find out why.
@@ -1839,12 +1856,12 @@ void ObjectStore::updateProperty(QObject const & object, BtStringConst const & p
    return;
 }
 
-std::shared_ptr<QObject>  ObjectStore::defaultSoftDelete(int id) {
+std::shared_ptr<QObject> ObjectStore::defaultSoftDelete(int id) {
    //
    // We assume on soft-delete that there is nothing to do on related objects - eg if a Mash is soft deleted (ie marked
    // deleted but remains in the DB) then there isn't actually anything we need to do with its MashSteps.
    //
-   qDebug() << Q_FUNC_INFO << "Soft delete item #" << id;
+   qDebug() << Q_FUNC_INFO << "Soft delete" << this->pimpl->m_className << "#" << id;
    auto object = this->pimpl->allObjects.value(id);
    if (this->pimpl->allObjects.contains(id)) {
       this->pimpl->allObjects.remove(id);
@@ -1856,14 +1873,14 @@ std::shared_ptr<QObject>  ObjectStore::defaultSoftDelete(int id) {
    return object;
 }
 
-std::shared_ptr<QObject>  ObjectStore::defaultHardDelete(int id) {
+std::shared_ptr<QObject> ObjectStore::defaultHardDelete(int id) {
    //
    // We assume on hard-delete that the subclass ObjectStore (specifically ObjectStoreTyped) will override this member
    // function to interact with the object to delete any "owned" objects.  It is better to have the rules for that in
    // the object model than here in the object store as they can be subtle, and it would be cumbersome to model them
    // generically.
    //
-   qDebug() << Q_FUNC_INFO << "Hard delete item #" << id;
+   qDebug() << Q_FUNC_INFO << "Hard delete" << this->pimpl->m_className << "#" << id;
    auto object = this->pimpl->allObjects.value(id);
    QSqlDatabase connection = this->pimpl->database->sqlDatabase();
    DbTransaction dbTransaction{*this->pimpl->database, connection};
@@ -1993,10 +2010,11 @@ QList<QObject *> ObjectStore::findAllMatching(std::function<bool(QObject *)> con
 QVector<int> ObjectStore::idsOfAllMatching(
    std::function<bool(QObject const *)> const & matchFunction
 ) const {
+   qDebug() << Q_FUNC_INFO << this->pimpl->m_className;
    // It would be nice to use C++20 ranges here, but I couldn't find a way to use them with QHash in such a way that the
    // keys of the hash would be accessible in the range.  So, for now, we do it the old way.
    QVector<int> results;
-   for (auto hashEntry = this->pimpl->allObjects.cbegin(); hashEntry != this->pimpl->allObjects.cbegin(); ++hashEntry) {
+   for (auto hashEntry = this->pimpl->allObjects.cbegin(); hashEntry != this->pimpl->allObjects.cend(); ++hashEntry) {
       if (matchFunction(hashEntry.value().get())) {
          results.append(hashEntry.key());
       }

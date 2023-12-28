@@ -20,6 +20,7 @@
 #include <memory>
 
 #include <QList>
+#include <QString>
 #include <QVariant>
 
 #include "model/NamedEntity.h"
@@ -33,13 +34,19 @@
  */
 class SerializationRecordDefinition {
 public:
-   SerializationRecordDefinition(char       const * const recordName,
-                                 TypeLookup const * const typeLookup,
-                                 char       const * const namedEntityClassName,
-                                 QVariant               (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &)) :
+   /**
+    * \param recordName The name of the XML or JSON object for this type of record, eg "fermentables" for a list of
+    *                   fermentables in BeerXML.
+    */
+   SerializationRecordDefinition(char       const * const   recordName,
+                                 TypeLookup const * const   typeLookup,
+                                 char       const * const   namedEntityClassName,
+                                 QString            const & localisedEntityName,
+                                 QVariant                 (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &)) :
       m_recordName          {recordName},
       m_typeLookup          {typeLookup},
       m_namedEntityClassName{namedEntityClassName},
+      m_localisedEntityName {localisedEntityName},
       m_listUpcaster        {listUpcaster} {
       return;
    }
@@ -49,9 +56,17 @@ public:
 
    TypeLookup const * const m_typeLookup;
 
-   // The name of the class of object contained in this type of record, eg "Hop", "Yeast", etc.
-   // Blank for the root record (which is just a container and doesn't have a NamedEntity).
+   /**
+    * The name of the class of object contained in this type of record, eg "Hop", "Yeast", etc.
+    * Blank for the root record (which is just a container and doesn't have a NamedEntity).
+    */
    BtStringConst const m_namedEntityClassName;
+
+   /**
+    * The localised name of the object, suitable for showing on the screen (eg if we want to tell the user how many Hop
+    * records were read in, etc).
+    */
+   QString const m_localisedEntityName;
 
    QVariant (*m_listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &);
 

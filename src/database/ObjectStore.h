@@ -205,12 +205,14 @@ public:
    /**
     * \brief Constructor sets up mappings but does not read in data from DB
     *
+    * \param className Set by \c ObjectStoreTyped
     * \param typeLookup The \c TypeLookup object that, amongst other things allows us to tell whether Qt properties on
     *                   this object type are "optional" (ie wrapped in \c std::optional)
     * \param primaryTable  First in the list should be the primary key
     * \param junctionTables  Optional
     */
-   ObjectStore(TypeLookup               const & typeLookup,
+   ObjectStore(char const *             const   className,
+               TypeLookup               const & typeLookup,
                TableDefinition          const & primaryTable,
                JunctionTableDefinitions const & junctionTables = JunctionTableDefinitions{});
 

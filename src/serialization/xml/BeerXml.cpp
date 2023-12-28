@@ -67,9 +67,10 @@ namespace {
    // it's not used) but other compilers do.
    //
    template<class NE> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION {
-      "not_used",
+      "not_used", // XML record name
       nullptr,
-      "not_used",
+      "not_used", // namedEntityClassName
+      "not_used", // localisedEntityName
       nullptr,
       XmlRecordDefinition::create<XmlRecord>,
       std::initializer_list<XmlRecordDefinition::FieldDefinition>{}
@@ -165,7 +166,6 @@ namespace {
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Hop> {
       std::in_place_type_t<Hop>{},
       "HOP",            // XML record name
-      "Hop",            // NamedEntity class name
       XmlRecordDefinition::create< XmlNamedEntityRecord< Hop > >,
       {BeerXml_HopBase, BeerXml_HopType_ExclBase}
    };
@@ -233,7 +233,6 @@ namespace {
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Fermentable> {
       std::in_place_type_t<Fermentable>{},
       "FERMENTABLE",            // XML record name
-      "Fermentable",            // NamedEntity class name
       XmlRecordDefinition::create<XmlNamedEntityRecord<Fermentable>>,
       {
          // Type                                            XPath                             Q_PROPERTY                                             Value Decoder
@@ -336,7 +335,6 @@ namespace {
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Yeast> {
       std::in_place_type_t<Yeast>{},
       "YEAST",            // XML record name
-      "Yeast",            // NamedEntity class name
       XmlRecordDefinition::create<XmlNamedEntityRecord<Yeast>>,
       {
          // Type                                            XPath                           Q_PROPERTY                                       Value Decoder
@@ -406,7 +404,6 @@ namespace {
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Misc> {
       std::in_place_type_t<Misc>{},
       "MISC",            // XML record name
-      "Misc",            // NamedEntity class name
       XmlRecordDefinition::create<XmlNamedEntityRecord<Misc>>,
       {
          // Type                                            XPath               Q_PROPERTY                           Value Decoder
@@ -434,7 +431,6 @@ namespace {
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Water> {
       std::in_place_type_t<Water>{},
       "WATER",            // XML record name
-      "Water",            // NamedEntity class name
       XmlRecordDefinition::create<XmlNamedEntityRecord<Water>>,
       {
          // Type                                            XPath             Q_PROPERTY                             Value Decoder
@@ -473,7 +469,6 @@ namespace {
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Style> {
       std::in_place_type_t<Style>{},
       "STYLE",            // XML record name
-      "Style",            // NamedEntity class name
       XmlRecordDefinition::create<XmlNamedEntityRecord<Style>>,
       {
          // Type                                            XPath                 Q_PROPERTY                               Value Decoder
@@ -544,7 +539,6 @@ namespace {
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<MashStep> {
       std::in_place_type_t<MashStep>{},
       "MASH_STEP",           // XML record name
-      "MashStep",            // NamedEntity class name
 //      XmlRecordDefinition::create<XmlNamedEntityRecord<MashStep>>,
       XmlRecordDefinition::create<XmlMashStepRecord>,
       {
@@ -578,7 +572,6 @@ namespace {
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Mash> {
       std::in_place_type_t<Mash>{},
       "MASH",            // XML record name
-      "Mash",            // NamedEntity class name
 //      XmlRecordDefinition::create<XmlNamedEntityRecord<Mash>>,
       XmlRecordDefinition::create<XmlMashRecord>,
       {
@@ -607,7 +600,6 @@ namespace {
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Equipment> {
       std::in_place_type_t<Equipment>{},
       "EQUIPMENT",            // XML record name
-      "Equipment",            // NamedEntity class name
       XmlRecordDefinition::create<XmlNamedEntityRecord<Equipment>>,
       {
          // Type                                            XPath                             Q_PROPERTY                                             Value Decoder
@@ -678,7 +670,6 @@ namespace {
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Instruction> {
       std::in_place_type_t<Instruction>{},
       "INSTRUCTION",            // XML record name
-      "Instruction",            // NamedEntity class name
       XmlRecordDefinition::create<XmlNamedEntityRecord<Instruction>>,
       {
          // Type                                            XPath         Q_PROPERTY                              Value Decoder
@@ -703,7 +694,6 @@ namespace {
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<BrewNote> {
       std::in_place_type_t<BrewNote>{},
       "BREWNOTE",            // XML record name
-      "BrewNote",            // NamedEntity class name
       XmlRecordDefinition::create<XmlNamedEntityRecord<BrewNote>>,
       {
          // Type                                            XPath                      Q_PROPERTY                                  Value Decoder
@@ -754,7 +744,6 @@ namespace {
    XmlRecordDefinition const BEER_XML_RECORD_DEFINITION_HOP_IN_RECIPE_ADDITION_HOP {
       std::in_place_type_t<Hop>{},
       "HOP",            // XML record name
-      "Hop",            // NamedEntity class name
       XmlRecordDefinition::create< XmlNamedEntityRecord< Hop > >,
       {BeerXml_HopBase}
    };
@@ -770,7 +759,6 @@ namespace {
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<RecipeAdditionHop> {
       std::in_place_type_t<RecipeAdditionHop>{},
       "HOP",                          // XML record name
-      "RecipeAdditionHop",            // NamedEntity class name
       XmlRecordDefinition::create<XmlNamedEntityRecord<RecipeAdditionHop>>,
       {
          // Type                                  XPath                Q_PROPERTY                                      Value Decoder
@@ -808,8 +796,6 @@ namespace {
    template<> XmlRecordDefinition const BEER_XML_RECORD_DEFINITION<Recipe> {
       std::in_place_type_t<Recipe>{},
       "RECIPE",            // XML record name
-      "Recipe",            // NamedEntity class name
-
       //      XmlRecordDefinition::create<XmlNamedEntityRecord<Recipe>>,
       XmlRecordDefinition::create<XmlRecipeRecord>,
       {
@@ -883,6 +869,7 @@ namespace {
       "BEER_XML", // XML record name
       nullptr,    // Type Lookup for our corresponding model object
       "",         // NamedEntity class name
+      "",         // Localised name
       nullptr,    // listUpcaster = NamedEntity::upcastListToVariant<T> for T = model class for this record type
       XmlRecordDefinition::create<XmlRecord>,
       {

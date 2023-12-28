@@ -25,6 +25,8 @@
 /**
  * \brief Base class for \c XmlRecord and \c JsonRecord
  *
+ * TODO: There is more common functionality that could be pulled out into this base class
+ *
  * TODO: I think this could be templated on Coding and RecordDefinition
  */
 class SerializationRecord {

@@ -223,9 +223,10 @@ namespace {
    // it's not used) but other compilers do.
    //
    template<class NE> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION {
-      "not_used",
+      "not_used", // JSON record name
       nullptr,
-      "not_used",
+      "not_used", // namedEntityClassName
+      "not_used", // localisedEntityName
       nullptr,
       JsonRecordDefinition::create<JsonRecord>,
       std::initializer_list<JsonRecordDefinition::FieldDefinition>{}
@@ -339,8 +340,7 @@ namespace {
    // As mentioned above, it would be really nice to do this at compile time, but haven't yet found a nice way to do so
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Fermentable> {
       std::in_place_type_t<Fermentable>{},
-      "fermentables",
-      "Fermentable",
+      "fermentables", // JSON record name
       JsonRecordDefinition::create< JsonNamedEntityRecord< Fermentable > >,
       {BeerJson_FermentableBase, BeerJson_FermentableType_ExclBase}
    };
@@ -363,8 +363,7 @@ namespace {
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Misc> {
       std::in_place_type_t<Misc>{},
-      "miscellaneous_ingredients",
-      "Misc",
+      "miscellaneous_ingredients", // JSON record name
       JsonRecordDefinition::create< JsonNamedEntityRecord< Misc > >,
       {BeerJson_MiscellaneousBase, BeerJson_MiscellaneousType_ExclBase}
    };
@@ -409,8 +408,7 @@ namespace {
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Hop> {
       std::in_place_type_t<Hop>{},
-      "hop_varieties",
-      "Hop",
+      "hop_varieties", // JSON record name
       JsonRecordDefinition::create< JsonNamedEntityRecord< Hop > >,
       {BeerJson_HopBase, BeerJson_HopType_ExclBase}
    };
@@ -420,8 +418,7 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Yeast> {
       std::in_place_type_t<Yeast>{},
-      "cultures",
-      "Yeast",
+      "cultures", // JSON record name
       JsonRecordDefinition::create< JsonNamedEntityRecord< Yeast > >,
       {
          // Type                                                       XPath                        Q_PROPERTY                                      Value Decoder
@@ -458,8 +455,7 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Water> {
       std::in_place_type_t<Water>{},
-      "profiles",
-      "Water",
+      "profiles", // JSON record name
       JsonRecordDefinition::create< JsonNamedEntityRecord< Water > >,
       {
          // Type                                                       XPath          Q_PROPERTY                             Value Decoder
@@ -488,8 +484,7 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Style> {
       std::in_place_type_t<Style>{},
-      "styles",
-      "Style",
+      "styles", // JSON record name
       JsonRecordDefinition::create< JsonNamedEntityRecord< Style > >,
       {
          // Type                                                 XPath                                     Q_PROPERTY                               Value Decoder
@@ -527,8 +522,7 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<MashStep> {
       std::in_place_type_t<MashStep>{},
-      "MashStepType",           // JSON recordName
-      "MashStep",               // NamedEntity class name
+      "MashStepType", // JSON record name
       JsonRecordDefinition::create<JsonNamedEntityRecord<MashStep>>,
       {
          // Type                                                 XPath                 Q_PROPERTY                                       Value Decoder
@@ -552,8 +546,7 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Mash> {
       std::in_place_type_t<Mash>{},
-      "mashes",             // JSON recordName
-      "Mash",               // NamedEntity class name
+      "mashes", // JSON record name
       JsonRecordDefinition::create<JsonNamedEntityRecord<Mash>>,
       {
          // Type                                                 XPath                Q_PROPERTY                              Value Decoder
@@ -579,8 +572,7 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Equipment> {
       std::in_place_type_t<Equipment>{},
-      "equipments",              // JSON recordName
-      "Equipment",               // NamedEntity class name
+      "equipments", // JSON record name
       JsonRecordDefinition::create< JsonNamedEntityRecord< Equipment > >,
       {
          // NOTE, per comment above, that we deliberately do not support certain things, on the grounds that they are
@@ -665,8 +657,7 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION_HOP_IN_ADDITION {
       std::in_place_type_t<Hop>{},
-      "hop base",
-      "Hop",
+      "hop base", // JSON record name
       JsonRecordDefinition::create< JsonNamedEntityRecord< Hop > >,
       {BeerJson_HopBase}
    };
@@ -693,8 +684,7 @@ namespace {
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<RecipeAdditionHop> {
       std::in_place_type_t<RecipeAdditionHop>{},
-      "hop_additions",                   // JSON recordName
-      "RecipeAdditionHop",               // NamedEntity class name
+      "hop_additions", // JSON record name
       JsonRecordDefinition::create< JsonNamedEntityRecord<RecipeAdditionHop> >,
       {BeerJson_IngredientAdditionType_ExclBase, BeerJson_HopAdditionType_Base}
    };
@@ -704,8 +694,7 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Recipe> {
       std::in_place_type_t<Recipe>{},
-      "recipes",              // JSON recordName
-      "Recipe",               // NamedEntity class name
+      "recipes", // JSON record name
       JsonRecordDefinition::create< JsonNamedEntityRecord<Recipe> >,
       {
          // Type                                                 XPath                    Q_PROPERTY                                Value Decoder
@@ -735,9 +724,10 @@ namespace {
    // Field mappings for root of BeerJSON document
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION_ROOT {
-      "beerjson",
+      "beerjson", // JSON record name
       nullptr,
-      "",
+      "",         // NamedEntity class name
+      "",         // Localised name
       nullptr,
       JsonRecordDefinition::create<JsonRecord>,
       {

@@ -331,9 +331,10 @@ public:
     * \param fieldDefinitions A list of fields we expect to find in this record (other fields will be ignored) and how
     *                         to parse them.
     */
-   JsonRecordDefinition(char                     const * const recordName,
-                        TypeLookup               const * const typeLookup,
-                        char                     const * const namedEntityClassName,
+   JsonRecordDefinition(char                   const * const   recordName,
+                        TypeLookup             const * const   typeLookup,
+                        char                   const * const   namedEntityClassName,
+                        QString                        const & localisedEntityName,
                         QVariant                             (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
                         JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
                         std::initializer_list<FieldDefinition> fieldDefinitions);
@@ -346,12 +347,12 @@ public:
    template<typename T>
    JsonRecordDefinition(std::in_place_type_t<T>,
                         char                     const * const recordName,
-                        char                     const * const namedEntityClassName,
                         JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
                         std::initializer_list<FieldDefinition> fieldDefinitions) :
       JsonRecordDefinition(recordName,
                            &T::typeLookup,
-                           namedEntityClassName,
+                           T::staticMetaObject.className(),
+                           T::LocalisedName,
                            NamedEntity::upcastListToVariant<T>,
                            jsonRecordConstructorWrapper,
                            fieldDefinitions) {
@@ -364,21 +365,22 @@ public:
     *                         and how to parse them.  Effectively the constructor just concatenates all the lists.
     *                         See comments fin BeerJson.cpp for why we want to do this.
     */
-   JsonRecordDefinition(char                     const * const recordName,
-                        TypeLookup               const * const typeLookup,
-                        char                     const * const namedEntityClassName,
+   JsonRecordDefinition(char                   const * const   recordName,
+                        TypeLookup             const * const   typeLookup,
+                        char                   const * const   namedEntityClassName,
+                        QString                        const & localisedEntityName,
                         QVariant                             (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
                         JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
                         std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists);
    template<typename T>
    JsonRecordDefinition(std::in_place_type_t<T>,
                         char                     const * const recordName,
-                        char                     const * const namedEntityClassName,
                         JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
                         std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists) :
       JsonRecordDefinition(recordName,
                            &T::typeLookup,
-                           namedEntityClassName,
+                           T::staticMetaObject.className(),
+                           T::LocalisedName,
                            NamedEntity::upcastListToVariant<T>,
                            jsonRecordConstructorWrapper,
                            fieldDefinitionLists) {

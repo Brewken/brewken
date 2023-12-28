@@ -108,16 +108,17 @@ bool PropertyPath::setValue(NamedEntity & obj, QVariant const & val) const {
 
          qDebug() <<
             Q_FUNC_INFO << "Request to set" << this->m_path << "on" << obj.metaObject()->className() << "(=" <<
-            *property << "on" << ne->metaObject()->className() << "); type =" << neMetaProperty.typeName() <<
+            *property << "on" << ne->metaObject()->className() << "); property type =" << neMetaProperty.typeName() <<
             "; writable =" << neMetaProperty.isWritable();
 
          if (neMetaProperty.isWritable()) {
             bool succeeded = ne->setProperty(**property, val);
             if (!succeeded) {
-               // Caller needs to decide what to do, but we log a warning
-               qWarning() <<
+               // Caller needs to decide what to do, but we assume it's a coding error that the property could not be
+               // set.
+               qCritical() <<
                   Q_FUNC_INFO << "Error trying to set" << this->m_path << "on" << obj.metaObject()->className() <<
-                  "(=" << *property << "on" << ne->metaObject()->className() << ") to" << val << "; type =" <<
+                  "(=" << *property << "on" << ne->metaObject()->className() << ") to" << val << "; property type =" <<
                   neMetaProperty.typeName() << "; writable =" << neMetaProperty.isWritable();
             }
             return succeeded;

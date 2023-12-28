@@ -39,7 +39,7 @@ public:
    ObjectStoreTyped(TypeLookup               const & typeLookup,
                     TableDefinition          const & primaryTable,
                     JunctionTableDefinitions const & junctionTables = JunctionTableDefinitions{}) :
-      ObjectStore(typeLookup, primaryTable, junctionTables) {
+      ObjectStore(NE::staticMetaObject.className(), typeLookup, primaryTable, junctionTables) {
       return;
    }
 

@@ -557,7 +557,7 @@ XmlRecord::ProcessingResult XmlRecord::normaliseAndStoreInDb(std::shared_ptr<Nam
       //
       if (nullptr == this->m_namedEntity.get()) {
          // Child records OK and no duplicate check needed (root record), which also means no further processing
-         // required
+         // required.
          return XmlRecord::ProcessingResult::Succeeded;
       }
       processingResult = this->isDuplicate() ? XmlRecord::ProcessingResult::FoundDuplicate :
@@ -573,13 +573,14 @@ XmlRecord::ProcessingResult XmlRecord::normaliseAndStoreInDb(std::shared_ptr<Nam
       //
       if (XmlRecord::ProcessingResult::FoundDuplicate == processingResult) {
          qDebug() <<
-            Q_FUNC_INFO << "(Late found) duplicate" << this->m_recordDefinition.m_namedEntityClassName <<
-            (this->m_includeInStats ? " will" : " won't") << " be included in stats";
+            Q_FUNC_INFO << "(Late found) duplicate" << this->m_recordDefinition.m_namedEntityClassName << "(" <<
+            this->m_recordDefinition.m_localisedEntityName << ")" << (this->m_includeInStats ? " will" : " won't") <<
+            " be included in stats";
          if (this->m_includeInStats) {
-            stats.skipped(*this->m_recordDefinition.m_namedEntityClassName);
+            stats.skipped(this->m_recordDefinition.m_localisedEntityName);
          }
       } else if (XmlRecord::ProcessingResult::Succeeded == processingResult && this->m_includeInStats) {
-         stats.processedOk(*this->m_recordDefinition.m_namedEntityClassName);
+         stats.processedOk(this->m_recordDefinition.m_localisedEntityName);
       }
 
       //
@@ -624,10 +625,16 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
    for (auto & childRecordSet : this->m_childRecordSets) {
       if (childRecordSet.parentFieldDefinition) {
          qDebug() <<
-            Q_FUNC_INFO << childRecordSet.parentFieldDefinition->propertyPath << "has" <<
+            Q_FUNC_INFO << *childRecordSet.parentFieldDefinition << "has" <<
             childRecordSet.records.size() << "entries";
       } else {
          qDebug() << Q_FUNC_INFO << "Top-level record has" << childRecordSet.records.size() << "entries";
+      }
+
+      // If the list of children is empty, there is no work to do.  Explicitly move on to the next loop item.  (This
+      // means that, in the code below, we know the list is non-empty, so it's valid to look at the first item etc.)
+      if (0 == childRecordSet.records.size()) {
+         continue;
       }
 
       QList< std::shared_ptr<NamedEntity> > processedChildren;
@@ -636,7 +643,7 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
          // records it contains), which is why we have all the "member of pointer" (->) operators below.
          qDebug() <<
             Q_FUNC_INFO << "Storing" << childRecord->m_recordDefinition.m_namedEntityClassName << "child of" <<
-            this->m_recordDefinition.m_namedEntityClassName;
+            this->m_recordDefinition.m_namedEntityClassName << ":" << this->m_namedEntity;
          if (XmlRecord::ProcessingResult::Failed ==
             childRecord->normaliseAndStoreInDb(this->m_namedEntity, userMessage, stats)) {
             return false;
@@ -678,13 +685,17 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
                valueToSet = QVariant::fromValue(processedChildren.first().get());
             } else {
                // Multi-item setters for class T all take a list of shared pointers to T, so we need to upcast from our
-               // list of shared pointers to NamedEntity.
-               valueToSet = this->m_recordDefinition.m_listUpcaster(processedChildren);
+               // list of shared pointers to NamedEntity.  Note that we need the child's upcaster, not the parent's.
+               // Eg, if we are setting the hopAdditions property on a Recipe, we need the RecipeAdditionHop upcaster to
+               // cast QList<std::shared_ptr<NamedEntity> > to QList<std::shared_ptr<RecipeAdditionHop> >
+//               valueToSet = this->m_recordDefinition.m_listUpcaster(processedChildren);
+               valueToSet = childRecordSet.records.at(0)->m_recordDefinition.m_listUpcaster(processedChildren);
             }
 
             qDebug() <<
                Q_FUNC_INFO << "Setting" << propertyPath << "property on" <<
-               this->m_recordDefinition.m_namedEntityClassName << "with" << processedChildren.size() << "value(s)";
+               this->m_recordDefinition.m_namedEntityClassName << "with" << processedChildren.size() << "value(s):" <<
+               valueToSet;
             if (!propertyPath.setValue(*this->m_namedEntity, valueToSet)) {
                // It's a coding error if we could not set the property we use to pass in the child records
                qCritical() <<
@@ -692,6 +703,9 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
                   this->m_recordDefinition.m_namedEntityClassName;
                   // TODO Reinstate this assert once all the RecipeAddition work is done!
 //                  Q_ASSERT(false);
+                  // TEMPORARILY RETURN true SO THAT WE CAN TEST, EG, HOP ADDITIONS BEFORE WE HAVE DONE THE WORK FOR
+                  // FERMENTABLE ADDITIONS.  THIS MUST BE REPLACED WITH return false BEFORE THE NEXT RELEASE!
+                  return true;
             }
          }
       }

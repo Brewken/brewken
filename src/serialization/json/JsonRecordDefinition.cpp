@@ -53,28 +53,30 @@ JsonRecordDefinition::FieldDefinition::FieldDefinition(FieldType type,
 }
 
 JsonRecordDefinition::JsonRecordDefinition(
-   char const *       const recordName,
-   TypeLookup const * const typeLookup,
-   char const *       const namedEntityClassName,
+   char const *       const   recordName,
+   TypeLookup const * const   typeLookup,
+   char const *       const   namedEntityClassName,
+   QString            const & localisedEntityName,
    QVariant               (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
    JsonRecordConstructorWrapper jsonRecordConstructorWrapper,
    std::initializer_list<JsonRecordDefinition::FieldDefinition> fieldDefinitions
 ) :
-   SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName, listUpcaster},
+   SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName, localisedEntityName, listUpcaster},
    jsonRecordConstructorWrapper{jsonRecordConstructorWrapper},
    fieldDefinitions{fieldDefinitions} {
    return;
 }
 
 JsonRecordDefinition::JsonRecordDefinition(
-   char const *       const recordName,
-   TypeLookup const * const typeLookup,
-   char const *       const namedEntityClassName,
+   char const *       const   recordName,
+   TypeLookup const * const   typeLookup,
+   char const *       const   namedEntityClassName,
+   QString            const & localisedEntityName,
    QVariant               (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
    JsonRecordConstructorWrapper jsonRecordConstructorWrapper,
    std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists
 ) :
-   SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName, listUpcaster},
+   SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName, localisedEntityName, listUpcaster},
    jsonRecordConstructorWrapper{jsonRecordConstructorWrapper},
    fieldDefinitions{} {
    // This is a bit clunky, but it works and the inefficiency is a one-off cost at start-up

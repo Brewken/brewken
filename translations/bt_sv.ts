@@ -1891,11 +1891,11 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="vanished">Lager</translation>
+        <translation>Lager</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="obsolete">Mängdbeteckning</translation>
+        <translation type="unfinished">Mängdbeteckning</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -3407,7 +3407,7 @@ Error message:
     </message>
     <message>
         <source>Mass</source>
-        <translation type="unfinished">Massa</translation>
+        <translation type="obsolete">Massa</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -3648,10 +3648,6 @@ Log file may contain more details.</source>
         <translation type="unfinished">Öppna</translation>
     </message>
     <message>
-        <source>BeerJSON files (*.json);;BeerXML files (*.xml)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save</source>
         <translation type="unfinished">Spara</translation>
     </message>
@@ -3877,6 +3873,14 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BeerJSON and BeerXML files (*.json *.xml);;BeerJSON files (*.json);;BeerXML files (*.xml)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Weight (Mass)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4255,7 +4259,7 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="obsolete">Mängdbeteckning</translation>
+        <translation type="unfinished">Mängdbeteckning</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -4276,6 +4280,10 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>Stage</source>
         <translation type="unfinished">Steg</translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6604,7 +6612,7 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Amount in Inventory</source>
-        <translation type="vanished">Antal i Lager</translation>
+        <translation>Antal i Lager</translation>
     </message>
     <message>
         <source>Amount in inventory</source>
@@ -6773,6 +6781,18 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
         <translation type="obsolete">Markera denna om värdet indikerar vikt istället för volym</translation>
+    </message>
+    <message>
+        <source>Total amount in inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Mängdbeteckning</translation>
     </message>
 </context>
 <context>
