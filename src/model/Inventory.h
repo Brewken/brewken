@@ -275,7 +275,7 @@ private:
    std::unique_ptr<impl> pimpl;
 };
 // Thankfully C++11 allows us to inherit constructors using "using"
-class InventoryFermentable : public OldInventory { using OldInventory::OldInventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
+///class InventoryFermentable : public OldInventory { using OldInventory::OldInventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
 class InventoryMisc        : public OldInventory { using OldInventory::OldInventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
 class InventoryYeast       : public OldInventory { using OldInventory::OldInventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
 

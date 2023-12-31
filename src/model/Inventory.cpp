@@ -18,6 +18,7 @@
 #include "database/ObjectStoreWrapper.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
+#include "model/InventoryFermentable.h"
 #include "model/InventoryHop.h"
 #include "model/Misc.h"
 #include "model/NamedParameterBundle.h"
@@ -25,9 +26,10 @@
 #include "utils/TypeLookup.h"
 
 // If we're compiling with CMake, the AUTOMOC property will run the Qt meta-object compiler (MOC) on InventoryHop.h (to
-// produce moc_InventoryHop.cpp) but will not link the resulting code (because there is not a corresponding
+// produce moc_InventoryHop.cpp) etc but will not link the resulting code (because there is not a corresponding
 // InventoryHop.cpp.  If we include the results of the MOC here, it guarantees they get linked into the final
 // executable.
+#include "moc_InventoryFermentable.cpp"
 #include "moc_InventoryHop.cpp"
 
 namespace {
@@ -39,14 +41,14 @@ namespace {
    //
 
    template<class Ing> ObjectStore & getInventoryObjectStore();
-   template<> ObjectStore & getInventoryObjectStore<Fermentable>() { return ObjectStoreTyped<InventoryFermentable>::getInstance(); }
+///   template<> ObjectStore & getInventoryObjectStore<Fermentable>() { return ObjectStoreTyped<InventoryFermentable>::getInstance(); }
 ///   template<> ObjectStore & getInventoryObjectStore<Hop>()         { return ObjectStoreTyped<InventoryHop>::getInstance();         }
    template<> ObjectStore & getInventoryObjectStore<Misc>()        { return ObjectStoreTyped<InventoryMisc>::getInstance();        }
    template<> ObjectStore & getInventoryObjectStore<Yeast>()       { return ObjectStoreTyped<InventoryYeast>::getInstance();       }
 
    template<class Ing> std::shared_ptr<OldInventory> newInventory();
 ///   template<> std::shared_ptr<Inventory> newInventory<Hop>()         { return std::static_pointer_cast<Inventory>(std::make_shared<InventoryHop>());         }
-   template<> std::shared_ptr<OldInventory> newInventory<Fermentable>() { return std::static_pointer_cast<OldInventory>(std::make_shared<InventoryFermentable>()); }
+///   template<> std::shared_ptr<OldInventory> newInventory<Fermentable>() { return std::static_pointer_cast<OldInventory>(std::make_shared<InventoryFermentable>()); }
    template<> std::shared_ptr<OldInventory> newInventory<Misc>()        { return std::static_pointer_cast<OldInventory>(std::make_shared<InventoryMisc>());        }
    template<> std::shared_ptr<OldInventory> newInventory<Yeast>()       { return std::static_pointer_cast<OldInventory>(std::make_shared<InventoryYeast>());       }
 
@@ -123,7 +125,7 @@ void Inventory::hardDeleteOwnedEntities() {
 // Inventory sub classes
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//QString const InventoryFermentable::LocalisedName = tr("Fermentable Inventory");
+QString const InventoryFermentable::LocalisedName = tr("Fermentable Inventory");
 QString const InventoryHop        ::LocalisedName = tr("Hop Inventory");
 //QString const InventoryMisc       ::LocalisedName = tr("Misc Inventory");
 //QString const InventoryYeast      ::LocalisedName = tr("Yeast Inventory");
@@ -138,6 +140,58 @@ ObjectStore & InventoryHop        ::getObjectStoreTypedInstance() const { return
 ObjectStore & InventoryMisc       ::getObjectStoreTypedInstance() const { return ObjectStoreTyped<InventoryMisc       >::getInstance(); }
 ObjectStore & InventoryYeast      ::getObjectStoreTypedInstance() const { return ObjectStoreTyped<InventoryYeast      >::getInstance(); }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// InventoryFermentable
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool InventoryFermentable::isEqualTo(NamedEntity const & other) const {
+   // Base class (NamedEntity) will have ensured this cast is valid
+   InventoryFermentable const & rhs = static_cast<InventoryFermentable const &>(other);
+   return (
+      this->m_amount == rhs.m_amount &&
+      // Parent classes have to be equal too
+      this->Inventory::isEqualTo(other)
+   );
+}
+
+TypeLookup const InventoryFermentable::typeLookup {
+   "InventoryFermentable",
+   {
+      // All our properties are defined in our base classes
+   },
+   // Parent classes lookup.  NB: Inventory not NamedEntity!
+   {&Inventory::typeLookup,
+    std::addressof(IngredientAmount<InventoryFermentable, Fermentable>::typeLookup)}
+};
+static_assert(std::is_base_of<Inventory, InventoryFermentable>::value);
+
+InventoryFermentable::InventoryFermentable() :
+   Inventory(),
+   IngredientAmount<InventoryFermentable, Fermentable>() {
+   return;
+}
+
+InventoryFermentable::InventoryFermentable(NamedParameterBundle const & namedParameterBundle) :
+   Inventory                          {namedParameterBundle},
+   IngredientAmount<InventoryFermentable, Fermentable>{namedParameterBundle} {
+   return;
+}
+
+InventoryFermentable::InventoryFermentable(InventoryFermentable const & other) :
+   Inventory                          {other},
+   IngredientAmount<InventoryFermentable, Fermentable>{other} {
+   return;
+}
+
+InventoryFermentable::~InventoryFermentable() = default;
+
+Fermentable * InventoryFermentable::fermentable() const {
+   return ObjectStoreWrapper::getByIdRaw<Fermentable>(this->m_ingredientId);
+}
+
+// Boilerplate code for IngredientAmount
+INGREDIENT_AMOUNT_COMMON_CODE(InventoryFermentable, Fermentable)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // InventoryHop
@@ -357,7 +411,7 @@ void InventoryUtils::setAmount(Ing & ing, double amount) {
 }
 // Instantiate the above template for all the classes we care about.
 // This is just a trick to avoid having the template definition in the header file.
-template void InventoryUtils::setAmount(Fermentable & ing, double amount);
+///template void InventoryUtils::setAmount(Fermentable & ing, double amount);
 ///template void InventoryUtils::setAmount(Hop & ing,         double amount);
 template void InventoryUtils::setAmount(Misc & ing,        double amount);
 template void InventoryUtils::setAmount(Yeast & ing,       double amount);
@@ -374,7 +428,7 @@ double InventoryUtils::getAmount(Ing const & ing) {
    // There isn't an inventory for this object, so we don't have any stock of it
    return 0.0;
 }
-template double InventoryUtils::getAmount(Fermentable const & ing);
+///template double InventoryUtils::getAmount(Fermentable const & ing);
 ///template double InventoryUtils::getAmount(Hop const & ing        );
 template double InventoryUtils::getAmount(Misc const & ing       );
 template double InventoryUtils::getAmount(Yeast const & ing      );

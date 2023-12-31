@@ -1516,7 +1516,7 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Hoeveelheid</translation>
+        <translation type="vanished">Hoeveelheid</translation>
     </message>
     <message>
         <source>Yield %</source>
@@ -1532,11 +1532,11 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Method</source>
-        <translation>Methode</translation>
+        <translation type="vanished">Methode</translation>
     </message>
     <message>
         <source>Addition</source>
-        <translation>Toevoeging</translation>
+        <translation type="vanished">Toevoeging</translation>
     </message>
     <message>
         <source>Amount Type</source>
@@ -1544,27 +1544,19 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Volume</translation>
+        <translation type="obsolete">Volume</translation>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Gewicht</translation>
+        <translation type="obsolete">Gewicht</translation>
     </message>
     <message>
         <source>Not mashed</source>
-        <translation type="unfinished">Niet gemaischt</translation>
-    </message>
-    <message>
-        <source>Mashed</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Niet gemaischt</translation>
     </message>
     <message>
         <source>Normal</source>
-        <translation type="unfinished">Normaal</translation>
-    </message>
-    <message>
-        <source>Late</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Normaal</translation>
     </message>
 </context>
 <context>
@@ -2053,6 +2045,13 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
+    <name>InventoryFermentable</name>
+    <message>
+        <source>Fermentable Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>InventoryHop</name>
     <message>
         <source>Hop Inventory</source>
@@ -2295,10 +2294,6 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Redo %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove fermentable from recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3858,6 +3853,14 @@ Program will now exit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>BeerJSON and BeerXML files (*.json *.xml);;BeerJSON files (*.json);;BeerXML files (*.xml)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Weight (Mass)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>%1 Catalog / Database</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3887,14 +3890,6 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>BeerJSON and BeerXML files (*.json *.xml);;BeerJSON files (*.json);;BeerXML files (*.xml)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Weight (Mass)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4216,6 +4211,64 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Add to Package</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionFermentable</name>
+    <message>
+        <source>Fermentable Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Addition of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionFermentableTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Naam</translation>
+    </message>
+    <message>
+        <source>Alpha %</source>
+        <translation type="obsolete">Alpha %</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished">Hoeveelheid</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Hoeveelheid Type</translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Inventaris</translation>
+    </message>
+    <message>
+        <source>Stage</source>
+        <translation type="unfinished">Fase</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished">Tijd</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Type</translation>
+    </message>
+    <message>
+        <source>Yield</source>
+        <translation type="unfinished">Rendement</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Kleur</translation>
     </message>
 </context>
 <context>

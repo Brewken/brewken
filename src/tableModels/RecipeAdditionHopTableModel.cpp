@@ -76,7 +76,7 @@ RecipeAdditionHopTableModel::RecipeAdditionHopTableModel(QTableView * parent, bo
    TableModelBase<RecipeAdditionHopTableModel, RecipeAdditionHop>{},
    showIBUs(false) {
    this->rows.clear();
-   this->setObjectName("hopTable");
+   this->setObjectName("hopAdditionTable");
 
    QHeaderView * headerView = m_parentTableWidget->horizontalHeader();
    connect(headerView, &QWidget::customContextMenuRequested, this, &RecipeAdditionHopTableModel::contextMenu);

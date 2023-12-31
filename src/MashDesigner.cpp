@@ -95,7 +95,7 @@ void MashDesigner::setRecipe(Recipe* rec) {
 
 void MashDesigner::show() {
    // No point to run unless we have fermentables.
-   if (this->recObs && this->recObs->fermentables().size() == 0) {
+   if (this->recObs && this->recObs->fermentableAdditions().size() == 0) {
       QMessageBox::information(
          this,
          tr("No Fermentables"),

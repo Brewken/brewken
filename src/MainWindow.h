@@ -130,6 +130,7 @@ public:
     */
    template<class NE> void addToRecipe(std::shared_ptr<NE> ne);
 
+   void addFermentableToRecipe(Fermentable * fermentable);
    void addHopToRecipe(Hop * hop);
 
 public slots:
@@ -167,9 +168,9 @@ public slots:
    void closeBrewNote(int brewNoteId, std::shared_ptr<QObject> object);
 
    //! \brief Remove selected Fermentable(s) from the Recipe.
-   void removeSelectedFermentable();
+   void removeSelectedFermentableAddition();
    //! \brief Edit selected Fermentable.
-   void editSelectedFermentable();
+   void editFermentableOfSelectedFermentableAddition();
 
    //! \brief Show the pitch dialog.
    void showPitchDialog();
@@ -311,8 +312,8 @@ private:
 
    // TODO: At the moment, these need to be in MainWindow itself rather than in the pimpl because of the way function
    // pointers get passed to UndoableAddOrRemove.  We should fix that at some point.
-   void removeHopAddition(std::shared_ptr<RecipeAdditionHop> itemToRemove);
-   void removeFermentable(std::shared_ptr<Fermentable> itemToRemove);
+   void removeHopAddition        (std::shared_ptr<RecipeAdditionHop        > itemToRemove);
+   void removeFermentableAddition(std::shared_ptr<RecipeAdditionFermentable> itemToRemove);
    void removeMisc(std::shared_ptr<Misc> itemToRemove);
    void removeYeast(std::shared_ptr<Yeast> itemToRemove);
    void removeMashStep(std::shared_ptr<MashStep> itemToRemove);

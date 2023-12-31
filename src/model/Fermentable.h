@@ -36,18 +36,22 @@
 #include "measurement/Amount.h"
 #include "measurement/ConstrainedAmount.h"
 #include "measurement/Unit.h"
-#include "model/NamedEntityWithInventory.h"
+#include "model/Ingredient.h"
+#include "model/IngredientBase.h"
+#include "model/IngredientAmount.h"
 #include "utils/EnumStringMapping.h"
+
+class InventoryFermentable;
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Fermentable { BtStringConst const property{#property}; }
-AddPropertyName(addAfterBoil             )
+///AddPropertyName(addAfterBoil             )
 AddPropertyName(alphaAmylase_dextUnits   )
-AddPropertyName(amount                   )
-AddPropertyName(amountIsWeight           )
-AddPropertyName(amountWithUnits          )
+///AddPropertyName(amount                   )
+///AddPropertyName(amountIsWeight           )
+///AddPropertyName(amountWithUnits          )
 AddPropertyName(betaGlucan               )
 AddPropertyName(betaGlucanIsMassPerVolume)
 AddPropertyName(betaGlucanWithUnits      )
@@ -70,7 +74,7 @@ AddPropertyName(hardnessPrpGlassy_pct    )
 AddPropertyName(hardnessPrpHalf_pct      )
 AddPropertyName(hardnessPrpMealy_pct     )
 AddPropertyName(ibuGalPerLb              )
-AddPropertyName(isMashed                 )
+///AddPropertyName(isMashed                 )
 AddPropertyName(kernelSizePrpPlump_pct   )
 AddPropertyName(kernelSizePrpThin_pct    )
 AddPropertyName(kolbachIndex_pct         )
@@ -96,8 +100,10 @@ AddPropertyName(yield_pct                )
  *
  * \brief Model for a fermentable record in the database.
  */
-class Fermentable : public NamedEntityWithInventory {
+class Fermentable : public Ingredient, public IngredientBase<Fermentable> {
    Q_OBJECT
+
+   INGREDIENT_BASE_DECL(Fermentable)
 
 public:
    /**
@@ -170,6 +176,15 @@ public:
    static EnumStringMapping const grainGroupDisplayNames;
 
    /**
+    * \brief This is where we centrally define how \c Fermentable objects can be measured.  Essentially, mass is used in
+    *        almost all cases, but volume is eg useful for \c Fermentable::Type::Juice
+    */
+   static constexpr auto validMeasures  = Measurement::ChoiceOfPhysicalQuantity::Mass_Volume;
+   static constexpr auto defaultMeasure = Measurement::PhysicalQuantity::Mass;
+
+   using InventoryClass = InventoryFermentable;
+
+   /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
     *        info.
     */
@@ -184,20 +199,20 @@ public:
    //=================================================== PROPERTIES ====================================================
    //! \brief The \c Type.
    Q_PROPERTY(Type           type                   READ type                   WRITE setType                               )
-   //! \brief The amount in kg or litres
-   Q_PROPERTY(double         amount                 READ amount                 WRITE setAmount                             )
-   Q_PROPERTY(bool           amountIsWeight         READ amountIsWeight         WRITE setAmountIsWeight                     )
+///   //! \brief The amount in kg or litres
+///   Q_PROPERTY(double         amount                 READ amount                 WRITE setAmount                             )
+///   Q_PROPERTY(bool           amountIsWeight         READ amountIsWeight         WRITE setAmountIsWeight                     )
    //! \brief The yield (when finely milled) as a percentage of equivalent glucose.
    Q_PROPERTY(double         yield_pct              READ yield_pct              WRITE setYield_pct                          )
    //! \brief The color in SRM.
    Q_PROPERTY(double         color_srm              READ color_srm              WRITE setColor_srm                          )
-   /**
-    * \brief Whether to add after the boil: \c true if this Fermentable is normally added after the boil.  The default
-    *        value is \c false since most grains are added during the mash or boil.
-    *
-    *        Note that this is stored in BeerXML but not in BeerJSON.
-    */
-   Q_PROPERTY(bool           addAfterBoil           READ addAfterBoil           WRITE setAddAfterBoil                       )
+///   /**
+///    * \brief Whether to add after the boil: \c true if this Fermentable is normally added after the boil.  The default
+///    *        value is \c false since most grains are added during the mash or boil.
+///    *
+///    *        Note that this is stored in BeerXML but not in BeerJSON.
+///    */
+///   Q_PROPERTY(bool           addAfterBoil           READ addAfterBoil           WRITE setAddAfterBoil                       )
    //! \brief The origin.
    Q_PROPERTY(QString        origin                 READ origin                 WRITE setOrigin                             )
    //! \brief The supplier.  NB: Not supported by BeerJSON (which does have Producer and Product ID)
@@ -215,8 +230,8 @@ public:
    Q_PROPERTY(double         coarseFineDiff_pct     READ coarseFineDiff_pct     WRITE setCoarseFineDiff_pct                 )
    //! \brief The moisture in pct.
    Q_PROPERTY(double         moisture_pct           READ moisture_pct           WRITE setMoisture_pct                       )
-   //! \brief The diastatic power in Lintner.  .:TODO:. Should probably make this optional and change all current 0 values to NULL
-   Q_PROPERTY(double         diastaticPower_lintner READ diastaticPower_lintner WRITE setDiastaticPower_lintner             )
+   //! \brief The diastatic power in Lintner.
+   Q_PROPERTY(std::optional<double> diastaticPower_lintner READ diastaticPower_lintner WRITE setDiastaticPower_lintner             )
    //! \brief The percent protein.
    Q_PROPERTY(double         protein_pct            READ protein_pct            WRITE setProtein_pct                        )
    //! \brief The maximum recommended amount in a batch, as a percentage of the total grains.
@@ -229,10 +244,8 @@ public:
    Q_PROPERTY(bool           recommendMash          READ recommendMash          WRITE setRecommendMash                      )
    //! \brief The IBUs per gal/lb if this is a liquid extract.  .:TODO:.  Should this be a metric measure?
    Q_PROPERTY(double         ibuGalPerLb            READ ibuGalPerLb            WRITE setIbuGalPerLb                        )
-   //! \brief The maximum kg of equivalent glucose that will come from this Fermentable.
-   Q_PROPERTY(double         equivSucrose_kg        READ equivSucrose_kg        /*WRITE*/                       STORED false)
-   //! \brief Whether the grains actually is mashed.
-   Q_PROPERTY(bool           isMashed               READ isMashed               WRITE setIsMashed                           )
+///   //! \brief Whether the grains actually is mashed.
+///   Q_PROPERTY(bool           isMashed               READ isMashed               WRITE setIsMashed                           )
    //! \brief Whether this fermentable is an extract.
    Q_PROPERTY(bool           isExtract              READ isExtract                                              STORED false)
    //! \brief Whether this fermentable is a sugar. Somewhat redundant, but it makes for nice symmetry elsewhere
@@ -279,13 +292,13 @@ public:
     */
    Q_PROPERTY(std::optional<double> kolbachIndex_pct   READ kolbachIndex_pct   WRITE setKolbachIndex_pct      )
 
-   /**
-    * \brief Amounts of a \c Fermentable can be measured by mass or by volume (depending usually on what it is)
-    *
-    * .:TBD JSON:. Check what else we need to do to tie in to Mixed2PhysicalQuantities, plus look at how we force weight
-    * for BeerXML.
-    */
-   Q_PROPERTY(Measurement::Amount    amountWithUnits   READ amountWithUnits   WRITE setAmountWithUnits)
+///   /**
+///    * \brief Amounts of a \c Fermentable can be measured by mass or by volume (depending usually on what it is)
+///    *
+///    * .:TBD JSON:. Check what else we need to do to tie in to Mixed2PhysicalQuantities, plus look at how we force weight
+///    * for BeerXML.
+///    */
+///   Q_PROPERTY(Measurement::Amount    amountWithUnits   READ amountWithUnits   WRITE setAmountWithUnits)
 
    /**
     * \brief Percentage of malt that is "glassy".  For a malt, % "glassy" + % "half glassy" + % "mealy" = 100%.
@@ -455,22 +468,22 @@ public:
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    Type    type                                       () const;
-   double  amount                                     () const;
-   bool    amountIsWeight                             () const; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+///   double  amount                                     () const;
+///   bool    amountIsWeight                             () const; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
    double  yield_pct                                  () const;
    double  color_srm                                  () const;
-   bool    addAfterBoil                               () const;
+///   bool    addAfterBoil                               () const;
    QString origin                                     () const;
    QString supplier                                   () const;
    QString notes                                      () const;
    double  coarseFineDiff_pct                         () const;
    double  moisture_pct                               () const;
-   double  diastaticPower_lintner                     () const;
+   std::optional<double>     diastaticPower_lintner   () const;
    double  protein_pct                                () const;
    double  maxInBatch_pct                             () const;
    bool    recommendMash                              () const;
    double  ibuGalPerLb                                () const;
-   bool    isMashed                                   () const;
+///   bool    isMashed                                   () const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<GrainGroup> grainGroup               () const;
    std::optional<int>        grainGroupAsInt          () const;
@@ -498,34 +511,33 @@ public:
    bool                      betaGlucanIsMassPerVolume() const;
 
    // Combined getters (all added for BeerJSON support)
-   Measurement::Amount                             amountWithUnits    () const;
+///   Measurement::Amount                             amountWithUnits    () const;
    std::optional<Measurement::Amount> dmsPWithUnits      () const;
    std::optional<Measurement::Amount> fanWithUnits       () const;
    std::optional<Measurement::Amount> betaGlucanWithUnits() const;
 
    // Calculated getters.
-   double  equivSucrose_kg       () const;
    bool    isExtract             () const;
    bool    isSugar               () const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setType                     (Type                      const   val);
-   void setAmount                   (double                    const   val);
-   void setAmountIsWeight           (bool                      const   val); // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+///   void setAmount                   (double                    const   val);
+///   void setAmountIsWeight           (bool                      const   val); // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
    void setYield_pct                (double                    const   val);
    void setColor_srm                (double                    const   val);
-   void setAddAfterBoil             (bool                      const   val);
+///   void setAddAfterBoil             (bool                      const   val);
    void setOrigin                   (QString                   const & val);
    void setSupplier                 (QString                   const & val);
    void setNotes                    (QString                   const & val);
    void setCoarseFineDiff_pct       (double                    const   val);
    void setMoisture_pct             (double                    const   val);
-   void setDiastaticPower_lintner   (double                    const   val);
+   void setDiastaticPower_lintner   (std::optional<double>     const   val);
    void setProtein_pct              (double                    const   val);
    void setMaxInBatch_pct           (double                    const   val);
    void setRecommendMash            (bool                      const   val);
    void setIbuGalPerLb              (double                    const   val);
-   void setIsMashed                 (bool                      const   val);
+///   void setIsMashed                 (bool                      const   val);
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    void setGrainGroup               (std::optional<GrainGroup> const   val);
    void setGrainGroupAsInt          (std::optional<int>        const   val);
@@ -553,13 +565,13 @@ public:
    void setBetaGlucanIsMassPerVolume(bool                      const   val);
 
    // Combined setters (all added for BeerJSON support)
-   void setAmountWithUnits    (Measurement::Amount                             const   val);
+///   void setAmountWithUnits    (Measurement::Amount                             const   val);
    void setDmsPWithUnits      (std::optional<Measurement::Amount> const   val);
    void setFanWithUnits       (std::optional<Measurement::Amount> const   val);
    void setBetaGlucanWithUnits(std::optional<Measurement::Amount> const   val);
 
    // Insert boiler-plate declarations for inventory
-   INVENTORY_COMMON_HEADER_DECLS
+///   INVENTORY_COMMON_HEADER_DECLS
 
    virtual Recipe * getOwningRecipe() const;
 
@@ -569,8 +581,8 @@ protected:
 
 private:
    Type                      m_type                     ;
-   double                    m_amount                   ; // Primarily valid in "Use Of" instance
-   bool                      m_amountIsWeight           ; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+///   double                    m_amount                   ; // Primarily valid in "Use Of" instance
+///   bool                      m_amountIsWeight           ; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
    double                    m_yield_pct                ;
    double                    m_color_srm                ;
    bool                      m_addAfterBoil             ; // Primarily valid in "Use Of" instance
@@ -579,12 +591,12 @@ private:
    QString                   m_notes                    ;
    double                    m_coarseFineDiff_pct       ;
    double                    m_moisture_pct             ;
-   double                    m_diastaticPower_lintner   ;
+   std::optional<double>     m_diastaticPower_lintner   ;
    double                    m_protein_pct              ;
    double                    m_maxInBatch_pct           ;
    bool                      m_recommendMash            ;
    double                    m_ibuGalPerLb              ;
-   bool                      m_isMashed                 ; // Primarily valid in "Use Of" instance
+///   bool                      m_isMashed                 ; // Primarily valid in "Use Of" instance
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<GrainGroup> m_grainGroup               ;
    QString                   m_producer                 ;
@@ -613,10 +625,5 @@ private:
 
 Q_DECLARE_METATYPE(QList<                Fermentable *>)
 Q_DECLARE_METATYPE(QList<std::shared_ptr<Fermentable> >)
-
-/**
- * \brief This function is used (as a parameter to std::sort) for sorting in the recipe formatter
- */
-bool fermentablesLessThanByWeight(Fermentable const * const lhs, Fermentable const * const rhs);
 
 #endif

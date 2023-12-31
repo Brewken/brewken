@@ -30,6 +30,7 @@
 #include "model/MashStep.h"
 #include "model/Misc.h"
 #include "model/Recipe.h"
+#include "model/RecipeAdditionFermentable.h"
 #include "model/RecipeAdditionHop.h"
 #include "model/Water.h"
 #include "model/Yeast.h"
@@ -85,12 +86,12 @@ void ScaleRecipeTool::scale(Equipment* equip, double newEff) {
       (*this->recObs->boil())->setBoilTime_mins(equip->boilTime_min().value_or(Equipment::default_boilTime_min));
    }
 
-   for (auto ferm : this->recObs->fermentables()) {
+   for (auto fermAddition : this->recObs->fermentableAdditions()) {
       // We assume volumes and masses get scaled the same way
-      if (!ferm->isSugar() && !ferm->isExtract()) {
-         ferm->setAmount(ferm->amount() * effRatio * volRatio);
+      if (!fermAddition->fermentable()->isSugar() && !fermAddition->fermentable()->isExtract()) {
+         fermAddition->setQuantity(fermAddition->quantity() * effRatio * volRatio);
       } else {
-         ferm->setAmount(ferm->amount() * volRatio);
+         fermAddition->setQuantity(fermAddition->quantity() * volRatio);
       }
    }
 

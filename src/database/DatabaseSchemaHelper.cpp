@@ -667,13 +667,12 @@ namespace {
          {QString("     UPDATE fermentable SET ftype = 'other'       WHERE ftype = 'Adjunct'"    )},
          {QString("ALTER TABLE fermentable ADD COLUMN grain_group                    %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE fermentable ADD COLUMN producer                       %1").arg(db.getDbNativeTypeName<QString>())},
-         {QString("ALTER TABLE fermentable ADD COLUMN productid                      %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable ADD COLUMN product_id                     %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE fermentable ADD COLUMN fine_grind_yield_pct           %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE fermentable ADD COLUMN coarse_grind_yield_pct         %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE fermentable ADD COLUMN potential_yield_sg             %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE fermentable ADD COLUMN alpha_amylase_dext_units       %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE fermentable ADD COLUMN kolbach_index_pct              %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN amount_is_weight               %1").arg(db.getDbNativeTypeName<bool   >())},
          {QString("ALTER TABLE fermentable ADD COLUMN hardness_prp_glassy_pct        %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE fermentable ADD COLUMN hardness_prp_half_pct          %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE fermentable ADD COLUMN hardness_prp_mealy_pct         %1").arg(db.getDbNativeTypeName<double >())},
@@ -689,7 +688,9 @@ namespace {
          {QString("ALTER TABLE fermentable ADD COLUMN fermentability_pct             %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE fermentable ADD COLUMN beta_glucan                    %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE fermentable ADD COLUMN beta_glucan_is_mass_per_volume %1").arg(db.getDbNativeTypeName<bool   >())},
-         {QString("     UPDATE fermentable SET amount_is_weight = ?"), {QVariant{true}}}, // All existing amounts will be weights
+         // Also on Fermentable, diastaticPower_lintner is now optional (as it should have been all along) and we convert
+         // 0 values to NULL
+         {QString("     UPDATE fermentable SET diastatic_power = NULL where diastatic_power = 0.0")},
          //
          // Misc: Extended and additional fields for BeerJSON
          //
@@ -1026,8 +1027,8 @@ namespace {
                   "FROM recipe"
          ), {QVariant{false}, QVariant{true}}},
          //
-         // Now comes the tricky stuff where we change the hop_in_recipe junction table to a full-blown object table,
-         // and remove hop children.
+         // Now comes the tricky stuff where we change the hop_in_recipe, fermentable_in_recipe junction tables to
+         // full-blown object tables, and remove hop_children, fermentable_children.
          //
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN name              %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN display           %1").arg(db.getDbNativeTypeName<bool   >())},
@@ -1043,9 +1044,23 @@ namespace {
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN duration_mins     %1").arg(db.getDbNativeTypeName<double >())},
          {QString("     UPDATE hop_in_recipe SET display = ?"), {QVariant{true}}},
          {QString("     UPDATE hop_in_recipe SET deleted = ?"), {QVariant{false}}},
+         {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN name              %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN display           %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN deleted           %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN folder            %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN quantity          %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN unit              %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
+         {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN stage             %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
+         {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN step              %1").arg(db.getDbNativeTypeName<int    >())},
+         {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN add_at_time_mins  %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN add_at_gravity_sg %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN add_at_acidity_ph %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN duration_mins     %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("     UPDATE fermentable_in_recipe SET display = ?"), {QVariant{true}}},
+         {QString("     UPDATE fermentable_in_recipe SET deleted = ?"), {QVariant{false}}},
          //
-         // Bring the amounts across from the hop table.  At the outset, all amounts are going to be weights, because
-         // the previous schemas did not support volumes for hop additions.
+         // Bring the amounts across from the hop and fermentable tables.  At the outset, all amounts are going to be
+         // weights, because the previous schemas did not support volumes for hop or fermentable additions.
          //
          // Although we mostly try to avoid it, we are using non-standard UPDATE FROM syntax here (see
          // https://www.sqlite.org/lang_update.html#update_from).  Fortunately, SQLite follows PostgreSQL for this, so
@@ -1060,15 +1075,25 @@ namespace {
                      "FROM hop"
                   ") AS h "
                   "WHERE hop_in_recipe.hop_id = h.id")},
+         {QString("UPDATE fermentable_in_recipe "
+                  "SET quantity = f.amount, "
+                      "unit = 'kilograms' "
+                  "FROM ("
+                     "SELECT id, "
+                            "amount "
+                     "FROM fermentable"
+                  ") AS f "
+                  "WHERE fermentable_in_recipe.fermentable_id = f.id")},
          //
-         // Now we brought the amounts across, we can drop them on the hop table.
+         // Now we brought the amounts across, we can drop them on the hop and fermentable tables.
          //
-         // Technically we are losing some data here, because we lose the amount field for "parent" hops (ie those rows
-         // that do not correspond to "use of hop in a recipe".  However, this is meaningless data, which is why it
-         // isn't in the new schema, and the user has a backup of the old DB, so it should be OK.  (Note that inventory
-         // amounts are stored in a different table - hop_in_inventory.)
+         // Technically we are losing some data here, because we lose the amount field for "parent" hops/fermentables
+         // (ie those rows that do not correspond to "use of hop/fermentable in a recipe".  However, this is meaningless
+         // data, which is why it isn't in the new schema, and the user has a backup of the old DB, so it should be OK.
+         // (Note that inventory amounts are stored in different tables - hop_in_inventory, fermentable_in_inventory.)
          //
-         {QString("ALTER TABLE hop DROP COLUMN amount")},
+         {QString("ALTER TABLE hop         DROP COLUMN amount")},
+         {QString("ALTER TABLE fermentable DROP COLUMN amount")},
          //
          // Bring the addition times across from the hop table.  Do this before setting stage etc, as it's similar to
          // the queries we've just done.
@@ -1081,6 +1106,11 @@ namespace {
                      "FROM hop"
                   ") AS h "
                   "WHERE hop_in_recipe.hop_id = h.id")},
+         //
+         // Existing data doesn't have an addition time for fermentables, so we set it to 0 for all of them
+         //
+         {QString("UPDATE fermentable_in_recipe "
+                  "SET add_at_time_mins = 0.0 ")},
          //
          // And, as above, drop the time column on the hop table now we pulled the data across.
          //
@@ -1151,7 +1181,56 @@ namespace {
          //
          {QString("ALTER TABLE hop DROP COLUMN use")},
          //
+         // Fermentable additions are a bit simpler.  They are either "is_mashed" or "add_after_boil" or neither.
+         // (Obviously doesn't make sense to be both!)  In the case of neither (ie not mashed and not added after boil,
+         // we assume added at the start of the boil).
+         //
+         // NOTE: For historical reasons, there are a lot of places in the database where a Boolean value could be
+         //       stored as "true" / "false" rather than 1 / 0 (depending on the exact version of the software that a
+         //       particular field was written with).  According to https://sqlite.org/datatype3.html:
+         //
+         //          SQLite does not have a separate Boolean storage class. Instead, Boolean values are stored as
+         //          integers 0 (false) and 1 (true).
+         //
+         //          SQLite recognizes the keywords "TRUE" and "FALSE", as of version 3.23.0 (2018-04-02) but those
+         //          keywords are really just alternative spellings for the integer literals 1 and 0 respectively.
+         //
+         //       So it should be OK to ignore this difference and trust SQLite to "do the right thing" when we have a
+         //       Boolean value in a WHERE clause.
+         //
+         {QString("UPDATE fermentable_in_recipe "
+                  "SET stage = 'add_to_mash' "
+                  "WHERE fermentable_id IN ("
+                     "SELECT id "
+                     "FROM fermentable "
+                     "WHERE is_mashed = ?"
+                  ")"), {QVariant{true}}},
+         {QString("UPDATE fermentable_in_recipe "
+                  "SET stage = 'add_to_boil', "
+                      "step  = 1 "
+                  "WHERE fermentable_id IN ("
+                     "SELECT id "
+                     "FROM fermentable "
+                     "WHERE is_mashed = ? "
+                     "AND add_after_boil = ?"
+                  ")"), {QVariant{false}, QVariant{false}}},
+         {QString("UPDATE fermentable_in_recipe "
+                  "SET stage = 'add_to_boil', "
+                      "step  = 3 "
+                  "WHERE fermentable_id IN ("
+                     "SELECT id "
+                     "FROM fermentable "
+                     "WHERE add_after_boil = ?"
+                  ")"), {QVariant{true}}},
+         //
+         // We can drop the is_mashed and add_after_boil columns on fermentable as we just pulled the information from
+         // them into the fermentable_in_recipe table.
+         //
+         {QString("ALTER TABLE fermentable DROP COLUMN is_mashed")},
+         {QString("ALTER TABLE fermentable DROP COLUMN add_after_boil")},
+         //
          // Entries in hop_in_recipe will still be pointing to the "child" hop.  We need to point to the parent one.
+         // Same for fermentable_in_recipe.
          //
          {QString("UPDATE hop_in_recipe "
                   "SET hop_id = hc.parent_id "
@@ -1161,17 +1240,31 @@ namespace {
                      "FROM hop_children"
                   ") AS hc "
                   "WHERE hop_in_recipe.hop_id = hc.child_id")},
+         {QString("UPDATE fermentable_in_recipe "
+                  "SET fermentable_id = fc.parent_id "
+                  "FROM ("
+                     "SELECT parent_id, "
+                            "child_id "
+                     "FROM fermentable_children"
+                  ") AS fc "
+                  "WHERE fermentable_in_recipe.fermentable_id = fc.child_id")},
          //
-         // Now we can mark the child hops as deleted
+         // Now we can mark the child hops, fermentables as deleted
          //
          {QString("UPDATE hop "
                   "SET deleted = ?, "
                       "display = ? "
                   "WHERE hop.id IN (SELECT child_id FROM hop_children)"), {QVariant{true}, QVariant{false}}},
+         {QString("UPDATE fermentable "
+                  "SET deleted = ?, "
+                      "display = ? "
+                  "WHERE fermentable.id IN (SELECT child_id FROM fermentable_children)"), {QVariant{true}, QVariant{false}}},
          //
-         // So we don't need the hop_children table any more
+         // So we don't need the hop_children, fermentable_children tables any more
          //
-         {QString("DROP TABLE hop_children")},
+         {QString("DROP TABLE         hop_children")},
+         {QString("DROP TABLE fermentable_children")},
+
          //
          // Whilst we're here, there are some unused columns on hop, and various other tables, that we should get rid
          // of.  These were added a long time ago for a feature that was dropped (see
@@ -1192,25 +1285,37 @@ namespace {
          {QString("ALTER TABLE yeast       DROP COLUMN display_scale")},
          //
          // Now we sort out inventory.  We move the hop ID and by-volume/by-mass info from the hop table to the
-         // inventory table.
+         // inventory table.  Same thing for fermentables.
          //
-         {QString("ALTER TABLE hop_in_inventory RENAME COLUMN amount TO quantity")},
-         {QString("ALTER TABLE hop_in_inventory ADD COLUMN hop_id %1").arg(db.getDbNativeTypeName<QString>())},
-         {QString("ALTER TABLE hop_in_inventory ADD COLUMN unit   %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE         hop_in_inventory RENAME COLUMN amount TO quantity")},
+         {QString("ALTER TABLE fermentable_in_inventory RENAME COLUMN amount TO quantity")},
+         {QString("ALTER TABLE         hop_in_inventory ADD COLUMN         hop_id %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable_in_inventory ADD COLUMN fermentable_id %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE         hop_in_inventory ADD COLUMN unit   %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable_in_inventory ADD COLUMN unit   %1").arg(db.getDbNativeTypeName<QString>())},
+         // At this point, all hop and fermentable amounts will be weights, because prior versions of the DB did not
+         // support measuring them by volume.
          {QString("UPDATE hop_in_inventory "
-                  "SET hop_id = h.id "
+                  "SET hop_id = h.id, "
+                      "unit = 'kilograms' "
                   "FROM ("
                      "SELECT id, "
                             "inventory_id "
                      "FROM hop"
                   ") AS h "
                   "WHERE hop_in_inventory.id = h.inventory_id")},
-         // At this point, all hop amounts will be weights, because prior versions of the DB did not support measuring
-         // hop by volume.
-         {QString("UPDATE hop_in_inventory "
-                  "SET unit = 'kilograms'")},
-         // Now we transferred info across, we don't need the inventory_id column on hop
+         {QString("UPDATE fermentable_in_inventory "
+                  "SET fermentable_id = f.id, "
+                      "unit = 'kilograms' "
+                  "FROM ("
+                     "SELECT id, "
+                            "inventory_id "
+                     "FROM fermentable"
+                  ") AS f "
+                  "WHERE fermentable_in_inventory.id = f.inventory_id ")},
+         // Now we transferred info across, we don't need the inventory_id column on hop or fermentable
          {QString("ALTER TABLE hop         DROP COLUMN inventory_id")},
+         {QString("ALTER TABLE fermentable DROP COLUMN inventory_id")},
          //
          // We would like hop_in_inventory.hop_id to be a foreign key to hop.id.  SQLite only lets you create foreign
          // key constraints at the time that you create the table, so this is a bit of a palava.
@@ -1231,6 +1336,23 @@ namespace {
          {QString("DROP TABLE hop_in_inventory")},
          {QString("ALTER TABLE tmp_hop_in_inventory "
                   "RENAME TO hop_in_inventory")},
+         // Same palava for fermentable_in_inventory.fermentable_id to be a foreign key to fermentable.id
+         {QString("CREATE TABLE tmp_fermentable_in_inventory ( "
+                    "id             %1, "
+                    "fermentable_id %2, "
+                    "quantity       %3, "
+                    "unit           %4, "
+                    "FOREIGN KEY(fermentable_id)   REFERENCES fermentable(id)"
+                 ");").arg(db.getDbNativePrimaryKeyDeclaration(),
+                           db.getDbNativeTypeName<int    >(),
+                           db.getDbNativeTypeName<double >(),
+                           db.getDbNativeTypeName<QString>())},
+         {QString("INSERT INTO tmp_fermentable_in_inventory (id, fermentable_id, quantity, unit) "
+                  "SELECT id, fermentable_id, quantity, unit "
+                  "FROM fermentable_in_inventory")},
+         {QString("DROP TABLE fermentable_in_inventory")},
+         {QString("ALTER TABLE tmp_fermentable_in_inventory "
+                  "RENAME TO fermentable_in_inventory")},
 
       };
 

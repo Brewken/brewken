@@ -48,6 +48,7 @@
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Misc.h"
+#include "model/RecipeAdditionFermentable.h"
 #include "model/RecipeAdditionHop.h"
 #include "model/Style.h"
 #include "model/Water.h"
@@ -132,10 +133,10 @@ namespace {
       return sorted;
    }
 
-   QList<Fermentable*> sortFermentablesByWeight(Recipe* rec) {
-      QList<Fermentable*> sorted = rec->fermentables();
+   QList<std::shared_ptr<RecipeAdditionFermentable>> sortFermentableAdditionsByWeight(Recipe* rec) {
+      QList<std::shared_ptr<RecipeAdditionFermentable>> sorted = rec->fermentableAdditions();
 
-      std::sort(sorted.begin(), sorted.end(), fermentablesLessThanByWeight);
+      std::sort(sorted.begin(), sorted.end(), RecipeAdditionFermentable::lessThanByWeight<RecipeAdditionFermentable>);
       return sorted;
    }
 
@@ -418,9 +419,9 @@ public:
       }
 
       QString ftable;
-      QList<Fermentable*> ferms = sortFermentablesByWeight(this->rec);
+      auto fermentableAdditions = sortFermentableAdditionsByWeight(this->rec);
 
-      int size = ferms.size();
+      int size = fermentableAdditions.size();
       if ( size < 1 ) {
          return "";
       }
@@ -445,16 +446,16 @@ public:
             .arg(tr("Yield"))
             .arg(tr("Color"));
       // Now add a row for each fermentable
-      for(int ii = 0; ii < size; ++ii) {
-         Fermentable* ferm = ferms[ii];
+      for (auto const & fermentableAddition : fermentableAdditions) {
+         auto const & fermentable = fermentableAddition->fermentable();
          ftable += QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td><td>%6%</td><td>%7</td></tr>")
-               .arg(ferm->name())
-               .arg(Fermentable::typeDisplayNames[ferm->type()])
-               .arg(Measurement::displayAmount(ferm->amountWithUnits()))
-               .arg(ferm->isMashed() ? tr("Yes") : tr("No") )
-               .arg(ferm->addAfterBoil() ? tr("Yes") : tr("No"))
-               .arg(Measurement::displayQuantity(ferm->yield_pct(), 0) )
-               .arg(Measurement::displayAmount(Measurement::Amount{ferm->color_srm(), Measurement::Units::srm}, 1));
+               .arg(fermentable->name())
+               .arg(Fermentable::typeDisplayNames[fermentable->type()])
+               .arg(Measurement::displayAmount(fermentableAddition->amount()))
+               .arg(fermentableAddition->stage() == RecipeAddition::Stage::Mash ? tr("Yes") : tr("No") )
+               .arg(fermentableAddition->addAfterBoil() ? tr("Yes") : tr("No"))
+               .arg(Measurement::displayQuantity(fermentable->yield_pct(), 0) )
+               .arg(Measurement::displayAmount(Measurement::Amount{fermentable->color_srm(), Measurement::Units::srm}, 1));
       }
       // One row for the total grain (QTextBrowser does not know the caption tag)
       ftable += QString("<tr><td><b>%1</b></td><td>%2</td><td>%3</td><td>%4</td><td>%5</td><td>%6</td><td>%7</td></tr>")
@@ -475,8 +476,8 @@ public:
       }
 
       QString ret = "";
-      QList<Fermentable*> ferms = sortFermentablesByWeight(this->rec);
-      int size = ferms.size();
+      auto fermentableAdditions = sortFermentableAdditionsByWeight(this->rec);
+      int size = fermentableAdditions.size();
       if (size > 0) {
          QStringList names  {tr("Name"  )};
          QStringList types  {tr("Type"  )};
@@ -486,15 +487,15 @@ public:
          QStringList yields {tr("Yield" )};
          QStringList colors {tr("Color" )};
 
-         for (int ii = 0; ii < size; ++ii) {
-            Fermentable* ferm =  ferms[ii];
-            names.append(ferm->name());
-            types.append(Fermentable::typeDisplayNames[ferm->type()]);
-            amounts.append(Measurement::displayAmount(ferm->amountWithUnits()));
-            masheds.append( ferm->isMashed() ? tr("Yes") : tr("No"));
-            lates.append( ferm->addAfterBoil() ? tr("Yes") : tr("No"));
-            yields.append( QString("%1%").arg(Measurement::displayQuantity(ferm->yield_pct(), 0) ) );
-            colors.append( QString("%1").arg(Measurement::displayAmount(Measurement::Amount{ferm->color_srm(),
+         for (auto const & fermentableAddition : fermentableAdditions) {
+            auto const & fermentable = fermentableAddition->fermentable();
+            names.append(fermentable->name());
+            types.append(Fermentable::typeDisplayNames[fermentable->type()]);
+            amounts.append(Measurement::displayAmount(fermentableAddition->amount()));
+            masheds.append(fermentableAddition->stage() == RecipeAddition::Stage::Mash ? tr("Yes") : tr("No"));
+            lates.append(fermentableAddition->addAfterBoil() ? tr("Yes") : tr("No"));
+            yields.append( QString("%1%").arg(Measurement::displayQuantity(fermentable->yield_pct(), 0) ) );
+            colors.append( QString("%1").arg(Measurement::displayAmount(Measurement::Amount{fermentable->color_srm(),
                                                                                             Measurement::Units::srm}, 1)));
          }
 
@@ -1331,9 +1332,10 @@ QString RecipeFormatter::getToolTip(Fermentable* ferm) {
            .arg(tr("Color"))
            .arg(Measurement::displayAmount(Measurement::Amount{ferm->color_srm(), Measurement::Units::srm}, 1));
    // Second row -- isMashed and yield?
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-           .arg(tr("Mashed"))
-           .arg( ferm->isMashed() ? tr("Yes") : tr("No") );
+//   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
+//           .arg(tr("Mashed"))
+//           .arg( ferm->stage() == RecipeAddition::Stage::Mash ? tr("Yes") : tr("No") );
+   body += QString("<tr><td class=\"left\">.</td><td class=\"value\">.</td>");
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
            .arg(tr("Yield"))
            .arg(Measurement::displayQuantity(ferm->yield_pct(), 3));

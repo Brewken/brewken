@@ -68,7 +68,7 @@ public:
    Q_ENUM(Use)
 
    /*!
-    * \brief Mapping between \c Hop::Form and string values suitable for serialisation in DB, BeerXML, etc (but \b not
+    * \brief Mapping between \c RecipeAdditionHop::Use and string values suitable for serialisation in DB, BeerXML, etc (but \b not
     *        used in BeerJSON)
     *
     *        This can also be used to obtain the number of values of \c Type, albeit at run-time rather than
@@ -77,7 +77,7 @@ public:
    static EnumStringMapping const useStringMapping;
 
    /*!
-    * \brief Localised names of \c Hop::Use values suitable for displaying to the end user
+    * \brief Localised names of \c RecipeAdditionHop::Use values suitable for displaying to the end user
     */
    static EnumStringMapping const useDisplayNames;
 

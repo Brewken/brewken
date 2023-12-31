@@ -29,10 +29,12 @@
 #include "model/Hop.h"
 #include "model/Instruction.h"
 #include "model/Inventory.h"
+#include "model/InventoryFermentable.h"
 #include "model/InventoryHop.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Misc.h"
+#include "model/RecipeAdditionFermentable.h"
 #include "model/RecipeAdditionHop.h"
 #include "model/Recipe.h"
 #include "model/Salt.h"
@@ -134,18 +136,6 @@ namespace {
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // Database field mappings for InventoryFermentable
-   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> ObjectStore::TableDefinition const PRIMARY_TABLE<InventoryFermentable> {
-      "fermentable_in_inventory",
-      {
-         {ObjectStore::FieldType::Int,    "id",               PropertyNames::Inventory::id},
-         {ObjectStore::FieldType::Double, "amount",           PropertyNames::Inventory::amount}
-      }
-   };
-   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<InventoryFermentable> {};
-
-   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Fermentable
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<Fermentable> {
@@ -156,15 +146,15 @@ namespace {
          {ObjectStore::FieldType::Bool  , "deleted"                       , PropertyNames::NamedEntity::deleted                  },
          {ObjectStore::FieldType::Bool  , "display"                       , PropertyNames::NamedEntity::display                  },
          {ObjectStore::FieldType::String, "folder"                        , PropertyNames::NamedEntity::folder                   },
-         {ObjectStore::FieldType::Int   , "inventory_id"                  , PropertyNames::NamedEntityWithInventory::inventoryId , &PRIMARY_TABLE<InventoryFermentable>},
-         {ObjectStore::FieldType::Bool  , "add_after_boil"                , PropertyNames::Fermentable::addAfterBoil             },
-         {ObjectStore::FieldType::Double, "amount"                        , PropertyNames::Fermentable::amount                   },
-         {ObjectStore::FieldType::Bool  , "amount_is_weight"              , PropertyNames::Fermentable::amountIsWeight           }, // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+///         {ObjectStore::FieldType::Int   , "inventory_id"                  , PropertyNames::NamedEntityWithInventory::inventoryId , &PRIMARY_TABLE<InventoryFermentable>},
+///         {ObjectStore::FieldType::Bool  , "add_after_boil"                , PropertyNames::Fermentable::addAfterBoil             },
+///         {ObjectStore::FieldType::Double, "amount"                        , PropertyNames::Fermentable::amount                   },
+///         {ObjectStore::FieldType::Bool  , "amount_is_weight"              , PropertyNames::Fermentable::amountIsWeight           }, // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
          {ObjectStore::FieldType::Double, "coarse_fine_diff"              , PropertyNames::Fermentable::coarseFineDiff_pct       },
          {ObjectStore::FieldType::Double, "color"                         , PropertyNames::Fermentable::color_srm                },
          {ObjectStore::FieldType::Double, "diastatic_power"               , PropertyNames::Fermentable::diastaticPower_lintner   },
          {ObjectStore::FieldType::Enum  , "ftype"                         , PropertyNames::Fermentable::type                     , &Fermentable::typeStringMapping},
-         {ObjectStore::FieldType::Bool  , "is_mashed"                     , PropertyNames::Fermentable::isMashed                 },
+///         {ObjectStore::FieldType::Bool  , "is_mashed"                     , PropertyNames::Fermentable::isMashed                 },
          {ObjectStore::FieldType::Double, "ibu_gal_per_lb"                , PropertyNames::Fermentable::ibuGalPerLb              },
          {ObjectStore::FieldType::Double, "max_in_batch"                  , PropertyNames::Fermentable::maxInBatch_pct           },
          {ObjectStore::FieldType::Double, "moisture"                      , PropertyNames::Fermentable::moisture_pct             },
@@ -177,7 +167,7 @@ namespace {
          // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
          {ObjectStore::FieldType::Enum  , "grain_group"                   , PropertyNames::Fermentable::grainGroup               , &Fermentable::grainGroupStringMapping},
          {ObjectStore::FieldType::String, "producer"                      , PropertyNames::Fermentable::producer                 },
-         {ObjectStore::FieldType::String, "productid"                     , PropertyNames::Fermentable::productId                },
+         {ObjectStore::FieldType::String, "product_id"                    , PropertyNames::Fermentable::productId                },
          {ObjectStore::FieldType::Double, "fine_grind_yield_pct"          , PropertyNames::Fermentable::fineGrindYield_pct       },
          {ObjectStore::FieldType::Double, "coarse_grind_yield_pct"        , PropertyNames::Fermentable::coarseGrindYield_pct     },
          {ObjectStore::FieldType::Double, "potential_yield_sg"            , PropertyNames::Fermentable::potentialYield_sg        },
@@ -200,17 +190,31 @@ namespace {
          {ObjectStore::FieldType::Bool  , "beta_glucan_is_mass_per_volume", PropertyNames::Fermentable::betaGlucanIsMassPerVolume},
       }
    };
-   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Fermentable> {
+///   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Fermentable> {
+///      {
+///         "fermentable_children",
+///         {
+///            {ObjectStore::FieldType::Int, "id"                                                                                    },
+///            {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Fermentable>},
+///            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, &PRIMARY_TABLE<Fermentable>},
+///         },
+///         ObjectStore::MAX_ONE_ENTRY
+///      }
+///   };
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Database field mappings for InventoryFermentable
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> ObjectStore::TableDefinition const PRIMARY_TABLE<InventoryFermentable> {
+      "fermentable_in_inventory",
       {
-         "fermentable_children",
-         {
-            {ObjectStore::FieldType::Int, "id"                                                                                    },
-            {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Fermentable>},
-            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, &PRIMARY_TABLE<Fermentable>},
-         },
-         ObjectStore::MAX_ONE_ENTRY
+         {ObjectStore::FieldType::Int   , "id"            , PropertyNames::NamedEntity::key                     },
+         {ObjectStore::FieldType::Int   , "fermentable_id", PropertyNames::Inventory::ingredientId   , &PRIMARY_TABLE<Fermentable>},
+         {ObjectStore::FieldType::Double, "quantity"      , PropertyNames::IngredientAmount::quantity},
+         {ObjectStore::FieldType::Unit  , "unit"          , PropertyNames::IngredientAmount::unit    , &Measurement::Units::unitStringMapping},
       }
    };
+   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<InventoryFermentable> {};
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Hop
@@ -735,14 +739,14 @@ namespace {
       // .:TODO:. BrewNote table stores its recipe ID, so there isn't a brewnote junction table
       // There is a lot of boiler-plate here, and we could have gone for a much more compact representation of junction
       // tables, but this keeps the definition format relatively closely aligned with that of primary tables.
-      {
-         "fermentable_in_recipe",
-         {
-            {ObjectStore::FieldType::Int, "id"                                                                                            },
-            {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Recipe>     },
-            {ObjectStore::FieldType::Int, "fermentable_id",    PropertyNames::Recipe::fermentableIds, &PRIMARY_TABLE<Fermentable>},
-         }
-      },
+///      {
+///         "fermentable_in_recipe",
+///         {
+///            {ObjectStore::FieldType::Int, "id"                                                                                            },
+///            {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Recipe>     },
+///            {ObjectStore::FieldType::Int, "fermentable_id",    PropertyNames::Recipe::fermentableIds, &PRIMARY_TABLE<Fermentable>},
+///         }
+///      },
 ///      {
 ///         "hop_in_recipe",
 ///         {
@@ -792,6 +796,30 @@ namespace {
             {ObjectStore::FieldType::Int, "yeast_id",          PropertyNames::Recipe::yeastIds,       &PRIMARY_TABLE<Yeast>      },
          }
       },
+   };
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Database field mappings for RecipeAdditionFermentable
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> ObjectStore::TableDefinition const PRIMARY_TABLE<RecipeAdditionFermentable> {
+      "fermentable_in_recipe",
+      {
+         {ObjectStore::FieldType::Int   , "id"               , PropertyNames::NamedEntity::key               },
+         {ObjectStore::FieldType::String, "name"             , PropertyNames::NamedEntity::name              },
+         {ObjectStore::FieldType::Bool  , "display"          , PropertyNames::NamedEntity::display           },
+         {ObjectStore::FieldType::Bool  , "deleted"          , PropertyNames::NamedEntity::deleted           },
+         {ObjectStore::FieldType::String, "folder"           , PropertyNames::NamedEntity::folder            },
+         {ObjectStore::FieldType::Int   , "recipe_id"        , PropertyNames::RecipeAddition::recipeId       , &PRIMARY_TABLE<Recipe>     },
+         {ObjectStore::FieldType::Int   , "fermentable_id"   , PropertyNames::RecipeAddition::ingredientId   , &PRIMARY_TABLE<Fermentable>},
+         {ObjectStore::FieldType::Enum  , "stage"            , PropertyNames::RecipeAddition::stage          , &RecipeAddition::stageStringMapping},
+         {ObjectStore::FieldType::Double, "quantity"         , PropertyNames::IngredientAmount::quantity     },
+         {ObjectStore::FieldType::Unit  , "unit"             , PropertyNames::IngredientAmount::unit         , &Measurement::Units::unitStringMapping},
+         {ObjectStore::FieldType::Int   , "step"             , PropertyNames::RecipeAddition::step           },
+         {ObjectStore::FieldType::Double, "add_at_time_mins" , PropertyNames::RecipeAddition::addAtTime_mins },
+         {ObjectStore::FieldType::Double, "add_at_gravity_sg", PropertyNames::RecipeAddition::addAtGravity_sg},
+         {ObjectStore::FieldType::Double, "add_at_acidity_ph", PropertyNames::RecipeAddition::addAtAcidity_pH},
+         {ObjectStore::FieldType::Double, "duration_mins"    , PropertyNames::RecipeAddition::duration_mins  },
+      }
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -891,31 +919,32 @@ ObjectStoreTyped<NE> & ObjectStoreTyped<NE>::getInstance() {
 // We have to make sure that each version of the above function gets instantiated.  NOTE: This is the 1st of 3 places we
 // need to add any new ObjectStoreTyped
 //
-// You might think the use in InitialiseAllObjectStores below is sufficient for this, but the GCC linker thinks
+// You might think the use in InitialiseAllObjectStores below is sufficient for this, but the GCC linker says
 // otherwise.
 //
-template ObjectStoreTyped<Boil                > & ObjectStoreTyped<Boil                >::getInstance();
-template ObjectStoreTyped<BoilStep            > & ObjectStoreTyped<BoilStep            >::getInstance();
-template ObjectStoreTyped<BrewNote            > & ObjectStoreTyped<BrewNote            >::getInstance();
-template ObjectStoreTyped<Equipment           > & ObjectStoreTyped<Equipment           >::getInstance();
-template ObjectStoreTyped<Fermentable         > & ObjectStoreTyped<Fermentable         >::getInstance();
-template ObjectStoreTyped<Fermentation        > & ObjectStoreTyped<Fermentation        >::getInstance();
-template ObjectStoreTyped<FermentationStep    > & ObjectStoreTyped<FermentationStep    >::getInstance();
-template ObjectStoreTyped<Hop                 > & ObjectStoreTyped<Hop                 >::getInstance();
-template ObjectStoreTyped<Instruction         > & ObjectStoreTyped<Instruction         >::getInstance();
-template ObjectStoreTyped<InventoryFermentable> & ObjectStoreTyped<InventoryFermentable>::getInstance();
-template ObjectStoreTyped<InventoryHop        > & ObjectStoreTyped<InventoryHop        >::getInstance();
-template ObjectStoreTyped<InventoryMisc       > & ObjectStoreTyped<InventoryMisc       >::getInstance();
-template ObjectStoreTyped<InventoryYeast      > & ObjectStoreTyped<InventoryYeast      >::getInstance();
-template ObjectStoreTyped<Mash                > & ObjectStoreTyped<Mash                >::getInstance();
-template ObjectStoreTyped<MashStep            > & ObjectStoreTyped<MashStep            >::getInstance();
-template ObjectStoreTyped<Misc                > & ObjectStoreTyped<Misc                >::getInstance();
-template ObjectStoreTyped<Recipe              > & ObjectStoreTyped<Recipe              >::getInstance();
-template ObjectStoreTyped<RecipeAdditionHop   > & ObjectStoreTyped<RecipeAdditionHop   >::getInstance();
-template ObjectStoreTyped<Salt                > & ObjectStoreTyped<Salt                >::getInstance();
-template ObjectStoreTyped<Style               > & ObjectStoreTyped<Style               >::getInstance();
-template ObjectStoreTyped<Water               > & ObjectStoreTyped<Water               >::getInstance();
-template ObjectStoreTyped<Yeast               > & ObjectStoreTyped<Yeast               >::getInstance();
+template ObjectStoreTyped<Boil                     > & ObjectStoreTyped<Boil                     >::getInstance();
+template ObjectStoreTyped<BoilStep                 > & ObjectStoreTyped<BoilStep                 >::getInstance();
+template ObjectStoreTyped<BrewNote                 > & ObjectStoreTyped<BrewNote                 >::getInstance();
+template ObjectStoreTyped<Equipment                > & ObjectStoreTyped<Equipment                >::getInstance();
+template ObjectStoreTyped<Fermentable              > & ObjectStoreTyped<Fermentable              >::getInstance();
+template ObjectStoreTyped<Fermentation             > & ObjectStoreTyped<Fermentation             >::getInstance();
+template ObjectStoreTyped<FermentationStep         > & ObjectStoreTyped<FermentationStep         >::getInstance();
+template ObjectStoreTyped<Hop                      > & ObjectStoreTyped<Hop                      >::getInstance();
+template ObjectStoreTyped<Instruction              > & ObjectStoreTyped<Instruction              >::getInstance();
+template ObjectStoreTyped<InventoryFermentable     > & ObjectStoreTyped<InventoryFermentable     >::getInstance();
+template ObjectStoreTyped<InventoryHop             > & ObjectStoreTyped<InventoryHop             >::getInstance();
+template ObjectStoreTyped<InventoryMisc            > & ObjectStoreTyped<InventoryMisc            >::getInstance();
+template ObjectStoreTyped<InventoryYeast           > & ObjectStoreTyped<InventoryYeast           >::getInstance();
+template ObjectStoreTyped<Mash                     > & ObjectStoreTyped<Mash                     >::getInstance();
+template ObjectStoreTyped<MashStep                 > & ObjectStoreTyped<MashStep                 >::getInstance();
+template ObjectStoreTyped<Misc                     > & ObjectStoreTyped<Misc                     >::getInstance();
+template ObjectStoreTyped<Recipe                   > & ObjectStoreTyped<Recipe                   >::getInstance();
+template ObjectStoreTyped<RecipeAdditionFermentable> & ObjectStoreTyped<RecipeAdditionFermentable>::getInstance();
+template ObjectStoreTyped<RecipeAdditionHop        > & ObjectStoreTyped<RecipeAdditionHop        >::getInstance();
+template ObjectStoreTyped<Salt                     > & ObjectStoreTyped<Salt                     >::getInstance();
+template ObjectStoreTyped<Style                    > & ObjectStoreTyped<Style                    >::getInstance();
+template ObjectStoreTyped<Water                    > & ObjectStoreTyped<Water                    >::getInstance();
+template ObjectStoreTyped<Yeast                    > & ObjectStoreTyped<Yeast                    >::getInstance();
 
 bool InitialiseAllObjectStores(QString & errorMessage) {
    // It's deliberate that we don't stop after the first error.  If there is a problem, it's quite useful to know how

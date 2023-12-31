@@ -164,6 +164,33 @@ public:
       return IngredientClass::defaultMeasure;
    }
 
+   bool amountIsWeight() const {
+      return this->m_amount.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass;
+   }
+
+   /**
+    * \brief This function is used (as a parameter to std::sort) for sorting in the recipe formatter
+    */
+   [[nodiscard]] static bool lessThanByWeight(IngredientAmount const & lhs, IngredientAmount const & rhs) {
+
+      // Sort by name if the two fermentables are of equal weight or volume
+      if (lhs.getMeasure() == Measurement::PhysicalQuantity::Mass &&
+          rhs.getMeasure() == Measurement::PhysicalQuantity::Mass &&
+          qFuzzyCompare(lhs.getQuantity(), rhs.getQuantity())) {
+         return lhs.derived().name() < rhs.derived().name();
+      }
+
+      // .:TBD:. Do we want to separate out liquids and solids?
+
+      // Yes. I know. This seems silly, but I want the returned list in descending not ascending order.
+      return lhs.getQuantity() > rhs.getQuantity();
+   }
+
+   template<typename RA>
+   [[nodiscard]] static bool lessThanByWeight(std::shared_ptr<RA> const lhs, std::shared_ptr<RA> const rhs) {
+      return lessThanByWeight(*lhs, *rhs);
+   }
+
    //! This is only for BeerXML support
    bool getIsWeight() const {
       return (this->getMeasure() == Measurement::PhysicalQuantity::Mass);

@@ -1461,7 +1461,7 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Ποσότητα</translation>
+        <translation type="vanished">Ποσότητα</translation>
     </message>
     <message>
         <source>Yield %</source>
@@ -1476,40 +1476,24 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation>Χρώμα</translation>
     </message>
     <message>
-        <source>Method</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Addition</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount Type</source>
         <translation type="unfinished">Μονάδα μέτρησης</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Όγκος</translation>
+        <translation type="obsolete">Όγκος</translation>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Βάρος</translation>
-    </message>
-    <message>
-        <source>Not mashed</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Βάρος</translation>
     </message>
     <message>
         <source>Mashed</source>
-        <translation type="unfinished">στο σκεύος σακχαροποίησης</translation>
-    </message>
-    <message>
-        <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">στο σκεύος σακχαροποίησης</translation>
     </message>
     <message>
         <source>Late</source>
-        <translation type="unfinished">Στο τέλος</translation>
+        <translation type="obsolete">Στο τέλος</translation>
     </message>
 </context>
 <context>
@@ -1990,6 +1974,13 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
+    <name>InventoryFermentable</name>
+    <message>
+        <source>Fermentable Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>InventoryHop</name>
     <message>
         <source>Hop Inventory</source>
@@ -2224,10 +2215,6 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Redo %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove fermentable from recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3797,6 +3784,14 @@ Program will now exit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>BeerJSON and BeerXML files (*.json *.xml);;BeerJSON files (*.json);;BeerXML files (*.xml)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Weight (Mass)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>%1 Catalog / Database</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3826,14 +3821,6 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>BeerJSON and BeerXML files (*.json *.xml);;BeerJSON files (*.json);;BeerXML files (*.xml)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Weight (Mass)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4155,6 +4142,68 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Add to Package</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionFermentable</name>
+    <message>
+        <source>Fermentable Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Addition of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionFermentableTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="obsolete">Μορφή</translation>
+    </message>
+    <message>
+        <source>Alpha %</source>
+        <translation type="obsolete">Alpha %</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished">Ποσότητα</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Μονάδα μέτρησης</translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Ευρετήριο ειδών</translation>
+    </message>
+    <message>
+        <source>Stage</source>
+        <translation type="unfinished">Στάδιο</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished">Χρόνος</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yield</source>
+        <translation type="unfinished">Απόδοση</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Χρώμα</translation>
     </message>
 </context>
 <context>

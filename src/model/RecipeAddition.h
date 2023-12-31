@@ -46,6 +46,9 @@ AddPropertyName(duration_mins  )
  *        note that we do \b not have a class corresponding with BeerJSON's \c WaterAdditionType as it's simpler just to
  *        include the two component fields directly in \c Recipe.)
  *
+ *        Our naming is slightly more cumbersome (eg RecipeAdditionHop instead of HopAddition), but has the merit of
+ *        grouping all the "recipe addition" class files together in alphabetical directory listings etc.
+ *
  *        In BeerJSON, the inheritance structure of, eg, hop-related records is:
  *
  *                                         HopVarietyBase
@@ -70,13 +73,13 @@ AddPropertyName(duration_mins  )
  *        with 4.4% alpha acid).  This is, however, outside the scope of the BeerJSON work, and will be something we
  *        come back to as a future enhancement.  In the meantime, we have:
  *
- *                     NamedEntity
- *                     /    |     \
- *                    /     |      \
- *           Ingredient   Recipe   RecipeAddition     IngredientAmount<RecipeAdditionHop, Hop>
- *               |                       \            /
- *               |                        \          /
- *              Hop                   RecipeAdditionHop
+ *                                           NamedEntity
+ *                                           /    |     \
+ *                                          /     |      \
+ *           IngredientBase<Hop>   Ingredient   Recipe   RecipeAddition     IngredientAmount<RecipeAdditionHop, Hop>
+ *                           \     /                               \            /
+ *                            \   /                                 \          /
+ *                             Hop                                RecipeAdditionHop
  */
 class RecipeAddition : public NamedEntity {
    Q_OBJECT
@@ -124,8 +127,8 @@ public:
    virtual ~RecipeAddition();
 
    /**
-   * \brief This function is used (as a parameter to std::sort) for sorting in the recipe formatter
-   */
+    * \brief This function is used (as a parameter to std::sort) for sorting in the recipe formatter
+    */
    [[nodiscard]] static bool lessThanByTime(RecipeAddition const & lhs, RecipeAddition const & rhs);
 
    template<typename RA>

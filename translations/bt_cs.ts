@@ -1461,7 +1461,7 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Množství</translation>
+        <translation type="vanished">Množství</translation>
     </message>
     <message>
         <source>Yield %</source>
@@ -1476,40 +1476,24 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation>Barva</translation>
     </message>
     <message>
-        <source>Method</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Addition</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount Type</source>
         <translation type="unfinished">Druh množství</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Objem</translation>
+        <translation type="obsolete">Objem</translation>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Hmotnost</translation>
-    </message>
-    <message>
-        <source>Not mashed</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Hmotnost</translation>
     </message>
     <message>
         <source>Mashed</source>
-        <translation type="unfinished">Šrotovaný</translation>
-    </message>
-    <message>
-        <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Šrotovaný</translation>
     </message>
     <message>
         <source>Late</source>
-        <translation type="unfinished">Pozdní</translation>
+        <translation type="obsolete">Pozdní</translation>
     </message>
 </context>
 <context>
@@ -1986,6 +1970,13 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
+    <name>InventoryFermentable</name>
+    <message>
+        <source>Fermentable Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>InventoryHop</name>
     <message>
         <source>Hop Inventory</source>
@@ -2220,10 +2211,6 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Redo %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove fermentable from recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3797,6 +3784,14 @@ Program will now exit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>BeerJSON and BeerXML files (*.json *.xml);;BeerJSON files (*.json);;BeerXML files (*.xml)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Weight (Mass)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>%1 Catalog / Database</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3822,14 +3817,6 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>BeerJSON and BeerXML files (*.json *.xml);;BeerJSON files (*.json);;BeerXML files (*.xml)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Weight (Mass)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4151,6 +4138,64 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Add to Package</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionFermentable</name>
+    <message>
+        <source>Fermentable Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Addition of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionFermentableTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Název</translation>
+    </message>
+    <message>
+        <source>Alpha %</source>
+        <translation type="obsolete">Alfa %</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished">Množství</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Druh množství</translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Sklad</translation>
+    </message>
+    <message>
+        <source>Stage</source>
+        <translation type="unfinished">Etapa</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished">Čas</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Druh</translation>
+    </message>
+    <message>
+        <source>Yield</source>
+        <translation type="unfinished">Výtěžnost</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Barva</translation>
     </message>
 </context>
 <context>

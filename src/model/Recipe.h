@@ -46,74 +46,74 @@
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Recipe { BtStringConst const property{#property}; }
-AddPropertyName(ABV_pct           )
-AddPropertyName(age_days          )
-AddPropertyName(ageTemp_c         )
-AddPropertyName(ancestorId        )
-AddPropertyName(asstBrewer        )
-AddPropertyName(batchSize_l       )
-AddPropertyName(boil              )
-AddPropertyName(boilGrav          )
-AddPropertyName(boilId            )
-AddPropertyName(boilSize_l        ) // Deprecated, but retained for BeerXML -- see comments below
-AddPropertyName(boilTime_min      ) // Deprecated, but retained for BeerXML -- see comments below
-AddPropertyName(boilVolume_l      )
-AddPropertyName(brewer            )
-AddPropertyName(brewNotes         )
-AddPropertyName(calories          )
-AddPropertyName(carbonationTemp_c )
-AddPropertyName(carbonation_vols  )
-AddPropertyName(color_srm         )
-AddPropertyName(date              )
-AddPropertyName(efficiency_pct    )
-AddPropertyName(equipment         )
-AddPropertyName(equipmentId       )
-AddPropertyName(fermentableIds    )
-AddPropertyName(fermentables      )
-AddPropertyName(fermentation      )
-AddPropertyName(fermentationId    )
-AddPropertyName(fermentationStages)
-AddPropertyName(fg                )
-AddPropertyName(finalVolume_l     )
-AddPropertyName(forcedCarbonation )
-AddPropertyName(grainsInMash_kg   )
-AddPropertyName(grains_kg         )
-AddPropertyName(hopAdditionIds    )
-AddPropertyName(hopAdditions      )
-AddPropertyName(IBU               )
-AddPropertyName(IBUs              )
-AddPropertyName(instructionIds    )
-AddPropertyName(instructions      )
-AddPropertyName(kegPrimingFactor  )
-AddPropertyName(locked            )
-AddPropertyName(mash              )
-AddPropertyName(mashId            )
-AddPropertyName(miscIds           )
-AddPropertyName(miscs             )
-AddPropertyName(notes             )
-AddPropertyName(og                )
-AddPropertyName(points            )
-AddPropertyName(postBoilVolume_l  )
-AddPropertyName(primaryAge_days   )
-AddPropertyName(primaryTemp_c     )
-AddPropertyName(primingSugarEquiv )
-AddPropertyName(primingSugarName  )
-AddPropertyName(saltIds           )
-AddPropertyName(secondaryAge_days )
-AddPropertyName(secondaryTemp_c   )
-AddPropertyName(SRMColor          )
-AddPropertyName(style             )
-AddPropertyName(styleId           )
-AddPropertyName(tasteNotes        )
-AddPropertyName(tasteRating       )
-AddPropertyName(tertiaryAge_days  )
-AddPropertyName(tertiaryTemp_c    )
-AddPropertyName(type              )
-AddPropertyName(waterIds          )
-AddPropertyName(waters            )
-AddPropertyName(wortFromMash_l    )
-AddPropertyName(yeastIds          )
-AddPropertyName(yeasts            )
+AddPropertyName(ABV_pct               )
+AddPropertyName(age_days              )
+AddPropertyName(ageTemp_c             )
+AddPropertyName(ancestorId            )
+AddPropertyName(asstBrewer            )
+AddPropertyName(batchSize_l           )
+AddPropertyName(boil                  )
+AddPropertyName(boilGrav              )
+AddPropertyName(boilId                )
+AddPropertyName(boilSize_l            ) // Deprecated, but retained for BeerXML -- see comments below
+AddPropertyName(boilTime_min          ) // Deprecated, but retained for BeerXML -- see comments below
+AddPropertyName(boilVolume_l          )
+AddPropertyName(brewer                )
+AddPropertyName(brewNotes             )
+AddPropertyName(calories              )
+AddPropertyName(carbonationTemp_c     )
+AddPropertyName(carbonation_vols      )
+AddPropertyName(color_srm             )
+AddPropertyName(date                  )
+AddPropertyName(efficiency_pct        )
+AddPropertyName(equipment             )
+AddPropertyName(equipmentId           )
+AddPropertyName(fermentableAdditionIds)
+AddPropertyName(fermentableAdditions  )
+AddPropertyName(fermentation          )
+AddPropertyName(fermentationId        )
+AddPropertyName(fermentationStages    )
+AddPropertyName(fg                    )
+AddPropertyName(finalVolume_l         )
+AddPropertyName(forcedCarbonation     )
+AddPropertyName(grainsInMash_kg       )
+AddPropertyName(grains_kg             )
+AddPropertyName(hopAdditionIds        )
+AddPropertyName(hopAdditions          )
+AddPropertyName(IBU                   )
+AddPropertyName(IBUs                  )
+AddPropertyName(instructionIds        )
+AddPropertyName(instructions          )
+AddPropertyName(kegPrimingFactor      )
+AddPropertyName(locked                )
+AddPropertyName(mash                  )
+AddPropertyName(mashId                )
+AddPropertyName(miscIds               )
+AddPropertyName(miscs                 )
+AddPropertyName(notes                 )
+AddPropertyName(og                    )
+AddPropertyName(points                )
+AddPropertyName(postBoilVolume_l      )
+AddPropertyName(primaryAge_days       )
+AddPropertyName(primaryTemp_c         )
+AddPropertyName(primingSugarEquiv     )
+AddPropertyName(primingSugarName      )
+AddPropertyName(saltIds               )
+AddPropertyName(secondaryAge_days     )
+AddPropertyName(secondaryTemp_c       )
+AddPropertyName(SRMColor              )
+AddPropertyName(style                 )
+AddPropertyName(styleId               )
+AddPropertyName(tasteNotes            )
+AddPropertyName(tasteRating           )
+AddPropertyName(tertiaryAge_days      )
+AddPropertyName(tertiaryTemp_c        )
+AddPropertyName(type                  )
+AddPropertyName(waterIds              )
+AddPropertyName(waters                )
+AddPropertyName(wortFromMash_l        )
+AddPropertyName(yeastIds              )
+AddPropertyName(yeasts                )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -129,6 +129,7 @@ class FermentationStep;
 class Instruction;
 class Mash;
 class MashStep;
+class RecipeAdditionFermentable;
 class RecipeAdditionHop;
 class Style;
 class Water;
@@ -337,15 +338,14 @@ public:
    //! \brief The brew notes.
    Q_PROPERTY(QList<BrewNote *> brewNotes READ brewNotes /*WRITE*/ /*NOTIFY changed*/ STORED false)
    //! \brief The hop additions.
-///   Q_PROPERTY(QList<RecipeAdditionHop *>                hopAdditions   READ hopAdditions   /*WRITE setHopAdditions*/    STORED false)
    Q_PROPERTY(QList<std::shared_ptr<RecipeAdditionHop>> hopAdditions   READ hopAdditions WRITE setHopAdditions   STORED false)
-   Q_PROPERTY(QVector<int>               hopAdditionIds READ hopAdditionIds /*WRITE setHopAdditionIds*/ STORED false)
+   Q_PROPERTY(QVector<int>                              hopAdditionIds READ hopAdditionIds /*WRITE setHopAdditionIds*/ STORED false)
    //! \brief The instructions.
    Q_PROPERTY(QList<Instruction *> instructions   READ instructions /*WRITE*/ /*NOTIFY changed*/ STORED false)
    Q_PROPERTY(QVector<int>         instructionIds READ getInstructionIds WRITE setInstructionIds)
-   //! \brief The fermentables.
-   Q_PROPERTY(QList<Fermentable *> fermentables   READ fermentables /*WRITE*/ /*NOTIFY changed*/ STORED false)
-   Q_PROPERTY(QVector<int>         fermentableIds READ getFermentableIds WRITE setFermentableIds)
+   //! \brief The fermentable additions.
+   Q_PROPERTY(QList<std::shared_ptr<RecipeAdditionFermentable>> fermentableAdditions   READ fermentableAdditions WRITE setFermentableAdditions   STORED false)
+   Q_PROPERTY(QVector<int>                                      fermentableAdditionIds READ fermentableAdditionIds /*WRITE setFermentableAdditionIds*/ STORED false)
 
    //! \brief The miscs.
    Q_PROPERTY(QList<Misc *> miscs   READ miscs /*WRITE*/ /*NOTIFY changed*/ STORED false)
@@ -514,29 +514,29 @@ public:
 
    // Relational getters
    template<typename NE> QList<std::shared_ptr<NE>> getAll() const;
-   QList<std::shared_ptr<RecipeAdditionHop>> hopAdditions     () const;
-   QVector<int>                              hopAdditionIds   () const;
-   QList<Instruction *>                      instructions     () const;
-   QVector<int>                              getInstructionIds() const;
-   QList<Fermentable *>                      fermentables     () const;
-   QVector<int>                              getFermentableIds() const;
-   QList<Misc *>                             miscs            () const;
-   QVector<int>                              getMiscIds       () const;
-   QList<Yeast *>                            yeasts           () const;
-   QVector<int>                              getYeastIds      () const;
-   QList<Water *>                            waters           () const;
-   QVector<int>                              getWaterIds      () const;
-   QList<Salt *>                             salts            () const;
-   QVector<int>                              getSaltIds       () const;
-   QList<BrewNote *>                         brewNotes        () const;
-   QList<Recipe *>                           ancestors        () const;
-   std::shared_ptr<Mash>                     getMash          () const;
-   Mash *                                    mash             () const;
-   int                                       getMashId        () const;
-   Equipment *                               equipment        () const;
-   int                                       getEquipmentId   () const;
-   Style *                                   style            () const;
-   int                                       getStyleId       () const;
+   QList<std::shared_ptr<RecipeAdditionFermentable>> fermentableAdditions  () const;
+   QVector<int>                                      fermentableAdditionIds() const;
+   QList<std::shared_ptr<RecipeAdditionHop>>         hopAdditions          () const;
+   QVector<int>                                      hopAdditionIds        () const;
+   QList<Instruction *>                              instructions          () const;
+   QVector<int>                                      getInstructionIds     () const;
+   QList<Misc *>                                     miscs                 () const;
+   QVector<int>                                      getMiscIds            () const;
+   QList<Yeast *>                                    yeasts                () const;
+   QVector<int>                                      getYeastIds           () const;
+   QList<Water *>                                    waters                () const;
+   QVector<int>                                      getWaterIds           () const;
+   QList<Salt *>                                     salts                 () const;
+   QVector<int>                                      getSaltIds            () const;
+   QList<BrewNote *>                                 brewNotes             () const;
+   QList<Recipe *>                                   ancestors             () const;
+   std::shared_ptr<Mash>                             getMash               () const;
+   Mash *                                            mash                  () const;
+   int                                               getMashId             () const;
+   Equipment *                                       equipment             () const;
+   int                                               getEquipmentId        () const;
+   Style *                                           style                 () const;
+   int                                               getStyleId            () const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<std::shared_ptr<Boil>>      boil             () const;
    //! \brief This will create a \c Boil object if it doesn't exist
@@ -557,7 +557,9 @@ public:
    void setBoil        (std::optional<std::shared_ptr<Boil>> val);
    void setFermentation(std::shared_ptr<Fermentation> val);
    void setFermentation(Fermentation *                val);
-   void setHopAdditions(QList<std::shared_ptr<RecipeAdditionHop>> val);
+   template<typename RA> void setAdditions(QList<std::shared_ptr<RA>> val);
+   void setFermentableAdditions(QList<std::shared_ptr<RecipeAdditionFermentable>> val);
+   void setHopAdditions        (QList<std::shared_ptr<RecipeAdditionHop        >> val);
 
    /**
     * \brief These calls are intended for use by the ObjectStore when pulling data from the database.  As such they do
@@ -570,7 +572,6 @@ public:
    // ⮜⮜⮜ Next two added for BeerJSON support ⮞⮞⮞
    void setBoilId        (int const id);
    void setFermentationId(int const id);
-   void setFermentableIds(QVector<int> ids);
    void setInstructionIds(QVector<int> ids);
    void setMiscIds       (QVector<int> ids);
    void setSaltIds       (QVector<int> ids);
@@ -588,8 +589,8 @@ public:
    //! \brief Get the ibus from a given \c hop.
    double ibuFromHopAddition(RecipeAdditionHop const & hop);
    // .:TBD:. Not sure reagents is the best word here...
-   //! \brief Formats the fermentables for instructions
-   QList<QString> getReagents(QList<Fermentable *> ferms);
+   //! \brief Formats the fermentable additions for instructions
+   QList<QString> getReagents(QList<std::shared_ptr<RecipeAdditionFermentable>> fermentableAdditions);
    //! \brief Formats the mashsteps for instructions
    QList<QString> getReagents(QList< std::shared_ptr<MashStep> >);
    //! \brief Formats the hops for instructions

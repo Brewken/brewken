@@ -26,6 +26,7 @@
 #include "model/Water.h"
 #include "model/Yeast.h"
 #include "model/RecipeAdditionHop.h"
+#include "model/RecipeAdditionFermentable.h"
 
 namespace {
    //
@@ -46,14 +47,14 @@ namespace {
 ///      hop.setTime_min      (npb.val<double>(PropertyNames::Hop::time_min ));
       return;
    }
-   template<> void setAmountsEtc(Fermentable & fermentable, NamedParameterBundle const & npb) {
+   template<> void setAmountsEtc(RecipeAdditionFermentable & fermentableAddition, NamedParameterBundle const & npb) {
       // For Fermentable, assume amount is weight unless otherwise specified because base BeerXML does not include the
       // possibility of fermentables being measured by volume.  (It is an extension we have added as a result of
       // implementing support for BeerJSON.)
-      fermentable.setAmount        (npb.val<double>(PropertyNames::Fermentable::amount        ));
-      fermentable.setAmountIsWeight(npb.val<bool  >(PropertyNames::Fermentable::amountIsWeight, true));
-      fermentable.setAddAfterBoil  (npb.val<bool  >(PropertyNames::Fermentable::addAfterBoil  ));
-      fermentable.setIsMashed      (npb.val<bool  >(PropertyNames::Fermentable::isMashed      ));
+///      fermentable.setAmount        (npb.val<double>(PropertyNames::Fermentable::amount        ));
+///      fermentable.setAmountIsWeight(npb.val<bool  >(PropertyNames::Fermentable::amountIsWeight, true));
+///      fermentable.setAddAfterBoil  (npb.val<bool  >(PropertyNames::Fermentable::addAfterBoil  ));
+///      fermentable.setIsMashed      (npb.val<bool  >(PropertyNames::Fermentable::isMashed      ));
       return;
    }
    template<> void setAmountsEtc(Misc & misc, NamedParameterBundle const & npb) {
@@ -294,13 +295,13 @@ void XmlRecipeRecord::subRecordToXml(XmlRecordDefinition::FieldDefinition const 
    //
    Recipe const & recipe = static_cast<Recipe const &>(namedEntityToExport);
 
-   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::hopAdditions, &Recipe::hopAdditions)) { return; }
-   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::fermentables, &Recipe::fermentables)) { return; }
-   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::miscs       , &Recipe::miscs       )) { return; }
-   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::yeasts      , &Recipe::yeasts      )) { return; }
-   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::waters      , &Recipe::waters      )) { return; }
-   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::instructions, &Recipe::instructions)) { return; }
-   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::brewNotes   , &Recipe::brewNotes   )) { return; }
+   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::hopAdditions        , &Recipe::hopAdditions        )) { return; }
+   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::fermentableAdditions, &Recipe::fermentableAdditions)) { return; }
+   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::miscs               , &Recipe::miscs               )) { return; }
+   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::yeasts              , &Recipe::yeasts              )) { return; }
+   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::waters              , &Recipe::waters              )) { return; }
+   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::instructions        , &Recipe::instructions        )) { return; }
+   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::brewNotes           , &Recipe::brewNotes           )) { return; }
 
    // It's a coding error if we get here
    qCritical() << Q_FUNC_INFO << "Don't know how to export Recipe property " << fieldDefinition.propertyPath.asXPath();

@@ -29,6 +29,7 @@
 #include "model/Fermentable.h"
 #include "model/Hop.h"
 #include "model/Inventory.h"
+#include "model/InventoryFermentable.h"
 #include "model/InventoryHop.h"
 #include "model/Misc.h"
 #include "model/Yeast.h"
@@ -55,10 +56,13 @@ namespace {
 
       // Find all the parent Fermentables whose inventory is > 0
       // (We don't want children because they are just usages of the parents in recipes.)
-      auto inventory = ObjectStoreWrapper::findAllMatching<Fermentable>(
-         [](std::shared_ptr<Fermentable> ff) { return (ff->getParent() == nullptr && ff->inventory() > 0.0); }
+///      auto inventory = ObjectStoreWrapper::findAllMatching<Fermentable>(
+///         [](std::shared_ptr<Fermentable> ff) { return (ff->getParent() == nullptr && ff->inventory() > 0.0); }
+///      );
+      auto fermentableInventory = ObjectStoreWrapper::findAllMatching<InventoryFermentable>(
+         [](std::shared_ptr<InventoryFermentable> val) { return val->quantity() > 0.0; }
       );
-      if (!inventory.empty()) {
+      if (!fermentableInventory.empty()) {
          result += QString("<h2>%1</h2>").arg(QObject::tr("Fermentables"));
          result += "<table id=\"fermentables\">";
          result += QString("<tr>"
@@ -68,14 +72,22 @@ namespace {
                         .arg(QObject::tr("Name"))
                         .arg(QObject::tr("Amount"));
 
-         for (auto fermentable : inventory) {
+///         for (auto fermentable : inventory) {
+///            result += QString("<tr>"
+///                              "<td>%1</td>"
+///                              "<td>%2</td>"
+///                              "</tr>")
+///                           .arg(fermentable->name())
+///                           .arg(Measurement::displayAmount(Measurement::Amount{fermentable->inventory(),
+///                                                                               Measurement::Units::kilograms}));
+///         }
+         for (auto ii : fermentableInventory) {
             result += QString("<tr>"
                               "<td>%1</td>"
                               "<td>%2</td>"
                               "</tr>")
-                           .arg(fermentable->name())
-                           .arg(Measurement::displayAmount(Measurement::Amount{fermentable->inventory(),
-                                                                               Measurement::Units::kilograms}));
+                           .arg(ii->fermentable()->name())
+                           .arg(Measurement::displayAmount(ii->amount()));
          }
          result += "</table>";
       }

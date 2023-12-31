@@ -33,6 +33,7 @@
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Recipe.h"
+#include "model/RecipeAdditionFermentable.h"
 #include "model/Salt.h"
 #include "tableModels/SaltTableModel.h"
 #include "tableModels/WaterTableModel.h"
@@ -238,14 +239,14 @@ void WaterDialog::setRecipe(Recipe *rec) {
    }
 
    // I need these numbers before we set the ranges
-   for (Fermentable *ii : m_rec->fermentables() ) {
+   for (auto const & fermentableAddition : m_rec->fermentableAdditions() ) {
       // .:TBD:. This almost certainly needs some refinement
-      switch (ii->type()) {
+      switch (fermentableAddition->fermentable()->type()) {
          case Fermentable::Type::Grain:
          case Fermentable::Type::Extract:
          case Fermentable::Type::Dry_Extract:
-            if (ii->amountIsWeight()) {
-               m_total_grains += ii->amount();
+            if (fermentableAddition->getMeasure() == Measurement::PhysicalQuantity::Mass) {
+               m_total_grains += fermentableAddition->amount().quantity;
             }
             break;
          case Fermentable::Type::Sugar:
@@ -260,16 +261,16 @@ void WaterDialog::setRecipe(Recipe *rec) {
    }
 
    // Now we've got m_total_grains, we need to loop over fermentable again
-   for (Fermentable *ii : m_rec->fermentables() ) {
+   for (auto const & fermentableAddition : m_rec->fermentableAdditions() ) {
       // .:TBD:. This almost certainly needs some refinement
-      switch (ii->type()) {
+      switch (fermentableAddition->fermentable()->type()) {
          case Fermentable::Type::Grain:
          case Fermentable::Type::Extract:
          case Fermentable::Type::Dry_Extract:
-            if (ii->amountIsWeight()) {
-               double lovi = ( ii->color_srm() +0.6 ) / 1.35;
-               m_weighted_colors   += (ii->amount()/m_total_grains)*lovi;
-   }
+            if (fermentableAddition->getMeasure() == Measurement::PhysicalQuantity::Mass) {
+               double lovi = (fermentableAddition->fermentable()->color_srm() +0.6 ) / 1.35;
+               m_weighted_colors   += (fermentableAddition->amount().quantity/m_total_grains)*lovi;
+            }
             break;
          case Fermentable::Type::Sugar:
          case Fermentable::Type::Other_Adjunct:
@@ -502,14 +503,14 @@ double WaterDialog::calculateGristpH() {
    double gristPh = nosrmbeer_ph;
    double pHAdjustment = 0.0;
 
-   if ( m_rec && m_rec->fermentables().size() ) {
+   if ( m_rec && m_rec->fermentableAdditions().size() ) {
 
       double platoRatio = 1/Measurement::Units::plato.fromCanonical(m_rec->og());
       double color = m_rec->color_srm();
       double colorFromGrain = 0.0;
 
-      for (Fermentable * ii : m_rec->fermentables()) {
-         switch (ii->type()) {
+      for (auto const & fermentableAddition : m_rec->fermentableAdditions() ) {
+         switch (fermentableAddition->fermentable()->type()) {
             case Fermentable::Type::Grain:
             case Fermentable::Type::Extract:
             case Fermentable::Type::Dry_Extract:
@@ -517,12 +518,12 @@ double WaterDialog::calculateGristpH() {
                // power as a roasted/crystal malt. I am sure my assumption will
                // haunt me later, but I have no way of knowing what kind of malt
                // (base, crystal, roasted) this is.
-               if ( ii->diastaticPower_lintner() < 1 ) {
+               if (fermentableAddition->fermentable()->diastaticPower_lintner() < 1 ) {
                   double lovi = 19.0;
-                  if ( ii->color_srm() <= 120 ) {
-                     lovi = ( ii->color_srm() + 0.6)/1.35;
+                  if (fermentableAddition->fermentable()->color_srm() <= 120 ) {
+                     lovi = (fermentableAddition->fermentable()->color_srm() + 0.6)/1.35;
                }
-                  colorFromGrain = ( ii->amount() / m_total_grains ) * lovi;
+                  colorFromGrain = (fermentableAddition->amount().quantity / m_total_grains ) * lovi;
                }
                break;
             case Fermentable::Type::Sugar:
@@ -549,7 +550,7 @@ double WaterDialog::calculateGristpH() {
 double WaterDialog::calculateMashpH() {
    double mashpH = 0.0;
 
-   if ( m_rec && m_rec->fermentables().size() ) {
+   if ( m_rec && m_rec->fermentableAdditions().size() ) {
       double gristpH   = calculateGristpH();
       double basepH    = calculateSaltpH();
       double saltpH    = calculateAddedSaltpH();

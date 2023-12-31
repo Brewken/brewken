@@ -436,7 +436,7 @@ QString BrewDayScrollWidget::buildInstructionTable() {
       // doesn't work in other languages. Find a better way.
       QList<QString> reagents;
       if ( ins->name() == tr("Add grains") ) {
-         reagents = this->recObs->getReagents( this->recObs->fermentables() );
+         reagents = this->recObs->getReagents( this->recObs->fermentableAdditions() );
       } else if ( ins->name() == tr("Heat water") ) {
          reagents = this->recObs->getReagents( this->recObs->mash()->mashSteps() );
       } else {

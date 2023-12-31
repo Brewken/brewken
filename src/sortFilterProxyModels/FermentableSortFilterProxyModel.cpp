@@ -29,15 +29,12 @@ bool FermentableSortFilterProxyModel::isLessThan(FermentableTableModel::ColumnIn
                                                  QVariant const & leftItem,
                                                  QVariant const & rightItem) const {
    switch (columnIndex) {
-      case FermentableTableModel::ColumnIndex::Name     :
-      case FermentableTableModel::ColumnIndex::Type     :
-      case FermentableTableModel::ColumnIndex::IsWeight :
-      case FermentableTableModel::ColumnIndex::IsMashed :
-      case FermentableTableModel::ColumnIndex::AfterBoil:
+      case FermentableTableModel::ColumnIndex::Name              :
+      case FermentableTableModel::ColumnIndex::Type              :
+      case FermentableTableModel::ColumnIndex::TotalInventoryType:
          return leftItem.toString() < rightItem.toString();
 
-      case FermentableTableModel::ColumnIndex::Inventory:
-      case FermentableTableModel::ColumnIndex::Amount:
+      case FermentableTableModel::ColumnIndex::TotalInventory:
          return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Mass) <
                 Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Mass);
 

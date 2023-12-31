@@ -29,6 +29,7 @@
 
 #include "database/ObjectStoreWrapper.h"
 #include "model/Inventory.h"
+#include "model/InventoryFermentable.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 #include "utils/OptionalHelpers.h"
@@ -107,11 +108,11 @@ TypeLookup const Fermentable::typeLookup {
    "Fermentable",
    {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::type                     , Fermentable::m_type                     ,           NonPhysicalQuantity::Enum           ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::amount                   , Fermentable::m_amount                   , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume             ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::amountIsWeight           , Fermentable::m_amountIsWeight           ,           NonPhysicalQuantity::Bool           ), // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::amount                   , Fermentable::m_amount                   , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume             ),
+///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::amountIsWeight           , Fermentable::m_amountIsWeight           ,           NonPhysicalQuantity::Bool           ), // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::yield_pct                , Fermentable::m_yield_pct                ,           NonPhysicalQuantity::Percentage     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::color_srm                , Fermentable::m_color_srm                , Measurement::PhysicalQuantity::Color          ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::addAfterBoil             , Fermentable::m_addAfterBoil             ,           NonPhysicalQuantity::Bool           ),
+///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::addAfterBoil             , Fermentable::m_addAfterBoil             ,           NonPhysicalQuantity::Bool           ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::origin                   , Fermentable::m_origin                   ,           NonPhysicalQuantity::String         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::supplier                 , Fermentable::m_supplier                 ,           NonPhysicalQuantity::String         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::notes                    , Fermentable::m_notes                    ),
@@ -122,7 +123,7 @@ TypeLookup const Fermentable::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::maxInBatch_pct           , Fermentable::m_maxInBatch_pct           ,           NonPhysicalQuantity::Percentage     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::recommendMash            , Fermentable::m_recommendMash            ,           NonPhysicalQuantity::Bool           ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::ibuGalPerLb              , Fermentable::m_ibuGalPerLb              ,           NonPhysicalQuantity::Dimensionless  ), // Not really dimensionless...
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::isMashed                 , Fermentable::m_isMashed                 ,           NonPhysicalQuantity::Bool           ),
+///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::isMashed                 , Fermentable::m_isMashed                 ,           NonPhysicalQuantity::Bool           ),
       // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::grainGroup               , Fermentable::m_grainGroup               ,           NonPhysicalQuantity::Enum           ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::producer                 , Fermentable::m_producer                 ,           NonPhysicalQuantity::String         ),
@@ -148,35 +149,36 @@ TypeLookup const Fermentable::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::betaGlucan               , Fermentable::m_betaGlucan               , Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::betaGlucanIsMassPerVolume, Fermentable::m_betaGlucanIsMassPerVolume,           NonPhysicalQuantity::Bool           ),
 
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::amountWithUnits    , Fermentable::amountWithUnits            , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume        ),
+///      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::amountWithUnits    , Fermentable::amountWithUnits            , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume        ),
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::dmsPWithUnits      , Fermentable::dmsPWithUnits              , Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc),
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::fanWithUnits       , Fermentable::fanWithUnits               , Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc),
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::betaGlucanWithUnits, Fermentable::betaGlucanWithUnits        , Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc),
    },
-   // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
-   {&NamedEntityWithInventory::typeLookup}
+   // Parent classes lookup
+   {&Ingredient::typeLookup,
+    &IngredientBase<Fermentable>::typeLookup}
 };
-static_assert(std::is_base_of<NamedEntityWithInventory, Fermentable>::value);
+static_assert(std::is_base_of<Ingredient, Fermentable>::value);
 
 Fermentable::Fermentable(QString name) :
-   NamedEntityWithInventory   {name, true},
+   Ingredient                 {name},
    m_type                     {Fermentable::Type::Grain},
-   m_amount                   {0.0                     },
-   m_amountIsWeight           {true                    }, // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+///   m_amount                   {0.0                     },
+///   m_amountIsWeight           {true                    }, // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
    m_yield_pct                {0.0                     },
    m_color_srm                {0.0                     },
-   m_addAfterBoil             {false                   },
+///   m_addAfterBoil             {false                   },
    m_origin                   {""                      },
    m_supplier                 {""                      },
    m_notes                    {""                      },
    m_coarseFineDiff_pct       {0.0                     },
    m_moisture_pct             {0.0                     },
-   m_diastaticPower_lintner   {0.0                     },
+   m_diastaticPower_lintner   {std::nullopt            },
    m_protein_pct              {0.0                     },
    m_maxInBatch_pct           {100.0                   },
    m_recommendMash            {false                   },
    m_ibuGalPerLb              {0.0                     },
-   m_isMashed                 {false                   },
+///   m_isMashed                 {false                   },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    m_grainGroup               {std::nullopt            },
    m_producer                 {""                      },
@@ -205,11 +207,11 @@ Fermentable::Fermentable(QString name) :
 }
 
 Fermentable::Fermentable(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntityWithInventory   {namedParameterBundle},
+   Ingredient   {namedParameterBundle},
    SET_REGULAR_FROM_NPB (m_type                               , namedParameterBundle, PropertyNames::Fermentable::type                             ),
    SET_REGULAR_FROM_NPB (m_yield_pct                          , namedParameterBundle, PropertyNames::Fermentable::yield_pct                        ),
    SET_REGULAR_FROM_NPB (m_color_srm                          , namedParameterBundle, PropertyNames::Fermentable::color_srm                        ),
-   SET_REGULAR_FROM_NPB (m_addAfterBoil                       , namedParameterBundle, PropertyNames::Fermentable::addAfterBoil                     ),
+///   SET_REGULAR_FROM_NPB (m_addAfterBoil                       , namedParameterBundle, PropertyNames::Fermentable::addAfterBoil                     ),
    SET_REGULAR_FROM_NPB (m_origin                             , namedParameterBundle, PropertyNames::Fermentable::origin                , QString()),
    SET_REGULAR_FROM_NPB (m_supplier                           , namedParameterBundle, PropertyNames::Fermentable::supplier              , QString()),
    SET_REGULAR_FROM_NPB (m_notes                              , namedParameterBundle, PropertyNames::Fermentable::notes                 , QString()),
@@ -220,7 +222,7 @@ Fermentable::Fermentable(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_maxInBatch_pct                     , namedParameterBundle, PropertyNames::Fermentable::maxInBatch_pct                   ),
    SET_REGULAR_FROM_NPB (m_recommendMash                      , namedParameterBundle, PropertyNames::Fermentable::recommendMash                    ),
    SET_REGULAR_FROM_NPB (m_ibuGalPerLb                        , namedParameterBundle, PropertyNames::Fermentable::ibuGalPerLb                      ),
-   SET_REGULAR_FROM_NPB (m_isMashed                           , namedParameterBundle, PropertyNames::Fermentable::isMashed              , false    ),
+///   SET_REGULAR_FROM_NPB (m_isMashed                           , namedParameterBundle, PropertyNames::Fermentable::isMashed              , false    ),
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    SET_OPT_ENUM_FROM_NPB(m_grainGroup, Fermentable::GrainGroup, namedParameterBundle, PropertyNames::Fermentable::grainGroup                       ),
    SET_REGULAR_FROM_NPB (m_producer                           , namedParameterBundle, PropertyNames::Fermentable::producer                         ),
@@ -240,13 +242,13 @@ Fermentable::Fermentable(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_viscosity_cP                       , namedParameterBundle, PropertyNames::Fermentable::viscosity_cP                     ),
    SET_REGULAR_FROM_NPB (m_fermentability_pct                 , namedParameterBundle, PropertyNames::Fermentable::fermentability_pct               ) {
 
-   this->setEitherOrReqParams(namedParameterBundle,
-                              PropertyNames::Fermentable::amount    ,
-                              PropertyNames::Fermentable::amountIsWeight           ,
-                              PropertyNames::Fermentable::amountWithUnits    ,
-                              Measurement::PhysicalQuantity::Mass,
-                              this->m_amount    ,
-                              this->m_amountIsWeight           );
+///   this->setEitherOrReqParams(namedParameterBundle,
+///                              PropertyNames::Fermentable::amount    ,
+///                              PropertyNames::Fermentable::amountIsWeight           ,
+///                              PropertyNames::Fermentable::amountWithUnits    ,
+///                              Measurement::PhysicalQuantity::Mass,
+///                              this->m_amount    ,
+///                              this->m_amountIsWeight           );
    this->setEitherOrOptParams(namedParameterBundle,
                               PropertyNames::Fermentable::dmsP      ,
                               PropertyNames::Fermentable::dmsPIsMassPerVolume      ,
@@ -272,13 +274,13 @@ Fermentable::Fermentable(NamedParameterBundle const & namedParameterBundle) :
 }
 
 Fermentable::Fermentable(Fermentable const & other) :
-   NamedEntityWithInventory   {other                         },
+   Ingredient                 {other                         },
    m_type                     {other.m_type                  },
-   m_amount                   {other.m_amount                },
-   m_amountIsWeight           {other.m_amountIsWeight        }, // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+///   m_amount                   {other.m_amount                },
+///   m_amountIsWeight           {other.m_amountIsWeight        }, // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
    m_yield_pct                {other.m_yield_pct             },
    m_color_srm                {other.m_color_srm             },
-   m_addAfterBoil             {other.m_addAfterBoil          },
+///   m_addAfterBoil             {other.m_addAfterBoil          },
    m_origin                   {other.m_origin                },
    m_supplier                 {other.m_supplier              },
    m_notes                    {other.m_notes                 },
@@ -289,7 +291,7 @@ Fermentable::Fermentable(Fermentable const & other) :
    m_maxInBatch_pct           {other.m_maxInBatch_pct        },
    m_recommendMash            {other.m_recommendMash         },
    m_ibuGalPerLb              {other.m_ibuGalPerLb           },
-   m_isMashed                 {other.m_isMashed              },
+///   m_isMashed                 {other.m_isMashed              },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    m_grainGroup               {other.m_grainGroup            },
    m_producer                 {other.m_producer              },
@@ -321,22 +323,22 @@ Fermentable::~Fermentable() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
 Fermentable::Type                      Fermentable::type                     () const { return                    this->m_type                     ; }
-double                                 Fermentable::amount                   () const { return                    this->m_amount                   ; }
-bool                                   Fermentable::amountIsWeight           () const { return                    this->m_amountIsWeight           ; } // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+///double                                 Fermentable::amount                   () const { return                    this->m_amount                   ; }
+///bool                                   Fermentable::amountIsWeight           () const { return                    this->m_amountIsWeight           ; } // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
 double                                 Fermentable::yield_pct                () const { return                    this->m_yield_pct                ; }
 double                                 Fermentable::color_srm                () const { return                    this->m_color_srm                ; }
-bool                                   Fermentable::addAfterBoil             () const { return                    this->m_addAfterBoil             ; }
+///bool                                   Fermentable::addAfterBoil             () const { return                    this->m_addAfterBoil             ; }
 QString                                Fermentable::origin                   () const { return                    this->m_origin                   ; }
 QString                                Fermentable::supplier                 () const { return                    this->m_supplier                 ; }
 QString                                Fermentable::notes                    () const { return                    this->m_notes                    ; }
 double                                 Fermentable::coarseFineDiff_pct       () const { return                    this->m_coarseFineDiff_pct       ; }
 double                                 Fermentable::moisture_pct             () const { return                    this->m_moisture_pct             ; }
-double                                 Fermentable::diastaticPower_lintner   () const { return                    this->m_diastaticPower_lintner   ; }
+std::optional<double>                  Fermentable::diastaticPower_lintner   () const { return                    this->m_diastaticPower_lintner   ; }
 double                                 Fermentable::protein_pct              () const { return                    this->m_protein_pct              ; }
 double                                 Fermentable::maxInBatch_pct           () const { return                    this->m_maxInBatch_pct           ; }
 bool                                   Fermentable::recommendMash            () const { return                    this->m_recommendMash            ; }
 double                                 Fermentable::ibuGalPerLb              () const { return                    this->m_ibuGalPerLb              ; }
-bool                                   Fermentable::isMashed                 () const { return                    this->m_isMashed                 ; }
+///bool                                   Fermentable::isMashed                 () const { return                    this->m_isMashed                 ; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 std::optional<Fermentable::GrainGroup> Fermentable::grainGroup               () const { return                    this->m_grainGroup               ; }
 std::optional<int>                     Fermentable::grainGroupAsInt          () const { return Optional::toOptInt(this->m_grainGroup)              ; }
@@ -364,7 +366,7 @@ std::optional<double>                  Fermentable::betaGlucan               () 
 bool                                   Fermentable::betaGlucanIsMassPerVolume() const { return                    this->m_betaGlucanIsMassPerVolume; }
 
 // Combined getters (all added for BeerJSON support)
-Measurement::Amount                             Fermentable::amountWithUnits    () const { return MassOrVolumeAmt{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
+///Measurement::Amount                             Fermentable::amountWithUnits    () const { return MassOrVolumeAmt{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
 std::optional<Measurement::Amount> Fermentable::dmsPWithUnits      () const { return Optional::eitherOr<MassOrVolumeConcentrationAmt>(this->m_dmsP      , this->m_dmsPIsMassPerVolume      , Measurement::Units::milligramsPerLiter, Measurement::Units::partsPerMillion); }
 std::optional<Measurement::Amount> Fermentable::fanWithUnits       () const { return Optional::eitherOr<MassOrVolumeConcentrationAmt>(this->m_fan       , this->m_fanIsMassPerVolume       , Measurement::Units::milligramsPerLiter, Measurement::Units::partsPerMillion); }
 std::optional<Measurement::Amount> Fermentable::betaGlucanWithUnits() const { return Optional::eitherOr<MassOrVolumeConcentrationAmt>(this->m_betaGlucan, this->m_betaGlucanIsMassPerVolume, Measurement::Units::milligramsPerLiter, Measurement::Units::partsPerMillion); }
@@ -378,36 +380,22 @@ bool Fermentable::isSugar() const {
    return (type() == Fermentable::Type::Sugar);
 }
 
-double Fermentable::equivSucrose_kg() const {
-   // .:TBD:. Not clear what we should return (or whether we should even be called) if amount is a volume
-   if (!this->m_amountIsWeight) {
-      qWarning() << Q_FUNC_INFO << "Trying to calculate equivSucrose_kg for Fermantable measured by volume";
-   }
-   double const ret = this->amount() * this->yield_pct() * (1.0 - this->moisture_pct() / 100.0) / 100.0;
-
-   // If this is a steeped grain...
-   if (this->type() == Fermentable::Type::Grain && !this->isMashed()) {
-      return 0.60 * ret; // Reduce the yield by 60%.
-   }
-   return ret;
-}
-
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
 void Fermentable::setType                     (Type                      const   val) { this->setAndNotify(PropertyNames::Fermentable::type                     , this->m_type                     , val); return; }
-void Fermentable::setAddAfterBoil             (bool                      const   val) { this->setAndNotify(PropertyNames::Fermentable::addAfterBoil             , this->m_addAfterBoil             , val); return; }
+///void Fermentable::setAddAfterBoil             (bool                      const   val) { this->setAndNotify(PropertyNames::Fermentable::addAfterBoil             , this->m_addAfterBoil             , val); return; }
 void Fermentable::setOrigin                   (QString                   const & val) { this->setAndNotify(PropertyNames::Fermentable::origin                   , this->m_origin                   , val); return; }
 void Fermentable::setSupplier                 (QString                   const & val) { this->setAndNotify(PropertyNames::Fermentable::supplier                 , this->m_supplier                 , val); return; }
 void Fermentable::setNotes                    (QString                   const & val) { this->setAndNotify(PropertyNames::Fermentable::notes                    , this->m_notes                    , val); return; }
 void Fermentable::setRecommendMash            (bool                      const   val) { this->setAndNotify(PropertyNames::Fermentable::recommendMash            , this->m_recommendMash            , val); return; }
-void Fermentable::setIsMashed                 (bool                      const   val) { this->setAndNotify(PropertyNames::Fermentable::isMashed                 , this->m_isMashed                 , val); return; }
+///void Fermentable::setIsMashed                 (bool                      const   val) { this->setAndNotify(PropertyNames::Fermentable::isMashed                 , this->m_isMashed                 , val); return; }
 void Fermentable::setIbuGalPerLb              (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::ibuGalPerLb              , this->m_ibuGalPerLb              , val); return; }
-void Fermentable::setAmount                   (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::amount                   , this->m_amount                   , this->enforceMin      (val, "amount"));                     return; }
-void Fermentable::setAmountIsWeight           (bool                      const   val) { this->setAndNotify(PropertyNames::Fermentable::amountIsWeight           , this->m_amountIsWeight           , val); return; } // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+///void Fermentable::setAmount                   (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::amount                   , this->m_amount                   , this->enforceMin      (val, "amount"));                     return; }
+///void Fermentable::setAmountIsWeight           (bool                      const   val) { this->setAndNotify(PropertyNames::Fermentable::amountIsWeight           , this->m_amountIsWeight           , val); return; } // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
 void Fermentable::setYield_pct                (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::yield_pct                , this->m_yield_pct                , this->enforceMinAndMax(val, "amount",         0.0, 100.0)); return; }
 void Fermentable::setColor_srm                (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::color_srm                , this->m_color_srm                , this->enforceMin      (val, "color"));                      return; }
 void Fermentable::setCoarseFineDiff_pct       (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::coarseFineDiff_pct       , this->m_coarseFineDiff_pct       , this->enforceMinAndMax(val, "coarseFineDiff", 0.0, 100.0)); return; }
 void Fermentable::setMoisture_pct             (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::moisture_pct             , this->m_moisture_pct             , this->enforceMinAndMax(val, "moisture",       0.0, 100.0)); return; }
-void Fermentable::setDiastaticPower_lintner   (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::diastaticPower_lintner   , this->m_diastaticPower_lintner   , this->enforceMin      (val, "diastatic power"));            return; }
+void Fermentable::setDiastaticPower_lintner   (std::optional<double>     const   val) { this->setAndNotify(PropertyNames::Fermentable::diastaticPower_lintner   , this->m_diastaticPower_lintner   , this->enforceMin      (val, "diastatic power"));            return; }
 void Fermentable::setProtein_pct              (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::protein_pct              , this->m_protein_pct              , this->enforceMinAndMax(val, "protein",        0.0, 100.0)); return; }
 void Fermentable::setMaxInBatch_pct           (double                    const   val) { this->setAndNotify(PropertyNames::Fermentable::maxInBatch_pct           , this->m_maxInBatch_pct           , this->enforceMinAndMax(val, "max in batch",   0.0, 100.0)); return; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -436,11 +424,11 @@ void Fermentable::setFermentability_pct       (std::optional<double>     const  
 void Fermentable::setBetaGlucan               (std::optional<double>     const   val) { this->setAndNotify(PropertyNames::Fermentable::betaGlucan               , this->m_betaGlucan               , val                                  ); return; }
 void Fermentable::setBetaGlucanIsMassPerVolume(bool                      const   val) { this->setAndNotify(PropertyNames::Fermentable::betaGlucanIsMassPerVolume, this->m_betaGlucanIsMassPerVolume, val                                  ); return; }
 
-void Fermentable::setAmountWithUnits          (Measurement::Amount           const   val) {
-   this->setAndNotify(PropertyNames::Fermentable::amount        , this->m_amount        , val.quantity);
-   this->setAndNotify(PropertyNames::Fermentable::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
-   return;
-}
+///void Fermentable::setAmountWithUnits          (Measurement::Amount           const   val) {
+///   this->setAndNotify(PropertyNames::Fermentable::amount        , this->m_amount        , val.quantity);
+///   this->setAndNotify(PropertyNames::Fermentable::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
+///   return;
+///}
 void Fermentable::setDmsPWithUnits      (std::optional<Measurement::Amount> const   val) {
    std::optional<double> quantity = std::nullopt; // Gets set by Optional::eitherOr
    bool const isMassPerVolume = Optional::eitherOr(val, quantity, Measurement::PhysicalQuantity::MassConcentration);
@@ -467,17 +455,5 @@ Recipe * Fermentable::getOwningRecipe() const {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 }
 
-bool fermentablesLessThanByWeight(Fermentable const * const lhs, Fermentable const * const rhs) {
-   // Sort by name if the two fermentables are of equal weight or volume
-   if (lhs->amountIsWeight() == rhs->amountIsWeight() && qFuzzyCompare(lhs->amount(), rhs->amount())) {
-      return lhs->name() < rhs->name();
-   }
-
-   // .:TBD:. Do we want to separate out liquids and solids?
-
-   // Yes. I know. This seems silly, but I want the returned list in descending not ascending order.
-   return lhs->amount() > rhs->amount();
-}
-
 // Insert the boiler-plate stuff for inventory
-INVENTORY_COMMON_CODE(Fermentable)
+INGREDIENT_BASE_COMMON_CODE(Fermentable)

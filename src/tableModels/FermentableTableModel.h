@@ -46,15 +46,12 @@ class Recipe;
 class FermentableTableModel;
 template <> struct TableModelTraits<FermentableTableModel> {
    enum class ColumnIndex {
-      Name     ,
-      Type     ,
-      Amount   ,
-      Inventory,
-      IsWeight ,
-      IsMashed ,
-      AfterBoil,
-      Yield    ,
-      Color    ,
+      Name              ,
+      Type              ,
+      Yield             ,
+      Color             ,
+      TotalInventory    ,
+      TotalInventoryType,
    };
 };
 
@@ -63,29 +60,15 @@ template <> struct TableModelTraits<FermentableTableModel> {
  *
  * \brief A table model for a list of fermentables.
  */
-class FermentableTableModel : public BtTableModelInventory, public TableModelBase<FermentableTableModel, Fermentable> {
+class FermentableTableModel : public BtTableModel, public TableModelBase<FermentableTableModel, Fermentable> {
    Q_OBJECT
 
    TABLE_MODEL_COMMON_DECL(Fermentable)
-
-public:
-   //! \brief True if you want to display percent of each grain in the row header.
-   void setDisplayPercentages(bool var);
-
-private:
-   //! \brief Recalculate the total amount of grains in the model.
-   void updateTotalGrains();
-
-private:
-   bool displayPercentages;
-
-   // .:TODO:.:JSON:.  Now that fermentables can also be measured by volume, we need to rethink this
-   double totalFermMass_kg;
 };
 
-// Check that concepts are working!
-static_assert(ObservesRecipe<FermentableTableModel>);
-static_assert(HasInventory<FermentableTableModel>);
+///// Check that concepts are working!
+///static_assert(ObservesRecipe<FermentableTableModel>);
+///static_assert(HasInventory<FermentableTableModel>);
 
 //=========================================== CLASS FermentableItemDelegate ============================================
 

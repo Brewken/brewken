@@ -217,7 +217,7 @@ QString BrewDayFormatter::buildInstructionHtml() {
       // TODO: comparing ins->name() with these untranslated strings means this
       // doesn't work in other languages. Find a better way.
       if (ins->name() == tr("Add grains")) {
-         reagents = recObs->getReagents(recObs->fermentables());
+         reagents = recObs->getReagents(recObs->fermentableAdditions());
       } else if (ins->name() == tr("Heat water")) {
          reagents = recObs->getReagents(recObs->mash()->mashSteps());
       } else {
@@ -280,7 +280,7 @@ QList<QStringList> BrewDayFormatter::buildInstructionList() {
       // TODO: comparing ins->name() with these untranslated strings means this
       // doesn't work in other languages. Find a better way.
       if (ins->name() == tr("Add grains")) {
-         reagents = recObs->getReagents(recObs->fermentables());
+         reagents = recObs->getReagents(recObs->fermentableAdditions());
       } else if (ins->name() == tr("Heat water")) {
          reagents = recObs->getReagents(recObs->mash()->mashSteps());
       } else {

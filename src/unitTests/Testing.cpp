@@ -57,6 +57,7 @@
 #include "model/MashStep.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
+#include "model/RecipeAdditionFermentable.h"
 #include "model/RecipeAdditionHop.h"
 #include "PersistentSettings.h"
 
@@ -451,7 +452,7 @@ void Testing::initTestCase() {
       this->pimpl->m_twoRow->setYield_pct(70.0);
       this->pimpl->m_twoRow->setColor_srm(2.0);
       this->pimpl->m_twoRow->setMoisture_pct(0);
-      this->pimpl->m_twoRow->setIsMashed(true);
+///      this->pimpl->m_twoRow->setIsMashed(true);
    } catch (std::exception const & e) {
       // When an exception gets to Qt, it will barf something along the lines of "Caught unhandled exception" without
       // leaving you much the wiser.  If we can intercept the exception along the way, we can ensure more details are
@@ -508,9 +509,12 @@ void Testing::recipeCalcTest_allGrain() {
    rec->add(cascadeHopAddition);
 
    // Add grain
-   this->pimpl->m_twoRow->setAmount(grain_kg);
-   this->pimpl->m_twoRow->setAmountIsWeight(true);
-   rec->add<Fermentable>(this->pimpl->m_twoRow);
+   auto twoRowFermentableAddition = std::make_shared<RecipeAdditionFermentable>("Two Row Grain Addition");
+   twoRowFermentableAddition->setFermentable(this->pimpl->m_twoRow.get());
+   twoRowFermentableAddition->setStage(RecipeAddition::Stage::Mash);
+   twoRowFermentableAddition->setQuantity(grain_kg);
+   twoRowFermentableAddition->setMeasure(Measurement::PhysicalQuantity::Mass);
+   rec->add(twoRowFermentableAddition);
 
    // Add mash
    rec->setMash(singleConversion.get());
@@ -589,10 +593,18 @@ void Testing::postBoilLossOgTest() {
    recLoss->setEquipment(eLoss);
 
    // Add grain
-   this->pimpl->m_twoRow->setAmount(grain_kg);
-   this->pimpl->m_twoRow->setAmountIsWeight(true);
-   recNoLoss->add<Fermentable>(this->pimpl->m_twoRow);
-   recLoss->add<Fermentable>(this->pimpl->m_twoRow);
+   auto twoRowFermentableAddition1 = std::make_shared<RecipeAdditionFermentable>("Two Row Grain Addition 1");
+   auto twoRowFermentableAddition2 = std::make_shared<RecipeAdditionFermentable>("Two Row Grain Addition 2");
+   twoRowFermentableAddition1->setFermentable(this->pimpl->m_twoRow.get());
+   twoRowFermentableAddition2->setFermentable(this->pimpl->m_twoRow.get());
+   twoRowFermentableAddition1->setStage(RecipeAddition::Stage::Mash);
+   twoRowFermentableAddition2->setStage(RecipeAddition::Stage::Mash);
+   twoRowFermentableAddition1->setQuantity(grain_kg);
+   twoRowFermentableAddition2->setQuantity(grain_kg);
+   twoRowFermentableAddition1->setMeasure(Measurement::PhysicalQuantity::Mass);
+   twoRowFermentableAddition2->setMeasure(Measurement::PhysicalQuantity::Mass);
+   recNoLoss->add(twoRowFermentableAddition1);
+   recLoss->add(twoRowFermentableAddition2);
 
    // Single conversion, no sparge
    auto singleConversion = std::make_shared<Mash>();

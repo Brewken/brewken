@@ -16,4 +16,4 @@
 #include "listModels/FermentableListModel.h"
 
 // Insert the boiler-plate stuff that we cannot do in ListModelBase
-LIST_MODEL_COMMON_CODE(Fermentable, PropertyNames::Recipe::fermentables)
+LIST_MODEL_COMMON_CODE(Fermentable, PropertyNames::Recipe::fermentableAdditions)

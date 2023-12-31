@@ -52,6 +52,7 @@
 #include "model/MashStep.h"
 #include "model/Misc.h"
 #include "model/NamedParameterBundle.h"
+#include "model/RecipeAdditionFermentable.h"
 #include "model/RecipeAdditionHop.h"
 #include "model/Salt.h"
 #include "model/Style.h"
@@ -175,18 +176,18 @@ namespace {
    // update the database.  These template specialisations map from property type to property name.
    //
    template<class NE> BtStringConst const & propertyToPropertyName();
-   template<> BtStringConst const & propertyToPropertyName<Boil        >() { return PropertyNames::Recipe::boilId        ; }
-   template<> BtStringConst const & propertyToPropertyName<Equipment   >() { return PropertyNames::Recipe::equipmentId   ; }
-   template<> BtStringConst const & propertyToPropertyName<Fermentable >() { return PropertyNames::Recipe::fermentableIds; }
-   template<> BtStringConst const & propertyToPropertyName<Fermentation>() { return PropertyNames::Recipe::fermentationId; }
-   template<> BtStringConst const & propertyToPropertyName<RecipeAdditionHop>() { return PropertyNames::Recipe::hopAdditionIds        ; }
-   template<> BtStringConst const & propertyToPropertyName<Instruction >() { return PropertyNames::Recipe::instructionIds; }
-   template<> BtStringConst const & propertyToPropertyName<Mash        >() { return PropertyNames::Recipe::mashId        ; }
-   template<> BtStringConst const & propertyToPropertyName<Misc        >() { return PropertyNames::Recipe::miscIds       ; }
-   template<> BtStringConst const & propertyToPropertyName<Salt        >() { return PropertyNames::Recipe::saltIds       ; }
-   template<> BtStringConst const & propertyToPropertyName<Style       >() { return PropertyNames::Recipe::styleId       ; }
-   template<> BtStringConst const & propertyToPropertyName<Water       >() { return PropertyNames::Recipe::waterIds      ; }
-   template<> BtStringConst const & propertyToPropertyName<Yeast       >() { return PropertyNames::Recipe::yeastIds      ; }
+   template<> BtStringConst const & propertyToPropertyName<Boil                     >() { return PropertyNames::Recipe::boilId                ; }
+   template<> BtStringConst const & propertyToPropertyName<Equipment                >() { return PropertyNames::Recipe::equipmentId           ; }
+   template<> BtStringConst const & propertyToPropertyName<RecipeAdditionFermentable>() { return PropertyNames::Recipe::fermentableAdditionIds; }
+   template<> BtStringConst const & propertyToPropertyName<Fermentation             >() { return PropertyNames::Recipe::fermentationId        ; }
+   template<> BtStringConst const & propertyToPropertyName<RecipeAdditionHop        >() { return PropertyNames::Recipe::hopAdditionIds        ; }
+   template<> BtStringConst const & propertyToPropertyName<Instruction              >() { return PropertyNames::Recipe::instructionIds        ; }
+   template<> BtStringConst const & propertyToPropertyName<Mash                     >() { return PropertyNames::Recipe::mashId                ; }
+   template<> BtStringConst const & propertyToPropertyName<Misc                     >() { return PropertyNames::Recipe::miscIds               ; }
+   template<> BtStringConst const & propertyToPropertyName<Salt                     >() { return PropertyNames::Recipe::saltIds               ; }
+   template<> BtStringConst const & propertyToPropertyName<Style                    >() { return PropertyNames::Recipe::styleId               ; }
+   template<> BtStringConst const & propertyToPropertyName<Water                    >() { return PropertyNames::Recipe::waterIds              ; }
+   template<> BtStringConst const & propertyToPropertyName<Yeast                    >() { return PropertyNames::Recipe::yeastIds              ; }
 
 ///   QHash<QString, Recipe::Type> const RECIPE_TYPE_STRING_TO_TYPE {
 ///      {"Extract",      Recipe::Type::Extract},
@@ -365,9 +366,12 @@ public:
          connect(equipment, &NamedEntity::changed,           &this->m_self, &Recipe::acceptChangeToContainedObject);
       }
 
-      QList<Fermentable *> fermentables = this->m_self.fermentables();
-      for (auto fermentable : fermentables) {
-         connect(fermentable, &NamedEntity::changed, &this->m_self, &Recipe::acceptChangeToContainedObject);
+      auto fermentableAdditions = this->m_self.fermentableAdditions();
+      for (auto fermentableAddition : fermentableAdditions) {
+         connect(fermentableAddition->fermentable(),
+                 &NamedEntity::changed,
+                 &this->m_self,
+                 &Recipe::acceptChangeToContainedObject);
       }
 
       auto hopAdditions = this->m_self.hopAdditions();
@@ -569,17 +573,15 @@ public:
 
    PreInstruction boilFermentablesPre(double timeRemaining) {
       QString str = tr("Boil or steep ");
-      QList<Fermentable *> flist = m_self.fermentables();
-      int size = flist.size();
-      for (int i = 0; static_cast<int>(i) < size; ++i) {
-         Fermentable * ferm = flist[i];
-         if (ferm->isMashed() || ferm->addAfterBoil() || ferm->isExtract()) {
+      for (auto const & fermentableAddition : m_self.fermentableAdditions()) {
+         if (fermentableAddition->stage() != RecipeAddition::Stage::Boil ||
+            fermentableAddition->addAfterBoil() || fermentableAddition->fermentable()->isExtract()) {
             continue;
          }
 
          str += QString("%1 %2, ")
-               .arg(Measurement::displayAmount(ferm->amountWithUnits()))
-               .arg(ferm->name());
+               .arg(Measurement::displayAmount(fermentableAddition->amount()))
+               .arg(fermentableAddition->name());
       }
       str += ".";
 
@@ -587,10 +589,8 @@ public:
    }
 
    bool hasBoilFermentable() {
-      int i;
-      for (i = 0; static_cast<int>(i) < m_self.fermentables().size(); ++i) {
-         Fermentable * ferm = m_self.fermentables()[i];
-         if (ferm->isMashed() || ferm->addAfterBoil()) {
+      for (auto const & fermentableAddition : m_self.fermentableAdditions()) {
+         if (fermentableAddition->stage() == RecipeAddition::Stage::Mash || fermentableAddition->addAfterBoil()) {
             continue;
          } else {
             return true;
@@ -600,10 +600,8 @@ public:
    }
 
    bool hasBoilExtract() {
-      int i;
-      for (i = 0; static_cast<int>(i) < m_self.fermentables().size(); ++i) {
-         Fermentable * ferm = m_self.fermentables()[i];
-         if (ferm->isExtract()) {
+      for (auto const & fermentableAddition : m_self.fermentableAdditions()) {
+         if (fermentableAddition->fermentable()->isExtract()) {
             return true;
          } else {
             continue;
@@ -614,14 +612,11 @@ public:
 
    PreInstruction addExtracts(double timeRemaining) const {
       QString str = tr("Raise water to boil and then remove from heat. Stir in  ");
-      const QList<Fermentable *> flist = m_self.fermentables();
-      int size = flist.size();
-      for (int i = 0; static_cast<int>(i) < size; ++i) {
-         const Fermentable * ferm = flist[i];
-         if (ferm->isExtract()) {
+      for (auto const & fermentableAddition : m_self.fermentableAdditions()) {
+         if (fermentableAddition->fermentable()->isExtract()) {
             str += QString("%1 %2, ")
-                  .arg(Measurement::displayAmount(ferm->amountWithUnits()))
-                  .arg(ferm->name());
+                  .arg(Measurement::displayAmount(fermentableAddition->amount()))
+                  .arg(fermentableAddition->fermentable()->name());
          }
       }
       str += ".";
@@ -824,7 +819,7 @@ TypeLookup const Recipe::typeLookup {
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::brewNotes         , Recipe::m_brewNotes         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::calories          , Recipe::m_calories          ,           NonPhysicalQuantity::Dimensionless ), // .:TBD:. One day this should perhaps become Measurement::PhysicalQuantity::Energy
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::color_srm         , Recipe::m_color_srm         , Measurement::PhysicalQuantity::Color         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::fermentableIds    , Recipe::impl::fermentableIds),
+//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::fermentableIds    , Recipe::impl::fermentableIds),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::fermentables      , Recipe::m_fermentables      ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::finalVolume_l     , Recipe::m_finalVolume_l     , Measurement::PhysicalQuantity::Volume        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::grainsInMash_kg   , Recipe::m_grainsInMash_kg   , Measurement::PhysicalQuantity::Mass          ),
@@ -846,9 +841,10 @@ TypeLookup const Recipe::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::yeastIds          , Recipe::impl::yeastIds      ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::yeasts            , Recipe::m_yeasts            ),
 
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::hopAdditionIds, Recipe::hopAdditionIds    ),
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::boilSize_l    , Recipe::boilSize_l        , Measurement::PhysicalQuantity::Volume        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::boilTime_min  , Recipe::boilTime_min      , Measurement::PhysicalQuantity::Time          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::fermentableAdditionIds, Recipe::fermentableAdditionIds),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::hopAdditionIds        , Recipe::hopAdditionIds        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::boilSize_l            , Recipe::boilSize_l            , Measurement::PhysicalQuantity::Volume        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::boilTime_min          , Recipe::boilTime_min          , Measurement::PhysicalQuantity::Time          ),
    },
    // Parent class lookup
    {&NamedEntity::typeLookup}
@@ -1072,7 +1068,7 @@ void Recipe::mashFermentableIns() {
    auto ins = std::make_shared<Instruction>();
    ins->setName(tr("Add grains"));
    QString str = tr("Add ");
-   QList<QString> reagents = this->getReagents(this->fermentables());
+   QList<QString> reagents = this->getReagents(this->fermentableAdditions());
 
    for (int ii = 0; ii < reagents.size(); ++ii) {
       str += reagents.at(ii);
@@ -1194,18 +1190,15 @@ void Recipe::postboilFermentablesIns() {
    bool hasFerms = false;
 
    QString str = tr("Add ");
-   QList<Fermentable *> flist = this->fermentables();
-   int size = flist.size();
-   for (int ii = 0; ii < size; ++ii) {
-      Fermentable * ferm = flist[ii];
-      if (!ferm->addAfterBoil()) {
+   for (auto const & fermentableAddition : this->fermentableAdditions()) {
+      if (!fermentableAddition->addAfterBoil()) {
          continue;
       }
 
       hasFerms = true;
       tmp = QString("%1 %2, ")
-            .arg(Measurement::displayAmount(ferm->amountWithUnits()))
-            .arg(ferm->name());
+            .arg(Measurement::displayAmount(fermentableAddition->amount()))
+            .arg(fermentableAddition->fermentable()->name());
       str += tmp;
    }
    str += tr("to the boil at knockout.");
@@ -1499,7 +1492,6 @@ template<class NE> std::shared_ptr<NE> Recipe::add(std::shared_ptr<NE> ne) {
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
 // means, amongst other things, that we can reference the pimpl.)
 //
-template std::shared_ptr<Fermentable> Recipe::add(std::shared_ptr<Fermentable> var);
 template std::shared_ptr<Misc       > Recipe::add(std::shared_ptr<Misc       > var);
 template std::shared_ptr<Yeast      > Recipe::add(std::shared_ptr<Yeast      > var);
 template std::shared_ptr<Water      > Recipe::add(std::shared_ptr<Water      > var);
@@ -1531,7 +1523,8 @@ template<class RA> std::shared_ptr<RA> Recipe::addAddition(std::shared_ptr<RA> a
    this->recalcIfNeeded(addition->ingredient()->metaObject()->className());
    return addition;
 }
-template std::shared_ptr<RecipeAdditionHop> Recipe::addAddition(std::shared_ptr<RecipeAdditionHop> addition);
+template std::shared_ptr<RecipeAdditionFermentable> Recipe::addAddition(std::shared_ptr<RecipeAdditionFermentable> addition);
+template std::shared_ptr<RecipeAdditionHop        > Recipe::addAddition(std::shared_ptr<RecipeAdditionHop        > addition);
 
 template<class NE> bool Recipe::uses(NE const & val) const {
    int idToLookFor = val.key();
@@ -1601,7 +1594,6 @@ template<class NE> std::shared_ptr<NE> Recipe::remove(std::shared_ptr<NE> var) {
    // remove).
    return var;
 }
-template std::shared_ptr<Fermentable> Recipe::remove(std::shared_ptr<Fermentable> var);
 template std::shared_ptr<Misc       > Recipe::remove(std::shared_ptr<Misc       > var);
 template std::shared_ptr<Yeast      > Recipe::remove(std::shared_ptr<Yeast      > var);
 template std::shared_ptr<Water      > Recipe::remove(std::shared_ptr<Water      > var);
@@ -1633,7 +1625,8 @@ template<class RA> std::shared_ptr<RA> Recipe::removeAddition(std::shared_ptr<RA
    // remove).
    return addition;
 }
-template std::shared_ptr<RecipeAdditionHop> Recipe::removeAddition(std::shared_ptr<RecipeAdditionHop> addition);
+template std::shared_ptr<RecipeAdditionFermentable> Recipe::removeAddition(std::shared_ptr<RecipeAdditionFermentable> addition);
+template std::shared_ptr<RecipeAdditionHop        > Recipe::removeAddition(std::shared_ptr<RecipeAdditionHop        > addition);
 
 int Recipe::instructionNumber(Instruction const & ins) const {
    // C++ arrays etc are indexed from 0, but for end users we want instruction numbers to start from 1
@@ -1721,15 +1714,17 @@ void Recipe::setBoil        (std::optional<std::shared_ptr<Boil>> val) { this->p
 void Recipe::setFermentation(std::shared_ptr<Fermentation> val) { this->pimpl->setStepOwner<Fermentation>(val, this->m_fermentationId, PropertyNames::Recipe::fermentation); return; }
 void Recipe::setFermentation(Fermentation *                val) { this->pimpl->setStepOwner<Fermentation>(val, this->m_fermentationId, PropertyNames::Recipe::fermentation); return; }
 
-void Recipe::setHopAdditions(QList<std::shared_ptr<RecipeAdditionHop>> val) {
-   qDebug() << Q_FUNC_INFO << "Adding" << val.size() << "RecipeAdditionHop entries" << "¥¥";
+template<typename RA> void Recipe::setAdditions(QList<std::shared_ptr<RA>> val) {
+//   qDebug() << Q_FUNC_INFO << "Adding" << val.size() << RA::staticMetaObject.className() << "entries";
    for (auto ii : val) {
-      qDebug() << Q_FUNC_INFO << "Setting Recipe ID #" << this->key() << "on RecipeAdditionHop #" << ii->key() << "¥¥";
+//      qDebug() << Q_FUNC_INFO << "Setting Recipe ID #" << this->key() << "on" << RA::staticMetaObject.className() << "#" << ii->key();
       ii->setRecipeId(this->key());
    }
    return;
 }
 
+void Recipe::setFermentableAdditions(QList<std::shared_ptr<RecipeAdditionFermentable>> val) { this->setAdditions(val); return; }
+void Recipe::setHopAdditions        (QList<std::shared_ptr<RecipeAdditionHop        >> val) { this->setAdditions(val); return; }
 
 ///void Recipe::setMash(Mash * var) {
 ///   if (var->key() == this->m_mashId) {
@@ -1758,7 +1753,6 @@ void Recipe::setMashId        (int const id) { this->m_mashId         = id; retu
 void Recipe::setBoilId        (int const id) { this->m_boilId         = id; return; }
 void Recipe::setFermentationId(int const id) { this->m_fermentationId = id; return; }
 
-void Recipe::setFermentableIds(QVector<int> ids) {    this->pimpl->fermentableIds = ids; return; }
 void Recipe::setInstructionIds(QVector<int> ids) {    this->pimpl->instructionIds = ids; return; }
 void Recipe::setMiscIds       (QVector<int> ids) {    this->pimpl->miscIds        = ids; return; }
 void Recipe::setSaltIds       (QVector<int> ids) {    this->pimpl->saltIds        = ids; return; }
@@ -2241,15 +2235,14 @@ template QList< std::shared_ptr<Salt> > Recipe::getAll<Salt>() const;
 template QList< std::shared_ptr<Yeast> > Recipe::getAll<Yeast>() const;
 template QList< std::shared_ptr<Water> > Recipe::getAll<Water>() const;
 // Override for things that aren't stored in junction tables
-template<> QList< std::shared_ptr<RecipeAdditionHop> > Recipe::getAll<RecipeAdditionHop>() const {
-   return this->pimpl->allMy<RecipeAdditionHop>();
-}
+template<> QList< std::shared_ptr<RecipeAdditionFermentable> > Recipe::getAll<RecipeAdditionFermentable>() const { return this->pimpl->allMy<RecipeAdditionFermentable>(); }
+template<> QList< std::shared_ptr<RecipeAdditionHop        > > Recipe::getAll<RecipeAdditionHop        >() const { return this->pimpl->allMy<RecipeAdditionHop        >(); }
 
 ///QList<RecipeAdditionHop *>  Recipe::hopAdditions() const { return this->pimpl->allMyRaw<RecipeAdditionHop>(); }
-QList<std::shared_ptr<RecipeAdditionHop>> Recipe::hopAdditions() const { return this->pimpl->allMy<RecipeAdditionHop>(); }
-QVector<int>         Recipe::hopAdditionIds()      const { return this->pimpl->allMyIds<RecipeAdditionHop>();                 }
-QList<Fermentable *> Recipe::fermentables()      const { return this->pimpl->getAllMyRaw<Fermentable>(); }
-QVector<int>         Recipe::getFermentableIds() const { return this->pimpl->fermentableIds;             }
+QList<std::shared_ptr<RecipeAdditionFermentable>> Recipe::fermentableAdditions() const { return this->pimpl->allMy<RecipeAdditionFermentable>(); }
+QList<std::shared_ptr<RecipeAdditionHop        >> Recipe::        hopAdditions() const { return this->pimpl->allMy<RecipeAdditionHop        >(); }
+QVector<int>         Recipe::fermentableAdditionIds() const { return this->pimpl->allMyIds<RecipeAdditionFermentable>(); }
+QVector<int>         Recipe::        hopAdditionIds() const { return this->pimpl->allMyIds<RecipeAdditionHop        >(); }
 QList<Misc *>        Recipe::miscs()             const { return this->pimpl->getAllMyRaw<Misc>();        }
 QVector<int>         Recipe::getMiscIds()        const { return this->pimpl->miscIds;                    }
 QList<Yeast *>       Recipe::yeasts()            const { return this->pimpl->getAllMyRaw<Yeast>();       }
@@ -2387,15 +2380,15 @@ void Recipe::recalcABV_pct() {
 void Recipe::recalcColor_srm() {
    double mcu = 0.0;
 
-   for (auto const * ii : this->fermentables()) {
-      if (ii->amountIsWeight()) {
+   for (auto const & fermentableAddition : this->fermentableAdditions()) {
+      if (fermentableAddition->amountIsWeight()) {
          // Conversion factor for lb/gal to kg/l = 8.34538.
-         mcu += ii->color_srm() * 8.34538 * ii->amount() / m_finalVolumeNoLosses_l;
+         mcu += fermentableAddition->fermentable()->color_srm() * 8.34538 * fermentableAddition->amount().quantity / m_finalVolumeNoLosses_l;
       } else {
          // .:TBD:. What do do about liquids
          qWarning() <<
-            Q_FUNC_INFO << "Unimplemented branch for handling color of liquid fermentables - #" << ii->key() << ":" <<
-            ii->name();
+            Q_FUNC_INFO << "Unimplemented branch for handling color of liquid fermentables - #" << fermentableAddition->fermentable()->key() << ":" <<
+            fermentableAddition->name();
       }
    }
 
@@ -2426,15 +2419,15 @@ void Recipe::recalcIBU() {
    }
 
    // Bitterness due to hopped extracts...
-   for (auto const * ii : this->fermentables()) {
-      if (ii->amountIsWeight()) {
+   for (auto const & fermentableAddition : this->fermentableAdditions()) {
+      if (fermentableAddition->amountIsWeight()) {
          // Conversion factor for lb/gal to kg/l = 8.34538.
-         ibus += ii->ibuGalPerLb() * (ii->amount() / batchSize_l()) / 8.34538;
+         ibus += fermentableAddition->fermentable()->ibuGalPerLb() * (fermentableAddition->amount().quantity / batchSize_l()) / 8.34538;
       } else {
          // .:TBD:. What do do about liquids
          qWarning() <<
-            Q_FUNC_INFO << "Unimplemented branch for handling IBU of liquid fermentables - #" << ii->key() << ":" <<
-            ii->name();
+            Q_FUNC_INFO << "Unimplemented branch for handling IBU of liquid fermentables - #" << fermentableAddition->fermentable()->key() << ":" <<
+            fermentableAddition->name();
       }
    }
 
@@ -2481,27 +2474,28 @@ void Recipe::recalcVolumeEstimates() {
 
    // .:TODO:. Assumptions below about liquids are almost certainly wrong, also TBD what other cases we have to cover
    // Need to account for extract/sugar volume also.
-   for (auto const * ii : this->fermentables()) {
-      switch (ii->type()) {
+   for (auto const & fermentableAddition : this->fermentableAdditions()) {
+      auto const & fermentable = fermentableAddition->fermentable();
+      switch (fermentable->type()) {
          case Fermentable::Type::Extract:
-            if (ii->amountIsWeight()) {
-               tmp += ii->amount() / PhysicalConstants::liquidExtractDensity_kgL;
+            if (fermentableAddition->amountIsWeight()) {
+               tmp += fermentableAddition->amount().quantity / PhysicalConstants::liquidExtractDensity_kgL;
             } else {
-               tmp += ii->amount();
+               tmp += fermentableAddition->amount().quantity;
             }
             break;
          case Fermentable::Type::Sugar:
-            if (ii->amountIsWeight()) {
-               tmp += ii->amount() / PhysicalConstants::sucroseDensity_kgL;
+            if (fermentableAddition->amountIsWeight()) {
+               tmp += fermentableAddition->amount().quantity / PhysicalConstants::sucroseDensity_kgL;
             } else {
-               tmp += ii->amount();
+               tmp += fermentableAddition->amount().quantity;
             }
             break;
          case Fermentable::Type::Dry_Extract:
-            if (ii->amountIsWeight()) {
-               tmp += ii->amount() / PhysicalConstants::dryExtractDensity_kgL;
+            if (fermentableAddition->amountIsWeight()) {
+               tmp += fermentableAddition->amount().quantity / PhysicalConstants::dryExtractDensity_kgL;
             } else {
-               tmp += ii->amount();
+               tmp += fermentableAddition->amount().quantity;
             }
             break;
       }
@@ -2569,14 +2563,15 @@ void Recipe::recalcVolumeEstimates() {
 void Recipe::recalcGrainsInMash_kg() {
    double ret = 0.0;
 
-   for (auto const * ii : this->fermentables()) {
-      if (ii->type() == Fermentable::Type::Grain && ii->isMashed()) {
-         if (ii->amountIsWeight()) {
-            ret += ii->amount();
+   for (auto const & fermentableAddition : this->fermentableAdditions()) {
+      if (fermentableAddition->fermentable()->type() == Fermentable::Type::Grain &&
+          fermentableAddition->stage() == RecipeAddition::Stage::Mash) {
+         if (fermentableAddition->amountIsWeight()) {
+            ret += fermentableAddition->amount().quantity;
          } else {
             qWarning() <<
-               Q_FUNC_INFO << "Ignoring fermentable #" << ii->key() << "(" << ii->name() << ") as measured by "
-               "volume";
+               Q_FUNC_INFO << "Ignoring grain fermentable addition #" << fermentableAddition->key() << "(" <<
+               fermentableAddition->name() << ") as measured by volume";
          }
       }
    }
@@ -2593,16 +2588,16 @@ void Recipe::recalcGrainsInMash_kg() {
 void Recipe::recalcGrains_kg() {
    double ret = 0.0;
 
-   for (auto const * ii : this->fermentables()) {
+   for (auto const & fermentableAddition : this->fermentableAdditions()) {
       // .:TODO:. Need to think about what, if anything, we need to do for other Fermantable types here
-      if (ii->type() == Fermentable::Type::Grain) {
+      if (fermentableAddition->fermentable()->type() == Fermentable::Type::Grain) {
          // I wouldn't have thought you would want to measure grain by volume, but best to check
-         if (ii->amountIsWeight()) {
-            ret += ii->amount();
+         if (fermentableAddition->amountIsWeight()) {
+            ret += fermentableAddition->amount().quantity;
          } else {
             qWarning() <<
-               Q_FUNC_INFO << "Ignoring fermentable #" << ii->key() << "(" << ii->name() << ") as measured by "
-               "volume";
+               Q_FUNC_INFO << "Ignoring grain fermentable addition #" << fermentableAddition->key() << "(" <<
+               fermentableAddition->name() << ") as measured by volume";
          }
       }
    }
@@ -2666,49 +2661,43 @@ void Recipe::recalcCalories() {
    return;
 }
 
-// other efficiency calculations need access to the maximum theoretical sugars
+// Other efficiency calculations need access to the maximum theoretical sugars
 // available. The only way I can see of doing that which doesn't suck is to
-// split that calcuation out of recalcOgFg();
+// split that calculation out of recalcOgFg();
 QHash<QString, double> Recipe::calcTotalPoints() {
-   int i;
    double sugar_kg_ignoreEfficiency = 0.0;
    double sugar_kg                  = 0.0;
-   double nonFermentableSugars_kg    = 0.0;
+   double nonFermentableSugars_kg   = 0.0;
    double lateAddition_kg           = 0.0;
    double lateAddition_kg_ignoreEff = 0.0;
 
-   Fermentable * ferm;
-
-   QList<Fermentable *> ferms = fermentables();
-   QHash<QString, double> ret;
-
-   for (i = 0; static_cast<int>(i) < ferms.size(); ++i) {
-      ferm = ferms[i];
-
+   for (auto const & fermentableAddition : this->fermentableAdditions()) {
+      auto const & fermentable = fermentableAddition->fermentable();
       // If we have some sort of non-grain, we have to ignore efficiency.
-      if (ferm->isSugar() || ferm->isExtract()) {
-         sugar_kg_ignoreEfficiency += ferm->equivSucrose_kg();
+      if (fermentable->isSugar() || fermentable->isExtract()) {
+         sugar_kg_ignoreEfficiency += fermentableAddition->equivSucrose_kg();
 
-         if (ferm->addAfterBoil()) {
-            lateAddition_kg_ignoreEff += ferm->equivSucrose_kg();
+         if (fermentableAddition->addAfterBoil()) {
+            lateAddition_kg_ignoreEff += fermentableAddition->equivSucrose_kg();
          }
 
-         if (!isFermentableSugar(ferm)) {
-            nonFermentableSugars_kg += ferm->equivSucrose_kg();
+         if (!isFermentableSugar(fermentable)) {
+            nonFermentableSugars_kg += fermentableAddition->equivSucrose_kg();
          }
       } else {
-         sugar_kg += ferm->equivSucrose_kg();
+         sugar_kg += fermentableAddition->equivSucrose_kg();
 
-         if (ferm->addAfterBoil()) {
-            lateAddition_kg += ferm->equivSucrose_kg();
+         if (fermentableAddition->addAfterBoil()) {
+            lateAddition_kg += fermentableAddition->equivSucrose_kg();
          }
       }
    }
 
-   ret.insert("sugar_kg", sugar_kg);
-   ret.insert("nonFermentableSugars_kg", nonFermentableSugars_kg);
+   QHash<QString, double> ret;
+   ret.insert("sugar_kg"                 , sugar_kg                 );
+   ret.insert("nonFermentableSugars_kg"  , nonFermentableSugars_kg  );
    ret.insert("sugar_kg_ignoreEfficiency", sugar_kg_ignoreEfficiency);
-   ret.insert("lateAddition_kg", lateAddition_kg);
+   ret.insert("lateAddition_kg"          , lateAddition_kg          );
    ret.insert("lateAddition_kg_ignoreEff", lateAddition_kg_ignoreEff);
 
    return ret;
@@ -2901,7 +2890,7 @@ double Recipe::ibuFromHopAddition(RecipeAdditionHop const & hopAddition) {
 
    double AArating = hopAddition.hop()->alpha_pct() / 100.0;
    // .:TBD.JSON:.  What to do if hopAddition is measured by volume?
-   if (hopAddition.measure() != Measurement::PhysicalQuantity::Mass) {
+   if (hopAddition.amountIsWeight()) {
       qCritical() << Q_FUNC_INFO << "Using Hop volume as weight - THIS IS PROBABLY WRONG!";
    }
    double grams = hopAddition.quantity() * 1000.0;
@@ -2962,21 +2951,23 @@ double Recipe::ibuFromHopAddition(RecipeAdditionHop const & hopAddition) {
 ///   return RECIPE_TYPE_STRING_TO_TYPE.contains(str);
 ///}
 
-QList<QString> Recipe::getReagents(QList<Fermentable *> ferms) {
+QList<QString> Recipe::getReagents(QList<std::shared_ptr<RecipeAdditionFermentable>> fermentableAdditions) {
    QList<QString> reagents;
-   for (int ii = 0; ii < ferms.size(); ++ii) {
-      if (ferms[ii]->isMashed()) {
+   bool firstTime = true;
+   for (auto const & fermentableAddition : fermentableAdditions) {
+      if (fermentableAddition->stage() == RecipeAddition::Stage::Mash) {
          // .:TBD:.  This isn't the most elegant or accurate way of handling commas.  If we're returning a list, we
          // should probably leave it to the caller to put commas in for display.
          QString format;
-         if (ii + 1 < ferms.size()) {
-            format = "%1 %2, ";
+         if (firstTime) {
+            format = "%1 %2";
+            firstTime = false;
          } else {
-            format = "%1 %2 ";
+            format = ", %1 %2";
          }
          reagents.append(
-            format.arg(Measurement::displayAmount(ferms[ii]->amountWithUnits()))
-                  .arg(ferms[ii]->name())
+            format.arg(Measurement::displayAmount(fermentableAddition->amount()))
+                  .arg(fermentableAddition->fermentable()->name())
          );
       }
    }
@@ -3102,30 +3093,31 @@ double Recipe::targetCollectedWortVol_l() {
    // Need to account for extract/sugar volume also.
    double postMashAdditionVolume_l = 0;
 
-   for (Fermentable const * f : this->fermentables()) {
-      switch (f->type()) {
+   for (auto const & fermentableAddition : this->fermentableAdditions()) {
+      auto const & fermentable = fermentableAddition->fermentable();
+      switch (fermentable->type()) {
          case Fermentable::Type::Extract:
-            if (f->amountIsWeight()) {
-               postMashAdditionVolume_l += f->amount() / PhysicalConstants::liquidExtractDensity_kgL;
+            if (fermentableAddition->amountIsWeight()) {
+               postMashAdditionVolume_l += fermentableAddition->amount().quantity / PhysicalConstants::liquidExtractDensity_kgL;
             } else {
                // .:TBD:. This is probably incorrect!
-               postMashAdditionVolume_l += f->amount();
+               postMashAdditionVolume_l += fermentableAddition->amount().quantity;
             }
             break;
          case Fermentable::Type::Sugar:
-            if (f->amountIsWeight()) {
-               postMashAdditionVolume_l += f->amount() / PhysicalConstants::sucroseDensity_kgL;
+            if (fermentableAddition->amountIsWeight()) {
+               postMashAdditionVolume_l += fermentableAddition->amount().quantity / PhysicalConstants::sucroseDensity_kgL;
             } else {
                // .:TBD:. This is probably incorrect!
-               postMashAdditionVolume_l += f->amount();
+               postMashAdditionVolume_l += fermentableAddition->amount().quantity;
             }
             break;
          case Fermentable::Type::Dry_Extract:
-            if (f->amountIsWeight()) {
-               postMashAdditionVolume_l += f->amount() / PhysicalConstants::dryExtractDensity_kgL;
+            if (fermentableAddition->amountIsWeight()) {
+               postMashAdditionVolume_l += fermentableAddition->amount().quantity / PhysicalConstants::dryExtractDensity_kgL;
             } else {
                // .:TBD:. This is probably incorrect!
-               postMashAdditionVolume_l += f->amount();
+               postMashAdditionVolume_l += fermentableAddition->amount().quantity;
             }
             break;
          // .:TODO:. Need to handle other types of Fermentable here, even if it's just to add a NO-OP to show the

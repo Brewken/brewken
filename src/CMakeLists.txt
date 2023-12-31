@@ -99,6 +99,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/listModels/MashListModel.cpp
     ${repoDir}/src/listModels/MashStepListModel.cpp
     ${repoDir}/src/listModels/MiscListModel.cpp
+    ${repoDir}/src/listModels/RecipeAdditionFermentableListModel.cpp
     ${repoDir}/src/listModels/RecipeAdditionHopListModel.cpp
     ${repoDir}/src/listModels/SaltListModel.cpp
     ${repoDir}/src/listModels/StyleListModel.cpp
@@ -136,6 +137,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/model/NamedEntityWithInventory.cpp
     ${repoDir}/src/model/NamedParameterBundle.cpp
     ${repoDir}/src/model/RecipeAddition.cpp
+    ${repoDir}/src/model/RecipeAdditionFermentable.cpp
     ${repoDir}/src/model/RecipeAdditionHop.cpp
     ${repoDir}/src/model/Recipe.cpp
     ${repoDir}/src/model/Salt.cpp
@@ -180,6 +182,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/sortFilterProxyModels/FermentableSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/HopSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/MiscSortFilterProxyModel.cpp
+    ${repoDir}/src/sortFilterProxyModels/RecipeAdditionFermentableSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/RecipeAdditionHopSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/StyleSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/WaterSortFilterProxyModel.cpp
@@ -193,6 +196,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/tableModels/HopTableModel.cpp
     ${repoDir}/src/tableModels/MashStepTableModel.cpp
     ${repoDir}/src/tableModels/MiscTableModel.cpp
+    ${repoDir}/src/tableModels/RecipeAdditionFermentableTableModel.cpp
     ${repoDir}/src/tableModels/RecipeAdditionHopTableModel.cpp
     ${repoDir}/src/tableModels/SaltTableModel.cpp
     ${repoDir}/src/tableModels/StyleTableModel.cpp
