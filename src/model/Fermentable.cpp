@@ -452,7 +452,8 @@ void Fermentable::setBetaGlucanWithUnits(std::optional<Measurement::Amount> cons
 }
 
 Recipe * Fermentable::getOwningRecipe() const {
-   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+   return nullptr;
 }
 
 // Insert the boiler-plate stuff for inventory

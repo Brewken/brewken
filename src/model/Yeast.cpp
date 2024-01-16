@@ -121,8 +121,8 @@ TypeLookup const Yeast::typeLookup {
    {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::type                     , Yeast::m_type                     ,           NonPhysicalQuantity::Enum          ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::form                     , Yeast::m_form                     ,           NonPhysicalQuantity::Enum          ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::amount                   , Yeast::m_amount                   , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume            ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::amountIsWeight           , Yeast::m_amountIsWeight           ,           NonPhysicalQuantity::Bool          ),
+///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::amount                   , Yeast::m_amount                   , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume            ),
+///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::amountIsWeight           , Yeast::m_amountIsWeight           ,           NonPhysicalQuantity::Bool          ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::laboratory               , Yeast::m_laboratory               ,           NonPhysicalQuantity::String        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::productID                , Yeast::m_productID                ,           NonPhysicalQuantity::String        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::minTemperature_c         , Yeast::m_minTemperature_c         , Measurement::PhysicalQuantity::Temperature   ),
@@ -160,8 +160,8 @@ Yeast::Yeast(QString name) :
    NamedEntityWithInventory   {name, true},
    m_type                     {Yeast::Type::Ale},
    m_form                     {Yeast::Form::Liquid},
-   m_amount                   {0.0},
-   m_amountIsWeight           {false},
+///   m_amount                   {0.0},
+///   m_amountIsWeight           {false},
    m_laboratory               {""},
    m_productID                {""},
    m_minTemperature_c         {std::nullopt},
@@ -191,8 +191,8 @@ Yeast::Yeast(NamedParameterBundle const & namedParameterBundle) :
    NamedEntityWithInventory   {namedParameterBundle},
    SET_REGULAR_FROM_NPB (m_type                             , namedParameterBundle, PropertyNames::Yeast::type                     ),
    SET_REGULAR_FROM_NPB (m_form                             , namedParameterBundle, PropertyNames::Yeast::form                     ),
-   SET_REGULAR_FROM_NPB (m_amount                           , namedParameterBundle, PropertyNames::Yeast::amount                   ),
-   SET_REGULAR_FROM_NPB (m_amountIsWeight                   , namedParameterBundle, PropertyNames::Yeast::amountIsWeight           ),
+///   SET_REGULAR_FROM_NPB (m_amount                           , namedParameterBundle, PropertyNames::Yeast::amount                   ),
+///   SET_REGULAR_FROM_NPB (m_amountIsWeight                   , namedParameterBundle, PropertyNames::Yeast::amountIsWeight           ),
    SET_REGULAR_FROM_NPB (m_laboratory                       , namedParameterBundle, PropertyNames::Yeast::laboratory               ),
    SET_REGULAR_FROM_NPB (m_productID                        , namedParameterBundle, PropertyNames::Yeast::productID                ),
    SET_REGULAR_FROM_NPB (m_minTemperature_c                 , namedParameterBundle, PropertyNames::Yeast::minTemperature_c         ),
@@ -222,8 +222,8 @@ Yeast::Yeast(Yeast const & other) :
    NamedEntityWithInventory   {other                            },
    m_type                     {other.m_type                     },
    m_form                     {other.m_form                     },
-   m_amount                   {other.m_amount                   },
-   m_amountIsWeight           {other.m_amountIsWeight           },
+///   m_amount                   {other.m_amount                   },
+///   m_amountIsWeight           {other.m_amountIsWeight           },
    m_laboratory               {other.m_laboratory               },
    m_productID                {other.m_productID                },
    m_minTemperature_c         {other.m_minTemperature_c         },
@@ -253,8 +253,8 @@ Yeast::~Yeast() = default;
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
 Yeast::Type                        Yeast::type                     () const { return                    m_type                     ; }
 Yeast::Form                        Yeast::form                     () const { return                    m_form                     ; }
-double                             Yeast::amount                   () const { return                    m_amount                   ; }
-bool                               Yeast::amountIsWeight           () const { return                    m_amountIsWeight           ; }
+///double                             Yeast::amount                   () const { return                    m_amount                   ; }
+///bool                               Yeast::amountIsWeight           () const { return                    m_amountIsWeight           ; }
 QString                            Yeast::laboratory               () const { return                    m_laboratory               ; }
 QString                            Yeast::productID                () const { return                    m_productID                ; }
 std::optional<double>              Yeast::minTemperature_c         () const { return                    m_minTemperature_c         ; } // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
@@ -285,8 +285,8 @@ MassOrVolumeAmt     Yeast::amountWithUnits () const { return MassOrVolumeAmt{thi
 // It seems a bit of overkill to enforce absolute zero as the lowest allowable temperature, but we do
 void Yeast::setType                     (Yeast::Type                 const   val) { this->setAndNotify(PropertyNames::Yeast::type                     , m_type            , val); return; }
 void Yeast::setForm                     (Yeast::Form                 const   val) { this->setAndNotify(PropertyNames::Yeast::form                     , m_form            , val); return; }
-void Yeast::setAmount                   (double                      const   val) { this->setAndNotify(PropertyNames::Yeast::amount                   , m_amount          , this->enforceMin      (val, "amount"         , 0.0)); return; }
-void Yeast::setAmountIsWeight           (bool                        const   val) { this->setAndNotify(PropertyNames::Yeast::amountIsWeight           , m_amountIsWeight  , val); return; }
+///void Yeast::setAmount                   (double                      const   val) { this->setAndNotify(PropertyNames::Yeast::amount                   , m_amount          , this->enforceMin      (val, "amount"         , 0.0)); return; }
+///void Yeast::setAmountIsWeight           (bool                        const   val) { this->setAndNotify(PropertyNames::Yeast::amountIsWeight           , m_amountIsWeight  , val); return; }
 void Yeast::setLaboratory               (QString                     const & val) { this->setAndNotify(PropertyNames::Yeast::laboratory               , m_laboratory      , val); return; }
 void Yeast::setProductID                (QString                     const & val) { this->setAndNotify(PropertyNames::Yeast::productID                , m_productID       , val); return; }
 void Yeast::setMinTemperature_c         (std::optional<double>       const   val) { this->setAndNotify(PropertyNames::Yeast::minTemperature_c         , m_minTemperature_c, this->enforceMin      (val, "max temp"       , PhysicalConstants::absoluteZero, 0.0  )); return; }
@@ -311,11 +311,11 @@ void Yeast::setKillerProducingK28Toxin  (std::optional<bool>         const   val
 void Yeast::setKillerProducingKlusToxin (std::optional<bool>         const   val) { this->setAndNotify(PropertyNames::Yeast::killerProducingKlusToxin , m_killerProducingKlusToxin , val); return; }
 void Yeast::setKillerNeutral            (std::optional<bool>         const   val) { this->setAndNotify(PropertyNames::Yeast::killerNeutral            , m_killerNeutral            , val); return; }
 
-void Yeast::setAmountWithUnits (MassOrVolumeAmt     const   val) {
-   this->setAndNotify(PropertyNames::Yeast::amount        , this->m_amount        , val.quantity);
-   this->setAndNotify(PropertyNames::Yeast::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
-   return;
-}
+///void Yeast::setAmountWithUnits (MassOrVolumeAmt     const   val) {
+///   this->setAndNotify(PropertyNames::Yeast::amount        , this->m_amount        , val.quantity);
+///   this->setAndNotify(PropertyNames::Yeast::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
+///   return;
+///}
 
 
 double Yeast::getTypicalAttenuation_pct() const {
@@ -329,13 +329,14 @@ double Yeast::getTypicalAttenuation_pct() const {
 }
 
 Recipe * Yeast::getOwningRecipe() const {
-   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+   return nullptr;
 }
 
-void Yeast::setInventoryQuanta(int var) {
-   this->setInventoryAmount(var);
-   return;
-}
+///void Yeast::setInventoryQuanta(int var) {
+///   this->setInventoryAmount(var);
+///   return;
+///}
 
 // Insert the boiler-plate stuff for inventory
-INVENTORY_COMMON_CODE(Yeast)
+INGREDIENT_BASE_COMMON_CODE(Yeast)

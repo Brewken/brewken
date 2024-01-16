@@ -4336,6 +4336,154 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
+    <name>RecipeAdditionMisc</name>
+    <message>
+        <source>Misc Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished">Затор</translation>
+    </message>
+    <message>
+        <source>First Wort</source>
+        <translation type="unfinished">Первое сусло</translation>
+    </message>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished">Кипячение</translation>
+    </message>
+    <message>
+        <source>Post-Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dry Misc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Addition of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionMiscTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Форма</translation>
+    </message>
+    <message>
+        <source>Alpha %</source>
+        <translation type="unfinished">Альфа %</translation>
+    </message>
+    <message>
+        <source>Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished">Количество</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Инвентарь</translation>
+    </message>
+    <message>
+        <source>Stage</source>
+        <translation type="unfinished">Этап</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished">Время</translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionYeast</name>
+    <message>
+        <source>Yeast Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished">Затор</translation>
+    </message>
+    <message>
+        <source>First Wort</source>
+        <translation type="unfinished">Первое сусло</translation>
+    </message>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished">Кипячение</translation>
+    </message>
+    <message>
+        <source>Post-Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dry Yeast</source>
+        <translation type="unfinished">Сухие дрожжи</translation>
+    </message>
+    <message>
+        <source>Addition of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionYeastTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Форма</translation>
+    </message>
+    <message>
+        <source>Alpha %</source>
+        <translation type="unfinished">Альфа %</translation>
+    </message>
+    <message>
+        <source>Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished">Количество</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Инвентарь</translation>
+    </message>
+    <message>
+        <source>Stage</source>
+        <translation type="unfinished">Этап</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished">Время</translation>
+    </message>
+</context>
+<context>
     <name>RecipeExtrasWidget</name>
     <message>
         <source>Change Brewer</source>

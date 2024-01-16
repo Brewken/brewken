@@ -1548,19 +1548,19 @@ template<class NE> bool Recipe::uses(NE const & val) const {
 
    return match != this->pimpl->accessIds<NE>().cend();
 }
-template bool Recipe::uses(Fermentable  const & val) const;
+///template bool Recipe::uses(Fermentable  const & val) const;
 template bool Recipe::uses(Instruction  const & val) const;
-template bool Recipe::uses(Misc         const & val) const;
+///template bool Recipe::uses(Misc         const & val) const;
 template bool Recipe::uses(Salt         const & val) const;
 template bool Recipe::uses(Water        const & val) const;
-template bool Recipe::uses(Yeast        const & val) const;
+///template bool Recipe::uses(Yeast        const & val) const;
 template<> bool Recipe::uses<Equipment   > (Equipment    const & val) const { return val.key() == this->m_equipmentId   ; }
 template<> bool Recipe::uses<Style       > (Style        const & val) const { return val.key() == this->m_styleId       ; }
 template<> bool Recipe::uses<Mash        > (Mash         const & val) const { return val.key() == this->m_mashId        ; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 template<> bool Recipe::uses<Boil        > (Boil         const & val) const { return val.key() == this->m_boilId        ; }
 template<> bool Recipe::uses<Fermentation> (Fermentation const & val) const { return val.key() == this->m_fermentationId; }
-template<> bool Recipe::uses<RecipeAdditionHop>(RecipeAdditionHop          const & val) const { return val.recipeId() == this->key(); }
+template<> bool Recipe::uses<RecipeAddition>(RecipeAddition const & val) const { return val.recipeId() == this->key(); }
 
 template<class NE> std::shared_ptr<NE> Recipe::remove(std::shared_ptr<NE> var) {
    // It's a coding error to supply a null shared pointer

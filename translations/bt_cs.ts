@@ -4285,6 +4285,154 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
 </context>
 <context>
+    <name>RecipeAdditionMisc</name>
+    <message>
+        <source>Misc Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>First Wort</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished">Chmelovar</translation>
+    </message>
+    <message>
+        <source>Post-Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dry Misc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Addition of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionMiscTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Název</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alpha %</source>
+        <translation type="unfinished">Alfa %</translation>
+    </message>
+    <message>
+        <source>Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished">Množství</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Druh množství</translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Sklad</translation>
+    </message>
+    <message>
+        <source>Stage</source>
+        <translation type="unfinished">Etapa</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished">Čas</translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionYeast</name>
+    <message>
+        <source>Yeast Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>First Wort</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished">Chmelovar</translation>
+    </message>
+    <message>
+        <source>Post-Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dry Yeast</source>
+        <translation type="unfinished">Sušené kvasnice</translation>
+    </message>
+    <message>
+        <source>Addition of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionYeastTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Název</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alpha %</source>
+        <translation type="unfinished">Alfa %</translation>
+    </message>
+    <message>
+        <source>Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished">Množství</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Druh množství</translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Sklad</translation>
+    </message>
+    <message>
+        <source>Stage</source>
+        <translation type="unfinished">Etapa</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished">Čas</translation>
+    </message>
+</context>
+<context>
     <name>RecipeExtrasWidget</name>
     <message>
         <source>Change Brewer</source>

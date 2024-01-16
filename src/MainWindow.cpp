@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MainWindow.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * MainWindow.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
@@ -133,16 +133,16 @@
 #include "sortFilterProxyModels/FermentableSortFilterProxyModel.h"
 #include "sortFilterProxyModels/RecipeAdditionFermentableSortFilterProxyModel.h"
 #include "sortFilterProxyModels/RecipeAdditionHopSortFilterProxyModel.h"
-#include "sortFilterProxyModels/MiscSortFilterProxyModel.h"
+#include "sortFilterProxyModels/RecipeAdditionMiscSortFilterProxyModel.h"
+#include "sortFilterProxyModels/RecipeAdditionYeastSortFilterProxyModel.h"
 #include "sortFilterProxyModels/StyleSortFilterProxyModel.h"
-#include "sortFilterProxyModels/YeastSortFilterProxyModel.h"
 #include "StrikeWaterDialog.h"
 #include "tableModels/FermentableTableModel.h"
 #include "tableModels/RecipeAdditionFermentableTableModel.h"
 #include "tableModels/RecipeAdditionHopTableModel.h"
+#include "tableModels/RecipeAdditionMiscTableModel.h"
+#include "tableModels/RecipeAdditionYeastTableModel.h"
 #include "tableModels/MashStepTableModel.h"
-#include "tableModels/MiscTableModel.h"
-#include "tableModels/YeastTableModel.h"
 #include "TimerMainDialog.h"
 #include "undoRedo/RelationalUndoableUpdate.h"
 #include "undoRedo/UndoableAddOrRemove.h"
@@ -2546,19 +2546,13 @@ void MainWindow::reduceInventory() {
       //
       // Reduce fermentables, miscs, hops, yeasts
       //
-      // Note that yeast inventory is done by "quanta" not amount, probably trying to indicate number of packets rather
-      // than weight.  Of course, even though quanta implies an integer measurement, inventory() still returns a double
-      // so there's some heroic casting going on here.
+      // Note that the amount can be mass, volume or (for Yeast and Misc) count.  We don't worry about which here as we
+      // assume that a given type of ingredient is always measured in the same way.
       //
-      // For fermentables and miscs, the amount can be either mass or volume, but we don't worry about which here as we
-      // assume that a given type of fermentable/misc is always measured in the same way.
-      //
-///      for (auto ii : rec->fermentables()) { ii->setInventoryAmount(std::max(                 ii->inventory()  - ii->amount(),    0.0)); }
-      for (auto ii : rec->miscs       ()) { ii->setInventoryAmount(std::max(                 ii->inventory()  - ii->amount(),    0.0)); }
-///      for (auto ii : rec->hops        ()) { ii->setInventoryAmount(std::max(                 ii->inventory()  - ii->amount_kg(), 0.0)); }
-      for (auto ii : rec->yeasts      ()) { ii->setInventoryQuanta(std::max(static_cast<int>(ii->inventory()) - 1,               0  )); }
-
-/// TODO      for (auto ii : rec->hopAdditions()) {}
+      for (auto ii : rec->fermentableAdditions()) { ii->hop()->setTotalInventory(std::max(ii->fermentable()->totalInventory() - ii->amount(), 0.0)); }
+      for (auto ii : rec->        hopAdditions()) { ii->hop()->setTotalInventory(std::max(ii->        hop()->totalInventory() - ii->amount(), 0.0)); }
+      for (auto ii : rec->       miscAdditions()) { ii->hop()->setTotalInventory(std::max(ii->       misc()->totalInventory() - ii->amount(), 0.0)); }
+      for (auto ii : rec->      yeastAdditions()) { ii->hop()->setTotalInventory(std::max(ii->      yeast()->totalInventory() - ii->amount(), 0.0)); }
    }
 
    return;
@@ -3008,42 +3002,42 @@ void MainWindow::exportSelected() {
          qWarning() << Q_FUNC_INFO << "Unknown type for selection" << selection;
       } else {
          switch(*itemType) {
-            case BtTreeItem::Type::RECIPE:
+            case BtTreeItem::Type::Recipe:
                recipes.append(treeView_recipe->getItem<Recipe>(selection));
                ++count;
                break;
-            case BtTreeItem::Type::EQUIPMENT:
+            case BtTreeItem::Type::Equipment:
                equipments.append(treeView_equip->getItem<Equipment>(selection));
                ++count;
                break;
-            case BtTreeItem::Type::FERMENTABLE:
+            case BtTreeItem::Type::Fermentable:
                fermentables.append(treeView_ferm->getItem<Fermentable>(selection));
                ++count;
                break;
-            case BtTreeItem::Type::HOP:
+            case BtTreeItem::Type::Hop:
                hops.append(treeView_hops->getItem<Hop>(selection));
                ++count;
                break;
-            case BtTreeItem::Type::MISC:
+            case BtTreeItem::Type::Misc:
                miscs.append(treeView_misc->getItem<Misc>(selection));
                ++count;
                break;
-            case BtTreeItem::Type::STYLE:
+            case BtTreeItem::Type::Style:
                styles.append(treeView_style->getItem<Style>(selection));
                ++count;
                break;
-            case BtTreeItem::Type::WATER:
+            case BtTreeItem::Type::Water:
                waters.append(treeView_water->getItem<Water>(selection));
                ++count;
                break;
-            case BtTreeItem::Type::YEAST:
+            case BtTreeItem::Type::Yeast:
                yeasts.append(treeView_yeast->getItem<Yeast>(selection));
                ++count;
                break;
-            case BtTreeItem::Type::FOLDER:
+            case BtTreeItem::Type::Folder:
                qDebug() << Q_FUNC_INFO << "Can't export selected Folder to XML as BeerXML does not support it";
                break;
-            case BtTreeItem::Type::BREWNOTE:
+            case BtTreeItem::Type::BrewNote:
                qDebug() << Q_FUNC_INFO << "Can't export selected BrewNote to XML as BeerXML does not support it";
                break;
             default:

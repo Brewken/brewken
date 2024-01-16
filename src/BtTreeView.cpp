@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtTreeView.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * BtTreeView.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -316,25 +316,25 @@ void BtTreeView::newNamedEntity() {
    }
 
    switch (m_type) {
-      case BtTreeModel::EQUIPMASK:
+      case BtTreeModel::TypeMask::EQUIPMASK:
          qobject_cast<EquipmentEditor *>(m_editor)->newEditItem(folder);
          break;
-      case BtTreeModel::FERMENTMASK:
+      case BtTreeModel::TypeMask::FERMENTMASK:
          qobject_cast<FermentableEditor *>(m_editor)->newEditItem(folder);
          break;
-      case BtTreeModel::HOPMASK:
+      case BtTreeModel::TypeMask::HOPMASK:
          qobject_cast<HopEditor *>(m_editor)->newEditItem(folder);
          break;
-      case BtTreeModel::MISCMASK:
+      case BtTreeModel::TypeMask::MISCMASK:
          qobject_cast<MiscEditor *>(m_editor)->newEditItem(folder);
          break;
-      case BtTreeModel::STYLEMASK:
+      case BtTreeModel::TypeMask::STYLEMASK:
          qobject_cast<StyleEditor *>(m_editor)->newEditItem(folder);
          break;
-      case BtTreeModel::YEASTMASK:
+      case BtTreeModel::TypeMask::YEASTMASK:
          qobject_cast<YeastEditor *>(m_editor)->newEditItem(folder);
          break;
-      case BtTreeModel::WATERMASK:
+      case BtTreeModel::TypeMask::WATERMASK:
          qobject_cast<WaterEditor *>(m_editor)->newWater(folder);
          break;
       default:
@@ -344,7 +344,7 @@ void BtTreeView::newNamedEntity() {
 }
 
 void BtTreeView::showAncestors() {
-   if (m_type == BtTreeModel::RECIPEMASK) {
+   if (m_type == BtTreeModel::TypeMask::Recipe) {
       QModelIndexList ndxs = selectionModel()->selectedRows();
 
       // I hear a noise at the door, as of some immense slippery body
@@ -356,7 +356,7 @@ void BtTreeView::showAncestors() {
 }
 
 void BtTreeView::hideAncestors() {
-   if (m_type == BtTreeModel::RECIPEMASK) {
+   if (m_type == BtTreeModel::TypeMask::Recipe) {
       QModelIndexList ndxs = selectionModel()->selectedRows();
 
       // I hear a noise at the door, as of some immense slippery body
@@ -369,7 +369,7 @@ void BtTreeView::hideAncestors() {
 }
 
 void BtTreeView::revertRecipeToPreviousVersion() {
-   if (m_type == BtTreeModel::RECIPEMASK) {
+   if (m_type == BtTreeModel::TypeMask::Recipe) {
       QModelIndexList ndxs = selectionModel()->selectedRows();
 
       // I hear a noise at the door, as of some immense slippery body
@@ -382,7 +382,7 @@ void BtTreeView::revertRecipeToPreviousVersion() {
 }
 
 void BtTreeView::orphanRecipe() {
-   if ( m_type == BtTreeModel::RECIPEMASK ) {
+   if (m_type == BtTreeModel::TypeMask::Recipe) {
       QModelIndexList ndxs = selectionModel()->selectedRows();
 
       // I hear a noise at the door, as of some immense slippery body
@@ -395,7 +395,7 @@ void BtTreeView::orphanRecipe() {
 }
 
 void BtTreeView::spawnRecipe() {
-   if (m_type == BtTreeModel::RECIPEMASK) {
+   if (m_type == BtTreeModel::TypeMask::Recipe) {
       QModelIndexList ndxs = selectionModel()->selectedRows();
 
       foreach (QModelIndex selected, ndxs) {
@@ -406,7 +406,7 @@ void BtTreeView::spawnRecipe() {
 }
 
 bool BtTreeView::ancestorsAreShowing(QModelIndex ndx) {
-   if (m_type == BtTreeModel::RECIPEMASK) {
+   if (m_type == BtTreeModel::TypeMask::Recipe) {
       QModelIndex translated = m_filter->mapToSource(ndx);
       return m_model->showChild(translated);
    }
@@ -443,7 +443,7 @@ void BtTreeView::setupContextMenu(QWidget * top, QWidget * editor) {
 
    switch (m_type) {
       // the recipe case is a bit more complex, because we need to handle the brewnotes too
-      case BtTreeModel::RECIPEMASK:
+      case BtTreeModel::TypeMask::Recipe:
          newMenu->addAction(tr("Recipe"), editor, SLOT(newRecipe()));
 
          // version menu
@@ -464,25 +464,25 @@ void BtTreeView::setupContextMenu(QWidget * top, QWidget * editor) {
          subMenu->addAction(tr("Delete"), top, SLOT(deleteSelected()));
 
          break;
-      case BtTreeModel::EQUIPMASK:
+      case BtTreeModel::TypeMask::Equipment:
          newMenu->addAction(tr("Equipment"), this, SLOT(newNamedEntity()));
          break;
-      case BtTreeModel::FERMENTMASK:
+      case BtTreeModel::TypeMask::Fermentable:
          newMenu->addAction(tr("Fermentable"), this, SLOT(newNamedEntity()));
          break;
-      case BtTreeModel::HOPMASK:
+      case BtTreeModel::TypeMask::Hop:
          newMenu->addAction(tr("Hop"), this, SLOT(newNamedEntity()));
          break;
-      case BtTreeModel::MISCMASK:
+      case BtTreeModel::TypeMask::Misc:
          newMenu->addAction(tr("Misc"), this, SLOT(newNamedEntity()));
          break;
-      case BtTreeModel::STYLEMASK:
+      case BtTreeModel::TypeMask::Style:
          newMenu->addAction(tr("Style"), this, SLOT(newNamedEntity()));
          break;
-      case BtTreeModel::YEASTMASK:
+      case BtTreeModel::TypeMask::Yeast:
          newMenu->addAction(tr("Yeast"), this, SLOT(newNamedEntity()));
          break;
-      case BtTreeModel::WATERMASK:
+      case BtTreeModel::TypeMask::Water:
          newMenu->addAction(tr("Water"), this, SLOT(newNamedEntity()));
          break;
       default:
@@ -771,41 +771,40 @@ void BtTreeView::versionedRecipe(Recipe * descendant) {
 
 // Bad form likely
 
-RecipeTreeView::RecipeTreeView(QWidget * parent)
-   : BtTreeView(parent, BtTreeModel::RECIPEMASK) {
+RecipeTreeView::RecipeTreeView(QWidget * parent) : BtTreeView(parent, BtTreeModel::TypeMask::Recipe) {
    connect(m_model, &BtTreeModel::recipeSpawn, this, &BtTreeView::versionedRecipe);
 }
 
 EquipmentTreeView::EquipmentTreeView(QWidget * parent)
-   : BtTreeView(parent, BtTreeModel::EQUIPMASK) {
+   : BtTreeView(parent, BtTreeModel::TypeMask::Equipment) {
 }
 
 // Icky ick ikcy
 FermentableTreeView::FermentableTreeView(QWidget * parent)
-   : BtTreeView(parent, BtTreeModel::FERMENTMASK) {
+   : BtTreeView(parent, BtTreeModel::TypeMask::Fermentable) {
 }
 
 // More Ick
 HopTreeView::HopTreeView(QWidget * parent)
-   : BtTreeView(parent, BtTreeModel::HOPMASK) {
+   : BtTreeView(parent, BtTreeModel::TypeMask::Hop) {
 }
 
 // Ick some more
 MiscTreeView::MiscTreeView(QWidget * parent)
-   : BtTreeView(parent, BtTreeModel::MISCMASK) {
+   : BtTreeView(parent, BtTreeModel::TypeMask::Misc) {
 }
 
 // Will this ick never end?
 YeastTreeView::YeastTreeView(QWidget * parent)
-   : BtTreeView(parent, BtTreeModel::YEASTMASK) {
+   : BtTreeView(parent, BtTreeModel::TypeMask::Yeast) {
 }
 
 // Nope. Apparently not, cause I keep adding more
 StyleTreeView::StyleTreeView(QWidget * parent)
-   : BtTreeView(parent, BtTreeModel::STYLEMASK) {
+   : BtTreeView(parent, BtTreeModel::TypeMask::Style) {
 }
 
 // Cthulhu take me
 WaterTreeView::WaterTreeView(QWidget * parent)
-   : BtTreeView(parent, BtTreeModel::WATERMASK) {
+   : BtTreeView(parent, BtTreeModel::TypeMask::Water) {
 }

@@ -30,7 +30,7 @@
 # Variable that contains all the .cpp files in this project.
 #
 # You can recreate the body of this list by running the following from the bash prompt in the build directory:
-#    find ../src -name '*.cpp' | sort  | sed 's+^../src+    ${repoDir}/src+' | grep -v Testing.cpp | grep -v main.cpp
+#    find ../src -name '*.cpp' | LC_ALL=C sort | sed 's+^../src+    ${repoDir}/src+' | grep -v Testing.cpp | grep -v main.cpp
 #
 # It is tempting to ask ourselves why we don't have CMake figure out this list itself.  Well, according to the
 # documentation (https://cmake.org/cmake/help/latest/command/file.html#filesystem) "We do not recommend using GLOB to
@@ -44,7 +44,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/AncestorDialog.cpp
     ${repoDir}/src/Application.cpp
     ${repoDir}/src/BeerColorWidget.cpp
-    ${repoDir}/src/boiltime.cpp
     ${repoDir}/src/BrewDayFormatter.cpp
     ${repoDir}/src/BrewDayScrollWidget.cpp
     ${repoDir}/src/BrewNoteWidget.cpp
@@ -58,6 +57,40 @@ set(filesToCompile_cpp
     ${repoDir}/src/BtTreeItem.cpp
     ${repoDir}/src/BtTreeModel.cpp
     ${repoDir}/src/BtTreeView.cpp
+    ${repoDir}/src/ConverterTool.cpp
+    ${repoDir}/src/HeatCalculations.cpp
+    ${repoDir}/src/HelpDialog.cpp
+    ${repoDir}/src/Html.cpp
+    ${repoDir}/src/HydrometerTool.cpp
+    ${repoDir}/src/IbuGuSlider.cpp
+    ${repoDir}/src/ImportExport.cpp
+    ${repoDir}/src/InstructionWidget.cpp
+    ${repoDir}/src/InventoryFormatter.cpp
+    ${repoDir}/src/Localization.cpp
+    ${repoDir}/src/Logging.cpp
+    ${repoDir}/src/MainWindow.cpp
+    ${repoDir}/src/MashDesigner.cpp
+    ${repoDir}/src/MashWizard.cpp
+    ${repoDir}/src/NamedEntitySortProxyModel.cpp
+    ${repoDir}/src/OgAdjuster.cpp
+    ${repoDir}/src/OptionDialog.cpp
+    ${repoDir}/src/PersistentSettings.cpp
+    ${repoDir}/src/PitchDialog.cpp
+    ${repoDir}/src/PrimingDialog.cpp
+    ${repoDir}/src/PrintAndPreviewDialog.cpp
+    ${repoDir}/src/RadarChart.cpp
+    ${repoDir}/src/RangedSlider.cpp
+    ${repoDir}/src/RecipeExtrasWidget.cpp
+    ${repoDir}/src/RecipeFormatter.cpp
+    ${repoDir}/src/RefractoDialog.cpp
+    ${repoDir}/src/ScaleRecipeTool.cpp
+    ${repoDir}/src/StrikeWaterDialog.cpp
+    ${repoDir}/src/StyleRangeWidget.cpp
+    ${repoDir}/src/TimerListDialog.cpp
+    ${repoDir}/src/TimerMainDialog.cpp
+    ${repoDir}/src/TimerWidget.cpp
+    ${repoDir}/src/WaterDialog.cpp
+    ${repoDir}/src/boiltime.cpp
     ${repoDir}/src/buttons/EquipmentButton.cpp
     ${repoDir}/src/buttons/MashButton.cpp
     ${repoDir}/src/buttons/StyleButton.cpp
@@ -68,7 +101,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/catalogs/MiscCatalog.cpp
     ${repoDir}/src/catalogs/StyleCatalog.cpp
     ${repoDir}/src/catalogs/YeastCatalog.cpp
-    ${repoDir}/src/ConverterTool.cpp
     ${repoDir}/src/database/BtSqlQuery.cpp
     ${repoDir}/src/database/Database.cpp
     ${repoDir}/src/database/DatabaseSchemaHelper.cpp
@@ -85,14 +117,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/editors/StyleEditor.cpp
     ${repoDir}/src/editors/WaterEditor.cpp
     ${repoDir}/src/editors/YeastEditor.cpp
-    ${repoDir}/src/HeatCalculations.cpp
-    ${repoDir}/src/HelpDialog.cpp
-    ${repoDir}/src/Html.cpp
-    ${repoDir}/src/HydrometerTool.cpp
-    ${repoDir}/src/IbuGuSlider.cpp
-    ${repoDir}/src/ImportExport.cpp
-    ${repoDir}/src/InstructionWidget.cpp
-    ${repoDir}/src/InventoryFormatter.cpp
     ${repoDir}/src/listModels/EquipmentListModel.cpp
     ${repoDir}/src/listModels/FermentableListModel.cpp
     ${repoDir}/src/listModels/HopListModel.cpp
@@ -101,15 +125,12 @@ set(filesToCompile_cpp
     ${repoDir}/src/listModels/MiscListModel.cpp
     ${repoDir}/src/listModels/RecipeAdditionFermentableListModel.cpp
     ${repoDir}/src/listModels/RecipeAdditionHopListModel.cpp
+    ${repoDir}/src/listModels/RecipeAdditionMiscListModel.cpp
+    ${repoDir}/src/listModels/RecipeAdditionYeastListModel.cpp
     ${repoDir}/src/listModels/SaltListModel.cpp
     ${repoDir}/src/listModels/StyleListModel.cpp
     ${repoDir}/src/listModels/WaterListModel.cpp
     ${repoDir}/src/listModels/YeastListModel.cpp
-    ${repoDir}/src/Localization.cpp
-    ${repoDir}/src/Logging.cpp
-    ${repoDir}/src/MainWindow.cpp
-    ${repoDir}/src/MashDesigner.cpp
-    ${repoDir}/src/MashWizard.cpp
     ${repoDir}/src/measurement/Amount.cpp
     ${repoDir}/src/measurement/ColorMethods.cpp
     ${repoDir}/src/measurement/IbuMethods.cpp
@@ -136,29 +157,19 @@ set(filesToCompile_cpp
     ${repoDir}/src/model/NamedEntity.cpp
     ${repoDir}/src/model/NamedEntityWithInventory.cpp
     ${repoDir}/src/model/NamedParameterBundle.cpp
+    ${repoDir}/src/model/Recipe.cpp
     ${repoDir}/src/model/RecipeAddition.cpp
     ${repoDir}/src/model/RecipeAdditionFermentable.cpp
     ${repoDir}/src/model/RecipeAdditionHop.cpp
-    ${repoDir}/src/model/Recipe.cpp
+    ${repoDir}/src/model/RecipeAdditionMisc.cpp
+    ${repoDir}/src/model/RecipeAdditionYeast.cpp
     ${repoDir}/src/model/Salt.cpp
     ${repoDir}/src/model/Step.cpp
     ${repoDir}/src/model/StepExtended.cpp
     ${repoDir}/src/model/Style.cpp
     ${repoDir}/src/model/Water.cpp
     ${repoDir}/src/model/Yeast.cpp
-    ${repoDir}/src/NamedEntitySortProxyModel.cpp
-    ${repoDir}/src/OgAdjuster.cpp
-    ${repoDir}/src/OptionDialog.cpp
-    ${repoDir}/src/PersistentSettings.cpp
-    ${repoDir}/src/PitchDialog.cpp
-    ${repoDir}/src/PrimingDialog.cpp
-    ${repoDir}/src/PrintAndPreviewDialog.cpp
-    ${repoDir}/src/RadarChart.cpp
-    ${repoDir}/src/RangedSlider.cpp
-    ${repoDir}/src/RecipeExtrasWidget.cpp
-    ${repoDir}/src/RecipeFormatter.cpp
-    ${repoDir}/src/RefractoDialog.cpp
-    ${repoDir}/src/ScaleRecipeTool.cpp
+    ${repoDir}/src/serialization/SerializationRecord.cpp
     ${repoDir}/src/serialization/json/BeerJson.cpp
     ${repoDir}/src/serialization/json/JsonCoding.cpp
     ${repoDir}/src/serialization/json/JsonMeasureableUnitsMapping.cpp
@@ -167,7 +178,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/serialization/json/JsonSchema.cpp
     ${repoDir}/src/serialization/json/JsonUtils.cpp
     ${repoDir}/src/serialization/json/JsonXPath.cpp
-    ${repoDir}/src/serialization/SerializationRecord.cpp
     ${repoDir}/src/serialization/xml/BeerXml.cpp
     ${repoDir}/src/serialization/xml/BtDomErrorHandler.cpp
     ${repoDir}/src/serialization/xml/XercesHelpers.cpp
@@ -184,11 +194,11 @@ set(filesToCompile_cpp
     ${repoDir}/src/sortFilterProxyModels/MiscSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/RecipeAdditionFermentableSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/RecipeAdditionHopSortFilterProxyModel.cpp
+    ${repoDir}/src/sortFilterProxyModels/RecipeAdditionMiscSortFilterProxyModel.cpp
+    ${repoDir}/src/sortFilterProxyModels/RecipeAdditionYeastSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/StyleSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/WaterSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/YeastSortFilterProxyModel.cpp
-    ${repoDir}/src/StrikeWaterDialog.cpp
-    ${repoDir}/src/StyleRangeWidget.cpp
     ${repoDir}/src/tableModels/BtTableModel.cpp
     ${repoDir}/src/tableModels/BtTableModelInventory.cpp
     ${repoDir}/src/tableModels/EquipmentTableModel.cpp
@@ -198,13 +208,12 @@ set(filesToCompile_cpp
     ${repoDir}/src/tableModels/MiscTableModel.cpp
     ${repoDir}/src/tableModels/RecipeAdditionFermentableTableModel.cpp
     ${repoDir}/src/tableModels/RecipeAdditionHopTableModel.cpp
+    ${repoDir}/src/tableModels/RecipeAdditionMiscTableModel.cpp
+    ${repoDir}/src/tableModels/RecipeAdditionYeastTableModel.cpp
     ${repoDir}/src/tableModels/SaltTableModel.cpp
     ${repoDir}/src/tableModels/StyleTableModel.cpp
     ${repoDir}/src/tableModels/WaterTableModel.cpp
     ${repoDir}/src/tableModels/YeastTableModel.cpp
-    ${repoDir}/src/TimerListDialog.cpp
-    ${repoDir}/src/TimerMainDialog.cpp
-    ${repoDir}/src/TimerWidget.cpp
     ${repoDir}/src/undoRedo/SimpleUndoableUpdate.cpp
     ${repoDir}/src/utils/BtException.cpp
     ${repoDir}/src/utils/BtStringConst.cpp
@@ -213,12 +222,11 @@ set(filesToCompile_cpp
     ${repoDir}/src/utils/Fonts.cpp
     ${repoDir}/src/utils/ImportRecordCount.cpp
     ${repoDir}/src/utils/MetaTypes.cpp
-    ${repoDir}/src/utils/OptionalHelpers.cpp
     ${repoDir}/src/utils/OStreamWriterForQFile.cpp
+    ${repoDir}/src/utils/OptionalHelpers.cpp
     ${repoDir}/src/utils/PropertyPath.cpp
     ${repoDir}/src/utils/TimerUtils.cpp
     ${repoDir}/src/utils/TypeLookup.cpp
-    ${repoDir}/src/WaterDialog.cpp
     ${repoDir}/src/widgets/Animator.cpp
     ${repoDir}/src/widgets/BtBoolComboBox.cpp
     ${repoDir}/src/widgets/BtComboBox.cpp
@@ -227,8 +235,8 @@ set(filesToCompile_cpp
     ${repoDir}/src/widgets/InfoText.cpp
     ${repoDir}/src/widgets/MashComboBox.cpp
     ${repoDir}/src/widgets/SelectionControl.cpp
-    ${repoDir}/src/widgets/SmartAmounts.cpp
     ${repoDir}/src/widgets/SmartAmountSettings.cpp
+    ${repoDir}/src/widgets/SmartAmounts.cpp
     ${repoDir}/src/widgets/SmartCheckBox.cpp
     ${repoDir}/src/widgets/SmartDigitWidget.cpp
     ${repoDir}/src/widgets/SmartField.cpp

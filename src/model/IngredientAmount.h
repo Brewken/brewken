@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/IngredientAmount.h is part of Brewken, and is copyright the following authors 2023:
+ * model/IngredientAmount.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -16,8 +16,6 @@
 #ifndef MODEL_INGREDIENTAMOUNT_H
 #define MODEL_INGREDIENTAMOUNT_H
 #pragma once
-
-#include <QFlags>
 
 #include "measurement/Unit.h"
 #include "model/NamedParameterBundle.h"

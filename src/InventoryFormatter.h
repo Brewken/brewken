@@ -21,7 +21,7 @@
 
 #include <cstdint>
 
-#include <QFlags>
+#include <QFlags> // For Q_DECLARE_FLAGS
 
 class QString;
 

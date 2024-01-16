@@ -95,7 +95,7 @@ RecipeAdditionHop::RecipeAdditionHop(RecipeAdditionHop const & other) :
 RecipeAdditionHop::~RecipeAdditionHop() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
-RecipeAdditionHop::Use  RecipeAdditionHop::use() const {
+RecipeAdditionHop::Use RecipeAdditionHop::use() const {
    switch (this->stage()) {
       case RecipeAddition::Stage::Mash:
          return RecipeAdditionHop::Use::Mash;

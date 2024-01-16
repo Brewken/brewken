@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/SmartField.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * widgets/SmartField.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -130,7 +130,8 @@ public:
                                    bool * const ok = nullptr) {
       Q_ASSERT(this->m_initialised);
 
-      // It's a coding error to call this for a NonPhysicalQuantity
+      // It's a coding error to call this for a NonPhysicalQuantity.  (Instead call getNonOptValueAs<double> or
+      // similar.)
       Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->m_self.getTypeInfo().fieldType));
 
       qDebug() <<

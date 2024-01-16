@@ -287,6 +287,8 @@ public:
    /**
     * \brief Subclasses need to override this to return the Recipe, if any, to which this object belongs.
     *
+    *        TODO: This is not meaningful on all subclasses \c NamedEntity and should be moved to another class
+    *
     * \return \c nullptr if this object is not, and does not belong to, any Recipe
     */
    virtual Recipe * getOwningRecipe() const = 0;

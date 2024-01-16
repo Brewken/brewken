@@ -4324,6 +4324,154 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
 </context>
 <context>
+    <name>RecipeAdditionMisc</name>
+    <message>
+        <source>Misc Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished">Maische</translation>
+    </message>
+    <message>
+        <source>First Wort</source>
+        <translation type="unfinished">Vorderwürze</translation>
+    </message>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post-Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dry Misc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Addition of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionMiscTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Name</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alpha %</source>
+        <translation type="unfinished">Alpha %</translation>
+    </message>
+    <message>
+        <source>Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished">Menge</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Mengenangabe</translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Lagerbestand</translation>
+    </message>
+    <message>
+        <source>Stage</source>
+        <translation type="unfinished">Phase</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished">Zeit</translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionYeast</name>
+    <message>
+        <source>Yeast Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished">Maische</translation>
+    </message>
+    <message>
+        <source>First Wort</source>
+        <translation type="unfinished">Vorderwürze</translation>
+    </message>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post-Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dry Yeast</source>
+        <translation type="unfinished">Trockenhefe</translation>
+    </message>
+    <message>
+        <source>Addition of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdditionYeastTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Name</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alpha %</source>
+        <translation type="unfinished">Alpha %</translation>
+    </message>
+    <message>
+        <source>Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished">Menge</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Mengenangabe</translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Lagerbestand</translation>
+    </message>
+    <message>
+        <source>Stage</source>
+        <translation type="unfinished">Phase</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished">Zeit</translation>
+    </message>
+</context>
+<context>
     <name>RecipeExtrasWidget</name>
     <message>
         <source>Change Brewer</source>

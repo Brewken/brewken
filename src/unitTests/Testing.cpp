@@ -506,7 +506,7 @@ void Testing::recipeCalcTest_allGrain() {
    cascadeHopAddition->setAddAtTime_mins(60);
    cascadeHopAddition->setQuantity(0.085);
    cascadeHopAddition->setMeasure(Measurement::PhysicalQuantity::Mass);
-   rec->add(cascadeHopAddition);
+   rec->addAddition(cascadeHopAddition);
 
    // Add grain
    auto twoRowFermentableAddition = std::make_shared<RecipeAdditionFermentable>("Two Row Grain Addition");
@@ -514,7 +514,7 @@ void Testing::recipeCalcTest_allGrain() {
    twoRowFermentableAddition->setStage(RecipeAddition::Stage::Mash);
    twoRowFermentableAddition->setQuantity(grain_kg);
    twoRowFermentableAddition->setMeasure(Measurement::PhysicalQuantity::Mass);
-   rec->add(twoRowFermentableAddition);
+   rec->addAddition(twoRowFermentableAddition);
 
    // Add mash
    rec->setMash(singleConversion.get());
@@ -603,8 +603,8 @@ void Testing::postBoilLossOgTest() {
    twoRowFermentableAddition2->setQuantity(grain_kg);
    twoRowFermentableAddition1->setMeasure(Measurement::PhysicalQuantity::Mass);
    twoRowFermentableAddition2->setMeasure(Measurement::PhysicalQuantity::Mass);
-   recNoLoss->add(twoRowFermentableAddition1);
-   recLoss->add(twoRowFermentableAddition2);
+   recNoLoss->addAddition(twoRowFermentableAddition1);
+   recLoss  ->addAddition(twoRowFermentableAddition2);
 
    // Single conversion, no sparge
    auto singleConversion = std::make_shared<Mash>();

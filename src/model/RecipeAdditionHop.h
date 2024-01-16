@@ -57,7 +57,9 @@ public:
    /*!
     * \brief This is the old (BeerXML) way of specifying the stage at which the hop addition happens.  It is retained
     *        for BeerXML but otherwise deprecated.  With the arrival of BeerJSON, we now use \c RecipeAddition::Stage
-    *        and \c RecipeAddition::Step to hold this information with more precision.
+    *        and \c RecipeAddition::Step to hold this information with more consistency and precision.
+    *
+    *        See also \c RecipeAdditionMisc::Use.
     */
    enum class Use {Mash,
                    First_Wort,

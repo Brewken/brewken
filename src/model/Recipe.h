@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Recipe.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/Recipe.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
@@ -88,8 +88,8 @@ AddPropertyName(kegPrimingFactor      )
 AddPropertyName(locked                )
 AddPropertyName(mash                  )
 AddPropertyName(mashId                )
-AddPropertyName(miscIds               )
-AddPropertyName(miscs                 )
+AddPropertyName(miscAdditionIds       )
+AddPropertyName(miscAdditions         )
 AddPropertyName(notes                 )
 AddPropertyName(og                    )
 AddPropertyName(points                )
@@ -112,8 +112,8 @@ AddPropertyName(type                  )
 AddPropertyName(waterIds              )
 AddPropertyName(waters                )
 AddPropertyName(wortFromMash_l        )
-AddPropertyName(yeastIds              )
-AddPropertyName(yeasts                )
+AddPropertyName(yeastAdditionIds      )
+AddPropertyName(yeastAdditions        )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -131,6 +131,8 @@ class Mash;
 class MashStep;
 class RecipeAdditionFermentable;
 class RecipeAdditionHop;
+class RecipeAdditionMisc;
+class RecipeAdditionYeast;
 class Style;
 class Water;
 class Yeast;
@@ -337,22 +339,22 @@ public:
    // one of their elements is replaced by another with a different key.
    //! \brief The brew notes.
    Q_PROPERTY(QList<BrewNote *> brewNotes READ brewNotes /*WRITE*/ /*NOTIFY changed*/ STORED false)
-   //! \brief The hop additions.
-   Q_PROPERTY(QList<std::shared_ptr<RecipeAdditionHop>> hopAdditions   READ hopAdditions WRITE setHopAdditions   STORED false)
-   Q_PROPERTY(QVector<int>                              hopAdditionIds READ hopAdditionIds /*WRITE setHopAdditionIds*/ STORED false)
    //! \brief The instructions.
    Q_PROPERTY(QList<Instruction *> instructions   READ instructions /*WRITE*/ /*NOTIFY changed*/ STORED false)
    Q_PROPERTY(QVector<int>         instructionIds READ getInstructionIds WRITE setInstructionIds)
    //! \brief The fermentable additions.
    Q_PROPERTY(QList<std::shared_ptr<RecipeAdditionFermentable>> fermentableAdditions   READ fermentableAdditions WRITE setFermentableAdditions   STORED false)
    Q_PROPERTY(QVector<int>                                      fermentableAdditionIds READ fermentableAdditionIds /*WRITE setFermentableAdditionIds*/ STORED false)
+   //! \brief The hop additions.
+   Q_PROPERTY(QList<std::shared_ptr<RecipeAdditionHop>> hopAdditions   READ hopAdditions WRITE setHopAdditions   STORED false)
+   Q_PROPERTY(QVector<int>                              hopAdditionIds READ hopAdditionIds /*WRITE setHopAdditionIds*/ STORED false)
+   //! \brief The misc additions.
+   Q_PROPERTY(QList<std::shared_ptr<RecipeAdditionMisc>> miscAdditions   READ miscAdditions WRITE setMiscAdditions   STORED false)
+   Q_PROPERTY(QVector<int>                               miscAdditionIds READ miscAdditionIds /*WRITE setMiscAdditionIds*/ STORED false)
+   //! \brief The yeast additions.
+   Q_PROPERTY(QList<std::shared_ptr<RecipeAdditionYeast>> yeastAdditions   READ yeastAdditions WRITE setYeastAdditions   STORED false)
+   Q_PROPERTY(QVector<int>                                yeastAdditionIds READ yeastAdditionIds /*WRITE setYeastAdditionIds*/ STORED false)
 
-   //! \brief The miscs.
-   Q_PROPERTY(QList<Misc *> miscs   READ miscs /*WRITE*/ /*NOTIFY changed*/ STORED false)
-   Q_PROPERTY(QVector<int>  miscIds READ getMiscIds WRITE setMiscIds)
-   //! \brief The yeasts.
-   Q_PROPERTY(QList<Yeast *> yeasts   READ yeasts /*WRITE*/ /*NOTIFY changed*/ STORED false)
-   Q_PROPERTY(QVector<int>   yeastIds READ getYeastIds WRITE setYeastIds)
    //! \brief The waters.
    Q_PROPERTY(QList<Water *> waters   READ waters /*WRITE*/ /*NOTIFY changed*/ STORED false)
    Q_PROPERTY(QVector<int>   waterIds READ getWaterIds WRITE setWaterIds)
@@ -379,36 +381,36 @@ public:
     */
    static void connectSignalsForAllRecipes();
 
-   /*!
-    * \brief Add (a copy if necessary of) a Hop/Fermentable/Instruction etc (that may or may not already be in an
-    *        ObjectStore).
-    *
-    * When we add a Hop/Fermentable/Yeast/etc to a Recipe, we make a copy of thing we're adding to serve as an "instance
-    * of use of" record.  Amongst other things, this allows the same Hop/Fermentable/Yeast/etc to be added multiple
-    * times to a recipe - eg the same type of hops might well be added at multiple points in the recipe.  It also allows
-    * an ingredient in a recipe to be modified without those modifications affecting the use of the ingredient in other
-    * recipes (eg if you want to modify the % alpha acid on a hop).  An "instance of use of" instance of a
-    * Hop/Fermentable/Yeast/etc will always have parent record which is the actual Hop/Fermentable/Yeast/etc to which it
-    * relates.
-    *
-    * Calling the templated \c Recipe::add function returns the copy "instance of use of" object for whatever
-    * Hop/Fermentable/Yeast/etc was added.  This returned object is what needs to be passed to \c Recipe::remove to
-    * remove that instance of use of the Hop/Fermentable/Yeast/etc from the Recipe.  When you  call \c Recipe::remove it
-    * returns the "instance of use of" object that was removed, which you as caller now own (because it will no longer
-    * be in the ObjectStore).  If you want to undo the remove (or redo an add that the remove itself was undoing), you
-    * can call \c Recipe::add with the "instance of use of" object returned from \c Recipe::remove, in which case
-    * \c Recipe::add will determine that the "instance of use of" object can be used directly without needing to be
-    * copied.  (The \c Recipe::add method will also recognise when an object has been removed from the ObjectStore and
-    * will reinsert it, so the caller doesn't need to worry about this.)  Thus, eg, the following sequence of calls is
-    * valid:
-    *
-    *    std::shared_ptr<Hop> copyOfFooHop = myRecipe->add<Hop>(fooHop);                     // DO
-    *    std::shared_ptr<Hop> sameCopyOfFooHop = myRecipe->remove<Hop>(*copyOfFooHop);       // UNDO
-    *    std::shared_ptr<Hop> stillSameCopyOfFooHop = myRecipe->add<Hop>(*sameCopyOfFooHop); // REDO
-    *
-    * TBD: (MY 2020-11-23) It would be good one day to separate out "instance of use of" into a separate class.
-    *
-    */
+///   /*!
+///    * \brief Add (a copy if necessary of) a Hop/Fermentable/Instruction etc (that may or may not already be in an
+///    *        ObjectStore).
+///    *
+///    * When we add a Hop/Fermentable/Yeast/etc to a Recipe, we make a copy of thing we're adding to serve as an "instance
+///    * of use of" record.  Amongst other things, this allows the same Hop/Fermentable/Yeast/etc to be added multiple
+///    * times to a recipe - eg the same type of hops might well be added at multiple points in the recipe.  It also allows
+///    * an ingredient in a recipe to be modified without those modifications affecting the use of the ingredient in other
+///    * recipes (eg if you want to modify the % alpha acid on a hop).  An "instance of use of" instance of a
+///    * Hop/Fermentable/Yeast/etc will always have parent record which is the actual Hop/Fermentable/Yeast/etc to which it
+///    * relates.
+///    *
+///    * Calling the templated \c Recipe::add function returns the copy "instance of use of" object for whatever
+///    * Hop/Fermentable/Yeast/etc was added.  This returned object is what needs to be passed to \c Recipe::remove to
+///    * remove that instance of use of the Hop/Fermentable/Yeast/etc from the Recipe.  When you  call \c Recipe::remove it
+///    * returns the "instance of use of" object that was removed, which you as caller now own (because it will no longer
+///    * be in the ObjectStore).  If you want to undo the remove (or redo an add that the remove itself was undoing), you
+///    * can call \c Recipe::add with the "instance of use of" object returned from \c Recipe::remove, in which case
+///    * \c Recipe::add will determine that the "instance of use of" object can be used directly without needing to be
+///    * copied.  (The \c Recipe::add method will also recognise when an object has been removed from the ObjectStore and
+///    * will reinsert it, so the caller doesn't need to worry about this.)  Thus, eg, the following sequence of calls is
+///    * valid:
+///    *
+///    *    std::shared_ptr<Hop> copyOfFooHop = myRecipe->add<Hop>(fooHop);                     // DO
+///    *    std::shared_ptr<Hop> sameCopyOfFooHop = myRecipe->remove<Hop>(*copyOfFooHop);       // UNDO
+///    *    std::shared_ptr<Hop> stillSameCopyOfFooHop = myRecipe->add<Hop>(*sameCopyOfFooHop); // REDO
+///    *
+///    * TBD: (MY 2020-11-23) It would be good one day to separate out "instance of use of" into a separate class.
+///    *
+///    */
    template<class NE> std::shared_ptr<NE> add(std::shared_ptr<NE> var);
 
    /**
@@ -518,12 +520,12 @@ public:
    QVector<int>                                      fermentableAdditionIds() const;
    QList<std::shared_ptr<RecipeAdditionHop>>         hopAdditions          () const;
    QVector<int>                                      hopAdditionIds        () const;
+   QList<std::shared_ptr<RecipeAdditionMisc>>        miscAdditions         () const;
+   QVector<int>                                      miscAdditionIds       () const;
+   QList<std::shared_ptr<RecipeAdditionYeast>>       yeastAdditions        () const;
+   QVector<int>                                      yeastAdditionIds      () const;
    QList<Instruction *>                              instructions          () const;
    QVector<int>                                      getInstructionIds     () const;
-   QList<Misc *>                                     miscs                 () const;
-   QVector<int>                                      getMiscIds            () const;
-   QList<Yeast *>                                    yeasts                () const;
-   QVector<int>                                      getYeastIds           () const;
    QList<Water *>                                    waters                () const;
    QVector<int>                                      getWaterIds           () const;
    QList<Salt *>                                     salts                 () const;
@@ -560,6 +562,8 @@ public:
    template<typename RA> void setAdditions(QList<std::shared_ptr<RA>> val);
    void setFermentableAdditions(QList<std::shared_ptr<RecipeAdditionFermentable>> val);
    void setHopAdditions        (QList<std::shared_ptr<RecipeAdditionHop        >> val);
+   void setMiscAdditions       (QList<std::shared_ptr<RecipeAdditionMisc       >> val);
+   void setYeastAdditions      (QList<std::shared_ptr<RecipeAdditionYeast      >> val);
 
    /**
     * \brief These calls are intended for use by the ObjectStore when pulling data from the database.  As such they do
@@ -573,10 +577,8 @@ public:
    void setBoilId        (int const id);
    void setFermentationId(int const id);
    void setInstructionIds(QVector<int> ids);
-   void setMiscIds       (QVector<int> ids);
    void setSaltIds       (QVector<int> ids);
    void setWaterIds      (QVector<int> ids);
-   void setYeastIds      (QVector<int> ids);
    void setAncestorId    (int ancestorId, bool notify = true);
    //! @}
 
@@ -591,10 +593,10 @@ public:
    // .:TBD:. Not sure reagents is the best word here...
    //! \brief Formats the fermentable additions for instructions
    QList<QString> getReagents(QList<std::shared_ptr<RecipeAdditionFermentable>> fermentableAdditions);
-   //! \brief Formats the mashsteps for instructions
-   QList<QString> getReagents(QList< std::shared_ptr<MashStep> >);
    //! \brief Formats the hops for instructions
    QList<QString> getReagents(QList<std::shared_ptr<RecipeAdditionHop>> hopAdditions, bool firstWort);
+   //! \brief Formats the mashsteps for instructions
+   QList<QString> getReagents(QList< std::shared_ptr<MashStep> >);
    //! \brief Formats the salts for instructions
    QStringList getReagents(QList<Salt *> salts, Salt::WhenToAdd wanted);
    QHash<QString, double> calcTotalPoints();
@@ -772,9 +774,6 @@ private:
    void firstWortHopsIns();
    void topOffIns();
    void saltWater(Salt::WhenToAdd when);
-
-   //void setDefaults();
-///   bool isValidType(const QString & str);
 };
 
 Q_DECLARE_METATYPE(QList<std::shared_ptr<Recipe> >)

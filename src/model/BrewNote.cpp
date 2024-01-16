@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/BrewNote.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/BrewNote.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
@@ -34,7 +34,7 @@
 #include "model/MashStep.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
-#include "model/Yeast.h"
+#include "model/RecipeAdditionYeast.h"
 
 // These belong here, because they really just are constant strings for
 // reaching into a hash
@@ -188,7 +188,7 @@ BrewNote::BrewNote(NamedParameterBundle const & namedParameterBundle) :
 
 BrewNote::~BrewNote() = default;
 
-void BrewNote::populateNote(Recipe* parent) {
+void BrewNote::populateNote(Recipe * parent) {
    this->m_recipeId = parent->key();
 
    // Since we have the recipe, lets set some defaults The order in which
@@ -259,14 +259,14 @@ void BrewNote::populateNote(Recipe* parent) {
    setProjABV_pct( parent->ABV_pct());
 
    double atten_pct = -1.0;
-   auto yeasts = parent->yeasts();
-   for (auto yeast : yeasts) {
-      if ( yeast->attenuation_pct() > atten_pct ) {
-         atten_pct = yeast->getTypicalAttenuation_pct();
+   auto const yeastAdditions = parent->yeastAdditions();
+   for (auto const & yeastAddition : yeastAdditions) {
+      if (yeastAddition->yeast()->attenuation_pct() > atten_pct ) {
+         atten_pct = yeastAddition->yeast()->getTypicalAttenuation_pct();
       }
    }
 
-   if ( yeasts.size() == 0 || atten_pct < 0.0 ) {
+   if (yeastAdditions.size() == 0 || atten_pct < 0.0 ) {
       atten_pct = Yeast::DefaultAttenuation_pct; // Use an average attenuation;
    }
    setProjAtten(atten_pct);

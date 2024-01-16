@@ -1,6 +1,6 @@
 /*======================================================================================================================
  * sortFilterProxyModels/BtTreeFilterProxyModel.cpp is part of Brewken, and is copyright the following authors
- * 2009-2023:
+ * 2009-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -52,11 +52,11 @@ namespace {
       }
 
       switch (left.column()) {
-         case BtTreeItem::RECIPENAMECOL:
+         case BtTreeItem::RecipeColumn::Name:
             return lhs->name() < rhs->name();
-         case BtTreeItem::RECIPEBREWDATECOL:
+         case BtTreeItem::RecipeColumn::BrewDate:
             return lhs->date() < rhs->date();
-         case BtTreeItem::RECIPESTYLECOL:
+         case BtTreeItem::RecipeColumn::Style:
             if (! lhs->style()) {
                return true;
             } else if (! rhs->style()) {
@@ -76,9 +76,9 @@ namespace {
                                        Equipment * lhs,
                                        Equipment * rhs) {
       switch (left.column()) {
-         case BtTreeItem::EQUIPMENTNAMECOL:
+         case BtTreeItem::EquipmentColumn::Name:
             return lhs->name() < rhs->name();
-         case BtTreeItem::EQUIPMENTBOILTIMECOL:
+         case BtTreeItem::EquipmentColumn::BoilTime:
             return lhs->boilTime_min().value_or(Equipment::default_boilTime_min) < rhs->boilTime_min().value_or(Equipment::default_boilTime_min);
       }
       return lhs->name() < rhs->name();
@@ -90,12 +90,9 @@ namespace {
                                          Fermentable * lhs,
                                          Fermentable * rhs) {
       switch (left.column()) {
-         case BtTreeItem::FERMENTABLENAMECOL:
-            return lhs->name() < rhs->name();
-         case BtTreeItem::FERMENTABLETYPECOL:
-            return lhs->type() < rhs->type();
-         case BtTreeItem::FERMENTABLECOLORCOL:
-            return lhs->color_srm() < rhs->color_srm();
+         case BtTreeItem::FermentableColumn::Name : return lhs->name()      < rhs->name();
+         case BtTreeItem::FermentableColumn::Type : return lhs->type()      < rhs->type();
+         case BtTreeItem::FermentableColumn::Color: return lhs->color_srm() < rhs->color_srm();
       }
       return lhs->name() < rhs->name();
    }
@@ -106,14 +103,10 @@ namespace {
                                  Hop * lhs,
                                  Hop * rhs) {
       switch (static_cast<BtTreeItem::HopColumn>(left.column())) {
-         case BtTreeItem::HopColumn::Name:
-            return lhs->name() < rhs->name();
-         case BtTreeItem::HopColumn::Form:
-            return lhs->form() < rhs->form();
-         case BtTreeItem::HopColumn::AlphaPct:
-            return lhs->alpha_pct() < rhs->alpha_pct();
-         case BtTreeItem::HopColumn::Origin:
-            return lhs->origin() < rhs->origin();
+         case BtTreeItem::HopColumn::Name    : return lhs->name()      < rhs->name();
+         case BtTreeItem::HopColumn::Form    : return lhs->form()      < rhs->form();
+         case BtTreeItem::HopColumn::AlphaPct: return lhs->alpha_pct() < rhs->alpha_pct();
+         case BtTreeItem::HopColumn::Origin  : return lhs->origin()    < rhs->origin();
          default:
             return lhs->name() < rhs->name();
       }
@@ -126,12 +119,8 @@ namespace {
                                   Misc * lhs,
                                   Misc * rhs) {
       switch (left.column()) {
-         case BtTreeItem::MISCNAMECOL:
-            return lhs->name() < rhs->name();
-         case BtTreeItem::MISCTYPECOL:
-            return lhs->type() < rhs->type();
-         case BtTreeItem::MISCUSECOL:
-            return lhs->use() < rhs->use();
+         case BtTreeItem::MiscColumn::Name: return lhs->name() < rhs->name();
+         case BtTreeItem::MiscColumn::Type: return lhs->type() < rhs->type();
       }
       return lhs->name() < rhs->name();
    }
@@ -142,16 +131,11 @@ namespace {
                                    Style * lhs,
                                    Style * rhs) {
       switch (left.column()) {
-         case BtTreeItem::STYLENAMECOL:
-            return lhs->name() < rhs->name();
-         case BtTreeItem::STYLECATEGORYCOL:
-            return lhs->category() < rhs->category();
-         case BtTreeItem::STYLENUMBERCOL:
-            return lhs->categoryNumber() < rhs->categoryNumber();
-         case BtTreeItem::STYLELETTERCOL:
-            return lhs->styleLetter() < rhs->styleLetter();
-         case BtTreeItem::STYLEGUIDECOL:
-            return lhs->styleGuide() < rhs->styleGuide();
+         case BtTreeItem::StyleColumn::Name          : return lhs->name()           < rhs->name();
+         case BtTreeItem::StyleColumn::Category      : return lhs->category()       < rhs->category();
+         case BtTreeItem::StyleColumn::CategoryNumber: return lhs->categoryNumber() < rhs->categoryNumber();
+         case BtTreeItem::StyleColumn::CategoryLetter: return lhs->styleLetter()    < rhs->styleLetter();
+         case BtTreeItem::StyleColumn::StyleGuide    : return lhs->styleGuide()     < rhs->styleGuide();
       }
       return lhs->name() < rhs->name();
    }
@@ -162,12 +146,9 @@ namespace {
                                    Yeast * lhs,
                                    Yeast * rhs) {
       switch (left.column()) {
-         case BtTreeItem::YEASTNAMECOL:
-            return lhs->name() < rhs->name();
-         case BtTreeItem::YEASTTYPECOL:
-            return lhs->type() < rhs->type();
-         case BtTreeItem::YEASTFORMCOL:
-            return lhs->form() < rhs->form();
+         case BtTreeItem::YeastColumn::Name: return lhs->name() < rhs->name();
+         case BtTreeItem::YeastColumn::Type: return lhs->type() < rhs->type();
+         case BtTreeItem::YeastColumn::Form: return lhs->form() < rhs->form();
       }
       return lhs->name() < rhs->name();
    }
@@ -178,22 +159,14 @@ namespace {
                                    Water * lhs,
                                    Water * rhs) {
       switch (left.column()) {
-         case BtTreeItem::WATERNAMECOL:
-            return lhs->name() < rhs->name();
-         case BtTreeItem::WATERpHCOL:
-            return lhs->ph() < rhs->ph();
-         case BtTreeItem::WATERHCO3COL:
-            return lhs->bicarbonate_ppm() < rhs->bicarbonate_ppm();
-         case BtTreeItem::WATERSO4COL:
-            return lhs->sulfate_ppm() < rhs->sulfate_ppm();
-         case BtTreeItem::WATERCLCOL:
-            return lhs->chloride_ppm() < rhs->chloride_ppm();
-         case BtTreeItem::WATERNACOL:
-            return lhs->sodium_ppm() < rhs->sodium_ppm();
-         case BtTreeItem::WATERMGCOL:
-            return lhs->magnesium_ppm() < rhs->magnesium_ppm();
-         case BtTreeItem::WATERCACOL:
-            return lhs->calcium_ppm() < rhs->calcium_ppm();
+         case BtTreeItem::WaterColumn::Name       : return lhs->name()            < rhs->name();
+         case BtTreeItem::WaterColumn::pH         : return lhs->ph()              < rhs->ph();
+         case BtTreeItem::WaterColumn::Bicarbonate: return lhs->bicarbonate_ppm() < rhs->bicarbonate_ppm();
+         case BtTreeItem::WaterColumn::Sulfate    : return lhs->sulfate_ppm()     < rhs->sulfate_ppm();
+         case BtTreeItem::WaterColumn::Chloride   : return lhs->chloride_ppm()    < rhs->chloride_ppm();
+         case BtTreeItem::WaterColumn::Sodium     : return lhs->sodium_ppm()      < rhs->sodium_ppm();
+         case BtTreeItem::WaterColumn::Magnesium  : return lhs->magnesium_ppm()   < rhs->magnesium_ppm();
+         case BtTreeItem::WaterColumn::Calcium    : return lhs->calcium_ppm()     < rhs->calcium_ppm();
       }
       return lhs->name() < rhs->name();
    }
@@ -204,20 +177,20 @@ namespace {
                  QModelIndex const & right) {
       // As the models get more complex, so does the sort algorithm
       // Try to sort folders first.
-      if (model->type(left) == BtTreeItem::Type::FOLDER && model->type(right) == BtTreeItem::typeOf<T>()) {
+      if (model->type(left) == BtTreeItem::Type::Folder && model->type(right) == BtTreeItem::typeOf<T>()) {
          auto leftFolder = model->getItem<BtFolder>(left);
          auto rightTee = model->getItem<T>(right);
 
          return leftFolder->fullPath() < rightTee->name();
       }
 
-      if (model->type(right) == BtTreeItem::Type::FOLDER && model->type(left) == BtTreeItem::typeOf<T>()) {
+      if (model->type(right) == BtTreeItem::Type::Folder && model->type(left) == BtTreeItem::typeOf<T>()) {
          auto rightFolder = model->getItem<BtFolder>(right);
          auto leftTee = model->getItem<T>(left);
          return leftTee->name() < rightFolder->fullPath();
       }
 
-      if (model->type(right) == BtTreeItem::Type::FOLDER && model->type(left) == BtTreeItem::Type::FOLDER) {
+      if (model->type(right) == BtTreeItem::Type::Folder && model->type(left) == BtTreeItem::Type::Folder) {
          auto rightFolder = model->getItem<BtFolder>(right);
          auto leftFolder = model->getItem<BtFolder>(left);
          return leftFolder->fullPath() < rightFolder->fullPath();
@@ -239,7 +212,7 @@ bool BtTreeFilterProxyModel::lessThan(const QModelIndex & left,
 
    BtTreeModel * model = qobject_cast<BtTreeModel *>(sourceModel());
    switch (treeMask) {
-      case BtTreeModel::RECIPEMASK:
+      case BtTreeModel::TypeMask::Recipe:
          // We don't want to sort brewnotes with the recipes, so only do this if
          // both sides are brewnotes
          if (model->type(left) == BtTreeItem::Type::BREWNOTE || model->type(right) == BtTreeItem::Type::BREWNOTE) {
@@ -251,23 +224,22 @@ bool BtTreeFilterProxyModel::lessThan(const QModelIndex & left,
             return false;
          }
          return isLessThan<Recipe>(model, left, right);
-      case BtTreeModel::EQUIPMASK:
+      case BtTreeModel::TypeMask::Equipment:
          return isLessThan<Equipment>(model, left, right);
-      case BtTreeModel::FERMENTMASK:
+      case BtTreeModel::TypeMask::Fermentable:
          return isLessThan<Fermentable>(model, left, right);
-      case BtTreeModel::HOPMASK:
+      case BtTreeModel::TypeMask::Hop:
          return isLessThan<Hop>(model, left, right);
-      case BtTreeModel::MISCMASK:
+      case BtTreeModel::TypeMask::Misc:
          return isLessThan<Misc>(model, left, right);
-      case BtTreeModel::YEASTMASK:
+      case BtTreeModel::TypeMask::Yeast:
          return isLessThan<Yeast>(model, left, right);
-      case BtTreeModel::STYLEMASK:
+      case BtTreeModel::TypeMask::Style:
          return isLessThan<Style>(model, left, right);
-      case BtTreeModel::WATERMASK:
+      case BtTreeModel::TypeMask::Water:
          return isLessThan<Water>(model, left, right);
       default:
          return isLessThan<Recipe>(model, left, right);
-
    }
 }
 
@@ -292,7 +264,7 @@ bool BtTreeFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex 
 
    NamedEntity * thing = model->thing(child);
 
-   if (treeMask == BtTreeModel::RECIPEMASK && thing) {
+   if (treeMask == BtTreeModel::TypeMask::Recipe && thing) {
 
       // we are showing the child (context menu -> show snapshots ) OR
       // we are meant to display this thing.
@@ -301,8 +273,8 @@ bool BtTreeFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex 
 
    if (thing) {
       return thing->display();
-   } else {
-      return true;
    }
+
+   return true;
 
 }

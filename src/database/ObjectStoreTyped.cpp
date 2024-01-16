@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/ObjectStoreTyped.cpp is part of Brewken, and is copyright the following authors 2021-2023:
+ * database/ObjectStoreTyped.cpp is part of Brewken, and is copyright the following authors 2021-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -36,6 +36,8 @@
 #include "model/Misc.h"
 #include "model/RecipeAdditionFermentable.h"
 #include "model/RecipeAdditionHop.h"
+#include "model/RecipeAdditionMisc.h"
+#include "model/RecipeAdditionYeast.h"
 #include "model/Recipe.h"
 #include "model/Salt.h"
 #include "model/Style.h"
@@ -462,18 +464,6 @@ namespace {
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<FermentationStep> {};
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // Database field mappings for InventoryMisc
-   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> ObjectStore::TableDefinition const PRIMARY_TABLE<InventoryMisc> {
-      "misc_in_inventory",
-      {
-         {ObjectStore::FieldType::Int,    "id",               PropertyNames::Inventory::id    },
-         {ObjectStore::FieldType::Double, "amount",           PropertyNames::Inventory::amount},
-      }
-   };
-   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<InventoryMisc> {};
-
-   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Misc
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<Misc> {
@@ -484,12 +474,12 @@ namespace {
          {ObjectStore::FieldType::Bool  , "deleted"         , PropertyNames::NamedEntity::deleted                 },
          {ObjectStore::FieldType::Bool  , "display"         , PropertyNames::NamedEntity::display                 },
          {ObjectStore::FieldType::String, "folder"          , PropertyNames::NamedEntity::folder                  },
-         {ObjectStore::FieldType::Int   , "inventory_id"    , PropertyNames::NamedEntityWithInventory::inventoryId, &PRIMARY_TABLE<InventoryMisc>},
+///         {ObjectStore::FieldType::Int   , "inventory_id"    , PropertyNames::NamedEntityWithInventory::inventoryId, &PRIMARY_TABLE<InventoryMisc>},
          {ObjectStore::FieldType::Enum  , "mtype"           , PropertyNames::Misc::type                           , &Misc::typeStringMapping},
-         {ObjectStore::FieldType::Enum  , "use"             , PropertyNames::Misc::use                            , &Misc::useStringMapping },
+///         {ObjectStore::FieldType::Enum  , "use"             , PropertyNames::Misc::use                            , &Misc::useStringMapping },
          {ObjectStore::FieldType::Double, "time"            , PropertyNames::Misc::time_min                       },
-         {ObjectStore::FieldType::Double, "amount"          , PropertyNames::Misc::amount                         },
-         {ObjectStore::FieldType::Bool  , "amount_is_weight", PropertyNames::Misc::amountIsWeight                 },
+///         {ObjectStore::FieldType::Double, "amount"          , PropertyNames::Misc::amount                         },
+///         {ObjectStore::FieldType::Bool  , "amount_is_weight", PropertyNames::Misc::amountIsWeight                 },
          {ObjectStore::FieldType::String, "use_for"         , PropertyNames::Misc::useFor                         },
          {ObjectStore::FieldType::String, "notes"           , PropertyNames::Misc::notes                          },
          // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -497,17 +487,31 @@ namespace {
          {ObjectStore::FieldType::String, "product_id"      , PropertyNames::Misc::productId                      },
       }
    };
-   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Misc> {
+///   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Misc> {
+///      {
+///         "misc_children",
+///         {
+///            {ObjectStore::FieldType::Int, "id"                                                                             },
+///            {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Misc>},
+///            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, &PRIMARY_TABLE<Misc>},
+///         },
+///         ObjectStore::MAX_ONE_ENTRY
+///      }
+///   };
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Database field mappings for InventoryMisc
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> ObjectStore::TableDefinition const PRIMARY_TABLE<InventoryMisc> {
+      "misc_in_inventory",
       {
-         "misc_children",
-         {
-            {ObjectStore::FieldType::Int, "id"                                                                             },
-            {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Misc>},
-            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, &PRIMARY_TABLE<Misc>},
-         },
-         ObjectStore::MAX_ONE_ENTRY
+         {ObjectStore::FieldType::Int   , "id"      , PropertyNames::NamedEntity::key                     },
+         {ObjectStore::FieldType::Int   , "misc_id"  , PropertyNames::Inventory::ingredientId   , &PRIMARY_TABLE<Misc>},
+         {ObjectStore::FieldType::Double, "quantity", PropertyNames::IngredientAmount::quantity},
+         {ObjectStore::FieldType::Unit  , "unit"    , PropertyNames::IngredientAmount::unit    , &Measurement::Units::unitStringMapping},
       }
    };
+   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<InventoryMisc> {};
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Salt
@@ -646,9 +650,9 @@ namespace {
          {ObjectStore::FieldType::Bool  , "display"                     , PropertyNames::NamedEntity::display                 },
          {ObjectStore::FieldType::Bool  , "deleted"                     , PropertyNames::NamedEntity::deleted                 },
          {ObjectStore::FieldType::String, "folder"                      , PropertyNames::NamedEntity::folder                  },
-         {ObjectStore::FieldType::Int   , "inventory_id"                , PropertyNames::NamedEntityWithInventory::inventoryId, &PRIMARY_TABLE<InventoryYeast>},
-         {ObjectStore::FieldType::Bool  , "add_to_secondary"            , PropertyNames::Yeast::addToSecondary                },
-         {ObjectStore::FieldType::Bool  , "amount_is_weight"            , PropertyNames::Yeast::amountIsWeight                },
+///         {ObjectStore::FieldType::Int   , "inventory_id"                , PropertyNames::NamedEntityWithInventory::inventoryId, &PRIMARY_TABLE<InventoryYeast>},
+¥¥¥         {ObjectStore::FieldType::Bool  , "add_to_secondary"            , PropertyNames::Yeast::addToSecondary                },
+///         {ObjectStore::FieldType::Bool  , "amount_is_weight"            , PropertyNames::Yeast::amountIsWeight                },
          {ObjectStore::FieldType::Double, "amount"                      , PropertyNames::Yeast::amount                        },
          {ObjectStore::FieldType::Double, "attenuation"                 , PropertyNames::Yeast::attenuation_pct               },
          {ObjectStore::FieldType::Double, "max_temperature"             , PropertyNames::Yeast::maxTemperature_c              },

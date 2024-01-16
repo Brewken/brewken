@@ -48,7 +48,7 @@ class BtTreeView : public QTreeView {
    Q_OBJECT
 public:
    //! \brief The standard constructor
-   BtTreeView(QWidget * parent = nullptr, BtTreeModel::TypeMasks mask = BtTreeModel::RECIPEMASK);
+   BtTreeView(QWidget * parent = nullptr, BtTreeModel::TypeMasks mask = BtTreeModel::TypeMask::Recipe);
    //! \brief returns the model associated with this tree
    BtTreeModel * model();
    //! \b returns the filter associated with this model

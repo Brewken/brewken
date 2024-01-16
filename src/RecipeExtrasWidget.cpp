@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * RecipeExtrasWidget.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * RecipeExtrasWidget.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -88,13 +88,13 @@ void RecipeExtrasWidget::setRecipe(Recipe* rec) {
 }
 
 void RecipeExtrasWidget::updateBrewer() {
-   if (!this->recipe) { return;}
+   if (!this->recipe) { return; }
    MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, brewer), lineEdit_brewer->text(), tr("Change Brewer"));
    return;
 }
 
 void RecipeExtrasWidget::updateBrewerAsst() {
-   if (!this->recipe) { return;}
+   if (!this->recipe) { return; }
    if ( lineEdit_asstBrewer->isModified() ) {
       MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, asstBrewer), lineEdit_asstBrewer->text(), tr("Change Assistant Brewer"));
    }
@@ -104,7 +104,7 @@ void RecipeExtrasWidget::updateBrewerAsst() {
 void RecipeExtrasWidget::changeRatings([[maybe_unused]] int rating) { ratingChanged = true; }
 
 void RecipeExtrasWidget::updateTasteRating() {
-   if (!this->recipe) { return;}
+   if (!this->recipe) { return; }
    if ( ratingChanged )
    {
       MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, tasteRating), spinBox_tasteRating->value(), tr("Change Taste Rating"));
@@ -114,47 +114,49 @@ void RecipeExtrasWidget::updateTasteRating() {
 }
 
 void RecipeExtrasWidget::updatePrimaryAge() {
-   if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, primaryAge_days), lineEdit_primaryAge->getNonOptCanonicalQty(), tr("Change Primary Age"));
+   // See comment in model/Recipe.cpp for why age_days, primaryAge_days, secondaryAge_days, tertiaryAge_days properties
+   // are dimensionless
+   if (!this->recipe) { return; }
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, primaryAge_days), lineEdit_primaryAge->getNonOptValueAs<double>(), tr("Change Primary Age"));
 }
 
 void RecipeExtrasWidget::updatePrimaryTemp() {
-   if (!this->recipe) { return;}
+   if (!this->recipe) { return; }
    MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, primaryTemp_c), lineEdit_primaryTemp->getNonOptCanonicalQty(), tr("Change Primary Temp"));
 }
 
 void RecipeExtrasWidget::updateSecondaryAge() {
-   if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, secondaryAge_days), lineEdit_secAge->getNonOptCanonicalQty(), tr("Change Secondary Age"));
+   if (!this->recipe) { return; }
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, secondaryAge_days), lineEdit_secAge->getNonOptValueAs<double>(), tr("Change Secondary Age"));
 }
 
 void RecipeExtrasWidget::updateSecondaryTemp() {
-   if (!this->recipe) { return;}
+   if (!this->recipe) { return; }
    MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, secondaryTemp_c), lineEdit_secTemp->getNonOptCanonicalQty(), tr("Change Secondary Temp"));
 }
 
 void RecipeExtrasWidget::updateTertiaryAge() {
-   if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, tertiaryAge_days), lineEdit_tertAge->getNonOptCanonicalQty(), tr("Change Tertiary Age"));
+   if (!this->recipe) { return; }
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, tertiaryAge_days), lineEdit_tertAge->getNonOptValueAs<double>(), tr("Change Tertiary Age"));
 }
 
 void RecipeExtrasWidget::updateTertiaryTemp() {
-   if (!this->recipe) { return;}
+   if (!this->recipe) { return; }
    MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, tertiaryTemp_c), lineEdit_tertTemp->getNonOptCanonicalQty(), tr("Change Tertiary Temp"));
 }
 
 void RecipeExtrasWidget::updateAge() {
-   if (!this->recipe) { return;}
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, age_days), lineEdit_age->getNonOptCanonicalQty(), tr("Change Age"));
+   if (!this->recipe) { return; }
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, age_days), lineEdit_age->getNonOptValueAs<double>(), tr("Change Age"));
 }
 
 void RecipeExtrasWidget::updateAgeTemp() {
-   if (!this->recipe) { return;}
+   if (!this->recipe) { return; }
    MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, ageTemp_c), lineEdit_ageTemp->getNonOptCanonicalQty(), tr("Change Age Temp"));
 }
 
 void RecipeExtrasWidget::updateDate(QDate const & date) {
-   if (!this->recipe) { return;}
+   if (!this->recipe) { return; }
 
    if (date.isNull()) {
       MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, date), dateEdit_date->date(), tr("Change Date"));
@@ -170,7 +172,7 @@ void RecipeExtrasWidget::updateDate(QDate const & date) {
 }
 
 void RecipeExtrasWidget::updateCarbonation() {
-   if (!this->recipe) { return;}
+   if (!this->recipe) { return; }
 
    MainWindow::instance().doOrRedoUpdate(*recipe,
                                          TYPE_INFO(Recipe, carbonation_vols),
@@ -179,7 +181,7 @@ void RecipeExtrasWidget::updateCarbonation() {
 }
 
 void RecipeExtrasWidget::updateTasteNotes() {
-   if (!this->recipe) { return;}
+   if (!this->recipe) { return; }
 
    MainWindow::instance().doOrRedoUpdate(*recipe,
                                          TYPE_INFO(Recipe, tasteNotes),
@@ -188,7 +190,7 @@ void RecipeExtrasWidget::updateTasteNotes() {
 }
 
 void RecipeExtrasWidget::updateNotes() {
-   if (!this->recipe) { return;}
+   if (!this->recipe) { return; }
 
    MainWindow::instance().doOrRedoUpdate(*recipe,
                                          TYPE_INFO(Recipe, notes),
@@ -232,7 +234,7 @@ void RecipeExtrasWidget::saveAll() {
 }
 
 void RecipeExtrasWidget::showChanges(QMetaProperty* prop) {
-   if (!this->recipe) { return;}
+   if (!this->recipe) { return; }
 
    bool updateAll = true;
    QString propName;

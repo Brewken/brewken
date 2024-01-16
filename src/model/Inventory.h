@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Inventory.h is part of Brewken, and is copyright the following authors 2021-2023:
+ * model/Inventory.h is part of Brewken, and is copyright the following authors 2021-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -27,7 +27,6 @@
 #include "model/NamedEntity.h"
 #include "utils/MetaTypes.h"
 
-class Hop;
 class ObjectStore;
 class TypeLookup;
 
@@ -196,98 +195,98 @@ Inv * getInventory(Ing const & ing) {
 
 
 //////////////////////////////////////////////// OLD OLD OLD OLD OLD OLD ////////////////////////////////////////////////
-class OldInventory : public QObject {
-   Q_OBJECT
-
-public:
-   /**
-    * \brief See comment in model/NamedEntity.h
-    */
-   static QString const LocalisedName;
-
-   /**
-    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
-    *        info.
-    */
-   static TypeLookup const typeLookup;
-
-   OldInventory();
-   OldInventory(NamedParameterBundle const & namedParameterBundle);
-   OldInventory(OldInventory const & other);
-
-   ~OldInventory();
-
-   Q_PROPERTY(int    id     READ getId     WRITE setId    )
-   Q_PROPERTY(double amount READ getAmount WRITE setAmount)
-
-   /**
-    * \brief Returns the ID of the Inventory object, which is unique for a given subclass of Inventory (eg InventoryHop)
-    */
-   int getId() const;
-
-   /**
-    * \brief Returns the amount of the ingredient in the inventory.  Note that the interpretation of this amount (eg,
-    *        whether it's kilograms, liters, etc) is the responsibility of the ingredient class.
-    */
-   double getAmount() const;
-
-   void setId(int id);
-   void setAmount(double amount);
-
-   /**
-    * \brief Synonym for \c setId(), as it's needed for \c ObjectStoreTyped::hardDelete()
-    */
-   void setKey(int id);
-
-   /**
-    * \brief This doesn't actually do anything, but using ObjectStoreTyped means we have to provide an implementation,
-    *        as it's needed for \c ObjectStoreTyped::softDelete().
-    */
-   void setDeleted(bool var);
-
-   /**
-    * \brief This doesn't actually do anything, but using ObjectStoreTyped means we have to provide an implementation,
-    *        as it's needed for \c ObjectStoreTyped::softDelete().
-    */
-   void setDisplay(bool var);
-
-   /**
-    * \brief Returns the name of the ingredient class (eg Hop, Fermentable, Misc, Yeast) to which this Inventory class
-    *        relates.  Subclasses need to provide the (trivial) implementation of this.  Primarily useful for logging
-    *        and debugging.
-    */
-   virtual char const * getIngredientClass() const = 0;
-
-   /**
-    * \brief We need this for ObjectStoreTyped to call
-    */
-   void hardDeleteOwnedEntities();
-
-protected:
-   /**
-    * \brief Subclasses need to override this function to return the appropriate instance of \c ObjectStoreTyped.
-    */
-   virtual ObjectStore & getObjectStoreTypedInstance() const = 0;
-
-private:
-   // Private implementation details - see https://herbsutter.com/gotw/_100/
-   class impl;
-   std::unique_ptr<impl> pimpl;
-};
-// Thankfully C++11 allows us to inherit constructors using "using"
-///class InventoryFermentable : public OldInventory { using OldInventory::OldInventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
-class InventoryMisc        : public OldInventory { using OldInventory::OldInventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
-class InventoryYeast       : public OldInventory { using OldInventory::OldInventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
-
-namespace InventoryUtils {
-   /**
-    * \brief Helper function to set inventory amount for a given object
-    */
-   template<class Ing>
-   void setAmount(Ing & ing, double amount);
-
-   template<class Ing>
-   double getAmount(Ing const & ing);
-}
+///class OldInventory : public QObject {
+///   Q_OBJECT
+///
+///public:
+///   /**
+///    * \brief See comment in model/NamedEntity.h
+///    */
+///   static QString const LocalisedName;
+///
+///   /**
+///    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
+///    *        info.
+///    */
+///   static TypeLookup const typeLookup;
+///
+///   OldInventory();
+///   OldInventory(NamedParameterBundle const & namedParameterBundle);
+///   OldInventory(OldInventory const & other);
+///
+///   ~OldInventory();
+///
+///   Q_PROPERTY(int    id     READ getId     WRITE setId    )
+///   Q_PROPERTY(double amount READ getAmount WRITE setAmount)
+///
+///   /**
+///    * \brief Returns the ID of the Inventory object, which is unique for a given subclass of Inventory (eg InventoryHop)
+///    */
+///   int getId() const;
+///
+///   /**
+///    * \brief Returns the amount of the ingredient in the inventory.  Note that the interpretation of this amount (eg,
+///    *        whether it's kilograms, liters, etc) is the responsibility of the ingredient class.
+///    */
+///   double getAmount() const;
+///
+///   void setId(int id);
+///   void setAmount(double amount);
+///
+///   /**
+///    * \brief Synonym for \c setId(), as it's needed for \c ObjectStoreTyped::hardDelete()
+///    */
+///   void setKey(int id);
+///
+///   /**
+///    * \brief This doesn't actually do anything, but using ObjectStoreTyped means we have to provide an implementation,
+///    *        as it's needed for \c ObjectStoreTyped::softDelete().
+///    */
+///   void setDeleted(bool var);
+///
+///   /**
+///    * \brief This doesn't actually do anything, but using ObjectStoreTyped means we have to provide an implementation,
+///    *        as it's needed for \c ObjectStoreTyped::softDelete().
+///    */
+///   void setDisplay(bool var);
+///
+///   /**
+///    * \brief Returns the name of the ingredient class (eg Hop, Fermentable, Misc, Yeast) to which this Inventory class
+///    *        relates.  Subclasses need to provide the (trivial) implementation of this.  Primarily useful for logging
+///    *        and debugging.
+///    */
+///   virtual char const * getIngredientClass() const = 0;
+///
+///   /**
+///    * \brief We need this for ObjectStoreTyped to call
+///    */
+///   void hardDeleteOwnedEntities();
+///
+///protected:
+///   /**
+///    * \brief Subclasses need to override this function to return the appropriate instance of \c ObjectStoreTyped.
+///    */
+///   virtual ObjectStore & getObjectStoreTypedInstance() const = 0;
+///
+///private:
+///   // Private implementation details - see https://herbsutter.com/gotw/_100/
+///   class impl;
+///   std::unique_ptr<impl> pimpl;
+///};
+///// Thankfully C++11 allows us to inherit constructors using "using"
+//////class InventoryFermentable : public OldInventory { using OldInventory::OldInventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
+///class InventoryMisc        : public OldInventory { using OldInventory::OldInventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
+///class InventoryYeast       : public OldInventory { using OldInventory::OldInventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
+///
+///namespace InventoryUtils {
+///   /**
+///    * \brief Helper function to set inventory amount for a given object
+///    */
+///   template<class Ing>
+///   void setAmount(Ing & ing, double amount);
+///
+///   template<class Ing>
+///   double getAmount(Ing const & ing);
+///}
 
 #endif

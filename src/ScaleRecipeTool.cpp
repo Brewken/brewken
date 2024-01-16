@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * ScaleRecipeTool.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * ScaleRecipeTool.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -32,6 +32,8 @@
 #include "model/Recipe.h"
 #include "model/RecipeAdditionFermentable.h"
 #include "model/RecipeAdditionHop.h"
+#include "model/RecipeAdditionMisc.h"
+#include "model/RecipeAdditionYeast.h"
 #include "model/Water.h"
 #include "model/Yeast.h"
 #include "NamedEntitySortProxyModel.h"
@@ -100,9 +102,9 @@ void ScaleRecipeTool::scale(Equipment* equip, double newEff) {
       hopAddition->setQuantity(hopAddition->quantity() * volRatio);
    }
 
-   for (auto misc : this->recObs->miscs()) {
+   for (auto miscAddition : this->recObs->miscAdditions()) {
       // We assume volumes and masses get scaled the same way
-      misc->setAmount(misc->amount() * volRatio);
+      miscAddition->setQuantity(Addition->quantity() * volRatio);
    }
 
    for (auto water : this->recObs->waters()) {
@@ -118,7 +120,8 @@ void ScaleRecipeTool::scale(Equipment* equip, double newEff) {
       }
    }
 
-   // I don't think I should scale the yeasts.
+   // TBD: For now we don't scale the yeasts, but it might be good to give the option on this if user is doing a big
+   //      scale-up or down.
 
    // Let the user know what happened.
    QMessageBox::information(this,
