@@ -57,18 +57,14 @@ RecipeAdditionMiscTableModel::RecipeAdditionMiscTableModel(QTableView * parent, 
          // Note that we have to use PropertyNames::NamedEntityWithInventory::inventoryWithUnits because
          // PropertyNames::NamedEntityWithInventory::inventory is not implemented
          TABLE_MODEL_HEADER(RecipeAdditionMisc, Name          , tr("Name"       ), PropertyPath{{PropertyNames::RecipeAdditionMisc::misc,
-                                                                                                PropertyNames::NamedEntity::name         }}),
-         TABLE_MODEL_HEADER(RecipeAdditionMisc, Form          , tr("Form"       ), PropertyPath{{PropertyNames::RecipeAdditionMisc::misc,
-                                                                                                PropertyNames::Misc::form                 }}, EnumInfo{Misc::formStringMapping, Misc::formDisplayNames}),
-         TABLE_MODEL_HEADER(RecipeAdditionMisc, Alpha         , tr("Alpha %"    ), PropertyPath{{PropertyNames::RecipeAdditionMisc::misc,
-                                                                                                PropertyNames::Misc::alpha_pct            }}, PrecisionInfo{1}),
-         TABLE_MODEL_HEADER(RecipeAdditionMisc, Year          , tr("Year"       ), PropertyPath{{PropertyNames::RecipeAdditionMisc::misc,
-                                                                                                PropertyNames::Misc::year                 }}),
+                                                                                                 PropertyNames::NamedEntity::name         }}),
+         TABLE_MODEL_HEADER(RecipeAdditionMisc, Type          , tr("Type"       ), PropertyPath{{PropertyNames::RecipeAdditionMisc::misc,
+                                                                                                 PropertyNames::Misc::type                 }}, EnumInfo{Misc::typeStringMapping, Misc::typeDisplayNames}),
          TABLE_MODEL_HEADER(RecipeAdditionMisc, Amount        , tr("Amount"     ), PropertyNames::IngredientAmount::amount                  , PrecisionInfo{1}),
          TABLE_MODEL_HEADER(RecipeAdditionMisc, AmountType    , tr("Amount Type"), PropertyNames::IngredientAmount::amount                  , Misc::validMeasures),
          // In this table, inventory is read-only, so there is intentionally no TotalInventoryType column
          TABLE_MODEL_HEADER(RecipeAdditionMisc, TotalInventory, tr("Inventory"  ), PropertyPath{{PropertyNames::RecipeAdditionMisc::misc,
-                                                                                                PropertyNames::Ingredient::totalInventory}}),
+                                                                                                 PropertyNames::Ingredient::totalInventory}}),
          TABLE_MODEL_HEADER(RecipeAdditionMisc, Stage         , tr("Stage"      ), PropertyNames::RecipeAddition::stage                     , EnumInfo{RecipeAddition::stageStringMapping, RecipeAddition::stageDisplayNames}),
          TABLE_MODEL_HEADER(RecipeAdditionMisc, Time          , tr("Time"       ), PropertyNames::RecipeAddition::addAtTime_mins            , PrecisionInfo{1}),
       }
@@ -104,9 +100,7 @@ QVariant RecipeAdditionMiscTableModel::data(const QModelIndex & index, int role)
    auto const columnIndex = static_cast<RecipeAdditionMiscTableModel::ColumnIndex>(index.column());
    switch (columnIndex) {
       case RecipeAdditionMiscTableModel::ColumnIndex::Name          :
-      case RecipeAdditionMiscTableModel::ColumnIndex::Form          :
-      case RecipeAdditionMiscTableModel::ColumnIndex::Alpha         :
-      case RecipeAdditionMiscTableModel::ColumnIndex::Year          :
+      case RecipeAdditionMiscTableModel::ColumnIndex::Type          :
       case RecipeAdditionMiscTableModel::ColumnIndex::Amount        :
       case RecipeAdditionMiscTableModel::ColumnIndex::AmountType    :
       case RecipeAdditionMiscTableModel::ColumnIndex::TotalInventory:
@@ -158,9 +152,7 @@ bool RecipeAdditionMiscTableModel::setData(const QModelIndex & index, const QVar
    auto const columnIndex = static_cast<RecipeAdditionMiscTableModel::ColumnIndex>(index.column());
    switch (columnIndex) {
       case RecipeAdditionMiscTableModel::ColumnIndex::Name          :
-      case RecipeAdditionMiscTableModel::ColumnIndex::Form          :
-      case RecipeAdditionMiscTableModel::ColumnIndex::Alpha         :
-      case RecipeAdditionMiscTableModel::ColumnIndex::Year          :
+      case RecipeAdditionMiscTableModel::ColumnIndex::Type          :
       case RecipeAdditionMiscTableModel::ColumnIndex::Amount        :
       case RecipeAdditionMiscTableModel::ColumnIndex::AmountType    :
       case RecipeAdditionMiscTableModel::ColumnIndex::TotalInventory:

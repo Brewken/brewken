@@ -232,16 +232,16 @@ public:
       m_self{self},
 ///      fileOpener{},
       m_undoStack{std::make_unique<QUndoStack>(&m_self)},
-      m_fermentableAdditionsTableModel    {nullptr},
-      m_hopAdditionsTableModel     {nullptr},
-      m_mashStepTableModel{nullptr},
-      m_miscTableModel    {nullptr},
-      m_yeastTableModel   {nullptr},
-      m_fermentableAdditionsTableProxy    {nullptr},
-      m_hopAdditionsTableProxy     {nullptr},
-      m_miscTableProxy    {nullptr},
-      m_styleProxyModel   {nullptr},
-      m_yeastTableProxy   {nullptr} {
+      m_fermentableAdditionsTableModel{nullptr},
+      m_hopAdditionsTableModel        {nullptr},
+      m_mashStepTableModel            {nullptr},
+      m_miscAdditionsTableModel       {nullptr},
+      m_yeastAdditionsTableModel      {nullptr},
+      m_fermentableAdditionsTableProxy{nullptr},
+      m_hopAdditionsTableProxy        {nullptr},
+      m_miscAdditionsTableProxy       {nullptr},
+      m_styleProxyModel               {nullptr},
+      m_yeastAdditionsTableProxy      {nullptr} {
       return;
    }
 
@@ -284,26 +284,26 @@ public:
       });
 
       // Misc
-      m_miscTableModel = std::make_unique<MiscTableModel>(m_self.miscTable);
-      m_miscTableProxy = std::make_unique<MiscSortFilterProxyModel>(m_self.miscTable, false);
-      m_miscTableProxy->setSourceModel(m_miscTableModel.get());
-      m_self.miscTable->setItemDelegate(new MiscItemDelegate(m_self.miscTable, *m_miscTableModel));
-      m_self.miscTable->setModel(m_miscTableProxy.get());
-      connect(m_self.miscTable, &QTableView::doubleClicked, &m_self, [&](const QModelIndex &idx) {
+      m_miscAdditionsTableModel = std::make_unique<RecipeAdditionMiscTableModel>(m_self.miscAdditionTable);
+      m_miscAdditionsTableProxy = std::make_unique<RecipeAdditionMiscSortFilterProxyModel>(m_self.miscAdditionTable, false);
+      m_miscAdditionsTableProxy->setSourceModel(m_miscAdditionsTableModel.get());
+      m_self.miscAdditionTable->setItemDelegate(new RecipeAdditionMiscItemDelegate(m_self.miscAdditionTable, *m_miscAdditionsTableModel));
+      m_self.miscAdditionTable->setModel(m_miscAdditionsTableProxy.get());
+      connect(m_self.miscAdditionTable, &QTableView::doubleClicked, &m_self, [&](const QModelIndex &idx) {
          if (idx.column() == 0) {
-            m_self.editSelectedMisc();
+            m_self.editMiscOfSelectedMiscAddition();
          }
       });
 
       // Yeast
-      m_yeastTableModel = std::make_unique<YeastTableModel>(m_self.yeastTable);
-      m_yeastTableProxy = std::make_unique<YeastSortFilterProxyModel>(m_self.yeastTable, false);
-      m_yeastTableProxy->setSourceModel(m_yeastTableModel.get());
-      m_self.yeastTable->setItemDelegate(new YeastItemDelegate(m_self.yeastTable, *m_yeastTableModel));
-      m_self.yeastTable->setModel(m_yeastTableProxy.get());
-      connect(m_self.yeastTable, &QTableView::doubleClicked, &m_self, [&](const QModelIndex &idx) {
+      m_yeastAdditionsTableModel = std::make_unique<RecipeAdditionYeastTableModel>(m_self.yeastAdditionTable);
+      m_yeastAdditionsTableProxy = std::make_unique<RecipeAdditionYeastSortFilterProxyModel>(m_self.yeastAdditionTable, false);
+      m_yeastAdditionsTableProxy->setSourceModel(m_yeastAdditionsTableModel.get());
+      m_self.yeastAdditionTable->setItemDelegate(new RecipeAdditionYeastItemDelegate(m_self.yeastAdditionTable, *m_yeastAdditionsTableModel));
+      m_self.yeastAdditionTable->setModel(m_yeastAdditionsTableProxy.get());
+      connect(m_self.yeastAdditionTable, &QTableView::doubleClicked, &m_self, [&](const QModelIndex &idx) {
          if (idx.column() == 0) {
-            m_self.editSelectedYeast();
+            m_self.editYeastOfSelectedYeastAddition();
          }
       });
 
@@ -324,12 +324,12 @@ public:
       m_self.hopAdditionTable->horizontalHeader()->setSortIndicator(static_cast<int>(RecipeAdditionHopTableModel::ColumnIndex::Time), Qt::DescendingOrder );
       m_self.hopAdditionTable->setSortingEnabled(true);
       m_hopAdditionsTableProxy->setDynamicSortFilter(true);
-      m_self.miscTable->horizontalHeader()->setSortIndicator(static_cast<int>(MiscTableModel::ColumnIndex::Use), Qt::DescendingOrder );
-      m_self.miscTable->setSortingEnabled(true);
-      m_miscTableProxy->setDynamicSortFilter(true);
-      m_self.yeastTable->horizontalHeader()->setSortIndicator(static_cast<int>(YeastTableModel::ColumnIndex::Name), Qt::DescendingOrder );
-      m_self.yeastTable->setSortingEnabled(true);
-      m_yeastTableProxy->setDynamicSortFilter(true);
+      m_self.miscAdditionTable->horizontalHeader()->setSortIndicator(static_cast<int>(RecipeAdditionMiscTableModel::ColumnIndex::Time), Qt::DescendingOrder );
+      m_self.miscAdditionTable->setSortingEnabled(true);
+      m_miscAdditionsTableProxy->setDynamicSortFilter(true);
+      m_self.yeastAdditionTable->horizontalHeader()->setSortIndicator(static_cast<int>(RecipeAdditionYeastTableModel::ColumnIndex::Name), Qt::DescendingOrder );
+      m_self.yeastAdditionTable->setSortingEnabled(true);
+      m_yeastAdditionsTableProxy->setDynamicSortFilter(true);
    }
 
    /**
@@ -343,7 +343,7 @@ public:
       m_equipCatalog          = std::make_unique<EquipmentCatalog     >(&m_self);
       m_equipEditor           = std::make_unique<EquipmentEditor      >(&m_self);
       m_fermCatalog           = std::make_unique<FermentableCatalog   >(&m_self);
-      m_fermentableEditor            = std::make_unique<FermentableEditor    >(&m_self);
+      m_fermentableEditor     = std::make_unique<FermentableEditor    >(&m_self);
       m_hopCatalog            = std::make_unique<HopCatalog           >(&m_self);
       m_hopEditor             = std::make_unique<HopEditor            >(&m_self);
       m_mashEditor            = std::make_unique<MashEditor           >(&m_self);
@@ -432,10 +432,10 @@ public:
       return tableModel->getRow(modelIndex.row()).get();
    }
 
-   RecipeAdditionFermentable * selectedFermentableAddition() { return this->selected<RecipeAdditionFermentable>(m_self.fermentableAdditionTable, this->m_fermentableAdditionsTableProxy.get()        , this->m_fermentableAdditionsTableModel.get()        ); }
-   RecipeAdditionHop * selectedHopAddition() { return this->selected<RecipeAdditionHop>(m_self.hopAdditionTable, this->m_hopAdditionsTableProxy.get(), this->m_hopAdditionsTableModel.get()); }
-   Misc              * selectedMisc       () { return this->selected<Misc             >(m_self.miscTable       , this->m_miscTableProxy.get()        , this->m_miscTableModel.get()        ); }
-   Yeast             * selectedYeast      () { return this->selected<Yeast            >(m_self.yeastTable      , this->m_yeastTableProxy.get()       , this->m_yeastTableModel.get()       ); }
+   RecipeAdditionFermentable * selectedFermentableAddition() { return this->selected<RecipeAdditionFermentable>(m_self.fermentableAdditionTable, this->m_fermentableAdditionsTableProxy.get(), this->m_fermentableAdditionsTableModel.get()); }
+   RecipeAdditionHop *         selectedHopAddition        () { return this->selected<RecipeAdditionHop        >(m_self.hopAdditionTable        , this->m_hopAdditionsTableProxy.get()        , this->m_hopAdditionsTableModel.get()); }
+   RecipeAdditionMisc *        selectedMiscAddition       () { return this->selected<RecipeAdditionMisc       >(m_self.miscAdditionTable       , this->m_miscAdditionsTableProxy.get()       , this->m_miscAdditionsTableModel.get()); }
+   RecipeAdditionYeast *       selectedYeastAddition      () { return this->selected<RecipeAdditionYeast      >(m_self.yeastAdditionTable      , this->m_yeastAdditionsTableProxy.get()      , this->m_yeastAdditionsTableModel.get()); }
 
    /**
     * \brief Use this for adding \c RecipeAdditionHop etc
@@ -512,16 +512,16 @@ public:
    // all things tables should go here.
    std::unique_ptr<RecipeAdditionFermentableTableModel> m_fermentableAdditionsTableModel;
    std::unique_ptr<RecipeAdditionHopTableModel        > m_hopAdditionsTableModel;
-   std::unique_ptr<MashStepTableModel   > m_mashStepTableModel;
-   std::unique_ptr<MiscTableModel       > m_miscTableModel    ;
-   std::unique_ptr<YeastTableModel      > m_yeastTableModel   ;
+   std::unique_ptr<MashStepTableModel                 > m_mashStepTableModel;
+   std::unique_ptr<RecipeAdditionMiscTableModel       > m_miscAdditionsTableModel;
+   std::unique_ptr<RecipeAdditionYeastTableModel      > m_yeastAdditionsTableModel;
 
    // all things sort/filter proxy go here
    std::unique_ptr<RecipeAdditionFermentableSortFilterProxyModel> m_fermentableAdditionsTableProxy;
    std::unique_ptr<RecipeAdditionHopSortFilterProxyModel        > m_hopAdditionsTableProxy;
-   std::unique_ptr<MiscSortFilterProxyModel       > m_miscTableProxy ;
-   std::unique_ptr<StyleSortFilterProxyModel      > m_styleProxyModel;
-   std::unique_ptr<YeastSortFilterProxyModel      > m_yeastTableProxy;
+   std::unique_ptr<RecipeAdditionMiscSortFilterProxyModel       > m_miscAdditionsTableProxy;
+   std::unique_ptr<StyleSortFilterProxyModel                    > m_styleProxyModel;
+   std::unique_ptr<RecipeAdditionYeastSortFilterProxyModel      > m_yeastAdditionsTableProxy;
 
    // All initialised in setupDialogs
    std::unique_ptr<AboutDialog          > m_aboutDialog          ;
@@ -567,7 +567,6 @@ public:
 //   std::unique_ptr<WaterListModel> waterListModel;  Appears to be unused...
    std::unique_ptr<NamedMashEditor> m_namedMashEditor;
    std::unique_ptr<NamedMashEditor> m_singleNamedMashEditor;
-
 
 };
 
@@ -1093,26 +1092,26 @@ void MainWindow::setupTriggers() {
 void MainWindow::setupClicks() {
    connect(this->equipmentButton          , &QAbstractButton::clicked, this        , &MainWindow::showEquipmentEditor      );
    connect(this->styleButton              , &QAbstractButton::clicked, this        , &MainWindow::showStyleEditor          );
-   connect(this->mashButton               , &QAbstractButton::clicked, this->pimpl->m_mashEditor  , &MashEditor::showEditor               );
-   connect(this->pushButton_addFerm       , &QAbstractButton::clicked, this->pimpl->m_fermCatalog  , &QWidget::show                        );
-   connect(this->pushButton_addHop        , &QAbstractButton::clicked, this->pimpl->m_hopCatalog   , &QWidget::show                        );
-   connect(this->pushButton_addMisc       , &QAbstractButton::clicked, this->pimpl->m_miscCatalog  , &QWidget::show                        );
-   connect(this->pushButton_addYeast      , &QAbstractButton::clicked, this->pimpl->m_yeastCatalog , &QWidget::show                        );
+   connect(this->mashButton               , &QAbstractButton::clicked, this->pimpl->m_mashEditor  , &MashEditor::showEditor);
+   connect(this->pushButton_addFerm       , &QAbstractButton::clicked, this->pimpl->m_fermCatalog  , &QWidget::show        );
+   connect(this->pushButton_addHop        , &QAbstractButton::clicked, this->pimpl->m_hopCatalog   , &QWidget::show        );
+   connect(this->pushButton_addMisc       , &QAbstractButton::clicked, this->pimpl->m_miscCatalog  , &QWidget::show        );
+   connect(this->pushButton_addYeast      , &QAbstractButton::clicked, this->pimpl->m_yeastCatalog , &QWidget::show        );
    connect(this->pushButton_removeFerm    , &QAbstractButton::clicked, this        , &MainWindow::removeSelectedFermentableAddition);
    connect(this->pushButton_removeHop     , &QAbstractButton::clicked, this        , &MainWindow::removeSelectedHopAddition        );
-   connect(this->pushButton_removeMisc    , &QAbstractButton::clicked, this        , &MainWindow::removeSelectedMisc       );
-   connect(this->pushButton_removeYeast   , &QAbstractButton::clicked, this        , &MainWindow::removeSelectedYeast      );
-   connect(this->pushButton_editFerm      , &QAbstractButton::clicked, this        , &MainWindow::editFermentableOfSelectedFermentableAddition  );
-   connect(this->pushButton_editMisc      , &QAbstractButton::clicked, this        , &MainWindow::editSelectedMisc         );
-   connect(this->pushButton_editHop       , &QAbstractButton::clicked, this        , &MainWindow::editHopOfSelectedHopAddition          );
-   connect(this->pushButton_editYeast     , &QAbstractButton::clicked, this        , &MainWindow::editSelectedYeast        );
-   connect(this->pushButton_editMash      , &QAbstractButton::clicked, this->pimpl->m_mashEditor  , &MashEditor::showEditor               );
+   connect(this->pushButton_removeMisc    , &QAbstractButton::clicked, this        , &MainWindow::removeSelectedMiscAddition       );
+   connect(this->pushButton_removeYeast   , &QAbstractButton::clicked, this        , &MainWindow::removeSelectedYeastAddition      );
+   connect(this->pushButton_editFerm      , &QAbstractButton::clicked, this        , &MainWindow::editFermentableOfSelectedFermentableAddition);
+   connect(this->pushButton_editMisc      , &QAbstractButton::clicked, this        , &MainWindow::editMiscOfSelectedMiscAddition              );
+   connect(this->pushButton_editHop       , &QAbstractButton::clicked, this        , &MainWindow::editHopOfSelectedHopAddition                );
+   connect(this->pushButton_editYeast     , &QAbstractButton::clicked, this        , &MainWindow::editYeastOfSelectedYeastAddition            );
+   connect(this->pushButton_editMash      , &QAbstractButton::clicked, this->pimpl->m_mashEditor  , &MashEditor::showEditor                   );
    connect(this->pushButton_addMashStep   , &QAbstractButton::clicked, this        , &MainWindow::addMashStep              );
    connect(this->pushButton_removeMashStep, &QAbstractButton::clicked, this        , &MainWindow::removeSelectedMashStep   );
    connect(this->pushButton_editMashStep  , &QAbstractButton::clicked, this        , &MainWindow::editSelectedMashStep     );
-   connect(this->pushButton_mashWizard    , &QAbstractButton::clicked, this->pimpl->m_mashWizard  , &MashWizard::show                     );
+   connect(this->pushButton_mashWizard    , &QAbstractButton::clicked, this->pimpl->m_mashWizard  , &MashWizard::show      );
    connect(this->pushButton_saveMash      , &QAbstractButton::clicked, this        , &MainWindow::saveMash                 );
-   connect(this->pushButton_mashDes       , &QAbstractButton::clicked, this->pimpl->m_mashDesigner, &MashDesigner::show                   );
+   connect(this->pushButton_mashDes       , &QAbstractButton::clicked, this->pimpl->m_mashDesigner, &MashDesigner::show    );
    connect(this->pushButton_mashUp        , &QAbstractButton::clicked, this        , &MainWindow::moveSelectedMashStepUp   );
    connect(this->pushButton_mashDown      , &QAbstractButton::clicked, this        , &MainWindow::moveSelectedMashStepDown );
    connect(this->pushButton_mashRemove    , &QAbstractButton::clicked, this        , &MainWindow::removeMash               );
@@ -1192,7 +1191,7 @@ void MainWindow::deleteSelected() {
       qDebug() << Q_FUNC_INFO << "Row" << oldRow << "no longer valid, so returning to first (" << start.row() << ")";
    }
 
-   while (start.isValid() && active->type(start) == BtTreeItem::Type::FOLDER) {
+   while (start.isValid() && active->type(start) == BtTreeItem::Type::Folder) {
       qDebug() << Q_FUNC_INFO << "Skipping over folder at row" << start.row();
       // Once all platforms are on Qt 5.11 or later, we can write:
       // start = start.siblingAtRow(start.row() + 1);
@@ -1201,7 +1200,7 @@ void MainWindow::deleteSelected() {
 
    if (start.isValid()) {
       qDebug() << Q_FUNC_INFO << "Row" << start.row() << "is" << active->type(start);
-      if (active->type(start) == BtTreeItem::Type::RECIPE) {
+      if (active->type(start) == BtTreeItem::Type::Recipe) {
          this->setRecipe(treeView_recipe->getItem<Recipe>(start));
       }
       this->setTreeSelection(start);
@@ -1229,10 +1228,10 @@ void MainWindow::treeActivated(const QModelIndex &index) {
       qWarning() << Q_FUNC_INFO << "Unknown type for index" << index;
    } else {
       switch (*itemType) {
-         case BtTreeItem::Type::RECIPE:
+         case BtTreeItem::Type::Recipe:
             setRecipe(treeView_recipe->getItem<Recipe>(index));
             break;
-         case BtTreeItem::Type::EQUIPMENT:
+         case BtTreeItem::Type::Equipment:
             {
                Equipment * kit = active->getItem<Equipment>(index);
                if ( kit ) {
@@ -1241,7 +1240,7 @@ void MainWindow::treeActivated(const QModelIndex &index) {
                }
             }
             break;
-         case BtTreeItem::Type::FERMENTABLE:
+         case BtTreeItem::Type::Fermentable:
             {
                Fermentable * ferm = active->getItem<Fermentable>(index);
                if (ferm) {
@@ -1250,7 +1249,7 @@ void MainWindow::treeActivated(const QModelIndex &index) {
                }
             }
             break;
-         case BtTreeItem::Type::HOP:
+         case BtTreeItem::Type::Hop:
             {
                Hop* hop = active->getItem<Hop>(index);
                if (hop) {
@@ -1259,7 +1258,7 @@ void MainWindow::treeActivated(const QModelIndex &index) {
                }
             }
             break;
-         case BtTreeItem::Type::MISC:
+         case BtTreeItem::Type::Misc:
             {
                Misc * misc = active->getItem<Misc>(index);
                if (misc) {
@@ -1268,7 +1267,7 @@ void MainWindow::treeActivated(const QModelIndex &index) {
                }
             }
             break;
-         case BtTreeItem::Type::STYLE:
+         case BtTreeItem::Type::Style:
             {
                Style * style = active->getItem<Style>(index);
                if (style) {
@@ -1277,7 +1276,7 @@ void MainWindow::treeActivated(const QModelIndex &index) {
                }
             }
             break;
-         case BtTreeItem::Type::YEAST:
+         case BtTreeItem::Type::Yeast:
             {
                Yeast * yeast = active->getItem<Yeast>(index);
                if (yeast) {
@@ -1286,12 +1285,12 @@ void MainWindow::treeActivated(const QModelIndex &index) {
                }
             }
             break;
-         case BtTreeItem::Type::BREWNOTE:
+         case BtTreeItem::Type::BrewNote:
             setBrewNoteByIndex(index);
             break;
-         case BtTreeItem::Type::FOLDER:  // default behavior is fine, but no warning
+         case BtTreeItem::Type::Folder:  // default behavior is fine, but no warning
             break;
-         case BtTreeItem::Type::WATER:
+         case BtTreeItem::Type::Water:
             {
                Water * w = active->getItem<Water>(index);
                if (w) {
@@ -1433,8 +1432,8 @@ void MainWindow::setRecipe(Recipe* recipe) {
    // Reset all previous recipe shit.
    this->pimpl->m_fermentableAdditionsTableModel->observeRecipe(recipe);
    this->pimpl->m_hopAdditionsTableModel->observeRecipe(recipe);
-   this->pimpl->m_miscTableModel->observeRecipe(recipe);
-   this->pimpl->m_yeastTableModel->observeRecipe(recipe);
+   this->pimpl->m_miscAdditionsTableModel->observeRecipe(recipe);
+   this->pimpl->m_yeastAdditionsTableModel->observeRecipe(recipe);
    this->pimpl->m_mashStepTableModel->setMash(recipeObs->mash());
 
    // Clean out any brew notes
@@ -1543,12 +1542,12 @@ void MainWindow::lockRecipe(int state) {
    pushButton_removeHop->setEnabled(enabled);
    pushButton_editHop->setEnabled(enabled);
 
-   miscTable->setEnabled(enabled);
+   miscAdditionTable->setEnabled(enabled);
    pushButton_addMisc->setEnabled(enabled);
    pushButton_removeMisc->setEnabled(enabled);
    pushButton_editMisc->setEnabled(enabled);
 
-   yeastTable->setEnabled(enabled);
+   yeastAdditionTable->setEnabled(enabled);
    pushButton_addYeast->setEnabled(enabled);
    pushButton_removeYeast->setEnabled(enabled);
    pushButton_editYeast->setEnabled(enabled);
@@ -2039,6 +2038,20 @@ void MainWindow::removeSelectedHopAddition() {
    return;
 }
 
+void MainWindow::removeSelectedMiscAddition() {
+   this->pimpl->doRemoveRecipeAddition<RecipeAdditionMisc>(miscAdditionTable,
+                                                          this->pimpl->m_miscAdditionsTableProxy.get(),
+                                                          this->pimpl->m_miscAdditionsTableModel.get());
+   return;
+}
+
+void MainWindow::removeSelectedYeastAddition() {
+   this->pimpl->doRemoveRecipeAddition<RecipeAdditionYeast>(yeastAdditionTable,
+                                                          this->pimpl->m_yeastAdditionsTableProxy.get(),
+                                                          this->pimpl->m_yeastAdditionsTableModel.get());
+   return;
+}
+
 void MainWindow::addMashStepToMash(std::shared_ptr<MashStep> mashStep) {
    qDebug() << Q_FUNC_INFO;
    //
@@ -2143,7 +2156,6 @@ void MainWindow::editRedo() {
    return;
 }
 
-// .:TBD:. Can we get rid of this now?
 void MainWindow::removeHopAddition(std::shared_ptr<RecipeAdditionHop> itemToRemove) {
    this->pimpl->m_hopAdditionsTableModel->remove(itemToRemove);
    return;
@@ -2152,12 +2164,12 @@ void MainWindow::removeFermentableAddition(std::shared_ptr<RecipeAdditionFerment
    this->pimpl->m_fermentableAdditionsTableModel->remove(itemToRemove);
    return;
 }
-void MainWindow::removeMisc(std::shared_ptr<Misc> itemToRemove) {
-   this->pimpl->m_miscTableModel->remove(itemToRemove);
+void MainWindow::removeMiscAddition(std::shared_ptr<RecipeAdditionMisc> itemToRemove) {
+   this->pimpl->m_miscAdditionsTableModel->remove(itemToRemove);
    return;
 }
-void MainWindow::removeYeast(std::shared_ptr<Yeast> itemToRemove) {
-   this->pimpl->m_yeastTableModel->remove(itemToRemove);
+void MainWindow::removeYeastAddition(std::shared_ptr<RecipeAdditionYeast> itemToRemove) {
+   this->pimpl->m_yeastAdditionsTableModel->remove(itemToRemove);
    return;
 }
 
@@ -2211,13 +2223,18 @@ void MainWindow::removeMashStep(std::shared_ptr<MashStep> itemToRemove) {
 ///   return;
 ///}
 
-void MainWindow::editSelectedMisc() {
-   Misc* m = this->pimpl->selectedMisc();
-   if (!m) {
+void MainWindow::editMiscOfSelectedMiscAddition() {
+   RecipeAdditionMisc * miscAddition = this->pimpl->selectedMiscAddition();
+   if (!miscAddition) {
       return;
    }
 
-   this->pimpl->m_miscEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(m));
+   Misc * misc = miscAddition->misc();
+   if (!misc) {
+      return;
+   }
+
+   this->pimpl->m_miscEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(misc));
    this->pimpl->m_miscEditor->show();
 }
 
@@ -2253,74 +2270,79 @@ void MainWindow::editHopOfSelectedHopAddition() {
    return;
 }
 
-void MainWindow::editSelectedYeast() {
-   Yeast* y = this->pimpl->selectedYeast();
-   if (!y) {
+void MainWindow::editYeastOfSelectedYeastAddition() {
+   RecipeAdditionYeast * yeastAddition = this->pimpl->selectedYeastAddition();
+   if (!yeastAddition) {
       return;
    }
 
-   this->pimpl->m_yeastEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(y));
+   Yeast * yeast = yeastAddition->yeast();
+   if (!yeast) {
+      return;
+   }
+
+   this->pimpl->m_yeastEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(yeast));
    this->pimpl->m_yeastEditor->show();
    return;
 }
-
-void MainWindow::removeSelectedMisc() {
-   QModelIndexList selected = miscTable->selectionModel()->selectedIndexes();
-   QList< std::shared_ptr<Misc> > itemsToRemove;
-
-   int size = selected.size();
-   if (size == 0) {
-      return;
-   }
-
-   for (int i = 0; i < size; i++) {
-      QModelIndex viewIndex = selected.at(i);
-      QModelIndex modelIndex = this->pimpl->m_miscTableProxy->mapToSource(viewIndex);
-
-      itemsToRemove.append(this->pimpl->m_miscTableModel->getRow(modelIndex.row()));
-   }
-
-   for (auto item : itemsToRemove) {
-      this->doOrRedoUpdate(
-         newUndoableAddOrRemove(*this->recipeObs,
-                                 &Recipe::remove<Misc>,
-                                 item,
-                                 &Recipe::add<Misc>,
-                                 &MainWindow::removeMisc,
-                                 static_cast<void (MainWindow::*)(std::shared_ptr<Misc>)>(nullptr),
-                                 tr("Remove misc from recipe"))
-      );
-   }
-}
-
-void MainWindow::removeSelectedYeast() {
-   QModelIndexList selected = yeastTable->selectionModel()->selectedIndexes();
-   QList< std::shared_ptr<Yeast> > itemsToRemove;
-
-   int size = selected.size();
-   if (size == 0) {
-      return;
-   }
-
-   for(int i = 0; i < size; i++) {
-      QModelIndex viewIndex = selected.at(i);
-      QModelIndex modelIndex = this->pimpl->m_yeastTableProxy->mapToSource(viewIndex);
-
-      itemsToRemove.append(this->pimpl->m_yeastTableModel->getRow(modelIndex.row()));
-   }
-
-   for (auto item : itemsToRemove) {
-      this->doOrRedoUpdate(
-         newUndoableAddOrRemove(*this->recipeObs,
-                                 &Recipe::remove<Yeast>,
-                                 item,
-                                 &Recipe::add<Yeast>,
-                                 &MainWindow::removeYeast,
-                                 static_cast<void (MainWindow::*)(std::shared_ptr<Yeast>)>(nullptr),
-                                 tr("Remove yeast from recipe"))
-      );
-   }
-}
+///
+///void MainWindow::removeSelectedMisc() {
+///   QModelIndexList selected = miscAdditionTable->selectionModel()->selectedIndexes();
+///   QList< std::shared_ptr<Misc> > itemsToRemove;
+///
+///   int size = selected.size();
+///   if (size == 0) {
+///      return;
+///   }
+///
+///   for (int i = 0; i < size; i++) {
+///      QModelIndex viewIndex = selected.at(i);
+///      QModelIndex modelIndex = this->pimpl->m_miscTableProxy->mapToSource(viewIndex);
+///
+///      itemsToRemove.append(this->pimpl->m_miscTableModel->getRow(modelIndex.row()));
+///   }
+///
+///   for (auto item : itemsToRemove) {
+///      this->doOrRedoUpdate(
+///         newUndoableAddOrRemove(*this->recipeObs,
+///                                 &Recipe::remove<Misc>,
+///                                 item,
+///                                 &Recipe::add<Misc>,
+///                                 &MainWindow::removeMisc,
+///                                 static_cast<void (MainWindow::*)(std::shared_ptr<Misc>)>(nullptr),
+///                                 tr("Remove misc from recipe"))
+///      );
+///   }
+///}
+///
+///void MainWindow::removeSelectedYeast() {
+///   QModelIndexList selected = yeastAdditionTable->selectionModel()->selectedIndexes();
+///   QList< std::shared_ptr<Yeast> > itemsToRemove;
+///
+///   int size = selected.size();
+///   if (size == 0) {
+///      return;
+///   }
+///
+///   for(int i = 0; i < size; i++) {
+///      QModelIndex viewIndex = selected.at(i);
+///      QModelIndex modelIndex = this->pimpl->m_yeastTableProxy->mapToSource(viewIndex);
+///
+///      itemsToRemove.append(this->pimpl->m_yeastTableModel->getRow(modelIndex.row()));
+///   }
+///
+///   for (auto item : itemsToRemove) {
+///      this->doOrRedoUpdate(
+///         newUndoableAddOrRemove(*this->recipeObs,
+///                                 &Recipe::remove<Yeast>,
+///                                 item,
+///                                 &Recipe::add<Yeast>,
+///                                 &MainWindow::removeYeast,
+///                                 static_cast<void (MainWindow::*)(std::shared_ptr<Yeast>)>(nullptr),
+///                                 tr("Remove yeast from recipe"))
+///      );
+///   }
+///}
 
 void MainWindow::newRecipe()
 {
@@ -2369,28 +2391,22 @@ void MainWindow::newRecipe()
 
    // a new recipe will be put in a folder if you right click on a recipe or
    // folder. Otherwise, it goes into the main window?
-   if ( selection ) {
+   if (selection) {
       BtTreeView* sent = qobject_cast<BtTreeView*>(tabWidget_Trees->currentWidget()->focusWidget());
-      if ( sent )
-      {
+      if (sent) {
          QModelIndexList indexes = sent->selectionModel()->selectedRows();
          // This is a little weird. There is an edge case where nothing is
          // selected and you click the big blue + button.
-         if ( indexes.size() > 0 )
-         {
-            if ( sent->type(indexes.at(0)) == BtTreeItem::Type::RECIPE )
-            {
+         if (indexes.size() > 0) {
+            if (sent->type(indexes.at(0)) == BtTreeItem::Type::Recipe) {
                auto foo = sent->getItem<Recipe>(indexes.at(0));
-
-               if ( foo && ! foo->folder().isEmpty()) {
+               if (foo && ! foo->folder().isEmpty()) {
                   newRec->setFolder( foo->folder() );
                }
-            }
-            else if ( sent->type(indexes.at(0)) == BtTreeItem::Type::FOLDER )
-            {
+            } else if (sent->type(indexes.at(0)) == BtTreeItem::Type::Folder) {
                BtFolder* foo = sent->getItem<BtFolder>(indexes.at(0));
-               if ( foo ) {
-                  newRec->setFolder( foo->fullPath() );
+               if (foo) {
+                  newRec->setFolder(foo->fullPath());
                }
             }
          }
@@ -2456,7 +2472,7 @@ void MainWindow::renameFolder() {
 
    // The item to be renamed
    // Don't rename anything other than a folder
-   if ( active->type(starter) != BtTreeItem::Type::FOLDER) {
+   if ( active->type(starter) != BtTreeItem::Type::Folder) {
       return;
    }
 
@@ -2518,7 +2534,7 @@ void MainWindow::setTreeSelection(QModelIndex item) {
    QModelIndex parent = active->parent(item);
 
    active->setCurrentIndex(item);
-   if ( active->type(parent) == BtTreeItem::Type::FOLDER && ! active->isExpanded(parent) ) {
+   if ( active->type(parent) == BtTreeItem::Type::Folder && ! active->isExpanded(parent) ) {
       active->setExpanded(parent, true);
    }
    active->scrollTo(item,QAbstractItemView::PositionAtCenter);
@@ -2549,10 +2565,26 @@ void MainWindow::reduceInventory() {
       // Note that the amount can be mass, volume or (for Yeast and Misc) count.  We don't worry about which here as we
       // assume that a given type of ingredient is always measured in the same way.
       //
-      for (auto ii : rec->fermentableAdditions()) { ii->hop()->setTotalInventory(std::max(ii->fermentable()->totalInventory() - ii->amount(), 0.0)); }
-      for (auto ii : rec->        hopAdditions()) { ii->hop()->setTotalInventory(std::max(ii->        hop()->totalInventory() - ii->amount(), 0.0)); }
-      for (auto ii : rec->       miscAdditions()) { ii->hop()->setTotalInventory(std::max(ii->       misc()->totalInventory() - ii->amount(), 0.0)); }
-      for (auto ii : rec->      yeastAdditions()) { ii->hop()->setTotalInventory(std::max(ii->      yeast()->totalInventory() - ii->amount(), 0.0)); }
+      for (auto ii : rec->fermentableAdditions()) {
+         auto inv = ii->fermentable()->totalInventory();
+         inv.quantity = std::max(inv.quantity - ii->amount().quantity, 0.0);
+         ii->fermentable()->setTotalInventory(inv);
+      }
+      for (auto ii : rec->hopAdditions()) {
+         auto inv = ii->hop()->totalInventory();
+         inv.quantity = std::max(inv.quantity - ii->amount().quantity, 0.0);
+         ii->hop()->setTotalInventory(inv);
+      }
+      for (auto ii : rec->miscAdditions()) {
+         auto inv = ii->misc()->totalInventory();
+         inv.quantity = std::max(inv.quantity - ii->amount().quantity, 0.0);
+         ii->misc()->setTotalInventory(inv);
+      }
+      for (auto ii : rec->yeastAdditions()) {
+         auto inv = ii->yeast()->totalInventory();
+         inv.quantity = std::max(inv.quantity - ii->amount().quantity, 0.0);
+         ii->yeast()->setTotalInventory(inv);
+      }
    }
 
    return;

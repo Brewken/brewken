@@ -119,18 +119,6 @@ public:
    [[deprecated]] void setUse(Use const val);
    void setMisc(Misc * const val);
 
-   /**
-    * \brief With BeerJSON changes, there is no longer an explicit flag for a first wort misc addition.  You have to
-    *        jump through a couple of hoops to work it out, which is what this function does for you.
-    */
-   bool isFirstWort() const;
-
-   /**
-    * \brief Similarly, what used to be Misc::Use::Aroma (ie hops added at the end of the boil) is now something we need
-    *        to work out.
-    */
-   bool isAroma() const;
-
    virtual Recipe * getOwningRecipe() const;
 
    virtual NamedEntity * ensureExists(BtStringConst const & property);

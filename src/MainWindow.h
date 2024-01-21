@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MainWindow.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * MainWindow.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
@@ -169,7 +169,7 @@ public slots:
 
    //! \brief Remove selected Fermentable(s) from the Recipe.
    void removeSelectedFermentableAddition();
-   //! \brief Edit selected Fermentable.
+   //! \brief Edit the Fermentable in the selected Fermentable addition.
    void editFermentableOfSelectedFermentableAddition();
 
    //! \brief Show the pitch dialog.
@@ -187,15 +187,15 @@ public slots:
     */
    void editHopOfSelectedHopAddition();
 
-   //! \brief Remove selected Misc(s) from the Recipe.
-   void removeSelectedMisc();
-   //! \brief Edit selected Misc.
-   void editSelectedMisc();
+   //! \brief Remove selected Misc addition(s) from the Recipe.
+   void removeSelectedMiscAddition();
+   //! \brief Edit the Misc in the selected Misc addition.
+   void editMiscOfSelectedMiscAddition();
 
-   //! \brief Remove selected Yeast(s) from the Recipe.
-   void removeSelectedYeast();
-   //! \brief Edit selected Yeast
-   void editSelectedYeast();
+   //! \brief Remove selected Yeast addition(s) from the Recipe.
+   void removeSelectedYeastAddition();
+   //! \brief Edit the Yeast in the selected Yeast addition.
+   void editYeastOfSelectedYeastAddition();
 
    //! \brief Invoke the pop-up Window to add a new mash step to (the mash of) the recipe.
    void addMashStep();
@@ -314,8 +314,8 @@ private:
    // pointers get passed to UndoableAddOrRemove.  We should fix that at some point.
    void removeHopAddition        (std::shared_ptr<RecipeAdditionHop        > itemToRemove);
    void removeFermentableAddition(std::shared_ptr<RecipeAdditionFermentable> itemToRemove);
-   void removeMisc(std::shared_ptr<Misc> itemToRemove);
-   void removeYeast(std::shared_ptr<Yeast> itemToRemove);
+   void removeMiscAddition       (std::shared_ptr<RecipeAdditionMisc       > itemToRemove);
+   void removeYeastAddition      (std::shared_ptr<RecipeAdditionYeast      > itemToRemove);
    void removeMashStep(std::shared_ptr<MashStep> itemToRemove);
 
    Recipe* recipeObs;

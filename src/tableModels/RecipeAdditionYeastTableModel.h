@@ -42,14 +42,15 @@ class RecipeAdditionYeastTableModel;
 template <> struct TableModelTraits<RecipeAdditionYeastTableModel> {
    enum class ColumnIndex {
       Name          ,
+      Laboratory    ,
+      ProductId     ,
+      Type          ,
       Form          ,
-      Alpha         ,
-      Year          ,
       Amount        ,
       AmountType    ,
       TotalInventory,
       Stage         ,
-      Time          ,
+      Step          ,
    };
 };
 

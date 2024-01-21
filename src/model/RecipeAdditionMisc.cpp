@@ -24,19 +24,19 @@
 QString const RecipeAdditionMisc::LocalisedName = tr("Misc Addition");
 
 EnumStringMapping const RecipeAdditionMisc::useStringMapping {
-   {Misc::Use::Boil     , "Boil"     },
-   {Misc::Use::Mash     , "Mash"     },
-   {Misc::Use::Primary  , "Primary"  },
-   {Misc::Use::Secondary, "Secondary"},
-   {Misc::Use::Bottling , "Bottling" }
+   {RecipeAdditionMisc::Use::Boil     , "Boil"     },
+   {RecipeAdditionMisc::Use::Mash     , "Mash"     },
+   {RecipeAdditionMisc::Use::Primary  , "Primary"  },
+   {RecipeAdditionMisc::Use::Secondary, "Secondary"},
+   {RecipeAdditionMisc::Use::Bottling , "Bottling" }
 };
 
 EnumStringMapping const RecipeAdditionMisc::useDisplayNames {
-   {Misc::Use::Boil     , tr("Boil"     )},
-   {Misc::Use::Mash     , tr("Mash"     )},
-   {Misc::Use::Primary  , tr("Primary"  )},
-   {Misc::Use::Secondary, tr("Secondary")},
-   {Misc::Use::Bottling , tr("Bottling" )}
+   {RecipeAdditionMisc::Use::Boil     , tr("Boil"     )},
+   {RecipeAdditionMisc::Use::Mash     , tr("Mash"     )},
+   {RecipeAdditionMisc::Use::Primary  , tr("Primary"  )},
+   {RecipeAdditionMisc::Use::Secondary, tr("Secondary")},
+   {RecipeAdditionMisc::Use::Bottling , tr("Bottling" )}
 };
 
 ObjectStore & RecipeAdditionMisc::getObjectStoreTypedInstance() const {
@@ -101,17 +101,16 @@ RecipeAdditionMisc::Use  RecipeAdditionMisc::use() const {
          return RecipeAdditionMisc::Use::Mash;
 
       case RecipeAddition::Stage::Boil:
-         if (this->isFirstWort()) {
-            return RecipeAdditionMisc::Use::First_Wort;
-         }
-         if (this->isAroma()) {
-            return RecipeAdditionMisc::Use::Aroma;
-         }
          return RecipeAdditionMisc::Use::Boil;
 
       case RecipeAddition::Stage::Fermentation:
+         if (1 == this->step()) {
+            return RecipeAdditionMisc::Use::Primary;
+         }
+         return RecipeAdditionMisc::Use::Secondary;
+
       case RecipeAddition::Stage::Packaging:
-         return RecipeAdditionMisc::Use::Dry_Misc;
+         return RecipeAdditionMisc::Use::Bottling;
 
       // No default case as we want the compiler to warn us if we missed a case above
    }
@@ -131,63 +130,6 @@ Misc * RecipeAdditionMisc::misc() const {
 
 ///   qDebug() << Q_FUNC_INFO << "RecipeAdditionMisc #" << this->key() << ": Recipe #" << this->m_recipeId << ", Misc #" << this->m_ingredientId << "@" << ObjectStoreWrapper::getByIdRaw<Misc>(this->m_ingredientId);
    return ObjectStoreWrapper::getByIdRaw<Misc>(this->m_ingredientId);
-}
-
-bool RecipeAdditionMisc::isFirstWort() const {
-   //
-   // In switching from Misc::use to RecipeAddition::stage, there is no longer an explicit flag for First Wort Miscs.
-   // Instead, a first wort addition is simply(!) one that occurs at the beginning of step 1 of the boil if that step
-   // ramps from mash end temperature to boil temperature.
-   //
-   // We could work this out in a single if statement, but it would be too horrible to look at, so we simply go through
-   // all the conditions that have to be satisfied.
-   //
-   if (this->stage() != RecipeAddition::Stage::Boil) { return false; }
-
-   // First Wort must be the first step of the boil, during ramp-up from mashout and before the boil proper
-   if (!this->step() || *this->step() != 1) { return false; }
-
-   Recipe const * recipe = this->getOwningRecipe();
-   if (!recipe->boil()) { return false; }
-
-   auto boil = *recipe->boil();
-   if (boil->boilSteps().empty()) { return false; }
-
-   auto boilStep = boil->boilSteps().first();
-   if (!boilStep->startTemp_c() || *boilStep->startTemp_c() > Boil::minimumBoilTemperature_c) {return false; }
-
-   return true;
-}
-
-bool RecipeAdditionMisc::isAroma() const {
-   //
-   // In switching from Misc::use to RecipeAddition::stage, there is no longer an explicit flag for Aroma Miscs, ie those
-   // added after the boil (aka zero minute hops).
-   //
-   if (this->stage() != RecipeAddition::Stage::Boil) { return false; }
-
-   // Aroma must be after the first step of the boil
-   if (!this->step() || *this->step() == 1) { return false; }
-
-   Recipe const * recipe = this->getOwningRecipe();
-   if (!recipe->boil()) { return false; }
-
-   auto boil = *recipe->boil();
-   if (boil->boilSteps().empty()) { return false; }
-
-   int const numBoilSteps = boil->boilSteps().size();
-   if (*this->step() > numBoilSteps) {
-      qCritical() <<
-         Q_FUNC_INFO << "RecipeAdditionMisc #" << this->key() << "in Recipe #" << this->m_recipeId <<
-         "has boil step #" << *this->step() << "but boil only has" << numBoilSteps << "steps.  This is probably a bug!";
-      return false;
-   }
-
-   // Remember RecipeAddition steps are numbered from 1, but vectors are indexed from 0
-   auto boilStep = boil->boilSteps()[*this->step() - 1];
-   if (!boilStep->endTemp_c() || *boilStep->endTemp_c() > Boil::minimumBoilTemperature_c) { return false; }
-
-   return true;
 }
 
 Recipe * RecipeAdditionMisc::getOwningRecipe() const {
@@ -216,32 +158,29 @@ NamedEntity * RecipeAdditionMisc::ensureExists(BtStringConst const & property) {
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
 void RecipeAdditionMisc::setUse(RecipeAdditionMisc::Use const val) {
    switch (val) {
-      case RecipeAdditionMisc::Use::Mash:
+
+      case RecipeAdditionMisc::Use::Mash     :
          this->setStage(RecipeAddition::Stage::Mash);
          break;
 
-      case RecipeAdditionMisc::Use::First_Wort:
-         // A first wort misc is in the ramp-up stage of the boil
-         this->setStage(RecipeAddition::Stage::Boil);
-         this->recipe()->nonOptBoil()->ensureStandardProfile();
-         this->setStep(1);
-         break;
-
-      case RecipeAdditionMisc::Use::Boil:
+      case RecipeAdditionMisc::Use::Boil     :
          this->setStage(RecipeAddition::Stage::Boil);
          this->recipe()->nonOptBoil()->ensureStandardProfile();
          this->setStep(2);
          break;
 
-      case RecipeAdditionMisc::Use::Aroma:
-         // An aroma misc is added during the post-boil
-         this->setStage(RecipeAddition::Stage::Boil);
-         this->recipe()->nonOptBoil()->ensureStandardProfile();
-         this->setStep(3);
+      case RecipeAdditionMisc::Use::Primary  :
+         this->setStage(RecipeAddition::Stage::Fermentation);
+         this->setStep(1);
          break;
 
-      case RecipeAdditionMisc::Use::Dry_Misc:
+      case RecipeAdditionMisc::Use::Secondary:
          this->setStage(RecipeAddition::Stage::Fermentation);
+         this->setStep(2);
+         break;
+
+      case RecipeAdditionMisc::Use::Bottling :
+         this->setStage(RecipeAddition::Stage::Packaging);
          break;
 
       // No default case as we want the compiler to warn us if we missed a case above

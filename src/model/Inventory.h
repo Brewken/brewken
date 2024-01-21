@@ -34,8 +34,8 @@ class TypeLookup;
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Inventory { BtStringConst const property{#property}; }
-AddPropertyName(id)      // Deprecated.  Use PropertyNames::NamedEntity::key instead
-AddPropertyName(amount)  // Deprecated.  Use PropertyNames::IngredientAmount::quantity instead
+///AddPropertyName(id)      // Deprecated.  Use PropertyNames::NamedEntity::key instead
+///AddPropertyName(amount)  // Deprecated.  Use PropertyNames::IngredientAmount::quantity instead
 AddPropertyName(ingredientId)
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================

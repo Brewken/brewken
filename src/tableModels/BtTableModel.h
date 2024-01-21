@@ -68,19 +68,22 @@ template<class Derived, class NE> class TableModelBase; // This forward declarat
  *                              /     MashStepTableModel   /      /
  *                             /        HopTableModel     /      /
  *                            /                          /      /
- *                   BtTableModelRecipeObserver         /      /
- *                      \               \              /      /
- *                       \               \            /      /
- *                        \    RecipeAdditionHopTableModel  /
- *                         \            SaltTableModel     /
- *                          \          WaterTableModel    /
- *                           \                           /
- *                         BtTableModelInventory        /
- *                                    \                /
- *                                     \              /
- *                                  FermentableTableModel
- *                                      MiscTableModel
- *                                      YeastTableModel
+ *              BtTableModelRecipeObserver              /      /
+ *                \                   \                /      /
+ *                 \                   \              /      /
+ *                  \  RecipeAdditionFermentableTableModel  /
+ *                   \    RecipeAdditionHopTableModel      /
+ *                    \   RecipeAdditionMiscTableModel    /
+ *                     \  RecipeAdditionYeastTableModel  /
+ *                      \          SaltTableModel       /
+ *                       \        WaterTableModel      /
+ *                        \                           /
+ *                         BtTableModelInventory     /
+ *                                 \                /
+ *                                  \              /
+ *                               FermentableTableModel
+ *                                   MiscTableModel
+ *                                   YeastTableModel
  *
  *        Eg RecipeAdditionHopTableModel inherits from BtTableModelRecipeObserver and
  *        TableModelBase<RecipeAdditionHopTableModel, RecipeAdditionHop>

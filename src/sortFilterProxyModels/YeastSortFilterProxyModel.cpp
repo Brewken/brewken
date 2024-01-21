@@ -1,6 +1,6 @@
 /*======================================================================================================================
  * sortFilterProxyModels/YeastSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors
- * 2009-2023:
+ * 2009-2024:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -27,15 +27,15 @@ bool YeastSortFilterProxyModel::isLessThan(YeastTableModel::ColumnIndex const co
                                            QVariant const & leftItem,
                                            QVariant const & rightItem) const {
    switch (columnIndex) {
-      case YeastTableModel::ColumnIndex::Name:
-      case YeastTableModel::ColumnIndex::Lab :
-      case YeastTableModel::ColumnIndex::Type:
-      case YeastTableModel::ColumnIndex::Form:
-      case YeastTableModel::ColumnIndex::ProdId:
+      case YeastTableModel::ColumnIndex::Name      :
+      case YeastTableModel::ColumnIndex::Laboratory:
+      case YeastTableModel::ColumnIndex::Type      :
+      case YeastTableModel::ColumnIndex::Form      :
+      case YeastTableModel::ColumnIndex::ProductId :
+      case YeastTableModel::ColumnIndex::TotalInventoryType :
          return leftItem.toString() < rightItem.toString();
 
-      case YeastTableModel::ColumnIndex::Inventory:
-      case YeastTableModel::ColumnIndex::Amount:
+      case YeastTableModel::ColumnIndex::TotalInventory:
          // This is a lie. I need to figure out if they are weights or volumes.
          // and then figure some reasonable way to compare weights to volumes.
          // Maybe lying isn't such a bad idea

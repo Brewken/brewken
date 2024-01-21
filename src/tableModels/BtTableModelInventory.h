@@ -22,7 +22,7 @@
 /**
  * \class BtTableModelInventory
  *
- * \brief Extends \c BtTableModel to add support for inventory
+ * \brief Extends \c BtTableModel to add support for inventory  TODO: RETIRE THIS CLASS
  */
 class BtTableModelInventory : public BtTableModelRecipeObserver {
 public:

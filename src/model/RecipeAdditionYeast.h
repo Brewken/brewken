@@ -29,8 +29,9 @@
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::RecipeAdditionYeast { BtStringConst const property{#property}; }
-AddPropertyName(yeast)
-AddPropertyName(use) // Deprecated - retained only for BeerXML
+AddPropertyName(addToSecondary )  // Deprecated - retained only for BeerXML
+AddPropertyName(attenuation_pct)
+AddPropertyName(yeast          )
 
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
@@ -40,8 +41,8 @@ AddPropertyName(use) // Deprecated - retained only for BeerXML
  * \brief Represents the addition of a \c Yeast to a \c Recipe
  */
 class RecipeAdditionYeast : public RecipeAddition,
-                          public RecipeAdditionBase<RecipeAdditionYeast, Yeast>,
-                          public IngredientAmount<RecipeAdditionYeast, Yeast> {
+                            public RecipeAdditionBase<RecipeAdditionYeast, Yeast>,
+                            public IngredientAmount<RecipeAdditionYeast, Yeast> {
    Q_OBJECT
 
    RECIPE_ADDITION_DECL(Yeast)
@@ -53,33 +54,6 @@ public:
     * \brief See comment in model/NamedEntity.h
     */
    static QString const LocalisedName;
-
-   /*!
-    * \brief This is the old (BeerXML) way of specifying the stage at which the yeast addition happens.  It is retained
-    *        for BeerXML but otherwise deprecated.  With the arrival of BeerJSON, we now use \c RecipeAddition::Stage
-    *        and \c RecipeAddition::Step to hold this information with more precision.
-    */
-   enum class Use {Mash,
-                   First_Wort,
-                   Boil,
-                   Aroma,
-                   Dry_Yeast};
-   // This allows us to store the above enum class in a QVariant
-   Q_ENUM(Use)
-
-   /*!
-    * \brief Mapping between \c RecipeAdditionYeast::Use and string values suitable for serialisation in DB, BeerXML, etc (but \b not
-    *        used in BeerJSON)
-    *
-    *        This can also be used to obtain the number of values of \c Type, albeit at run-time rather than
-    *        compile-time.  (One day, C++ will have reflection and we won't need to do things this way.)
-    */
-   static EnumStringMapping const useStringMapping;
-
-   /*!
-    * \brief Localised names of \c RecipeAdditionYeast::Use values suitable for displaying to the end user
-    */
-   static EnumStringMapping const useDisplayNames;
 
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
@@ -94,11 +68,6 @@ public:
    virtual ~RecipeAdditionYeast();
 
    //=================================================== PROPERTIES ====================================================
-   /**
-    * \brief The \c Use.  This is moved from \c Yeast with the introduction of BeerJSON.  It is required for BeerXML, but
-    *        \b deprecated for other use.
-    */
-   Q_PROPERTY(Use   use   READ use   WRITE setUse STORED false)
    Q_PROPERTY(Yeast * yeast   READ yeast   WRITE setYeast             )
 
    // See model/IngredientAmount.h
@@ -108,26 +77,20 @@ public:
    Q_PROPERTY(Measurement::PhysicalQuantity measure   READ measure    WRITE setMeasure )
    Q_PROPERTY(bool                          isWeight  READ isWeight   WRITE setIsWeight)
 
+   //! \brief The apparent attenuation in percent (moved from \c Yeast).                 ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+   Q_PROPERTY(std::optional<double>  attenuation_pct           READ attenuation_pct           WRITE setAttenuation_pct          )
+   //! \brief Whether the yeast is added to secondary or primary.  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+   Q_PROPERTY(std::optional<bool>    addToSecondary            READ addToSecondary            WRITE setAddToSecondary           )
+
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-   // Ideally this too would be marked [[deprecated]], but we do need to refer to it in RecipeAdditionYeast::typeLookup
-   Use use() const;
-   Yeast * yeast () const;
+   Yeast *               yeast          () const;
+   std::optional<double> attenuation_pct() const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+   std::optional<bool>   addToSecondary () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   [[deprecated]] void setUse(Use const val);
-   void setYeast(Yeast * const val);
-
-   /**
-    * \brief With BeerJSON changes, there is no longer an explicit flag for a first wort yeast addition.  You have to
-    *        jump through a couple of hoops to work it out, which is what this function does for you.
-    */
-   bool isFirstWort() const;
-
-   /**
-    * \brief Similarly, what used to be Yeast::Use::Aroma (ie hops added at the end of the boil) is now something we need
-    *        to work out.
-    */
-   bool isAroma() const;
+   void setYeast          (Yeast *               const val);
+   void setAttenuation_pct(std::optional<double> const val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+   void setAddToSecondary (std::optional<bool  > const val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
 
    virtual Recipe * getOwningRecipe() const;
 
@@ -137,6 +100,8 @@ protected:
    // Note that we don't override isEqualTo, as we don't have any non-inherited member variables
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
+private:
+   std::optional<double>       m_attenuation_pct          ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
 };
 
 Q_DECLARE_METATYPE(Yeast)

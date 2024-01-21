@@ -458,6 +458,7 @@ protected:
                                            T const minValue,
                                            T const maxValue,
                                            T const defaultValue = 0) {
+      // We could use std::clamp here, but, since we want to print the warning message, it wouldn't buy us anything
       if (value < minValue || value > maxValue) {
          qWarning() <<
             Q_FUNC_INFO << this->metaObject()->className() << ":" << name << "value" << value <<

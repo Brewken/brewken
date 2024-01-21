@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/YeastTableModel.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * tableModels/YeastTableModel.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -30,7 +30,6 @@
 #include <QWidget>
 
 #include "model/Yeast.h"
-#include "tableModels/BtTableModelInventory.h"
 #include "tableModels/ItemDelegate.h"
 #include "tableModels/TableModelBase.h"
 
@@ -43,13 +42,13 @@ class Recipe;
 class YeastTableModel;
 template <> struct TableModelTraits<YeastTableModel> {
    enum class ColumnIndex {
-      Name     ,
-      Lab      ,
-      ProdId   ,
-      Type     ,
-      Form     ,
-      Amount   ,
-      Inventory,
+      Name              ,
+      Laboratory        ,
+      ProductId         ,
+      Type              ,
+      Form              ,
+      TotalInventory    ,
+      TotalInventoryType,
    };
 };
 
@@ -58,7 +57,7 @@ template <> struct TableModelTraits<YeastTableModel> {
  *
  * \brief Table model for yeasts.
  */
-class YeastTableModel : public BtTableModelInventory, public TableModelBase<YeastTableModel, Yeast> {
+class YeastTableModel : public BtTableModel, public TableModelBase<YeastTableModel, Yeast> {
    Q_OBJECT
 
    TABLE_MODEL_COMMON_DECL(Yeast)

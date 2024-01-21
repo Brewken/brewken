@@ -1275,7 +1275,7 @@
              </attribute>
              <layout class="QHBoxLayout" name="horizontalLayout_21">
               <item>
-               <widget class="QTableView" name="miscTable">
+               <widget class="QTableView" name="miscAdditionTable">
                 <property name="contextMenuPolicy">
                  <enum>Qt::CustomContextMenu</enum>
                 </property>
@@ -1351,7 +1351,7 @@
              </attribute>
              <layout class="QHBoxLayout" name="horizontalLayout_13">
               <item>
-               <widget class="QTableView" name="yeastTable">
+               <widget class="QTableView" name="yeastAdditionTable">
                 <property name="contextMenuPolicy">
                  <enum>Qt::CustomContextMenu</enum>
                 </property>
@@ -2292,11 +2292,11 @@
   <tabstop>pushButton_addHop</tabstop>
   <tabstop>pushButton_removeHop</tabstop>
   <tabstop>pushButton_editHop</tabstop>
-  <tabstop>miscTable</tabstop>
+  <tabstop>miscAdditionTable</tabstop>
   <tabstop>pushButton_addMisc</tabstop>
   <tabstop>pushButton_removeMisc</tabstop>
   <tabstop>pushButton_editMisc</tabstop>
-  <tabstop>yeastTable</tabstop>
+  <tabstop>yeastAdditionTable</tabstop>
   <tabstop>pushButton_addYeast</tabstop>
   <tabstop>pushButton_removeYeast</tabstop>
   <tabstop>pushButton_editYeast</tabstop>

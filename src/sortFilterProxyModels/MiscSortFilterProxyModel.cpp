@@ -1,6 +1,6 @@
 /*======================================================================================================================
  * sortFilterProxyModels/MiscSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors
- * 2009-2023:
+ * 2009-2024:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -27,27 +27,21 @@ bool MiscSortFilterProxyModel::isLessThan(MiscTableModel::ColumnIndex const colu
                                           QVariant const & leftItem,
                                           QVariant const & rightItem) const {
    switch (columnIndex) {
-       case MiscTableModel::ColumnIndex::Name:
-       case MiscTableModel::ColumnIndex::Type:
-       case MiscTableModel::ColumnIndex::Use:
-       case MiscTableModel::ColumnIndex::IsWeight:
+      case MiscTableModel::ColumnIndex::Name:
+      case MiscTableModel::ColumnIndex::Type:
+///      case MiscTableModel::ColumnIndex::Use:
+      case MiscTableModel::ColumnIndex::TotalInventoryType:
          return leftItem.toString() < rightItem.toString();
 
-       case MiscTableModel::ColumnIndex::Inventory:
-         if (Measurement::qStringToSI(leftItem.toString(), Measurement::PhysicalQuantity::Mass).quantity == 0.0 &&
-             this->sortOrder() == Qt::AscendingOrder) {
-            return false;
-         }
-         return (Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Mass) <
-                 Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Mass));
+      case MiscTableModel::ColumnIndex::TotalInventory:
+         // It's probably wrong to assume everything is mass, but OTOH, it's not instantly obvious how to sort a mixture
+         // of masses and volumes
+         return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Mass) <
+                Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Mass);
 
-      case MiscTableModel::ColumnIndex::Amount:
-         return (Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Mass) <
-                 Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Mass));
-
-      case MiscTableModel::ColumnIndex::Time:
-         return (Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Time) <
-                 Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Time));
+///      case MiscTableModel::ColumnIndex::Time:
+///         return (Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Time) <
+///                 Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Time));
 
       // No default case as we want the compiler to warn us if we missed one
    }

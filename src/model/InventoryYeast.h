@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/InventoryHop.h is part of Brewken, and is copyright the following authors 2023:
+ * model/InventoryYeast.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,24 +13,24 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef MODEL_INVENTORYHOP_H
-#define MODEL_INVENTORYHOP_H
+#ifndef MODEL_INVENTORYYEAST_H
+#define MODEL_INVENTORYYEAST_H
 #pragma once
 
 #include <QObject>
 #include <QString>
 
-#include "model/Hop.h"
+#include "model/Yeast.h"
 #include "model/Inventory.h"
 #include "model/IngredientAmount.h"
 
 /**
- * \brief Inventory of \c Hop
+ * \brief Inventory of \c Yeast
  */
-class InventoryHop : public Inventory, public IngredientAmount<InventoryHop, Hop> {
+class InventoryYeast : public Inventory, public IngredientAmount<InventoryYeast, Yeast> {
    Q_OBJECT
 
-   INGREDIENT_AMOUNT_DECL(InventoryHop, Hop)
+   INGREDIENT_AMOUNT_DECL(InventoryYeast, Yeast)
 
 public:
    /**
@@ -44,15 +44,15 @@ public:
     */
    static TypeLookup const typeLookup;
 
-   InventoryHop();
-   InventoryHop(NamedParameterBundle const & namedParameterBundle);
-   InventoryHop(InventoryHop const & other);
+   InventoryYeast();
+   InventoryYeast(NamedParameterBundle const & namedParameterBundle);
+   InventoryYeast(InventoryYeast const & other);
 
-   virtual ~InventoryHop();
+   virtual ~InventoryYeast();
 
 public:
    virtual char const * getIngredientClass() const;
-   Hop * hop() const ;
+   Yeast * yeast() const ;
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;

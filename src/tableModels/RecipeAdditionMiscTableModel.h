@@ -42,9 +42,7 @@ class RecipeAdditionMiscTableModel;
 template <> struct TableModelTraits<RecipeAdditionMiscTableModel> {
    enum class ColumnIndex {
       Name          ,
-      Form          ,
-      Alpha         ,
-      Year          ,
+      Type          ,
       Amount        ,
       AmountType    ,
       TotalInventory,

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Hop.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/Hop.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -25,7 +25,6 @@
 #include <QObject>
 
 #include "database/ObjectStoreWrapper.h"
-#include "model/Inventory.h"
 #include "model/InventoryHop.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"

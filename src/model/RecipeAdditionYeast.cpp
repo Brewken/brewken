@@ -18,26 +18,8 @@
 #include "database/ObjectStoreTyped.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/NamedParameterBundle.h"
-#include "model/Boil.h"
-#include "model/BoilStep.h"
 
 QString const RecipeAdditionYeast::LocalisedName = tr("Yeast Addition");
-
-EnumStringMapping const RecipeAdditionYeast::useStringMapping {
-   {RecipeAdditionYeast::Use::Mash      , "Mash"      },
-   {RecipeAdditionYeast::Use::First_Wort, "First Wort"},
-   {RecipeAdditionYeast::Use::Boil      , "Boil"      },
-   {RecipeAdditionYeast::Use::Aroma     , "Aroma"     },
-   {RecipeAdditionYeast::Use::Dry_Yeast   , "Dry Yeast"   },
-};
-
-EnumStringMapping const RecipeAdditionYeast::useDisplayNames {
-   {RecipeAdditionYeast::Use::Mash      , tr("Mash"      )},
-   {RecipeAdditionYeast::Use::First_Wort, tr("First Wort")},
-   {RecipeAdditionYeast::Use::Boil      , tr("Boil"      )},
-   {RecipeAdditionYeast::Use::Aroma     , tr("Post-Boil" )},
-   {RecipeAdditionYeast::Use::Dry_Yeast   , tr("Dry Yeast"   )},
-};
 
 ObjectStore & RecipeAdditionYeast::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<RecipeAdditionYeast>::getInstance();
@@ -46,8 +28,8 @@ ObjectStore & RecipeAdditionYeast::getObjectStoreTypedInstance() const {
 TypeLookup const RecipeAdditionYeast::typeLookup {
    "RecipeAdditionYeast",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionYeast::yeast, RecipeAdditionYeast::yeast),
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionYeast::use, RecipeAdditionYeast::use),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionYeast::yeast          , RecipeAdditionYeast::yeast            ),
+      PROPERTY_TYPE_LOOKUP_ENTRY      (PropertyNames::RecipeAdditionYeast::attenuation_pct, RecipeAdditionYeast::m_attenuation_pct,  NonPhysicalQuantity::Percentage),
    },
    // Parent classes lookup.  NB: RecipeAddition not NamedEntity!
    {&RecipeAddition::typeLookup,
@@ -67,20 +49,22 @@ static_assert(!HasTypeLookup<QString>);
 RecipeAdditionYeast::RecipeAdditionYeast(QString name, int const recipeId, int const hopId) :
    RecipeAddition{name, recipeId, hopId},
    RecipeAdditionBase<RecipeAdditionYeast, Yeast>{},
-   IngredientAmount<RecipeAdditionYeast, Yeast>{} {
+   IngredientAmount<RecipeAdditionYeast, Yeast>{},
+   m_attenuation_pct{std::nullopt} {
    return;
 }
 
 RecipeAdditionYeast::RecipeAdditionYeast(NamedParameterBundle const & namedParameterBundle) :
    RecipeAddition{namedParameterBundle},
    RecipeAdditionBase<RecipeAdditionYeast, Yeast>{},
-   IngredientAmount<RecipeAdditionYeast, Yeast>{namedParameterBundle} {
+   IngredientAmount<RecipeAdditionYeast, Yeast>{namedParameterBundle},
+   SET_REGULAR_FROM_NPB (m_attenuation_pct, namedParameterBundle, PropertyNames::RecipeAdditionYeast::attenuation_pct) {
    //
-   // If the addition stage is not specified then we assume it is boil, as this is the first stage at which it is usual
-   // to add hops.
+   // If the addition stage is not specified then we assume it is fermentation, as this is the first stage at which it is usual
+   // to add yeast.
    //
    m_stage = namedParameterBundle.val<RecipeAddition::Stage>(PropertyNames::RecipeAddition::stage,
-                                                             RecipeAddition::Stage::Boil);
+                                                             RecipeAddition::Stage::Fermentation);
 ///   qDebug() << Q_FUNC_INFO << "RecipeAdditionYeast #" << this->key() << ": Recipe #" << this->m_recipeId << ", Yeast #" << this->m_ingredientId;
    return;
 }
@@ -88,37 +72,15 @@ RecipeAdditionYeast::RecipeAdditionYeast(NamedParameterBundle const & namedParam
 RecipeAdditionYeast::RecipeAdditionYeast(RecipeAdditionYeast const & other) :
    RecipeAddition{other},
    RecipeAdditionBase<RecipeAdditionYeast, Yeast>{},
-   IngredientAmount<RecipeAdditionYeast, Yeast>{other} {
+   IngredientAmount<RecipeAdditionYeast, Yeast>{other},
+   m_attenuation_pct{other.m_attenuation_pct          } {
    return;
 }
 
 RecipeAdditionYeast::~RecipeAdditionYeast() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
-RecipeAdditionYeast::Use  RecipeAdditionYeast::use() const {
-   switch (this->stage()) {
-      case RecipeAddition::Stage::Mash:
-         return RecipeAdditionYeast::Use::Mash;
-
-      case RecipeAddition::Stage::Boil:
-         if (this->isFirstWort()) {
-            return RecipeAdditionYeast::Use::First_Wort;
-         }
-         if (this->isAroma()) {
-            return RecipeAdditionYeast::Use::Aroma;
-         }
-         return RecipeAdditionYeast::Use::Boil;
-
-      case RecipeAddition::Stage::Fermentation:
-      case RecipeAddition::Stage::Packaging:
-         return RecipeAdditionYeast::Use::Dry_Yeast;
-
-      // No default case as we want the compiler to warn us if we missed a case above
-   }
-
-   // This should be unreachable, but putting a return statement here prevents compiler warnings
-   return RecipeAdditionYeast::Use::Boil;
-}
+std::optional<double> RecipeAdditionYeast::attenuation_pct() const { return m_attenuation_pct; } // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
 
 Yeast * RecipeAdditionYeast::yeast() const {
    // Normally there should always be a valid Yeast in a RecipeAdditionYeast.  (The Recipe ID may be -1 if the addition is
@@ -131,63 +93,6 @@ Yeast * RecipeAdditionYeast::yeast() const {
 
 ///   qDebug() << Q_FUNC_INFO << "RecipeAdditionYeast #" << this->key() << ": Recipe #" << this->m_recipeId << ", Yeast #" << this->m_ingredientId << "@" << ObjectStoreWrapper::getByIdRaw<Yeast>(this->m_ingredientId);
    return ObjectStoreWrapper::getByIdRaw<Yeast>(this->m_ingredientId);
-}
-
-bool RecipeAdditionYeast::isFirstWort() const {
-   //
-   // In switching from Yeast::use to RecipeAddition::stage, there is no longer an explicit flag for First Wort Yeasts.
-   // Instead, a first wort addition is simply(!) one that occurs at the beginning of step 1 of the boil if that step
-   // ramps from mash end temperature to boil temperature.
-   //
-   // We could work this out in a single if statement, but it would be too horrible to look at, so we simply go through
-   // all the conditions that have to be satisfied.
-   //
-   if (this->stage() != RecipeAddition::Stage::Boil) { return false; }
-
-   // First Wort must be the first step of the boil, during ramp-up from mashout and before the boil proper
-   if (!this->step() || *this->step() != 1) { return false; }
-
-   Recipe const * recipe = this->getOwningRecipe();
-   if (!recipe->boil()) { return false; }
-
-   auto boil = *recipe->boil();
-   if (boil->boilSteps().empty()) { return false; }
-
-   auto boilStep = boil->boilSteps().first();
-   if (!boilStep->startTemp_c() || *boilStep->startTemp_c() > Boil::minimumBoilTemperature_c) {return false; }
-
-   return true;
-}
-
-bool RecipeAdditionYeast::isAroma() const {
-   //
-   // In switching from Yeast::use to RecipeAddition::stage, there is no longer an explicit flag for Aroma Yeasts, ie those
-   // added after the boil (aka zero minute hops).
-   //
-   if (this->stage() != RecipeAddition::Stage::Boil) { return false; }
-
-   // Aroma must be after the first step of the boil
-   if (!this->step() || *this->step() == 1) { return false; }
-
-   Recipe const * recipe = this->getOwningRecipe();
-   if (!recipe->boil()) { return false; }
-
-   auto boil = *recipe->boil();
-   if (boil->boilSteps().empty()) { return false; }
-
-   int const numBoilSteps = boil->boilSteps().size();
-   if (*this->step() > numBoilSteps) {
-      qCritical() <<
-         Q_FUNC_INFO << "RecipeAdditionYeast #" << this->key() << "in Recipe #" << this->m_recipeId <<
-         "has boil step #" << *this->step() << "but boil only has" << numBoilSteps << "steps.  This is probably a bug!";
-      return false;
-   }
-
-   // Remember RecipeAddition steps are numbered from 1, but vectors are indexed from 0
-   auto boilStep = boil->boilSteps()[*this->step() - 1];
-   if (!boilStep->endTemp_c() || *boilStep->endTemp_c() > Boil::minimumBoilTemperature_c) { return false; }
-
-   return true;
 }
 
 Recipe * RecipeAdditionYeast::getOwningRecipe() const {
@@ -214,38 +119,10 @@ NamedEntity * RecipeAdditionYeast::ensureExists(BtStringConst const & property) 
 }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void RecipeAdditionYeast::setUse(RecipeAdditionYeast::Use const val) {
-   switch (val) {
-      case RecipeAdditionYeast::Use::Mash:
-         this->setStage(RecipeAddition::Stage::Mash);
-         break;
-
-      case RecipeAdditionYeast::Use::First_Wort:
-         // A first wort yeast is in the ramp-up stage of the boil
-         this->setStage(RecipeAddition::Stage::Boil);
-         this->recipe()->nonOptBoil()->ensureStandardProfile();
-         this->setStep(1);
-         break;
-
-      case RecipeAdditionYeast::Use::Boil:
-         this->setStage(RecipeAddition::Stage::Boil);
-         this->recipe()->nonOptBoil()->ensureStandardProfile();
-         this->setStep(2);
-         break;
-
-      case RecipeAdditionYeast::Use::Aroma:
-         // An aroma yeast is added during the post-boil
-         this->setStage(RecipeAddition::Stage::Boil);
-         this->recipe()->nonOptBoil()->ensureStandardProfile();
-         this->setStep(3);
-         break;
-
-      case RecipeAdditionYeast::Use::Dry_Yeast:
-         this->setStage(RecipeAddition::Stage::Fermentation);
-         break;
-
-      // No default case as we want the compiler to warn us if we missed a case above
-   }
+void RecipeAdditionYeast::setAttenuation_pct(std::optional<double> const val) {
+   this->setAndNotify(PropertyNames::RecipeAdditionYeast::attenuation_pct,
+                      m_attenuation_pct,
+                      this->enforceMinAndMax(val, "pct attenuation", 0.0, 100.0, 0.0));
    return;
 }
 

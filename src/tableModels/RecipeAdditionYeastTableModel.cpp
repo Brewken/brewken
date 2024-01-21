@@ -57,20 +57,22 @@ RecipeAdditionYeastTableModel::RecipeAdditionYeastTableModel(QTableView * parent
          // Note that we have to use PropertyNames::NamedEntityWithInventory::inventoryWithUnits because
          // PropertyNames::NamedEntityWithInventory::inventory is not implemented
          TABLE_MODEL_HEADER(RecipeAdditionYeast, Name          , tr("Name"       ), PropertyPath{{PropertyNames::RecipeAdditionYeast::yeast,
-                                                                                                PropertyNames::NamedEntity::name         }}),
+                                                                                                  PropertyNames::NamedEntity::name      }}),
+         TABLE_MODEL_HEADER(RecipeAdditionYeast, Laboratory    , tr("Laboratory" ), PropertyPath{{PropertyNames::RecipeAdditionYeast::yeast,
+                                                                                                  PropertyNames::Yeast::laboratory      }}),
+         TABLE_MODEL_HEADER(RecipeAdditionYeast, ProductId     , tr("Product ID" ), PropertyPath{{PropertyNames::RecipeAdditionYeast::yeast,
+                                                                                                  PropertyNames::Yeast::productId       }}),
+         TABLE_MODEL_HEADER(RecipeAdditionYeast, Type          , tr("Type"       ), PropertyPath{{PropertyNames::RecipeAdditionYeast::yeast,
+                                                                                                  PropertyNames::Yeast::type             }}, EnumInfo{Yeast::typeStringMapping, Yeast::typeDisplayNames}),
          TABLE_MODEL_HEADER(RecipeAdditionYeast, Form          , tr("Form"       ), PropertyPath{{PropertyNames::RecipeAdditionYeast::yeast,
-                                                                                                PropertyNames::Yeast::form                 }}, EnumInfo{Yeast::formStringMapping, Yeast::formDisplayNames}),
-         TABLE_MODEL_HEADER(RecipeAdditionYeast, Alpha         , tr("Alpha %"    ), PropertyPath{{PropertyNames::RecipeAdditionYeast::yeast,
-                                                                                                PropertyNames::Yeast::alpha_pct            }}, PrecisionInfo{1}),
-         TABLE_MODEL_HEADER(RecipeAdditionYeast, Year          , tr("Year"       ), PropertyPath{{PropertyNames::RecipeAdditionYeast::yeast,
-                                                                                                PropertyNames::Yeast::year                 }}),
+                                                                                                  PropertyNames::Yeast::form             }}, EnumInfo{Yeast::formStringMapping, Yeast::formDisplayNames}),
          TABLE_MODEL_HEADER(RecipeAdditionYeast, Amount        , tr("Amount"     ), PropertyNames::IngredientAmount::amount                  , PrecisionInfo{1}),
          TABLE_MODEL_HEADER(RecipeAdditionYeast, AmountType    , tr("Amount Type"), PropertyNames::IngredientAmount::amount                  , Yeast::validMeasures),
          // In this table, inventory is read-only, so there is intentionally no TotalInventoryType column
          TABLE_MODEL_HEADER(RecipeAdditionYeast, TotalInventory, tr("Inventory"  ), PropertyPath{{PropertyNames::RecipeAdditionYeast::yeast,
                                                                                                 PropertyNames::Ingredient::totalInventory}}),
          TABLE_MODEL_HEADER(RecipeAdditionYeast, Stage         , tr("Stage"      ), PropertyNames::RecipeAddition::stage                     , EnumInfo{RecipeAddition::stageStringMapping, RecipeAddition::stageDisplayNames}),
-         TABLE_MODEL_HEADER(RecipeAdditionYeast, Time          , tr("Time"       ), PropertyNames::RecipeAddition::addAtTime_mins            , PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(RecipeAdditionYeast, Step          , tr("Step"       ), PropertyNames::RecipeAddition::step                      ),
       }
    },
    TableModelBase<RecipeAdditionYeastTableModel, RecipeAdditionYeast>{},
@@ -104,14 +106,15 @@ QVariant RecipeAdditionYeastTableModel::data(const QModelIndex & index, int role
    auto const columnIndex = static_cast<RecipeAdditionYeastTableModel::ColumnIndex>(index.column());
    switch (columnIndex) {
       case RecipeAdditionYeastTableModel::ColumnIndex::Name          :
+      case RecipeAdditionYeastTableModel::ColumnIndex::Laboratory    :
+      case RecipeAdditionYeastTableModel::ColumnIndex::ProductId     :
+      case RecipeAdditionYeastTableModel::ColumnIndex::Type          :
       case RecipeAdditionYeastTableModel::ColumnIndex::Form          :
-      case RecipeAdditionYeastTableModel::ColumnIndex::Alpha         :
-      case RecipeAdditionYeastTableModel::ColumnIndex::Year          :
       case RecipeAdditionYeastTableModel::ColumnIndex::Amount        :
       case RecipeAdditionYeastTableModel::ColumnIndex::AmountType    :
       case RecipeAdditionYeastTableModel::ColumnIndex::TotalInventory:
       case RecipeAdditionYeastTableModel::ColumnIndex::Stage         :
-      case RecipeAdditionYeastTableModel::ColumnIndex::Time          :
+      case RecipeAdditionYeastTableModel::ColumnIndex::Step          :
          return this->readDataFromModel(index, role);
 
       // No default case as we want the compiler to warn us if we missed one
@@ -158,14 +161,15 @@ bool RecipeAdditionYeastTableModel::setData(const QModelIndex & index, const QVa
    auto const columnIndex = static_cast<RecipeAdditionYeastTableModel::ColumnIndex>(index.column());
    switch (columnIndex) {
       case RecipeAdditionYeastTableModel::ColumnIndex::Name          :
+      case RecipeAdditionYeastTableModel::ColumnIndex::Laboratory    :
+      case RecipeAdditionYeastTableModel::ColumnIndex::ProductId     :
+      case RecipeAdditionYeastTableModel::ColumnIndex::Type          :
       case RecipeAdditionYeastTableModel::ColumnIndex::Form          :
-      case RecipeAdditionYeastTableModel::ColumnIndex::Alpha         :
-      case RecipeAdditionYeastTableModel::ColumnIndex::Year          :
       case RecipeAdditionYeastTableModel::ColumnIndex::Amount        :
       case RecipeAdditionYeastTableModel::ColumnIndex::AmountType    :
       case RecipeAdditionYeastTableModel::ColumnIndex::TotalInventory:
       case RecipeAdditionYeastTableModel::ColumnIndex::Stage         :
-      case RecipeAdditionYeastTableModel::ColumnIndex::Time          :
+      case RecipeAdditionYeastTableModel::ColumnIndex::Step          :
          retVal = this->writeDataToModel(index, value, role);
          break;
 

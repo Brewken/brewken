@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/HopTableModel.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * tableModels/HopTableModel.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Markus Mårtensson <mackan.90@gmail.com>
@@ -29,7 +29,6 @@
 #include <QWidget>
 
 #include "model/Hop.h"
-#include "tableModels/BtTableModelInventory.h"
 #include "tableModels/ItemDelegate.h"
 #include "tableModels/TableModelBase.h"
 

@@ -104,7 +104,7 @@ void ScaleRecipeTool::scale(Equipment* equip, double newEff) {
 
    for (auto miscAddition : this->recObs->miscAdditions()) {
       // We assume volumes and masses get scaled the same way
-      miscAddition->setQuantity(Addition->quantity() * volRatio);
+      miscAddition->setQuantity(miscAddition->quantity() * volRatio);
    }
 
    for (auto water : this->recObs->waters()) {

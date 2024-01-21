@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * serialization/xml/XmlRecipeRecord.cpp is part of Brewken, and is copyright the following authors 2020-2023:
+ * serialization/xml/XmlRecipeRecord.cpp is part of Brewken, and is copyright the following authors 2020-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -25,8 +25,10 @@
 #include "model/Style.h"
 #include "model/Water.h"
 #include "model/Yeast.h"
-#include "model/RecipeAdditionHop.h"
 #include "model/RecipeAdditionFermentable.h"
+#include "model/RecipeAdditionHop.h"
+#include "model/RecipeAdditionMisc.h"
+#include "model/RecipeAdditionYeast.h"
 
 namespace {
    //
@@ -57,15 +59,15 @@ namespace {
 ///      fermentable.setIsMashed      (npb.val<bool  >(PropertyNames::Fermentable::isMashed      ));
       return;
    }
-   template<> void setAmountsEtc(Misc & misc, NamedParameterBundle const & npb) {
-      misc.setAmount        (npb.val<double>(PropertyNames::Misc::amount        ));
-      misc.setAmountIsWeight(npb.val<bool  >(PropertyNames::Misc::amountIsWeight));
-      misc.setTime_min      (npb.val<double>(PropertyNames::Misc::time_min      ));
+   template<> void setAmountsEtc(RecipeAdditionMisc & miscAddition, NamedParameterBundle const & npb) {
+///      misc.setAmount        (npb.val<double>(PropertyNames::Misc::amount        ));
+///      misc.setAmountIsWeight(npb.val<bool  >(PropertyNames::Misc::amountIsWeight));
+///      misc.setTime_min      (npb.val<double>(PropertyNames::Misc::time_min      ));
       return;
    }
-   template<> void setAmountsEtc(Yeast & yeast, NamedParameterBundle const & npb) {
-      yeast.setAmount        (npb.val<double>(PropertyNames::Yeast::amount        ));
-      yeast.setAmountIsWeight(npb.val<bool  >(PropertyNames::Yeast::amountIsWeight));
+   template<> void setAmountsEtc(RecipeAdditionYeast & yeastAddition, NamedParameterBundle const & npb) {
+///      yeast.setAmount        (npb.val<double>(PropertyNames::Yeast::amount        ));
+///      yeast.setAmountIsWeight(npb.val<bool  >(PropertyNames::Yeast::amountIsWeight));
       return;
    }
    template<> void setAmountsEtc(Water & water, NamedParameterBundle const & npb) {
@@ -297,8 +299,8 @@ void XmlRecipeRecord::subRecordToXml(XmlRecordDefinition::FieldDefinition const 
 
    if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::hopAdditions        , &Recipe::hopAdditions        )) { return; }
    if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::fermentableAdditions, &Recipe::fermentableAdditions)) { return; }
-   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::miscs               , &Recipe::miscs               )) { return; }
-   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::yeasts              , &Recipe::yeasts              )) { return; }
+   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::miscAdditions       , &Recipe::miscAdditions       )) { return; }
+   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::yeastAdditions      , &Recipe::yeastAdditions      )) { return; }
    if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::waters              , &Recipe::waters              )) { return; }
    if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::instructions        , &Recipe::instructions        )) { return; }
    if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::brewNotes           , &Recipe::brewNotes           )) { return; }

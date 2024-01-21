@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Misc.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/Misc.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -28,7 +28,7 @@
 #include <QVector>
 
 #include "database/ObjectStoreWrapper.h"
-#include "model/Inventory.h"
+#include "model/InventoryMisc.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
@@ -83,15 +83,16 @@ TypeLookup const Misc::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::producer      , Misc::m_producer      ,           NonPhysicalQuantity::String  ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::productId     , Misc::m_productId     ,           NonPhysicalQuantity::String  ),
    },
-   // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
-   {&NamedEntityWithInventory::typeLookup}
+   // Parent classes lookup
+   {&Ingredient::typeLookup,
+    &IngredientBase<Misc>::typeLookup}
 };
-static_assert(std::is_base_of<NamedEntityWithInventory, Misc>::value);
+static_assert(std::is_base_of<Ingredient, Misc>::value);
 
 //============================CONSTRUCTORS======================================
 
 Misc::Misc(QString name) :
-   NamedEntityWithInventory{name, true},
+   Ingredient{name},
    m_type          {Misc::Type::Spice},
 ///   m_use           {std::nullopt     },
 ///   m_time_min      {0.0              },
@@ -106,7 +107,7 @@ Misc::Misc(QString name) :
 }
 
 Misc::Misc(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntityWithInventory{namedParameterBundle},
+   Ingredient{namedParameterBundle},
    SET_REGULAR_FROM_NPB (m_type                , namedParameterBundle, PropertyNames::Misc::type     ),
 ///   SET_OPT_ENUM_FROM_NPB(m_use      , Misc::Use, namedParameterBundle, PropertyNames::Misc::use      ),
 ///   SET_REGULAR_FROM_NPB (m_time_min            , namedParameterBundle, PropertyNames::Misc::time_min ),
@@ -127,7 +128,7 @@ Misc::Misc(NamedParameterBundle const & namedParameterBundle) :
 }
 
 Misc::Misc(Misc const & other) :
-   NamedEntityWithInventory{other                 },
+   Ingredient{other                        },
    m_type                  {other.m_type          },
 ///   m_use                   {other.m_use           },
 ///   m_time_min              {other.m_time_min      },
@@ -156,7 +157,7 @@ QString                  Misc::notes         () const { return                  
 QString                  Misc::producer      () const { return                    m_producer      ; }
 QString                  Misc::productId     () const { return                    m_productId     ; }
 
-Measurement::Amount Misc::amountWithUnits() const { return Measurement::Amount{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
+///Measurement::Amount Misc::amountWithUnits() const { return Measurement::Amount{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
 
 //============================"SET" METHODS=====================================
 void Misc::setType          (Type                     const   val) { this->setAndNotify( PropertyNames::Misc::type          , this->m_type          , val); }

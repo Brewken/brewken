@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/MiscTableModel.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * tableModels/MiscTableModel.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -28,7 +28,6 @@
 #include <QWidget>
 
 #include "model/Misc.h"
-#include "tableModels/BtTableModelInventory.h"
 #include "tableModels/ItemDelegate.h"
 #include "tableModels/TableModelBase.h"
 
@@ -40,13 +39,12 @@ class Recipe;
 class MiscTableModel;
 template <> struct TableModelTraits<MiscTableModel> {
    enum class ColumnIndex {
-      Name     ,
-      Type     ,
-      Use      ,
-      Time     ,
-      Amount   ,
-      Inventory,
-      IsWeight ,
+      Name              ,
+      Type              ,
+///      Use               ,
+///      Time              ,
+      TotalInventory    ,
+      TotalInventoryType,
    };
 };
 
@@ -55,7 +53,7 @@ template <> struct TableModelTraits<MiscTableModel> {
  *
  * \brief Table model for a list of miscs.
  */
-class MiscTableModel : public BtTableModelInventory, public TableModelBase<MiscTableModel, Misc> {
+class MiscTableModel : public BtTableModel, public TableModelBase<MiscTableModel, Misc> {
    Q_OBJECT
 
    TABLE_MODEL_COMMON_DECL(Misc)

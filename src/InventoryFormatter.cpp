@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * InventoryFormatter.cpp is part of Brewken, and is copyright the following authors 2016-2023:
+ * InventoryFormatter.cpp is part of Brewken, and is copyright the following authors 2016-2024:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -28,9 +28,10 @@
 #include "measurement/Measurement.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
-#include "model/Inventory.h"
 #include "model/InventoryFermentable.h"
 #include "model/InventoryHop.h"
+#include "model/InventoryMisc.h"
+#include "model/InventoryYeast.h"
 #include "model/Misc.h"
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
@@ -151,10 +152,13 @@ namespace {
    QString createInventoryTableMiscellaneous() {
       QString result;
 
-      auto inventory = ObjectStoreWrapper::findAllMatching<Misc>(
-         [](std::shared_ptr<Misc> mm) { return (mm->getParent() == nullptr && mm->inventory() > 0.0); }
+///      auto inventory = ObjectStoreWrapper::findAllMatching<Misc>(
+///         [](std::shared_ptr<Misc> mm) { return (mm->getParent() == nullptr && mm->inventory() > 0.0); }
+///      );
+      auto inventoryMisc = ObjectStoreWrapper::findAllMatching<InventoryMisc>(
+         [](std::shared_ptr<InventoryMisc> val) { return val->quantity() > 0.0; }
       );
-      if (!inventory.empty()) {
+      if (!inventoryMisc.empty()) {
 
          result += QString("<h2>%1</h2>").arg(QObject::tr("Miscellaneous"));
          result += "<table id=\"misc\">";
@@ -165,19 +169,19 @@ namespace {
                         .arg(QObject::tr("Name"))
                         .arg(QObject::tr("Amount"));
 
-         for (auto miscellaneous : inventory) {
-            QString const displayAmount = Measurement::displayAmount(
-               Measurement::Amount{
-                  miscellaneous->inventory(),
-                  miscellaneous->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
-               }
-            );
+         for (auto ii : inventoryMisc) {
+///            QString const displayAmount = Measurement::displayAmount(
+///               Measurement::Amount{
+///                  ii->inventory(),
+///                  ii->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
+///               }
+///            );
             result += QString("<tr>"
                               "<td>%1</td>"
                               "<td>%2</td>"
                               "</tr>")
-                           .arg(miscellaneous->name())
-                           .arg(displayAmount);
+                           .arg(ii->name())
+                           .arg(Measurement::displayAmount(ii->amount()));
          }
          result += "</table>";
       }
@@ -189,10 +193,13 @@ namespace {
     */
    QString createInventoryTableYeast() {
       QString result;
-      auto inventory = ObjectStoreWrapper::findAllMatching<Yeast>(
-         [](std::shared_ptr<Yeast> yy) { return (yy->getParent() == nullptr && yy->inventory() > 0.0); }
+///      auto inventory = ObjectStoreWrapper::findAllMatching<Yeast>(
+///         [](std::shared_ptr<Yeast> yy) { return (yy->getParent() == nullptr && yy->inventory() > 0.0); }
+///      );
+      auto inventoryYeast = ObjectStoreWrapper::findAllMatching<InventoryYeast>(
+         [](std::shared_ptr<InventoryYeast> val) { return val->quantity() > 0.0; }
       );
-      if (!inventory.empty()) {
+      if (!inventoryYeast.empty()) {
          result += QString("<h2>%1</h2>").arg(QObject::tr("Yeast"));
          result += "<table id=\"yeast\">";
          result += QString("<tr>"
@@ -202,20 +209,20 @@ namespace {
                         .arg(QObject::tr("Name"))
                         .arg(QObject::tr("Amount"));
 
-         for (auto yeast : inventory) {
-            QString const displayAmount = Measurement::displayAmount(
-               Measurement::Amount{
-                  yeast->inventory(),
-                  yeast->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
-               }
-            );
+         for (auto ii : inventoryYeast) {
+///            QString const displayAmount = Measurement::displayAmount(
+///               Measurement::Amount{
+///                  yeast->inventory(),
+///                  yeast->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
+///               }
+///            );
 
             result += QString("<tr>"
                               "<td>%1</td>"
                               "<td>%2</td>"
                               "</tr>")
-                           .arg(yeast->name())
-                           .arg(displayAmount);
+                           .arg(ii->name())
+                           .arg(Measurement::displayAmount(ii->amount()));
          }
          result += "</table>";
       }

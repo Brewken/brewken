@@ -44,7 +44,7 @@ class InventoryMisc;
 AddPropertyName(notes          )
 AddPropertyName(producer       )
 AddPropertyName(productId      )
-AddPropertyName(time_min       )
+///AddPropertyName(time_min       )
 AddPropertyName(type           )
 AddPropertyName(useFor         )
 ///AddPropertyName(use            )

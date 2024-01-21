@@ -38,14 +38,13 @@ class InventoryYeast;
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Yeast { BtStringConst const property{#property}; }
-AddPropertyName(addToSecondary           )
+///AddPropertyName(addToSecondary           )
 AddPropertyName(alcoholTolerance_pct     )
 ///AddPropertyName(amount                   )
 ///AddPropertyName(amountIsWeight           )
 ///AddPropertyName(amountWithUnits          )
 AddPropertyName(attenuationMax_pct       )
 AddPropertyName(attenuationMin_pct       )
-AddPropertyName(attenuation_pct          )
 AddPropertyName(bestFor                  )
 AddPropertyName(flocculation             )
 AddPropertyName(form                     )
@@ -61,7 +60,7 @@ AddPropertyName(maxTemperature_c         )
 AddPropertyName(minTemperature_c         )
 AddPropertyName(notes                    )
 AddPropertyName(phenolicOffFlavorPositive)
-AddPropertyName(productID                )
+AddPropertyName(productId                )
 AddPropertyName(timesCultured            )
 AddPropertyName(type                     )
 #undef AddPropertyName
@@ -215,7 +214,7 @@ public:
    //! \brief The lab from which it came.
    Q_PROPERTY(QString                laboratory                READ laboratory                WRITE setLaboratory               )
    //! \brief The product ID.
-   Q_PROPERTY(QString                productID                 READ productID                 WRITE setProductID                )
+   Q_PROPERTY(QString                productId                 READ productId                 WRITE setProductId                )
    //! \brief The minimum fermenting temperature.                  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    Q_PROPERTY(std::optional<double>  minTemperature_c          READ minTemperature_c          WRITE setMinTemperature_c         )
    //! \brief The maximum fermenting temperature.                  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
@@ -226,13 +225,7 @@ public:
     *        rather than std::optional<Flocculation>.
     */
    Q_PROPERTY(std::optional<int>     flocculation              READ flocculationAsInt         WRITE setFlocculationAsInt        )
-¥¥¥ MOVE TO YEAST ADDITION
-   /**
-    * \brief The apparent attenuation in percent.                 ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-    *
-    *        .:TBD:. Maybe this should ultimately be read-only returning the average of Min and Max
-    */
-   Q_PROPERTY(std::optional<double>  attenuation_pct           READ attenuation_pct           WRITE setAttenuation_pct          )
+
    //! \brief The notes.
    Q_PROPERTY(QString                notes                     READ notes                     WRITE setNotes                    )
    //! \brief What styles the strain is best for.
@@ -242,7 +235,7 @@ public:
    //! \brief The maximum recommended number of reculturings.      ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    Q_PROPERTY(std::optional<int>     maxReuse                  READ maxReuse                  WRITE setMaxReuse                 )
    //! \brief Whether the yeast is added to secondary or primary.  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-   Q_PROPERTY(std::optional<bool>    addToSecondary            READ addToSecondary            WRITE setAddToSecondary           )
+///   Q_PROPERTY(std::optional<bool>    addToSecondary            READ addToSecondary            WRITE setAddToSecondary           )
 
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 
@@ -281,17 +274,16 @@ public:
 ///   double                      amount                   () const;
 ///   bool                        amountIsWeight           () const;
    QString                     laboratory               () const;
-   QString                     productID                () const;
+   QString                     productId                () const;
    std::optional<double>       minTemperature_c         () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    std::optional<double>       maxTemperature_c         () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    std::optional<Flocculation> flocculation             () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    std::optional<int>          flocculationAsInt        () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-   std::optional<double>       attenuation_pct          () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    QString                     notes                    () const;
    QString                     bestFor                  () const;
    std::optional<int>          timesCultured            () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    std::optional<int>          maxReuse                 () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-   std::optional<bool>         addToSecondary           () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+///   std::optional<bool>         addToSecondary           () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 ///   MassOrVolumeAmt             amountWithUnits          () const;
    std::optional<double>       alcoholTolerance_pct     () const;
@@ -311,17 +303,16 @@ public:
 ///   void setAmount                   (double                      const   val);
 ///   void setAmountIsWeight           (bool                        const   val);
    void setLaboratory               (QString                     const & val);
-   void setProductID                (QString                     const & val);
+   void setProductId                (QString                     const & val);
    void setMinTemperature_c         (std::optional<double>       const   val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    void setMaxTemperature_c         (std::optional<double>       const   val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    void setFlocculation             (std::optional<Flocculation> const   val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    void setFlocculationAsInt        (std::optional<int>          const   val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-   void setAttenuation_pct          (std::optional<double>       const   val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    void setNotes                    (QString                     const & val);
    void setBestFor                  (QString                     const & val);
    void setTimesCultured            (std::optional<int>          const   val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    void setMaxReuse                 (std::optional<int>          const   val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-   void setAddToSecondary           (std::optional<bool>         const   val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+///   void setAddToSecondary           (std::optional<bool>         const   val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 ///   void setAmountWithUnits          (MassOrVolumeAmt             const   val);
    void setAlcoholTolerance_pct     (std::optional<double>       const   val);
@@ -365,16 +356,15 @@ private:
 ///   double                      m_amount                   ;
 ///   bool                        m_amountIsWeight           ;
    QString                     m_laboratory               ;
-   QString                     m_productID                ;
+   QString                     m_productId                ;
    std::optional<double>       m_minTemperature_c         ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    std::optional<double>       m_maxTemperature_c         ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    std::optional<Flocculation> m_flocculation             ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-   std::optional<double>       m_attenuation_pct          ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    QString                     m_notes                    ;
    QString                     m_bestFor                  ;
    std::optional<int>          m_timesCultured            ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    std::optional<int>          m_maxReuse                 ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-   std::optional<bool>         m_addToSecondary           ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+///   std::optional<bool>         m_addToSecondary           ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
 ///   int                         m_inventory_id             ;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<double>       m_alcoholTolerance_pct     ;

@@ -267,7 +267,7 @@ private:
 
    BtTreeItem * rootItem;
    BtTreeView * parentTree;
-   TypeMasks treeMask;
+   TypeMasks m_treeMask;
    BtTreeItem::Type itemType;
    int m_maxColumns;
    QString m_mimeType;

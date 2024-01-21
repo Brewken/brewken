@@ -29,24 +29,19 @@ bool RecipeAdditionYeastSortFilterProxyModel::isLessThan(RecipeAdditionYeastTabl
                                                        QVariant const & rightItem) const {
    switch (columnIndex) {
       case RecipeAdditionYeastTableModel::ColumnIndex::Name:
+      case RecipeAdditionYeastTableModel::ColumnIndex::Laboratory:
+      case RecipeAdditionYeastTableModel::ColumnIndex::ProductId:
+      case RecipeAdditionYeastTableModel::ColumnIndex::Type:
       case RecipeAdditionYeastTableModel::ColumnIndex::Form:
-      case RecipeAdditionYeastTableModel::ColumnIndex::Year:
       case RecipeAdditionYeastTableModel::ColumnIndex::Stage:
+      case RecipeAdditionYeastTableModel::ColumnIndex::Step:
       case RecipeAdditionYeastTableModel::ColumnIndex::AmountType:
          return leftItem.toString() < rightItem.toString();
-
-      case RecipeAdditionYeastTableModel::ColumnIndex::Alpha:
-         return Measurement::extractRawFromString<double>( leftItem.toString()) <
-                Measurement::extractRawFromString<double>(rightItem.toString());
 
       case RecipeAdditionYeastTableModel::ColumnIndex::TotalInventory:
       case RecipeAdditionYeastTableModel::ColumnIndex::Amount:
          return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Mass) <
                 Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Mass);
-
-      case RecipeAdditionYeastTableModel::ColumnIndex::Time:
-         return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Time) <
-                Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Time);
 
       // No default case as we want the compiler to warn us if we missed one
    }

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/TableModelBase.h is part of Brewken, and is copyright the following authors 2023:
+ * tableModels/TableModelBase.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -822,7 +822,7 @@ protected:
    template<class Caller>
    void updateInventory(int invKey, BtStringConst const & propertyName) requires IsTableModel<Caller> && HasInventory<Caller> {
       // Substantive version
-      if (propertyName == PropertyNames::Inventory::amount) {
+      if (propertyName == PropertyNames::IngredientAmount::amount) {
          for (int ii = 0; ii < this->rows.size(); ++ii) {
             if (invKey == this->rows.at(ii)->inventoryId()) {
                emit this->derived().dataChanged(this->derived().createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)),

@@ -51,7 +51,7 @@ namespace {
          return lhs->key() > rhs->key();
       }
 
-      switch (left.column()) {
+      switch (static_cast<BtTreeItem::RecipeColumn>(left.column())) {
          case BtTreeItem::RecipeColumn::Name:
             return lhs->name() < rhs->name();
          case BtTreeItem::RecipeColumn::BrewDate:
@@ -75,7 +75,7 @@ namespace {
                                        [[maybe_unused]] QModelIndex const & right,
                                        Equipment * lhs,
                                        Equipment * rhs) {
-      switch (left.column()) {
+      switch (static_cast<BtTreeItem::EquipmentColumn>(left.column())) {
          case BtTreeItem::EquipmentColumn::Name:
             return lhs->name() < rhs->name();
          case BtTreeItem::EquipmentColumn::BoilTime:
@@ -89,7 +89,7 @@ namespace {
                                          [[maybe_unused]] QModelIndex const & right,
                                          Fermentable * lhs,
                                          Fermentable * rhs) {
-      switch (left.column()) {
+      switch (static_cast<BtTreeItem::FermentableColumn>(left.column())) {
          case BtTreeItem::FermentableColumn::Name : return lhs->name()      < rhs->name();
          case BtTreeItem::FermentableColumn::Type : return lhs->type()      < rhs->type();
          case BtTreeItem::FermentableColumn::Color: return lhs->color_srm() < rhs->color_srm();
@@ -118,7 +118,7 @@ namespace {
                                   [[maybe_unused]] QModelIndex const & right,
                                   Misc * lhs,
                                   Misc * rhs) {
-      switch (left.column()) {
+      switch (static_cast<BtTreeItem::MiscColumn>(left.column())) {
          case BtTreeItem::MiscColumn::Name: return lhs->name() < rhs->name();
          case BtTreeItem::MiscColumn::Type: return lhs->type() < rhs->type();
       }
@@ -130,7 +130,7 @@ namespace {
                                    [[maybe_unused]] QModelIndex const & right,
                                    Style * lhs,
                                    Style * rhs) {
-      switch (left.column()) {
+      switch (static_cast<BtTreeItem::StyleColumn>(left.column())) {
          case BtTreeItem::StyleColumn::Name          : return lhs->name()           < rhs->name();
          case BtTreeItem::StyleColumn::Category      : return lhs->category()       < rhs->category();
          case BtTreeItem::StyleColumn::CategoryNumber: return lhs->categoryNumber() < rhs->categoryNumber();
@@ -145,7 +145,7 @@ namespace {
                                    [[maybe_unused]] QModelIndex const & right,
                                    Yeast * lhs,
                                    Yeast * rhs) {
-      switch (left.column()) {
+      switch (static_cast<BtTreeItem::YeastColumn>(left.column())) {
          case BtTreeItem::YeastColumn::Name: return lhs->name() < rhs->name();
          case BtTreeItem::YeastColumn::Type: return lhs->type() < rhs->type();
          case BtTreeItem::YeastColumn::Form: return lhs->form() < rhs->form();
@@ -158,7 +158,7 @@ namespace {
                                    [[maybe_unused]] QModelIndex const & right,
                                    Water * lhs,
                                    Water * rhs) {
-      switch (left.column()) {
+      switch (static_cast<BtTreeItem::WaterColumn>(left.column())) {
          case BtTreeItem::WaterColumn::Name       : return lhs->name()            < rhs->name();
          case BtTreeItem::WaterColumn::pH         : return lhs->ph()              < rhs->ph();
          case BtTreeItem::WaterColumn::Bicarbonate: return lhs->bicarbonate_ppm() < rhs->bicarbonate_ppm();
@@ -203,7 +203,7 @@ namespace {
 BtTreeFilterProxyModel::BtTreeFilterProxyModel(QObject * parent,
                                                BtTreeModel::TypeMasks mask) :
    QSortFilterProxyModel{parent},
-   treeMask{mask} {
+   m_treeMask{mask} {
    return;
 }
 
@@ -211,36 +211,29 @@ bool BtTreeFilterProxyModel::lessThan(const QModelIndex & left,
                                       const QModelIndex & right) const {
 
    BtTreeModel * model = qobject_cast<BtTreeModel *>(sourceModel());
-   switch (treeMask) {
-      case BtTreeModel::TypeMask::Recipe:
-         // We don't want to sort brewnotes with the recipes, so only do this if
-         // both sides are brewnotes
-         if (model->type(left) == BtTreeItem::Type::BREWNOTE || model->type(right) == BtTreeItem::Type::BREWNOTE) {
-            BrewNote * leftBn = model->getItem<BrewNote>(left);
-            BrewNote * rightBn = model->getItem<BrewNote>(right);
-            if (leftBn && rightBn) {
-               return leftBn->brewDate() < rightBn->brewDate();
-            }
-            return false;
+
+   if (this->m_treeMask.testFlag(BtTreeModel::TypeMask::Recipe)) {
+      // We don't want to sort brewnotes with the recipes, so only do this if
+      // both sides are brewnotes
+      if (model->type(left) == BtTreeItem::Type::BrewNote || model->type(right) == BtTreeItem::Type::BrewNote) {
+         BrewNote * leftBn = model->getItem<BrewNote>(left);
+         BrewNote * rightBn = model->getItem<BrewNote>(right);
+         if (leftBn && rightBn) {
+            return leftBn->brewDate() < rightBn->brewDate();
          }
-         return isLessThan<Recipe>(model, left, right);
-      case BtTreeModel::TypeMask::Equipment:
-         return isLessThan<Equipment>(model, left, right);
-      case BtTreeModel::TypeMask::Fermentable:
-         return isLessThan<Fermentable>(model, left, right);
-      case BtTreeModel::TypeMask::Hop:
-         return isLessThan<Hop>(model, left, right);
-      case BtTreeModel::TypeMask::Misc:
-         return isLessThan<Misc>(model, left, right);
-      case BtTreeModel::TypeMask::Yeast:
-         return isLessThan<Yeast>(model, left, right);
-      case BtTreeModel::TypeMask::Style:
-         return isLessThan<Style>(model, left, right);
-      case BtTreeModel::TypeMask::Water:
-         return isLessThan<Water>(model, left, right);
-      default:
-         return isLessThan<Recipe>(model, left, right);
+         return false;
+      }
+      return isLessThan<Recipe>(model, left, right);
    }
+
+   if (this->m_treeMask.testFlag(BtTreeModel::TypeMask::Equipment  )) { return isLessThan<Equipment  >(model, left, right); }
+   if (this->m_treeMask.testFlag(BtTreeModel::TypeMask::Fermentable)) { return isLessThan<Fermentable>(model, left, right); }
+   if (this->m_treeMask.testFlag(BtTreeModel::TypeMask::Hop        )) { return isLessThan<Hop        >(model, left, right); }
+   if (this->m_treeMask.testFlag(BtTreeModel::TypeMask::Misc       )) { return isLessThan<Misc       >(model, left, right); }
+   if (this->m_treeMask.testFlag(BtTreeModel::TypeMask::Yeast      )) { return isLessThan<Yeast      >(model, left, right); }
+   if (this->m_treeMask.testFlag(BtTreeModel::TypeMask::Style      )) { return isLessThan<Style      >(model, left, right); }
+   if (this->m_treeMask.testFlag(BtTreeModel::TypeMask::Water      )) { return isLessThan<Water      >(model, left, right); }
+   return isLessThan<Recipe>(model, left, right);
 }
 
 bool BtTreeFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex & source_parent) const {
@@ -264,7 +257,7 @@ bool BtTreeFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex 
 
    NamedEntity * thing = model->thing(child);
 
-   if (treeMask == BtTreeModel::TypeMask::Recipe && thing) {
+   if (this->m_treeMask.testFlag(BtTreeModel::TypeMask::Recipe) && thing) {
 
       // we are showing the child (context menu -> show snapshots ) OR
       // we are meant to display this thing.

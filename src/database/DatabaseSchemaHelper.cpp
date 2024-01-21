@@ -1349,12 +1349,39 @@ namespace {
          {QString("ALTER TABLE fermentable DROP COLUMN is_mashed")},
          {QString("ALTER TABLE fermentable DROP COLUMN add_after_boil")},
          //
-         // Yeast additions are either add_to_secondary or not (ie add to primary)
+         // Yeast additions are either add_to_secondary or not (ie add to primary).  The BeerXML specifications explain
+         // that add_to_secondary is a "flag denoting that this yeast was added for a secondary (or later) fermentation
+         // as opposed to the primary fermentation.  Useful if one uses two or more yeast strains for a single brew (eg:
+         // Lambic).  Default value is FALSE".
          //
-
-         ¥¥¥ Nope - need to look at add_to_secondary column and then drop it!
+         // In BeerJSON, the TimingType of an addition includes the "step" field, which is "used to indicate what step
+         // this ingredient timing addition is referencing. EG A value of 2 for add_to_fermentation would mean to add
+         // during the second fermentation step".
+         //
+         // We could do something more elegant than two separate queries here, but this is a one-off and has the merit
+         // of being consistent with the other ingredient addition updates.
+         //
          {QString("UPDATE yeast_in_recipe "
-                  "SET stage = 'add_to_fermentation'")},
+                  "SET stage = 'add_to_fermentation', "
+                      "step = 1, "
+                  "FROM yeast_id IN ("
+                     "SELECT id "
+                     "FROM yeast "
+                     "WHERE add_to_secondary = ?"
+                  ")"), {QVariant{false}}},
+         {QString("UPDATE yeast_in_recipe "
+                  "SET stage = 'add_to_fermentation', "
+                      "step = 2, "
+                  "FROM yeast_id IN ("
+                     "SELECT id "
+                     "FROM yeast "
+                     "WHERE add_to_secondary = ?"
+                  ")"), {QVariant{true}}},
+         //
+         // We can drop the add_to_secondary column on yeast now that we have transferred the information from it across
+         // to yeast_in_recipe.
+         //
+         {QString("ALTER TABLE yeast DROP COLUMN add_to_secondary")},
 
          //
          // Entries in hop_in_recipe will still be pointing to the "child" hop.  We need to point to the parent one.
@@ -1439,12 +1466,12 @@ namespace {
          {QString("ALTER TABLE yeast       DROP COLUMN display_scale")},
          //
          // Now we sort out inventory.  We move the hop ID and by-volume/by-mass info from the hop table to the
-         // inventory table.  Same thing for fermentables, misc and yeast.
+         // inventory table.  Same thing for fermentables, misc and, to some extent, yeast.
          //
          {QString("ALTER TABLE         hop_in_inventory RENAME COLUMN amount TO quantity")},
          {QString("ALTER TABLE fermentable_in_inventory RENAME COLUMN amount TO quantity")},
          {QString("ALTER TABLE        misc_in_inventory RENAME COLUMN amount TO quantity")},
-         {QString("ALTER TABLE       yeast_in_inventory RENAME COLUMN amount TO quantity")},
+         {QString("ALTER TABLE       yeast_in_inventory RENAME COLUMN quanta TO quantity")},
          {QString("ALTER TABLE         hop_in_inventory ADD COLUMN         hop_id %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE fermentable_in_inventory ADD COLUMN fermentable_id %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE        misc_in_inventory ADD COLUMN         hop_id %1").arg(db.getDbNativeTypeName<QString>())},

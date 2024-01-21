@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * sortFilterProxyModels/BtTreeFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * sortFilterProxyModels/BtTreeFilterProxyModel.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -40,7 +40,7 @@ protected:
    bool filterAcceptsRow( int source_row, const QModelIndex &source_parent) const;
 
 private:
-   BtTreeModel::TypeMasks treeMask;
+   BtTreeModel::TypeMasks m_treeMask;
 };
 
 #endif

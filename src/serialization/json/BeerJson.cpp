@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * serialization/json/BeerJson.cpp is part of Brewken, and is copyright the following authors 2021-2023:
+ * serialization/json/BeerJson.cpp is part of Brewken, and is copyright the following authors 2021-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -322,7 +322,7 @@ namespace {
       {JsonRecordDefinition::FieldType::Double                    , "kolbach_index"   , PropertyNames::Fermentable::kolbachIndex_pct      ,                                       },
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "max_in_batch"    , PropertyNames::Fermentable::maxInBatch_pct        , &BEER_JSON_PERCENT_UNIT               },
       {JsonRecordDefinition::FieldType::Bool                      , "recommend_mash"  , PropertyNames::Fermentable::recommendMash         ,                                       },
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount", PropertyNames::NamedEntityWithInventory::inventoryWithUnits, &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER },
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount", PropertyNames::IngredientAmount::amount           , &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER },
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "glassy"          , PropertyNames::Fermentable::hardnessPrpGlassy_pct , &BEER_JSON_PERCENT_UNIT               },
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "plump"           , PropertyNames::Fermentable::kernelSizePrpPlump_pct, &BEER_JSON_PERCENT_UNIT               },
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "half"            , PropertyNames::Fermentable::hardnessPrpHalf_pct   , &BEER_JSON_PERCENT_UNIT               },
@@ -359,7 +359,7 @@ namespace {
       // Type                                                       XPath               Q_PROPERTY                            Value Decoder
       {JsonRecordDefinition::FieldType::String                    , "use_for"         , PropertyNames::Misc::useFor         },
       {JsonRecordDefinition::FieldType::String                    , "notes"           , PropertyNames::Misc::notes          },
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount", PropertyNames::NamedEntityWithInventory::inventoryWithUnits, &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount", PropertyNames::IngredientAmount::amount, &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
    };
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Misc> {
       std::in_place_type_t<Misc>{},
@@ -402,7 +402,7 @@ namespace {
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/pinene"               , PropertyNames::Hop::pinene_pct           , &BEER_JSON_PERCENT_UNIT},
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/polyphenols"          , PropertyNames::Hop::polyphenols_pct      , &BEER_JSON_PERCENT_UNIT},
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "oil_content/xanthohumol"          , PropertyNames::Hop::xanthohumol_pct      , &BEER_JSON_PERCENT_UNIT},
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount"                 , PropertyNames::NamedEntityWithInventory::inventoryWithUnits, &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount"                 , PropertyNames::IngredientAmount::amount  , &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
 
       // .:TODO.JSON:. Note that we'll need to look at HopAdditionType, IBUEstimateType, IBUMethodType when we use Hops in Recipes
    };
@@ -426,7 +426,7 @@ namespace {
          {JsonRecordDefinition::FieldType::Enum                      , "type"                     , PropertyNames::Yeast::type                     , &Yeast::typeStringMapping},
          {JsonRecordDefinition::FieldType::Enum                      , "form"                     , PropertyNames::Yeast::form                     , &Yeast::formStringMapping},
          {JsonRecordDefinition::FieldType::String                    , "producer"                 , PropertyNames::Yeast::laboratory               },
-         {JsonRecordDefinition::FieldType::String                    , "product_id"               , PropertyNames::Yeast::productID                },
+         {JsonRecordDefinition::FieldType::String                    , "product_id"               , PropertyNames::Yeast::productId                },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "temperature_range/minimum", PropertyNames::Yeast::minTemperature_c         , &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
          {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "temperature_range/maximum", PropertyNames::Yeast::maxTemperature_c         , &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
          {JsonRecordDefinition::FieldType::SingleUnitValue           , "alcohol_tolerance"        , PropertyNames::Yeast::alcoholTolerance_pct     , &BEER_JSON_PERCENT_UNIT           },
@@ -438,7 +438,7 @@ namespace {
          {JsonRecordDefinition::FieldType::Int                       , "max_reuse"                , PropertyNames::Yeast::maxReuse                 },
          {JsonRecordDefinition::FieldType::Bool                      , "pof"                      , PropertyNames::Yeast::phenolicOffFlavorPositive},
          {JsonRecordDefinition::FieldType::Bool                      , "glucoamylase"             , PropertyNames::Yeast::glucoamylasePositive     },
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount"         , PropertyNames::NamedEntityWithInventory::inventoryWithUnits, &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount"         , PropertyNames::IngredientAmount::amount        , &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
          {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no1"             , PropertyNames::Yeast::killerProducingK1Toxin   },
          {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no2"             , PropertyNames::Yeast::killerProducingK2Toxin   },
          {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no28"            , PropertyNames::Yeast::killerProducingK28Toxin  },

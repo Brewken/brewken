@@ -86,6 +86,10 @@ void SmartCheckBox::init(char const *  const   editorName,
    //
    // So, even though it seems a bit odd to sync the two fields before either one has had values set, it is necessary!
    this->pimpl->m_controlledField->selectPhysicalQuantity(this->isChecked());
+   // TBD: Probably replace the above line with something along the following lines, but also need to look at onToggled below.
+///   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType));
+///   auto const physicalQuantity = std::get<Measurement::PhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType);
+///   this->pimpl->m_controlledField->selectPhysicalQuantity(physicalQuantity);
 
    this->pimpl->m_initialised = true;
    return;

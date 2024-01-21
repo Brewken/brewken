@@ -117,7 +117,7 @@ void RecipeExtrasWidget::updatePrimaryAge() {
    // See comment in model/Recipe.cpp for why age_days, primaryAge_days, secondaryAge_days, tertiaryAge_days properties
    // are dimensionless
    if (!this->recipe) { return; }
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, primaryAge_days), lineEdit_primaryAge->getNonOptValueAs<double>(), tr("Change Primary Age"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, primaryAge_days), lineEdit_primaryAge->getNonOptValue<double>(), tr("Change Primary Age"));
 }
 
 void RecipeExtrasWidget::updatePrimaryTemp() {
@@ -127,7 +127,7 @@ void RecipeExtrasWidget::updatePrimaryTemp() {
 
 void RecipeExtrasWidget::updateSecondaryAge() {
    if (!this->recipe) { return; }
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, secondaryAge_days), lineEdit_secAge->getNonOptValueAs<double>(), tr("Change Secondary Age"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, secondaryAge_days), lineEdit_secAge->getNonOptValue<double>(), tr("Change Secondary Age"));
 }
 
 void RecipeExtrasWidget::updateSecondaryTemp() {
@@ -137,7 +137,7 @@ void RecipeExtrasWidget::updateSecondaryTemp() {
 
 void RecipeExtrasWidget::updateTertiaryAge() {
    if (!this->recipe) { return; }
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, tertiaryAge_days), lineEdit_tertAge->getNonOptValueAs<double>(), tr("Change Tertiary Age"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, tertiaryAge_days), lineEdit_tertAge->getNonOptValue<double>(), tr("Change Tertiary Age"));
 }
 
 void RecipeExtrasWidget::updateTertiaryTemp() {
@@ -147,7 +147,7 @@ void RecipeExtrasWidget::updateTertiaryTemp() {
 
 void RecipeExtrasWidget::updateAge() {
    if (!this->recipe) { return; }
-   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, age_days), lineEdit_age->getNonOptValueAs<double>(), tr("Change Age"));
+   MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, age_days), lineEdit_age->getNonOptValue<double>(), tr("Change Age"));
 }
 
 void RecipeExtrasWidget::updateAgeTemp() {

@@ -29,15 +29,10 @@ bool RecipeAdditionMiscSortFilterProxyModel::isLessThan(RecipeAdditionMiscTableM
                                                        QVariant const & rightItem) const {
    switch (columnIndex) {
       case RecipeAdditionMiscTableModel::ColumnIndex::Name:
-      case RecipeAdditionMiscTableModel::ColumnIndex::Form:
-      case RecipeAdditionMiscTableModel::ColumnIndex::Year:
+      case RecipeAdditionMiscTableModel::ColumnIndex::Type:
       case RecipeAdditionMiscTableModel::ColumnIndex::Stage:
       case RecipeAdditionMiscTableModel::ColumnIndex::AmountType:
          return leftItem.toString() < rightItem.toString();
-
-      case RecipeAdditionMiscTableModel::ColumnIndex::Alpha:
-         return Measurement::extractRawFromString<double>( leftItem.toString()) <
-                Measurement::extractRawFromString<double>(rightItem.toString());
 
       case RecipeAdditionMiscTableModel::ColumnIndex::TotalInventory:
       case RecipeAdditionMiscTableModel::ColumnIndex::Amount:

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Recipe.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/Recipe.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Greenaae <ggreenaae@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -54,6 +54,8 @@
 #include "model/NamedParameterBundle.h"
 #include "model/RecipeAdditionFermentable.h"
 #include "model/RecipeAdditionHop.h"
+#include "model/RecipeAdditionMisc.h"
+#include "model/RecipeAdditionYeast.h"
 #include "model/Salt.h"
 #include "model/Style.h"
 #include "model/Water.h"
@@ -183,11 +185,11 @@ namespace {
    template<> BtStringConst const & propertyToPropertyName<RecipeAdditionHop        >() { return PropertyNames::Recipe::hopAdditionIds        ; }
    template<> BtStringConst const & propertyToPropertyName<Instruction              >() { return PropertyNames::Recipe::instructionIds        ; }
    template<> BtStringConst const & propertyToPropertyName<Mash                     >() { return PropertyNames::Recipe::mashId                ; }
-   template<> BtStringConst const & propertyToPropertyName<Misc                     >() { return PropertyNames::Recipe::miscIds               ; }
+   template<> BtStringConst const & propertyToPropertyName<Misc                     >() { return PropertyNames::Recipe::miscAdditionIds       ; }
    template<> BtStringConst const & propertyToPropertyName<Salt                     >() { return PropertyNames::Recipe::saltIds               ; }
    template<> BtStringConst const & propertyToPropertyName<Style                    >() { return PropertyNames::Recipe::styleId               ; }
    template<> BtStringConst const & propertyToPropertyName<Water                    >() { return PropertyNames::Recipe::waterIds              ; }
-   template<> BtStringConst const & propertyToPropertyName<Yeast                    >() { return PropertyNames::Recipe::yeastIds              ; }
+   template<> BtStringConst const & propertyToPropertyName<Yeast                    >() { return PropertyNames::Recipe::yeastAdditionIds      ; }
 
 ///   QHash<QString, Recipe::Type> const RECIPE_TYPE_STRING_TO_TYPE {
 ///      {"Extract",      Recipe::Type::Extract},
@@ -215,12 +217,9 @@ public:
     */
    impl(Recipe & self) :
       m_self{self},
-      fermentableIds{},
       instructionIds{},
-      miscIds{},
       saltIds{},
-      waterIds{},
-      yeastIds{} {
+      waterIds{} {
       return;
    }
 
@@ -376,14 +375,18 @@ public:
 
       auto hopAdditions = this->m_self.hopAdditions();
       for (auto hopAddition : hopAdditions) {
-         if (hopAddition->hop()) {
-            connect(hopAddition->hop(), &NamedEntity::changed, &this->m_self, &Recipe::acceptChangeToContainedObject);
-         }
+         connect(hopAddition->hop(),
+                 &NamedEntity::changed,
+                 &this->m_self,
+                 &Recipe::acceptChangeToContainedObject);
       }
 
-      QList<Yeast *> yeasts = this->m_self.yeasts();
-      for (auto yeast : yeasts) {
-         connect(yeast, &NamedEntity::changed, &this->m_self, &Recipe::acceptChangeToContainedObject);
+      auto yeastAdditions = this->m_self.yeastAdditions();
+      for (auto yeastAddition : yeastAdditions) {
+         connect(yeastAddition->yeast(),
+                 &NamedEntity::changed,
+                 &this->m_self,
+                 &Recipe::acceptChangeToContainedObject);
       }
 
       Mash * mash = this->m_self.mash();
@@ -498,7 +501,7 @@ public:
       // TBD: What about hopAddition->addAtTime_mins()?
       QVector<PreInstruction> preins;
       for (auto hopAddition : m_self.hopAdditions()) {
-         Hop * hop = hopAddition->hop();
+         auto hop = hopAddition->hop();
          if (hopAddition->stage() == stage) {
             QString str;
             switch (stage) {
@@ -534,38 +537,32 @@ public:
       return preins;
    }
 
-   QVector<PreInstruction> miscSteps(Misc::Use type) {
+   QVector<PreInstruction> miscSteps(RecipeAdditionMisc::Use type) {
       QVector<PreInstruction> preins;
-
-      QList<Misc *> mlist = m_self.miscs();
-      int size = mlist.size();
-      for (unsigned int i = 0; static_cast<int>(i) < size; ++i) {
+      for (auto miscAddition : m_self.miscAdditions()) {
          QString str;
-         Misc * misc = mlist[static_cast<int>(i)];
-         if (misc->use() == type) {
-            if (type == Misc::Use::Boil) {
+         auto misc = miscAddition->misc();
+         if (miscAddition->use() == type) {
+            if (type == RecipeAdditionMisc::Use::Boil) {
                str = tr("Put %1 %2 into boil for %3.");
-            } else if (type == Misc::Use::Bottling) {
+            } else if (type == RecipeAdditionMisc::Use::Bottling) {
                str = tr("Use %1 %2 at bottling for %3.");
-            } else if (type == Misc::Use::Mash) {
+            } else if (type == RecipeAdditionMisc::Use::Mash) {
                str = tr("Put %1 %2 into mash for %3.");
-            } else if (type == Misc::Use::Primary) {
+            } else if (type == RecipeAdditionMisc::Use::Primary) {
                str = tr("Put %1 %2 into primary for %3.");
-            } else if (type == Misc::Use::Secondary) {
+            } else if (type == RecipeAdditionMisc::Use::Secondary) {
                str = tr("Put %1 %2 into secondary for %3.");
             } else {
-               qWarning() << "Recipe::getMiscSteps(): Unrecognized misc use.";
+               qWarning() << Q_FUNC_INFO << "Unrecognized misc use.";
                str = tr("Use %1 %2 for %3.");
             }
 
-            str = str .arg(Measurement::displayAmount(Measurement::Amount{
-                                                         misc->amount(),
-                                                         misc->amountIsWeight() ? Measurement::Units::kilograms : Measurement::Units::liters
-                                                      }))
-                  .arg(misc->name())
-                  .arg(Measurement::displayAmount(Measurement::Amount{misc->time_min(), Measurement::Units::minutes}));
+            str = str.arg(Measurement::displayAmount(miscAddition->amount()))
+                     .arg(misc->name())
+                     .arg(Measurement::displayAmount(Measurement::Amount{miscAddition->duration_mins().value_or(0.0), Measurement::Units::minutes}));
 
-            preins.push_back(PreInstruction(str, tr("Misc addition"), misc->time_min()));
+            preins.push_back(PreInstruction(str, tr("Misc addition"), miscAddition->duration_mins().value_or(0.0)));
          }
       }
       return preins;
@@ -679,23 +676,23 @@ public:
 
    //================================================ Member variables =================================================
    Recipe & m_self;
-   QVector<int> fermentableIds;
+///   QVector<int> fermentableIds;
 ///   QVector<int> m_hopAdditionIds;
    QVector<int> instructionIds;
-   QVector<int> miscIds;
+///   QVector<int> miscIds;
    QVector<int> saltIds;
    QVector<int> waterIds;
-   QVector<int> yeastIds;
+///   QVector<int> yeastIds;
 
 };
 
-template<> QVector<int> & Recipe::impl::accessIds<Fermentable>() { return this->fermentableIds; }
+///template<> QVector<int> & Recipe::impl::accessIds<Fermentable>() { return this->fermentableIds; }
 ///template<> QVector<int> & Recipe::impl::accessIds<RecipeAdditionHop>()         { return this->m_hopAdditionIds; }
 template<> QVector<int> & Recipe::impl::accessIds<Instruction>() { return this->instructionIds; }
-template<> QVector<int> & Recipe::impl::accessIds<Misc>()        { return this->miscIds; }
+///template<> QVector<int> & Recipe::impl::accessIds<Misc>()        { return this->miscIds; }
 template<> QVector<int> & Recipe::impl::accessIds<Salt>()        { return this->saltIds; }
 template<> QVector<int> & Recipe::impl::accessIds<Water>()       { return this->waterIds; }
-template<> QVector<int> & Recipe::impl::accessIds<Yeast>()       { return this->yeastIds; }
+///template<> QVector<int> & Recipe::impl::accessIds<Yeast>()       { return this->yeastIds; }
 
 QString const Recipe::LocalisedName = tr("Recipe");
 
@@ -750,15 +747,15 @@ bool Recipe::isEqualTo(NamedEntity const & other) const {
       ObjectStoreWrapper::compareById<Equipment>(this->m_equipmentId, rhs.m_equipmentId) &&
       this->m_og                == rhs.m_og                &&
       this->m_fg                == rhs.m_fg                &&
-      ObjectStoreWrapper::compareListByIds<Fermentable      >(this->pimpl->fermentableIds  , rhs.pimpl->fermentableIds  ) &&
+///      ObjectStoreWrapper::compareListByIds<Fermentable      >(this->pimpl->fermentableIds  , rhs.pimpl->fermentableIds  ) &&
 ///      ObjectStoreWrapper::compareListByIds<RecipeAdditionHop>(this->pimpl->m_hopAdditionIds, rhs.pimpl->m_hopAdditionIds) &&
       ObjectStoreWrapper::compareListByIds<Instruction      >(this->pimpl->instructionIds  , rhs.pimpl->instructionIds  ) &&
-      ObjectStoreWrapper::compareListByIds<Misc             >(this->pimpl->miscIds         , rhs.pimpl->miscIds         ) &&
+///      ObjectStoreWrapper::compareListByIds<Misc             >(this->pimpl->miscIds         , rhs.pimpl->miscIds         ) &&
       ObjectStoreWrapper::compareListByIds<Salt             >(this->pimpl->saltIds         , rhs.pimpl->saltIds         ) &&
-      ObjectStoreWrapper::compareListByIds<Water            >(this->pimpl->waterIds        , rhs.pimpl->waterIds        ) &&
-      ObjectStoreWrapper::compareListByIds<Yeast            >(this->pimpl->yeastIds        , rhs.pimpl->yeastIds        )
+      ObjectStoreWrapper::compareListByIds<Water            >(this->pimpl->waterIds        , rhs.pimpl->waterIds        )
+///      ObjectStoreWrapper::compareListByIds<Yeast            >(this->pimpl->yeastIds        , rhs.pimpl->yeastIds        )
 
-      // TODO: What about BrewNote and RecipeAdditionHop
+      // TODO: What about BrewNote, RecipeAdditionFermentable, RecipeAdditionHop, RecipeAdditionMisc, RecipeAdditionYeast
    );
 }
 
@@ -829,7 +826,7 @@ TypeLookup const Recipe::typeLookup {
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::IBUs              , Recipe::m_IBUs              ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::instructionIds    , Recipe::impl::instructionIds),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::instructions      , Recipe::m_instructions      ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::miscIds           , Recipe::impl::miscIds       ),
+//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::miscIds           , Recipe::impl::miscIds       ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::miscs             , Recipe::m_miscs             ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::points            , Recipe::m_points            ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::postBoilVolume_l  , Recipe::m_postBoilVolume_l  , Measurement::PhysicalQuantity::Volume        ),
@@ -838,11 +835,13 @@ TypeLookup const Recipe::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::waterIds          , Recipe::impl::waterIds      ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::waters            , Recipe::m_waters            ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::wortFromMash_l    , Recipe::m_wortFromMash_l    , Measurement::PhysicalQuantity::Volume        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::yeastIds          , Recipe::impl::yeastIds      ),
+//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::yeastIds          , Recipe::impl::yeastIds      ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::yeasts            , Recipe::m_yeasts            ),
 
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::fermentableAdditionIds, Recipe::fermentableAdditionIds),
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::hopAdditionIds        , Recipe::hopAdditionIds        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::miscAdditionIds       , Recipe::miscAdditionIds       ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::yeastAdditionIds      , Recipe::yeastAdditionIds      ),
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::boilSize_l            , Recipe::boilSize_l            , Measurement::PhysicalQuantity::Volume        ),
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::boilTime_min          , Recipe::boilTime_min          , Measurement::PhysicalQuantity::Time          ),
    },
@@ -1281,7 +1280,7 @@ void Recipe::generateInstructions() {
       preinstructions += this->pimpl->hopSteps(RecipeAddition::Stage::Mash);
 
       /*** Misc mash additions ***/
-      preinstructions += this->pimpl->miscSteps(Misc::Use::Mash);
+      preinstructions += this->pimpl->miscSteps(RecipeAdditionMisc::Use::Mash);
 
       /*** Add the preinstructions into the instructions ***/
       this->pimpl->addPreinstructions(preinstructions);
@@ -1332,7 +1331,7 @@ void Recipe::generateInstructions() {
    preinstructions += this->pimpl->hopSteps(RecipeAddition::Stage::Boil);
 
    /*** Boiled miscs ***/
-   preinstructions += this->pimpl->miscSteps(Misc::Use::Boil);
+   preinstructions += this->pimpl->miscSteps(RecipeAdditionMisc::Use::Boil);
 
    // END boil instructions.
 
@@ -1362,10 +1361,9 @@ void Recipe::generateInstructions() {
 
    /*** Primary yeast ***/
    str = tr("Cool wort and pitch ");
-   QList<Yeast *> ylist = yeasts();
-   for (int ii = 0; ii < ylist.size(); ++ii) {
-      Yeast * yeast = ylist[ii];
-      if (! yeast->addToSecondary()) {
+   for (auto yeastAddition : this->yeastAdditions()) {
+      if (1 == yeastAddition->step()) {
+         auto yeast = yeastAddition->yeast();
          str += tr("%1 %2 yeast, ").arg(yeast->name()).arg(Yeast::typeDisplayNames[yeast->type()]);
       }
    }
@@ -1378,7 +1376,7 @@ void Recipe::generateInstructions() {
    /*** End primary yeast ***/
 
    /*** Primary misc ***/
-   this->pimpl->addPreinstructions(this->pimpl->miscSteps(Misc::Use::Primary));
+   this->pimpl->addPreinstructions(this->pimpl->miscSteps(RecipeAdditionMisc::Use::Primary));
 
    str = tr("Let ferment until FG is %1.").arg(
       Measurement::displayAmount(Measurement::Amount{fg(), Measurement::Units::specificGravity}, 3)
@@ -1396,7 +1394,7 @@ void Recipe::generateInstructions() {
    this->add(transferIns);
 
    /*** Secondary misc ***/
-   this->pimpl->addPreinstructions(this->pimpl->miscSteps(Misc::Use::Secondary));
+   this->pimpl->addPreinstructions(this->pimpl->miscSteps(RecipeAdditionMisc::Use::Secondary));
 
    /*** Dry hopping ***/
    this->pimpl->addPreinstructions(this->pimpl->hopSteps(RecipeAddition::Stage::Fermentation));
@@ -1433,21 +1431,21 @@ QString Recipe::nextAddToBoil(double & time) {
       }
    }
 
-   // Search miscs
-   QList<Misc *> mmiscs = miscs();
-   auto size = mmiscs.size();
-   for (int i = 0; i < size; ++i) {
-      Misc * m = mmiscs[i];
-      if (m->use() != Misc::Use::Boil) {
+   // Search misc additions
+   for (auto miscAddition : this->miscAdditions()) {
+      if (miscAddition->stage() != RecipeAddition::Stage::Boil) {
          continue;
       }
-      if (m->time_min() < time && m->time_min() > max) {
+      if (!miscAddition->addAtTime_mins()) {
+         continue;
+      }
+      double const addAtTime_mins = *miscAddition->addAtTime_mins();
+      if (addAtTime_mins < time && addAtTime_mins > max) {
          ret = tr("Add %1 %2 to boil at %3.");
-         ret = ret.arg(Measurement::displayAmount(m->amountWithUnits()));
-
-         ret = ret.arg(m->name());
-         ret = ret.arg(Measurement::displayAmount(Measurement::Amount{m->time_min(), Measurement::Units::minutes}));
-         max = m->time_min();
+         ret = ret.arg(Measurement::displayAmount(miscAddition->amount()));
+         ret = ret.arg(miscAddition->misc()->name());
+         ret = ret.arg(Measurement::displayAmount(Measurement::Amount{addAtTime_mins, Measurement::Units::minutes}));
+         max = addAtTime_mins;
          foundSomething = true;
       }
    }
@@ -1754,10 +1752,8 @@ void Recipe::setBoilId        (int const id) { this->m_boilId         = id; retu
 void Recipe::setFermentationId(int const id) { this->m_fermentationId = id; return; }
 
 void Recipe::setInstructionIds(QVector<int> ids) {    this->pimpl->instructionIds = ids; return; }
-void Recipe::setMiscIds       (QVector<int> ids) {    this->pimpl->miscIds        = ids; return; }
 void Recipe::setSaltIds       (QVector<int> ids) {    this->pimpl->saltIds        = ids; return; }
 void Recipe::setWaterIds      (QVector<int> ids) {    this->pimpl->waterIds       = ids; return; }
-void Recipe::setYeastIds      (QVector<int> ids) {    this->pimpl->yeastIds       = ids; return; }
 
 //==============================="SET" METHODS=================================
 void Recipe::setType(Recipe::Type const val) {
@@ -2229,24 +2225,23 @@ template<typename NE> QList< std::shared_ptr<NE> > Recipe::getAll() const {
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
 // means, amongst other things, that we can reference the pimpl.)
 //
-template QList< std::shared_ptr<Fermentable> > Recipe::getAll<Fermentable>() const;
-template QList< std::shared_ptr<Misc> > Recipe::getAll<Misc>() const;
 template QList< std::shared_ptr<Salt> > Recipe::getAll<Salt>() const;
-template QList< std::shared_ptr<Yeast> > Recipe::getAll<Yeast>() const;
 template QList< std::shared_ptr<Water> > Recipe::getAll<Water>() const;
 // Override for things that aren't stored in junction tables
 template<> QList< std::shared_ptr<RecipeAdditionFermentable> > Recipe::getAll<RecipeAdditionFermentable>() const { return this->pimpl->allMy<RecipeAdditionFermentable>(); }
 template<> QList< std::shared_ptr<RecipeAdditionHop        > > Recipe::getAll<RecipeAdditionHop        >() const { return this->pimpl->allMy<RecipeAdditionHop        >(); }
+template<> QList< std::shared_ptr<RecipeAdditionMisc       > > Recipe::getAll<RecipeAdditionMisc       >() const { return this->pimpl->allMy<RecipeAdditionMisc       >(); }
+template<> QList< std::shared_ptr<RecipeAdditionYeast      > > Recipe::getAll<RecipeAdditionYeast      >() const { return this->pimpl->allMy<RecipeAdditionYeast      >(); }
 
 ///QList<RecipeAdditionHop *>  Recipe::hopAdditions() const { return this->pimpl->allMyRaw<RecipeAdditionHop>(); }
 QList<std::shared_ptr<RecipeAdditionFermentable>> Recipe::fermentableAdditions() const { return this->pimpl->allMy<RecipeAdditionFermentable>(); }
 QList<std::shared_ptr<RecipeAdditionHop        >> Recipe::        hopAdditions() const { return this->pimpl->allMy<RecipeAdditionHop        >(); }
+QList<std::shared_ptr<RecipeAdditionMisc       >> Recipe::       miscAdditions() const { return this->pimpl->allMy<RecipeAdditionMisc       >(); }
+QList<std::shared_ptr<RecipeAdditionYeast      >> Recipe::      yeastAdditions() const { return this->pimpl->allMy<RecipeAdditionYeast      >(); }
 QVector<int>         Recipe::fermentableAdditionIds() const { return this->pimpl->allMyIds<RecipeAdditionFermentable>(); }
 QVector<int>         Recipe::        hopAdditionIds() const { return this->pimpl->allMyIds<RecipeAdditionHop        >(); }
-QList<Misc *>        Recipe::miscs()             const { return this->pimpl->getAllMyRaw<Misc>();        }
-QVector<int>         Recipe::getMiscIds()        const { return this->pimpl->miscIds;                    }
-QList<Yeast *>       Recipe::yeasts()            const { return this->pimpl->getAllMyRaw<Yeast>();       }
-QVector<int>         Recipe::getYeastIds()       const { return this->pimpl->yeastIds;                   }
+QVector<int>         Recipe::       miscAdditionIds() const { return this->pimpl->allMyIds<RecipeAdditionMisc       >(); }
+QVector<int>         Recipe::      yeastAdditionIds() const { return this->pimpl->allMyIds<RecipeAdditionYeast      >(); }
 QList<Water *>       Recipe::waters()            const { return this->pimpl->getAllMyRaw<Water>();       }
 QVector<int>         Recipe::getWaterIds()       const { return this->pimpl->waterIds;                   }
 QList<Salt *>        Recipe::salts()             const { return this->pimpl->getAllMyRaw<Salt>();        }
@@ -2809,16 +2804,14 @@ void Recipe::recalcOgFg() {
    }
 
    // Calculage FG
-   QList<Yeast *> yeasties = yeasts();
-   for (i = 0; static_cast<int>(i) < yeasties.size(); ++i) {
-      yeast = yeasties[i];
+   for (auto yeastAddition : this->yeastAdditions()) {
       // Get the yeast with the greatest attenuation.
-      if (yeast->attenuation_pct() > attenuation_pct) {
-         attenuation_pct = yeast->getTypicalAttenuation_pct();
+      if (yeastAddition->attenuation_pct() > attenuation_pct) {
+         attenuation_pct = yeastAddition->yeast()->getTypicalAttenuation_pct();
       }
    }
    // This means we have yeast, but they neglected to provide attenuation percentages.
-   if (yeasties.size() > 0 && attenuation_pct <= 0.0)  {
+   if (this->yeastAdditions().size() > 0 && attenuation_pct <= 0.0)  {
       attenuation_pct = Yeast::DefaultAttenuation_pct; // Use an average attenuation.
    }
 

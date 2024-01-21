@@ -119,7 +119,7 @@ QModelIndex BtTreeView::first() {
 }
 
 QString BtTreeView::folderName(QModelIndex index) {
-   if (m_model->type(m_filter->mapToSource(index)) == BtTreeItem::Type::FOLDER) {
+   if (m_model->type(m_filter->mapToSource(index)) == BtTreeItem::Type::Folder) {
       return m_model->getItem<BtFolder>(m_filter->mapToSource(index))->fullPath();
    }
 
@@ -246,7 +246,7 @@ QMimeData * BtTreeView::mimeData(QModelIndexList indexes) {
 
       int id;
       auto itemType = this->type(index);
-      if (itemType != BtTreeItem::Type::FOLDER) {
+      if (itemType != BtTreeItem::Type::Folder) {
          if (m_model->thing(m_filter->mapToSource(index)) == nullptr) {
             qWarning() << QString("Couldn't map that thing");
             id = -1;
@@ -265,13 +265,13 @@ QMimeData * BtTreeView::mimeData(QModelIndexList indexes) {
       stream << static_cast<int>(*itemType) << id << name;
    }
 
-   if (*itsa == BtTreeItem::Type::RECIPE || *itsa == BtTreeItem::Type::STYLE || *itsa == BtTreeItem::Type::EQUIPMENT) {
+   if (*itsa == BtTreeItem::Type::Recipe || *itsa == BtTreeItem::Type::Style || *itsa == BtTreeItem::Type::Equipment) {
       // Recipes, equipment and styles get dropped on the recipe pane
       name = "application/x-brewken-recipe";
-   } else if ( *itsa == BtTreeItem::Type::FOLDER ) {
+   } else if ( *itsa == BtTreeItem::Type::Folder ) {
       // folders will be handled by themselves.
       name = "application/x-brewken-folder";
-   } else if ( *itsa != BtTreeItem::Type::WATER ) {
+   } else if ( *itsa != BtTreeItem::Type::Water ) {
       // Everything other than folders get dropped on the ingredients pane
       name = "application/x-brewken-ingredient";
    } else {
@@ -315,36 +315,20 @@ void BtTreeView::newNamedEntity() {
       folder = folderName(indexes.at(0));
    }
 
-   switch (m_type) {
-      case BtTreeModel::TypeMask::EQUIPMASK:
-         qobject_cast<EquipmentEditor *>(m_editor)->newEditItem(folder);
-         break;
-      case BtTreeModel::TypeMask::FERMENTMASK:
-         qobject_cast<FermentableEditor *>(m_editor)->newEditItem(folder);
-         break;
-      case BtTreeModel::TypeMask::HOPMASK:
-         qobject_cast<HopEditor *>(m_editor)->newEditItem(folder);
-         break;
-      case BtTreeModel::TypeMask::MISCMASK:
-         qobject_cast<MiscEditor *>(m_editor)->newEditItem(folder);
-         break;
-      case BtTreeModel::TypeMask::STYLEMASK:
-         qobject_cast<StyleEditor *>(m_editor)->newEditItem(folder);
-         break;
-      case BtTreeModel::TypeMask::YEASTMASK:
-         qobject_cast<YeastEditor *>(m_editor)->newEditItem(folder);
-         break;
-      case BtTreeModel::TypeMask::WATERMASK:
-         qobject_cast<WaterEditor *>(m_editor)->newWater(folder);
-         break;
-      default:
-         qWarning() << QString("BtTreeView::setupContextMenu unrecognized mask %1").arg(m_type);
-   }
+   if (m_type.testFlag(BtTreeModel::TypeMask::Equipment  )) { qobject_cast<EquipmentEditor   *>(m_editor)->newEditItem(folder); return; }
+   if (m_type.testFlag(BtTreeModel::TypeMask::Fermentable)) { qobject_cast<FermentableEditor *>(m_editor)->newEditItem(folder); return; }
+   if (m_type.testFlag(BtTreeModel::TypeMask::Hop        )) { qobject_cast<HopEditor         *>(m_editor)->newEditItem(folder); return; }
+   if (m_type.testFlag(BtTreeModel::TypeMask::Misc       )) { qobject_cast<MiscEditor        *>(m_editor)->newEditItem(folder); return; }
+   if (m_type.testFlag(BtTreeModel::TypeMask::Style      )) { qobject_cast<StyleEditor       *>(m_editor)->newEditItem(folder); return; }
+   if (m_type.testFlag(BtTreeModel::TypeMask::Yeast      )) { qobject_cast<YeastEditor       *>(m_editor)->newEditItem(folder); return; }
+   if (m_type.testFlag(BtTreeModel::TypeMask::Water      )) { qobject_cast<WaterEditor       *>(m_editor)->newWater   (folder); return; }
 
+   qWarning() << Q_FUNC_INFO << "Unrecognized mask" << m_type;
+   return;
 }
 
 void BtTreeView::showAncestors() {
-   if (m_type == BtTreeModel::TypeMask::Recipe) {
+   if (m_type.testFlag(BtTreeModel::TypeMask::Recipe)) {
       QModelIndexList ndxs = selectionModel()->selectedRows();
 
       // I hear a noise at the door, as of some immense slippery body
@@ -356,7 +340,7 @@ void BtTreeView::showAncestors() {
 }
 
 void BtTreeView::hideAncestors() {
-   if (m_type == BtTreeModel::TypeMask::Recipe) {
+   if (m_type.testFlag(BtTreeModel::TypeMask::Recipe)) {
       QModelIndexList ndxs = selectionModel()->selectedRows();
 
       // I hear a noise at the door, as of some immense slippery body
@@ -369,7 +353,7 @@ void BtTreeView::hideAncestors() {
 }
 
 void BtTreeView::revertRecipeToPreviousVersion() {
-   if (m_type == BtTreeModel::TypeMask::Recipe) {
+   if (m_type.testFlag(BtTreeModel::TypeMask::Recipe)) {
       QModelIndexList ndxs = selectionModel()->selectedRows();
 
       // I hear a noise at the door, as of some immense slippery body
@@ -382,7 +366,7 @@ void BtTreeView::revertRecipeToPreviousVersion() {
 }
 
 void BtTreeView::orphanRecipe() {
-   if (m_type == BtTreeModel::TypeMask::Recipe) {
+   if (m_type.testFlag(BtTreeModel::TypeMask::Recipe)) {
       QModelIndexList ndxs = selectionModel()->selectedRows();
 
       // I hear a noise at the door, as of some immense slippery body
@@ -395,7 +379,7 @@ void BtTreeView::orphanRecipe() {
 }
 
 void BtTreeView::spawnRecipe() {
-   if (m_type == BtTreeModel::TypeMask::Recipe) {
+   if (m_type.testFlag(BtTreeModel::TypeMask::Recipe)) {
       QModelIndexList ndxs = selectionModel()->selectedRows();
 
       foreach (QModelIndex selected, ndxs) {
@@ -406,7 +390,7 @@ void BtTreeView::spawnRecipe() {
 }
 
 bool BtTreeView::ancestorsAreShowing(QModelIndex ndx) {
-   if (m_type == BtTreeModel::TypeMask::Recipe) {
+   if (m_type.testFlag(BtTreeModel::TypeMask::Recipe)) {
       QModelIndex translated = m_filter->mapToSource(ndx);
       return m_model->showChild(translated);
    }
@@ -441,52 +425,38 @@ void BtTreeView::setupContextMenu(QWidget * top, QWidget * editor) {
    newMenu->setTitle(tr("New"));
    m_contextMenu->addMenu(newMenu);
 
-   switch (m_type) {
+
+   if (m_type.testFlag(BtTreeModel::TypeMask::Recipe)) {
       // the recipe case is a bit more complex, because we need to handle the brewnotes too
-      case BtTreeModel::TypeMask::Recipe:
-         newMenu->addAction(tr("Recipe"), editor, SLOT(newRecipe()));
+      newMenu->addAction(tr("Recipe"), editor, SLOT(newRecipe()));
 
-         // version menu
-         m_versionMenu->setTitle("Snapshots");
-         m_showAncestorAction = m_versionMenu->addAction(tr("Show Snapshots"), this, SLOT(showAncestors()));
-         m_hideAncestorAction = m_versionMenu->addAction(tr("Hide Snapshots"), this, SLOT(hideAncestors()));
-         m_orphanAction = m_versionMenu->addAction(tr("Detach Recipe"), this, SLOT(orphanRecipe()));
-         m_spawnAction  = m_versionMenu->addAction(tr("Snapshot Recipe"), this, SLOT(spawnRecipe()));
-         m_contextMenu->addMenu(m_versionMenu);
+      // version menu
+      m_versionMenu->setTitle("Snapshots");
+      m_showAncestorAction = m_versionMenu->addAction(tr("Show Snapshots"), this, SLOT(showAncestors()));
+      m_hideAncestorAction = m_versionMenu->addAction(tr("Hide Snapshots"), this, SLOT(hideAncestors()));
+      m_orphanAction = m_versionMenu->addAction(tr("Detach Recipe"), this, SLOT(orphanRecipe()));
+      m_spawnAction  = m_versionMenu->addAction(tr("Snapshot Recipe"), this, SLOT(spawnRecipe()));
+      m_contextMenu->addMenu(m_versionMenu);
 
-         m_contextMenu->addSeparator();
-         m_brewItAction = m_contextMenu->addAction(tr("Brew It!"), top, SLOT(brewItHelper()));
-         m_contextMenu->addSeparator();
+      m_contextMenu->addSeparator();
+      m_brewItAction = m_contextMenu->addAction(tr("Brew It!"), top, SLOT(brewItHelper()));
+      m_contextMenu->addSeparator();
 
-         subMenu->addAction(tr("Brew Again"), top, SLOT(brewAgainHelper()));
-         subMenu->addAction(tr("Change date"), top, SLOT(changeBrewDate()));
-         subMenu->addAction(tr("Recalculate eff"), top, SLOT(fixBrewNote()));
-         subMenu->addAction(tr("Delete"), top, SLOT(deleteSelected()));
+      subMenu->addAction(tr("Brew Again"), top, SLOT(brewAgainHelper()));
+      subMenu->addAction(tr("Change date"), top, SLOT(changeBrewDate()));
+      subMenu->addAction(tr("Recalculate eff"), top, SLOT(fixBrewNote()));
+      subMenu->addAction(tr("Delete"), top, SLOT(deleteSelected()));
 
-         break;
-      case BtTreeModel::TypeMask::Equipment:
-         newMenu->addAction(tr("Equipment"), this, SLOT(newNamedEntity()));
-         break;
-      case BtTreeModel::TypeMask::Fermentable:
-         newMenu->addAction(tr("Fermentable"), this, SLOT(newNamedEntity()));
-         break;
-      case BtTreeModel::TypeMask::Hop:
-         newMenu->addAction(tr("Hop"), this, SLOT(newNamedEntity()));
-         break;
-      case BtTreeModel::TypeMask::Misc:
-         newMenu->addAction(tr("Misc"), this, SLOT(newNamedEntity()));
-         break;
-      case BtTreeModel::TypeMask::Style:
-         newMenu->addAction(tr("Style"), this, SLOT(newNamedEntity()));
-         break;
-      case BtTreeModel::TypeMask::Yeast:
-         newMenu->addAction(tr("Yeast"), this, SLOT(newNamedEntity()));
-         break;
-      case BtTreeModel::TypeMask::Water:
-         newMenu->addAction(tr("Water"), this, SLOT(newNamedEntity()));
-         break;
-      default:
-         qWarning() << QString("BtTreeView::setupContextMenu unrecognized mask %1").arg(m_type);
+   }
+   else if (m_type.testFlag(BtTreeModel::TypeMask::Equipment  )) { newMenu->addAction(tr("Equipment"  ), this, SLOT(newNamedEntity())); }
+   else if (m_type.testFlag(BtTreeModel::TypeMask::Fermentable)) { newMenu->addAction(tr("Fermentable"), this, SLOT(newNamedEntity())); }
+   else if (m_type.testFlag(BtTreeModel::TypeMask::Hop        )) { newMenu->addAction(tr("Hop"        ), this, SLOT(newNamedEntity())); }
+   else if (m_type.testFlag(BtTreeModel::TypeMask::Misc       )) { newMenu->addAction(tr("Misc"       ), this, SLOT(newNamedEntity())); }
+   else if (m_type.testFlag(BtTreeModel::TypeMask::Style      )) { newMenu->addAction(tr("Style"      ), this, SLOT(newNamedEntity())); }
+   else if (m_type.testFlag(BtTreeModel::TypeMask::Yeast      )) { newMenu->addAction(tr("Yeast"      ), this, SLOT(newNamedEntity())); }
+   else if (m_type.testFlag(BtTreeModel::TypeMask::Water      )) { newMenu->addAction(tr("Water"      ), this, SLOT(newNamedEntity())); }
+   else {
+      qWarning() << Q_FUNC_INFO << "Unrecognized mask" << m_type;
    }
 
    m_contextMenu->addSeparator();
@@ -509,11 +479,11 @@ QMenu * BtTreeView::contextMenu(QModelIndex selected) {
    bool disableDelete = false;
 
    BtTreeItem::Type t_type = *this->type(selected);
-   if ( t_type == BtTreeItem::Type::BREWNOTE ) {
+   if (t_type == BtTreeItem::Type::BrewNote) {
       return subMenu;
    }
 
-   if ( t_type == BtTreeItem::Type::RECIPE ) {
+   if (t_type == BtTreeItem::Type::Recipe) {
       // Right at the top of the tree, it's possible to click on something that is neither a folder nor a recipe, so
       // we have to check for that here.
       auto rec = this->getItem<Recipe>(selected);
@@ -545,10 +515,10 @@ QMenu * BtTreeView::contextMenu(QModelIndex selected) {
       } else {
          // This case will happen if user Right-click the top most item in the list, as that will yield a rec == nullptr.
          // In this case we will treat it like a folder and disable a bunch of options.
-         t_type = BtTreeItem::Type::FOLDER;
+         t_type = BtTreeItem::Type::Folder;
          disableDelete = true;
       }
-      if ( t_type == BtTreeItem::Type::FOLDER ) {
+      if (t_type == BtTreeItem::Type::Folder) {
          enableDelete( ! disableDelete );
          enableHideAncestor( false );
          enableShowAncestor( false );
@@ -613,32 +583,32 @@ void BtTreeView::copySelected(QModelIndexList selected) {
          qWarning() << Q_FUNC_INFO << "Unknown type";
       } else {
          switch (*itemType) {
-            case BtTreeItem::Type::EQUIPMENT:
+            case BtTreeItem::Type::Equipment:
                newName = verifyCopy(tr("Equipment"), m_model->name(trans), &abort);
                break;
-            case BtTreeItem::Type::FERMENTABLE:
+            case BtTreeItem::Type::Fermentable:
                newName = verifyCopy(tr("Fermentable"), m_model->name(trans), &abort);
                break;
-            case BtTreeItem::Type::HOP:
+            case BtTreeItem::Type::Hop:
                newName = verifyCopy(tr("Hop"), m_model->name(trans), &abort);
                break;
-            case BtTreeItem::Type::MISC:
+            case BtTreeItem::Type::Misc:
                newName = verifyCopy(tr("Misc"), m_model->name(trans), &abort);
                break;
-            case BtTreeItem::Type::RECIPE:
+            case BtTreeItem::Type::Recipe:
                newName = verifyCopy(tr("Recipe"), m_model->name(trans), &abort);
                break;
-            case BtTreeItem::Type::STYLE:
+            case BtTreeItem::Type::Style:
                newName = verifyCopy(tr("Style"), m_model->name(trans), &abort);
                break;
-            case BtTreeItem::Type::YEAST:
+            case BtTreeItem::Type::Yeast:
                newName = verifyCopy(tr("Yeast"), m_model->name(trans), &abort);
                break;
-            case BtTreeItem::Type::WATER:
+            case BtTreeItem::Type::Water:
                newName = verifyCopy(tr("Water"), m_model->name(trans), &abort);
                break;
-            case BtTreeItem::Type::BREWNOTE:
-            case BtTreeItem::Type::FOLDER:
+            case BtTreeItem::Type::BrewNote:
+            case BtTreeItem::Type::Folder:
                // These cases shouldn't arise (I think!) but the compiler will emit a warning if we don't explicitly
                // have code to handle them (which is good!).
                qWarning() << Q_FUNC_INFO << "Unexpected item type" << static_cast<int>(*itemType);
@@ -702,34 +672,34 @@ void BtTreeView::deleteSelected(QModelIndexList selected) {
          qWarning() << Q_FUNC_INFO << "Unknown type";
       } else {
          switch (*itemType) {
-            case BtTreeItem::Type::RECIPE:
+            case BtTreeItem::Type::Recipe:
                confirmDelete = verifyDelete(confirmDelete, tr("Recipe"), m_model->name(trans));
                break;
-            case BtTreeItem::Type::EQUIPMENT:
+            case BtTreeItem::Type::Equipment:
                confirmDelete = verifyDelete(confirmDelete, tr("Equipment"), m_model->name(trans));
                break;
-            case BtTreeItem::Type::FERMENTABLE:
+            case BtTreeItem::Type::Fermentable:
                confirmDelete = verifyDelete(confirmDelete, tr("Fermentable"), m_model->name(trans));
                break;
-            case BtTreeItem::Type::HOP:
+            case BtTreeItem::Type::Hop:
                confirmDelete = verifyDelete(confirmDelete, tr("Hop"), m_model->name(trans));
                break;
-            case BtTreeItem::Type::MISC:
+            case BtTreeItem::Type::Misc:
                confirmDelete = verifyDelete(confirmDelete, tr("Misc"), m_model->name(trans));
                break;
-            case BtTreeItem::Type::STYLE:
+            case BtTreeItem::Type::Style:
                confirmDelete = verifyDelete(confirmDelete, tr("Style"), m_model->name(trans));
                break;
-            case BtTreeItem::Type::YEAST:
+            case BtTreeItem::Type::Yeast:
                confirmDelete = verifyDelete(confirmDelete, tr("Yeast"), m_model->name(trans));
                break;
-            case BtTreeItem::Type::BREWNOTE:
+            case BtTreeItem::Type::BrewNote:
                confirmDelete = verifyDelete(confirmDelete, tr("BrewNote"), m_model->getItem<BrewNote>(trans)->brewDate_short());
                break;
-            case BtTreeItem::Type::FOLDER:
+            case BtTreeItem::Type::Folder:
                confirmDelete = verifyDelete(confirmDelete, tr("Folder"), m_model->getItem<BtFolder>(trans)->fullPath());
                break;
-            case BtTreeItem::Type::WATER:
+            case BtTreeItem::Type::Water:
                confirmDelete = verifyDelete(confirmDelete, tr("Water"), m_model->name(trans));
                break;
          }

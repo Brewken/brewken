@@ -31,6 +31,8 @@
 #include "model/Inventory.h"
 #include "model/InventoryFermentable.h"
 #include "model/InventoryHop.h"
+#include "model/InventoryMisc.h"
+#include "model/InventoryYeast.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Misc.h"
@@ -477,7 +479,7 @@ namespace {
 ///         {ObjectStore::FieldType::Int   , "inventory_id"    , PropertyNames::NamedEntityWithInventory::inventoryId, &PRIMARY_TABLE<InventoryMisc>},
          {ObjectStore::FieldType::Enum  , "mtype"           , PropertyNames::Misc::type                           , &Misc::typeStringMapping},
 ///         {ObjectStore::FieldType::Enum  , "use"             , PropertyNames::Misc::use                            , &Misc::useStringMapping },
-         {ObjectStore::FieldType::Double, "time"            , PropertyNames::Misc::time_min                       },
+///         {ObjectStore::FieldType::Double, "time"            , PropertyNames::Misc::time_min                       },
 ///         {ObjectStore::FieldType::Double, "amount"          , PropertyNames::Misc::amount                         },
 ///         {ObjectStore::FieldType::Bool  , "amount_is_weight", PropertyNames::Misc::amountIsWeight                 },
          {ObjectStore::FieldType::String, "use_for"         , PropertyNames::Misc::useFor                         },
@@ -627,19 +629,6 @@ namespace {
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // Database field mappings for InventoryYeast
-   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> ObjectStore::TableDefinition const PRIMARY_TABLE<InventoryYeast> {
-      "yeast_in_inventory",
-      {
-         {ObjectStore::FieldType::Int,    "id",               PropertyNames::Inventory::id},
-         // Yeast inventory amount is called quanta, which I find hard to understand
-         {ObjectStore::FieldType::Double, "quanta",           PropertyNames::Inventory::amount}
-      }
-   };
-   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<InventoryYeast> {};
-
-   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Yeast
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<Yeast> {
@@ -651,10 +640,10 @@ namespace {
          {ObjectStore::FieldType::Bool  , "deleted"                     , PropertyNames::NamedEntity::deleted                 },
          {ObjectStore::FieldType::String, "folder"                      , PropertyNames::NamedEntity::folder                  },
 ///         {ObjectStore::FieldType::Int   , "inventory_id"                , PropertyNames::NamedEntityWithInventory::inventoryId, &PRIMARY_TABLE<InventoryYeast>},
-¥¥¥         {ObjectStore::FieldType::Bool  , "add_to_secondary"            , PropertyNames::Yeast::addToSecondary                },
+///         {ObjectStore::FieldType::Bool  , "add_to_secondary"            , PropertyNames::Yeast::addToSecondary                },
 ///         {ObjectStore::FieldType::Bool  , "amount_is_weight"            , PropertyNames::Yeast::amountIsWeight                },
-         {ObjectStore::FieldType::Double, "amount"                      , PropertyNames::Yeast::amount                        },
-         {ObjectStore::FieldType::Double, "attenuation"                 , PropertyNames::Yeast::attenuation_pct               },
+///         {ObjectStore::FieldType::Double, "amount"                      , PropertyNames::Yeast::amount                        },
+///         {ObjectStore::FieldType::Double, "attenuation"                 , PropertyNames::Yeast::attenuation_pct               },
          {ObjectStore::FieldType::Double, "max_temperature"             , PropertyNames::Yeast::maxTemperature_c              },
          {ObjectStore::FieldType::Double, "min_temperature"             , PropertyNames::Yeast::minTemperature_c              },
          {ObjectStore::FieldType::Enum  , "flocculation"                , PropertyNames::Yeast::flocculation                  , &Yeast::flocculationStringMapping},
@@ -665,7 +654,7 @@ namespace {
          {ObjectStore::FieldType::String, "best_for"                    , PropertyNames::Yeast::bestFor                       },
          {ObjectStore::FieldType::String, "laboratory"                  , PropertyNames::Yeast::laboratory                    },
          {ObjectStore::FieldType::String, "notes"                       , PropertyNames::Yeast::notes                         },
-         {ObjectStore::FieldType::String, "product_id"                  , PropertyNames::Yeast::productID                     }, // Manufacturer's product ID, so, unlike other blah_id fields, not a foreign key!
+         {ObjectStore::FieldType::String, "product_id"                  , PropertyNames::Yeast::productId                     }, // Manufacturer's product ID, so, unlike other blah_id fields, not a foreign key!
          // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
          {ObjectStore::FieldType::Double, "alcohol_tolerance_pct"       , PropertyNames::Yeast::alcoholTolerance_pct          },
          {ObjectStore::FieldType::Double, "attenuation_min_pct"         , PropertyNames::Yeast::attenuationMin_pct            },
@@ -690,6 +679,20 @@ namespace {
          ObjectStore::MAX_ONE_ENTRY
       }
    };
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Database field mappings for InventoryYeast
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> ObjectStore::TableDefinition const PRIMARY_TABLE<InventoryYeast> {
+      "yeast_in_inventory",
+      {
+         {ObjectStore::FieldType::Int   , "id"            , PropertyNames::NamedEntity::key                     },
+         {ObjectStore::FieldType::Int   , "yeast_id"      , PropertyNames::Inventory::ingredientId   , &PRIMARY_TABLE<Yeast>},
+         {ObjectStore::FieldType::Double, "quantity"      , PropertyNames::IngredientAmount::quantity},
+         {ObjectStore::FieldType::Unit  , "unit"          , PropertyNames::IngredientAmount::unit    , &Measurement::Units::unitStringMapping},
+      }
+   };
+   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<InventoryYeast> {};
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Recipe
@@ -768,14 +771,14 @@ namespace {
             {ObjectStore::FieldType::Int, "instruction_number"                                                                            },
          }
       },
-      {
-         "misc_in_recipe",
-         {
-            {ObjectStore::FieldType::Int, "id"                                                                                            },
-            {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Recipe>     },
-            {ObjectStore::FieldType::Int, "misc_id",           PropertyNames::Recipe::miscIds,        &PRIMARY_TABLE<Misc>       },
-         }
-      },
+///      {
+///         "misc_in_recipe",
+///         {
+///            {ObjectStore::FieldType::Int, "id"                                                                                            },
+///            {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Recipe>     },
+///            {ObjectStore::FieldType::Int, "misc_id",           PropertyNames::Recipe::miscIds,        &PRIMARY_TABLE<Misc>       },
+///         }
+///      },
       {
          "salt_in_recipe",
          {
@@ -792,14 +795,14 @@ namespace {
             {ObjectStore::FieldType::Int, "water_id",          PropertyNames::Recipe::waterIds,       &PRIMARY_TABLE<Water>      },
          }
       },
-      {
-         "yeast_in_recipe",
-         {
-            {ObjectStore::FieldType::Int, "id"                                                                                            },
-            {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Recipe>     },
-            {ObjectStore::FieldType::Int, "yeast_id",          PropertyNames::Recipe::yeastIds,       &PRIMARY_TABLE<Yeast>      },
-         }
-      },
+///      {
+///         "yeast_in_recipe",
+///         {
+///            {ObjectStore::FieldType::Int, "id"                                                                                            },
+///            {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Recipe>     },
+///            {ObjectStore::FieldType::Int, "yeast_id",          PropertyNames::Recipe::yeastIds,       &PRIMARY_TABLE<Yeast>      },
+///         }
+///      },
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -839,6 +842,54 @@ namespace {
          {ObjectStore::FieldType::String, "folder"           , PropertyNames::NamedEntity::folder            },
          {ObjectStore::FieldType::Int   , "recipe_id"        , PropertyNames::RecipeAddition::recipeId       , &PRIMARY_TABLE<Recipe>},
          {ObjectStore::FieldType::Int   , "hop_id"           , PropertyNames::RecipeAddition::ingredientId   , &PRIMARY_TABLE<Hop>   },
+         {ObjectStore::FieldType::Enum  , "stage"            , PropertyNames::RecipeAddition::stage          , &RecipeAddition::stageStringMapping},
+         {ObjectStore::FieldType::Double, "quantity"         , PropertyNames::IngredientAmount::quantity     },
+         {ObjectStore::FieldType::Unit  , "unit"             , PropertyNames::IngredientAmount::unit         , &Measurement::Units::unitStringMapping},
+         {ObjectStore::FieldType::Int   , "step"             , PropertyNames::RecipeAddition::step           },
+         {ObjectStore::FieldType::Double, "add_at_time_mins" , PropertyNames::RecipeAddition::addAtTime_mins },
+         {ObjectStore::FieldType::Double, "add_at_gravity_sg", PropertyNames::RecipeAddition::addAtGravity_sg},
+         {ObjectStore::FieldType::Double, "add_at_acidity_ph", PropertyNames::RecipeAddition::addAtAcidity_pH},
+         {ObjectStore::FieldType::Double, "duration_mins"    , PropertyNames::RecipeAddition::duration_mins  },
+      }
+   };
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Database field mappings for RecipeAdditionMisc
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> ObjectStore::TableDefinition const PRIMARY_TABLE<RecipeAdditionMisc> {
+      "misc_in_recipe",
+      {
+         {ObjectStore::FieldType::Int   , "id"               , PropertyNames::NamedEntity::key               },
+         {ObjectStore::FieldType::String, "name"             , PropertyNames::NamedEntity::name              },
+         {ObjectStore::FieldType::Bool  , "display"          , PropertyNames::NamedEntity::display           },
+         {ObjectStore::FieldType::Bool  , "deleted"          , PropertyNames::NamedEntity::deleted           },
+         {ObjectStore::FieldType::String, "folder"           , PropertyNames::NamedEntity::folder            },
+         {ObjectStore::FieldType::Int   , "recipe_id"        , PropertyNames::RecipeAddition::recipeId       , &PRIMARY_TABLE<Recipe>},
+         {ObjectStore::FieldType::Int   , "hop_id"           , PropertyNames::RecipeAddition::ingredientId   , &PRIMARY_TABLE<Misc>   },
+         {ObjectStore::FieldType::Enum  , "stage"            , PropertyNames::RecipeAddition::stage          , &RecipeAddition::stageStringMapping},
+         {ObjectStore::FieldType::Double, "quantity"         , PropertyNames::IngredientAmount::quantity     },
+         {ObjectStore::FieldType::Unit  , "unit"             , PropertyNames::IngredientAmount::unit         , &Measurement::Units::unitStringMapping},
+         {ObjectStore::FieldType::Int   , "step"             , PropertyNames::RecipeAddition::step           },
+         {ObjectStore::FieldType::Double, "add_at_time_mins" , PropertyNames::RecipeAddition::addAtTime_mins },
+         {ObjectStore::FieldType::Double, "add_at_gravity_sg", PropertyNames::RecipeAddition::addAtGravity_sg},
+         {ObjectStore::FieldType::Double, "add_at_acidity_ph", PropertyNames::RecipeAddition::addAtAcidity_pH},
+         {ObjectStore::FieldType::Double, "duration_mins"    , PropertyNames::RecipeAddition::duration_mins  },
+      }
+   };
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Database field mappings for RecipeAdditionYeast
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> ObjectStore::TableDefinition const PRIMARY_TABLE<RecipeAdditionYeast> {
+      "yeast_in_recipe",
+      {
+         {ObjectStore::FieldType::Int   , "id"               , PropertyNames::NamedEntity::key               },
+         {ObjectStore::FieldType::String, "name"             , PropertyNames::NamedEntity::name              },
+         {ObjectStore::FieldType::Bool  , "display"          , PropertyNames::NamedEntity::display           },
+         {ObjectStore::FieldType::Bool  , "deleted"          , PropertyNames::NamedEntity::deleted           },
+         {ObjectStore::FieldType::String, "folder"           , PropertyNames::NamedEntity::folder            },
+         {ObjectStore::FieldType::Int   , "recipe_id"        , PropertyNames::RecipeAddition::recipeId       , &PRIMARY_TABLE<Recipe>},
+         {ObjectStore::FieldType::Int   , "hop_id"           , PropertyNames::RecipeAddition::ingredientId   , &PRIMARY_TABLE<Yeast>   },
          {ObjectStore::FieldType::Enum  , "stage"            , PropertyNames::RecipeAddition::stage          , &RecipeAddition::stageStringMapping},
          {ObjectStore::FieldType::Double, "quantity"         , PropertyNames::IngredientAmount::quantity     },
          {ObjectStore::FieldType::Unit  , "unit"             , PropertyNames::IngredientAmount::unit         , &Measurement::Units::unitStringMapping},
