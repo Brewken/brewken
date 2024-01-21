@@ -80,8 +80,6 @@ RecipeAdditionYeast::RecipeAdditionYeast(RecipeAdditionYeast const & other) :
 RecipeAdditionYeast::~RecipeAdditionYeast() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
-std::optional<double> RecipeAdditionYeast::attenuation_pct() const { return m_attenuation_pct; } // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-
 Yeast * RecipeAdditionYeast::yeast() const {
    // Normally there should always be a valid Yeast in a RecipeAdditionYeast.  (The Recipe ID may be -1 if the addition is
    // only just about to be added to the Recipe or has just been removed from it, but there's no great reason for the
@@ -93,6 +91,15 @@ Yeast * RecipeAdditionYeast::yeast() const {
 
 ///   qDebug() << Q_FUNC_INFO << "RecipeAdditionYeast #" << this->key() << ": Recipe #" << this->m_recipeId << ", Yeast #" << this->m_ingredientId << "@" << ObjectStoreWrapper::getByIdRaw<Yeast>(this->m_ingredientId);
    return ObjectStoreWrapper::getByIdRaw<Yeast>(this->m_ingredientId);
+}
+
+std::optional<double> RecipeAdditionYeast::attenuation_pct() const { return m_attenuation_pct; }
+
+std::optional<bool>   RecipeAdditionYeast::addToSecondary () const {
+   if (1 == this->step()) {
+      return false;
+   }
+   return true;
 }
 
 Recipe * RecipeAdditionYeast::getOwningRecipe() const {
@@ -119,13 +126,6 @@ NamedEntity * RecipeAdditionYeast::ensureExists(BtStringConst const & property) 
 }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void RecipeAdditionYeast::setAttenuation_pct(std::optional<double> const val) {
-   this->setAndNotify(PropertyNames::RecipeAdditionYeast::attenuation_pct,
-                      m_attenuation_pct,
-                      this->enforceMinAndMax(val, "pct attenuation", 0.0, 100.0, 0.0));
-   return;
-}
-
 void RecipeAdditionYeast::setYeast(Yeast * const val) {
    if (val) {
       this->setIngredientId(val->key());
@@ -138,6 +138,23 @@ void RecipeAdditionYeast::setYeast(Yeast * const val) {
    }
    return;
 }
+
+void RecipeAdditionYeast::setAttenuation_pct(std::optional<double> const val) {
+   this->setAndNotify(PropertyNames::RecipeAdditionYeast::attenuation_pct,
+                      m_attenuation_pct,
+                      this->enforceMinAndMax(val, "pct attenuation", 0.0, 100.0, 0.0));
+   return;
+}
+
+void RecipeAdditionYeast::setAddToSecondary (std::optional<bool  > const val) {
+   if (val && *val) {
+      this->setStep(2);
+   } else {
+      this->setStep(1);
+   }
+   return;
+}
+
 
 // Boilerplate code for IngredientAmount
 INGREDIENT_AMOUNT_COMMON_CODE(RecipeAdditionYeast, Yeast)

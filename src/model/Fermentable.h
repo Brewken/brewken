@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Fermentable.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/Fermentable.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Blair Bonnett <blair.bonnett@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
@@ -42,6 +42,7 @@
 #include "utils/EnumStringMapping.h"
 
 class InventoryFermentable;
+class RecipeAdditionFermentable;
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
@@ -182,7 +183,12 @@ public:
    static constexpr auto validMeasures  = Measurement::ChoiceOfPhysicalQuantity::Mass_Volume;
    static constexpr auto defaultMeasure = Measurement::PhysicalQuantity::Mass;
 
-   using InventoryClass = InventoryFermentable;
+   //
+   // These aliases make it easier to template a number of functions that are essentially the same for all subclasses of
+   // Ingredient.
+   //
+   using InventoryClass      = InventoryFermentable;
+   using RecipeAdditionClass = RecipeAdditionFermentable;
 
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more

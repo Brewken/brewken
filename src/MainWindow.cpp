@@ -1857,7 +1857,7 @@ void MainWindow::droppedRecipeFermentable(QList<Fermentable *> fermentables) {
                                  &Recipe::addAddition<RecipeAdditionFermentable>,
                                  fermentableAdditions,
                                  &Recipe::removeAddition<RecipeAdditionFermentable>,
-                                 tr("Drop fermentables on a recipe"))
+                                 tr("Drop fermentable(s) on a recipe"))
    );
    return;
 }
@@ -1878,12 +1878,12 @@ void MainWindow::droppedRecipeHop(QList<Hop *> hops) {
                                  &Recipe::addAddition<RecipeAdditionHop>,
                                  hopAdditions,
                                  &Recipe::removeAddition<RecipeAdditionHop>,
-                                 tr("Drop hops on a recipe"))
+                                 tr("Drop hop(s) on a recipe"))
    );
    return;
 }
 
-void MainWindow::droppedRecipeMisc(QList<Misc*>miscs) {
+void MainWindow::droppedRecipeMisc(QList<Misc *> miscs) {
    if (!this->recipeObs) {
       return;
    }
@@ -1891,29 +1891,36 @@ void MainWindow::droppedRecipeMisc(QList<Misc*>miscs) {
    if (tabWidget_ingredients->currentWidget() != recipeMiscTab) {
       tabWidget_ingredients->setCurrentWidget(recipeMiscTab);
    }
+
+   auto miscAdditions = RecipeAdditionMisc::create(*this->recipeObs, miscs);
+
    this->doOrRedoUpdate(
       newUndoableAddOrRemoveList(*this->recipeObs,
-                                 &Recipe::add<Misc>,
-                                 miscs,
-                                 &Recipe::remove<Misc>,
-                                 tr("Drop misc on a recipe"))
+                                 &Recipe::addAddition<RecipeAdditionMisc>,
+                                 miscAdditions,
+                                 &Recipe::removeAddition<RecipeAdditionMisc>,
+                                 tr("Drop misc(s) on a recipe"))
    );
    return;
 }
 
-void MainWindow::droppedRecipeYeast(QList<Yeast*>yeasts) {
+void MainWindow::droppedRecipeYeast(QList<Yeast *> yeasts) {
    if (!this->recipeObs) {
       return;
    }
 
-   if ( tabWidget_ingredients->currentWidget() != recipeYeastTab )
+   if (tabWidget_ingredients->currentWidget() != recipeYeastTab) {
       tabWidget_ingredients->setCurrentWidget(recipeYeastTab);
+   }
+
+   auto yeastAdditions = RecipeAdditionYeast::create(*this->recipeObs, yeasts);
+
    this->doOrRedoUpdate(
       newUndoableAddOrRemoveList(*this->recipeObs,
-                                 &Recipe::add<Yeast>,
-                                 yeasts,
-                                 &Recipe::remove<Yeast>,
-                                 tr("Drop yeast on a recipe"))
+                                 &Recipe::addAddition<RecipeAdditionYeast>,
+                                 yeastAdditions,
+                                 &Recipe::removeAddition<RecipeAdditionYeast>,
+                                 tr("Drop yeast(s) on a recipe"))
    );
 }
 
@@ -1972,62 +1979,62 @@ void MainWindow::updateRecipeEfficiency() {
    return;
 }
 
+///template<class NE>
+///void MainWindow::addToRecipe(std::shared_ptr<NE> ne) {
+///   Q_ASSERT(ne);
+///
+///   this->doOrRedoUpdate(
+///      newUndoableAddOrRemove(*this->recipeObs,
+///                             &Recipe::add<NE>,
+///                             ne,
+///                             &Recipe::remove<NE>,
+///                             QString(tr("Add %1 to recipe")).arg(NE::LocalisedName))
+///   );
+///
+///   // Since we just added an ingredient, switch the focus to the tab that lists that type of ingredient.  We rely here
+///   // on the individual tabs following a naming convention (recipeHopTab, recipeFermentableTab, etc)
+///   // Note that we want the untranslated class name because this is not for display but to refer to a QWidget inside
+///   // tabWidget_ingredients
+///   auto const widgetName = QString("recipe%1Tab").arg(NE::staticMetaObject.className());
+///   qDebug() << Q_FUNC_INFO << widgetName;
+///   QWidget * widget = this->tabWidget_ingredients->findChild<QWidget *>(widgetName);
+///   Q_ASSERT(widget);
+///   this->tabWidget_ingredients->setCurrentWidget(widget);
+///
+///   // We don't need to call this->pimpl->m_hopAdditionsTableModel->addHop(hop) here (or the equivalent for fermentable, misc or
+///   // yeast) because the change to the recipe will already have triggered the necessary updates to
+///   // this->pimpl->m_hopAdditionsTableModel/this->pimpl->m_fermentableTableModel/etc.
+///   return;
+///}
+/////
+///// Instantiate the above template function for the types that are going to use it
+///// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
+/////
+///template void MainWindow::addToRecipe(std::shared_ptr<Misc       > ne);
+///template void MainWindow::addToRecipe(std::shared_ptr<Yeast      > ne);
+
 template<class NE>
-void MainWindow::addToRecipe(std::shared_ptr<NE> ne) {
-   Q_ASSERT(ne);
-
-   this->doOrRedoUpdate(
-      newUndoableAddOrRemove(*this->recipeObs,
-                             &Recipe::add<NE>,
-                             ne,
-                             &Recipe::remove<NE>,
-                             QString(tr("Add %1 to recipe")).arg(NE::LocalisedName))
-   );
-
-   // Since we just added an ingredient, switch the focus to the tab that lists that type of ingredient.  We rely here
-   // on the individual tabs following a naming convention (recipeHopTab, recipeFermentableTab, etc)
-   // Note that we want the untranslated class name because this is not for display but to refer to a QWidget inside
-   // tabWidget_ingredients
-   auto const widgetName = QString("recipe%1Tab").arg(NE::staticMetaObject.className());
-   qDebug() << Q_FUNC_INFO << widgetName;
-   QWidget * widget = this->tabWidget_ingredients->findChild<QWidget *>(widgetName);
-   Q_ASSERT(widget);
-   this->tabWidget_ingredients->setCurrentWidget(widget);
-
-   // We don't need to call this->pimpl->m_hopAdditionsTableModel->addHop(hop) here (or the equivalent for fermentable, misc or
-   // yeast) because the change to the recipe will already have triggered the necessary updates to
-   // this->pimpl->m_hopAdditionsTableModel/this->pimpl->m_fermentableTableModel/etc.
+void MainWindow::addIngredientToRecipe(NE * ne) {
+   if (!this->recipeObs) {
+      return;
+   }
+   auto neAddition = std::make_shared<typename NE::RecipeAdditionClass>(*this->recipeObs, *ne);
+   this->pimpl->doRecipeAddition(neAddition);
    return;
 }
 //
 // Instantiate the above template function for the types that are going to use it
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
 //
-template void MainWindow::addToRecipe(std::shared_ptr<Misc       > ne);
-template void MainWindow::addToRecipe(std::shared_ptr<Yeast      > ne);
-
-void MainWindow::addFermentableToRecipe(Fermentable * fermentable) {
-   if (!this->recipeObs) {
-      return;
-   }
-   auto fermentableAddition = std::make_shared<RecipeAdditionFermentable>(*this->recipeObs, *fermentable);
-   this->pimpl->doRecipeAddition(fermentableAddition);
-   return;
-}
-
-void MainWindow::addHopToRecipe(Hop * hop) {
-   if (!this->recipeObs) {
-      return;
-   }
-   auto hopAddition = std::make_shared<RecipeAdditionHop>(*this->recipeObs, *hop);
-   this->pimpl->doRecipeAddition(hopAddition);
-   return;
-}
+template void MainWindow::addIngredientToRecipe(Fermentable * ne);
+template void MainWindow::addIngredientToRecipe(Hop         * ne);
+template void MainWindow::addIngredientToRecipe(Misc        * ne);
+template void MainWindow::addIngredientToRecipe(Yeast       * ne);
 
 void MainWindow::removeSelectedFermentableAddition() {
    this->pimpl->doRemoveRecipeAddition<RecipeAdditionFermentable>(fermentableAdditionTable,
-                                                          this->pimpl->m_fermentableAdditionsTableProxy.get(),
-                                                          this->pimpl->m_fermentableAdditionsTableModel.get());
+                                                                  this->pimpl->m_fermentableAdditionsTableProxy.get(),
+                                                                  this->pimpl->m_fermentableAdditionsTableModel.get());
    return;
 }
 
@@ -2040,15 +2047,15 @@ void MainWindow::removeSelectedHopAddition() {
 
 void MainWindow::removeSelectedMiscAddition() {
    this->pimpl->doRemoveRecipeAddition<RecipeAdditionMisc>(miscAdditionTable,
-                                                          this->pimpl->m_miscAdditionsTableProxy.get(),
-                                                          this->pimpl->m_miscAdditionsTableModel.get());
+                                                           this->pimpl->m_miscAdditionsTableProxy.get(),
+                                                           this->pimpl->m_miscAdditionsTableModel.get());
    return;
 }
 
 void MainWindow::removeSelectedYeastAddition() {
    this->pimpl->doRemoveRecipeAddition<RecipeAdditionYeast>(yeastAdditionTable,
-                                                          this->pimpl->m_yeastAdditionsTableProxy.get(),
-                                                          this->pimpl->m_yeastAdditionsTableModel.get());
+                                                            this->pimpl->m_yeastAdditionsTableProxy.get(),
+                                                            this->pimpl->m_yeastAdditionsTableModel.get());
    return;
 }
 

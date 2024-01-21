@@ -128,7 +128,7 @@ public:
     *
     *        Fortunately this does not need to be a slot function (as slots cannot be templated)
     */
-   template<class NE> void addToRecipe(std::shared_ptr<NE> ne);
+   template<class NE> void addIngredientToRecipe(NE * ne);
 
    void addFermentableToRecipe(Fermentable * fermentable);
    void addHopToRecipe(Hop * hop);

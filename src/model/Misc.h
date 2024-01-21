@@ -33,6 +33,7 @@
 #include "utils/EnumStringMapping.h"
 
 class InventoryMisc;
+class RecipeAdditionMisc;
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
@@ -103,7 +104,12 @@ public:
    static constexpr auto validMeasures  = Measurement::ChoiceOfPhysicalQuantity::Mass_Volume_Count;
    static constexpr auto defaultMeasure = Measurement::PhysicalQuantity::Mass;
 
-   using InventoryClass = InventoryMisc;
+   //
+   // These aliases make it easier to template a number of functions that are essentially the same for all subclasses of
+   // Ingredient.
+   //
+   using InventoryClass      = InventoryMisc;
+   using RecipeAdditionClass = RecipeAdditionMisc;
 
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more

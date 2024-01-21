@@ -180,16 +180,16 @@ namespace {
    template<class NE> BtStringConst const & propertyToPropertyName();
    template<> BtStringConst const & propertyToPropertyName<Boil                     >() { return PropertyNames::Recipe::boilId                ; }
    template<> BtStringConst const & propertyToPropertyName<Equipment                >() { return PropertyNames::Recipe::equipmentId           ; }
-   template<> BtStringConst const & propertyToPropertyName<RecipeAdditionFermentable>() { return PropertyNames::Recipe::fermentableAdditionIds; }
    template<> BtStringConst const & propertyToPropertyName<Fermentation             >() { return PropertyNames::Recipe::fermentationId        ; }
-   template<> BtStringConst const & propertyToPropertyName<RecipeAdditionHop        >() { return PropertyNames::Recipe::hopAdditionIds        ; }
    template<> BtStringConst const & propertyToPropertyName<Instruction              >() { return PropertyNames::Recipe::instructionIds        ; }
    template<> BtStringConst const & propertyToPropertyName<Mash                     >() { return PropertyNames::Recipe::mashId                ; }
-   template<> BtStringConst const & propertyToPropertyName<Misc                     >() { return PropertyNames::Recipe::miscAdditionIds       ; }
+   template<> BtStringConst const & propertyToPropertyName<RecipeAdditionFermentable>() { return PropertyNames::Recipe::fermentableAdditionIds; }
+   template<> BtStringConst const & propertyToPropertyName<RecipeAdditionHop        >() { return PropertyNames::Recipe::hopAdditionIds        ; }
+   template<> BtStringConst const & propertyToPropertyName<RecipeAdditionMisc       >() { return PropertyNames::Recipe::miscAdditionIds       ; }
+   template<> BtStringConst const & propertyToPropertyName<RecipeAdditionYeast      >() { return PropertyNames::Recipe::yeastAdditionIds      ; }
    template<> BtStringConst const & propertyToPropertyName<Salt                     >() { return PropertyNames::Recipe::saltIds               ; }
    template<> BtStringConst const & propertyToPropertyName<Style                    >() { return PropertyNames::Recipe::styleId               ; }
    template<> BtStringConst const & propertyToPropertyName<Water                    >() { return PropertyNames::Recipe::waterIds              ; }
-   template<> BtStringConst const & propertyToPropertyName<Yeast                    >() { return PropertyNames::Recipe::yeastAdditionIds      ; }
 
 ///   QHash<QString, Recipe::Type> const RECIPE_TYPE_STRING_TO_TYPE {
 ///      {"Extract",      Recipe::Type::Extract},
@@ -242,8 +242,8 @@ public:
    }
 
    /**
-    * \brief Make copies of the ingredients of a particular type (Hop, Fermentable, etc) from one Recipe and add them
-    *        to another - typically because we are copying the Recipe.
+    * \brief Make copies of the Instructions / Salts / Waters from one Recipe and add them to another - typically
+    *        because we are copying the Recipe.
     */
    template<class NE> void copyList(Recipe & us, Recipe const & other) {
       qDebug() << Q_FUNC_INFO;
@@ -998,13 +998,13 @@ Recipe::Recipe(Recipe const & other) :
    // We _don't_ want to copy BrewNotes (an instance of brewing the Recipe).  (This is easy not to do as we don't
    // currently store BrewNote IDs in Recipe.)
    //
-   this->pimpl->copyList<Fermentable>(*this, other);
-   this->pimpl->copyAdditions<RecipeAdditionHop>(*this, other);
+   this->pimpl->copyAdditions<RecipeAdditionFermentable>(*this, other);
+   this->pimpl->copyAdditions<RecipeAdditionHop        >(*this, other);
+   this->pimpl->copyAdditions<RecipeAdditionMisc       >(*this, other);
+   this->pimpl->copyAdditions<RecipeAdditionYeast      >(*this, other);
    this->pimpl->copyList<Instruction>(*this, other);
-   this->pimpl->copyList<Misc       >(*this, other);
    this->pimpl->copyList<Salt       >(*this, other);
    this->pimpl->copyList<Water      >(*this, other);
-   this->pimpl->copyList<Yeast      >(*this, other);
 
    //
    // You might think that Style, Mash and Equipment could safely be shared between Recipes.   However, AFAICT, none of
@@ -1490,12 +1490,13 @@ template<class NE> std::shared_ptr<NE> Recipe::add(std::shared_ptr<NE> ne) {
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
 // means, amongst other things, that we can reference the pimpl.)
 //
-template std::shared_ptr<Misc       > Recipe::add(std::shared_ptr<Misc       > var);
-template std::shared_ptr<Yeast      > Recipe::add(std::shared_ptr<Yeast      > var);
 template std::shared_ptr<Water      > Recipe::add(std::shared_ptr<Water      > var);
 template std::shared_ptr<Salt       > Recipe::add(std::shared_ptr<Salt       > var);
 template std::shared_ptr<Instruction> Recipe::add(std::shared_ptr<Instruction> var);
+template<> std::shared_ptr<Fermentable> Recipe::add(std::shared_ptr<Fermentable> var) { Q_ASSERT(false); return nullptr; };
 template<> std::shared_ptr<Hop        > Recipe::add(std::shared_ptr<Hop        > var) { Q_ASSERT(false); return nullptr; };
+template<> std::shared_ptr<Misc       > Recipe::add(std::shared_ptr<Misc       > var) { Q_ASSERT(false); return nullptr; };
+template<> std::shared_ptr<Yeast      > Recipe::add(std::shared_ptr<Yeast      > var) { Q_ASSERT(false); return nullptr; };
 
 template<class RA> std::shared_ptr<RA> Recipe::addAddition(std::shared_ptr<RA> addition) {
    // It's a coding error if we've ended up with a null shared_ptr
@@ -1523,6 +1524,8 @@ template<class RA> std::shared_ptr<RA> Recipe::addAddition(std::shared_ptr<RA> a
 }
 template std::shared_ptr<RecipeAdditionFermentable> Recipe::addAddition(std::shared_ptr<RecipeAdditionFermentable> addition);
 template std::shared_ptr<RecipeAdditionHop        > Recipe::addAddition(std::shared_ptr<RecipeAdditionHop        > addition);
+template std::shared_ptr<RecipeAdditionMisc       > Recipe::addAddition(std::shared_ptr<RecipeAdditionMisc       > addition);
+template std::shared_ptr<RecipeAdditionYeast      > Recipe::addAddition(std::shared_ptr<RecipeAdditionYeast      > addition);
 
 template<class NE> bool Recipe::uses(NE const & val) const {
    int idToLookFor = val.key();
@@ -1592,8 +1595,6 @@ template<class NE> std::shared_ptr<NE> Recipe::remove(std::shared_ptr<NE> var) {
    // remove).
    return var;
 }
-template std::shared_ptr<Misc       > Recipe::remove(std::shared_ptr<Misc       > var);
-template std::shared_ptr<Yeast      > Recipe::remove(std::shared_ptr<Yeast      > var);
 template std::shared_ptr<Water      > Recipe::remove(std::shared_ptr<Water      > var);
 template std::shared_ptr<Salt       > Recipe::remove(std::shared_ptr<Salt       > var);
 template std::shared_ptr<Instruction> Recipe::remove(std::shared_ptr<Instruction> var);
@@ -1625,6 +1626,8 @@ template<class RA> std::shared_ptr<RA> Recipe::removeAddition(std::shared_ptr<RA
 }
 template std::shared_ptr<RecipeAdditionFermentable> Recipe::removeAddition(std::shared_ptr<RecipeAdditionFermentable> addition);
 template std::shared_ptr<RecipeAdditionHop        > Recipe::removeAddition(std::shared_ptr<RecipeAdditionHop        > addition);
+template std::shared_ptr<RecipeAdditionMisc       > Recipe::removeAddition(std::shared_ptr<RecipeAdditionMisc       > addition);
+template std::shared_ptr<RecipeAdditionYeast      > Recipe::removeAddition(std::shared_ptr<RecipeAdditionYeast      > addition);
 
 int Recipe::instructionNumber(Instruction const & ins) const {
    // C++ arrays etc are indexed from 0, but for end users we want instruction numbers to start from 1
@@ -1723,6 +1726,8 @@ template<typename RA> void Recipe::setAdditions(QList<std::shared_ptr<RA>> val) 
 
 void Recipe::setFermentableAdditions(QList<std::shared_ptr<RecipeAdditionFermentable>> val) { this->setAdditions(val); return; }
 void Recipe::setHopAdditions        (QList<std::shared_ptr<RecipeAdditionHop        >> val) { this->setAdditions(val); return; }
+void Recipe::setMiscAdditions       (QList<std::shared_ptr<RecipeAdditionMisc       >> val) { this->setAdditions(val); return; }
+void Recipe::setYeastAdditions      (QList<std::shared_ptr<RecipeAdditionYeast      >> val) { this->setAdditions(val); return; }
 
 ///void Recipe::setMash(Mash * var) {
 ///   if (var->key() == this->m_mashId) {
@@ -3158,13 +3163,13 @@ void Recipe::hardDeleteOwnedEntities() {
       ObjectStoreWrapper::hardDelete<BrewNote>(*brewNote);
    }
 
-   this->pimpl->hardDeleteAllMy<Fermentable>();
-   this->pimpl->hardDeleteAdditions<RecipeAdditionHop>();
+   this->pimpl->hardDeleteAdditions<RecipeAdditionFermentable>();
+   this->pimpl->hardDeleteAdditions<RecipeAdditionHop        >();
+   this->pimpl->hardDeleteAdditions<RecipeAdditionMisc       >();
+   this->pimpl->hardDeleteAdditions<RecipeAdditionYeast      >();
    this->pimpl->hardDeleteAllMy<Instruction>();
-   this->pimpl->hardDeleteAllMy<Misc>       ();
-   this->pimpl->hardDeleteAllMy<Salt>       ();
-   this->pimpl->hardDeleteAllMy<Water>      ();
-   this->pimpl->hardDeleteAllMy<Yeast>      ();
+   this->pimpl->hardDeleteAllMy<Salt       >();
+   this->pimpl->hardDeleteAllMy<Water      >();
 
    return;
 }

@@ -996,6 +996,8 @@ template ObjectStoreTyped<Misc                     > & ObjectStoreTyped<Misc    
 template ObjectStoreTyped<Recipe                   > & ObjectStoreTyped<Recipe                   >::getInstance();
 template ObjectStoreTyped<RecipeAdditionFermentable> & ObjectStoreTyped<RecipeAdditionFermentable>::getInstance();
 template ObjectStoreTyped<RecipeAdditionHop        > & ObjectStoreTyped<RecipeAdditionHop        >::getInstance();
+template ObjectStoreTyped<RecipeAdditionMisc       > & ObjectStoreTyped<RecipeAdditionMisc       >::getInstance();
+template ObjectStoreTyped<RecipeAdditionYeast      > & ObjectStoreTyped<RecipeAdditionYeast      >::getInstance();
 template ObjectStoreTyped<Salt                     > & ObjectStoreTyped<Salt                     >::getInstance();
 template ObjectStoreTyped<Style                    > & ObjectStoreTyped<Style                    >::getInstance();
 template ObjectStoreTyped<Water                    > & ObjectStoreTyped<Water                    >::getInstance();
@@ -1006,28 +1008,31 @@ bool InitialiseAllObjectStores(QString & errorMessage) {
    // extensive it is.
    QStringList errors;
    // NOTE: This is the 2nd of 3 places we need to add any new ObjectStoreTyped
-   if (ObjectStoreTyped<Boil                >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Boil"                ; }
-   if (ObjectStoreTyped<BoilStep            >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "BoilStep"            ; }
-   if (ObjectStoreTyped<BrewNote            >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "BrewNote"            ; }
-   if (ObjectStoreTyped<Equipment           >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Equipment"           ; }
-   if (ObjectStoreTyped<Fermentable         >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Fermentable"         ; }
-   if (ObjectStoreTyped<Fermentation        >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Fermentation"        ; }
-   if (ObjectStoreTyped<FermentationStep    >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "FermentationStep"    ; }
-   if (ObjectStoreTyped<Hop                 >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Hop"                 ; }
-   if (ObjectStoreTyped<Instruction         >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Instruction"         ; }
-   if (ObjectStoreTyped<InventoryFermentable>::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "InventoryFermentable"; }
-   if (ObjectStoreTyped<InventoryHop        >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "InventoryHop"        ; }
-   if (ObjectStoreTyped<InventoryMisc       >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "InventoryMisc"       ; }
-   if (ObjectStoreTyped<InventoryYeast      >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "InventoryYeast"      ; }
-   if (ObjectStoreTyped<Mash                >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Mash"                ; }
-   if (ObjectStoreTyped<MashStep            >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "MashStep"            ; }
-   if (ObjectStoreTyped<Misc                >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Misc"                ; }
-   if (ObjectStoreTyped<Recipe              >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Recipe"              ; }
-   if (ObjectStoreTyped<RecipeAdditionHop   >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "RecipeAdditionHop"   ; }
-   if (ObjectStoreTyped<Salt                >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Salt"                ; }
-   if (ObjectStoreTyped<Style               >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Style"               ; }
-   if (ObjectStoreTyped<Water               >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Water"               ; }
-   if (ObjectStoreTyped<Yeast               >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Yeast"               ; }
+   if (ObjectStoreTyped<Boil                     >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Boil"                     ; }
+   if (ObjectStoreTyped<BoilStep                 >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "BoilStep"                 ; }
+   if (ObjectStoreTyped<BrewNote                 >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "BrewNote"                 ; }
+   if (ObjectStoreTyped<Equipment                >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Equipment"                ; }
+   if (ObjectStoreTyped<Fermentable              >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Fermentable"              ; }
+   if (ObjectStoreTyped<Fermentation             >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Fermentation"             ; }
+   if (ObjectStoreTyped<FermentationStep         >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "FermentationStep"         ; }
+   if (ObjectStoreTyped<Hop                      >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Hop"                      ; }
+   if (ObjectStoreTyped<Instruction              >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Instruction"              ; }
+   if (ObjectStoreTyped<InventoryFermentable     >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "InventoryFermentable"     ; }
+   if (ObjectStoreTyped<InventoryHop             >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "InventoryHop"             ; }
+   if (ObjectStoreTyped<InventoryMisc            >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "InventoryMisc"            ; }
+   if (ObjectStoreTyped<InventoryYeast           >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "InventoryYeast"           ; }
+   if (ObjectStoreTyped<Mash                     >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Mash"                     ; }
+   if (ObjectStoreTyped<MashStep                 >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "MashStep"                 ; }
+   if (ObjectStoreTyped<Misc                     >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Misc"                     ; }
+   if (ObjectStoreTyped<Recipe                   >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Recipe"                   ; }
+   if (ObjectStoreTyped<RecipeAdditionFermentable>::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "RecipeAdditionFermentable"; }
+   if (ObjectStoreTyped<RecipeAdditionHop        >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "RecipeAdditionHop"        ; }
+   if (ObjectStoreTyped<RecipeAdditionMisc       >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "RecipeAdditionMisc"       ; }
+   if (ObjectStoreTyped<RecipeAdditionYeast      >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "RecipeAdditionYeast"      ; }
+   if (ObjectStoreTyped<Salt                     >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Salt"                     ; }
+   if (ObjectStoreTyped<Style                    >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Style"                    ; }
+   if (ObjectStoreTyped<Water                    >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Water"                    ; }
+   if (ObjectStoreTyped<Yeast                    >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Yeast"                    ; }
 
    if (errors.size() > 0) {
       errorMessage = QObject::tr("There were errors loading the following object store(s): %1").arg(errors.join(", "));
@@ -1040,28 +1045,31 @@ bool InitialiseAllObjectStores(QString & errorMessage) {
 namespace {
    QVector<ObjectStore const *> AllObjectStores {
       // NOTE: This is the 3rd of 3 places we need to add any new ObjectStoreTyped
-      &ostSingleton<Boil                >,
-      &ostSingleton<BoilStep            >,
-      &ostSingleton<BrewNote            >,
-      &ostSingleton<Equipment           >,
-      &ostSingleton<Fermentable         >,
-      &ostSingleton<Fermentation        >,
-      &ostSingleton<FermentationStep    >,
-      &ostSingleton<Hop                 >,
-      &ostSingleton<Instruction         >,
-      &ostSingleton<InventoryFermentable>,
-      &ostSingleton<InventoryHop        >,
-      &ostSingleton<InventoryMisc       >,
-      &ostSingleton<InventoryYeast      >,
-      &ostSingleton<Mash                >,
-      &ostSingleton<MashStep            >,
-      &ostSingleton<Misc                >,
-      &ostSingleton<Recipe              >,
-      &ostSingleton<RecipeAdditionHop   >,
-      &ostSingleton<Salt                >,
-      &ostSingleton<Style               >,
-      &ostSingleton<Water               >,
-      &ostSingleton<Yeast               >,
+      &ostSingleton<Boil                     >,
+      &ostSingleton<BoilStep                 >,
+      &ostSingleton<BrewNote                 >,
+      &ostSingleton<Equipment                >,
+      &ostSingleton<Fermentable              >,
+      &ostSingleton<Fermentation             >,
+      &ostSingleton<FermentationStep         >,
+      &ostSingleton<Hop                      >,
+      &ostSingleton<Instruction              >,
+      &ostSingleton<InventoryFermentable     >,
+      &ostSingleton<InventoryHop             >,
+      &ostSingleton<InventoryMisc            >,
+      &ostSingleton<InventoryYeast           >,
+      &ostSingleton<Mash                     >,
+      &ostSingleton<MashStep                 >,
+      &ostSingleton<Misc                     >,
+      &ostSingleton<Recipe                   >,
+      &ostSingleton<RecipeAdditionFermentable>,
+      &ostSingleton<RecipeAdditionHop        >,
+      &ostSingleton<RecipeAdditionMisc       >,
+      &ostSingleton<RecipeAdditionYeast      >,
+      &ostSingleton<Salt                     >,
+      &ostSingleton<Style                    >,
+      &ostSingleton<Water                    >,
+      &ostSingleton<Yeast                    >,
    };
 }
 
