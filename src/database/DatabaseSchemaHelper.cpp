@@ -1125,7 +1125,7 @@ namespace {
                   "FROM ("
                      "SELECT id, "
                             "amount, "
-                            "CASE WHEN amount_is_weight THEN 'kilograms' ELSE 'liters' AS unit "
+                            "CASE WHEN amount_is_weight THEN 'kilograms' ELSE 'liters' END AS unit "
                      "FROM misc"
                   ") AS m "
                   "WHERE misc_in_recipe.misc_id = m.id")},
@@ -1135,7 +1135,7 @@ namespace {
                   "FROM ("
                      "SELECT id, "
                             "amount, "
-                            "CASE WHEN amount_is_weight THEN 'kilograms' ELSE 'liters' AS unit "
+                            "CASE WHEN amount_is_weight THEN 'kilograms' ELSE 'liters' END AS unit "
                      "FROM yeast"
                   ") AS y "
                   "WHERE yeast_in_recipe.yeast_id = y.id")},
@@ -1363,16 +1363,16 @@ namespace {
          //
          {QString("UPDATE yeast_in_recipe "
                   "SET stage = 'add_to_fermentation', "
-                      "step = 1, "
-                  "FROM yeast_id IN ("
+                      "step = 1 "
+                  "WHERE yeast_id IN ("
                      "SELECT id "
                      "FROM yeast "
                      "WHERE add_to_secondary = ?"
                   ")"), {QVariant{false}}},
          {QString("UPDATE yeast_in_recipe "
                   "SET stage = 'add_to_fermentation', "
-                      "step = 2, "
-                  "FROM yeast_id IN ("
+                      "step = 2 "
+                  "WHERE yeast_id IN ("
                      "SELECT id "
                      "FROM yeast "
                      "WHERE add_to_secondary = ?"
@@ -1474,8 +1474,8 @@ namespace {
          {QString("ALTER TABLE       yeast_in_inventory RENAME COLUMN quanta TO quantity")},
          {QString("ALTER TABLE         hop_in_inventory ADD COLUMN         hop_id %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE fermentable_in_inventory ADD COLUMN fermentable_id %1").arg(db.getDbNativeTypeName<QString>())},
-         {QString("ALTER TABLE        misc_in_inventory ADD COLUMN         hop_id %1").arg(db.getDbNativeTypeName<QString>())},
-         {QString("ALTER TABLE       yeast_in_inventory ADD COLUMN fermentable_id %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE        misc_in_inventory ADD COLUMN        misc_id %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE       yeast_in_inventory ADD COLUMN       yeast_id %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE         hop_in_inventory ADD COLUMN unit   %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE fermentable_in_inventory ADD COLUMN unit   %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE        misc_in_inventory ADD COLUMN unit   %1").arg(db.getDbNativeTypeName<QString>())},
@@ -1507,7 +1507,7 @@ namespace {
                   "FROM ("
                      "SELECT id, "
                             "inventory_id, "
-                            "CASE WHEN amount_is_weight THEN 'kilograms' ELSE 'liters' AS unit "
+                            "CASE WHEN amount_is_weight THEN 'kilograms' ELSE 'liters' END AS unit "
                      "FROM misc"
                   ") AS m "
                   "WHERE misc_in_inventory.id = m.inventory_id")},

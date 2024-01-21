@@ -513,8 +513,8 @@ namespace {
    // However, if it turns out to create a lot of problems in real life then we'll need some special case handling to
    // force a default value in XML files.
    EnumStringMapping const BEER_XML_MISC_USE_MAPPER {
-      {RecipeAdditionMisc::Use::Boil     , "Boil"     },
       {RecipeAdditionMisc::Use::Mash     , "Mash"     },
+      {RecipeAdditionMisc::Use::Boil     , "Boil"     },
       {RecipeAdditionMisc::Use::Primary  , "Primary"  },
       {RecipeAdditionMisc::Use::Secondary, "Secondary"},
       {RecipeAdditionMisc::Use::Bottling , "Bottling" },

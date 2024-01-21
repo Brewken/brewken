@@ -24,16 +24,16 @@
 QString const RecipeAdditionMisc::LocalisedName = tr("Misc Addition");
 
 EnumStringMapping const RecipeAdditionMisc::useStringMapping {
-   {RecipeAdditionMisc::Use::Boil     , "Boil"     },
    {RecipeAdditionMisc::Use::Mash     , "Mash"     },
+   {RecipeAdditionMisc::Use::Boil     , "Boil"     },
    {RecipeAdditionMisc::Use::Primary  , "Primary"  },
    {RecipeAdditionMisc::Use::Secondary, "Secondary"},
    {RecipeAdditionMisc::Use::Bottling , "Bottling" }
 };
 
 EnumStringMapping const RecipeAdditionMisc::useDisplayNames {
-   {RecipeAdditionMisc::Use::Boil     , tr("Boil"     )},
    {RecipeAdditionMisc::Use::Mash     , tr("Mash"     )},
+   {RecipeAdditionMisc::Use::Boil     , tr("Boil"     )},
    {RecipeAdditionMisc::Use::Primary  , tr("Primary"  )},
    {RecipeAdditionMisc::Use::Secondary, tr("Secondary")},
    {RecipeAdditionMisc::Use::Bottling , tr("Bottling" )}
