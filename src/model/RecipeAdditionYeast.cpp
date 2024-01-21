@@ -30,6 +30,7 @@ TypeLookup const RecipeAdditionYeast::typeLookup {
    {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionYeast::yeast          , RecipeAdditionYeast::yeast            ),
       PROPERTY_TYPE_LOOKUP_ENTRY      (PropertyNames::RecipeAdditionYeast::attenuation_pct, RecipeAdditionYeast::m_attenuation_pct,  NonPhysicalQuantity::Percentage),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionYeast::addToSecondary , RecipeAdditionYeast::addToSecondary   ),
    },
    // Parent classes lookup.  NB: RecipeAddition not NamedEntity!
    {&RecipeAddition::typeLookup,

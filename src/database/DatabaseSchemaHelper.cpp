@@ -1085,6 +1085,7 @@ namespace {
          {QString("ALTER TABLE yeast_in_recipe ADD COLUMN add_at_gravity_sg %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE yeast_in_recipe ADD COLUMN add_at_acidity_ph %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE yeast_in_recipe ADD COLUMN duration_mins     %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN attenuation_pct   %1").arg(db.getDbNativeTypeName<double >())}, // NB: Extra column for yeast_in_recipe
          {QString("     UPDATE yeast_in_recipe SET display = ?"), {QVariant{true}}},
          {QString("     UPDATE yeast_in_recipe SET deleted = ?"), {QVariant{false}}},
          //
@@ -1318,13 +1319,12 @@ namespace {
          //       So it should be OK to ignore this difference and trust SQLite to "do the right thing" when we have a
          //       Boolean value in a WHERE clause.
          //
+         //       Note that we start by setting _everything_ to be added to the mash, then overwrite the boil cases
+         //       afterwards.  This guarantees that every entry in fermentable_in_recipe has stage set -- even if there
+         //       are odd null values in the is_mashed and/or add_after_boil columns of the fermentable table.
+         //
          {QString("UPDATE fermentable_in_recipe "
-                  "SET stage = 'add_to_mash' "
-                  "WHERE fermentable_id IN ("
-                     "SELECT id "
-                     "FROM fermentable "
-                     "WHERE is_mashed = ?"
-                  ")"), {QVariant{true}}},
+                  "SET stage = 'add_to_mash' ")},
          {QString("UPDATE fermentable_in_recipe "
                   "SET stage = 'add_to_boil', "
                       "step  = 1 "
@@ -1358,17 +1358,12 @@ namespace {
          // this ingredient timing addition is referencing. EG A value of 2 for add_to_fermentation would mean to add
          // during the second fermentation step".
          //
-         // We could do something more elegant than two separate queries here, but this is a one-off and has the merit
-         // of being consistent with the other ingredient addition updates.
+         // Again, we start by setting _everything_ to be add-to-primary and then overwrite the add-to-secondary cases
+         // afterwards, as this covers any null data in the add_to_secondary column of the yeast table.
          //
          {QString("UPDATE yeast_in_recipe "
                   "SET stage = 'add_to_fermentation', "
-                      "step = 1 "
-                  "WHERE yeast_id IN ("
-                     "SELECT id "
-                     "FROM yeast "
-                     "WHERE add_to_secondary = ?"
-                  ")"), {QVariant{false}}},
+                      "step = 1 ")},
          {QString("UPDATE yeast_in_recipe "
                   "SET stage = 'add_to_fermentation', "
                       "step = 2 "
@@ -1382,6 +1377,19 @@ namespace {
          // to yeast_in_recipe.
          //
          {QString("ALTER TABLE yeast DROP COLUMN add_to_secondary")},
+         //
+         // Attenuation percent moves from being a Yeast property to a RecipeAdditionYeast one
+         //
+         {QString("UPDATE yeast_in_recipe "
+                  "SET attenuation_pct = y.attenuation "
+                  "FROM ("
+                     "SELECT id, "
+                            "attenuation "
+                     "FROM yeast"
+                  ") AS y "
+                  "WHERE yeast_in_recipe.yeast_id = y.id")},
+         // Now we moved the attenuation column across, we can drop it
+         {QString("ALTER TABLE yeast DROP COLUMN attenuation")},
 
          //
          // Entries in hop_in_recipe will still be pointing to the "child" hop.  We need to point to the parent one.

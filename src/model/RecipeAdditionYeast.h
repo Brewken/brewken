@@ -77,7 +77,7 @@ public:
    Q_PROPERTY(Measurement::PhysicalQuantity measure   READ measure    WRITE setMeasure )
    Q_PROPERTY(bool                          isWeight  READ isWeight   WRITE setIsWeight)
 
-   //! \brief The apparent attenuation in percent (moved from \c Yeast).                 ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+   //! \brief The apparent attenuation in percent (moved from \c Yeast).  ⮜⮜⮜ Optional in BeerJSON and BeerXML ⮞⮞⮞
    Q_PROPERTY(std::optional<double>  attenuation_pct           READ attenuation_pct           WRITE setAttenuation_pct          )
    //! \brief Whether the yeast is added to secondary or primary.  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    Q_PROPERTY(std::optional<bool>    addToSecondary            READ addToSecondary            WRITE setAddToSecondary           )
@@ -89,7 +89,7 @@ public:
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setYeast          (Yeast *               const val);
-   void setAttenuation_pct(std::optional<double> const val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+   void setAttenuation_pct(std::optional<double> const val); // ⮜⮜⮜ Optional in BeerJSON and BeerXML ⮞⮞⮞
    void setAddToSecondary (std::optional<bool  > const val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
 
    virtual Recipe * getOwningRecipe() const;
@@ -101,7 +101,7 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   std::optional<double>       m_attenuation_pct          ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+   std::optional<double>       m_attenuation_pct          ; // ⮜⮜⮜ Optional in BeerJSON and BeerXML ⮞⮞⮞
 };
 
 Q_DECLARE_METATYPE(Yeast)

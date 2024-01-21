@@ -276,7 +276,13 @@ TypeLookup const IngredientAmount<Derived, IngredientClass>::typeLookup {
           PropertyNames::IngredientAmount::measure,
           TypeLookupOf<MemberFunctionReturnType_t<&IngredientAmount::getMeasure>>::value,
           NonPhysicalQuantity::Enum
-       )}
+       )},
+      {&PropertyNames::IngredientAmount::isWeight,
+       TypeInfo::construct<MemberFunctionReturnType_t<&IngredientAmount::amountIsWeight>>(
+          PropertyNames::IngredientAmount::isWeight,
+          TypeLookupOf<MemberFunctionReturnType_t<&IngredientAmount::amountIsWeight>>::value,
+          NonPhysicalQuantity::Bool
+       )},
    },
    // Parent class lookup: none as we are at the top of this arm of the inheritance tree
    {}

@@ -992,6 +992,7 @@ namespace {
       {
          // Type                                  XPath                Q_PROPERTY                                      Value Decoder
          {XmlRecordDefinition::FieldType::Double, "AMOUNT"           , PropertyNames::IngredientAmount::quantity     },
+         {XmlRecordDefinition::FieldType::Bool  , "AMOUNT_IS_WEIGHT" , PropertyNames::IngredientAmount::isWeight          },
          {XmlRecordDefinition::FieldType::Double, "TIME"             , PropertyNames::RecipeAddition::addAtTime_mins },
          {XmlRecordDefinition::FieldType::Record, ""                 , PropertyNames::RecipeAdditionMisc::misc       , &BEER_XML_RECORD_DEFINITION_MISC_IN_RECIPE_ADDITION_MISC},
          // ⮜⮜⮜ Following are new fields that BeerJSON adds to BeerXML, so all extension tags in BeerXML ⮞⮞⮞

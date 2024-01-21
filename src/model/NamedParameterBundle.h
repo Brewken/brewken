@@ -186,6 +186,11 @@ private:
  *
  *           SET_REGULAR_FROM_NPB(m_boilingPoint_c, namedParameterBundle, PropertyNames::Equipment::boilingPoint_c, 100.0)
  *
+ *        NOTE: If we get an error "No value supplied for required parameter" during start-up, it typically means there
+ *              is a mapping missing in database/ObjectStoreTyped.cpp.  (Even if a value is of type
+ *              std::optional<double>, the database layer should be supplying some value for it -- either a double or
+ *              std::nullopt.  The lack of any value in the bundle means no DB column was mapped to this property name.)
+ *
  */
 #define SET_REGULAR_FROM_NPB(MemberVariable, NamedParameterBundle, PropertyName, ...) \
    MemberVariable{NamedParameterBundle.val<decltype(MemberVariable)>(PropertyName __VA_OPT__(, __VA_ARGS__))}
