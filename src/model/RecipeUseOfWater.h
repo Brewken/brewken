@@ -102,6 +102,7 @@ public:
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 protected:
    int    m_recipeId    ;

@@ -19,6 +19,10 @@
 
 QString const RecipeUseOfWater::LocalisedName = tr("Recipe Use Of Water");
 
+ObjectStore & RecipeUseOfWater::getObjectStoreTypedInstance() const {
+   return ObjectStoreTyped<RecipeUseOfWater>::getInstance();
+}
+
 TypeLookup const RecipeUseOfWater::typeLookup {
    "RecipeUseOfWater",
    {
