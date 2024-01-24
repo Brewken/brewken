@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Mash.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/Mash.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Kregg Kemper <gigatropolis@yahoo.com>

@@ -135,19 +135,19 @@ Instruction::~Instruction() = default;
 
 // Setters ====================================================================
 void Instruction::setDirections(QString const & dir) {
-   this->setAndNotify(PropertyNames::Instruction::directions, this->m_directions, dir);
+   SET_AND_NOTIFY(PropertyNames::Instruction::directions, this->m_directions, dir);
 }
 
 void Instruction::setHasTimer(bool has) {
-   this->setAndNotify(PropertyNames::Instruction::hasTimer, this->m_hasTimer, has);
+   SET_AND_NOTIFY(PropertyNames::Instruction::hasTimer, this->m_hasTimer, has);
 }
 
 void Instruction::setTimerValue(QString const & timerVal) {
-   this->setAndNotify(PropertyNames::Instruction::timerValue, this->m_timerValue, timerVal);
+   SET_AND_NOTIFY(PropertyNames::Instruction::timerValue, this->m_timerValue, timerVal);
 }
 
 void Instruction::setCompleted(bool comp) {
-   this->setAndNotify(PropertyNames::Instruction::completed, this->m_completed, comp);
+   SET_AND_NOTIFY(PropertyNames::Instruction::completed, this->m_completed, comp);
 }
 
 // TODO: figure out.
@@ -159,7 +159,7 @@ void Instruction::setReagent(const QString& reagent)
 */
 
 void Instruction::setInterval(double time) {
-   this->setAndNotify(PropertyNames::Instruction::interval, this->m_interval, time);
+   SET_AND_NOTIFY(PropertyNames::Instruction::interval, this->m_interval, time);
 }
 
 void Instruction::addReagent(QString const & reagent) {

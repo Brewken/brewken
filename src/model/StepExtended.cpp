@@ -79,6 +79,6 @@ std::optional<double> StepExtended::startGravity_sg() const { return this->m_sta
 std::optional<double> StepExtended::endGravity_sg  () const { return this->m_endGravity_sg  ; }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void StepExtended::setStartTemp_c    (std::optional<double> const val) { this->setAndNotify(PropertyNames::StepExtended::startTemp_c    , this->m_startTemp_c    , val); return; }
-void StepExtended::setStartGravity_sg(std::optional<double> const val) { this->setAndNotify(PropertyNames::StepExtended::startGravity_sg, this->m_startGravity_sg, val); return; }
-void StepExtended::  setEndGravity_sg(std::optional<double> const val) { this->setAndNotify(PropertyNames::StepExtended::endGravity_sg  , this->m_endGravity_sg  , val); return; }
+void StepExtended::setStartTemp_c    (std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::StepExtended::startTemp_c    , this->m_startTemp_c    , val); return; }
+void StepExtended::setStartGravity_sg(std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::StepExtended::startGravity_sg, this->m_startGravity_sg, val); return; }
+void StepExtended::  setEndGravity_sg(std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::StepExtended::endGravity_sg  , this->m_endGravity_sg  , val); return; }

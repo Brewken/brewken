@@ -328,7 +328,7 @@ BrewNote::BrewNote(BrewNote const& other) :
 
 // Setters=====================================================================
 void BrewNote::setBrewDate(QDate const & date) {
-   this->setAndNotify(PropertyNames::BrewNote::brewDate, this->m_brewDate, date);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::brewDate, this->m_brewDate, date);
    if (this->key() > 0) {
       // .:TBD:. Do we really need this special signal when we could use the generic changed one?
       emit brewDateChanged(date);
@@ -336,11 +336,11 @@ void BrewNote::setBrewDate(QDate const & date) {
 }
 
 void BrewNote::setFermentDate(QDate const & date) {
-   this->setAndNotify(PropertyNames::BrewNote::fermentDate, this->m_fermentDate, date);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::fermentDate, this->m_fermentDate, date);
 }
 
 void BrewNote::setNotes(QString const& var) {
-   this->setAndNotify(PropertyNames::BrewNote::notes, this->m_notes, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::notes, this->m_notes, var);
 }
 
 void BrewNote::setLoading(bool flag) { this->loading = flag; }
@@ -350,7 +350,7 @@ void BrewNote::setLoading(bool flag) { this->loading = flag; }
 // the brewnote.
 void BrewNote::setSg(double var) {
    // I REALLY dislike this logic. It is too bloody intertwined
-   this->setAndNotify(PropertyNames::BrewNote::sg, this->m_sg, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::sg, this->m_sg, var);
 
    // write the value to the DB if requested
    if ( ! this->loading ) {
@@ -360,7 +360,7 @@ void BrewNote::setSg(double var) {
 }
 
 void BrewNote::setVolumeIntoBK_l(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::volumeIntoBK_l, this->m_volumeIntoBK_l, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::volumeIntoBK_l, this->m_volumeIntoBK_l, var);
 
    if ( ! loading ) {
       calculateEffIntoBK_pct();
@@ -370,7 +370,7 @@ void BrewNote::setVolumeIntoBK_l(double var) {
 }
 
 void BrewNote::setOg(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::og, this->m_og, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::og, this->m_og, var);
 
    if ( ! loading ) {
       calculateBrewHouseEff_pct();
@@ -381,7 +381,7 @@ void BrewNote::setOg(double var) {
 }
 
 void BrewNote::setVolumeIntoFerm_l(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::volumeIntoFerm_l, this->m_volumeIntoFerm_l, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::volumeIntoFerm_l, this->m_volumeIntoFerm_l, var);
 
    if ( ! loading ) {
       calculateBrewHouseEff_pct();
@@ -389,7 +389,7 @@ void BrewNote::setVolumeIntoFerm_l(double var) {
 }
 
 void BrewNote::setFg(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::fg, this->m_fg, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::fg, this->m_fg, var);
 
    if ( !loading ) {
       calculateActualABV_pct();
@@ -408,7 +408,7 @@ void BrewNote::setProjPoints(double var) {
       double total_g = Algorithms::PlatoToSG_20C20C( plato );
       double convertPnts = (total_g - 1.0 ) * 1000;
 
-      this->setAndNotify(PropertyNames::BrewNote::projPoints, this->m_projPoints, convertPnts);
+      SET_AND_NOTIFY(PropertyNames::BrewNote::projPoints, this->m_projPoints, convertPnts);
    }
 }
 
@@ -420,88 +420,88 @@ void BrewNote::setProjFermPoints(double var) {
       double total_g = Algorithms::PlatoToSG_20C20C( plato );
       double convertPnts = (total_g - 1.0 ) * 1000;
 
-      this->setAndNotify(PropertyNames::BrewNote::projFermPoints, this->m_projFermPoints, convertPnts);
+      SET_AND_NOTIFY(PropertyNames::BrewNote::projFermPoints, this->m_projFermPoints, convertPnts);
    }
 }
 
 void BrewNote::setABV(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::abv, this->m_abv, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::abv, this->m_abv, var);
 }
 
 void BrewNote::setAttenuation(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::attenuation, this->m_attenuation, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::attenuation, this->m_attenuation, var);
 }
 
 void BrewNote::setEffIntoBK_pct(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::effIntoBK_pct, this->m_effIntoBK_pct, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::effIntoBK_pct, this->m_effIntoBK_pct, var);
 }
 
 void BrewNote::setBrewhouseEff_pct(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::brewhouseEff_pct, this->m_brewhouseEff_pct, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::brewhouseEff_pct, this->m_brewhouseEff_pct, var);
 }
 
 void BrewNote::setStrikeTemp_c(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::strikeTemp_c, this->m_strikeTemp_c, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::strikeTemp_c, this->m_strikeTemp_c, var);
 }
 
 void BrewNote::setMashFinTemp_c(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::mashFinTemp_c, this->m_mashFinTemp_c, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::mashFinTemp_c, this->m_mashFinTemp_c, var);
 }
 
 void BrewNote::setPostBoilVolume_l(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::postBoilVolume_l, this->m_postBoilVolume_l, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::postBoilVolume_l, this->m_postBoilVolume_l, var);
 }
 
 void BrewNote::setPitchTemp_c(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::pitchTemp_c, this->m_pitchTemp_c, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::pitchTemp_c, this->m_pitchTemp_c, var);
 }
 
 void BrewNote::setFinalVolume_l(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::finalVolume_l, this->m_finalVolume_l, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::finalVolume_l, this->m_finalVolume_l, var);
 }
 
 void BrewNote::setProjBoilGrav(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::projBoilGrav, this->m_projBoilGrav, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::projBoilGrav, this->m_projBoilGrav, var);
 }
 
 void BrewNote::setProjVolIntoBK_l(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::projVolIntoBK_l, this->m_projVolIntoBK_l, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::projVolIntoBK_l, this->m_projVolIntoBK_l, var);
 }
 
 void BrewNote::setProjStrikeTemp_c(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::projStrikeTemp_c, this->m_projStrikeTemp_c, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::projStrikeTemp_c, this->m_projStrikeTemp_c, var);
 }
 
 void BrewNote::setProjMashFinTemp_c(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::projMashFinTemp_c, this->m_projMashFinTemp_c, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::projMashFinTemp_c, this->m_projMashFinTemp_c, var);
 }
 
 void BrewNote::setProjOg(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::projOg, this->m_projOg, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::projOg, this->m_projOg, var);
 }
 
 void BrewNote::setProjVolIntoFerm_l(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::projVolIntoFerm_l, this->m_projVolIntoFerm_l, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::projVolIntoFerm_l, this->m_projVolIntoFerm_l, var);
 }
 
 void BrewNote::setProjFg(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::projFg, this->m_projFg, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::projFg, this->m_projFg, var);
 }
 
 void BrewNote::setProjEff_pct(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::projEff_pct, this->m_projEff_pct, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::projEff_pct, this->m_projEff_pct, var);
 }
 
 void BrewNote::setProjABV_pct(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::projABV_pct, this->m_projABV_pct, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::projABV_pct, this->m_projABV_pct, var);
 }
 
 void BrewNote::setProjAtten(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::projAtten, this->m_projAtten, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::projAtten, this->m_projAtten, var);
 }
 
 void BrewNote::setBoilOff_l(double var) {
-   this->setAndNotify(PropertyNames::BrewNote::boilOff_l, this->m_boilOff_l, var);
+   SET_AND_NOTIFY(PropertyNames::BrewNote::boilOff_l, this->m_boilOff_l, var);
 }
 
 void BrewNote::setRecipeId(int recipeId) { this->m_recipeId = recipeId; }

@@ -150,11 +150,11 @@ MassOrVolumeAmt Salt::amountWithUnits() const {
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
 void Salt::setAmount(double val) {
-   this->setAndNotify(PropertyNames::Salt::amount, this->m_amount, val);
+   SET_AND_NOTIFY(PropertyNames::Salt::amount, this->m_amount, val);
 }
 
 void Salt::setWhenToAdd(Salt::WhenToAdd val) {
-   this->setAndNotify(PropertyNames::Salt::whenToAdd, this->m_whenToAdd, val);
+   SET_AND_NOTIFY(PropertyNames::Salt::whenToAdd, this->m_whenToAdd, val);
 }
 
 // This may come to haunt me, but I am setting the isAcid flag and the
@@ -172,9 +172,9 @@ void Salt::setType(Salt::Type type) {
    } else {
       newPercentAcid = 0.0;
    }
-   this->setAndNotify(PropertyNames::Salt::type,           this->m_type,    type);
-   this->setAndNotify(PropertyNames::Salt::isAcid,         this->m_is_acid, isAcid);
-   this->setAndNotify(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, !(type == Salt::Type::LacticAcid || type == Salt::Type::H3PO4));
+   SET_AND_NOTIFY(PropertyNames::Salt::type,           this->m_type,    type);
+   SET_AND_NOTIFY(PropertyNames::Salt::isAcid,         this->m_is_acid, isAcid);
+   SET_AND_NOTIFY(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, !(type == Salt::Type::LacticAcid || type == Salt::Type::H3PO4));
    if (isAcid && newPercentAcid == 0.0) {
       switch (type) {
          case Salt::Type::LacticAcid    : newPercentAcid = 88; break;
@@ -189,21 +189,21 @@ void Salt::setType(Salt::Type type) {
 }
 
 void Salt::setAmountIsWeight(bool val) {
-   this->setAndNotify(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, val);
+   SET_AND_NOTIFY(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, val);
 }
 
 void Salt::setIsAcid(bool val) {
-   this->setAndNotify(PropertyNames::Salt::isAcid, this->m_is_acid, val);
+   SET_AND_NOTIFY(PropertyNames::Salt::isAcid, this->m_is_acid, val);
 }
 
 void Salt::setPercentAcid(double val) {
    // .:TBD:. Maybe we should check here that we are an acid...
-   this->setAndNotify(PropertyNames::Salt::percentAcid, this->m_percent_acid, val);
+   SET_AND_NOTIFY(PropertyNames::Salt::percentAcid, this->m_percent_acid, val);
 }
 
 void Salt::setAmountWithUnits(MassOrVolumeAmt const   val) {
-   this->setAndNotify(PropertyNames::Salt::amount        , this->m_amount        , val.quantity);
-   this->setAndNotify(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
+   SET_AND_NOTIFY(PropertyNames::Salt::amount        , this->m_amount        , val.quantity);
+   SET_AND_NOTIFY(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
    return;
 }
 

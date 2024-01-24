@@ -76,7 +76,7 @@ Inventory::~Inventory() = default;
 int Inventory::ingredientId() const { return this->m_ingredientId; }
 
 //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-void Inventory::setIngredientId(int const val) { this->setAndNotify(PropertyNames::Inventory::ingredientId, this->m_ingredientId, val); return;}
+void Inventory::setIngredientId(int const val) { SET_AND_NOTIFY(PropertyNames::Inventory::ingredientId, this->m_ingredientId, val); return;}
 
 void Inventory::setDeleted([[maybe_unused]] bool var) {
    // See comment in header.  This is currently a no-op.

@@ -142,14 +142,14 @@ std::optional<double> Mash::mashTunSpecificHeat_calGC() const { return this->m_m
 bool                  Mash::equipAdjust              () const { return this->m_equipAdjust              ; }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void Mash::setGrainTemp_c              (double                const   val) { this->setAndNotify(PropertyNames::Mash::grainTemp_c              , this->m_grainTemp_c              , val                                              ); return; }
-void Mash::setNotes                    (QString               const & val) { this->setAndNotify(PropertyNames::Mash::notes                    , this->m_notes                    , val                                              ); return; }
-void Mash::setTunTemp_c                (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Mash::tunTemp_c                , this->m_tunTemp_c                , val                                              ); return; }
-void Mash::setSpargeTemp_c             (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Mash::spargeTemp_c             , this->m_spargeTemp_c             , val                                              ); return; }
-void Mash::setPh                       (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Mash::ph                       , this->m_ph                       , this->enforceMinAndMax(val, "pH", 0.0, 14.0, 7.0)); return; }
-void Mash::setTunWeight_kg             (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Mash::mashTunWeight_kg         , this->m_mashTunWeight_kg         , this->enforceMin(val, "tun weight")              ); return; }
-void Mash::setMashTunSpecificHeat_calGC(std::optional<double> const   val) { this->setAndNotify(PropertyNames::Mash::mashTunSpecificHeat_calGC, this->m_mashTunSpecificHeat_calGC, this->enforceMin(val, "specific heat")           ); return; }
-void Mash::setEquipAdjust              (bool                  const   val) { this->setAndNotify(PropertyNames::Mash::equipAdjust              , this->m_equipAdjust              , val                                              ); return; }
+void Mash::setGrainTemp_c              (double                const   val) { SET_AND_NOTIFY(PropertyNames::Mash::grainTemp_c              , this->m_grainTemp_c              , val                                              ); return; }
+void Mash::setNotes                    (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Mash::notes                    , this->m_notes                    , val                                              ); return; }
+void Mash::setTunTemp_c                (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Mash::tunTemp_c                , this->m_tunTemp_c                , val                                              ); return; }
+void Mash::setSpargeTemp_c             (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Mash::spargeTemp_c             , this->m_spargeTemp_c             , val                                              ); return; }
+void Mash::setPh                       (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Mash::ph                       , this->m_ph                       , this->enforceMinAndMax(val, "pH", 0.0, 14.0, 7.0)); return; }
+void Mash::setTunWeight_kg             (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Mash::mashTunWeight_kg         , this->m_mashTunWeight_kg         , this->enforceMin(val, "tun weight")              ); return; }
+void Mash::setMashTunSpecificHeat_calGC(std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Mash::mashTunSpecificHeat_calGC, this->m_mashTunSpecificHeat_calGC, this->enforceMin(val, "specific heat")           ); return; }
+void Mash::setEquipAdjust              (bool                  const   val) { SET_AND_NOTIFY(PropertyNames::Mash::equipAdjust              , this->m_equipAdjust              , val                                              ); return; }
 
 // === other methods ===
 double Mash::totalMashWater_l() {

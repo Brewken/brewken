@@ -42,9 +42,9 @@ public:
    virtual ~WaterButton();
 
    //! Observe a recipe's water.
-   void setRecipe(Recipe* recipe);
+   void setRecipe(Recipe * recipe);
    //! Observe a particular water.
-   void setWater(Water* water);
+   void setWater(Water * water);
 
 private slots:
    void recChanged(QMetaProperty,QVariant);

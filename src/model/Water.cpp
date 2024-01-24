@@ -239,21 +239,21 @@ double                     Water::spargeRo_pct    () const { return             
 bool                       Water::alkalinityAsHCO3() const { return                    m_alkalinity_as_hco3; }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-///void Water::setAmount          (double              const   val) { this->setAndNotify(PropertyNames::Water::amount          , m_amount            ,                            val ); return; }
-void Water::setCalcium_ppm     (double              const   val) { this->setAndNotify(PropertyNames::Water::calcium_ppm     , m_calcium_ppm       ,                            val ); return; }
-void Water::setBicarbonate_ppm (double              const   val) { this->setAndNotify(PropertyNames::Water::bicarbonate_ppm , m_bicarbonate_ppm   ,                            val ); return; }
-void Water::setSulfate_ppm     (double              const   val) { this->setAndNotify(PropertyNames::Water::sulfate_ppm     , m_sulfate_ppm       ,                            val ); return; }
-void Water::setChloride_ppm    (double              const   val) { this->setAndNotify(PropertyNames::Water::chloride_ppm    , m_chloride_ppm      ,                            val ); return; }
-void Water::setSodium_ppm      (double              const   val) { this->setAndNotify(PropertyNames::Water::sodium_ppm      , m_sodium_ppm        ,                            val ); return; }
-void Water::setMagnesium_ppm   (double              const   val) { this->setAndNotify(PropertyNames::Water::magnesium_ppm   , m_magnesium_ppm     ,                            val ); return; }
-void Water::setPh              (double              const   val) { this->setAndNotify(PropertyNames::Water::ph              , m_ph                ,                            val ); return; }
-void Water::setAlkalinity_ppm  (double              const   val) { this->setAndNotify(PropertyNames::Water::alkalinity_ppm  , m_alkalinity_ppm    ,                            val ); return; }
-void Water::setNotes           (QString             const & val) { this->setAndNotify(PropertyNames::Water::notes           , m_notes             ,                            val ); return; }
-void Water::setType            (std::optional<Type> const   val) { this->setAndNotify(PropertyNames::Water::type            , m_type              ,                            val ); return; }
-void Water::setTypeAsInt       (std::optional<int>  const   val) { this->setAndNotify(PropertyNames::Water::type            , m_type              , Optional::fromOptInt<Type>(val)); return; }
-void Water::setMashRo_pct      (double              const   val) { this->setAndNotify(PropertyNames::Water::mashRo_pct      , m_mashRo_pct        ,                            val ); return; }
-void Water::setSpargeRo_pct    (double              const   val) { this->setAndNotify(PropertyNames::Water::spargeRo_pct    , m_spargeRo_pct      ,                            val ); return; }
-void Water::setAlkalinityAsHCO3(bool                const   val) { this->setAndNotify(PropertyNames::Water::alkalinityAsHCO3, m_alkalinity_as_hco3,                            val ); return; }
+///void Water::setAmount          (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::amount          , m_amount            ,                            val ); return; }
+void Water::setCalcium_ppm     (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::calcium_ppm     , m_calcium_ppm       ,                            val ); return; }
+void Water::setBicarbonate_ppm (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::bicarbonate_ppm , m_bicarbonate_ppm   ,                            val ); return; }
+void Water::setSulfate_ppm     (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::sulfate_ppm     , m_sulfate_ppm       ,                            val ); return; }
+void Water::setChloride_ppm    (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::chloride_ppm    , m_chloride_ppm      ,                            val ); return; }
+void Water::setSodium_ppm      (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::sodium_ppm      , m_sodium_ppm        ,                            val ); return; }
+void Water::setMagnesium_ppm   (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::magnesium_ppm   , m_magnesium_ppm     ,                            val ); return; }
+void Water::setPh              (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::ph              , m_ph                ,                            val ); return; }
+void Water::setAlkalinity_ppm  (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::alkalinity_ppm  , m_alkalinity_ppm    ,                            val ); return; }
+void Water::setNotes           (QString             const & val) { SET_AND_NOTIFY(PropertyNames::Water::notes           , m_notes             ,                            val ); return; }
+void Water::setType            (std::optional<Type> const   val) { SET_AND_NOTIFY(PropertyNames::Water::type            , m_type              ,                            val ); return; }
+void Water::setTypeAsInt       (std::optional<int>  const   val) { SET_AND_NOTIFY(PropertyNames::Water::type            , m_type              , Optional::fromOptInt<Type>(val)); return; }
+void Water::setMashRo_pct      (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::mashRo_pct      , m_mashRo_pct        ,                            val ); return; }
+void Water::setSpargeRo_pct    (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::spargeRo_pct    , m_spargeRo_pct      ,                            val ); return; }
+void Water::setAlkalinityAsHCO3(bool                const   val) { SET_AND_NOTIFY(PropertyNames::Water::alkalinityAsHCO3, m_alkalinity_as_hco3,                            val ); return; }
 
 
 double Water::ppm(Water::Ion const ion) const {

@@ -147,11 +147,11 @@ Recipe * RecipeAddition::recipe() const {
 
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void RecipeAddition::setRecipeId       (int                   const val) { this->setAndNotify(PropertyNames::RecipeAddition::recipeId       , this->m_recipeId       , val); return; }
-void RecipeAddition::setIngredientId   (int                   const val) { this->setAndNotify(PropertyNames::RecipeAddition::ingredientId   , this->m_ingredientId   , val); return; }
-void RecipeAddition::setStage          (Stage                 const val) { this->setAndNotify(PropertyNames::RecipeAddition::stage          , this->m_stage          , val); return; }
-void RecipeAddition::setStep           (std::optional<int>    const val) { this->setAndNotify(PropertyNames::RecipeAddition::step           , this->m_step           , val); return; }
-void RecipeAddition::setAddAtTime_mins (std::optional<double> const val) { this->setAndNotify(PropertyNames::RecipeAddition::addAtTime_mins , this->m_addAtTime_mins , val); return; }
-void RecipeAddition::setAddAtGravity_sg(std::optional<double> const val) { this->setAndNotify(PropertyNames::RecipeAddition::addAtGravity_sg, this->m_addAtGravity_sg, val); return; }
-void RecipeAddition::setAddAtAcidity_pH(std::optional<double> const val) { this->setAndNotify(PropertyNames::RecipeAddition::addAtAcidity_pH, this->m_addAtAcidity_pH, val); return; }
-void RecipeAddition::setDuration_mins  (std::optional<double> const val) { this->setAndNotify(PropertyNames::RecipeAddition::duration_mins  , this->m_duration_mins  , val); return; }
+void RecipeAddition::setRecipeId       (int                   const val) { SET_AND_NOTIFY(PropertyNames::RecipeAddition::recipeId       , this->m_recipeId       , val); return; }
+void RecipeAddition::setIngredientId   (int                   const val) { SET_AND_NOTIFY(PropertyNames::RecipeAddition::ingredientId   , this->m_ingredientId   , val); return; }
+void RecipeAddition::setStage          (Stage                 const val) { SET_AND_NOTIFY(PropertyNames::RecipeAddition::stage          , this->m_stage          , val); return; }
+void RecipeAddition::setStep           (std::optional<int>    const val) { SET_AND_NOTIFY(PropertyNames::RecipeAddition::step           , this->m_step           , val); return; }
+void RecipeAddition::setAddAtTime_mins (std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::RecipeAddition::addAtTime_mins , this->m_addAtTime_mins , val); return; }
+void RecipeAddition::setAddAtGravity_sg(std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::RecipeAddition::addAtGravity_sg, this->m_addAtGravity_sg, val); return; }
+void RecipeAddition::setAddAtAcidity_pH(std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::RecipeAddition::addAtAcidity_pH, this->m_addAtAcidity_pH, val); return; }
+void RecipeAddition::setDuration_mins  (std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::RecipeAddition::duration_mins  , this->m_duration_mins  , val); return; }

@@ -1764,17 +1764,17 @@ void Recipe::setSaltIds       (QVector<int> ids) {    this->pimpl->saltIds      
 
 //==============================="SET" METHODS=================================
 void Recipe::setType(Recipe::Type const val) {
-   this->setAndNotify(PropertyNames::Recipe::type, this->m_type, val);
+   SET_AND_NOTIFY(PropertyNames::Recipe::type, this->m_type, val);
    return;
 }
 
 void Recipe::setBrewer(QString const & var) {
-   this->setAndNotify(PropertyNames::Recipe::brewer, this->m_brewer, var);
+   SET_AND_NOTIFY(PropertyNames::Recipe::brewer, this->m_brewer, var);
    return;
 }
 
 void Recipe::setBatchSize_l(double var) {
-   this->setAndNotify(PropertyNames::Recipe::batchSize_l,
+   SET_AND_NOTIFY(PropertyNames::Recipe::batchSize_l,
                       this->m_batchSize_l,
                       this->enforceMin(var, "batch size"));
 
@@ -1785,7 +1785,7 @@ void Recipe::setBatchSize_l(double var) {
 }
 
 ///[[deprecated]] void Recipe::setBoilSize_l(double var) {
-///   this->setAndNotify(PropertyNames::Recipe::boilSize_l,
+///   SET_AND_NOTIFY(PropertyNames::Recipe::boilSize_l,
 ///                      this->m_boilSize_l,
 ///                      this->enforceMin(var, "boil size"));
 ///
@@ -1797,14 +1797,14 @@ void Recipe::setBatchSize_l(double var) {
 ///}
 
 ///void Recipe::setBoilTime_min(double var) {
-///   this->setAndNotify(PropertyNames::Recipe::boilTime_min,
+///   SET_AND_NOTIFY(PropertyNames::Recipe::boilTime_min,
 ///                      this->m_boilTime_min,
 ///                      this->enforceMin(var, "boil time"));
 ///   return;
 ///}
 
 void Recipe::setEfficiency_pct(double var) {
-   this->setAndNotify(PropertyNames::Recipe::efficiency_pct,
+   SET_AND_NOTIFY(PropertyNames::Recipe::efficiency_pct,
                       this->m_efficiency_pct,
                       this->enforceMinAndMax(var, "efficiency", 0.0, 100.0, 70.0));
 
@@ -1815,115 +1815,115 @@ void Recipe::setEfficiency_pct(double var) {
 }
 
 void Recipe::setAsstBrewer(const QString & var) {
-   this->setAndNotify(PropertyNames::Recipe::asstBrewer,
+   SET_AND_NOTIFY(PropertyNames::Recipe::asstBrewer,
                       this->m_asstBrewer,
                       var);
    return;
 }
 
 void Recipe::setNotes(const QString & var) {
-   this->setAndNotify(PropertyNames::Recipe::notes, this->m_notes, var);
+   SET_AND_NOTIFY(PropertyNames::Recipe::notes, this->m_notes, var);
    return;
 }
 
 void Recipe::setTasteNotes(const QString & var) {
-   this->setAndNotify(PropertyNames::Recipe::tasteNotes, this->m_tasteNotes, var);
+   SET_AND_NOTIFY(PropertyNames::Recipe::tasteNotes, this->m_tasteNotes, var);
    return;
 }
 
 void Recipe::setTasteRating(double var) {
-   this->setAndNotify(PropertyNames::Recipe::tasteRating, this->m_tasteRating, this->enforceMinAndMax(var, "taste rating", 0.0, 50.0, 0.0));
+   SET_AND_NOTIFY(PropertyNames::Recipe::tasteRating, this->m_tasteRating, this->enforceMinAndMax(var, "taste rating", 0.0, 50.0, 0.0));
    return;
 }
 
 void Recipe::setOg(double var) {
-   this->setAndNotify(PropertyNames::Recipe::og, this->m_og, this->enforceMin(var, "og", 0.0, 1.0));
+   SET_AND_NOTIFY(PropertyNames::Recipe::og, this->m_og, this->enforceMin(var, "og", 0.0, 1.0));
    return;
 }
 
 void Recipe::setFg(double var) {
-   this->setAndNotify(PropertyNames::Recipe::fg, this->m_fg, this->enforceMin(var, "fg", 0.0, 1.0));
+   SET_AND_NOTIFY(PropertyNames::Recipe::fg, this->m_fg, this->enforceMin(var, "fg", 0.0, 1.0));
    return;
 }
 
 void Recipe::setFermentationStages(int var) {
-   this->setAndNotify(PropertyNames::Recipe::fermentationStages, this->m_fermentationStages,
+   SET_AND_NOTIFY(PropertyNames::Recipe::fermentationStages, this->m_fermentationStages,
                                    this->enforceMin(var, "stages"));
    return;
 }
 
 void Recipe::setPrimaryAge_days(double var) {
-   this->setAndNotify(PropertyNames::Recipe::primaryAge_days, this->m_primaryAge_days, this->enforceMin(var, "primary age"));
+   SET_AND_NOTIFY(PropertyNames::Recipe::primaryAge_days, this->m_primaryAge_days, this->enforceMin(var, "primary age"));
    return;
 }
 
 void Recipe::setPrimaryTemp_c(double var) {
-   this->setAndNotify(PropertyNames::Recipe::primaryTemp_c, this->m_primaryTemp_c, var);
+   SET_AND_NOTIFY(PropertyNames::Recipe::primaryTemp_c, this->m_primaryTemp_c, var);
    return;
 }
 
 void Recipe::setSecondaryAge_days(double var) {
-   this->setAndNotify(PropertyNames::Recipe::secondaryAge_days, this->m_secondaryAge_days, this->enforceMin(var, "secondary age"));
+   SET_AND_NOTIFY(PropertyNames::Recipe::secondaryAge_days, this->m_secondaryAge_days, this->enforceMin(var, "secondary age"));
    return;
 }
 
 void Recipe::setSecondaryTemp_c(double var) {
-   this->setAndNotify(PropertyNames::Recipe::secondaryTemp_c, this->m_secondaryTemp_c, var);
+   SET_AND_NOTIFY(PropertyNames::Recipe::secondaryTemp_c, this->m_secondaryTemp_c, var);
    return;
 }
 
 void Recipe::setTertiaryAge_days(double var) {
-   this->setAndNotify(PropertyNames::Recipe::tertiaryAge_days, this->m_tertiaryAge_days, this->enforceMin(var, "tertiary age"));
+   SET_AND_NOTIFY(PropertyNames::Recipe::tertiaryAge_days, this->m_tertiaryAge_days, this->enforceMin(var, "tertiary age"));
    return;
 }
 
 void Recipe::setTertiaryTemp_c(double var) {
-   this->setAndNotify(PropertyNames::Recipe::tertiaryTemp_c, this->m_tertiaryTemp_c, var);
+   SET_AND_NOTIFY(PropertyNames::Recipe::tertiaryTemp_c, this->m_tertiaryTemp_c, var);
    return;
 }
 
 void Recipe::setAge_days(double var) {
-   this->setAndNotify(PropertyNames::Recipe::age_days, this->m_age, this->enforceMin(var, "age"));
+   SET_AND_NOTIFY(PropertyNames::Recipe::age_days, this->m_age, this->enforceMin(var, "age"));
    return;
 }
 
 void Recipe::setAgeTemp_c(double var) {
-   this->setAndNotify(PropertyNames::Recipe::ageTemp_c, this->m_ageTemp_c, var);
+   SET_AND_NOTIFY(PropertyNames::Recipe::ageTemp_c, this->m_ageTemp_c, var);
    return;
 }
 
 void Recipe::setDate(const QDate & var) {
-   this->setAndNotify(PropertyNames::Recipe::date, this->m_date, var);
+   SET_AND_NOTIFY(PropertyNames::Recipe::date, this->m_date, var);
    return;
 }
 
 void Recipe::setCarbonation_vols(double var) {
-   this->setAndNotify(PropertyNames::Recipe::carbonation_vols, this->m_carbonation_vols, this->enforceMin(var, "carb"));
+   SET_AND_NOTIFY(PropertyNames::Recipe::carbonation_vols, this->m_carbonation_vols, this->enforceMin(var, "carb"));
    return;
 }
 
 void Recipe::setForcedCarbonation(bool var) {
-   this->setAndNotify(PropertyNames::Recipe::forcedCarbonation, this->m_forcedCarbonation, var);
+   SET_AND_NOTIFY(PropertyNames::Recipe::forcedCarbonation, this->m_forcedCarbonation, var);
    return;
 }
 
 void Recipe::setPrimingSugarName(const QString & var) {
-   this->setAndNotify(PropertyNames::Recipe::primingSugarName, this->m_primingSugarName, var);
+   SET_AND_NOTIFY(PropertyNames::Recipe::primingSugarName, this->m_primingSugarName, var);
    return;
 }
 
 void Recipe::setCarbonationTemp_c(double var) {
-   this->setAndNotify(PropertyNames::Recipe::carbonationTemp_c, this->m_carbonationTemp_c, var);
+   SET_AND_NOTIFY(PropertyNames::Recipe::carbonationTemp_c, this->m_carbonationTemp_c, var);
    return;
 }
 
 void Recipe::setPrimingSugarEquiv(double var) {
-   this->setAndNotify(PropertyNames::Recipe::primingSugarEquiv, this->m_primingSugarEquiv, this->enforceMin(var, "priming sugar equiv", 0.0, 1.0));
+   SET_AND_NOTIFY(PropertyNames::Recipe::primingSugarEquiv, this->m_primingSugarEquiv, this->enforceMin(var, "priming sugar equiv", 0.0, 1.0));
    return;
 }
 
 void Recipe::setKegPrimingFactor(double var) {
-   this->setAndNotify(PropertyNames::Recipe::kegPrimingFactor, this->m_kegPrimingFactor, this->enforceMin(var, "keg priming factor", 0.0, 1.0));
+   SET_AND_NOTIFY(PropertyNames::Recipe::kegPrimingFactor, this->m_kegPrimingFactor, this->enforceMin(var, "keg priming factor", 0.0, 1.0));
    return;
 }
 

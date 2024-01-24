@@ -228,33 +228,33 @@ QString               Style::mouthfeel        () const { return m_mouthfeel     
 QString               Style::overallImpression() const { return m_overallImpression; }
 
 //==============================="SET" METHODS==================================
-void Style::setCategory         (QString               const & val) { this->setAndNotify(PropertyNames::Style::category         , this->m_category         , val); }
-void Style::setCategoryNumber   (QString               const & val) { this->setAndNotify(PropertyNames::Style::categoryNumber   , this->m_categoryNumber   , val); }
-void Style::setStyleLetter      (QString               const & val) { this->setAndNotify(PropertyNames::Style::styleLetter      , this->m_styleLetter      , val); }
-void Style::setStyleGuide       (QString               const & val) { this->setAndNotify(PropertyNames::Style::styleGuide       , this->m_styleGuide       , val); }
-void Style::setType             (Type                  const   val) { this->setAndNotify(PropertyNames::Style::type             , this->m_type             , val); }
-void Style::setOgMin            (double                const   val) { this->setAndNotify(PropertyNames::Style::ogMin            , this->m_ogMin            , this->enforceMin(val, "og min"      )); }
-void Style::setOgMax            (double                const   val) { this->setAndNotify(PropertyNames::Style::ogMax            , this->m_ogMax            , this->enforceMin(val, "og max"      )); }
-void Style::setFgMin            (double                const   val) { this->setAndNotify(PropertyNames::Style::fgMin            , this->m_fgMin            , this->enforceMin(val, "fg min"      )); }
-void Style::setFgMax            (double                const   val) { this->setAndNotify(PropertyNames::Style::fgMax            , this->m_fgMax            , this->enforceMin(val, "fg max"      )); }
-void Style::setIbuMin           (double                const   val) { this->setAndNotify(PropertyNames::Style::ibuMin           , this->m_ibuMin           , this->enforceMin(val, "ibu min"     )); }
-void Style::setIbuMax           (double                const   val) { this->setAndNotify(PropertyNames::Style::ibuMax           , this->m_ibuMax           , this->enforceMin(val, "ibu max"     )); }
-void Style::setColorMin_srm     (double                const   val) { this->setAndNotify(PropertyNames::Style::colorMin_srm     , this->m_colorMin_srm     , this->enforceMin(val, "color min"   )); }
-void Style::setColorMax_srm     (double                const   val) { this->setAndNotify(PropertyNames::Style::colorMax_srm     , this->m_colorMax_srm     , this->enforceMin(val, "color max"   )); }
-void Style::setCarbMin_vol      (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Style::carbMin_vol      , this->m_carbMin_vol      , this->enforceMin(val, "carb vol min")); }
-void Style::setCarbMax_vol      (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Style::carbMax_vol      , this->m_carbMax_vol      , this->enforceMin(val, "carb vol max")); }
-void Style::setAbvMin_pct       (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Style::abvMin_pct       , this->m_abvMin_pct       , this->enforceMinAndMax(val, "min abv pct", 0.0, 100.0)); }
-void Style::setAbvMax_pct       (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Style::abvMax_pct       , this->m_abvMax_pct       , this->enforceMinAndMax(val, "max abv pct", 0.0, 100.0)); }
-void Style::setNotes            (QString               const & val) { this->setAndNotify(PropertyNames::Style::notes            , this->m_notes            , val); }
-///void Style::setProfile          (QString               const & val) { this->setAndNotify(PropertyNames::Style::profile          , this->m_profile          , val); }
-void Style::setIngredients      (QString               const & val) { this->setAndNotify(PropertyNames::Style::ingredients      , this->m_ingredients      , val); }
-void Style::setExamples         (QString               const & val) { this->setAndNotify(PropertyNames::Style::examples         , this->m_examples         , val); }
+void Style::setCategory         (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Style::category         , this->m_category         , val); }
+void Style::setCategoryNumber   (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Style::categoryNumber   , this->m_categoryNumber   , val); }
+void Style::setStyleLetter      (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Style::styleLetter      , this->m_styleLetter      , val); }
+void Style::setStyleGuide       (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Style::styleGuide       , this->m_styleGuide       , val); }
+void Style::setType             (Type                  const   val) { SET_AND_NOTIFY(PropertyNames::Style::type             , this->m_type             , val); }
+void Style::setOgMin            (double                const   val) { SET_AND_NOTIFY(PropertyNames::Style::ogMin            , this->m_ogMin            , this->enforceMin(val, "og min"      )); }
+void Style::setOgMax            (double                const   val) { SET_AND_NOTIFY(PropertyNames::Style::ogMax            , this->m_ogMax            , this->enforceMin(val, "og max"      )); }
+void Style::setFgMin            (double                const   val) { SET_AND_NOTIFY(PropertyNames::Style::fgMin            , this->m_fgMin            , this->enforceMin(val, "fg min"      )); }
+void Style::setFgMax            (double                const   val) { SET_AND_NOTIFY(PropertyNames::Style::fgMax            , this->m_fgMax            , this->enforceMin(val, "fg max"      )); }
+void Style::setIbuMin           (double                const   val) { SET_AND_NOTIFY(PropertyNames::Style::ibuMin           , this->m_ibuMin           , this->enforceMin(val, "ibu min"     )); }
+void Style::setIbuMax           (double                const   val) { SET_AND_NOTIFY(PropertyNames::Style::ibuMax           , this->m_ibuMax           , this->enforceMin(val, "ibu max"     )); }
+void Style::setColorMin_srm     (double                const   val) { SET_AND_NOTIFY(PropertyNames::Style::colorMin_srm     , this->m_colorMin_srm     , this->enforceMin(val, "color min"   )); }
+void Style::setColorMax_srm     (double                const   val) { SET_AND_NOTIFY(PropertyNames::Style::colorMax_srm     , this->m_colorMax_srm     , this->enforceMin(val, "color max"   )); }
+void Style::setCarbMin_vol      (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Style::carbMin_vol      , this->m_carbMin_vol      , this->enforceMin(val, "carb vol min")); }
+void Style::setCarbMax_vol      (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Style::carbMax_vol      , this->m_carbMax_vol      , this->enforceMin(val, "carb vol max")); }
+void Style::setAbvMin_pct       (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Style::abvMin_pct       , this->m_abvMin_pct       , this->enforceMinAndMax(val, "min abv pct", 0.0, 100.0)); }
+void Style::setAbvMax_pct       (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Style::abvMax_pct       , this->m_abvMax_pct       , this->enforceMinAndMax(val, "max abv pct", 0.0, 100.0)); }
+void Style::setNotes            (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Style::notes            , this->m_notes            , val); }
+///void Style::setProfile          (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Style::profile          , this->m_profile          , val); }
+void Style::setIngredients      (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Style::ingredients      , this->m_ingredients      , val); }
+void Style::setExamples         (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Style::examples         , this->m_examples         , val); }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-void Style::setAroma            (QString               const & val) { this->setAndNotify(PropertyNames::Style::aroma            , this->m_aroma            , val); }
-void Style::setAppearance       (QString               const & val) { this->setAndNotify(PropertyNames::Style::appearance       , this->m_appearance       , val); }
-void Style::setFlavor           (QString               const & val) { this->setAndNotify(PropertyNames::Style::flavor           , this->m_flavor           , val); }
-void Style::setMouthfeel        (QString               const & val) { this->setAndNotify(PropertyNames::Style::mouthfeel        , this->m_mouthfeel        , val); }
-void Style::setOverallImpression(QString               const & val) { this->setAndNotify(PropertyNames::Style::overallImpression, this->m_overallImpression, val); }
+void Style::setAroma            (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Style::aroma            , this->m_aroma            , val); }
+void Style::setAppearance       (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Style::appearance       , this->m_appearance       , val); }
+void Style::setFlavor           (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Style::flavor           , this->m_flavor           , val); }
+void Style::setMouthfeel        (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Style::mouthfeel        , this->m_mouthfeel        , val); }
+void Style::setOverallImpression(QString               const & val) { SET_AND_NOTIFY(PropertyNames::Style::overallImpression, this->m_overallImpression, val); }
 
 ///Recipe * Style::getOwningRecipe() const {
 ///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );

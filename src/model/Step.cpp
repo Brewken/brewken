@@ -110,12 +110,12 @@ std::optional<double> Step::startAcidity_pH() const { return this->m_startAcidit
 std::optional<double> Step::endAcidity_pH  () const { return this->m_endAcidity_pH  ; }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void Step::setStepTime_min          (double                const   val) { this->setAndNotify(PropertyNames::Step::stepTime_min   , this->m_stepTime_min   , val                                                                ); return; }
-void Step::setEndTemp_c             (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Step::endTemp_c      , this->m_endTemp_c      , this->enforceMin(val, "end temp" , PhysicalConstants::absoluteZero)); return; }
-void Step::setStepNumber            (int                   const   val) { this->setAndNotify(PropertyNames::Step::stepNumber     , this->m_stepNumber     , val                                                                ); return; }
+void Step::setStepTime_min          (double                const   val) { SET_AND_NOTIFY(PropertyNames::Step::stepTime_min   , this->m_stepTime_min   , val                                                                ); return; }
+void Step::setEndTemp_c             (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Step::endTemp_c      , this->m_endTemp_c      , this->enforceMin(val, "end temp" , PhysicalConstants::absoluteZero)); return; }
+void Step::setStepNumber            (int                   const   val) { SET_AND_NOTIFY(PropertyNames::Step::stepNumber     , this->m_stepNumber     , val                                                                ); return; }
 void Step::setOwnerId               (int                   const   val) { this->m_ownerId = val;    this->propagatePropertyChange(PropertyNames::Step::ownerId, false);    return; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-void Step::setDescription           (QString               const & val) { this->setAndNotify(PropertyNames::Step::description    , this->m_description    , val                                                                ); return; }
-void Step::setRampTime_mins         (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Step::rampTime_mins  , this->m_rampTime_mins  , val                                                                ); return; }
-void Step::setStartAcidity_pH       (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Step::startAcidity_pH, this->m_startAcidity_pH, val                                                                ); return; }
-void Step::setEndAcidity_pH         (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Step::endAcidity_pH  , this->m_endAcidity_pH  , val                                                                ); return; }
+void Step::setDescription           (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Step::description    , this->m_description    , val                                                                ); return; }
+void Step::setRampTime_mins         (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Step::rampTime_mins  , this->m_rampTime_mins  , val                                                                ); return; }
+void Step::setStartAcidity_pH       (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Step::startAcidity_pH, this->m_startAcidity_pH, val                                                                ); return; }
+void Step::setEndAcidity_pH         (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Step::endAcidity_pH  , this->m_endAcidity_pH  , val                                                                ); return; }

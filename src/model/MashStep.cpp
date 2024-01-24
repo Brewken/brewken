@@ -144,12 +144,12 @@ std::optional<double> MashStep::liquorToGristRatio_lKg() const { return this->m_
 [[deprecated]] double MashStep::decoctionAmount_l() const { return this->m_amount_l; }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void MashStep::setType                  (MashStep::Type        const   val) { this->setAndNotify(PropertyNames::MashStep::type                  , this->m_type                  , val                                                                ); return; }
-void MashStep::setAmount_l              (double                const   val) { this->setAndNotify(PropertyNames::MashStep::amount_l              , this->m_amount_l              , val                                                                ); return; }
-void MashStep::setStepTemp_c            (double                const   val) { this->setAndNotify(PropertyNames::MashStep::stepTemp_c            , this->m_stepTemp_c            , this->enforceMin(val, "step temp", PhysicalConstants::absoluteZero)); return; }
-void MashStep::setInfuseTemp_c          (std::optional<double> const   val) { this->setAndNotify(PropertyNames::MashStep::infuseTemp_c          , this->m_infuseTemp_c          , val                                                                ); return; }
+void MashStep::setType                  (MashStep::Type        const   val) { SET_AND_NOTIFY(PropertyNames::MashStep::type                  , this->m_type                  , val                                                                ); return; }
+void MashStep::setAmount_l              (double                const   val) { SET_AND_NOTIFY(PropertyNames::MashStep::amount_l              , this->m_amount_l              , val                                                                ); return; }
+void MashStep::setStepTemp_c            (double                const   val) { SET_AND_NOTIFY(PropertyNames::MashStep::stepTemp_c            , this->m_stepTemp_c            , this->enforceMin(val, "step temp", PhysicalConstants::absoluteZero)); return; }
+void MashStep::setInfuseTemp_c          (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::MashStep::infuseTemp_c          , this->m_infuseTemp_c          , val                                                                ); return; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-void MashStep::setLiquorToGristRatio_lKg(std::optional<double> const   val) { this->setAndNotify(PropertyNames::MashStep::liquorToGristRatio_lKg, this->m_liquorToGristRatio_lKg, val                                                                ); return; }
+void MashStep::setLiquorToGristRatio_lKg(std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::MashStep::liquorToGristRatio_lKg, this->m_liquorToGristRatio_lKg, val                                                                ); return; }
 
 bool MashStep::isInfusion() const {
    return (m_type == MashStep::Type::Infusion    ||

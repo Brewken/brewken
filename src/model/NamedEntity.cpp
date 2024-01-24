@@ -258,7 +258,7 @@ QString NamedEntity::name() const {
 }
 
 void NamedEntity::setName(QString const & var) {
-   this->setAndNotify(PropertyNames::NamedEntity::name, this->m_name, var);
+   SET_AND_NOTIFY(PropertyNames::NamedEntity::name, this->m_name, var);
    return;
 }
 
@@ -484,7 +484,7 @@ NamedEntity * NamedEntity::getParent() const {
 }
 
 void NamedEntity::setParent(NamedEntity const & parentNamedEntity) {
-   this->setAndNotify(PropertyNames::NamedEntity::parentKey, this->parentKey, parentNamedEntity.m_key);
+   SET_AND_NOTIFY(PropertyNames::NamedEntity::parentKey, this->parentKey, parentNamedEntity.m_key);
    return;
 }
 

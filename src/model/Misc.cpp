@@ -160,22 +160,22 @@ QString                  Misc::productId     () const { return                  
 ///Measurement::Amount Misc::amountWithUnits() const { return Measurement::Amount{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
 
 //============================"SET" METHODS=====================================
-void Misc::setType          (Type                     const   val) { this->setAndNotify( PropertyNames::Misc::type          , this->m_type          , val); }
-///void Misc::setUse           (std::optional<Misc::Use> const   val) { this->setAndNotify( PropertyNames::Misc::use           , this->m_use           , val); }
-///void Misc::setUseAsInt      (std::optional<int>       const   val) { this->setAndNotify( PropertyNames::Misc::use           , this->m_use           , Optional::fromOptInt<Use>(val)); }
-void Misc::setUseFor        (QString                  const & val) { this->setAndNotify( PropertyNames::Misc::useFor        , this->m_useFor        , val); }
-void Misc::setNotes         (QString                  const & val) { this->setAndNotify( PropertyNames::Misc::notes         , this->m_notes         , val); }
-///void Misc::setAmountIsWeight(bool                     const   val) { this->setAndNotify( PropertyNames::Misc::amountIsWeight, this->m_amountIsWeight, val); }
-///void Misc::setAmount        (double                   const   val) { this->setAndNotify( PropertyNames::Misc::amount        , this->m_amount        , this->enforceMin(val, "amount")); }
-///void Misc::setTime_min      (double                   const   val) { this->setAndNotify( PropertyNames::Misc::time_min      , this->m_time_min      , this->enforceMin(val, "time_min"  )); }
+void Misc::setType          (Type                     const   val) { SET_AND_NOTIFY( PropertyNames::Misc::type          , this->m_type          , val); }
+///void Misc::setUse           (std::optional<Misc::Use> const   val) { SET_AND_NOTIFY( PropertyNames::Misc::use           , this->m_use           , val); }
+///void Misc::setUseAsInt      (std::optional<int>       const   val) { SET_AND_NOTIFY( PropertyNames::Misc::use           , this->m_use           , Optional::fromOptInt<Use>(val)); }
+void Misc::setUseFor        (QString                  const & val) { SET_AND_NOTIFY( PropertyNames::Misc::useFor        , this->m_useFor        , val); }
+void Misc::setNotes         (QString                  const & val) { SET_AND_NOTIFY( PropertyNames::Misc::notes         , this->m_notes         , val); }
+///void Misc::setAmountIsWeight(bool                     const   val) { SET_AND_NOTIFY( PropertyNames::Misc::amountIsWeight, this->m_amountIsWeight, val); }
+///void Misc::setAmount        (double                   const   val) { SET_AND_NOTIFY( PropertyNames::Misc::amount        , this->m_amount        , this->enforceMin(val, "amount")); }
+///void Misc::setTime_min      (double                   const   val) { SET_AND_NOTIFY( PropertyNames::Misc::time_min      , this->m_time_min      , this->enforceMin(val, "time_min"  )); }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-void Misc::setProducer      (QString                  const & val) { this->setAndNotify(PropertyNames::Misc::producer       , this->m_producer      , val); }
-void Misc::setProductId     (QString                  const & val) { this->setAndNotify(PropertyNames::Misc::productId      , this->m_productId     , val); }
+void Misc::setProducer      (QString                  const & val) { SET_AND_NOTIFY(PropertyNames::Misc::producer       , this->m_producer      , val); }
+void Misc::setProductId     (QString                  const & val) { SET_AND_NOTIFY(PropertyNames::Misc::productId      , this->m_productId     , val); }
 
 
 ///void Misc::setAmountWithUnits(Measurement::Amount const   val) {
-///   this->setAndNotify(PropertyNames::Misc::amount        , this->m_amount        , val.quantity);
-///   this->setAndNotify(PropertyNames::Misc::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
+///   SET_AND_NOTIFY(PropertyNames::Misc::amount        , this->m_amount        , val.quantity);
+///   SET_AND_NOTIFY(PropertyNames::Misc::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
 ///   return;
 ///}
 

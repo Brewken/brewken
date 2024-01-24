@@ -79,8 +79,8 @@ std::optional<BoilStep::ChillingType> BoilStep::chillingType     () const { retu
 std::optional<int>                    BoilStep::chillingTypeAsInt() const { return Optional::toOptInt(this->m_chillingType); }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void BoilStep::setChillingType     (std::optional<BoilStep::ChillingType> const val) { this->setAndNotify(PropertyNames::BoilStep::chillingType, this->m_chillingType,                                    val ); return; }
-void BoilStep::setChillingTypeAsInt(std::optional<int>                    const val) { this->setAndNotify(PropertyNames::BoilStep::chillingType, this->m_chillingType, Optional::fromOptInt<ChillingType>(val)); return; }
+void BoilStep::setChillingType     (std::optional<BoilStep::ChillingType> const val) { SET_AND_NOTIFY(PropertyNames::BoilStep::chillingType, this->m_chillingType,                                    val ); return; }
+void BoilStep::setChillingTypeAsInt(std::optional<int>                    const val) { SET_AND_NOTIFY(PropertyNames::BoilStep::chillingType, this->m_chillingType, Optional::fromOptInt<ChillingType>(val)); return; }
 
 // Insert boiler-plate wrapper functions that call down to StepBase
 STEP_COMMON_CODE(Boil)

@@ -325,13 +325,13 @@ QString               Equipment::packagingVesselNotes       () const { return m_
 
 // The logic through here is similar to what's in Hop. Unfortunately, the additional signals don't allow quite the
 // compactness.
-void Equipment::setKettleBoilSize_l         (double                const val) { this->setAndNotify(PropertyNames::Equipment::kettleBoilSize_l         , this->m_kettleBoilSize_l         , this->enforceMin(val, "boil size"        )); }
-void Equipment::setFermenterBatchSize_l     (double                const val) { this->setAndNotify(PropertyNames::Equipment::fermenterBatchSize_l     , this->m_fermenterBatchSize_l     , this->enforceMin(val, "batch size"       )); if (this->key() > 0) { doCalculations(); } }
-void Equipment::setMashTunVolume_l          (double                const val) { this->setAndNotify(PropertyNames::Equipment::mashTunVolume_l          , this->m_mashTunVolume_l          , this->enforceMin(val, "tun volume"       )); }
-void Equipment::setMashTunWeight_kg         (std::optional<double> const val) { this->setAndNotify(PropertyNames::Equipment::mashTunWeight_kg         , this->m_mashTunWeight_kg         , this->enforceMin(val, "tun weight"       )); }
-void Equipment::setMashTunSpecificHeat_calGC(std::optional<double> const val) { this->setAndNotify(PropertyNames::Equipment::mashTunSpecificHeat_calGC, this->m_mashTunSpecificHeat_calGC, this->enforceMin(val, "tun specific heat")); }
-void Equipment::setTopUpWater_l             (std::optional<double> const val) { this->setAndNotify(PropertyNames::Equipment::topUpWater_l             , this->m_topUpWater_l             , this->enforceMin(val, "top-up water"     )); if (this->key() > 0) { doCalculations(); } }
-void Equipment::setKettleTrubChillerLoss_l  (double                const val) { this->setAndNotify(PropertyNames::Equipment::kettleTrubChillerLoss_l  , this->m_kettleTrubChillerLoss_l  , this->enforceMin(val, "trub chiller loss")); if (this->key() > 0) { doCalculations(); } }
+void Equipment::setKettleBoilSize_l         (double                const val) { SET_AND_NOTIFY(PropertyNames::Equipment::kettleBoilSize_l         , this->m_kettleBoilSize_l         , this->enforceMin(val, "boil size"        )); }
+void Equipment::setFermenterBatchSize_l     (double                const val) { SET_AND_NOTIFY(PropertyNames::Equipment::fermenterBatchSize_l     , this->m_fermenterBatchSize_l     , this->enforceMin(val, "batch size"       )); if (this->key() > 0) { doCalculations(); } }
+void Equipment::setMashTunVolume_l          (double                const val) { SET_AND_NOTIFY(PropertyNames::Equipment::mashTunVolume_l          , this->m_mashTunVolume_l          , this->enforceMin(val, "tun volume"       )); }
+void Equipment::setMashTunWeight_kg         (std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::Equipment::mashTunWeight_kg         , this->m_mashTunWeight_kg         , this->enforceMin(val, "tun weight"       )); }
+void Equipment::setMashTunSpecificHeat_calGC(std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::Equipment::mashTunSpecificHeat_calGC, this->m_mashTunSpecificHeat_calGC, this->enforceMin(val, "tun specific heat")); }
+void Equipment::setTopUpWater_l             (std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::Equipment::topUpWater_l             , this->m_topUpWater_l             , this->enforceMin(val, "top-up water"     )); if (this->key() > 0) { doCalculations(); } }
+void Equipment::setKettleTrubChillerLoss_l  (double                const val) { SET_AND_NOTIFY(PropertyNames::Equipment::kettleTrubChillerLoss_l  , this->m_kettleTrubChillerLoss_l  , this->enforceMin(val, "trub chiller loss")); if (this->key() > 0) { doCalculations(); } }
 
 void Equipment::setEvapRate_pctHr(std::optional<double> const val) {
    // NOTE: We never use evapRate_pctHr, but we do use kettleEvaporationPerHour_l. So keep them
@@ -363,45 +363,45 @@ void Equipment::setKettleEvaporationPerHour_l(std::optional<double> const val) {
    doCalculations();
 }
 
-void Equipment::setBoilTime_min               (std::optional<double> const   val) { if (this->setAndNotify(PropertyNames::Equipment::boilTime_min              , this->m_boilTime_min              , this->enforceMin(val, "boil time"))) {       doCalculations();    }    return; }
-void Equipment::setCalcBoilVolume             (bool                  const   val) {     this->setAndNotify(PropertyNames::Equipment::calcBoilVolume            , this->m_calcBoilVolume            , val);    if ( val ) {       doCalculations();    } }
-void Equipment::setLauterTunDeadspaceLoss_l      (double                const   val) {     this->setAndNotify(PropertyNames::Equipment::lauterTunDeadspaceLoss_l     , this->m_lauterTunDeadspaceLoss_l         , this->enforceMin(val, "deadspace")); }
-void Equipment::setTopUpKettle_l              (std::optional<double> const   val) {     this->setAndNotify(PropertyNames::Equipment::topUpKettle_l             , this->m_topUpKettle_l             , this->enforceMin(val, "top-up kettle")); }
-void Equipment::setHopUtilization_pct         (std::optional<double> const   val) {     this->setAndNotify(PropertyNames::Equipment::hopUtilization_pct        , this->m_hopUtilization_pct        , this->enforceMin(val, "hop utilization")); }
-void Equipment::setKettleNotes                (QString               const & val) {     this->setAndNotify(PropertyNames::Equipment::kettleNotes               , this->m_kettleNotes               , val); }
-void Equipment::setMashTunGrainAbsorption_LKg (std::optional<double> const   val) {     this->setAndNotify(PropertyNames::Equipment::mashTunGrainAbsorption_LKg, this->m_mashTunGrainAbsorption_LKg, this->enforceMin(val, "absorption")); }
-void Equipment::setBoilingPoint_c             (double                const   val) {     this->setAndNotify(PropertyNames::Equipment::boilingPoint_c            , this->m_boilingPoint_c            , this->enforceMin(val, "boiling point of water")); }
+void Equipment::setBoilTime_min               (std::optional<double> const   val) { if (SET_AND_NOTIFY(PropertyNames::Equipment::boilTime_min              , this->m_boilTime_min              , this->enforceMin(val, "boil time"))) {       doCalculations();    }    return; }
+void Equipment::setCalcBoilVolume             (bool                  const   val) {     SET_AND_NOTIFY(PropertyNames::Equipment::calcBoilVolume            , this->m_calcBoilVolume            , val);    if ( val ) {       doCalculations();    } }
+void Equipment::setLauterTunDeadspaceLoss_l      (double                const   val) {     SET_AND_NOTIFY(PropertyNames::Equipment::lauterTunDeadspaceLoss_l     , this->m_lauterTunDeadspaceLoss_l         , this->enforceMin(val, "deadspace")); }
+void Equipment::setTopUpKettle_l              (std::optional<double> const   val) {     SET_AND_NOTIFY(PropertyNames::Equipment::topUpKettle_l             , this->m_topUpKettle_l             , this->enforceMin(val, "top-up kettle")); }
+void Equipment::setHopUtilization_pct         (std::optional<double> const   val) {     SET_AND_NOTIFY(PropertyNames::Equipment::hopUtilization_pct        , this->m_hopUtilization_pct        , this->enforceMin(val, "hop utilization")); }
+void Equipment::setKettleNotes                (QString               const & val) {     SET_AND_NOTIFY(PropertyNames::Equipment::kettleNotes               , this->m_kettleNotes               , val); }
+void Equipment::setMashTunGrainAbsorption_LKg (std::optional<double> const   val) {     SET_AND_NOTIFY(PropertyNames::Equipment::mashTunGrainAbsorption_LKg, this->m_mashTunGrainAbsorption_LKg, this->enforceMin(val, "absorption")); }
+void Equipment::setBoilingPoint_c             (double                const   val) {     SET_AND_NOTIFY(PropertyNames::Equipment::boilingPoint_c            , this->m_boilingPoint_c            , this->enforceMin(val, "boiling point of water")); }
 
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-void Equipment::setHltType                    (QString               const & val) { this->setAndNotify(PropertyNames::Equipment::hltType                    , this->m_hltType                    , val); }
-void Equipment::setMashTunType                (QString               const & val) { this->setAndNotify(PropertyNames::Equipment::mashTunType                , this->m_mashTunType                , val); }
-void Equipment::setLauterTunType              (QString               const & val) { this->setAndNotify(PropertyNames::Equipment::lauterTunType              , this->m_lauterTunType              , val); }
-void Equipment::setKettleType                 (QString               const & val) { this->setAndNotify(PropertyNames::Equipment::kettleType                 , this->m_kettleType                 , val); }
-void Equipment::setFermenterType              (QString               const & val) { this->setAndNotify(PropertyNames::Equipment::fermenterType              , this->m_fermenterType              , val); }
-void Equipment::setAgingVesselType            (QString               const & val) { this->setAndNotify(PropertyNames::Equipment::agingVesselType            , this->m_agingVesselType            , val); }
-void Equipment::setPackagingVesselType        (QString               const & val) { this->setAndNotify(PropertyNames::Equipment::packagingVesselType        , this->m_packagingVesselType        , val); }
-void Equipment::setHltVolume_l                (double                const   val) { this->setAndNotify(PropertyNames::Equipment::hltVolume_l                , this->m_hltVolume_l                , val); }
-void Equipment::setLauterTunVolume_l          (double                const   val) { this->setAndNotify(PropertyNames::Equipment::lauterTunVolume_l          , this->m_lauterTunVolume_l          , val); }
-void Equipment::setAgingVesselVolume_l        (double                const   val) { this->setAndNotify(PropertyNames::Equipment::agingVesselVolume_l        , this->m_agingVesselVolume_l        , val); }
-void Equipment::setPackagingVesselVolume_l    (double                const   val) { this->setAndNotify(PropertyNames::Equipment::packagingVesselVolume_l    , this->m_packagingVesselVolume_l    , val); }
-void Equipment::setHltLoss_l                  (double                const   val) { this->setAndNotify(PropertyNames::Equipment::hltLoss_l                  , this->m_hltLoss_l                  , val); }
-void Equipment::setMashTunLoss_l              (double                const   val) { this->setAndNotify(PropertyNames::Equipment::mashTunLoss_l              , this->m_mashTunLoss_l              , val); }
-void Equipment::setFermenterLoss_l            (double                const   val) { this->setAndNotify(PropertyNames::Equipment::fermenterLoss_l            , this->m_fermenterLoss_l            , val); }
-void Equipment::setAgingVesselLoss_l          (double                const   val) { this->setAndNotify(PropertyNames::Equipment::agingVesselLoss_l          , this->m_agingVesselLoss_l          , val); }
-void Equipment::setPackagingVesselLoss_l      (double                const   val) { this->setAndNotify(PropertyNames::Equipment::packagingVesselLoss_l      , this->m_packagingVesselLoss_l      , val); }
-void Equipment::setKettleOutflowPerMinute_l   (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Equipment::kettleOutflowPerMinute_l   , this->m_kettleOutflowPerMinute_l   , val); }
-void Equipment::setHltWeight_kg               (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Equipment::hltWeight_kg               , this->m_hltWeight_kg               , val); }
-void Equipment::setLauterTunWeight_kg         (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Equipment::lauterTunWeight_kg         , this->m_lauterTunWeight_kg         , val); }
-void Equipment::setKettleWeight_kg            (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Equipment::kettleWeight_kg            , this->m_kettleWeight_kg            , val); }
-void Equipment::setHltSpecificHeat_calGC      (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Equipment::hltSpecificHeat_calGC      , this->m_hltSpecificHeat_calGC      , val); }
-void Equipment::setLauterTunSpecificHeat_calGC(std::optional<double> const   val) { this->setAndNotify(PropertyNames::Equipment::lauterTunSpecificHeat_calGC, this->m_lauterTunSpecificHeat_calGC, val); }
-void Equipment::setKettleSpecificHeat_calGC   (std::optional<double> const   val) { this->setAndNotify(PropertyNames::Equipment::kettleSpecificHeat_calGC   , this->m_kettleSpecificHeat_calGC   , val); }
-void Equipment::setHltNotes                   (QString               const & val) { this->setAndNotify(PropertyNames::Equipment::hltNotes                   , this->m_hltNotes                   , val); }
-void Equipment::setMashTunNotes               (QString               const & val) { this->setAndNotify(PropertyNames::Equipment::mashTunNotes               , this->m_mashTunNotes               , val); }
-void Equipment::setLauterTunNotes             (QString               const & val) { this->setAndNotify(PropertyNames::Equipment::lauterTunNotes             , this->m_lauterTunNotes             , val); }
-void Equipment::setFermenterNotes             (QString               const & val) { this->setAndNotify(PropertyNames::Equipment::fermenterNotes             , this->m_fermenterNotes             , val); }
-void Equipment::setAgingVesselNotes           (QString               const & val) { this->setAndNotify(PropertyNames::Equipment::agingVesselNotes           , this->m_agingVesselNotes           , val); }
-void Equipment::setPackagingVesselNotes       (QString               const & val) { this->setAndNotify(PropertyNames::Equipment::packagingVesselNotes       , this->m_packagingVesselNotes       , val); }
+void Equipment::setHltType                    (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Equipment::hltType                    , this->m_hltType                    , val); }
+void Equipment::setMashTunType                (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Equipment::mashTunType                , this->m_mashTunType                , val); }
+void Equipment::setLauterTunType              (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Equipment::lauterTunType              , this->m_lauterTunType              , val); }
+void Equipment::setKettleType                 (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Equipment::kettleType                 , this->m_kettleType                 , val); }
+void Equipment::setFermenterType              (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Equipment::fermenterType              , this->m_fermenterType              , val); }
+void Equipment::setAgingVesselType            (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Equipment::agingVesselType            , this->m_agingVesselType            , val); }
+void Equipment::setPackagingVesselType        (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Equipment::packagingVesselType        , this->m_packagingVesselType        , val); }
+void Equipment::setHltVolume_l                (double                const   val) { SET_AND_NOTIFY(PropertyNames::Equipment::hltVolume_l                , this->m_hltVolume_l                , val); }
+void Equipment::setLauterTunVolume_l          (double                const   val) { SET_AND_NOTIFY(PropertyNames::Equipment::lauterTunVolume_l          , this->m_lauterTunVolume_l          , val); }
+void Equipment::setAgingVesselVolume_l        (double                const   val) { SET_AND_NOTIFY(PropertyNames::Equipment::agingVesselVolume_l        , this->m_agingVesselVolume_l        , val); }
+void Equipment::setPackagingVesselVolume_l    (double                const   val) { SET_AND_NOTIFY(PropertyNames::Equipment::packagingVesselVolume_l    , this->m_packagingVesselVolume_l    , val); }
+void Equipment::setHltLoss_l                  (double                const   val) { SET_AND_NOTIFY(PropertyNames::Equipment::hltLoss_l                  , this->m_hltLoss_l                  , val); }
+void Equipment::setMashTunLoss_l              (double                const   val) { SET_AND_NOTIFY(PropertyNames::Equipment::mashTunLoss_l              , this->m_mashTunLoss_l              , val); }
+void Equipment::setFermenterLoss_l            (double                const   val) { SET_AND_NOTIFY(PropertyNames::Equipment::fermenterLoss_l            , this->m_fermenterLoss_l            , val); }
+void Equipment::setAgingVesselLoss_l          (double                const   val) { SET_AND_NOTIFY(PropertyNames::Equipment::agingVesselLoss_l          , this->m_agingVesselLoss_l          , val); }
+void Equipment::setPackagingVesselLoss_l      (double                const   val) { SET_AND_NOTIFY(PropertyNames::Equipment::packagingVesselLoss_l      , this->m_packagingVesselLoss_l      , val); }
+void Equipment::setKettleOutflowPerMinute_l   (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Equipment::kettleOutflowPerMinute_l   , this->m_kettleOutflowPerMinute_l   , val); }
+void Equipment::setHltWeight_kg               (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Equipment::hltWeight_kg               , this->m_hltWeight_kg               , val); }
+void Equipment::setLauterTunWeight_kg         (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Equipment::lauterTunWeight_kg         , this->m_lauterTunWeight_kg         , val); }
+void Equipment::setKettleWeight_kg            (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Equipment::kettleWeight_kg            , this->m_kettleWeight_kg            , val); }
+void Equipment::setHltSpecificHeat_calGC      (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Equipment::hltSpecificHeat_calGC      , this->m_hltSpecificHeat_calGC      , val); }
+void Equipment::setLauterTunSpecificHeat_calGC(std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Equipment::lauterTunSpecificHeat_calGC, this->m_lauterTunSpecificHeat_calGC, val); }
+void Equipment::setKettleSpecificHeat_calGC   (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Equipment::kettleSpecificHeat_calGC   , this->m_kettleSpecificHeat_calGC   , val); }
+void Equipment::setHltNotes                   (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Equipment::hltNotes                   , this->m_hltNotes                   , val); }
+void Equipment::setMashTunNotes               (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Equipment::mashTunNotes               , this->m_mashTunNotes               , val); }
+void Equipment::setLauterTunNotes             (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Equipment::lauterTunNotes             , this->m_lauterTunNotes             , val); }
+void Equipment::setFermenterNotes             (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Equipment::fermenterNotes             , this->m_fermenterNotes             , val); }
+void Equipment::setAgingVesselNotes           (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Equipment::agingVesselNotes           , this->m_agingVesselNotes           , val); }
+void Equipment::setPackagingVesselNotes       (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Equipment::packagingVesselNotes       , this->m_packagingVesselNotes       , val); }
 
 
 void Equipment::doCalculations() {

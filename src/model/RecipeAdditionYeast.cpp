@@ -141,7 +141,7 @@ void RecipeAdditionYeast::setYeast(Yeast * const val) {
 }
 
 void RecipeAdditionYeast::setAttenuation_pct(std::optional<double> const val) {
-   this->setAndNotify(PropertyNames::RecipeAdditionYeast::attenuation_pct,
+   SET_AND_NOTIFY(PropertyNames::RecipeAdditionYeast::attenuation_pct,
                       m_attenuation_pct,
                       this->enforceMinAndMax(val, "pct attenuation", 0.0, 100.0, 0.0));
    return;

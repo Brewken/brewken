@@ -67,7 +67,7 @@ FermentationStep::~FermentationStep() = default;
 QString FermentationStep::vessel() const { return this->m_vessel; }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void FermentationStep::setVessel(QString const & val) { this->setAndNotify(PropertyNames::FermentationStep::vessel, this->m_vessel, val ); return; }
+void FermentationStep::setVessel(QString const & val) { SET_AND_NOTIFY(PropertyNames::FermentationStep::vessel, this->m_vessel, val ); return; }
 
 // Insert boiler-plate wrapper functions that call down to StepBase
 STEP_COMMON_CODE(Fermentation)

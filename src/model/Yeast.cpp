@@ -279,36 +279,36 @@ std::optional<bool>                Yeast::killerNeutral            () const { re
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
 // It seems a bit of overkill to enforce absolute zero as the lowest allowable temperature, but we do
-void Yeast::setType                     (Yeast::Type                 const   val) { this->setAndNotify(PropertyNames::Yeast::type                     , m_type            , val); return; }
-void Yeast::setForm                     (Yeast::Form                 const   val) { this->setAndNotify(PropertyNames::Yeast::form                     , m_form            , val); return; }
-///void Yeast::setAmount                   (double                      const   val) { this->setAndNotify(PropertyNames::Yeast::amount                   , m_amount          , this->enforceMin      (val, "amount"         , 0.0)); return; }
-///void Yeast::setAmountIsWeight           (bool                        const   val) { this->setAndNotify(PropertyNames::Yeast::amountIsWeight           , m_amountIsWeight  , val); return; }
-void Yeast::setLaboratory               (QString                     const & val) { this->setAndNotify(PropertyNames::Yeast::laboratory               , m_laboratory      , val); return; }
-void Yeast::setProductId                (QString                     const & val) { this->setAndNotify(PropertyNames::Yeast::productId                , m_productId       , val); return; }
-void Yeast::setMinTemperature_c         (std::optional<double>       const   val) { this->setAndNotify(PropertyNames::Yeast::minTemperature_c         , m_minTemperature_c, this->enforceMin      (val, "max temp"       , PhysicalConstants::absoluteZero, 0.0  )); return; }
-void Yeast::setMaxTemperature_c         (std::optional<double>       const   val) { this->setAndNotify(PropertyNames::Yeast::maxTemperature_c         , m_maxTemperature_c, this->enforceMin      (val, "max temp"       , PhysicalConstants::absoluteZero, 0.0  )); return; }
-void Yeast::setFlocculation             (std::optional<Flocculation> const   val) { this->setAndNotify(PropertyNames::Yeast::flocculation             , m_flocculation    , val); return; }
-void Yeast::setFlocculationAsInt        (std::optional<int>          const   val) { this->setAndNotify(PropertyNames::Yeast::flocculation             , m_flocculation    , Optional::fromOptInt<Flocculation>(val)); return; }
-void Yeast::setNotes                    (QString                     const & val) { this->setAndNotify(PropertyNames::Yeast::notes                    , m_notes           , val); return; }
-void Yeast::setBestFor                  (QString                     const & val) { this->setAndNotify(PropertyNames::Yeast::bestFor                  , m_bestFor         , val); return; }
-void Yeast::setTimesCultured            (std::optional<int>          const   val) { this->setAndNotify(PropertyNames::Yeast::timesCultured            , m_timesCultured   , this->enforceMin      (val, "times cultured" )); return; }
-void Yeast::setMaxReuse                 (std::optional<int>          const   val) { this->setAndNotify(PropertyNames::Yeast::maxReuse                 , m_maxReuse        , this->enforceMin      (val, "max reuse"      )); return; }
-///void Yeast::setAddToSecondary           (std::optional<bool>         const   val) { this->setAndNotify(PropertyNames::Yeast::addToSecondary           , m_addToSecondary  , val); return; }
+void Yeast::setType                     (Yeast::Type                 const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::type                     , m_type            , val); return; }
+void Yeast::setForm                     (Yeast::Form                 const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::form                     , m_form            , val); return; }
+///void Yeast::setAmount                   (double                      const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::amount                   , m_amount          , this->enforceMin      (val, "amount"         , 0.0)); return; }
+///void Yeast::setAmountIsWeight           (bool                        const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::amountIsWeight           , m_amountIsWeight  , val); return; }
+void Yeast::setLaboratory               (QString                     const & val) { SET_AND_NOTIFY(PropertyNames::Yeast::laboratory               , m_laboratory      , val); return; }
+void Yeast::setProductId                (QString                     const & val) { SET_AND_NOTIFY(PropertyNames::Yeast::productId                , m_productId       , val); return; }
+void Yeast::setMinTemperature_c         (std::optional<double>       const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::minTemperature_c         , m_minTemperature_c, this->enforceMin      (val, "max temp"       , PhysicalConstants::absoluteZero, 0.0  )); return; }
+void Yeast::setMaxTemperature_c         (std::optional<double>       const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::maxTemperature_c         , m_maxTemperature_c, this->enforceMin      (val, "max temp"       , PhysicalConstants::absoluteZero, 0.0  )); return; }
+void Yeast::setFlocculation             (std::optional<Flocculation> const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::flocculation             , m_flocculation    , val); return; }
+void Yeast::setFlocculationAsInt        (std::optional<int>          const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::flocculation             , m_flocculation    , Optional::fromOptInt<Flocculation>(val)); return; }
+void Yeast::setNotes                    (QString                     const & val) { SET_AND_NOTIFY(PropertyNames::Yeast::notes                    , m_notes           , val); return; }
+void Yeast::setBestFor                  (QString                     const & val) { SET_AND_NOTIFY(PropertyNames::Yeast::bestFor                  , m_bestFor         , val); return; }
+void Yeast::setTimesCultured            (std::optional<int>          const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::timesCultured            , m_timesCultured   , this->enforceMin      (val, "times cultured" )); return; }
+void Yeast::setMaxReuse                 (std::optional<int>          const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::maxReuse                 , m_maxReuse        , this->enforceMin      (val, "max reuse"      )); return; }
+///void Yeast::setAddToSecondary           (std::optional<bool>         const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::addToSecondary           , m_addToSecondary  , val); return; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-void Yeast::setAlcoholTolerance_pct     (std::optional<double>       const   val) { this->setAndNotify(PropertyNames::Yeast::alcoholTolerance_pct     , m_alcoholTolerance_pct     , val); return; }
-void Yeast::setAttenuationMin_pct       (std::optional<double>       const   val) { this->setAndNotify(PropertyNames::Yeast::attenuationMin_pct       , m_attenuationMin_pct       , val); return; }
-void Yeast::setAttenuationMax_pct       (std::optional<double>       const   val) { this->setAndNotify(PropertyNames::Yeast::attenuationMax_pct       , m_attenuationMax_pct       , val); return; }
-void Yeast::setPhenolicOffFlavorPositive(std::optional<bool>         const   val) { this->setAndNotify(PropertyNames::Yeast::phenolicOffFlavorPositive, m_phenolicOffFlavorPositive, val); return; }
-void Yeast::setGlucoamylasePositive     (std::optional<bool>         const   val) { this->setAndNotify(PropertyNames::Yeast::glucoamylasePositive     , m_glucoamylasePositive     , val); return; }
-void Yeast::setKillerProducingK1Toxin   (std::optional<bool>         const   val) { this->setAndNotify(PropertyNames::Yeast::killerProducingK1Toxin   , m_killerProducingK1Toxin   , val); return; }
-void Yeast::setKillerProducingK2Toxin   (std::optional<bool>         const   val) { this->setAndNotify(PropertyNames::Yeast::killerProducingK2Toxin   , m_killerProducingK2Toxin   , val); return; }
-void Yeast::setKillerProducingK28Toxin  (std::optional<bool>         const   val) { this->setAndNotify(PropertyNames::Yeast::killerProducingK28Toxin  , m_killerProducingK28Toxin  , val); return; }
-void Yeast::setKillerProducingKlusToxin (std::optional<bool>         const   val) { this->setAndNotify(PropertyNames::Yeast::killerProducingKlusToxin , m_killerProducingKlusToxin , val); return; }
-void Yeast::setKillerNeutral            (std::optional<bool>         const   val) { this->setAndNotify(PropertyNames::Yeast::killerNeutral            , m_killerNeutral            , val); return; }
+void Yeast::setAlcoholTolerance_pct     (std::optional<double>       const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::alcoholTolerance_pct     , m_alcoholTolerance_pct     , val); return; }
+void Yeast::setAttenuationMin_pct       (std::optional<double>       const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::attenuationMin_pct       , m_attenuationMin_pct       , val); return; }
+void Yeast::setAttenuationMax_pct       (std::optional<double>       const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::attenuationMax_pct       , m_attenuationMax_pct       , val); return; }
+void Yeast::setPhenolicOffFlavorPositive(std::optional<bool>         const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::phenolicOffFlavorPositive, m_phenolicOffFlavorPositive, val); return; }
+void Yeast::setGlucoamylasePositive     (std::optional<bool>         const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::glucoamylasePositive     , m_glucoamylasePositive     , val); return; }
+void Yeast::setKillerProducingK1Toxin   (std::optional<bool>         const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::killerProducingK1Toxin   , m_killerProducingK1Toxin   , val); return; }
+void Yeast::setKillerProducingK2Toxin   (std::optional<bool>         const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::killerProducingK2Toxin   , m_killerProducingK2Toxin   , val); return; }
+void Yeast::setKillerProducingK28Toxin  (std::optional<bool>         const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::killerProducingK28Toxin  , m_killerProducingK28Toxin  , val); return; }
+void Yeast::setKillerProducingKlusToxin (std::optional<bool>         const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::killerProducingKlusToxin , m_killerProducingKlusToxin , val); return; }
+void Yeast::setKillerNeutral            (std::optional<bool>         const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::killerNeutral            , m_killerNeutral            , val); return; }
 
 ///void Yeast::setAmountWithUnits (MassOrVolumeAmt     const   val) {
-///   this->setAndNotify(PropertyNames::Yeast::amount        , this->m_amount        , val.quantity);
-///   this->setAndNotify(PropertyNames::Yeast::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
+///   SET_AND_NOTIFY(PropertyNames::Yeast::amount        , this->m_amount        , val.quantity);
+///   SET_AND_NOTIFY(PropertyNames::Yeast::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
 ///   return;
 ///}
 

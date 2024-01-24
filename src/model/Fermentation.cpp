@@ -80,8 +80,8 @@ QString Fermentation::description() const { return this->m_description; }
 QString Fermentation::notes      () const { return this->m_notes      ; }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void Fermentation::setDescription (QString const & val) { this->setAndNotify(PropertyNames::Fermentation::description, this->m_description, val); return; }
-void Fermentation::setNotes       (QString const & val) { this->setAndNotify(PropertyNames::Fermentation::notes      , this->m_notes      , val); return; }
+void Fermentation::setDescription (QString const & val) { SET_AND_NOTIFY(PropertyNames::Fermentation::description, this->m_description, val); return; }
+void Fermentation::setNotes       (QString const & val) { SET_AND_NOTIFY(PropertyNames::Fermentation::notes      , this->m_notes      , val); return; }
 
 void Fermentation::acceptStepChange([[maybe_unused]] QMetaProperty prop,
                                     [[maybe_unused]] QVariant      val) {

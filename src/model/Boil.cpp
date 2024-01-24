@@ -98,10 +98,10 @@ std::optional<double> Boil::preBoilSize_l() const { return this->m_preBoilSize_l
 double                Boil::boilTime_mins() const { return this->m_boilTime_mins; }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void Boil::setDescription  (QString               const & val) { this->setAndNotify(PropertyNames::Boil::description  , this->m_description  , val); return; }
-void Boil::setNotes        (QString               const & val) { this->setAndNotify(PropertyNames::Boil::notes        , this->m_notes        , val); return; }
-void Boil::setPreBoilSize_l(std::optional<double> const   val) { this->setAndNotify(PropertyNames::Boil::preBoilSize_l, this->m_preBoilSize_l, val); return; }
-void Boil::setBoilTime_mins(double                const   val) { this->setAndNotify(PropertyNames::Boil::boilTime_mins, this->m_boilTime_mins, val); return; }
+void Boil::setDescription  (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Boil::description  , this->m_description  , val); return; }
+void Boil::setNotes        (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Boil::notes        , this->m_notes        , val); return; }
+void Boil::setPreBoilSize_l(std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Boil::preBoilSize_l, this->m_preBoilSize_l, val); return; }
+void Boil::setBoilTime_mins(double                const   val) { SET_AND_NOTIFY(PropertyNames::Boil::boilTime_mins, this->m_boilTime_mins, val); return; }
 
 void Boil::acceptStepChange([[maybe_unused]] QMetaProperty prop,
                             [[maybe_unused]] QVariant      val) {
