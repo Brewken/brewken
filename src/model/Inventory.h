@@ -137,10 +137,10 @@ public:
     */
    virtual char const * getIngredientClass() const = 0;
 
-   /**
-    * TBD: This is needed because NamedEntity has it, but I'd like to refactor it out at some point.
-    */
-   virtual Recipe * getOwningRecipe() const;
+///   /**
+///    * TBD: This is needed because NamedEntity has it, but I'd like to refactor it out at some point.
+///    */
+///   virtual Recipe * getOwningRecipe() const;
 
    /**
     * \brief We need this for ObjectStoreTyped to call

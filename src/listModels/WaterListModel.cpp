@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * listModels/WaterListModel.cpp is part of Brewken, and is copyright the following authors 2020-2023:
+ * listModels/WaterListModel.cpp is part of Brewken, and is copyright the following authors 2020-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -17,4 +17,4 @@
 #include "listModels/WaterListModel.h"
 
 // Insert the boiler-plate stuff that we cannot do in ListModelBase
-LIST_MODEL_COMMON_CODE(Water, PropertyNames::Recipe::waters)
+LIST_MODEL_COMMON_CODE(Water, PropertyNames::Recipe::waterUses)

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Equipment.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/Equipment.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -103,12 +103,12 @@ TypeLookup const Equipment::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::packagingVesselNotes       , Equipment::m_packagingVesselNotes       ,           NonPhysicalQuantity::String              ),
    },
    // Parent class lookup
-   {&NamedEntity::typeLookup}
+   {&NamedEntityWithFolder::typeLookup}
 };
 
 //=============================CONSTRUCTORS=====================================
 Equipment::Equipment(QString name) :
-   NamedEntity                  {name, true},
+   NamedEntityWithFolder        {name, true},
    m_kettleBoilSize_l           {22.927      },
    m_fermenterBatchSize_l       {18.927      },
    m_mashTunVolume_l            {0.0         },
@@ -166,7 +166,7 @@ Equipment::Equipment(QString name) :
 //    - boilingPoint_c
 //
 Equipment::Equipment(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity{namedParameterBundle},
+   NamedEntityWithFolder{namedParameterBundle},
    SET_REGULAR_FROM_NPB (m_kettleBoilSize_l           , namedParameterBundle, PropertyNames::Equipment::kettleBoilSize_l           ),
    SET_REGULAR_FROM_NPB (m_fermenterBatchSize_l       , namedParameterBundle, PropertyNames::Equipment::fermenterBatchSize_l       ),
    SET_REGULAR_FROM_NPB (m_mashTunVolume_l            , namedParameterBundle, PropertyNames::Equipment::mashTunVolume_l            ),
@@ -218,7 +218,7 @@ Equipment::Equipment(NamedParameterBundle const & namedParameterBundle) :
 }
 
 Equipment::Equipment(Equipment const & other) :
-   NamedEntity                  {other                              },
+   NamedEntityWithFolder        {other                              },
    m_kettleBoilSize_l           {other.m_kettleBoilSize_l           },
    m_fermenterBatchSize_l       {other.m_fermenterBatchSize_l       },
    m_mashTunVolume_l            {other.m_mashTunVolume_l            },
@@ -427,8 +427,8 @@ double Equipment::wortEndOfBoil_l( double kettleWort_l ) const {
    return kettleWort_l - (boilTime_min().value_or(Equipment::default_boilTime_min)/(double)60)*kettleEvaporationPerHour_l().value_or(Equipment::default_kettleEvaporationPerHour_l);
 }
 
-// Although it's a similar one-liner implementation for many subclasses of NamedEntity, we can't push the
-// implementation of this down to the base class, as Recipe::uses() is templated and won't work with type erasure.
-Recipe * Equipment::getOwningRecipe() const {
-   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
-}
+///// Although it's a similar one-liner implementation for many subclasses of NamedEntity, we can't push the
+///// implementation of this down to the base class, as Recipe::uses() is templated and won't work with type erasure.
+///Recipe * Equipment::getOwningRecipe() const {
+///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+///}

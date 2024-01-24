@@ -317,7 +317,7 @@ public:
    // Insert boiler-plate declarations for inventory
 ///   INVENTORY_COMMON_HEADER_DECLS
 
-   virtual Recipe * getOwningRecipe() const;
+///   virtual Recipe * getOwningRecipe() const;
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;

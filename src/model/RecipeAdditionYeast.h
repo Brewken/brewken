@@ -92,7 +92,7 @@ public:
    void setAttenuation_pct(std::optional<double> const val); // ⮜⮜⮜ Optional in BeerJSON and BeerXML ⮞⮞⮞
    void setAddToSecondary (std::optional<bool  > const val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
 
-   virtual Recipe * getOwningRecipe() const;
+///   virtual Recipe * getOwningRecipe() const;
 
    virtual NamedEntity * ensureExists(BtStringConst const & property);
 

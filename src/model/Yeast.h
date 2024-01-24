@@ -348,7 +348,7 @@ public:
     */
    double getTypicalAttenuation_pct() const;
 
-   virtual Recipe * getOwningRecipe() const;
+///   virtual Recipe * getOwningRecipe() const;
 
 signals:
 

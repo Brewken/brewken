@@ -711,7 +711,7 @@
     </message>
     <message>
         <source>Use</source>
-        <translation>Felhasználás</translation>
+        <translation type="vanished">Felhasználás</translation>
     </message>
     <message>
         <source>Form</source>
@@ -2047,6 +2047,20 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
+    <name>InventoryMisc</name>
+    <message>
+        <source>Misc Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>InventoryYeast</name>
+    <message>
+        <source>Yeast Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Open</source>
@@ -2245,22 +2259,6 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Drop fermentables on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop hops on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop misc on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop yeast on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Recipe Efficiency</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2274,14 +2272,6 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Redo %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove misc from recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove yeast from recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2326,6 +2316,22 @@ If you didn&apos;t yet do this, click Abort.</source>
 See logs for more details.
 
 If you need help, please open an issue at %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop fermentable(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop hop(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop misc(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop yeast(s) on a recipe</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2556,23 +2562,23 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Boil</source>
-        <translation type="unfinished">Forralás</translation>
+        <translation type="obsolete">Forralás</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished">Cefre</translation>
+        <translation type="obsolete">Cefre</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation type="unfinished">Elsődleges</translation>
+        <translation type="obsolete">Elsődleges</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation type="unfinished">Másodlagos</translation>
+        <translation type="obsolete">Másodlagos</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation type="unfinished">Palackozás</translation>
+        <translation type="obsolete">Palackozás</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -2704,15 +2710,15 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Use</source>
-        <translation>Felhasználás</translation>
+        <translation type="vanished">Felhasználás</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Idõ</translation>
+        <translation type="vanished">Idõ</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Mennyiség</translation>
+        <translation type="vanished">Mennyiség</translation>
     </message>
     <message>
         <source>Amount Type</source>
@@ -2724,19 +2730,15 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Mennyiség</translation>
+        <translation type="obsolete">Mennyiség</translation>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Súly</translation>
+        <translation type="obsolete">Súly</translation>
     </message>
 </context>
 <context>
     <name>NE</name>
-    <message>
-        <source>Add %1 to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Change %1 %2</source>
         <translation type="unfinished"></translation>
@@ -2750,9 +2752,9 @@ If you need help, please open an issue at %1</source>
     </message>
 </context>
 <context>
-    <name>NamedEntityWithInventory</name>
+    <name>NamedEntityWithFolder</name>
     <message>
-        <source>Named Entity With Inventory</source>
+        <source>Named Entity With Folder</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2760,7 +2762,7 @@ If you need help, please open an issue at %1</source>
     <name>OldInventory</name>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Készlet</translation>
+        <translation type="obsolete">Készlet</translation>
     </message>
 </context>
 <context>
@@ -4354,20 +4356,8 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="unfinished">Cefre</translation>
     </message>
     <message>
-        <source>First Wort</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Boil</source>
         <translation type="unfinished">Forralás</translation>
-    </message>
-    <message>
-        <source>Post-Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dry Misc</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Addition of %1</source>
@@ -4376,6 +4366,18 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Invalid!</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Primary</source>
+        <translation type="unfinished">Elsődleges</translation>
+    </message>
+    <message>
+        <source>Secondary</source>
+        <translation type="unfinished">Másodlagos</translation>
+    </message>
+    <message>
+        <source>Bottling</source>
+        <translation type="unfinished">Palackozás</translation>
     </message>
 </context>
 <context>
@@ -4386,15 +4388,11 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished">Forma</translation>
+        <translation type="obsolete">Forma</translation>
     </message>
     <message>
         <source>Alpha %</source>
-        <translation type="unfinished">Alfasav %</translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Alfasav %</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -4416,6 +4414,10 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <source>Time</source>
         <translation type="unfinished">Idõ</translation>
     </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAdditionYeast</name>
@@ -4425,23 +4427,11 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished">Cefre</translation>
-    </message>
-    <message>
-        <source>First Wort</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Cefre</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation type="unfinished">Forralás</translation>
-    </message>
-    <message>
-        <source>Post-Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dry Yeast</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Forralás</translation>
     </message>
     <message>
         <source>Addition of %1</source>
@@ -4464,11 +4454,7 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Alpha %</source>
-        <translation type="unfinished">Alfasav %</translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Alfasav %</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -4488,7 +4474,23 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished">Idõ</translation>
+        <translation type="obsolete">Idõ</translation>
+    </message>
+    <message>
+        <source>Laboratory</source>
+        <translation type="unfinished">Laboratórium</translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">Termékazonosító</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation type="unfinished">Lépés</translation>
     </message>
 </context>
 <context>
@@ -4866,6 +4868,13 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Add During</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeUseOfWater</name>
+    <message>
+        <source>Recipe Use Of Water</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5712,7 +5721,7 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Mennyiség</translation>
+        <translation type="vanished">Mennyiség</translation>
     </message>
     <message>
         <source>Laboratory</source>
@@ -5725,6 +5734,10 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Inventory</source>
         <translation>Készlet</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Mennyiségi egység</translation>
     </message>
 </context>
 <context>
@@ -7945,7 +7958,7 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Use</source>
-        <translation>Felhasználás</translation>
+        <translation type="vanished">Felhasználás</translation>
     </message>
     <message>
         <source>Boil</source>
@@ -8034,6 +8047,14 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Product ID</source>
         <translation type="unfinished">Termékazonosító</translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Mennyiségi egység</translation>
     </message>
 </context>
 <context>
@@ -9332,14 +9353,6 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="vanished">Mennyiségi alapérték</translation>
     </message>
     <message>
-        <source>Quanta in Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Quanta in inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Main</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9450,6 +9463,22 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Neutral strains do not produce toxins, nor are they killed by them</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount in Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount in inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Mennyiségi egység</translation>
     </message>
 </context>
 </TS>

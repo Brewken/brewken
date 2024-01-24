@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/WaterTableModel.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * tableModels/WaterTableModel.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -50,7 +50,7 @@ class WaterTableModel : public BtTableModelRecipeObserver, public BtTableModelDa
 public:
    enum class ColumnIndex {
       Name       ,
-      Amount     ,
+///      Amount     ,
       Calcium    ,
       Bicarbonate,
       Sulfate    ,

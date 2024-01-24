@@ -147,7 +147,7 @@ bool RecipeAdditionHop::isFirstWort() const {
    // First Wort must be the first step of the boil, during ramp-up from mashout and before the boil proper
    if (!this->step() || *this->step() != 1) { return false; }
 
-   Recipe const * recipe = this->getOwningRecipe();
+   Recipe const * recipe = ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
    if (!recipe->boil()) { return false; }
 
    auto boil = *recipe->boil();
@@ -169,7 +169,8 @@ bool RecipeAdditionHop::isAroma() const {
    // Aroma must be after the first step of the boil
    if (!this->step() || *this->step() == 1) { return false; }
 
-   Recipe const * recipe = this->getOwningRecipe();
+   Recipe const * recipe = ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
+
    if (!recipe->boil()) { return false; }
 
    auto boil = *recipe->boil();
@@ -190,9 +191,9 @@ bool RecipeAdditionHop::isAroma() const {
    return true;
 }
 
-Recipe * RecipeAdditionHop::getOwningRecipe() const {
-   return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
-}
+///Recipe * RecipeAdditionHop::getOwningRecipe() const {
+///   return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
+///}
 
 NamedEntity * RecipeAdditionHop::ensureExists(BtStringConst const & property) {
    if (property == PropertyNames::RecipeAdditionHop::hop) {

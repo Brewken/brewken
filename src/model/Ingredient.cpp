@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Ingredient.cpp is part of Brewken, and is copyright the following authors 2023:
+ * model/Ingredient.cpp is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -26,21 +26,21 @@ TypeLookup const Ingredient::typeLookup {
       // BtFieldType value for it depends on the Ingredient subclass.  Hence, it is instead done in IngredientBase.
    },
    // Parent class lookup
-   {&NamedEntity::typeLookup}
+   {&NamedEntityWithFolder::typeLookup}
 };
 
 Ingredient::Ingredient(QString name) :
-   NamedEntity{name, true} {
+   NamedEntityWithFolder{name, true} {
    return;
 }
 
 Ingredient::Ingredient(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity{namedParameterBundle} {
+   NamedEntityWithFolder{namedParameterBundle} {
    return;
 }
 
 Ingredient::Ingredient(Ingredient const & other) :
-   NamedEntity{other} {
+   NamedEntityWithFolder{other} {
    return;
 }
 

@@ -34,6 +34,7 @@
 #include "model/RecipeAdditionHop.h"
 #include "model/RecipeAdditionMisc.h"
 #include "model/RecipeAdditionYeast.h"
+#include "model/RecipeUseOfWater.h"
 #include "model/Water.h"
 #include "model/Yeast.h"
 #include "NamedEntitySortProxyModel.h"
@@ -107,8 +108,8 @@ void ScaleRecipeTool::scale(Equipment* equip, double newEff) {
       miscAddition->setQuantity(miscAddition->quantity() * volRatio);
    }
 
-   for (auto water : this->recObs->waters()) {
-      water->setAmount(water->amount() * volRatio);
+   for (auto waterUse : this->recObs->waterUses()) {
+      waterUse->setVolume_l(waterUse->volume_l() * volRatio);
    }
 
    Mash* mash = this->recObs->mash();

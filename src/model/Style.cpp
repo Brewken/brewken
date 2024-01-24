@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Style.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/Style.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -94,14 +94,14 @@ TypeLookup const Style::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::overallImpression, Style::m_overallImpression,           NonPhysicalQuantity::String     ),
    },
    // Parent class lookup
-   {&NamedEntity::typeLookup}
+   {&NamedEntityWithFolder::typeLookup}
 };
 
 //====== Constructors =========
 
 // suitable for something that will be written to the db later
 Style::Style(QString name) :
-   NamedEntity        {name, true       },
+   NamedEntityWithFolder{name, true       },
    m_category         {""               },
    m_categoryNumber   {""               },
    m_styleLetter      {""               },
@@ -133,7 +133,7 @@ Style::Style(QString name) :
 }
 
 Style::Style(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity        {namedParameterBundle},
+   NamedEntityWithFolder{namedParameterBundle},
    SET_REGULAR_FROM_NPB (m_category         , namedParameterBundle, PropertyNames::Style::category         ),
    SET_REGULAR_FROM_NPB (m_categoryNumber   , namedParameterBundle, PropertyNames::Style::categoryNumber   ),
    SET_REGULAR_FROM_NPB (m_styleLetter      , namedParameterBundle, PropertyNames::Style::styleLetter      ),
@@ -165,7 +165,7 @@ Style::Style(NamedParameterBundle const & namedParameterBundle) :
 }
 
 Style::Style(Style const & other) :
-   NamedEntity{other},
+   NamedEntityWithFolder{other},
    m_category         {other.m_category         },
    m_categoryNumber   {other.m_categoryNumber   },
    m_styleLetter      {other.m_styleLetter      },
@@ -256,6 +256,6 @@ void Style::setFlavor           (QString               const & val) { this->setA
 void Style::setMouthfeel        (QString               const & val) { this->setAndNotify(PropertyNames::Style::mouthfeel        , this->m_mouthfeel        , val); }
 void Style::setOverallImpression(QString               const & val) { this->setAndNotify(PropertyNames::Style::overallImpression, this->m_overallImpression, val); }
 
-Recipe * Style::getOwningRecipe() const {
-   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
-}
+///Recipe * Style::getOwningRecipe() const {
+///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+///}

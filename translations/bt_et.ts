@@ -498,10 +498,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Use</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1339,6 +1335,20 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
+    <name>InventoryMisc</name>
+    <message>
+        <source>Misc Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>InventoryYeast</name>
+    <message>
+        <source>Yeast Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Equipment request</source>
@@ -1489,22 +1499,6 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Drop fermentables on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop hops on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop misc on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop yeast on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Recipe Efficiency</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1518,14 +1512,6 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Redo %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove misc from recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove yeast from recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1574,6 +1560,22 @@ If you didn&apos;t yet do this, click Abort.</source>
 See logs for more details.
 
 If you need help, please open an issue at %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop fermentable(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop hop(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop misc(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop yeast(s) on a recipe</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1795,26 +1797,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Primary</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Secondary</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bottling</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Wood</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1834,16 +1816,8 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Use</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Time</source>
-        <translation>Kestus</translation>
-    </message>
-    <message>
-        <source>Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Kestus</translation>
     </message>
     <message>
         <source>Amount Type</source>
@@ -1853,21 +1827,9 @@ If you need help, please open an issue at %1</source>
         <source>Inventory</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Weight</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>NE</name>
-    <message>
-        <source>Add %1 to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Change %1 %2</source>
         <translation type="unfinished"></translation>
@@ -1881,16 +1843,9 @@ If you need help, please open an issue at %1</source>
     </message>
 </context>
 <context>
-    <name>NamedEntityWithInventory</name>
+    <name>NamedEntityWithFolder</name>
     <message>
-        <source>Named Entity With Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>OldInventory</name>
-    <message>
-        <source>Inventory</source>
+        <source>Named Entity With Folder</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3290,19 +3245,7 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>First Wort</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Post-Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dry Misc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3313,23 +3256,23 @@ The final volume in the primary is %1.</source>
         <source>Invalid!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Primary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Secondary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bottling</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAdditionMiscTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Alpha %</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Year</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3352,31 +3295,15 @@ The final volume in the primary is %1.</source>
         <source>Time</source>
         <translation type="unfinished">Kestus</translation>
     </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAdditionYeast</name>
     <message>
         <source>Yeast Addition</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>First Wort</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Post-Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dry Yeast</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3399,14 +3326,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Alpha %</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3424,7 +3343,23 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished">Kestus</translation>
+        <translation type="obsolete">Kestus</translation>
+    </message>
+    <message>
+        <source>Laboratory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation type="unfinished">Samm</translation>
     </message>
 </context>
 <context>
@@ -3798,6 +3733,13 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Add During</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeUseOfWater</name>
+    <message>
+        <source>Recipe Use Of Water</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4505,10 +4447,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Laboratory</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4518,6 +4456,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6310,10 +6252,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Use</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Time</source>
         <translation>Kestus</translation>
     </message>
@@ -6367,6 +6305,14 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Product ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7554,14 +7500,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Quanta in Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Quanta in inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Main</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7671,6 +7609,22 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Neutral strains do not produce toxins, nor are they killed by them</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount in Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount in inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * WaterButton.cpp is part of Brewken, and is copyright the following authors 2020:
+ * WaterButton.cpp is part of Brewken, and is copyright the following authors 2020-2024:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,48 +14,48 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-
 #include "WaterButton.h"
-#include "model/Water.h"
-#include "model/Recipe.h"
+
 #include <QWidget>
 
-WaterButton::WaterButton(QWidget* parent)
-   : QPushButton(parent),
-     m_rec(nullptr),
-     m_water(nullptr)
-{
+#include "model/Recipe.h"
+#include "model/RecipeUseOfWater.h"
+#include "model/Water.h"
+
+WaterButton::WaterButton(QWidget * parent) : QPushButton(parent), m_rec(nullptr), m_water(nullptr) {
+   return;
 }
 
-void WaterButton::setRecipe(Recipe* rec)
-{
+WaterButton::~WaterButton() = default;
+
+void WaterButton::setRecipe(Recipe * rec) {
    if (m_rec) {
       disconnect( m_rec, nullptr, this, nullptr );
    }
 
    m_rec = rec;
-   if ( m_rec && m_rec->waters().size() > 0 ) {
+   if (m_rec && m_rec->waterUses().size() > 0 ) {
       connect( m_rec, &NamedEntity::changed, this, &WaterButton::recChanged );
-      setWater( m_rec->waters().at(0) );
-   }
-   else {
+      this->setWater(m_rec->waterUses().at(0)->water());
+   } else {
       setWater(nullptr);
    }
+   return;
 }
 
-void WaterButton::setWater(Water* water)
-{
-   if ( m_water )
+void WaterButton::setWater(Water * water) {
+   if ( m_water ) {
       disconnect( m_water, nullptr, this, nullptr );
+   }
 
    m_water = water;
    if ( m_water ) {
       connect( m_water, &NamedEntity::changed, this, &WaterButton::waterChanged );
       setText( m_water->name() );
-   }
-   else {
+   } else {
       setText("");
    }
+   return;
 }
 
 void WaterButton::waterChanged(QMetaProperty prop, QVariant val) {
@@ -65,8 +66,10 @@ void WaterButton::waterChanged(QMetaProperty prop, QVariant val) {
 }
 
 void WaterButton::recChanged(QMetaProperty prop, QVariant val) {
-   if (prop.name() == PropertyNames::Recipe::waters) {
-      this->setWater(val.value<Water*>());
+   if (prop.name() == PropertyNames::Recipe::waterUses) {
+      if (m_rec && m_rec->waterUses().size() > 0) {
+         this->setWater(m_rec->waterUses().at(0)->water());
+      }
    }
    return;
 }

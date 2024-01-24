@@ -23,12 +23,12 @@
 #include "model/Hop.h"
 #include "model/Misc.h"
 #include "model/Style.h"
-#include "model/Water.h"
 #include "model/Yeast.h"
 #include "model/RecipeAdditionFermentable.h"
 #include "model/RecipeAdditionHop.h"
 #include "model/RecipeAdditionMisc.h"
 #include "model/RecipeAdditionYeast.h"
+#include "model/RecipeUseOfWater.h"
 
 namespace {
    //
@@ -70,8 +70,8 @@ namespace {
 ///      yeast.setAmountIsWeight(npb.val<bool  >(PropertyNames::Yeast::amountIsWeight));
       return;
    }
-   template<> void setAmountsEtc(Water & water, NamedParameterBundle const & npb) {
-      water.setAmount(npb.val<double>(PropertyNames::Water::amount));
+   template<> void setAmountsEtc(RecipeUseOfWater & water, NamedParameterBundle const & npb) {
+///      water.setAmount(npb.val<double>(PropertyNames::Water::amount));
       return;
    }
 
@@ -301,7 +301,7 @@ void XmlRecipeRecord::subRecordToXml(XmlRecordDefinition::FieldDefinition const 
    if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::fermentableAdditions, &Recipe::fermentableAdditions)) { return; }
    if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::miscAdditions       , &Recipe::miscAdditions       )) { return; }
    if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::yeastAdditions      , &Recipe::yeastAdditions      )) { return; }
-   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::waters              , &Recipe::waters              )) { return; }
+   if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::waterUses           , &Recipe::waterUses           )) { return; }
    if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::instructions        , &Recipe::instructions        )) { return; }
    if (this->childrenToXml(fieldDefinition, subRecord, recipe, out, indentLevel, indentString, PropertyNames::Recipe::brewNotes           , &Recipe::brewNotes           )) { return; }
 

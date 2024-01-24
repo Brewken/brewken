@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/RecipeAddition.h is part of Brewken, and is copyright the following authors 2023:
+ * model/RecipeAddition.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -80,6 +80,11 @@ AddPropertyName(duration_mins  )
  *                           \     /                               \            /
  *                            \   /                                 \          /
  *                             Hop                                RecipeAdditionHop
+ *
+ *        NOTE: We handle \c Water differently than other ingredients / additions because it has a lot less in common
+ *              with them.  There is no stage/step/time/etc info (because that is implied by the mash schedule).  A
+ *              \c Water addition in a \c Recipe essentially just says how much water of a particular profile that
+ *              recipe uses.  Hence we have \c RecipeUseOfWater not \c RecipeAdditionWater.
  */
 class RecipeAddition : public NamedEntity {
    Q_OBJECT

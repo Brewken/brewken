@@ -72,4 +72,27 @@ public:
 
 };
 
+/**
+ * \brief Convenience function for logging
+ */
+template<class S>
+S & operator<<(S & stream, SerializationRecordDefinition const & serializationRecordDefinition) {
+   stream <<
+      serializationRecordDefinition.m_recordName << "(" << serializationRecordDefinition.m_namedEntityClassName << ")";
+   return stream;
+}
+
+/**
+ * \brief Convenience function for logging
+ */
+template<class S>
+S & operator<<(S & stream, SerializationRecordDefinition const * serializationRecordDefinition) {
+   if (serializationRecordDefinition) {
+      stream << *serializationRecordDefinition;
+   } else {
+      stream << "nullptr";
+   }
+   return stream;
+}
+
 #endif

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * utils/TypeLookup.h is part of Brewken, and is copyright the following authors 2023:
+ * utils/TypeLookup.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -206,9 +206,6 @@ private:
  * \brief This is an additional concept for determining whether a class has a `static TypeLookup const typeLookup`
  *        member.
  */
-///template <typename T> concept HasTypeLookup = requires {
-///   { T::typeLookup } -> std::same_as<TypeLookup>;
-///};
 template <typename T> concept HasTypeLookup = (std::is_base_of_v<NamedEntity, T> &&
                                                std::same_as<decltype(T::typeLookup), TypeLookup const>);
 

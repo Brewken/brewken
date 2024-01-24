@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Water.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/Water.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -79,7 +79,7 @@ ObjectStore & Water::getObjectStoreTypedInstance() const {
 TypeLookup const Water::typeLookup {
    "Water",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::amount          , Water::m_amount            , Measurement::PhysicalQuantity::Volume             ),
+///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::amount          , Water::m_amount            , Measurement::PhysicalQuantity::Volume             ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::calcium_ppm     , Water::m_calcium_ppm       , Measurement::PhysicalQuantity::VolumeConcentration),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::bicarbonate_ppm , Water::m_bicarbonate_ppm   , Measurement::PhysicalQuantity::VolumeConcentration),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::sulfate_ppm     , Water::m_sulfate_ppm       , Measurement::PhysicalQuantity::VolumeConcentration),
@@ -96,31 +96,31 @@ TypeLookup const Water::typeLookup {
 
    },
    // Parent class lookup
-   {&NamedEntity::typeLookup}
+   {&NamedEntityWithFolder::typeLookup}
 };
 
 Water::Water(QString name) :
-   NamedEntity         {name, true},
-   m_amount            {0.0         },
-   m_calcium_ppm       {0.0         },
-   m_bicarbonate_ppm   {0.0         },
-   m_sulfate_ppm       {0.0         },
-   m_chloride_ppm      {0.0         },
-   m_sodium_ppm        {0.0         },
-   m_magnesium_ppm     {0.0         },
-   m_ph                {0.0         },
-   m_alkalinity_ppm    {0.0         },
-   m_notes             {""          },
-   m_type              {std::nullopt},
-   m_mashRo_pct        {0.0         },
-   m_spargeRo_pct      {0.0         },
-   m_alkalinity_as_hco3{true        } {
+   NamedEntityWithFolder{name, true},
+///   m_amount             {0.0         },
+   m_calcium_ppm        {0.0         },
+   m_bicarbonate_ppm    {0.0         },
+   m_sulfate_ppm        {0.0         },
+   m_chloride_ppm       {0.0         },
+   m_sodium_ppm         {0.0         },
+   m_magnesium_ppm      {0.0         },
+   m_ph                 {0.0         },
+   m_alkalinity_ppm     {0.0         },
+   m_notes              {""          },
+   m_type               {std::nullopt},
+   m_mashRo_pct         {0.0         },
+   m_spargeRo_pct       {0.0         },
+   m_alkalinity_as_hco3 {true        } {
    return;
 }
 
 Water::Water(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity         {namedParameterBundle},
-   SET_REGULAR_FROM_NPB (m_amount            , namedParameterBundle, PropertyNames::Water::amount          ),
+   NamedEntityWithFolder{namedParameterBundle},
+///   SET_REGULAR_FROM_NPB (m_amount            , namedParameterBundle, PropertyNames::Water::amount          ),
    SET_REGULAR_FROM_NPB (m_calcium_ppm       , namedParameterBundle, PropertyNames::Water::calcium_ppm     ),
    SET_REGULAR_FROM_NPB (m_bicarbonate_ppm   , namedParameterBundle, PropertyNames::Water::bicarbonate_ppm ),
    SET_REGULAR_FROM_NPB (m_sulfate_ppm       , namedParameterBundle, PropertyNames::Water::sulfate_ppm     ),
@@ -138,27 +138,27 @@ Water::Water(NamedParameterBundle const & namedParameterBundle) :
 }
 
 Water::Water(Water const& other) :
-   NamedEntity         {other                     },
-   m_amount            {other.m_amount            },
-   m_calcium_ppm       {other.m_calcium_ppm       },
-   m_bicarbonate_ppm   {other.m_bicarbonate_ppm   },
-   m_sulfate_ppm       {other.m_sulfate_ppm       },
-   m_chloride_ppm      {other.m_chloride_ppm      },
-   m_sodium_ppm        {other.m_sodium_ppm        },
-   m_magnesium_ppm     {other.m_magnesium_ppm     },
-   m_ph                {other.m_ph                },
-   m_alkalinity_ppm    {other.m_alkalinity_ppm    },
-   m_notes             {other.m_notes             },
-   m_type              {other.m_type              },
-   m_mashRo_pct        {other.m_mashRo_pct        },
-   m_spargeRo_pct      {other.m_spargeRo_pct      },
-   m_alkalinity_as_hco3{other.m_alkalinity_as_hco3} {
+   NamedEntityWithFolder{other                     },
+///   m_amount             {other.m_amount            },
+   m_calcium_ppm        {other.m_calcium_ppm       },
+   m_bicarbonate_ppm    {other.m_bicarbonate_ppm   },
+   m_sulfate_ppm        {other.m_sulfate_ppm       },
+   m_chloride_ppm       {other.m_chloride_ppm      },
+   m_sodium_ppm         {other.m_sodium_ppm        },
+   m_magnesium_ppm      {other.m_magnesium_ppm     },
+   m_ph                 {other.m_ph                },
+   m_alkalinity_ppm     {other.m_alkalinity_ppm    },
+   m_notes              {other.m_notes             },
+   m_type               {other.m_type              },
+   m_mashRo_pct         {other.m_mashRo_pct        },
+   m_spargeRo_pct       {other.m_spargeRo_pct      },
+   m_alkalinity_as_hco3 {other.m_alkalinity_as_hco3} {
    return;
 }
 
 void Water::swap(Water & other) noexcept {
-   this->NamedEntity::swap(other);
-   std::swap(this->m_amount            , other.m_amount            );
+   this->NamedEntityWithFolder::swap(other);
+///   std::swap(this->m_amount            , other.m_amount            );
    std::swap(this->m_calcium_ppm       , other.m_calcium_ppm       );
    std::swap(this->m_bicarbonate_ppm   , other.m_bicarbonate_ppm   );
    std::swap(this->m_sulfate_ppm       , other.m_sulfate_ppm       );
@@ -203,7 +203,7 @@ Water & Water::operator=(Water other) {
          static_cast<void *>(this) << "in DB";
       ObjectStoreWrapper::update(*this);
    }
-   if (this->m_amount             != other.m_amount            ) { this->propagatePropertyChange(PropertyNames::Water::amount          ); }
+///   if (this->m_amount             != other.m_amount            ) { this->propagatePropertyChange(PropertyNames::Water::amount          ); }
    if (this->m_calcium_ppm        != other.m_calcium_ppm       ) { this->propagatePropertyChange(PropertyNames::Water::calcium_ppm     ); }
    if (this->m_bicarbonate_ppm    != other.m_bicarbonate_ppm   ) { this->propagatePropertyChange(PropertyNames::Water::bicarbonate_ppm ); }
    if (this->m_sulfate_ppm        != other.m_sulfate_ppm       ) { this->propagatePropertyChange(PropertyNames::Water::sulfate_ppm     ); }
@@ -222,7 +222,7 @@ Water & Water::operator=(Water other) {
 }
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
-double                     Water::amount          () const { return                    m_amount            ; }
+///double                     Water::amount          () const { return                    m_amount            ; }
 double                     Water::calcium_ppm     () const { return                    m_calcium_ppm       ; }
 double                     Water::bicarbonate_ppm () const { return                    m_bicarbonate_ppm   ; }
 double                     Water::sulfate_ppm     () const { return                    m_sulfate_ppm       ; }
@@ -239,7 +239,7 @@ double                     Water::spargeRo_pct    () const { return             
 bool                       Water::alkalinityAsHCO3() const { return                    m_alkalinity_as_hco3; }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void Water::setAmount          (double              const   val) { this->setAndNotify(PropertyNames::Water::amount          , m_amount            ,                            val ); return; }
+///void Water::setAmount          (double              const   val) { this->setAndNotify(PropertyNames::Water::amount          , m_amount            ,                            val ); return; }
 void Water::setCalcium_ppm     (double              const   val) { this->setAndNotify(PropertyNames::Water::calcium_ppm     , m_calcium_ppm       ,                            val ); return; }
 void Water::setBicarbonate_ppm (double              const   val) { this->setAndNotify(PropertyNames::Water::bicarbonate_ppm , m_bicarbonate_ppm   ,                            val ); return; }
 void Water::setSulfate_ppm     (double              const   val) { this->setAndNotify(PropertyNames::Water::sulfate_ppm     , m_sulfate_ppm       ,                            val ); return; }
@@ -271,6 +271,6 @@ double Water::ppm(Water::Ion const ion) const {
    return 0.0;
 }
 
-Recipe * Water::getOwningRecipe() const {
-   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
-}
+///Recipe * Water::getOwningRecipe() const {
+///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+///}

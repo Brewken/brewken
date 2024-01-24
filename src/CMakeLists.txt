@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------------------------------------------------------
-# src/CMakeLists.txt is part of Brewken, and is copyright the following authors 2009-2023:
+# src/CMakeLists.txt is part of Brewken, and is copyright the following authors 2009-2024:
 #   • Aidan Roberts <aidanr67@gmail.com>
 #   • Daniel Moreno <danielm5@users.noreply.github.com>
 #   • Mark de Wever <koraq@xs4all.nl>
@@ -155,7 +155,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/model/MashStep.cpp
     ${repoDir}/src/model/Misc.cpp
     ${repoDir}/src/model/NamedEntity.cpp
-    ${repoDir}/src/model/NamedEntityWithInventory.cpp
+    ${repoDir}/src/model/NamedEntityWithFolder.cpp
     ${repoDir}/src/model/NamedParameterBundle.cpp
     ${repoDir}/src/model/Recipe.cpp
     ${repoDir}/src/model/RecipeAddition.cpp
@@ -163,6 +163,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/model/RecipeAdditionHop.cpp
     ${repoDir}/src/model/RecipeAdditionMisc.cpp
     ${repoDir}/src/model/RecipeAdditionYeast.cpp
+    ${repoDir}/src/model/RecipeUseOfWater.cpp
     ${repoDir}/src/model/Salt.cpp
     ${repoDir}/src/model/Step.cpp
     ${repoDir}/src/model/StepExtended.cpp

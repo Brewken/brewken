@@ -181,10 +181,10 @@ void Misc::setProductId     (QString                  const & val) { this->setAn
 
 //========================OTHER METHODS=========================================
 
-Recipe * Misc::getOwningRecipe() const {
-///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
-   return nullptr;
-}
+///Recipe * Misc::getOwningRecipe() const {
+//////   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+///   return nullptr;
+///}
 
 // Insert the boiler-plate stuff for inventory
 INGREDIENT_BASE_COMMON_CODE(Misc)

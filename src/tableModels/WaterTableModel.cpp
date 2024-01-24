@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/WaterTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * tableModels/WaterTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -44,7 +44,7 @@ WaterTableModel::WaterTableModel(QTableView * parent) :
       false,
       {
          TABLE_MODEL_HEADER(Water, Name       , tr("Name"             ), PropertyNames::NamedEntity::name     ),
-         TABLE_MODEL_HEADER(Water, Amount     , tr("Amount"           ), PropertyNames::Water::amount         ),
+///         TABLE_MODEL_HEADER(Water, Amount     , tr("Amount"           ), PropertyNames::Water::amount         ),
          TABLE_MODEL_HEADER(Water, Calcium    , tr("Calcium (ppm)"    ), PropertyNames::Water::calcium_ppm    ),
          TABLE_MODEL_HEADER(Water, Bicarbonate, tr("Bicarbonate (ppm)"), PropertyNames::Water::bicarbonate_ppm),
          TABLE_MODEL_HEADER(Water, Sulfate    , tr("Sulfate (ppm)"    ), PropertyNames::Water::sulfate_ppm    ),
@@ -111,11 +111,18 @@ void WaterTableModel::addWater(int waterId) {
 
    // If we are watching a Recipe and the new Water does not belong to it then there is nothing for us to do
    if (this->recObs) {
-      Recipe * recipeOfNewWater = water->getOwningRecipe();
-      if (recipeOfNewWater && this->recObs->key() != recipeOfNewWater->key()) {
+      bool waterIsInRecipe = false;
+      for (auto waterUse : this->recObs->waterUses()) {
+         if (waterUse->water()->key() == waterId) {
+            waterIsInRecipe = true;
+            break;
+         }
+      }
+
+      if (!waterIsInRecipe) {
          qDebug() <<
-            Q_FUNC_INFO << "Ignoring signal about new Water #" << water->key() << "as it belongs to Recipe #" <<
-            recipeOfNewWater->key() << "and we are watching Recipe #" << this->recObs->key();
+            Q_FUNC_INFO << "Ignoring signal about new Water #" << water->key() <<
+            "as it is not used in the Recipe we are watching: #" << this->recObs->key();
          return;
       }
    }
@@ -215,8 +222,8 @@ QVariant WaterTableModel::data(const QModelIndex & index, int role) const {
    switch (columnIndex) {
       case WaterTableModel::ColumnIndex::Name:
          return QVariant(row->name());
-      case WaterTableModel::ColumnIndex::Amount:
-         return QVariant(Measurement::displayAmount(Measurement::Amount{row->amount(), Measurement::Units::liters}));
+///      case WaterTableModel::ColumnIndex::Amount:
+///         return QVariant(Measurement::displayAmount(Measurement::Amount{row->amount(), Measurement::Units::liters}));
       case WaterTableModel::ColumnIndex::Calcium:
          return QVariant(Measurement::displayQuantity(row->calcium_ppm(), 3));
       case WaterTableModel::ColumnIndex::Bicarbonate:
@@ -267,12 +274,12 @@ bool WaterTableModel::setData(QModelIndex const & index, QVariant const & value,
       case WaterTableModel::ColumnIndex::Name:
          row->setName(value.toString());
          break;
-      case WaterTableModel::ColumnIndex::Amount:
-         row->setAmount(Measurement::qStringToSI(value.toString(),
-                                                 Measurement::PhysicalQuantity::Volume,
-                                                 this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
-                                                 this->getColumnInfo(columnIndex).getForcedRelativeScale()).quantity);
-         break;
+///      case WaterTableModel::ColumnIndex::Amount:
+///         row->setAmount(Measurement::qStringToSI(value.toString(),
+///                                                 Measurement::PhysicalQuantity::Volume,
+///                                                 this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),
+///                                                 this->getColumnInfo(columnIndex).getForcedRelativeScale()).quantity);
+///         break;
       case WaterTableModel::ColumnIndex::Calcium:
          row->setCalcium_ppm(Localization::toDouble(value.toString(), Q_FUNC_INFO));
          break;
@@ -300,7 +307,7 @@ bool WaterTableModel::setData(QModelIndex const & index, QVariant const & value,
    return retval;
 }
 
-//==========================CLASS HopItemDelegate===============================
+//==========================CLASS WaterItemDelegate===============================
 
 WaterItemDelegate::WaterItemDelegate(QObject * parent)
    : QItemDelegate(parent) {

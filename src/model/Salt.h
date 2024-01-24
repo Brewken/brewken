@@ -155,7 +155,7 @@ public:
    double Na  () const;
    double SO4 () const;
 
-   virtual Recipe * getOwningRecipe() const;
+///   virtual Recipe * getOwningRecipe() const;
 
 signals:
 

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedEntity.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/NamedEntity.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -37,6 +37,7 @@
 #include "utils/MetaTypes.h"
 #include "utils/TypeLookup.h"
 
+class NamedEntityWithFolder;
 class NamedParameterBundle;
 class ObjectStore;
 class Recipe;
@@ -60,7 +61,6 @@ class Recipe;
 #define AddPropertyName(property) namespace PropertyNames::NamedEntity { BtStringConst const property{#property}; }
 AddPropertyName(deleted)
 AddPropertyName(display)
-AddPropertyName(folder)
 AddPropertyName(key)
 AddPropertyName(name)
 AddPropertyName(parentKey)
@@ -74,19 +74,35 @@ AddPropertyName(parentKey)
  * \brief The base class for our substantive storable items.  There are really two sorts of storable items: ones that
  *        are freestanding and ones that are owned by other storable items.  Eg, a Hop exists in its own right and may
  *        or may not be used in one or more Recipes, but a MashStep only exists as part of a single Mash.
- *           \b BrewNote is owned by its \b Recipe
- *           \b Equipment
- *           \b Fermentable
- *           \b Hop
- *           \b Instruction is owned by its \b Recipe
- *           \b Mash
- *           \b MashStep is owned by its \b Mash
- *           \b Misc
- *           \b Recipe
- *           \b Salt
- *           \b Style
- *           \b Water
- *           \b Yeast
+ *           \c Boil
+ *           \c BoilStep is owned by its \c Boil
+ *           \c BrewNote is owned by its \c Recipe
+ *           \c Equipment
+ *           \c Fermentable
+ *           \c Fermentation
+ *           \c FermentationStep is owned by its \c Fermentation
+ *           \c Hop
+ *           \c Instruction is owned by its \c Recipe
+ *           \c InventoryFermentable is owned by its \c Fermentable
+ *           \c InventoryHop         is owned by its \c Hop
+ *           \c InventoryMisc        is owned by its \c Misc
+ *           \c InventoryYeast       is owned by its \c Yeast
+ *           \c Mash
+ *           \c MashStep is owned by its \c Mash
+ *           \c Misc
+ *           \c RecipeAdditionFermentable is owned by its \c Recipe
+ *           \c RecipeAdditionHop         is owned by its \c Recipe
+ *           \c RecipeAdditionMisc        is owned by its \c Recipe
+ *           \c RecipeAdditionYeast       is owned by its \c Recipe
+ *           \c Recipe
+ *           \c RecipeUseOfWater          is owned by its \c Recipe
+ *           \c Salt
+ *           \c Style
+ *           \c Water
+ *           \c Yeast
+ *        Broadly speaking, items in the above list that are not owned by something else can be placed in a folder (or a
+ *        subfolder etc), and thus inherit from \c NamedEntityWithFolder.  Folders work in a somewhat primitive way at
+ *        the moment, but we might revisit this in future.
  *
  *        I know \b NamedEntity isn't the snappiest name, but it's the best we've come up with so far.  If you look at
  *        older versions of the code, you'll see that this class has previously been called \b Ingredient and
@@ -149,7 +165,7 @@ public:
     */
    static TypeLookup const typeLookup;
 
-   NamedEntity(QString t_name, bool t_display = false, QString folder = QString());
+   NamedEntity(QString t_name, bool t_display = false);
    NamedEntity(NamedEntity const & other);
 
    /**
@@ -158,18 +174,19 @@ public:
     */
    NamedEntity(NamedParameterBundle const & namedParameterBundle);
 
-protected:
-   /**
-    * \brief Swap the contents of two NamedEntity objects - which provides an exception-safe way of implementing
-    *        operator=
-    */
-   void swap(NamedEntity & other) noexcept;
-
-public:
    // Our destructor needs to be virtual because we sometimes point to an instance of a derived class through a pointer
    // to this class -- ie NamedEntity * namedEntity = new Hop() and suchlike.  We do already get a virtual destructor by
    // virtue of inheriting from QObject, but this declaration does no harm.
    virtual ~NamedEntity();
+
+protected:
+   /**
+    * \brief Swap the contents of two NamedEntity objects - which provides an exception-safe way of implementing
+    *        operator=.  This is used in \c Water but not many other places AFAICT.
+    */
+   virtual void swap(NamedEntity & other) noexcept;
+
+public:
 
    /**
     * \brief Although we might need to implement assignment operator for some of its derived classes (eg Water),
@@ -195,9 +212,11 @@ public:
     *
     *        NB: This function must be called \b before the object is added to its \c ObjectStore
     *
+    *        TODO: We are trying to retire this!
+    *
     * \param copiedFrom The object from which this one was copied
     */
-   virtual void makeChild(NamedEntity const & copiedFrom);
+   [[deprecated]] virtual void makeChild(NamedEntity const & copiedFrom);
 
    /**
     * \brief This generic version of operator== should work for subclasses provided they correctly _override_ (NB not
@@ -211,31 +230,25 @@ public:
     */
    bool operator!=(NamedEntity const & other) const;
 
-
    /**
-   * \brief As you might expect, this ensures we order \b NamedEntity objects by name
-   */
+    * \brief As you might expect, this ensures we order \b NamedEntity objects by name
+    */
    auto operator<=>(NamedEntity const & other) const;
 
-   // Everything that inherits from NamedEntity has a name, delete, display and a folder
-   // TBD: Not everything _should_ have a folder -- eg MashStep does not make use of it
-   Q_PROPERTY(QString name   READ name WRITE setName )
-   Q_PROPERTY(bool deleted   READ deleted WRITE setDeleted )
-   Q_PROPERTY(bool display   READ display WRITE setDisplay )
-   Q_PROPERTY(QString folder READ folder WRITE setFolder )
+   // Everything that inherits from NamedEntity has these properties
+   Q_PROPERTY(QString name      READ name         WRITE setName     )
+   Q_PROPERTY(bool    deleted   READ deleted      WRITE setDeleted  )
+   Q_PROPERTY(bool    display   READ display      WRITE setDisplay  )
+   //! Key (ID) in the table we are stored in
+   Q_PROPERTY(int     key       READ key          WRITE setKey      )
+   //! TODO Once \c makeChild is retired, this can be retired too
+   Q_PROPERTY(int     parentKey READ getParentKey WRITE setParentKey)
 
-   Q_PROPERTY(int key READ key WRITE setKey )
-   Q_PROPERTY(int parentKey READ getParentKey WRITE setParentKey )
-
-   //! \returns our key in the table we are stored in.
-   int key() const;
-   //! Access to the name attribute.
    QString name() const;
-   //! Convenience method to determine if we are deleted or displayed
    bool deleted() const;
    bool display() const;
-   //! Access to the folder attribute.
-   QString folder() const;
+   int key() const;
+   [[deprecated]] int getParentKey() const;
 
    /**
     * \brief Returns a regexp that will match the " (n)" (for n some positive integer) added on the end of a name to
@@ -243,14 +256,18 @@ public:
     */
    static QRegExp const & getDuplicateNameNumberMatcher();
 
-   //! And ways to set those flags
+   void setName(QString const & var);
    void setDeleted(bool const var);
    void setDisplay(bool const var);
-   //! and a way to set the folder
-   virtual void setFolder(QString const & var);
+   /**
+    * \brief Set the ID (aka key) by which this object is uniquely identified in its DB table
+    *
+    *        This is virtual because, in some cases, subclasses are going to want to do additional work here
+    */
+   virtual void setKey(int key);
+   [[deprecated]] void setParentKey(int parentKey);
 
    //!
-   void setName(QString const & var);
 
    /**
     * \brief This sets or unsets the "being modified" flag on the object.  Callers should preferably access this via
@@ -265,33 +282,23 @@ public:
    bool isBeingModified() const;
 
    /**
-    * \brief Set the ID (aka key) by which this object is uniquely identified in its DB table
-    *
-    *        This is virtual because, in some cases, subclasses are going to want to do additional work here
-    */
-   virtual void setKey(int key);
-
-   int getParentKey() const;
-   void setParentKey(int parentKey);
-
-   /**
     * \brief Get the IDs of this object's parent, children and siblings (plus the ID of the object itself).
     *        A child object is just a copy of the parent that's being used in a Recipe.  Not all NamedEntity subclasses
     *        have children, just Equipment, Fermentable, Hop, Misc and Yeast.
     */
-   QVector<int> getParentAndChildrenIds() const;
+   [[deprecated]] QVector<int> getParentAndChildrenIds() const;
 
    //! Convenience method to get a meta property by name.
    QMetaProperty metaProperty(char const * const name) const;
 
-   /**
-    * \brief Subclasses need to override this to return the Recipe, if any, to which this object belongs.
-    *
-    *        TODO: This is not meaningful on all subclasses \c NamedEntity and should be moved to another class
-    *
-    * \return \c nullptr if this object is not, and does not belong to, any Recipe
-    */
-   virtual Recipe * getOwningRecipe() const = 0;
+///   /**
+///    * \brief Subclasses need to override this to return the Recipe, if any, to which this object belongs.
+///    *
+///    *        TODO: This is not meaningful on all subclasses of \c NamedEntity and should be moved to another class
+///    *
+///    * \return \c nullptr if this object is not, and does not belong to, any Recipe
+///    */
+///   virtual Recipe * getOwningRecipe() const = 0;
 
    /*!
     * \brief Some entities (eg Fermentable, Hop) get copied when added to a recipe, but others (eg Instruction) don't.
@@ -301,9 +308,9 @@ public:
     * \return Pointer to the parent NamedEntity from which this one was originally copied, or null if no such parent
     *         exists.
     */
-   NamedEntity * getParent() const;
+   [[deprecated]] NamedEntity * getParent() const;
 
-   void setParent(NamedEntity const & parentNamedEntity);
+   [[deprecated]] void setParent(NamedEntity const & parentNamedEntity);
 
    /**
     * \brief If we are _really_ deleting (rather than just marking deleted) an entity that owns other entities (eg a
@@ -488,7 +495,7 @@ protected:
     *        create a new version of a Recipe - eg because we are modifying some ingredient or other attribute of the
     *        Recipe and automatic versioning is enabled.
     */
-   void prepareForPropertyChange(BtStringConst const & propertyName);
+   template<typename NE> void prepareForPropertyChange(NE * ne, BtStringConst const & propertyName);
 
    /**
     * \brief This is intended to be called from setter member functions (including those of derived classes), \b after
@@ -527,14 +534,16 @@ protected:
     *         value to what it already was.  This is useful for the caller if, eg, there might be recalculations
     *         required when a value changes
     */
-   template<typename T>
-   bool setAndNotify(BtStringConst const & propertyName,
+   template<typename NE, typename T>
+   bool setAndNotify(NE * ne,
+                     BtStringConst const & propertyName,
                      T & memberVariable,
                      T const newValue) {
+      Q_ASSERT(this == static_cast<NamedEntity *>(ne));
       if (this->newValueMatchesExisting(propertyName, memberVariable, newValue)) {
          return false;
       }
-      this->prepareForPropertyChange(propertyName);
+      this->prepareForPropertyChange<NE>(ne, propertyName);
       memberVariable = newValue;
       this->propagatePropertyChange(propertyName);
       return true;
@@ -596,9 +605,7 @@ public:
       return QVariant::fromValue(NamedEntity::upcastList<T>(inputList));
    }
 
-
 private:
-  QString m_folder;
   QString m_name;
   bool m_display;
   bool m_deleted;
@@ -680,5 +687,19 @@ S & operator<<(S & stream, NE const * namedEntity) {
 Q_DECLARE_METATYPE(NamedEntity *)
 Q_DECLARE_METATYPE(NamedEntity const *)
 Q_DECLARE_METATYPE(std::shared_ptr<NamedEntity>)
+
+/**
+ * \brief Convenience macro
+ */
+#define SET_AND_NOTIFY(...) this->setAndNotify(this, __VA_ARGS__)
+
+/**
+ * \brief For some templated functions, it's useful at compile time to have one version for NE classes with folders and
+ *        one for those without.  We need to put the concepts here in the base class for them to be accessible.
+ *
+ *        See comment in utils/TypeTraits.h for definition of CONCEPT_FIX_UP (and why, for now, we need it).
+ */
+template <typename T> concept CONCEPT_FIX_UP HasFolder   = std::is_base_of_v<NamedEntityWithFolder, T>;
+template <typename T> concept CONCEPT_FIX_UP HasNoFolder = std::negation_v<std::is_base_of<NamedEntityWithFolder, T>>;
 
 #endif

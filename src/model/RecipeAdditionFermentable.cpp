@@ -90,9 +90,9 @@ Fermentable * RecipeAdditionFermentable::fermentable() const {
    return ObjectStoreWrapper::getByIdRaw<Fermentable>(this->m_ingredientId);
 }
 
-Recipe * RecipeAdditionFermentable::getOwningRecipe() const {
-   return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
-}
+///Recipe * RecipeAdditionFermentable::getOwningRecipe() const {
+///   return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
+///}
 
 NamedEntity * RecipeAdditionFermentable::ensureExists(BtStringConst const & property) {
    if (property == PropertyNames::RecipeAdditionFermentable::fermentable) {

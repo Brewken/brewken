@@ -723,7 +723,7 @@
     </message>
     <message>
         <source>Use</source>
-        <translation>Gebruik</translation>
+        <translation type="vanished">Gebruik</translation>
     </message>
     <message>
         <source>Form</source>
@@ -2059,6 +2059,20 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
+    <name>InventoryMisc</name>
+    <message>
+        <source>Misc Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>InventoryYeast</name>
+    <message>
+        <source>Yeast Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Open</source>
@@ -2265,22 +2279,6 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Drop fermentables on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop hops on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop misc on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop yeast on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Recipe Efficiency</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2294,14 +2292,6 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Redo %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove misc from recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove yeast from recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2346,6 +2336,22 @@ If you didn&apos;t yet do this, click Abort.</source>
 See logs for more details.
 
 If you need help, please open an issue at %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop fermentable(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop hop(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop misc(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop yeast(s) on a recipe</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2576,23 +2582,23 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Boil</source>
-        <translation>Koken</translation>
+        <translation type="vanished">Koken</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Maisch</translation>
+        <translation type="vanished">Maisch</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation>Primair</translation>
+        <translation type="vanished">Primair</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation>Secundair</translation>
+        <translation type="vanished">Secundair</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation>Bottelen</translation>
+        <translation type="vanished">Bottelen</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -2728,15 +2734,15 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Use</source>
-        <translation>Gebruik</translation>
+        <translation type="vanished">Gebruik</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Tijd</translation>
+        <translation type="vanished">Tijd</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Hoeveelheid</translation>
+        <translation type="vanished">Hoeveelheid</translation>
     </message>
     <message>
         <source>Amount Type</source>
@@ -2748,19 +2754,15 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Volume</translation>
+        <translation type="obsolete">Volume</translation>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Gewicht</translation>
+        <translation type="obsolete">Gewicht</translation>
     </message>
 </context>
 <context>
     <name>NE</name>
-    <message>
-        <source>Add %1 to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Change %1 %2</source>
         <translation type="unfinished"></translation>
@@ -2774,9 +2776,9 @@ If you need help, please open an issue at %1</source>
     </message>
 </context>
 <context>
-    <name>NamedEntityWithInventory</name>
+    <name>NamedEntityWithFolder</name>
     <message>
-        <source>Named Entity With Inventory</source>
+        <source>Named Entity With Folder</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2784,7 +2786,7 @@ If you need help, please open an issue at %1</source>
     <name>OldInventory</name>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Inventaris</translation>
+        <translation type="obsolete">Inventaris</translation>
     </message>
 </context>
 <context>
@@ -4369,19 +4371,11 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>First Wort</source>
-        <translation type="unfinished">Eerste Wort</translation>
+        <translation type="obsolete">Eerste Wort</translation>
     </message>
     <message>
         <source>Boil</source>
         <translation type="unfinished">Koken</translation>
-    </message>
-    <message>
-        <source>Post-Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dry Misc</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Addition of %1</source>
@@ -4391,6 +4385,18 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <source>Invalid!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Primary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Secondary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bottling</source>
+        <translation type="unfinished">Bottelen</translation>
+    </message>
 </context>
 <context>
     <name>RecipeAdditionMiscTableModel</name>
@@ -4399,16 +4405,8 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <translation type="unfinished">Naam</translation>
     </message>
     <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Alpha %</source>
-        <translation type="unfinished">Alpha %</translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Alpha %</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -4430,6 +4428,10 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <source>Time</source>
         <translation type="unfinished">Tijd</translation>
     </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Type</translation>
+    </message>
 </context>
 <context>
     <name>RecipeAdditionYeast</name>
@@ -4439,23 +4441,19 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished">Maisch</translation>
+        <translation type="obsolete">Maisch</translation>
     </message>
     <message>
         <source>First Wort</source>
-        <translation type="unfinished">Eerste Wort</translation>
+        <translation type="obsolete">Eerste Wort</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation type="unfinished">Koken</translation>
-    </message>
-    <message>
-        <source>Post-Boil</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Koken</translation>
     </message>
     <message>
         <source>Dry Yeast</source>
-        <translation type="unfinished">Gedroogde Gist</translation>
+        <translation type="obsolete">Gedroogde Gist</translation>
     </message>
     <message>
         <source>Addition of %1</source>
@@ -4478,11 +4476,7 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Alpha %</source>
-        <translation type="unfinished">Alpha %</translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Alpha %</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -4502,7 +4496,23 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished">Tijd</translation>
+        <translation type="obsolete">Tijd</translation>
+    </message>
+    <message>
+        <source>Laboratory</source>
+        <translation type="unfinished">Laboratorium</translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">Product ID</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Type</translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation type="unfinished">Stap</translation>
     </message>
 </context>
 <context>
@@ -4900,6 +4910,13 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Add During</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeUseOfWater</name>
+    <message>
+        <source>Recipe Use Of Water</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5738,7 +5755,7 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Hoeveelheid</translation>
+        <translation type="vanished">Hoeveelheid</translation>
     </message>
     <message>
         <source>Laboratory</source>
@@ -5751,6 +5768,10 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Inventory</source>
         <translation>Inventaris</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Hoeveelheid Type</translation>
     </message>
 </context>
 <context>
@@ -7935,7 +7956,7 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Use</source>
-        <translation>Gebruik</translation>
+        <translation type="vanished">Gebruik</translation>
     </message>
     <message>
         <source>Boil</source>
@@ -8028,6 +8049,14 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Product ID</source>
         <translation type="unfinished">Product ID</translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Hoeveelheid Type</translation>
     </message>
 </context>
 <context>
@@ -9371,11 +9400,11 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Quanta in Inventory</source>
-        <translation>Hoeveelheid in de Inventaris</translation>
+        <translation type="vanished">Hoeveelheid in de Inventaris</translation>
     </message>
     <message>
         <source>Quanta in inventory</source>
-        <translation>Hoeveelheid in de inventaris</translation>
+        <translation type="vanished">Hoeveelheid in de inventaris</translation>
     </message>
     <message>
         <source>Main</source>
@@ -9488,6 +9517,22 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Neutral strains do not produce toxins, nor are they killed by them</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount in Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount in inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Hoeveelheid Type</translation>
     </message>
 </context>
 </TS>

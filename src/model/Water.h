@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Water.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/Water.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -25,7 +25,7 @@
 #include <QString>
 #include <QSqlRecord>
 
-#include "model/NamedEntity.h"
+#include "model/NamedEntityWithFolder.h"
 #include "utils/EnumStringMapping.h"
 
 //======================================================================================================================
@@ -34,7 +34,7 @@
 #define AddPropertyName(property) namespace PropertyNames::Water { BtStringConst const property{#property}; }
 AddPropertyName(alkalinity_ppm  )
 AddPropertyName(alkalinityAsHCO3)
-AddPropertyName(amount          )
+///AddPropertyName(amount          )
 AddPropertyName(bicarbonate_ppm )
 AddPropertyName(calcium_ppm     )
 AddPropertyName(chloride_ppm    )
@@ -56,7 +56,7 @@ AddPropertyName(type            )
  *
  * \brief Model for water records in the database.
  */
-class Water : public NamedEntity {
+class Water : public NamedEntityWithFolder {
    Q_OBJECT
 
 public:
@@ -130,9 +130,9 @@ protected:
 public:
    // .:TODO:. On a base or target profile, bicarbonate and alkalinity cannot both be used. I'm gonna have fun figuring that out
 
-   //! \brief The amount in liters.
+   //! \brief The amount in liters. **** MOVED TO RecipeUseOfWater ****
    // .:TBD:. (MY 2020-01-03) In Hop we have amount_kg, so might be more consistent here to have amount_l or similar
-   Q_PROPERTY(double amount          READ amount          WRITE setAmount)
+///   Q_PROPERTY(double amount          READ amount          WRITE setAmount)
    //! \brief The ppm of calcium.  Required in BeerXML and BeerJSON.
    Q_PROPERTY(double calcium_ppm     READ calcium_ppm     WRITE setCalcium_ppm)
    //! \brief The ppm of bicarbonate.  Required in BeerXML and BeerJSON.
@@ -166,7 +166,7 @@ public:
    Q_PROPERTY(bool   alkalinityAsHCO3 READ alkalinityAsHCO3 WRITE setAlkalinityAsHCO3)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-   double              amount          () const;
+///   double              amount          () const;
    double              calcium_ppm     () const;
    double              bicarbonate_ppm () const;
    double              sulfate_ppm     () const;
@@ -185,7 +185,7 @@ public:
    double       ppm(Water::Ion const ion) const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   void setAmount          (double              const   val);
+///   void setAmount          (double              const   val);
    void setCalcium_ppm     (double              const   val);
    void setSulfate_ppm     (double              const   val);
    void setBicarbonate_ppm (double              const   val);
@@ -201,7 +201,7 @@ public:
    void setSpargeRo_pct    (double              const   val);
    void setAlkalinityAsHCO3(bool                const   val);
 
-   virtual Recipe * getOwningRecipe() const;
+///   virtual Recipe * getOwningRecipe() const;
 
 signals:
 
@@ -210,7 +210,7 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   double              m_amount            ;
+///   double              m_amount            ;
    double              m_calcium_ppm       ;
    double              m_bicarbonate_ppm   ;
    double              m_sulfate_ppm       ;
@@ -227,5 +227,8 @@ private:
 };
 
 Q_DECLARE_METATYPE(QList<std::shared_ptr<Water> >)
+
+static_assert(HasFolder<Water>);
+static_assert(!HasNoFolder<Water>);
 
 #endif

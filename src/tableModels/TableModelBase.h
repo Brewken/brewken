@@ -299,15 +299,11 @@ public:
       }
 
       // If we are watching a Recipe and the new item does not belong to it then there is nothing for us to do
-      if (observedRecipe) {
-         Recipe * recipeOfNewItem = item->getOwningRecipe();
-         if (recipeOfNewItem && observedRecipe->key() != recipeOfNewItem->key()) {
-            qDebug() <<
-               Q_FUNC_INFO << "Ignoring signal about new" << NE::staticMetaObject.className() << "#" << item->key() <<
-               "as it belongs to Recipe #" << recipeOfNewItem->key() << "and we are watching Recipe #" <<
-               observedRecipe->key();
-            return;
-         }
+      if (observedRecipe && !observedRecipe->uses(*item)) {
+         qDebug() <<
+            Q_FUNC_INFO << "Ignoring signal about new" << NE::staticMetaObject.className() << "#" << item->key() <<
+            "as it does not belong to the Recipe we are watching: #" << observedRecipe->key();
+         return;
       }
 
       int size = this->rows.size();

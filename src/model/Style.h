@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Style.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/Style.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -26,7 +26,7 @@
 #include <QStringList>
 #include <QSqlRecord>
 
-#include "model/NamedEntity.h"
+#include "model/NamedEntityWithFolder.h"
 #include "utils/EnumStringMapping.h"
 
 //======================================================================================================================
@@ -70,7 +70,7 @@ AddPropertyName(typeString       )
  *
  * \brief Model for style records in the database.
  */
-class Style : public NamedEntity {
+class Style : public NamedEntityWithFolder {
    Q_OBJECT
 
 public:
@@ -244,7 +244,7 @@ public:
    void setMouthfeel        (QString               const & val);
    void setOverallImpression(QString               const & val);
 
-   virtual Recipe * getOwningRecipe() const;
+///   virtual Recipe * getOwningRecipe() const;
 
 signals:
 

@@ -34,11 +34,10 @@
 QString const NamedEntity::LocalisedName = tr("Named Entity");
 
 
-NamedEntity::NamedEntity(QString t_name, bool t_display, QString folder) :
+NamedEntity::NamedEntity(QString t_name, bool t_display) :
    QObject        {nullptr  },
    m_key          {-1       },
    parentKey      {-1       },
-   m_folder       {folder   },
    m_name         {t_name   },
    m_display      {t_display},
    m_deleted      {false    },
@@ -52,7 +51,7 @@ NamedEntity::NamedEntity(QString t_name, bool t_display, QString folder) :
 // The "key", "display" and "deleted" properties are optional because they will be set if we're creating from a DB
 // record, but not if we're creating from an XML record.
 //
-// The "folder", "name" and "parent" properties have to be optional because not all subclasses have them.  (BrewNote is
+// The "name" and "parent" properties have to be optional because not all subclasses have them.  (BrewNote is
 // the subclass without a name, and, yes, I know the existence of a NamedEntity without a name calls into question our
 // class naming! :->)
 //
@@ -64,7 +63,6 @@ NamedEntity::NamedEntity(NamedParameterBundle const & namedParameterBundle) :
    QObject        {nullptr},
    SET_REGULAR_FROM_NPB (m_key    , namedParameterBundle, PropertyNames::NamedEntity::key,       -1       ),
    SET_REGULAR_FROM_NPB (parentKey, namedParameterBundle, PropertyNames::NamedEntity::parentKey, -1       ),
-   SET_REGULAR_FROM_NPB (m_folder , namedParameterBundle, PropertyNames::NamedEntity::folder,    QString{}),
    SET_REGULAR_FROM_NPB (m_name   , namedParameterBundle, PropertyNames::NamedEntity::name,      QString{}),
    SET_REGULAR_FROM_NPB (m_display, namedParameterBundle, PropertyNames::NamedEntity::display,   true     ),
    SET_REGULAR_FROM_NPB (m_deleted, namedParameterBundle, PropertyNames::NamedEntity::deleted,   false    ),
@@ -79,7 +77,6 @@ NamedEntity::NamedEntity(NamedEntity const & other) :
    QObject        {nullptr        }, // QObject doesn't have a copy constructor, so just make a new one
    m_key          {-1             }, // We don't want to copy the other object's key/ID
    parentKey      {other.parentKey},
-   m_folder       {other.m_folder },
    m_name         {other.m_name   },
    m_display      {other.m_display},
    m_deleted      {other.m_deleted},
@@ -98,7 +95,6 @@ void NamedEntity::swap(NamedEntity & other) noexcept {
    Q_ASSERT(!other.m_beingModified);
    // Now do the actual swapping
    std::swap(this->parentKey, other.parentKey);
-   std::swap(this->m_folder , other.m_folder );
    std::swap(this->m_name   , other.m_name   );
    std::swap(this->m_display, other.m_display);
    std::swap(this->m_deleted, other.m_deleted);
@@ -114,7 +110,6 @@ TypeLookup const NamedEntity::typeLookup {
       // the code to separately register every different enum that we use.)
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::deleted  , NamedEntity::m_deleted                             ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::display  , NamedEntity::m_display                             ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::folder   , NamedEntity::m_folder                              ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::key      , NamedEntity::m_key                                 ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::name     , NamedEntity::m_name   , NonPhysicalQuantity::String),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::NamedEntity::parentKey, NamedEntity::parentKey                             ),
@@ -255,19 +250,6 @@ void NamedEntity::setDisplay(bool var) {
    }
    this->m_display = var;
    this->propagatePropertyChange(PropertyNames::NamedEntity::display);
-   return;
-}
-
-QString NamedEntity::folder() const {
-   return this->m_folder;
-}
-
-void NamedEntity::setFolder(QString const & var) {
-   if (this->newValueMatchesExisting(PropertyNames::NamedEntity::folder, this->m_folder, var)) {
-      return;
-   }
-   this->m_folder = var;
-   this->propagatePropertyChange(PropertyNames::NamedEntity::folder);
    return;
 }
 
@@ -427,18 +409,50 @@ void NamedEntity::setEitherOrOptParams(NamedParameterBundle const & namedParamet
    return;
 }
 
-void NamedEntity::prepareForPropertyChange(BtStringConst const & propertyName) {
+template<typename NE> void NamedEntity::prepareForPropertyChange(NE * ne, BtStringConst const & propertyName) {
    //
    // At the moment, the only thing we want to do in this pre-change check is to see whether we need to version a
    // Recipe.  Obviously we leave all the details of that to the Recipe-related namespace.
    //
    // Obviously nothing gets versioned if it's not yet in the DB
    //
-   if (this->key() > 0) {
-      RecipeHelper::prepareForPropertyChange(*this, propertyName);
+   if (ne->key() > 0) {
+      RecipeHelper::prepareForPropertyChange<NE>(*ne, propertyName);
    }
    return;
 }
+//
+// Instantiate the above template function for the types that are going to use it
+// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
+// helps us avoid circular dependencies.)
+//
+template void NamedEntity::prepareForPropertyChange(Boil                      * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(BoilStep                  * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(BrewNote                  * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(Equipment                 * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(Fermentable               * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(Fermentation              * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(FermentationStep          * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(Hop                       * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(Instruction               * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(InventoryFermentable      * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(InventoryHop              * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(InventoryMisc             * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(InventoryYeast            * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(Mash                      * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(MashStep                  * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(Misc                      * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(RecipeAdditionFermentable * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(RecipeAdditionHop         * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(RecipeAdditionMisc        * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(RecipeAdditionYeast       * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(Recipe                    * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(RecipeUseOfWater          * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(Salt                      * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(Style                     * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(Water                     * ne, BtStringConst const & propertyName);
+template void NamedEntity::prepareForPropertyChange(Yeast                     * ne, BtStringConst const & propertyName);
+
 
 void NamedEntity::propagatePropertyChange(BtStringConst const & propertyName, bool notify) const {
    // If we're already stored in the object store, tell it about the property change so that it can write it to the

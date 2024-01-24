@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Fermentable.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/Fermentable.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Blair Bonnett <blair.bonnett@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -451,10 +451,10 @@ void Fermentable::setBetaGlucanWithUnits(std::optional<Measurement::Amount> cons
    return;
 }
 
-Recipe * Fermentable::getOwningRecipe() const {
-///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
-   return nullptr;
-}
+///Recipe * Fermentable::getOwningRecipe() const {
+//////   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+///   return nullptr;
+///}
 
 // Insert the boiler-plate stuff for inventory
 INGREDIENT_BASE_COMMON_CODE(Fermentable)

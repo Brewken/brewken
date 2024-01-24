@@ -47,7 +47,7 @@ TypeLookup const RecipeAdditionMisc::typeLookup {
    "RecipeAdditionMisc",
    {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionMisc::misc, RecipeAdditionMisc::misc),
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionMisc::use, RecipeAdditionMisc::use),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionMisc::use , RecipeAdditionMisc::use),
    },
    // Parent classes lookup.  NB: RecipeAddition not NamedEntity!
    {&RecipeAddition::typeLookup,
@@ -132,9 +132,9 @@ Misc * RecipeAdditionMisc::misc() const {
    return ObjectStoreWrapper::getByIdRaw<Misc>(this->m_ingredientId);
 }
 
-Recipe * RecipeAdditionMisc::getOwningRecipe() const {
-   return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
-}
+///Recipe * RecipeAdditionMisc::getOwningRecipe() const {
+///   return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
+///}
 
 NamedEntity * RecipeAdditionMisc::ensureExists(BtStringConst const & property) {
    if (property == PropertyNames::RecipeAdditionMisc::misc) {

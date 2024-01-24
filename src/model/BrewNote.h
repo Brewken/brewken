@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/BrewNote.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/BrewNote.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
@@ -229,7 +229,7 @@ public:
    double projFermPoints() const;
    double projAtten() const;
 
-   virtual Recipe * getOwningRecipe() const;
+///   virtual Recipe * getOwningRecipe() const;
 
 signals:
    void brewDateChanged(const QDate &);

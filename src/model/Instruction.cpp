@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Instruction.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/Instruction.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -184,6 +184,6 @@ int Instruction::instructionNumber() const {
    return this->pimpl->getRecipe()->instructionNumber(*this);
 }
 
-Recipe * Instruction::getOwningRecipe() const {
-   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
-}
+///Recipe * Instruction::getOwningRecipe() const {
+///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+///}

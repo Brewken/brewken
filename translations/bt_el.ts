@@ -672,7 +672,7 @@
     </message>
     <message>
         <source>Use</source>
-        <translation>Χρήση</translation>
+        <translation type="vanished">Χρήση</translation>
     </message>
     <message>
         <source>Form</source>
@@ -1988,6 +1988,20 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
+    <name>InventoryMisc</name>
+    <message>
+        <source>Misc Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>InventoryYeast</name>
+    <message>
+        <source>Yeast Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Open</source>
@@ -2186,22 +2200,6 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Drop fermentables on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop hops on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop misc on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop yeast on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Recipe Efficiency</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2215,14 +2213,6 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Redo %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove misc from recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove yeast from recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2267,6 +2257,22 @@ If you didn&apos;t yet do this, click Abort.</source>
 See logs for more details.
 
 If you need help, please open an issue at %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop fermentable(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop hop(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop misc(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop yeast(s) on a recipe</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2497,23 +2503,19 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Boil</source>
-        <translation type="unfinished">Στο Βράσιμο</translation>
-    </message>
-    <message>
-        <source>Mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Στο Βράσιμο</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation type="unfinished">Κατά την πρώτη ζύμωση</translation>
+        <translation type="obsolete">Κατά την πρώτη ζύμωση</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation type="unfinished">κατά την δεύτερη ζύμωση</translation>
+        <translation type="obsolete">κατά την δεύτερη ζύμωση</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation type="unfinished">Κατά την εμφιάλωση</translation>
+        <translation type="obsolete">Κατά την εμφιάλωση</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -2649,15 +2651,15 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Use</source>
-        <translation>Χρήση</translation>
+        <translation type="vanished">Χρήση</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Χρόνος</translation>
+        <translation type="vanished">Χρόνος</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Ποσότητα</translation>
+        <translation type="vanished">Ποσότητα</translation>
     </message>
     <message>
         <source>Amount Type</source>
@@ -2669,19 +2671,15 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Όγκος</translation>
+        <translation type="obsolete">Όγκος</translation>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Βάρος</translation>
+        <translation type="obsolete">Βάρος</translation>
     </message>
 </context>
 <context>
     <name>NE</name>
-    <message>
-        <source>Add %1 to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Change %1 %2</source>
         <translation type="unfinished"></translation>
@@ -2695,9 +2693,9 @@ If you need help, please open an issue at %1</source>
     </message>
 </context>
 <context>
-    <name>NamedEntityWithInventory</name>
+    <name>NamedEntityWithFolder</name>
     <message>
-        <source>Named Entity With Inventory</source>
+        <source>Named Entity With Folder</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2705,7 +2703,7 @@ If you need help, please open an issue at %1</source>
     <name>OldInventory</name>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Ευρετήριο ειδών</translation>
+        <translation type="obsolete">Ευρετήριο ειδών</translation>
     </message>
 </context>
 <context>
@@ -4304,19 +4302,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>First Wort</source>
-        <translation type="unfinished">Πρίν το βράσιμο</translation>
+        <translation type="obsolete">Πρίν το βράσιμο</translation>
     </message>
     <message>
         <source>Boil</source>
         <translation type="unfinished">Στο Βράσιμο</translation>
-    </message>
-    <message>
-        <source>Post-Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dry Misc</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Addition of %1</source>
@@ -4325,6 +4315,18 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Invalid!</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Primary</source>
+        <translation type="unfinished">Κατά την πρώτη ζύμωση</translation>
+    </message>
+    <message>
+        <source>Secondary</source>
+        <translation type="unfinished">κατά την δεύτερη ζύμωση</translation>
+    </message>
+    <message>
+        <source>Bottling</source>
+        <translation type="unfinished">Κατά την εμφιάλωση</translation>
     </message>
 </context>
 <context>
@@ -4335,15 +4337,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished">Μορφή</translation>
+        <translation type="obsolete">Μορφή</translation>
     </message>
     <message>
         <source>Alpha %</source>
-        <translation type="unfinished">Alpha %</translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Alpha %</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -4365,6 +4363,10 @@ The final volume in the primary is %1.</source>
         <source>Time</source>
         <translation type="unfinished">Χρόνος</translation>
     </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAdditionYeast</name>
@@ -4373,24 +4375,16 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>First Wort</source>
-        <translation type="unfinished">Πρίν το βράσιμο</translation>
+        <translation type="obsolete">Πρίν το βράσιμο</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation type="unfinished">Στο Βράσιμο</translation>
-    </message>
-    <message>
-        <source>Post-Boil</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Στο Βράσιμο</translation>
     </message>
     <message>
         <source>Dry Yeast</source>
-        <translation type="unfinished">Ξηρή μαγιά</translation>
+        <translation type="obsolete">Ξηρή μαγιά</translation>
     </message>
     <message>
         <source>Addition of %1</source>
@@ -4413,11 +4407,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Alpha %</source>
-        <translation type="unfinished">Alpha %</translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Alpha %</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -4437,7 +4427,23 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished">Χρόνος</translation>
+        <translation type="obsolete">Χρόνος</translation>
+    </message>
+    <message>
+        <source>Laboratory</source>
+        <translation type="unfinished">Εργαστήριο/Εταιρία</translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">Κωδικός προιόντος</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation type="unfinished">Βήμα</translation>
     </message>
 </context>
 <context>
@@ -4815,6 +4821,13 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Add During</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeUseOfWater</name>
+    <message>
+        <source>Recipe Use Of Water</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5671,7 +5684,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Ποσότητα</translation>
+        <translation type="vanished">Ποσότητα</translation>
     </message>
     <message>
         <source>Laboratory</source>
@@ -5684,6 +5697,10 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Inventory</source>
         <translation>Ευρετήριο ειδών</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Μονάδα μέτρησης</translation>
     </message>
 </context>
 <context>
@@ -7916,7 +7933,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Use</source>
-        <translation>Χρήση</translation>
+        <translation type="vanished">Χρήση</translation>
     </message>
     <message>
         <source>Boil</source>
@@ -8009,6 +8026,14 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Product ID</source>
         <translation type="unfinished">Κωδικός προιόντος</translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Μονάδα μέτρησης</translation>
     </message>
 </context>
 <context>
@@ -9432,11 +9457,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Quanta in Inventory</source>
-        <translation>Ποσότητα στο ευρετήριο</translation>
+        <translation type="vanished">Ποσότητα στο ευρετήριο</translation>
     </message>
     <message>
         <source>Quanta in inventory</source>
-        <translation>Ποσότητα στο ευρετήριο</translation>
+        <translation type="vanished">Ποσότητα στο ευρετήριο</translation>
     </message>
     <message>
         <source>Main</source>
@@ -9549,6 +9574,22 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Neutral strains do not produce toxins, nor are they killed by them</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount in Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount in inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Μονάδα μέτρησης</translation>
     </message>
 </context>
 </TS>

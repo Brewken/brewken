@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Equipment.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/Equipment.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -27,7 +27,7 @@
 #include <QDomNode>
 #include <QSqlRecord>
 
-#include "model/NamedEntity.h"
+#include "model/NamedEntityWithFolder.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
@@ -118,7 +118,7 @@ AddPropertyName(kettleTrubChillerLoss_l    )
  *              where there is a separate lautering tun, lautering losses will be associated with that tun.
  * TODO: Make the above NOTE true!
  */
-class Equipment : public NamedEntity {
+class Equipment : public NamedEntityWithFolder {
    Q_OBJECT
 
 public:
@@ -431,7 +431,7 @@ public:
    //! \brief Calculate how much wort is left immediately at knockout.
    double wortEndOfBoil_l( double kettleWort_l ) const;
 
-   virtual Recipe * getOwningRecipe() const;
+///   virtual Recipe * getOwningRecipe() const;
 
 signals:
 

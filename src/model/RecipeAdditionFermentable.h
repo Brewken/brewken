@@ -90,7 +90,7 @@ public:
    //! \brief The maximum kg of equivalent glucose that will come from this Fermentable addition.
    double equivSucrose_kg() const;
 
-   virtual Recipe * getOwningRecipe() const;
+///   virtual Recipe * getOwningRecipe() const;
 
    virtual NamedEntity * ensureExists(BtStringConst const & property);
 

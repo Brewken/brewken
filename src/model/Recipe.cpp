@@ -56,6 +56,7 @@
 #include "model/RecipeAdditionHop.h"
 #include "model/RecipeAdditionMisc.h"
 #include "model/RecipeAdditionYeast.h"
+#include "model/RecipeUseOfWater.h"
 #include "model/Salt.h"
 #include "model/Style.h"
 #include "model/Water.h"
@@ -187,9 +188,9 @@ namespace {
    template<> BtStringConst const & propertyToPropertyName<RecipeAdditionHop        >() { return PropertyNames::Recipe::hopAdditionIds        ; }
    template<> BtStringConst const & propertyToPropertyName<RecipeAdditionMisc       >() { return PropertyNames::Recipe::miscAdditionIds       ; }
    template<> BtStringConst const & propertyToPropertyName<RecipeAdditionYeast      >() { return PropertyNames::Recipe::yeastAdditionIds      ; }
+   template<> BtStringConst const & propertyToPropertyName<RecipeUseOfWater         >() { return PropertyNames::Recipe::waterUseIds           ; }
    template<> BtStringConst const & propertyToPropertyName<Salt                     >() { return PropertyNames::Recipe::saltIds               ; }
    template<> BtStringConst const & propertyToPropertyName<Style                    >() { return PropertyNames::Recipe::styleId               ; }
-   template<> BtStringConst const & propertyToPropertyName<Water                    >() { return PropertyNames::Recipe::waterIds              ; }
 
 ///   QHash<QString, Recipe::Type> const RECIPE_TYPE_STRING_TO_TYPE {
 ///      {"Extract",      Recipe::Type::Extract},
@@ -218,8 +219,7 @@ public:
    impl(Recipe & self) :
       m_self{self},
       instructionIds{},
-      saltIds{},
-      waterIds{} {
+      saltIds{} {
       return;
    }
 
@@ -231,6 +231,8 @@ public:
    /**
     * \brief Make copies of the additions of a particular type (\c RecipeAdditionHop, \c RecipeAdditionFermentable,
     *        etc) from one \c Recipe and add them to another - typically because we are copying the \c Recipe.
+    *
+    *        This also works for \c RecipeUseOfWater.
     */
    template<class RA> void copyAdditions(Recipe & us, Recipe const & other) {
       for (RA * otherAddition : other.pimpl->allMyRaw<RA>()) {
@@ -242,7 +244,7 @@ public:
    }
 
    /**
-    * \brief Make copies of the Instructions / Salts / Waters from one Recipe and add them to another - typically
+    * \brief Make copies of the Instructions / Salts from one Recipe and add them to another - typically
     *        because we are copying the Recipe.
     */
    template<class NE> void copyList(Recipe & us, Recipe const & other) {
@@ -681,7 +683,7 @@ public:
    QVector<int> instructionIds;
 ///   QVector<int> miscIds;
    QVector<int> saltIds;
-   QVector<int> waterIds;
+///   QVector<int> waterIds;
 ///   QVector<int> yeastIds;
 
 };
@@ -691,7 +693,7 @@ public:
 template<> QVector<int> & Recipe::impl::accessIds<Instruction>() { return this->instructionIds; }
 ///template<> QVector<int> & Recipe::impl::accessIds<Misc>()        { return this->miscIds; }
 template<> QVector<int> & Recipe::impl::accessIds<Salt>()        { return this->saltIds; }
-template<> QVector<int> & Recipe::impl::accessIds<Water>()       { return this->waterIds; }
+///template<> QVector<int> & Recipe::impl::accessIds<Water>()       { return this->waterIds; }
 ///template<> QVector<int> & Recipe::impl::accessIds<Yeast>()       { return this->yeastIds; }
 
 QString const Recipe::LocalisedName = tr("Recipe");
@@ -752,10 +754,10 @@ bool Recipe::isEqualTo(NamedEntity const & other) const {
       ObjectStoreWrapper::compareListByIds<Instruction      >(this->pimpl->instructionIds  , rhs.pimpl->instructionIds  ) &&
 ///      ObjectStoreWrapper::compareListByIds<Misc             >(this->pimpl->miscIds         , rhs.pimpl->miscIds         ) &&
       ObjectStoreWrapper::compareListByIds<Salt             >(this->pimpl->saltIds         , rhs.pimpl->saltIds         ) &&
-      ObjectStoreWrapper::compareListByIds<Water            >(this->pimpl->waterIds        , rhs.pimpl->waterIds        )
+///      ObjectStoreWrapper::compareListByIds<Water            >(this->pimpl->waterIds        , rhs.pimpl->waterIds        )
 ///      ObjectStoreWrapper::compareListByIds<Yeast            >(this->pimpl->yeastIds        , rhs.pimpl->yeastIds        )
 
-      // TODO: What about BrewNote, RecipeAdditionFermentable, RecipeAdditionHop, RecipeAdditionMisc, RecipeAdditionYeast
+      // TODO: What about BrewNote, RecipeAdditionFermentable, RecipeAdditionHop, RecipeAdditionMisc, RecipeAdditionYeast, RecipeUseOfWater
    );
 }
 
@@ -832,7 +834,7 @@ TypeLookup const Recipe::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::postBoilVolume_l  , Recipe::m_postBoilVolume_l  , Measurement::PhysicalQuantity::Volume        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::saltIds           , Recipe::impl::saltIds       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::SRMColor          , Recipe::m_SRMColor          ), // NB: This is an RGB display color
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::waterIds          , Recipe::impl::waterIds      ),
+//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::waterIds          , Recipe::impl::waterIds      ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::waters            , Recipe::m_waters            ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::wortFromMash_l    , Recipe::m_wortFromMash_l    , Measurement::PhysicalQuantity::Volume        ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::yeastIds          , Recipe::impl::yeastIds      ),
@@ -842,6 +844,7 @@ TypeLookup const Recipe::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::hopAdditionIds        , Recipe::hopAdditionIds        ),
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::miscAdditionIds       , Recipe::miscAdditionIds       ),
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::yeastAdditionIds      , Recipe::yeastAdditionIds      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::waterUseIds           , Recipe::waterUseIds           ),
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::boilSize_l            , Recipe::boilSize_l            , Measurement::PhysicalQuantity::Volume        ),
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::boilTime_min          , Recipe::boilTime_min          , Measurement::PhysicalQuantity::Time          ),
    },
@@ -1002,9 +1005,9 @@ Recipe::Recipe(Recipe const & other) :
    this->pimpl->copyAdditions<RecipeAdditionHop        >(*this, other);
    this->pimpl->copyAdditions<RecipeAdditionMisc       >(*this, other);
    this->pimpl->copyAdditions<RecipeAdditionYeast      >(*this, other);
+   this->pimpl->copyAdditions<RecipeUseOfWater         >(*this, other);
    this->pimpl->copyList<Instruction>(*this, other);
    this->pimpl->copyList<Salt       >(*this, other);
-   this->pimpl->copyList<Water      >(*this, other);
 
    //
    // You might think that Style, Mash and Equipment could safely be shared between Recipes.   However, AFAICT, none of
@@ -1490,13 +1493,13 @@ template<class NE> std::shared_ptr<NE> Recipe::add(std::shared_ptr<NE> ne) {
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
 // means, amongst other things, that we can reference the pimpl.)
 //
-template std::shared_ptr<Water      > Recipe::add(std::shared_ptr<Water      > var);
 template std::shared_ptr<Salt       > Recipe::add(std::shared_ptr<Salt       > var);
 template std::shared_ptr<Instruction> Recipe::add(std::shared_ptr<Instruction> var);
-template<> std::shared_ptr<Fermentable> Recipe::add(std::shared_ptr<Fermentable> var) { Q_ASSERT(false); return nullptr; };
-template<> std::shared_ptr<Hop        > Recipe::add(std::shared_ptr<Hop        > var) { Q_ASSERT(false); return nullptr; };
-template<> std::shared_ptr<Misc       > Recipe::add(std::shared_ptr<Misc       > var) { Q_ASSERT(false); return nullptr; };
-template<> std::shared_ptr<Yeast      > Recipe::add(std::shared_ptr<Yeast      > var) { Q_ASSERT(false); return nullptr; };
+template<> std::shared_ptr<Fermentable> Recipe::add(std::shared_ptr<Fermentable> var) { Q_ASSERT(false); return nullptr; }
+template<> std::shared_ptr<Hop        > Recipe::add(std::shared_ptr<Hop        > var) { Q_ASSERT(false); return nullptr; }
+template<> std::shared_ptr<Misc       > Recipe::add(std::shared_ptr<Misc       > var) { Q_ASSERT(false); return nullptr; }
+template<> std::shared_ptr<Yeast      > Recipe::add(std::shared_ptr<Yeast      > var) { Q_ASSERT(false); return nullptr; }
+template<> std::shared_ptr<Water      > Recipe::add(std::shared_ptr<Water      > var) { Q_ASSERT(false); return nullptr; }
 
 template<class RA> std::shared_ptr<RA> Recipe::addAddition(std::shared_ptr<RA> addition) {
    // It's a coding error if we've ended up with a null shared_ptr
@@ -1531,10 +1534,8 @@ template<class NE> bool Recipe::uses(NE const & val) const {
    int idToLookFor = val.key();
    if (idToLookFor <= 0) {
       //
-      // We shouldn't be trying to look for a Fermentable/Hop/etc that hasn't even been stored (and therefore does not
-      // yet have an ID).  The most likely reason for this happening would be a coding error that results in a copy of
-      // a Fermentable/Hop/etc being taken and passed in as the parameter to this function (because copies do not take
-      // the ID of the thing from which they were copied).
+      // We shouldn't be trying to look for something that hasn't even been stored (and therefore does not yet have an
+      // ID).
       //
       qCritical() <<
          Q_FUNC_INFO << "Trying to search for use of" << val.metaObject()->className() << "that is not stored!";
@@ -1553,7 +1554,7 @@ template<class NE> bool Recipe::uses(NE const & val) const {
 template bool Recipe::uses(Instruction  const & val) const;
 ///template bool Recipe::uses(Misc         const & val) const;
 template bool Recipe::uses(Salt         const & val) const;
-template bool Recipe::uses(Water        const & val) const;
+///template bool Recipe::uses(Water        const & val) const;
 ///template bool Recipe::uses(Yeast        const & val) const;
 template<> bool Recipe::uses<Equipment   > (Equipment    const & val) const { return val.key() == this->m_equipmentId   ; }
 template<> bool Recipe::uses<Style       > (Style        const & val) const { return val.key() == this->m_styleId       ; }
@@ -1562,6 +1563,7 @@ template<> bool Recipe::uses<Mash        > (Mash         const & val) const { re
 template<> bool Recipe::uses<Boil        > (Boil         const & val) const { return val.key() == this->m_boilId        ; }
 template<> bool Recipe::uses<Fermentation> (Fermentation const & val) const { return val.key() == this->m_fermentationId; }
 template<> bool Recipe::uses<RecipeAddition>(RecipeAddition const & val) const { return val.recipeId() == this->key(); }
+template<> bool Recipe::uses<RecipeUseOfWater>(RecipeUseOfWater const & val) const { return val.recipeId() == this->key(); }
 
 template<class NE> std::shared_ptr<NE> Recipe::remove(std::shared_ptr<NE> var) {
    // It's a coding error to supply a null shared pointer
@@ -1595,7 +1597,6 @@ template<class NE> std::shared_ptr<NE> Recipe::remove(std::shared_ptr<NE> var) {
    // remove).
    return var;
 }
-template std::shared_ptr<Water      > Recipe::remove(std::shared_ptr<Water      > var);
 template std::shared_ptr<Salt       > Recipe::remove(std::shared_ptr<Salt       > var);
 template std::shared_ptr<Instruction> Recipe::remove(std::shared_ptr<Instruction> var);
 
@@ -1628,6 +1629,7 @@ template std::shared_ptr<RecipeAdditionFermentable> Recipe::removeAddition(std::
 template std::shared_ptr<RecipeAdditionHop        > Recipe::removeAddition(std::shared_ptr<RecipeAdditionHop        > addition);
 template std::shared_ptr<RecipeAdditionMisc       > Recipe::removeAddition(std::shared_ptr<RecipeAdditionMisc       > addition);
 template std::shared_ptr<RecipeAdditionYeast      > Recipe::removeAddition(std::shared_ptr<RecipeAdditionYeast      > addition);
+template std::shared_ptr<RecipeUseOfWater         > Recipe::removeAddition(std::shared_ptr<RecipeUseOfWater         > addition);
 
 int Recipe::instructionNumber(Instruction const & ins) const {
    // C++ arrays etc are indexed from 0, but for end users we want instruction numbers to start from 1
@@ -1758,7 +1760,7 @@ void Recipe::setFermentationId(int const id) { this->m_fermentationId = id; retu
 
 void Recipe::setInstructionIds(QVector<int> ids) {    this->pimpl->instructionIds = ids; return; }
 void Recipe::setSaltIds       (QVector<int> ids) {    this->pimpl->saltIds        = ids; return; }
-void Recipe::setWaterIds      (QVector<int> ids) {    this->pimpl->waterIds       = ids; return; }
+///void Recipe::setWaterIds      (QVector<int> ids) {    this->pimpl->waterIds       = ids; return; }
 
 //==============================="SET" METHODS=================================
 void Recipe::setType(Recipe::Type const val) {
@@ -2231,24 +2233,24 @@ template<typename NE> QList< std::shared_ptr<NE> > Recipe::getAll() const {
 // means, amongst other things, that we can reference the pimpl.)
 //
 template QList< std::shared_ptr<Salt> > Recipe::getAll<Salt>() const;
-template QList< std::shared_ptr<Water> > Recipe::getAll<Water>() const;
 // Override for things that aren't stored in junction tables
 template<> QList< std::shared_ptr<RecipeAdditionFermentable> > Recipe::getAll<RecipeAdditionFermentable>() const { return this->pimpl->allMy<RecipeAdditionFermentable>(); }
 template<> QList< std::shared_ptr<RecipeAdditionHop        > > Recipe::getAll<RecipeAdditionHop        >() const { return this->pimpl->allMy<RecipeAdditionHop        >(); }
 template<> QList< std::shared_ptr<RecipeAdditionMisc       > > Recipe::getAll<RecipeAdditionMisc       >() const { return this->pimpl->allMy<RecipeAdditionMisc       >(); }
 template<> QList< std::shared_ptr<RecipeAdditionYeast      > > Recipe::getAll<RecipeAdditionYeast      >() const { return this->pimpl->allMy<RecipeAdditionYeast      >(); }
+template<> QList< std::shared_ptr<RecipeUseOfWater         > > Recipe::getAll<RecipeUseOfWater         >() const { return this->pimpl->allMy<RecipeUseOfWater         >(); }
 
 ///QList<RecipeAdditionHop *>  Recipe::hopAdditions() const { return this->pimpl->allMyRaw<RecipeAdditionHop>(); }
 QList<std::shared_ptr<RecipeAdditionFermentable>> Recipe::fermentableAdditions() const { return this->pimpl->allMy<RecipeAdditionFermentable>(); }
 QList<std::shared_ptr<RecipeAdditionHop        >> Recipe::        hopAdditions() const { return this->pimpl->allMy<RecipeAdditionHop        >(); }
 QList<std::shared_ptr<RecipeAdditionMisc       >> Recipe::       miscAdditions() const { return this->pimpl->allMy<RecipeAdditionMisc       >(); }
 QList<std::shared_ptr<RecipeAdditionYeast      >> Recipe::      yeastAdditions() const { return this->pimpl->allMy<RecipeAdditionYeast      >(); }
+QList<std::shared_ptr<RecipeUseOfWater         >> Recipe::           waterUses() const { return this->pimpl->allMy<RecipeUseOfWater         >(); }
 QVector<int>         Recipe::fermentableAdditionIds() const { return this->pimpl->allMyIds<RecipeAdditionFermentable>(); }
 QVector<int>         Recipe::        hopAdditionIds() const { return this->pimpl->allMyIds<RecipeAdditionHop        >(); }
 QVector<int>         Recipe::       miscAdditionIds() const { return this->pimpl->allMyIds<RecipeAdditionMisc       >(); }
 QVector<int>         Recipe::      yeastAdditionIds() const { return this->pimpl->allMyIds<RecipeAdditionYeast      >(); }
-QList<Water *>       Recipe::waters()            const { return this->pimpl->getAllMyRaw<Water>();       }
-QVector<int>         Recipe::getWaterIds()       const { return this->pimpl->waterIds;                   }
+QVector<int>         Recipe::           waterUseIds() const { return this->pimpl->allMyIds<RecipeUseOfWater         >(); }
 QList<Salt *>        Recipe::salts()             const { return this->pimpl->getAllMyRaw<Salt>();        }
 QVector<int>         Recipe::getSaltIds()        const { return this->pimpl->saltIds;                    }
 int                  Recipe::getAncestorId()     const { return this->m_ancestor_id;                     }
@@ -3148,12 +3150,12 @@ double Recipe::targetTotalMashVol_l() {
    return targetCollectedWortVol_l() + absorption_lKg * grainsInMash_kg();
 }
 
-Recipe * Recipe::getOwningRecipe() const {
-   // Recipes own themselves.
-   // Because this is a const function, the compiler treats the `this` pointer as a pointer to const Recipe.  This is
-   // why we need to cast it to return it.
-   return const_cast<Recipe *>(this);
-}
+///Recipe * Recipe::getOwningRecipe() const {
+///   // Recipes own themselves.
+///   // Because this is a const function, the compiler treats the `this` pointer as a pointer to const Recipe.  This is
+///   // why we need to cast it to return it.
+///   return const_cast<Recipe *>(this);
+///}
 
 void Recipe::hardDeleteOwnedEntities() {
    // It's the BrewNote that stores its Recipe ID, so all we need to do is delete our BrewNotes then the subsequent
@@ -3167,9 +3169,9 @@ void Recipe::hardDeleteOwnedEntities() {
    this->pimpl->hardDeleteAdditions<RecipeAdditionHop        >();
    this->pimpl->hardDeleteAdditions<RecipeAdditionMisc       >();
    this->pimpl->hardDeleteAdditions<RecipeAdditionYeast      >();
+   this->pimpl->hardDeleteAdditions<RecipeUseOfWater         >();
    this->pimpl->hardDeleteAllMy<Instruction>();
    this->pimpl->hardDeleteAllMy<Salt       >();
-   this->pimpl->hardDeleteAllMy<Water      >();
 
    return;
 }
@@ -3218,80 +3220,6 @@ QList<BrewNote *> RecipeHelper::brewNotesForRecipeAndAncestors(Recipe const & re
       brewNotes.append(ancestor->brewNotes());
    }
    return brewNotes;
-}
-
-void RecipeHelper::prepareForPropertyChange(NamedEntity & ne, BtStringConst const & propertyName) {
-
-   //
-   // If the user has said they don't want versioning, just return
-   //
-   if (!RecipeHelper::getAutomaticVersioningEnabled()) {
-      return;
-   }
-
-   qDebug() <<
-      Q_FUNC_INFO << "Modifying: " << ne.metaObject()->className() << "#" << ne.key() << "property" << propertyName;
-
-   //
-   // If the object we're about to change a property on is a Recipe or is used in a Recipe, then it might need a new
-   // version -- unless it's already being versioned.
-   //
-   Recipe * owner = ne.getOwningRecipe();
-   if (!owner || owner->isBeingModified()) {
-      // Change is not related to a recipe or the recipe is already being modified
-      return;
-   }
-
-   //
-   // Automatic versioning means that, once a recipe is brewed, it is "soft locked" and the first change should spawn a
-   // new version.  Any subsequent change should not spawn a new version until it is brewed again.
-   //
-   if (owner->brewNotes().empty()) {
-      // Recipe hasn't been brewed
-      return;
-   }
-
-   // If the object we're about to change already has descendants, then we don't want to create new ones.
-   if (owner->hasDescendants()) {
-      qDebug() << Q_FUNC_INFO << "Recipe #" << owner->key() << "already has descendants, so not creating any more";
-      return;
-   }
-
-   //
-   // Once we've started doing versioning, we don't want to trigger it again on the same Recipe until we've finished
-   //
-   NamedEntityModifyingMarker ownerModifyingMarker(*owner);
-
-   //
-   // Versioning when modifying something in a recipe is *hard*.  If we copy the recipe, there is no easy way to say
-   // "this ingredient in the old recipe is that ingredient in the new".  One approach would be to use the delete idea,
-   // ie copy everything but what's being modified, clone what's being modified and add the clone to the copy.  Another
-   // is to take a deep copy of the Recipe and make that the "prior version".
-   //
-
-   // Create a deep copy of the Recipe, and put it in the DB, so it has an ID.
-   // (This will also emit signalObjectInserted for the new Recipe from ObjectStoreTyped<Recipe>.)
-   qDebug() << Q_FUNC_INFO << "Copying Recipe" << owner->key();
-
-   // We also don't want to trigger versioning on the newly spawned Recipe until we're completely done here!
-   std::shared_ptr<Recipe> spawn = std::make_shared<Recipe>(*owner);
-   NamedEntityModifyingMarker spawnModifyingMarker(*spawn);
-   ObjectStoreWrapper::insert(spawn);
-
-   qDebug() << Q_FUNC_INFO << "Copied Recipe #" << owner->key() << "to new Recipe #" << spawn->key();
-
-   // We assert that the newly created version of the recipe has not yet been brewed (and therefore will not get
-   // automatically versioned on subsequent changes before it is brewed).
-   Q_ASSERT(spawn->brewNotes().empty());
-
-   //
-   // By default, copying a Recipe does not copy all its ancestry.  Here, we want the copy to become our ancestor (ie
-   // previous version).  This will also emit a signalPropertyChanged from ObjectStoreTyped<Recipe>, which the UI can
-   // pick up to update tree display of Recipes etc.
-   //
-   owner->setAncestor(*spawn);
-
-   return;
 }
 
 /**

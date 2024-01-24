@@ -40,6 +40,7 @@
 #include "model/RecipeAdditionHop.h"
 #include "model/RecipeAdditionMisc.h"
 #include "model/RecipeAdditionYeast.h"
+#include "model/RecipeUseOfWater.h"
 #include "model/Recipe.h"
 #include "model/Salt.h"
 #include "model/Style.h"
@@ -76,7 +77,7 @@ namespace {
          {ObjectStore::FieldType::String, "name"                          , PropertyNames::NamedEntity::name                     },
          {ObjectStore::FieldType::Bool  , "display"                       , PropertyNames::NamedEntity::display                  },
          {ObjectStore::FieldType::Bool  , "deleted"                       , PropertyNames::NamedEntity::deleted                  },
-         {ObjectStore::FieldType::String, "folder"                        , PropertyNames::NamedEntity::folder                   },
+         {ObjectStore::FieldType::String, "folder"                        , PropertyNames::NamedEntityWithFolder::folder         },
          {ObjectStore::FieldType::Double, "fermenter_batch_size_l"        , PropertyNames::Equipment::fermenterBatchSize_l       },
          {ObjectStore::FieldType::Double, "boiling_point"                 , PropertyNames::Equipment::boilingPoint_c             },
          {ObjectStore::FieldType::Double, "kettle_boil_size_l"            , PropertyNames::Equipment::kettleBoilSize_l           },
@@ -131,7 +132,7 @@ namespace {
       {
          "equipment_children",
          {
-            {ObjectStore::FieldType::Int, "id"                                                                                  },
+            {ObjectStore::FieldType::Int, "id"                                                                         },
             {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Equipment>},
             {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, &PRIMARY_TABLE<Equipment>},
          },
@@ -149,7 +150,7 @@ namespace {
          {ObjectStore::FieldType::String, "name"                          , PropertyNames::NamedEntity::name                     },
          {ObjectStore::FieldType::Bool  , "deleted"                       , PropertyNames::NamedEntity::deleted                  },
          {ObjectStore::FieldType::Bool  , "display"                       , PropertyNames::NamedEntity::display                  },
-         {ObjectStore::FieldType::String, "folder"                        , PropertyNames::NamedEntity::folder                   },
+         {ObjectStore::FieldType::String, "folder"                        , PropertyNames::NamedEntityWithFolder::folder                   },
 ///         {ObjectStore::FieldType::Int   , "inventory_id"                  , PropertyNames::NamedEntityWithInventory::inventoryId , &PRIMARY_TABLE<InventoryFermentable>},
 ///         {ObjectStore::FieldType::Bool  , "add_after_boil"                , PropertyNames::Fermentable::addAfterBoil             },
 ///         {ObjectStore::FieldType::Double, "amount"                        , PropertyNames::Fermentable::amount                   },
@@ -230,7 +231,7 @@ namespace {
          {ObjectStore::FieldType::String, "name"                 , PropertyNames::NamedEntity::name                    },
          {ObjectStore::FieldType::Bool  , "display"              , PropertyNames::NamedEntity::display                 },
          {ObjectStore::FieldType::Bool  , "deleted"              , PropertyNames::NamedEntity::deleted                 },
-         {ObjectStore::FieldType::String, "folder"               , PropertyNames::NamedEntity::folder                  },
+         {ObjectStore::FieldType::String, "folder"               , PropertyNames::NamedEntityWithFolder::folder                  },
 ///         {ObjectStore::FieldType::Int   , "inventory_id"         , PropertyNames::NamedEntityWithInventory::inventoryId, &PRIMARY_TABLE<InventoryHop>},
          {ObjectStore::FieldType::Double, "alpha"                , PropertyNames::Hop::alpha_pct                   },
 ///         {ObjectStore::FieldType::Double, "amount"               , PropertyNames::Hop::amount                          },
@@ -322,7 +323,7 @@ namespace {
          {ObjectStore::FieldType::String, "name"             , PropertyNames::NamedEntity::name              },
          {ObjectStore::FieldType::Bool  , "deleted"          , PropertyNames::NamedEntity::deleted           },
          {ObjectStore::FieldType::Bool  , "display"          , PropertyNames::NamedEntity::display           },
-         {ObjectStore::FieldType::String, "folder"           , PropertyNames::NamedEntity::folder            },
+         {ObjectStore::FieldType::String, "folder"           , PropertyNames::NamedEntityWithFolder::folder            },
          {ObjectStore::FieldType::Bool  , "equip_adjust"     , PropertyNames::Mash::equipAdjust              },
          {ObjectStore::FieldType::Double, "grain_temp"       , PropertyNames::Mash::grainTemp_c              },
          {ObjectStore::FieldType::String, "notes"            , PropertyNames::Mash::notes                    },
@@ -379,7 +380,7 @@ namespace {
          {ObjectStore::FieldType::String, "name"           , PropertyNames::NamedEntity::name   },
          {ObjectStore::FieldType::Bool  , "deleted"        , PropertyNames::NamedEntity::deleted},
          {ObjectStore::FieldType::Bool  , "display"        , PropertyNames::NamedEntity::display},
-         {ObjectStore::FieldType::String, "folder"         , PropertyNames::NamedEntity::folder },
+         {ObjectStore::FieldType::String, "folder"         , PropertyNames::NamedEntityWithFolder::folder },
          {ObjectStore::FieldType::String, "description"    , PropertyNames::Boil::description   },
          {ObjectStore::FieldType::String, "notes"          , PropertyNames::Boil::notes         },
          {ObjectStore::FieldType::Double, "pre_boil_size_l", PropertyNames::Boil::preBoilSize_l },
@@ -428,7 +429,7 @@ namespace {
          {ObjectStore::FieldType::String, "name"             , PropertyNames::NamedEntity::name              },
          {ObjectStore::FieldType::Bool  , "deleted"          , PropertyNames::NamedEntity::deleted           },
          {ObjectStore::FieldType::Bool  , "display"          , PropertyNames::NamedEntity::display           },
-         {ObjectStore::FieldType::String, "folder"           , PropertyNames::NamedEntity::folder            },
+         {ObjectStore::FieldType::String, "folder"           , PropertyNames::NamedEntityWithFolder::folder            },
          {ObjectStore::FieldType::String, "description"      , PropertyNames::Fermentation::description      },
          {ObjectStore::FieldType::String, "notes"            , PropertyNames::Fermentation::notes            },
       }
@@ -475,7 +476,7 @@ namespace {
          {ObjectStore::FieldType::String, "name"            , PropertyNames::NamedEntity::name                    },
          {ObjectStore::FieldType::Bool  , "deleted"         , PropertyNames::NamedEntity::deleted                 },
          {ObjectStore::FieldType::Bool  , "display"         , PropertyNames::NamedEntity::display                 },
-         {ObjectStore::FieldType::String, "folder"          , PropertyNames::NamedEntity::folder                  },
+         {ObjectStore::FieldType::String, "folder"          , PropertyNames::NamedEntityWithFolder::folder                  },
 ///         {ObjectStore::FieldType::Int   , "inventory_id"    , PropertyNames::NamedEntityWithInventory::inventoryId, &PRIMARY_TABLE<InventoryMisc>},
          {ObjectStore::FieldType::Enum  , "mtype"           , PropertyNames::Misc::type                           , &Misc::typeStringMapping},
 ///         {ObjectStore::FieldType::Enum  , "use"             , PropertyNames::Misc::use                            , &Misc::useStringMapping },
@@ -525,7 +526,7 @@ namespace {
          {ObjectStore::FieldType::String, "name"            , PropertyNames::NamedEntity::name    },
          {ObjectStore::FieldType::Bool  , "deleted"         , PropertyNames::NamedEntity::deleted },
          {ObjectStore::FieldType::Bool  , "display"         , PropertyNames::NamedEntity::display },
-         {ObjectStore::FieldType::String, "folder"          , PropertyNames::NamedEntity::folder  },
+         {ObjectStore::FieldType::String, "folder"          , PropertyNames::NamedEntityWithFolder::folder  },
          {ObjectStore::FieldType::Int   , "addTo"           , PropertyNames::Salt::whenToAdd      }, // TODO: Really an Enum.  Would be less fragile to store this as text than a number.  Also, column name...
          {ObjectStore::FieldType::Double, "amount"          , PropertyNames::Salt::amount         },
          {ObjectStore::FieldType::Bool  , "amount_is_weight", PropertyNames::Salt::amountIsWeight },
@@ -547,7 +548,7 @@ namespace {
          {ObjectStore::FieldType::String, "name"              , PropertyNames::NamedEntity::name       },
          {ObjectStore::FieldType::Bool  , "display"           , PropertyNames::NamedEntity::display    },
          {ObjectStore::FieldType::Bool  , "deleted"           , PropertyNames::NamedEntity::deleted    },
-         {ObjectStore::FieldType::String, "folder"            , PropertyNames::NamedEntity::folder     },
+         {ObjectStore::FieldType::String, "folder"            , PropertyNames::NamedEntityWithFolder::folder     },
          {ObjectStore::FieldType::Double, "abv_max"           , PropertyNames::Style::abvMax_pct       },
          {ObjectStore::FieldType::Double, "abv_min"           , PropertyNames::Style::abvMin_pct       },
          {ObjectStore::FieldType::Double, "carb_max"          , PropertyNames::Style::carbMax_vol      },
@@ -599,9 +600,9 @@ namespace {
          {ObjectStore::FieldType::String, "name"       , PropertyNames::NamedEntity::name      },
          {ObjectStore::FieldType::Bool  , "display"    , PropertyNames::NamedEntity::display   },
          {ObjectStore::FieldType::Bool  , "deleted"    , PropertyNames::NamedEntity::deleted   },
-         {ObjectStore::FieldType::String, "folder"     , PropertyNames::NamedEntity::folder    },
+         {ObjectStore::FieldType::String, "folder"     , PropertyNames::NamedEntityWithFolder::folder    },
          {ObjectStore::FieldType::String, "notes"      , PropertyNames::Water::notes           },
-         {ObjectStore::FieldType::Double, "amount"     , PropertyNames::Water::amount          },
+///         {ObjectStore::FieldType::Double, "amount"     , PropertyNames::Water::amount          },
          {ObjectStore::FieldType::Double, "calcium"    , PropertyNames::Water::calcium_ppm     },
          {ObjectStore::FieldType::Double, "bicarbonate", PropertyNames::Water::bicarbonate_ppm },
          {ObjectStore::FieldType::Double, "sulfate"    , PropertyNames::Water::sulfate_ppm     },
@@ -638,7 +639,7 @@ namespace {
          {ObjectStore::FieldType::String, "name"                        , PropertyNames::NamedEntity::name                    },
          {ObjectStore::FieldType::Bool  , "display"                     , PropertyNames::NamedEntity::display                 },
          {ObjectStore::FieldType::Bool  , "deleted"                     , PropertyNames::NamedEntity::deleted                 },
-         {ObjectStore::FieldType::String, "folder"                      , PropertyNames::NamedEntity::folder                  },
+         {ObjectStore::FieldType::String, "folder"                      , PropertyNames::NamedEntityWithFolder::folder                  },
 ///         {ObjectStore::FieldType::Int   , "inventory_id"                , PropertyNames::NamedEntityWithInventory::inventoryId, &PRIMARY_TABLE<InventoryYeast>},
 ///         {ObjectStore::FieldType::Bool  , "add_to_secondary"            , PropertyNames::Yeast::addToSecondary                },
 ///         {ObjectStore::FieldType::Bool  , "amount_is_weight"            , PropertyNames::Yeast::amountIsWeight                },
@@ -704,7 +705,7 @@ namespace {
          {ObjectStore::FieldType::String, "name"               , PropertyNames::NamedEntity::name         },
          {ObjectStore::FieldType::Bool  , "deleted"            , PropertyNames::NamedEntity::deleted      },
          {ObjectStore::FieldType::Bool  , "display"            , PropertyNames::NamedEntity::display      },
-         {ObjectStore::FieldType::String, "folder"             , PropertyNames::NamedEntity::folder       },
+         {ObjectStore::FieldType::String, "folder"             , PropertyNames::NamedEntityWithFolder::folder       },
          {ObjectStore::FieldType::Double, "age"                , PropertyNames::Recipe::age_days          },
          {ObjectStore::FieldType::Double, "age_temp"           , PropertyNames::Recipe::ageTemp_c         },
          {ObjectStore::FieldType::String, "assistant_brewer"   , PropertyNames::Recipe::asstBrewer        },
@@ -787,14 +788,14 @@ namespace {
             {ObjectStore::FieldType::Int, "salt_id",           PropertyNames::Recipe::saltIds,        &PRIMARY_TABLE<Salt>       },
          }
       },
-      {
-         "water_in_recipe",
-         {
-            {ObjectStore::FieldType::Int, "id"                                                                                            },
-            {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Recipe>     },
-            {ObjectStore::FieldType::Int, "water_id",          PropertyNames::Recipe::waterIds,       &PRIMARY_TABLE<Water>      },
-         }
-      },
+///      {
+///         "water_in_recipe",
+///         {
+///            {ObjectStore::FieldType::Int, "id"                                                                                            },
+///            {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Recipe>     },
+///            {ObjectStore::FieldType::Int, "water_id",          PropertyNames::Recipe::waterIds,       &PRIMARY_TABLE<Water>      },
+///         }
+///      },
 ///      {
 ///         "yeast_in_recipe",
 ///         {
@@ -815,7 +816,6 @@ namespace {
          {ObjectStore::FieldType::String, "name"             , PropertyNames::NamedEntity::name              },
          {ObjectStore::FieldType::Bool  , "display"          , PropertyNames::NamedEntity::display           },
          {ObjectStore::FieldType::Bool  , "deleted"          , PropertyNames::NamedEntity::deleted           },
-         {ObjectStore::FieldType::String, "folder"           , PropertyNames::NamedEntity::folder            },
          {ObjectStore::FieldType::Int   , "recipe_id"        , PropertyNames::RecipeAddition::recipeId       , &PRIMARY_TABLE<Recipe>     },
          {ObjectStore::FieldType::Int   , "fermentable_id"   , PropertyNames::RecipeAddition::ingredientId   , &PRIMARY_TABLE<Fermentable>},
          {ObjectStore::FieldType::Enum  , "stage"            , PropertyNames::RecipeAddition::stage          , &RecipeAddition::stageStringMapping},
@@ -839,7 +839,6 @@ namespace {
          {ObjectStore::FieldType::String, "name"             , PropertyNames::NamedEntity::name              },
          {ObjectStore::FieldType::Bool  , "display"          , PropertyNames::NamedEntity::display           },
          {ObjectStore::FieldType::Bool  , "deleted"          , PropertyNames::NamedEntity::deleted           },
-         {ObjectStore::FieldType::String, "folder"           , PropertyNames::NamedEntity::folder            },
          {ObjectStore::FieldType::Int   , "recipe_id"        , PropertyNames::RecipeAddition::recipeId       , &PRIMARY_TABLE<Recipe>},
          {ObjectStore::FieldType::Int   , "hop_id"           , PropertyNames::RecipeAddition::ingredientId   , &PRIMARY_TABLE<Hop>   },
          {ObjectStore::FieldType::Enum  , "stage"            , PropertyNames::RecipeAddition::stage          , &RecipeAddition::stageStringMapping},
@@ -863,7 +862,6 @@ namespace {
          {ObjectStore::FieldType::String, "name"             , PropertyNames::NamedEntity::name              },
          {ObjectStore::FieldType::Bool  , "display"          , PropertyNames::NamedEntity::display           },
          {ObjectStore::FieldType::Bool  , "deleted"          , PropertyNames::NamedEntity::deleted           },
-         {ObjectStore::FieldType::String, "folder"           , PropertyNames::NamedEntity::folder            },
          {ObjectStore::FieldType::Int   , "recipe_id"        , PropertyNames::RecipeAddition::recipeId       , &PRIMARY_TABLE<Recipe>},
          {ObjectStore::FieldType::Int   , "misc_id"          , PropertyNames::RecipeAddition::ingredientId   , &PRIMARY_TABLE<Misc>   },
          {ObjectStore::FieldType::Enum  , "stage"            , PropertyNames::RecipeAddition::stage          , &RecipeAddition::stageStringMapping},
@@ -887,7 +885,6 @@ namespace {
          {ObjectStore::FieldType::String, "name"             , PropertyNames::NamedEntity::name                   },
          {ObjectStore::FieldType::Bool  , "display"          , PropertyNames::NamedEntity::display                },
          {ObjectStore::FieldType::Bool  , "deleted"          , PropertyNames::NamedEntity::deleted                },
-         {ObjectStore::FieldType::String, "folder"           , PropertyNames::NamedEntity::folder                 },
          {ObjectStore::FieldType::Int   , "recipe_id"        , PropertyNames::RecipeAddition::recipeId            , &PRIMARY_TABLE<Recipe>},
          {ObjectStore::FieldType::Int   , "yeast_id"         , PropertyNames::RecipeAddition::ingredientId        , &PRIMARY_TABLE<Yeast>   },
          {ObjectStore::FieldType::Enum  , "stage"            , PropertyNames::RecipeAddition::stage               , &RecipeAddition::stageStringMapping},
@@ -903,6 +900,22 @@ namespace {
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Database field mappings for RecipeUseOfWater
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> ObjectStore::TableDefinition const PRIMARY_TABLE<RecipeUseOfWater> {
+      "water_in_recipe",
+      {
+         {ObjectStore::FieldType::Int   , "id"               , PropertyNames::NamedEntity::key                    },
+         {ObjectStore::FieldType::String, "name"             , PropertyNames::NamedEntity::name                   },
+         {ObjectStore::FieldType::Bool  , "display"          , PropertyNames::NamedEntity::display                },
+         {ObjectStore::FieldType::Bool  , "deleted"          , PropertyNames::NamedEntity::deleted                },
+         {ObjectStore::FieldType::Int   , "recipe_id"        , PropertyNames::RecipeAddition::recipeId            , &PRIMARY_TABLE<Recipe>},
+         {ObjectStore::FieldType::Int   , "water_id"         , PropertyNames::RecipeAddition::ingredientId        , &PRIMARY_TABLE<Yeast>   },
+         {ObjectStore::FieldType::Double, "volume_liters"    , PropertyNames::RecipeUseOfWater::volume_l          },
+      }
+   };
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for BrewNote
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<BrewNote> {
@@ -912,7 +925,7 @@ namespace {
          // NB: BrewNotes don't have names in DB
          {ObjectStore::FieldType::Bool  , "display"                , PropertyNames::NamedEntity::display       },
          {ObjectStore::FieldType::Bool  , "deleted"                , PropertyNames::NamedEntity::deleted       },
-         {ObjectStore::FieldType::String, "folder"                 , PropertyNames::NamedEntity::folder        },
+         {ObjectStore::FieldType::String, "folder"                 , PropertyNames::NamedEntityWithFolder::folder},
          {ObjectStore::FieldType::Double, "abv"                    , PropertyNames::BrewNote::abv              },
          {ObjectStore::FieldType::Double, "attenuation"            , PropertyNames::BrewNote::attenuation      },
          {ObjectStore::FieldType::Double, "boil_off"               , PropertyNames::BrewNote::boilOff_l        },
@@ -999,6 +1012,7 @@ template ObjectStoreTyped<RecipeAdditionFermentable> & ObjectStoreTyped<RecipeAd
 template ObjectStoreTyped<RecipeAdditionHop        > & ObjectStoreTyped<RecipeAdditionHop        >::getInstance();
 template ObjectStoreTyped<RecipeAdditionMisc       > & ObjectStoreTyped<RecipeAdditionMisc       >::getInstance();
 template ObjectStoreTyped<RecipeAdditionYeast      > & ObjectStoreTyped<RecipeAdditionYeast      >::getInstance();
+template ObjectStoreTyped<RecipeUseOfWater         > & ObjectStoreTyped<RecipeUseOfWater         >::getInstance();
 template ObjectStoreTyped<Salt                     > & ObjectStoreTyped<Salt                     >::getInstance();
 template ObjectStoreTyped<Style                    > & ObjectStoreTyped<Style                    >::getInstance();
 template ObjectStoreTyped<Water                    > & ObjectStoreTyped<Water                    >::getInstance();
@@ -1030,6 +1044,7 @@ bool InitialiseAllObjectStores(QString & errorMessage) {
    if (ObjectStoreTyped<RecipeAdditionHop        >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "RecipeAdditionHop"        ; }
    if (ObjectStoreTyped<RecipeAdditionMisc       >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "RecipeAdditionMisc"       ; }
    if (ObjectStoreTyped<RecipeAdditionYeast      >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "RecipeAdditionYeast"      ; }
+   if (ObjectStoreTyped<RecipeUseOfWater         >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "RecipeUseOfWater"         ; }
    if (ObjectStoreTyped<Salt                     >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Salt"                     ; }
    if (ObjectStoreTyped<Style                    >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Style"                    ; }
    if (ObjectStoreTyped<Water                    >::getInstance().state() == ObjectStore::State::ErrorInitialising) { errors << "Water"                    ; }
@@ -1067,6 +1082,7 @@ namespace {
       &ostSingleton<RecipeAdditionHop        >,
       &ostSingleton<RecipeAdditionMisc       >,
       &ostSingleton<RecipeAdditionYeast      >,
+      &ostSingleton<RecipeUseOfWater         >,
       &ostSingleton<Salt                     >,
       &ostSingleton<Style                    >,
       &ostSingleton<Water                    >,

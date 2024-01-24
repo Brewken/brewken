@@ -244,7 +244,7 @@ public slots:
    void restoreFromBackup();
 
    //! \brief makes sure we can do water chemistry before we show the window
-   void popChemistry();
+   void showWaterChemistryTool();
 
    //! \brief draws a context menu, the exact nature of which depends on which
    //tree is focused

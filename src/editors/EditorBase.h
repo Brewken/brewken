@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/EditorBase.h is part of Brewken, and is copyright the following authors 2023:
+ * editors/EditorBase.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -120,6 +120,17 @@ public:
     */
    template <typename D> void setEditItem(D) = delete;
 
+   void setFolder(std::shared_ptr<NE> ne, QString const & folder) requires HasFolder<NE> {
+      if (!folder.isEmpty()) {
+         ne->setFolder(folder);
+      }
+      return;
+   }
+
+   void setFolder(std::shared_ptr<NE> ne, QString const & folder) requires HasNoFolder<NE> {
+      return;
+   }
+
    /**
     * \brief Create a new Hop, Fermentable, etc.
     *
@@ -134,9 +145,10 @@ public:
       }
 
       auto ne = std::make_shared<NE>(name);
-      if (!folder.isEmpty()) {
-         ne->setFolder(folder);
-      }
+      this->setFolder(ne, folder);
+///      if (!folder.isEmpty()) {
+///         ne->setFolder(folder);
+///      }
 
       this->setEditItem(ne);
       this->derived().show();

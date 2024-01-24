@@ -323,10 +323,10 @@ double Yeast::getTypicalAttenuation_pct() const {
    return Yeast::DefaultAttenuation_pct;
 }
 
-Recipe * Yeast::getOwningRecipe() const {
-///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
-   return nullptr;
-}
+///Recipe * Yeast::getOwningRecipe() const {
+//////   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+///   return nullptr;
+///}
 
 ///void Yeast::setInventoryQuanta(int var) {
 ///   this->setInventoryAmount(var);

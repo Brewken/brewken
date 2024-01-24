@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * WaterDialog.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * WaterDialog.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
@@ -34,6 +34,7 @@
 #include "model/MashStep.h"
 #include "model/Recipe.h"
 #include "model/RecipeAdditionFermentable.h"
+#include "model/RecipeUseOfWater.h"
 #include "model/Salt.h"
 #include "tableModels/SaltTableModel.h"
 #include "tableModels/WaterTableModel.h"
@@ -227,8 +228,8 @@ void WaterDialog::setRecipe(Recipe *rec) {
    baseProfileButton->setRecipe(m_rec);
    targetProfileButton->setRecipe(m_rec);
 
-   for (auto waterId : this->m_rec->getWaterIds()) {
-      auto water = ObjectStoreWrapper::getById<Water>(waterId);
+   for (auto waterUse : this->m_rec->waterUses()) {
+      auto water = ObjectStoreWrapper::getById<Water>(waterUse->ingredientId());
       if (water->type() == Water::Type::Base) {
          qDebug() << Q_FUNC_INFO << "Base Water" << *water;
          this->m_base = water;

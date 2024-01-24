@@ -672,7 +672,7 @@
     </message>
     <message>
         <source>Use</source>
-        <translation>Користи</translation>
+        <translation type="vanished">Користи</translation>
     </message>
     <message>
         <source>Form</source>
@@ -1828,6 +1828,20 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
+    <name>InventoryMisc</name>
+    <message>
+        <source>Misc Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>InventoryYeast</name>
+    <message>
+        <source>Yeast Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Open</source>
@@ -2026,22 +2040,6 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Drop fermentables on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop hops on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop misc on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop yeast on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Recipe Efficiency</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2055,14 +2053,6 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Redo %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove misc from recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove yeast from recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2107,6 +2097,22 @@ If you didn&apos;t yet do this, click Abort.</source>
 See logs for more details.
 
 If you need help, please open an issue at %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop fermentable(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop hop(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop misc(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop yeast(s) on a recipe</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2337,23 +2343,23 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Boil</source>
-        <translation type="unfinished">Кључање</translation>
+        <translation type="obsolete">Кључање</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished">Укомљавање</translation>
+        <translation type="obsolete">Укомљавање</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation type="unfinished">Примарна</translation>
+        <translation type="obsolete">Примарна</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation type="unfinished">Секундарна</translation>
+        <translation type="obsolete">Секундарна</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation type="unfinished">Флаширање</translation>
+        <translation type="obsolete">Флаширање</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -2465,15 +2471,15 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Use</source>
-        <translation>Користи</translation>
+        <translation type="vanished">Користи</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Трајање</translation>
+        <translation type="vanished">Трајање</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Количина</translation>
+        <translation type="vanished">Количина</translation>
     </message>
     <message>
         <source>Amount Type</source>
@@ -2485,19 +2491,15 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Запремина</translation>
+        <translation type="obsolete">Запремина</translation>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Тежина</translation>
+        <translation type="obsolete">Тежина</translation>
     </message>
 </context>
 <context>
     <name>NE</name>
-    <message>
-        <source>Add %1 to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Change %1 %2</source>
         <translation type="unfinished"></translation>
@@ -2511,9 +2513,9 @@ If you need help, please open an issue at %1</source>
     </message>
 </context>
 <context>
-    <name>NamedEntityWithInventory</name>
+    <name>NamedEntityWithFolder</name>
     <message>
-        <source>Named Entity With Inventory</source>
+        <source>Named Entity With Folder</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2521,7 +2523,7 @@ If you need help, please open an issue at %1</source>
     <name>OldInventory</name>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Инвентар</translation>
+        <translation type="obsolete">Инвентар</translation>
     </message>
 </context>
 <context>
@@ -4073,19 +4075,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>First Wort</source>
-        <translation type="unfinished">Прва сладовина</translation>
+        <translation type="obsolete">Прва сладовина</translation>
     </message>
     <message>
         <source>Boil</source>
         <translation type="unfinished">Кључање</translation>
-    </message>
-    <message>
-        <source>Post-Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dry Misc</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Addition of %1</source>
@@ -4094,6 +4088,18 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Invalid!</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Primary</source>
+        <translation type="unfinished">Примарна</translation>
+    </message>
+    <message>
+        <source>Secondary</source>
+        <translation type="unfinished">Секундарна</translation>
+    </message>
+    <message>
+        <source>Bottling</source>
+        <translation type="unfinished">Флаширање</translation>
     </message>
 </context>
 <context>
@@ -4104,15 +4110,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished">Облик</translation>
+        <translation type="obsolete">Облик</translation>
     </message>
     <message>
         <source>Alpha %</source>
-        <translation type="unfinished">Алфа %</translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Алфа %</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -4134,6 +4136,10 @@ The final volume in the primary is %1.</source>
         <source>Time</source>
         <translation type="unfinished">Трајање</translation>
     </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Тип</translation>
+    </message>
 </context>
 <context>
     <name>RecipeAdditionYeast</name>
@@ -4143,23 +4149,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished">Укомљавање</translation>
+        <translation type="obsolete">Укомљавање</translation>
     </message>
     <message>
         <source>First Wort</source>
-        <translation type="unfinished">Прва сладовина</translation>
+        <translation type="obsolete">Прва сладовина</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation type="unfinished">Кључање</translation>
-    </message>
-    <message>
-        <source>Post-Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dry Yeast</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Кључање</translation>
     </message>
     <message>
         <source>Addition of %1</source>
@@ -4182,11 +4180,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Alpha %</source>
-        <translation type="unfinished">Алфа %</translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Алфа %</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -4206,7 +4200,23 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished">Трајање</translation>
+        <translation type="obsolete">Трајање</translation>
+    </message>
+    <message>
+        <source>Laboratory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Тип</translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation type="unfinished">Корак</translation>
     </message>
 </context>
 <context>
@@ -4584,6 +4594,13 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Add During</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeUseOfWater</name>
+    <message>
+        <source>Recipe Use Of Water</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5361,7 +5378,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Количина</translation>
+        <translation type="vanished">Количина</translation>
     </message>
     <message>
         <source>Laboratory</source>
@@ -5374,6 +5391,10 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Inventory</source>
         <translation>Инвентар</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Тип количине</translation>
     </message>
 </context>
 <context>
@@ -7294,7 +7315,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Use</source>
-        <translation>Користи</translation>
+        <translation type="vanished">Користи</translation>
     </message>
     <message>
         <source>Boil</source>
@@ -7375,6 +7396,14 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Product ID</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Тип количине</translation>
     </message>
 </context>
 <context>
@@ -8653,14 +8682,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Quanta in Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Quanta in inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Main</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8771,6 +8792,22 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Neutral strains do not produce toxins, nor are they killed by them</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount in Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount in inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Тип количине</translation>
     </message>
 </context>
 </TS>

@@ -1027,14 +1027,16 @@ namespace {
                   "FROM recipe"
          ), {QVariant{false}, QVariant{true}}},
          //
-         // Now comes the tricky stuff where we change the hop_in_recipe, fermentable_in_recipe, misc_in_recipe and
-         // yeast_in_recipe junction tables to full-blown object tables, and remove hop_children, fermentable_children,
-         // misc_children and yeast_children.
+         // Now comes the tricky stuff where we change the hop_in_recipe, fermentable_in_recipe, misc_in_recipe,
+         // yeast_in_recipe and water_in_recipe junction tables to full-blown object tables, and remove hop_children,
+         // fermentable_children, misc_children, yeast_children and water_children.  We do water last (out of
+         // alphabetical order) because it's a bit different from the other ingredients.  In particular, water additions
+         // don't have any timing info (because that's in the mash / mash step data) and there is no inventory for
+         // water.
          //
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN name              %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN display           %1").arg(db.getDbNativeTypeName<bool   >())},
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN deleted           %1").arg(db.getDbNativeTypeName<bool   >())},
-         {QString("ALTER TABLE hop_in_recipe ADD COLUMN folder            %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN quantity          %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN unit              %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN stage             %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
@@ -1048,7 +1050,6 @@ namespace {
          {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN name              %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN display           %1").arg(db.getDbNativeTypeName<bool   >())},
          {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN deleted           %1").arg(db.getDbNativeTypeName<bool   >())},
-         {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN folder            %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN quantity          %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN unit              %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
          {QString("ALTER TABLE fermentable_in_recipe ADD COLUMN stage             %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
@@ -1062,7 +1063,6 @@ namespace {
          {QString("ALTER TABLE misc_in_recipe ADD COLUMN name              %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE misc_in_recipe ADD COLUMN display           %1").arg(db.getDbNativeTypeName<bool   >())},
          {QString("ALTER TABLE misc_in_recipe ADD COLUMN deleted           %1").arg(db.getDbNativeTypeName<bool   >())},
-         {QString("ALTER TABLE misc_in_recipe ADD COLUMN folder            %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE misc_in_recipe ADD COLUMN quantity          %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE misc_in_recipe ADD COLUMN unit              %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
          {QString("ALTER TABLE misc_in_recipe ADD COLUMN stage             %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
@@ -1076,7 +1076,6 @@ namespace {
          {QString("ALTER TABLE yeast_in_recipe ADD COLUMN name              %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE yeast_in_recipe ADD COLUMN display           %1").arg(db.getDbNativeTypeName<bool   >())},
          {QString("ALTER TABLE yeast_in_recipe ADD COLUMN deleted           %1").arg(db.getDbNativeTypeName<bool   >())},
-         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN folder            %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE yeast_in_recipe ADD COLUMN quantity          %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE yeast_in_recipe ADD COLUMN unit              %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
          {QString("ALTER TABLE yeast_in_recipe ADD COLUMN stage             %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
@@ -1088,6 +1087,13 @@ namespace {
          {QString("ALTER TABLE yeast_in_recipe ADD COLUMN attenuation_pct   %1").arg(db.getDbNativeTypeName<double >())}, // NB: Extra column for yeast_in_recipe
          {QString("     UPDATE yeast_in_recipe SET display = ?"), {QVariant{true}}},
          {QString("     UPDATE yeast_in_recipe SET deleted = ?"), {QVariant{false}}},
+         {QString("ALTER TABLE water_in_recipe ADD COLUMN name              %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE water_in_recipe ADD COLUMN display           %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE water_in_recipe ADD COLUMN deleted           %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE water_in_recipe ADD COLUMN volume_liters     %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("     UPDATE water_in_recipe SET display = ?"), {QVariant{true}}},
+         {QString("     UPDATE water_in_recipe SET deleted = ?"), {QVariant{false}}},
+
          //
          // Bring the amounts across from the hop and fermentable tables.  At the outset, all amounts are going to be
          // weights, because the previous schemas did not support volumes for hop or fermentable additions.
@@ -1141,6 +1147,17 @@ namespace {
                   ") AS y "
                   "WHERE yeast_in_recipe.yeast_id = y.id")},
          //
+         // For water both the source and target are volume in liters
+         //
+         {QString("UPDATE water_in_recipe "
+                  "SET volume_l = w.amount "
+                  "FROM ("
+                     "SELECT id, "
+                            "amount "
+                     "FROM water"
+                  ") AS w "
+                  "WHERE water_in_recipe.hop_id = w.id")},
+         //
          // Now we brought the amounts across, we can drop them on the hop, fermentable, misc and yeast tables.
          //
          // NB: Do NOT drop the amount_is_weight columns yet!  We need them below to update inventory.
@@ -1154,6 +1171,7 @@ namespace {
          {QString("ALTER TABLE fermentable DROP COLUMN amount")},
          {QString("ALTER TABLE misc        DROP COLUMN amount")},
          {QString("ALTER TABLE yeast       DROP COLUMN amount")},
+         {QString("ALTER TABLE water       DROP COLUMN amount")},
          //
          // Bring the addition times across from the hop and misc tables.  Do this before setting stage etc, as it's
          // similar to the queries we've just done.
@@ -1186,6 +1204,8 @@ namespace {
          //
          {QString("ALTER TABLE hop  DROP COLUMN time")},
          {QString("ALTER TABLE misc DROP COLUMN time")},
+         //
+         // NB: No addition times or stages etc for water uses (as this is handled in mash steps etc).
          //
          // We need to map from old Hop::Use {Mash, First_Wort, Boil, Aroma, Dry_Hop} to new RecipeAddition::Stage
          // {Mash, Boil, Fermentation, Packaging}.  NB: The equivalent logic is also in RecipeAdditionHop::use() and
@@ -1393,7 +1413,7 @@ namespace {
 
          //
          // Entries in hop_in_recipe will still be pointing to the "child" hop.  We need to point to the parent one.
-         // Same for fermentable_in_recipe, misc_in_recipe and yeast_in_recipe.
+         // Same for fermentable_in_recipe, misc_in_recipe, yeast_in_recipe and water_in_recipe.
          //
          {QString("UPDATE hop_in_recipe "
                   "SET hop_id = hc.parent_id "
@@ -1427,8 +1447,16 @@ namespace {
                      "FROM yeast_children"
                   ") AS yc "
                   "WHERE yeast_in_recipe.yeast_id = yc.child_id")},
+         {QString("UPDATE water_in_recipe "
+                  "SET water_id = wc.parent_id "
+                  "FROM ("
+                     "SELECT parent_id, "
+                            "child_id "
+                     "FROM water_children"
+                  ") AS wc "
+                  "WHERE water_in_recipe.water_id = wc.child_id")},
          //
-         // Now we can mark the child hops, fermentables, misc, yeast as deleted
+         // Now we can mark the child hops, fermentables, miscs, yeasts, waters as deleted
          //
          {QString("UPDATE hop "
                   "SET deleted = ?, "
@@ -1446,13 +1474,19 @@ namespace {
                   "SET deleted = ?, "
                       "display = ? "
                   "WHERE yeast.id IN (SELECT child_id FROM yeast_children)"), {QVariant{true}, QVariant{false}}},
+         {QString("UPDATE water "
+                  "SET deleted = ?, "
+                      "display = ? "
+                  "WHERE water.id IN (SELECT child_id FROM water_children)"), {QVariant{true}, QVariant{false}}},
          //
-         // So we don't need the hop_children, fermentable_children, misc_children and yeast_children tables any more
+         // So we don't need the hop_children, fermentable_children, misc_children, yeast_children, water_children
+         // tables any more.
          //
          {QString("DROP TABLE         hop_children")},
          {QString("DROP TABLE fermentable_children")},
          {QString("DROP TABLE        misc_children")},
          {QString("DROP TABLE       yeast_children")},
+         {QString("DROP TABLE       water_children")},
 
          //
          // Whilst we're here, there are some unused columns on hop, and various other tables, that we should get rid
@@ -1475,6 +1509,8 @@ namespace {
          //
          // Now we sort out inventory.  We move the hop ID and by-volume/by-mass info from the hop table to the
          // inventory table.  Same thing for fermentables, misc and, to some extent, yeast.
+         //
+         // NB: No inventory for water!
          //
          {QString("ALTER TABLE         hop_in_inventory RENAME COLUMN amount TO quantity")},
          {QString("ALTER TABLE fermentable_in_inventory RENAME COLUMN amount TO quantity")},
@@ -1611,7 +1647,7 @@ namespace {
                   "RENAME TO yeast_in_inventory")},
          //
          // Finally, since we're doing a big update and a bit of a clean up, it is time to drop tables that have not
-         // been used for a long time.
+         // been used for a long time and are not mentioned anywhere else in the current code base.
          //
          {QString("DROP TABLE bt_equipment")},
          {QString("DROP TABLE bt_fermentable")},
@@ -1620,6 +1656,7 @@ namespace {
          {QString("DROP TABLE bt_style")},
          {QString("DROP TABLE bt_water")},
          {QString("DROP TABLE bt_yeast")},
+         {QString("DROP TABLE recipe_children")},
       };
 
       return executeSqlQueries(q, migrationQueries);

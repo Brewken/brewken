@@ -316,10 +316,10 @@ void Hop::setProducer             (QString                  const & val) { this-
 void Hop::setProduct_id           (QString                  const & val) { this->setAndNotify(PropertyNames::Hop::product_id           , this->m_product_id           , val                                                             ); return; }
 void Hop::setYear                 (QString                  const   val) { this->setAndNotify(PropertyNames::Hop::year                 , this->m_year                 , val                                                             ); return; }
 
-Recipe * Hop::getOwningRecipe() const {
-///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
-   return nullptr;
-}
+///Recipe * Hop::getOwningRecipe() const {
+//////   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+///   return nullptr;
+///}
 
 // Insert the boiler-plate stuff for inventory
 INGREDIENT_BASE_COMMON_CODE(Hop)

@@ -103,9 +103,9 @@ std::optional<bool>   RecipeAdditionYeast::addToSecondary () const {
    return true;
 }
 
-Recipe * RecipeAdditionYeast::getOwningRecipe() const {
-   return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
-}
+///Recipe * RecipeAdditionYeast::getOwningRecipe() const {
+///   return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
+///}
 
 NamedEntity * RecipeAdditionYeast::ensureExists(BtStringConst const & property) {
    if (property == PropertyNames::RecipeAdditionYeast::yeast) {

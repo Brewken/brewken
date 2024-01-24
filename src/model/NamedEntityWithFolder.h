@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Ingredient.h is part of Brewken, and is copyright the following authors 2023-2024:
+ * model/NamedEntityWithFolder.h is part of Brewken, and is copyright the following authors 2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,32 +13,23 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef MODEL_INGREDIENT_H
-#define MODEL_INGREDIENT_H
+#ifndef MODEL_NAMEDENTITYWITHFOLDER_H
+#define MODEL_NAMEDENTITYWITHFOLDER_H
 #pragma once
 
-#include "model/NamedEntityWithFolder.h"
-#include "utils/EnumStringMapping.h"
-#include "utils/TypeTraits.h"
-
-class NamedParameterBundle;
+#include "model/NamedEntity.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::Ingredient { BtStringConst const property{#property}; }
-AddPropertyName(totalInventory)
+#define AddPropertyName(property) namespace PropertyNames::NamedEntityWithFolder { BtStringConst const property{#property}; }
+AddPropertyName(folder)
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
 
 
-/**
- * \brief Subclasses of this class are actual ingredients in a recipe (eg \c Hop, \c Fermentable).
- *
- *        Ingredients are the objects for which we keep inventory.
- */
-class Ingredient : public NamedEntityWithFolder {
+class NamedEntityWithFolder : public NamedEntity {
    Q_OBJECT
 
 public:
@@ -53,34 +44,30 @@ public:
     */
    static TypeLookup const typeLookup;
 
-   Ingredient(QString name = "");
-   Ingredient(NamedParameterBundle const & namedParameterBundle);
-   Ingredient(Ingredient const & other);
+   NamedEntityWithFolder(QString name, bool display = false, QString folder = "");
+   NamedEntityWithFolder(NamedParameterBundle const & namedParameterBundle);
+   NamedEntityWithFolder(NamedEntityWithFolder const & other);
+   virtual ~NamedEntityWithFolder();
 
-   virtual ~Ingredient();
+   virtual void swap(NamedEntityWithFolder & other) noexcept;
 
    //=================================================== PROPERTIES ====================================================
-   /**
-    * \brief For the moment, we have a single "total amount" inventory for a given \c Ingredient instance (eg \c Hop etc
-    *        instance).  This property and its associated accessors allow the total to be read and modified without
-    *        directly obtaining an \c Inventory object (eg \c InventoryHop object etc).
-    */
-   Q_PROPERTY(Measurement::Amount totalInventory   READ totalInventory   WRITE setTotalInventory)
+   Q_PROPERTY(QString folder READ folder WRITE setFolder)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-   virtual Measurement::Amount totalInventory() const = 0;
+   QString folder() const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   virtual void setTotalInventory(Measurement::Amount const & val) = 0;
+   void setFolder(QString const & var);
 
+private:
+  QString m_folder;
 };
 
-/**
- * \brief For templates that require a parameter to be a subclass of \c Ingredient, this makes the concept requirement
- *        slightly more concise.
- *
- *        See comment in utils/TypeTraits.h for definition of CONCEPT_FIX_UP (and why, for now, we need it).
- */
-template <typename T> concept CONCEPT_FIX_UP IsIngredient = std::is_base_of_v<Ingredient, T>;
+// Note that we cannot write `Q_DECLARE_METATYPE(NamedEntityWithFolder)` here, because NamedEntityWithFolder is an
+// abstract class.
+Q_DECLARE_METATYPE(NamedEntityWithFolder *)
+Q_DECLARE_METATYPE(NamedEntityWithFolder const *)
+Q_DECLARE_METATYPE(std::shared_ptr<NamedEntityWithFolder>)
 
 #endif

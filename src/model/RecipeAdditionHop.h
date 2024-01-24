@@ -131,7 +131,7 @@ public:
     */
    bool isAroma() const;
 
-   virtual Recipe * getOwningRecipe() const;
+///   virtual Recipe * getOwningRecipe() const;
 
    virtual NamedEntity * ensureExists(BtStringConst const & property);
 

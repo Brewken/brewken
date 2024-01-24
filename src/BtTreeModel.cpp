@@ -548,9 +548,10 @@ void BtTreeModel::loadTreeModel() {
    qDebug() << Q_FUNC_INFO << "Got " << elems.length() << "elements matching type mask" << this->m_treeMask;
 
    for (NamedEntity * elem : elems) {
+      auto elemWithFolder = qobject_cast<NamedEntityWithFolder *>(elem);
 
-      if (! elem->folder().isEmpty()) {
-         ndxLocal = findFolder(elem->folder(), rootItem->child(0), true);
+      if (elemWithFolder && !elemWithFolder->folder().isEmpty()) {
+         ndxLocal = findFolder(elemWithFolder->folder(), rootItem->child(0), true);
          // I cannot imagine this failing, but what the hell
          if (! ndxLocal.isValid()) {
             qWarning() << Q_FUNC_INFO << "Invalid return from findFolder in loadTreeModel()";
@@ -619,7 +620,7 @@ void BtTreeModel::addBrewNoteSubTree(Recipe * rec, int i, BtTreeItem * parent, b
       // In previous insert loops, we ignore the error and soldier on. So we
       // will do that here too
       if (! insertRow(j, createIndex(i, 0, temp), note, BtTreeItem::Type::BrewNote)) {
-         qWarning() << "Brewnote insert failed in loadTreeModel()";
+         qWarning() << Q_FUNC_INFO << "Brewnote insert failed in loadTreeModel()";
          continue;
       }
       observeElement(note);
@@ -885,7 +886,11 @@ void BtTreeModel::folderChanged(NamedEntity * test) {
    // Find the new parent
    // That's awkward, but dropping a folder prolly does need a the folder
    // created.
-   QModelIndex newNdx = findFolder(test->folder(), rootItem->child(0), true);
+   auto elemWithFolder = qobject_cast<NamedEntityWithFolder *>(test);
+   if (!elemWithFolder) {
+      return;
+   }
+   QModelIndex newNdx = findFolder(elemWithFolder->folder(), rootItem->child(0), true);
    if (! newNdx.isValid()) {
       newNdx = createIndex(0, 0, rootItem->child(0));
       expand = false;
@@ -1007,8 +1012,12 @@ bool BtTreeModel::renameFolder(BtFolder * victim, QString newName) {
             newTarget.second = next;
             folders.append(newTarget);
             src++;
-         } else { // Leafnode
-            next->thing()->setFolder(targetPath);
+         } else {
+            // Leafnode
+            auto elemWithFolder = qobject_cast<NamedEntityWithFolder *>(next->thing());
+            if (elemWithFolder) {
+               elemWithFolder->setFolder(targetPath);
+            }
          }
       }
    }
@@ -1381,8 +1390,13 @@ bool BtTreeModel::dropMimeData(QMimeData const * data,
          qDebug() << Q_FUNC_INFO << "Invalid drop location";
          return false;
       }
+      auto elemWithFolder = qobject_cast<NamedEntityWithFolder *>(something);
+      if (!elemWithFolder) {
+         qDebug() << Q_FUNC_INFO << "Dragged element" << something << "cannot have folder";
+         return false;
+      }
 
-      target = something->folder();
+      target = elemWithFolder->folder();
    }
 
    qDebug() << Q_FUNC_INFO << "Target:" << target;
@@ -1396,19 +1410,21 @@ bool BtTreeModel::dropMimeData(QMimeData const * data,
       BtTreeItem::Type oType = static_cast<BtTreeItem::Type>(oTypeRaw);
       qDebug() << Q_FUNC_INFO << "Name:" << name << ", ID:" << id << ", Type:" << oTypeRaw;
 
-      NamedEntity * elem = getElement(oType, id);
-      if (elem == nullptr && oType != BtTreeItem::Type::Folder) {
+      auto elemWithFolder = qobject_cast<NamedEntityWithFolder *>(getElement(oType, id));
+      if (!elemWithFolder && oType != BtTreeItem::Type::Folder) {
          qDebug() << Q_FUNC_INFO << "No matching element";
          return false;
       }
 
       // this is the work.
       if (oType != BtTreeItem::Type::Folder) {
-         qDebug() << Q_FUNC_INFO << "Moving" << elem << "from folder" << elem->folder() << "to folder" << target;
+         qDebug() <<
+            Q_FUNC_INFO << "Moving" << elemWithFolder << "from folder" << elemWithFolder->folder() << "to folder" <<
+            target;
          // Dropping an item in a folder just means setting the folder name on that item
-         elem->setFolder(target);
+         elemWithFolder->setFolder(target);
          // Now we have to update our own model (ie that of BtTreeModel) so that the display will update!
-         this->folderChanged(elem);
+         this->folderChanged(elemWithFolder);
 
       } else {
          // I need the actual folder object that got dropped.

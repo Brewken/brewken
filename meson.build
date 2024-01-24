@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------------------------------------------------
-# meson.build is part of Brewken, and is copyright the following authors 2022-2023:
+# meson.build is part of Brewken, and is copyright the following authors 2022-2024:
 #   • Matt Young <mfsy@yahoo.com>
 #
 # Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -706,7 +706,7 @@ commonSourceFiles = files([
    'src/model/MashStep.cpp',
    'src/model/Misc.cpp',
    'src/model/NamedEntity.cpp',
-   'src/model/NamedEntityWithInventory.cpp',
+   'src/model/NamedEntityWithFolder.cpp',
    'src/model/NamedParameterBundle.cpp',
    'src/model/Recipe.cpp',
    'src/model/RecipeAddition.cpp',
@@ -714,6 +714,7 @@ commonSourceFiles = files([
    'src/model/RecipeAdditionHop.cpp',
    'src/model/RecipeAdditionMisc.cpp',
    'src/model/RecipeAdditionYeast.cpp',
+   'src/model/RecipeUseOfWater.cpp',
    'src/model/Salt.cpp',
    'src/model/Step.cpp',
    'src/model/StepExtended.cpp',
@@ -914,7 +915,7 @@ mocHeaders = files([
    'src/model/MashStep.h',
    'src/model/Misc.h',
    'src/model/NamedEntity.h',
-   'src/model/NamedEntityWithInventory.h',
+   'src/model/NamedEntityWithFolder.h',
    'src/model/Recipe.h',
    'src/model/RecipeAddition.h',
    'src/model/RecipeAdditionBase.h',
@@ -922,6 +923,7 @@ mocHeaders = files([
    'src/model/RecipeAdditionHop.h',
    'src/model/RecipeAdditionMisc.h',
    'src/model/RecipeAdditionYeast.h',
+   'src/model/RecipeUseOfWater.h',
    'src/model/Salt.h',
    'src/model/Step.h',
    'src/model/StepBase.h',

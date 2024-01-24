@@ -197,4 +197,7 @@ private:
 
 Q_DECLARE_METATYPE(QList<std::shared_ptr<MashStep> >)
 
+static_assert(!HasFolder<MashStep>);
+static_assert(HasNoFolder<MashStep>);
+
 #endif

@@ -672,7 +672,7 @@
     </message>
     <message>
         <source>Use</source>
-        <translation>Použití</translation>
+        <translation type="vanished">Použití</translation>
     </message>
     <message>
         <source>Form</source>
@@ -1984,6 +1984,20 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
+    <name>InventoryMisc</name>
+    <message>
+        <source>Misc Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>InventoryYeast</name>
+    <message>
+        <source>Yeast Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Open</source>
@@ -2182,22 +2196,6 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Drop fermentables on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop hops on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop misc on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop yeast on a recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Recipe Efficiency</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2211,14 +2209,6 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Redo %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove misc from recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove yeast from recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2263,6 +2253,22 @@ If you didn&apos;t yet do this, click Abort.</source>
 See logs for more details.
 
 If you need help, please open an issue at %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop fermentable(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop hop(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop misc(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop yeast(s) on a recipe</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2493,23 +2499,19 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Boil</source>
-        <translation type="unfinished">Chmelovar</translation>
-    </message>
-    <message>
-        <source>Mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Chmelovar</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation type="unfinished">Hlavní kvašení</translation>
+        <translation type="obsolete">Hlavní kvašení</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation type="unfinished">Dokvašování</translation>
+        <translation type="obsolete">Dokvašování</translation>
     </message>
     <message>
         <source>Bottling</source>
-        <translation type="unfinished">Stáčení</translation>
+        <translation type="obsolete">Stáčení</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -2645,15 +2647,15 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Use</source>
-        <translation>Použití</translation>
+        <translation type="vanished">Použití</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Čas</translation>
+        <translation type="vanished">Čas</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Množství</translation>
+        <translation type="vanished">Množství</translation>
     </message>
     <message>
         <source>Amount Type</source>
@@ -2665,19 +2667,15 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Objem</translation>
+        <translation type="obsolete">Objem</translation>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Hmotnost</translation>
+        <translation type="obsolete">Hmotnost</translation>
     </message>
 </context>
 <context>
     <name>NE</name>
-    <message>
-        <source>Add %1 to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Change %1 %2</source>
         <translation type="unfinished"></translation>
@@ -2691,9 +2689,9 @@ If you need help, please open an issue at %1</source>
     </message>
 </context>
 <context>
-    <name>NamedEntityWithInventory</name>
+    <name>NamedEntityWithFolder</name>
     <message>
-        <source>Named Entity With Inventory</source>
+        <source>Named Entity With Folder</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2701,7 +2699,7 @@ If you need help, please open an issue at %1</source>
     <name>OldInventory</name>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Sklad</translation>
+        <translation type="obsolete">Sklad</translation>
     </message>
 </context>
 <context>
@@ -4295,20 +4293,8 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>First Wort</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Boil</source>
         <translation type="unfinished">Chmelovar</translation>
-    </message>
-    <message>
-        <source>Post-Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dry Misc</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Addition of %1</source>
@@ -4318,6 +4304,18 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <source>Invalid!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Primary</source>
+        <translation type="unfinished">Hlavní kvašení</translation>
+    </message>
+    <message>
+        <source>Secondary</source>
+        <translation type="unfinished">Dokvašování</translation>
+    </message>
+    <message>
+        <source>Bottling</source>
+        <translation type="unfinished">Stáčení</translation>
+    </message>
 </context>
 <context>
     <name>RecipeAdditionMiscTableModel</name>
@@ -4326,16 +4324,8 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="unfinished">Název</translation>
     </message>
     <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Alpha %</source>
-        <translation type="unfinished">Alfa %</translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Alfa %</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -4357,6 +4347,10 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <source>Time</source>
         <translation type="unfinished">Čas</translation>
     </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Druh</translation>
+    </message>
 </context>
 <context>
     <name>RecipeAdditionYeast</name>
@@ -4365,24 +4359,12 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>First Wort</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Boil</source>
-        <translation type="unfinished">Chmelovar</translation>
-    </message>
-    <message>
-        <source>Post-Boil</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Chmelovar</translation>
     </message>
     <message>
         <source>Dry Yeast</source>
-        <translation type="unfinished">Sušené kvasnice</translation>
+        <translation type="obsolete">Sušené kvasnice</translation>
     </message>
     <message>
         <source>Addition of %1</source>
@@ -4405,11 +4387,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Alpha %</source>
-        <translation type="unfinished">Alfa %</translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Alfa %</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -4429,7 +4407,23 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished">Čas</translation>
+        <translation type="obsolete">Čas</translation>
+    </message>
+    <message>
+        <source>Laboratory</source>
+        <translation type="unfinished">Laboratoř</translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">ID produktu</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Druh</translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation type="unfinished">Krok</translation>
     </message>
 </context>
 <context>
@@ -4807,6 +4801,13 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Add During</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeUseOfWater</name>
+    <message>
+        <source>Recipe Use Of Water</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5667,7 +5668,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Množství</translation>
+        <translation type="vanished">Množství</translation>
     </message>
     <message>
         <source>Laboratory</source>
@@ -5680,6 +5681,10 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Inventory</source>
         <translation>Sklad</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Druh množství</translation>
     </message>
 </context>
 <context>
@@ -7910,7 +7915,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Use</source>
-        <translation>Použití</translation>
+        <translation type="vanished">Použití</translation>
     </message>
     <message>
         <source>Boil</source>
@@ -8003,6 +8008,14 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Product ID</source>
         <translation type="unfinished">ID produktu</translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Druh množství</translation>
     </message>
 </context>
 <context>
@@ -9425,14 +9438,6 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="vanished">Výchozí množství</translation>
     </message>
     <message>
-        <source>Quanta in Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Quanta in inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Main</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9543,6 +9548,22 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Neutral strains do not produce toxins, nor are they killed by them</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount in Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount in inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Druh množství</translation>
     </message>
 </context>
 </TS>

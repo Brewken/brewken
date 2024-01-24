@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/WaterEditor.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * editors/WaterEditor.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
@@ -136,7 +136,7 @@ void WaterEditor::setWater(std::optional<std::shared_ptr<Water>> water) {
 
       // Make a copy of the Water object we are observing
       this->pimpl->editedWater = std::make_unique<Water>(*this->pimpl->observedWater);
-      this->pimpl->editedWater->setAmount(0.0);
+///      this->pimpl->editedWater->setAmount(0.0);
       this->waterEditRadarChart->addSeries(tr("Modified"), Qt::green, *this->pimpl->editedWater);
 
       this->showChanges();

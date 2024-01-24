@@ -622,11 +622,14 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
    // items that share the same key in the opposite order to which they were inserted and don't offer STL reverse
    // iterators, so going backwards would be a bit clunky.)
    //
+   qDebug() <<
+      Q_FUNC_INFO << "this->m_childRecordSets for" << this->m_recordDefinition << "has" <<
+      this->m_childRecordSets.size() << "entries";
    for (auto & childRecordSet : this->m_childRecordSets) {
       if (childRecordSet.parentFieldDefinition) {
          qDebug() <<
-            Q_FUNC_INFO << *childRecordSet.parentFieldDefinition << "has" <<
-            childRecordSet.records.size() << "entries";
+            Q_FUNC_INFO << this->m_recordDefinition << ": childRecordSet" << *childRecordSet.parentFieldDefinition <<
+            "now holds" << childRecordSet.records.size() << "record(s)";
       } else {
          qDebug() << Q_FUNC_INFO << "Top-level record has" << childRecordSet.records.size() << "entries";
       }
@@ -701,11 +704,8 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
                qCritical() <<
                   Q_FUNC_INFO << "Could not write" << propertyPath << "property on" <<
                   this->m_recordDefinition.m_namedEntityClassName;
-                  // TODO Reinstate this assert once all the RecipeAddition work is done!
-//                  Q_ASSERT(false);
-                  // TEMPORARILY RETURN true SO THAT WE CAN TEST, EG, HOP ADDITIONS BEFORE WE HAVE DONE THE WORK FOR
-                  // FERMENTABLE ADDITIONS.  THIS MUST BE REPLACED WITH return false BEFORE THE NEXT RELEASE!
-                  return true;
+               Q_ASSERT(false);
+               return false;
             }
          }
       }
@@ -759,6 +759,9 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
    //
    auto constructorWrapper = childRecordDefinition.xmlRecordConstructorWrapper;
    this->m_childRecordSets.push_back(XmlRecord::ChildRecordSet{&parentFieldDefinition, {}});
+   qDebug() <<
+      Q_FUNC_INFO << "this->m_childRecordSets for" << this->m_recordDefinition << "has" <<
+      this->m_childRecordSets.size() << "entries";
    XmlRecord::ChildRecordSet & childRecordSet = this->m_childRecordSets.back();
    for (xalanc::XalanNode * childRecordNode : nodesForCurrentXPath) {
       //
@@ -795,6 +798,9 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
          return false;
       }
       childRecordSet.records.push_back(std::move(childRecord));
+      qDebug() <<
+         Q_FUNC_INFO << this->m_recordDefinition << ": childRecordSet" << *childRecordSet.parentFieldDefinition <<
+         "now holds" << childRecordSet.records.size() << "record(s)";
    }
 
    return true;

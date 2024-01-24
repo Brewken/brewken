@@ -62,7 +62,6 @@ protected:
                          NeName>;                                               \
                                                                                 \
    public:                                                                      \
-      /** Override NamedEntity::getOwningRecipe */                              \
       virtual Recipe * getOwningRecipe() const;                                 \
                                                                                 \
    protected:                                                                   \
