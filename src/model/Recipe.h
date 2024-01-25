@@ -437,6 +437,8 @@ public:
 
    /*!
     * \brief Find the first recipe that uses \c var
+    *
+    *        See below for specialisations (which have to be outside the class definition).
     */
    template<class T> static Recipe * findOwningRecipe(T const & var) {
       return ObjectStoreWrapper::findFirstMatching<Recipe>( [var](Recipe * rec) {return rec->uses(var);} );
@@ -641,7 +643,7 @@ public:
    void setLocked            (bool    const   val);
    void setHasDescendants    (bool    const   val);
 
-   virtual Recipe * getOwningRecipe() const;
+///   virtual Recipe * getOwningRecipe() const;
 
    /**
     * \brief A Recipe owns some of its contained objects, so needs to delete those if it itself is being deleted
@@ -783,6 +785,9 @@ private:
    void topOffIns();
    void saltWater(Salt::WhenToAdd when);
 };
+
+// Need specialisations for abstract types
+template<> inline Recipe * Recipe::findOwningRecipe([[maybe_unused]] NamedEntity const & var) { return nullptr; }
 
 Q_DECLARE_METATYPE(QList<std::shared_ptr<Recipe> >)
 

@@ -88,12 +88,12 @@ void Inventory::setDisplay([[maybe_unused]] bool var) {
    return;
 }
 
-Recipe * Inventory::getOwningRecipe() const {
-   // See comment in header.  This is not currently implemented and it's therefore a coding error if it gets called
-   qCritical().noquote() << Q_FUNC_INFO << "Call stack is:" << Logging::getStackTrace();
-   Q_ASSERT(false);
-   return nullptr;
-}
+///Recipe * Inventory::getOwningRecipe() const {
+///   // See comment in header.  This is not currently implemented and it's therefore a coding error if it gets called
+///   qCritical().noquote() << Q_FUNC_INFO << "Call stack is:" << Logging::getStackTrace();
+///   Q_ASSERT(false);
+///   return nullptr;
+///}
 
 void Inventory::hardDeleteOwnedEntities() {
    qDebug() << Q_FUNC_INFO << this->metaObject()->className() << "owns no other entities";

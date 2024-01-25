@@ -207,14 +207,18 @@ public:
    }
 
    void doSetQuantity(double const val) {
-      this->derived().setAndNotify(PropertyNames::IngredientAmount::quantity, this->m_amount.quantity, val);
+      this->derived().setAndNotify(&this->derived(),
+                                   PropertyNames::IngredientAmount::quantity,
+                                   this->m_amount.quantity, val);
       return;
    }
 
    void doSetUnit(Measurement::Unit const * val) {
       // It's a coding error to provide an amount that is not in canonical units
       Q_ASSERT(val->isCanonical());
-      this->derived().setAndNotify(PropertyNames::IngredientAmount::unit, this->m_amount.unit, val);
+      this->derived().setAndNotify(&this->derived(),
+                                   PropertyNames::IngredientAmount::unit,
+                                   this->m_amount.unit, val);
       return;
    }
 

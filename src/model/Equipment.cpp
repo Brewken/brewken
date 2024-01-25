@@ -348,7 +348,7 @@ void Equipment::setKettleEvaporationPerHour_l(std::optional<double> const val) {
    // NOTE: We never use evapRate_pctHr, but we maintain here anyway.
    // Because both values are stored in the DB, and because we only want to call prepareForPropertyChange() once, we
    // can't use the setAndNotify() helper function
-   this->prepareForPropertyChange(PropertyNames::Equipment::kettleEvaporationPerHour_l);
+   this->prepareForPropertyChange(this, PropertyNames::Equipment::kettleEvaporationPerHour_l);
    this->m_kettleEvaporationPerHour_l = this->enforceMin(val, "evap rate");
    if (this->m_kettleEvaporationPerHour_l) {
       this->m_evapRate_pctHr = *this->m_kettleEvaporationPerHour_l/this->m_fermenterBatchSize_l * 100.0; // We don't use it, but keep it current.

@@ -20,6 +20,7 @@
 #include <QString>
 
 #include "model/NamedEntity.h"
+#include "model/RecipeAdditionBase.h"
 #include "model/Water.h"
 
 //======================================================================================================================
@@ -45,8 +46,12 @@ AddPropertyName(volume_l    )
  *        However, \b technically, both BeerJSON and BeerXML allow for multiple different waters to be added to a
  *        recipe, so we align with that.
  */
-class RecipeUseOfWater : public NamedEntity {
+class RecipeUseOfWater : public NamedEntity,
+                         public RecipeAdditionBase<RecipeUseOfWater, Water> {
    Q_OBJECT
+
+   // This allows RecipeAdditionBase to call protected and private members of RecipeUseOfWater
+   friend class RecipeAdditionBase<RecipeUseOfWater, Water>;
 
 public:
    /**
@@ -110,5 +115,9 @@ protected:
    double m_volume_l    ;
 
 };
+
+Q_DECLARE_METATYPE(Water)
+Q_DECLARE_METATYPE(Water *)
+Q_DECLARE_METATYPE(QList<std::shared_ptr<RecipeUseOfWater> >)
 
 #endif

@@ -37,6 +37,7 @@
 #include "measurement/Unit.h"
 #include "model/Inventory.h"
 #include "model/Recipe.h"
+#include "model/RecipeUseOfWater.h"
 #include "tableModels/ItemDelegate.h"
 #include "utils/BtStringConst.h"
 #include "widgets/BtComboBox.h"

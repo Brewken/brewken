@@ -1,6 +1,6 @@
 /*======================================================================================================================
  * sortFilterProxyModels/WaterSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors
- * 2009-2023:
+ * 2009-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -29,9 +29,9 @@ bool WaterSortFilterProxyModel::isLessThan(WaterTableModel::ColumnIndex const co
       case WaterTableModel::ColumnIndex::Name:
          return leftItem.toString() < rightItem.toString();
 
-      case WaterTableModel::ColumnIndex::Amount:
-         return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Volume) <
-                Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Volume);
+///      case WaterTableModel::ColumnIndex::Amount:
+///         return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Volume) <
+///                Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Volume);
 
       case WaterTableModel::ColumnIndex::Calcium    :
       case WaterTableModel::ColumnIndex::Bicarbonate:

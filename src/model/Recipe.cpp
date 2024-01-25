@@ -650,7 +650,7 @@ public:
    std::shared_ptr<T> nonOptionalItem(BtStringConst const & propertyName, int & itemId) {
       if (itemId < 0) {
          std::shared_ptr<T> item{std::make_shared<T>()};
-         this->m_self.setAndNotify(propertyName, itemId, ObjectStoreWrapper::insert(item));
+         this->m_self.setAndNotify(&this->m_self, propertyName, itemId, ObjectStoreWrapper::insert(item));
       }
       return ObjectStoreWrapper::getById<T>(itemId);
    }
@@ -753,7 +753,7 @@ bool Recipe::isEqualTo(NamedEntity const & other) const {
 ///      ObjectStoreWrapper::compareListByIds<RecipeAdditionHop>(this->pimpl->m_hopAdditionIds, rhs.pimpl->m_hopAdditionIds) &&
       ObjectStoreWrapper::compareListByIds<Instruction      >(this->pimpl->instructionIds  , rhs.pimpl->instructionIds  ) &&
 ///      ObjectStoreWrapper::compareListByIds<Misc             >(this->pimpl->miscIds         , rhs.pimpl->miscIds         ) &&
-      ObjectStoreWrapper::compareListByIds<Salt             >(this->pimpl->saltIds         , rhs.pimpl->saltIds         ) &&
+      ObjectStoreWrapper::compareListByIds<Salt             >(this->pimpl->saltIds         , rhs.pimpl->saltIds         ) ///&&
 ///      ObjectStoreWrapper::compareListByIds<Water            >(this->pimpl->waterIds        , rhs.pimpl->waterIds        )
 ///      ObjectStoreWrapper::compareListByIds<Yeast            >(this->pimpl->yeastIds        , rhs.pimpl->yeastIds        )
 
@@ -849,11 +849,11 @@ TypeLookup const Recipe::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::boilTime_min          , Recipe::boilTime_min          , Measurement::PhysicalQuantity::Time          ),
    },
    // Parent class lookup
-   {&NamedEntity::typeLookup}
+   {&NamedEntityWithFolder::typeLookup}
 };
 
 Recipe::Recipe(QString name) :
-   NamedEntity         {name, true                   },
+   NamedEntityWithFolder{name, true                   },
    pimpl               {std::make_unique<impl>(*this)},
    m_type              {Recipe::Type::AllGrain       },
    m_brewer            {""                           },
@@ -894,7 +894,7 @@ Recipe::Recipe(QString name) :
 }
 
 Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity         {namedParameterBundle         },
+   NamedEntityWithFolder{namedParameterBundle         },
    pimpl               {std::make_unique<impl>(*this)},
    SET_REGULAR_FROM_NPB (m_type              , namedParameterBundle, PropertyNames::Recipe::type              ),
    SET_REGULAR_FROM_NPB (m_brewer            , namedParameterBundle, PropertyNames::Recipe::brewer            ),
@@ -948,7 +948,7 @@ Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
 
 
 Recipe::Recipe(Recipe const & other) :
-   NamedEntity{other},
+   NamedEntityWithFolder{other},
    pimpl{std::make_unique<impl>(*this)},
    m_type              {other.m_type              },
    m_brewer            {other.m_brewer            },

@@ -36,6 +36,7 @@
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
 #include "model/Recipe.h"
+#include "model/RecipeUseOfWater.h"
 #include "PersistentSettings.h"
 
 WaterTableModel::WaterTableModel(QTableView * parent) :
