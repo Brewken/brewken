@@ -1085,7 +1085,7 @@ namespace {
    // See comment on BEER_XML_RECORD_DEFINITION_HOP_IN_RECIPE_ADDITION_HOP above!
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    XmlRecordDefinition const BEER_XML_RECORD_DEFINITION_WATER_IN_RECIPE_USE_OF_WATER {
-      std::in_place_type_t<Yeast>{},
+      std::in_place_type_t<Water>{},
       "Water",            // XML record name
       XmlRecordDefinition::create< XmlNamedEntityRecord<Water> >,
       {BeerXml_WaterBase}

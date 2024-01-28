@@ -2031,6 +2031,13 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
+    <name>IngredientInRecipe</name>
+    <message>
+        <source>Ingredient In Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Instruction</name>
     <message>
         <source>Instruction</source>
@@ -4538,11 +4545,19 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="obsolete">Hoeveelheid Type</translation>
+        <translation type="unfinished">Hoeveelheid Type</translation>
     </message>
     <message>
         <source>Amount</source>
         <translation type="unfinished">Hoeveelheid</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Type</translation>
+    </message>
+    <message>
+        <source>Added To</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5449,6 +5464,10 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Maximum expected concentration is %1 ppm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use of %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

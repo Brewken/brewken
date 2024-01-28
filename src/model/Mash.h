@@ -115,8 +115,8 @@ public:
    //! \brief The total mash time in minutes. Calculated.
    Q_PROPERTY(double                totalTime                 READ totalTime  STORED false )
    //! \brief The individual mash steps.
-   Q_PROPERTY(QList<std::shared_ptr<MashStep>>    mashSteps         READ mashSteps  STORED false )
-   //! \brief The individual mash steps downcast as pointers to \c NamedEntity, which is used for BeerJSON processing.
+   Q_PROPERTY(QList<std::shared_ptr<MashStep>>    mashSteps         READ mashSteps         WRITE setMashSteps         STORED false )
+   //! \brief The individual mash steps downcast as pointers to \c NamedEntity, which is used (TBD OR IS IT?) for BeerJSON and BeerXML processing.
    Q_PROPERTY(QList<std::shared_ptr<NamedEntity>> mashStepsDowncast READ mashStepsDowncast WRITE setMashStepsDowncast STORED false )
 
    // ⮜⮜⮜ BeerJSON support does not require any additional properties on this class! ⮞⮞⮞

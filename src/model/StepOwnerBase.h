@@ -249,6 +249,14 @@ public:
       return NamedEntity::downcastList(this->steps());
    }
 
+   void setSteps(QList<std::shared_ptr<DerivedStep>> const & val) {
+      this->removeAllSteps();
+      for (auto step : val) {
+         this->addStep(step);
+      }
+      return;
+   }
+
    void setStepsDowncast(QList<std::shared_ptr<NamedEntity>> const & val) {
       this->removeAllSteps();
       QList<std::shared_ptr<DerivedStep>> steps = NamedEntity::upcastList<DerivedStep>(val);
@@ -390,23 +398,24 @@ protected:
  *        Note we have to be careful about comment formats in macro definitions
  */
 #define STEP_OWNER_COMMON_DECL(NeName, LcNeName) \
-   /* This allows StepOwnerBase to call protected and private members of Derived */     \
-   friend class StepOwnerBase<NeName,                                                   \
-                              NeName##Step>;                                            \
-                                                                                        \
-   public:                                                                              \
-      /* Relational getters and setters */                                              \
-      QList<std::shared_ptr<NeName##Step>> LcNeName##Steps        () const;             \
-      QList<std::shared_ptr<NamedEntity >> LcNeName##StepsDowncast() const;             \
-      void set##NeName##StepsDowncast(QList<std::shared_ptr<NamedEntity>> const & val); \
-                                                                                        \
-      /** \brief Connect DerivedStep changed signals to their parent Mashes. */         \
-      /*         Needs to be called \b after all the calls to             */            \
-      /*         ObjectStoreTyped<FooBar>::getInstance().loadAll()        */            \
-      static void connectSignals();                                                     \
-                                                                                        \
-      virtual void setKey(int key);                                                     \
-                                                                                        \
+   /* This allows StepOwnerBase to call protected and private members of Derived */      \
+   friend class StepOwnerBase<NeName,                                                    \
+                              NeName##Step>;                                             \
+                                                                                         \
+   public:                                                                               \
+      /* Relational getters and setters */                                               \
+      QList<std::shared_ptr<NeName##Step>> LcNeName##Steps        () const;              \
+      QList<std::shared_ptr<NamedEntity >> LcNeName##StepsDowncast() const;              \
+      void set##NeName##Steps        (QList<std::shared_ptr<NeName##Step>> const & val); \
+      void set##NeName##StepsDowncast(QList<std::shared_ptr<NamedEntity >> const & val); \
+                                                                                         \
+      /** \brief Connect DerivedStep changed signals to their parent Mashes. */          \
+      /*         Needs to be called \b after all the calls to             */             \
+      /*         ObjectStoreTyped<FooBar>::getInstance().loadAll()        */             \
+      static void connectSignals();                                                      \
+                                                                                         \
+      virtual void setKey(int key);                                                      \
+                                                                                         \
       virtual Recipe * getOwningRecipe() const;                                               \
       /** \brief NeName owns its NeName##Steps so needs to delete them if it itself is being deleted */ \
       virtual void hardDeleteOwnedEntities();                                           \
@@ -418,6 +427,9 @@ protected:
 #define STEP_OWNER_COMMON_CODE(NeName, LcNeName) \
    QList<std::shared_ptr<NeName##Step>> NeName::LcNeName##Steps        () const { return this->steps(); }         \
    QList<std::shared_ptr<NamedEntity >> NeName::LcNeName##StepsDowncast() const { return this->stepsDowncast(); } \
+   void NeName::set##NeName##Steps(QList<std::shared_ptr<NeName##Step>> const & val) {                            \
+      this->setSteps(val); return;                                                                                \
+   }                                                                                                              \
    void NeName::set##NeName##StepsDowncast(QList<std::shared_ptr<NamedEntity>> const & val) {                     \
       this->setStepsDowncast(val); return;                                                                        \
    }                                                                                                              \
