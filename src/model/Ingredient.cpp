@@ -25,9 +25,11 @@ TypeLookup const Ingredient::typeLookup {
       // Empty list - for now at least.  (We can't do PropertyNames::Ingredient::totalInventory here because the
       // BtFieldType value for it depends on the Ingredient subclass.  Hence, it is instead done in IngredientBase.
    },
-   // Parent class lookup
-   {&NamedEntity::typeLookup}
+   // Parent classes lookup
+   {&NamedEntity::typeLookup,
+    std::addressof(FolderBase<Ingredient>::typeLookup)}
 };
+static_assert(std::is_base_of<FolderBase<Ingredient>, Ingredient>::value);
 
 Ingredient::Ingredient(QString name) :
    NamedEntity{name, true},

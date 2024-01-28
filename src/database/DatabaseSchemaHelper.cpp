@@ -1130,7 +1130,7 @@ namespace {
          {QString("ALTER TABLE water_in_recipe ADD COLUMN name              %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE water_in_recipe ADD COLUMN display           %1").arg(db.getDbNativeTypeName<bool   >())},
          {QString("ALTER TABLE water_in_recipe ADD COLUMN deleted           %1").arg(db.getDbNativeTypeName<bool   >())},
-         {QString("ALTER TABLE water_in_recipe ADD COLUMN volume_liters     %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE water_in_recipe ADD COLUMN volume_l          %1").arg(db.getDbNativeTypeName<double >())},
          {QString("     UPDATE water_in_recipe SET display = ?"), {QVariant{true}}},
          {QString("     UPDATE water_in_recipe SET deleted = ?"), {QVariant{false}}},
 
@@ -1209,6 +1209,7 @@ namespace {
                   "FROM ("
                      "SELECT id, "
                             "amount, "
+                            "addTo, "
                             "CASE "
                                "WHEN amount_is_weight THEN 'kilograms' "
                                "ELSE 'liters' "
@@ -1233,7 +1234,7 @@ namespace {
                             "amount "
                      "FROM water"
                   ") AS w "
-                  "WHERE water_in_recipe.hop_id = w.id")},
+                  "WHERE water_in_recipe.water_id = w.id")},
          //
          // Now we brought the amounts across, we can drop them on the hop, fermentable, misc, yeast, salt and water
          // tables.
@@ -1272,14 +1273,12 @@ namespace {
                   ") AS m "
                   "WHERE misc_in_recipe.misc_id = m.id")},
          //
-         // Existing data doesn't have an addition time for fermentable, yeast or salt, so we set it to 0 for all of
-         // them.
+         // Existing data doesn't have an addition time for fermentable or yeast to 0 for both of them.  (Note that
+         // salt_in_recipe and water_in_recipe do not have the add_at_time_mins column.)
          //
          {QString("UPDATE fermentable_in_recipe "
                   "SET add_at_time_mins = 0.0 ")},
          {QString("UPDATE yeast_in_recipe "
-                  "SET add_at_time_mins = 0.0 ")},
-         {QString("UPDATE salt_in_recipe "
                   "SET add_at_time_mins = 0.0 ")},
          //
          // And, as above, drop the time column on the hop and misc tables now we pulled the data across.
@@ -1588,7 +1587,12 @@ namespace {
          {QString("ALTER TABLE misc        DROP COLUMN display_scale")},
          {QString("ALTER TABLE yeast       DROP COLUMN display_unit")},
          {QString("ALTER TABLE yeast       DROP COLUMN display_scale")},
-         {QString("ALTER TABLE salt        DROP COLUMN misc_id")},
+         //
+         // The salt table has a column misc_id that is a foreign key to the misc table.  AFAIK this is currently
+         // unused.  It's a bit of a palava to drop a foreign key column, as you have to make a new table and copy all
+         // the data over etc, then drop and rename tables.  For the moment, we'll leave it alone as it seems to do no
+         // harm.
+         //
          //
          // Now we sort out inventory.  We move the hop ID and by-volume/by-mass info from the hop table to the
          // inventory table.  Same thing for fermentables, misc and, to some extent, yeast.
