@@ -58,10 +58,13 @@
 #include "measurement/ColorMethods.h"
 #include "measurement/IbuMethods.h"
 #include "measurement/Measurement.h"
+#include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
+#include "model/Hop.h"
 #include "model/Instruction.h"
 #include "model/Mash.h"
+#include "model/Misc.h"
 #include "model/Salt.h"
 #include "model/Style.h"
 #include "model/Water.h"
@@ -363,20 +366,20 @@ QDir Application::getResourceDir() {
 }
 
 bool Application::initialize() {
-   // Need these for changed(QMetaProperty,QVariant) to be emitted across threads.
+   // Need these for changed(QMetaProperty, QVariant) to be emitted across threads.
    qRegisterMetaType<QMetaProperty>();
-   qRegisterMetaType<Equipment*>();
-   qRegisterMetaType<Mash*>();
-   qRegisterMetaType<Style*>();
-   qRegisterMetaType<Salt*>();
-   qRegisterMetaType< QList<BrewNote*> >();
-   qRegisterMetaType< QList<Hop*> >();
-   qRegisterMetaType< QList<Instruction*> >();
-   qRegisterMetaType< QList<Fermentable*> >();
-   qRegisterMetaType< QList<Misc*> >();
-   qRegisterMetaType< QList<Yeast*> >();
-   qRegisterMetaType< QList<Water*> >();
-   qRegisterMetaType< QList<Salt*> >();
+   qRegisterMetaType<Equipment *>();
+   qRegisterMetaType<Mash      *>();
+   qRegisterMetaType<Style     *>();
+   qRegisterMetaType<Salt      *>();
+   qRegisterMetaType<QList<BrewNote    *>>();
+   qRegisterMetaType<QList<Hop         *>>();
+   qRegisterMetaType<QList<Instruction *>>();
+   qRegisterMetaType<QList<Fermentable *>>();
+   qRegisterMetaType<QList<Misc        *>>();
+   qRegisterMetaType<QList<Yeast       *>>();
+   qRegisterMetaType<QList<Water       *>>();
+   qRegisterMetaType<QList<Salt        *>>();
 
    // Make sure all the necessary directories and files we need exist before starting.
    ensureDirectoriesExist();

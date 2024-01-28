@@ -36,11 +36,10 @@
 #include <QVariant>
 #include <QVector>
 
+#include "database/ObjectStoreWrapper.h"
 #include "model/BrewNote.h"
-#include "model/NamedEntityWithFolder.h"
-#include "model/Hop.h" // Dammit! Have to include these for Hop::Use (see hopSteps()) and Misc::Use (see miscSteps()).
-#include "model/Misc.h"
-#include "model/Salt.h"  // Needed for Salt::WhenToAdd (see getReagents())
+#include "model/FolderBase.h"
+#include "model/NamedEntity.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
@@ -98,7 +97,8 @@ AddPropertyName(primaryAge_days       )
 AddPropertyName(primaryTemp_c         )
 AddPropertyName(primingSugarEquiv     )
 AddPropertyName(primingSugarName      )
-AddPropertyName(saltIds               )
+AddPropertyName(saltAdjustmentIds     )
+AddPropertyName(saltAdjustments       )
 AddPropertyName(secondaryAge_days     )
 AddPropertyName(secondaryTemp_c       )
 AddPropertyName(SRMColor              )
@@ -132,8 +132,10 @@ class MashStep;
 class RecipeAdditionFermentable;
 class RecipeAdditionHop;
 class RecipeAdditionMisc;
+class RecipeAdjustmentSalt;
 class RecipeAdditionYeast;
 class RecipeUseOfWater;
+class Salt;
 class Style;
 class Water;
 class Yeast;
@@ -144,8 +146,10 @@ class Yeast;
  *
  * \brief Model class for recipe records in the database.
  */
-class Recipe : public NamedEntityWithFolder {
+class Recipe : public NamedEntity,
+               public FolderBase<Recipe> {
    Q_OBJECT
+   FOLDER_BASE_DECL(Recipe)
 
    /**
     * \brief \c MainWindow is a friend so it can access \c Recipe::recalcAll() and \c Recipe::recalcIBU()
@@ -358,9 +362,9 @@ public:
    //! \brief The waters.
    Q_PROPERTY(QList<std::shared_ptr<RecipeUseOfWater>> waterUses   READ waterUses   WRITE setWaterUses   STORED false)
    Q_PROPERTY(QVector<int>                             waterUseIds READ waterUseIds /*WRITE setWaterUseIds*/ STORED false)
-   //! \brief The salts.
-   Q_PROPERTY(QList<Salt *> salts   READ salts /*WRITE*/ /*NOTIFY changed*/ STORED false)
-   Q_PROPERTY(QVector<int>  saltIds READ getSaltIds WRITE setSaltIds)
+   //! \brief The salt adjustments.
+   Q_PROPERTY(QList<std::shared_ptr<RecipeAdjustmentSalt>> saltAdjustments    READ saltAdjustments    WRITE setSaltAdjustments   STORED false)
+   Q_PROPERTY(QVector<int>                                 saltAdjustmentIds  READ saltAdjustmentIds  /*WRITE setSaltAdjustmentIds*/ STORED false)
 
    Q_PROPERTY(int    ancestorId READ getAncestorId WRITE setAncestorId)
    //! \brief The ancestors.
@@ -431,9 +435,9 @@ public:
    template<class NE> std::shared_ptr<NE> removeAddition(std::shared_ptr<NE> addition);
 
    /*!
-    * \brief Returns whether \c var is used in this recipe
+    * \brief Returns whether \c val is used in this recipe
     */
-   template<class T> bool uses(T const & var) const;
+   template<class T> bool uses(T const & val) const;
 
    /*!
     * \brief Find the first recipe that uses \c var
@@ -533,12 +537,12 @@ public:
    QVector<int>                                      miscAdditionIds       () const;
    QList<std::shared_ptr<RecipeAdditionYeast>>       yeastAdditions        () const;
    QVector<int>                                      yeastAdditionIds      () const;
-   QList<Instruction *>                              instructions          () const;
-   QVector<int>                                      getInstructionIds     () const;
+   QList<std::shared_ptr<RecipeAdjustmentSalt>>      saltAdjustments       () const;
+   QVector<int>                                      saltAdjustmentIds     () const;
    QList<std::shared_ptr<RecipeUseOfWater>>          waterUses             () const;
    QVector<int>                                      waterUseIds           () const;
-   QList<Salt *>                                     salts                 () const;
-   QVector<int>                                      getSaltIds            () const;
+   QList<Instruction *>                              instructions          () const;
+   QVector<int>                                      getInstructionIds     () const;
    QList<BrewNote *>                                 brewNotes             () const;
    QList<Recipe *>                                   ancestors             () const;
    std::shared_ptr<Mash>                             getMash               () const;
@@ -573,6 +577,7 @@ public:
    void setHopAdditions        (QList<std::shared_ptr<RecipeAdditionHop        >> val);
    void setMiscAdditions       (QList<std::shared_ptr<RecipeAdditionMisc       >> val);
    void setYeastAdditions      (QList<std::shared_ptr<RecipeAdditionYeast      >> val);
+   void setSaltAdjustments     (QList<std::shared_ptr<RecipeAdjustmentSalt     >> val);
    void setWaterUses           (QList<std::shared_ptr<RecipeUseOfWater         >> val);
 
    /**
@@ -587,7 +592,7 @@ public:
    void setBoilId        (int const id);
    void setFermentationId(int const id);
    void setInstructionIds(QVector<int> ids);
-   void setSaltIds       (QVector<int> ids);
+///   void setSaltIds       (QVector<int> ids);
 ///   void setWaterIds      (QVector<int> ids);
    void setAncestorId    (int ancestorId, bool notify = true);
    //! @}
@@ -607,8 +612,6 @@ public:
    QList<QString> getReagents(QList<std::shared_ptr<RecipeAdditionHop>> hopAdditions, bool firstWort);
    //! \brief Formats the mashsteps for instructions
    QList<QString> getReagents(QList< std::shared_ptr<MashStep> >);
-   //! \brief Formats the salts for instructions
-   QStringList getReagents(QList<Salt *> salts, Salt::WhenToAdd wanted);
    QHash<QString, double> calcTotalPoints();
 
    // Setters that are not slots
@@ -776,14 +779,6 @@ private:
    // Emits changed(og), changed(fg). Depends on: _wortFromMash_l, _finalVolume_l
    Q_INVOKABLE void recalcOgFg();
 
-   // Adds instructions to the recipe.
-   void postboilFermentablesIns();
-   void postboilIns();
-   void mashFermentableIns();
-   void mashWaterIns();
-   void firstWortHopsIns();
-   void topOffIns();
-   void saltWater(Salt::WhenToAdd when);
 };
 
 // Need specialisations for abstract types
@@ -815,79 +810,7 @@ namespace RecipeHelper {
     *        because we are modifying some ingredient or other attribute of the Recipe and automatic versioning is
     *        enabled.
     */
-   template<typename NE> void prepareForPropertyChange(NE & ne, BtStringConst const & propertyName) {
-
-      //
-      // If the user has said they don't want versioning, just return
-      //
-      if (!RecipeHelper::getAutomaticVersioningEnabled()) {
-         return;
-      }
-
-      qDebug() <<
-         Q_FUNC_INFO << "Modifying: " << ne.metaObject()->className() << "#" << ne.key() << "property" << propertyName;
-
-      //
-      // If the object we're about to change a property on is a Recipe or is used in a Recipe, then it might need a new
-      // version -- unless it's already being versioned.
-      //
-      Recipe * owner = Recipe::findOwningRecipe(ne);
-      if (!owner || owner->isBeingModified()) {
-         // Change is not related to a recipe or the recipe is already being modified
-         return;
-      }
-
-      //
-      // Automatic versioning means that, once a recipe is brewed, it is "soft locked" and the first change should spawn a
-      // new version.  Any subsequent change should not spawn a new version until it is brewed again.
-      //
-      if (owner->brewNotes().empty()) {
-         // Recipe hasn't been brewed
-         return;
-      }
-
-      // If the object we're about to change already has descendants, then we don't want to create new ones.
-      if (owner->hasDescendants()) {
-         qDebug() << Q_FUNC_INFO << "Recipe #" << owner->key() << "already has descendants, so not creating any more";
-         return;
-      }
-
-      //
-      // Once we've started doing versioning, we don't want to trigger it again on the same Recipe until we've finished
-      //
-      NamedEntityModifyingMarker ownerModifyingMarker(*owner);
-
-      //
-      // Versioning when modifying something in a recipe is *hard*.  If we copy the recipe, there is no easy way to say
-      // "this ingredient in the old recipe is that ingredient in the new".  One approach would be to use the delete idea,
-      // ie copy everything but what's being modified, clone what's being modified and add the clone to the copy.  Another
-      // is to take a deep copy of the Recipe and make that the "prior version".
-      //
-
-      // Create a deep copy of the Recipe, and put it in the DB, so it has an ID.
-      // (This will also emit signalObjectInserted for the new Recipe from ObjectStoreTyped<Recipe>.)
-      qDebug() << Q_FUNC_INFO << "Copying Recipe" << owner->key();
-
-      // We also don't want to trigger versioning on the newly spawned Recipe until we're completely done here!
-      std::shared_ptr<Recipe> spawn = std::make_shared<Recipe>(*owner);
-      NamedEntityModifyingMarker spawnModifyingMarker(*spawn);
-      ObjectStoreWrapper::insert(spawn);
-
-      qDebug() << Q_FUNC_INFO << "Copied Recipe #" << owner->key() << "to new Recipe #" << spawn->key();
-
-      // We assert that the newly created version of the recipe has not yet been brewed (and therefore will not get
-      // automatically versioned on subsequent changes before it is brewed).
-      Q_ASSERT(spawn->brewNotes().empty());
-
-      //
-      // By default, copying a Recipe does not copy all its ancestry.  Here, we want the copy to become our ancestor (ie
-      // previous version).  This will also emit a signalPropertyChanged from ObjectStoreTyped<Recipe>, which the UI can
-      // pick up to update tree display of Recipes etc.
-      //
-      owner->setAncestor(*spawn);
-
-      return;
-   }
+   void prepareForPropertyChange(NamedEntity & ne, BtStringConst const & propertyName);
 
    /**
     * \brief Mini RAII class that allows automatic Recipe versioning to be suspended for the time that it's in scope

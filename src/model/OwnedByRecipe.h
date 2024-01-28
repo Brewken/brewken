@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedEntityWithFolder.h is part of Brewken, and is copyright the following authors 2024:
+ * model/OwnedByRecipe.h is part of Brewken, and is copyright the following authors 2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,24 +13,28 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef MODEL_NAMEDENTITYWITHFOLDER_H
-#define MODEL_NAMEDENTITYWITHFOLDER_H
+#ifndef MODEL_OWNEDBYRECIPE_H
+#define MODEL_OWNEDBYRECIPE_H
 #pragma once
+
+#include <QString>
 
 #include "model/NamedEntity.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::NamedEntityWithFolder { BtStringConst const property{#property}; }
-AddPropertyName(folder)
+#define AddPropertyName(property) namespace PropertyNames::OwnedByRecipe { BtStringConst const property{#property}; }
+AddPropertyName(recipeId)
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
 
+// Forward declarations;
+class Recipe;
 
-class NamedEntityWithFolder : public NamedEntity {
-   Q_OBJECT
+class OwnedByRecipe : public NamedEntity {
+    Q_OBJECT
 
 public:
    /**
@@ -44,30 +48,26 @@ public:
     */
    static TypeLookup const typeLookup;
 
-   NamedEntityWithFolder(QString name, bool display = false, QString folder = "");
-   NamedEntityWithFolder(NamedParameterBundle const & namedParameterBundle);
-   NamedEntityWithFolder(NamedEntityWithFolder const & other);
-   virtual ~NamedEntityWithFolder();
+   OwnedByRecipe(QString name = "", int const recipeId = -1);
+   OwnedByRecipe(NamedParameterBundle const & namedParameterBundle);
+   OwnedByRecipe(OwnedByRecipe const & other);
 
-   virtual void swap(NamedEntityWithFolder & other) noexcept;
+   virtual ~OwnedByRecipe();
 
-   //=================================================== PROPERTIES ====================================================
-   Q_PROPERTY(QString folder READ folder WRITE setFolder)
+   Q_PROPERTY(int recipeId   READ recipeId   WRITE setRecipeId   STORED false)
 
-   //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-   QString folder() const;
+   void setRecipeId(int recipeId);
+   void setRecipe(Recipe * recipe);
 
-   //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   void setFolder(QString const & var);
+   virtual std::optional<std::shared_ptr<Recipe>> owningRecipe() const;
+   int recipeId() const;
+   std::shared_ptr<Recipe> recipe() const;
 
-private:
-  QString m_folder;
+protected:
+   virtual bool isEqualTo(NamedEntity const & other) const;
+
+protected:
+   int m_recipeId;
 };
-
-// Note that we cannot write `Q_DECLARE_METATYPE(NamedEntityWithFolder)` here, because NamedEntityWithFolder is an
-// abstract class.
-Q_DECLARE_METATYPE(NamedEntityWithFolder *)
-Q_DECLARE_METATYPE(NamedEntityWithFolder const *)
-Q_DECLARE_METATYPE(std::shared_ptr<NamedEntityWithFolder>)
 
 #endif

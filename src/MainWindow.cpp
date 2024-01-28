@@ -1327,7 +1327,7 @@ void MainWindow::setBrewNoteByIndex(const QModelIndex &index)
    }
    // THERE
 
-   Recipe* parent  = ObjectStoreWrapper::getByIdRaw<Recipe>(bNote->getRecipeId());
+   Recipe* parent  = ObjectStoreWrapper::getByIdRaw<Recipe>(bNote->recipeId());
    QModelIndex pNdx = treeView_recipe->parent(index);
 
    // this gets complex. Versioning means we can't just clear the open
@@ -3216,7 +3216,7 @@ void MainWindow::versionedRecipe(Recipe* descendant) {
 // .:TBD:. Seems redundant to pass both the brewnote ID and a pointer to it; we only need one of these
 void MainWindow::closeBrewNote([[maybe_unused]] int brewNoteId, std::shared_ptr<QObject> object) {
    BrewNote* b = std::static_pointer_cast<BrewNote>(object).get();
-   Recipe* parent = ObjectStoreWrapper::getByIdRaw<Recipe>(b->getRecipeId());
+   Recipe* parent = ObjectStoreWrapper::getByIdRaw<Recipe>(b->recipeId());
 
    // If this isn't the focused recipe, do nothing because there are no tabs
    // to close.

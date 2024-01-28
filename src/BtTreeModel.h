@@ -274,4 +274,11 @@ private:
 
 };
 
+// This is a bit ugly, but will ultimately be refactored away, once we stop having to decide at runtime whether
+// something can have a folder.
+namespace FolderUtils {
+   std::optional<QString> getFolder(NamedEntity const * ne);
+   void setFolder(NamedEntity * ne, QString const & val);
+}
+
 #endif

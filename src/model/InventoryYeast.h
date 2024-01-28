@@ -31,33 +31,7 @@ class InventoryYeast : public Inventory, public IngredientAmount<InventoryYeast,
    Q_OBJECT
 
    INGREDIENT_AMOUNT_DECL(InventoryYeast, Yeast)
-
-public:
-   /**
-    * \brief See comment in model/NamedEntity.h
-    */
-   static QString const LocalisedName;
-
-   /**
-    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
-    *        info.
-    */
-   static TypeLookup const typeLookup;
-
-   InventoryYeast();
-   InventoryYeast(NamedParameterBundle const & namedParameterBundle);
-   InventoryYeast(InventoryYeast const & other);
-
-   virtual ~InventoryYeast();
-
-public:
-   virtual char const * getIngredientClass() const;
-   Yeast * yeast() const ;
-
-protected:
-   virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual ObjectStore & getObjectStoreTypedInstance() const;
-
+   INVENTORY_DECL(Yeast, yeast)
 };
 
 #endif

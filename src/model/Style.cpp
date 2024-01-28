@@ -94,14 +94,15 @@ TypeLookup const Style::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::overallImpression, Style::m_overallImpression,           NonPhysicalQuantity::String     ),
    },
    // Parent class lookup
-   {&NamedEntityWithFolder::typeLookup}
+   {&NamedEntity::typeLookup}
 };
 
 //====== Constructors =========
 
 // suitable for something that will be written to the db later
 Style::Style(QString name) :
-   NamedEntityWithFolder{name, true       },
+   NamedEntity        {name, true       },
+   FolderBase<Style>  {},
    m_category         {""               },
    m_categoryNumber   {""               },
    m_styleLetter      {""               },
@@ -133,7 +134,8 @@ Style::Style(QString name) :
 }
 
 Style::Style(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntityWithFolder{namedParameterBundle},
+   NamedEntity{namedParameterBundle},
+   FolderBase<Style>{namedParameterBundle},
    SET_REGULAR_FROM_NPB (m_category         , namedParameterBundle, PropertyNames::Style::category         ),
    SET_REGULAR_FROM_NPB (m_categoryNumber   , namedParameterBundle, PropertyNames::Style::categoryNumber   ),
    SET_REGULAR_FROM_NPB (m_styleLetter      , namedParameterBundle, PropertyNames::Style::styleLetter      ),
@@ -165,7 +167,8 @@ Style::Style(NamedParameterBundle const & namedParameterBundle) :
 }
 
 Style::Style(Style const & other) :
-   NamedEntityWithFolder{other},
+   NamedEntity{other},
+   FolderBase<Style>{other},
    m_category         {other.m_category         },
    m_categoryNumber   {other.m_categoryNumber   },
    m_styleLetter      {other.m_styleLetter      },
@@ -259,3 +262,6 @@ void Style::setOverallImpression(QString               const & val) { SET_AND_NO
 ///Recipe * Style::getOwningRecipe() const {
 ///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 ///}
+
+// Boilerplate code for FolderBase
+FOLDER_BASE_COMMON_CODE(Style)

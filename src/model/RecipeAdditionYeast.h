@@ -61,7 +61,7 @@ public:
     */
    static TypeLookup const typeLookup;
 
-   RecipeAdditionYeast(QString name = "", int const recipeId = -1, int const hopId = -1);
+   RecipeAdditionYeast(QString name = "", int const recipeId = -1, int const ingredientId = -1);
    RecipeAdditionYeast(NamedParameterBundle const & namedParameterBundle);
    RecipeAdditionYeast(RecipeAdditionYeast const & other);
 

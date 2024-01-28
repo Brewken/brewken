@@ -251,5 +251,8 @@ void Mash::acceptStepChange([[maybe_unused]] QMetaProperty prop,
 //////   return;
 ///}
 
+// Boilerplate code for FolderBase
+FOLDER_BASE_COMMON_CODE(Mash)
+
 // Insert boiler-plate wrapper functions that call down to StepOwnerBase
 STEP_OWNER_COMMON_CODE(Mash, mash)

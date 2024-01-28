@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Salt.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/Salt.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -19,8 +19,27 @@
 #include <QDebug>
 
 #include "database/ObjectStoreWrapper.h"
+#include "model/InventorySalt.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
+
+namespace {
+   // Constants used in our mass concentration calculations below
+   double constexpr molarMass_Ca     =  40.078     ; // https://en.wikipedia.org/wiki/Calcium
+   double constexpr molarMass_Cl     =  35.45      ; // https://en.wikipedia.org/wiki/Chloride
+   double constexpr molarMass_CO3    =  60.008     ; // https://en.wikipedia.org/wiki/Carbonate
+   double constexpr molarMass_HCO3   =  61.0168    ; // https://en.wikipedia.org/wiki/Bicarbonate
+   double constexpr molarMass_Mg     =  24.305     ; // https://en.wikipedia.org/wiki/Magnesium
+   double constexpr molarMass_Na     =  22.98976928; // https://en.wikipedia.org/wiki/Sodium
+   double constexpr molarMass_SO4    =  96.06      ; // https://en.wikipedia.org/wiki/Sulfate
+   double constexpr molarMass_CaCl2  = 110.98      ; // https://en.wikipedia.org/wiki/Calcium_chloride
+   double constexpr molarMass_CaCO3  = 100.0869    ; // https://en.wikipedia.org/wiki/Calcium_carbonate
+   double constexpr molarMass_CaSO4  = 136.14      ; // https://en.wikipedia.org/wiki/Calcium_sulfate (anhydrous form)
+   double constexpr molarMass_MgSO4  = 120.366     ; // https://en.wikipedia.org/wiki/Magnesium_sulfate (anhydrous form)
+   double constexpr molarMass_NaCl   =  58.443     ; // https://en.wikipedia.org/wiki/Sodium_chloride
+   double constexpr molarMass_NaHCO3 =  84.0066    ; // https://en.wikipedia.org/wiki/Sodium_bicarbonate
+   double constexpr molarMass_H3PO4  =  97.994     ; // https://en.wikipedia.org/wiki/Phosphoric_acid
+}
 
 QString const Salt::LocalisedName = tr("Salt");
 
@@ -48,28 +67,12 @@ EnumStringMapping const Salt::typeDisplayNames {
    {Salt::Type::AcidulatedMalt         , tr("Acidulated Malt"                        )},
 };
 
-EnumStringMapping const Salt::whenToAddStringMapping {
-   {Salt::WhenToAdd::NEVER , "never" },
-   {Salt::WhenToAdd::MASH  , "mash"  },
-   {Salt::WhenToAdd::SPARGE, "sparge"},
-   {Salt::WhenToAdd::RATIO , "ratio" },
-   {Salt::WhenToAdd::EQUAL , "equal" },
-};
-
-EnumStringMapping const Salt::whenToAddDisplayNames {
-   {Salt::WhenToAdd::NEVER , tr("Never" )},
-   {Salt::WhenToAdd::MASH  , tr("Mash"  )},
-   {Salt::WhenToAdd::SPARGE, tr("Sparge")},
-   {Salt::WhenToAdd::RATIO , tr("Ratio" )},
-   {Salt::WhenToAdd::EQUAL , tr("Equal" )},
-};
-
 bool Salt::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    Salt const & rhs = static_cast<Salt const &>(other);
    // Base class will already have ensured names are equal
    return (
-      this->m_whenToAdd == rhs.m_whenToAdd &&
+///      this->m_whenToAdd == rhs.m_whenToAdd &&
       this->m_type   == rhs.m_type
    );
 }
@@ -81,53 +84,55 @@ ObjectStore & Salt::getObjectStoreTypedInstance() const {
 TypeLookup const Salt::typeLookup {
    "Salt",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::amount        , Salt::m_amount          , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume      ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::amountIsWeight, Salt::m_amountIsWeight  ,         NonPhysicalQuantity::Bool      ),
+///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::amount        , Salt::m_amount          , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume      ),
+///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::amountIsWeight, Salt::m_amountIsWeight  ,         NonPhysicalQuantity::Bool      ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::isAcid        , Salt::m_is_acid         ,         NonPhysicalQuantity::Bool      ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::percentAcid   , Salt::m_percent_acid    ,         NonPhysicalQuantity::Percentage),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::type          , Salt::m_type            ,         NonPhysicalQuantity::Enum      ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::whenToAdd     , Salt::m_whenToAdd       ,         NonPhysicalQuantity::Enum      ),
+///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::whenToAdd     , Salt::m_whenToAdd       ,         NonPhysicalQuantity::Enum      ),
 
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Salt::amountWithUnits, Salt::amountWithUnits, Measurement::ChoiceOfPhysicalQuantity::Mass_Volume  ),
+///      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Salt::amountWithUnits, Salt::amountWithUnits, Measurement::ChoiceOfPhysicalQuantity::Mass_Volume  ),
    },
-   // Parent class lookup
-   {&NamedEntity::typeLookup}
+   // Parent classes lookup
+   {&Ingredient::typeLookup,
+    &IngredientBase<Salt>::typeLookup}
 };
+static_assert(std::is_base_of<Ingredient, Salt>::value);
 
 Salt::Salt(QString name) :
-   NamedEntity      {name, true},
-   m_amount         {0.0},
-   m_whenToAdd      {Salt::WhenToAdd::NEVER},
+   Ingredient{name},
+///   m_amount         {0.0},
+///   m_whenToAdd      {Salt::WhenToAdd::NEVER},
    m_type           {Salt::Type::CaCl2},
-   m_amountIsWeight{true},
+///   m_amountIsWeight{true},
    m_percent_acid   {0.0},
    m_is_acid        {false} {
    return;
 }
 
 Salt::Salt(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity       {namedParameterBundle},
-   SET_REGULAR_FROM_NPB (m_whenToAdd   , namedParameterBundle, PropertyNames::Salt::whenToAdd  ),
+   Ingredient       {namedParameterBundle},
+///   SET_REGULAR_FROM_NPB (m_whenToAdd   , namedParameterBundle, PropertyNames::Salt::whenToAdd  ),
    SET_REGULAR_FROM_NPB (m_type        , namedParameterBundle, PropertyNames::Salt::type       ),
    SET_REGULAR_FROM_NPB (m_percent_acid, namedParameterBundle, PropertyNames::Salt::percentAcid),
    SET_REGULAR_FROM_NPB (m_is_acid     , namedParameterBundle, PropertyNames::Salt::isAcid     ) {
 
-   this->setEitherOrReqParams(namedParameterBundle,
-                              PropertyNames::Salt::amount,
-                              PropertyNames::Salt::amountIsWeight,
-                              PropertyNames::Salt::amountWithUnits,
-                              Measurement::PhysicalQuantity::Mass,
-                              this->m_amount,
-                              this->m_amountIsWeight);
+///   this->setEitherOrReqParams(namedParameterBundle,
+///                              PropertyNames::Salt::amount,
+///                              PropertyNames::Salt::amountIsWeight,
+///                              PropertyNames::Salt::amountWithUnits,
+///                              Measurement::PhysicalQuantity::Mass,
+///                              this->m_amount,
+///                              this->m_amountIsWeight);
    return;
 }
 
 Salt::Salt(Salt const & other) :
-   NamedEntity       {other                   },
-   m_amount          {other.m_amount          },
-   m_whenToAdd       {other.m_whenToAdd       },
+   Ingredient       {other                   },
+///   m_amount          {other.m_amount          },
+///   m_whenToAdd       {other.m_whenToAdd       },
    m_type            {other.m_type            },
-   m_amountIsWeight{other.m_amountIsWeight},
+///   m_amountIsWeight{other.m_amountIsWeight},
    m_percent_acid    {other.m_percent_acid    },
    m_is_acid         {other.m_is_acid         } {
    return;
@@ -136,26 +141,44 @@ Salt::Salt(Salt const & other) :
 Salt::~Salt() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
-double          Salt::amount        () const { return this->m_amount          ; }
-Salt::WhenToAdd Salt::whenToAdd     () const { return this->m_whenToAdd       ; }
+///double          Salt::amount        () const { return this->m_amount          ; }
+///Salt::WhenToAdd Salt::whenToAdd     () const { return this->m_whenToAdd       ; }
 Salt::Type      Salt::type          () const { return this->m_type            ; }
 bool            Salt::isAcid        () const { return this->m_is_acid         ; }
-bool            Salt::amountIsWeight() const { return this->m_amountIsWeight; }
+///bool            Salt::amountIsWeight() const { return this->m_amountIsWeight; }
 double          Salt::percentAcid   () const { return this->m_percent_acid    ; }
 
-MassOrVolumeAmt Salt::amountWithUnits() const {
-   return MassOrVolumeAmt{this->m_amount,
-                          this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters};
+Measurement::PhysicalQuantity Salt::suggestedMeasure() const {
+   switch (this->m_type) {
+      case Salt::Type::CaCl2         :
+      case Salt::Type::CaCO3         :
+      case Salt::Type::CaSO4         :
+      case Salt::Type::MgSO4         :
+      case Salt::Type::NaCl          :
+      case Salt::Type::NaHCO3        :
+      case Salt::Type::AcidulatedMalt:
+         return Measurement::PhysicalQuantity::Mass;
+      case Salt::Type::LacticAcid    :
+      case Salt::Type::H3PO4         :
+         return Measurement::PhysicalQuantity::Volume;
+      // No default case as we want the compiler to warn us if we missed one
+   }
+   return Measurement::PhysicalQuantity::Mass; // Should be unreachable, but GCC gives a warning if we don't have this
 }
+
+///MassOrVolumeAmt Salt::amountWithUnits() const {
+///   return MassOrVolumeAmt{this->m_amount,
+///                          this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters};
+///}
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void Salt::setAmount(double val) {
-   SET_AND_NOTIFY(PropertyNames::Salt::amount, this->m_amount, val);
-}
-
-void Salt::setWhenToAdd(Salt::WhenToAdd val) {
-   SET_AND_NOTIFY(PropertyNames::Salt::whenToAdd, this->m_whenToAdd, val);
-}
+///void Salt::setAmount(double val) {
+///   SET_AND_NOTIFY(PropertyNames::Salt::amount, this->m_amount, val);
+///}
+///
+///void Salt::setWhenToAdd(Salt::WhenToAdd val) {
+///   SET_AND_NOTIFY(PropertyNames::Salt::whenToAdd, this->m_whenToAdd, val);
+///}
 
 // This may come to haunt me, but I am setting the isAcid flag and the
 // amount_is_weight flags here.
@@ -174,7 +197,7 @@ void Salt::setType(Salt::Type type) {
    }
    SET_AND_NOTIFY(PropertyNames::Salt::type,           this->m_type,    type);
    SET_AND_NOTIFY(PropertyNames::Salt::isAcid,         this->m_is_acid, isAcid);
-   SET_AND_NOTIFY(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, !(type == Salt::Type::LacticAcid || type == Salt::Type::H3PO4));
+///   SET_AND_NOTIFY(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, !(type == Salt::Type::LacticAcid || type == Salt::Type::H3PO4));
    if (isAcid && newPercentAcid == 0.0) {
       switch (type) {
          case Salt::Type::LacticAcid    : newPercentAcid = 88; break;
@@ -188,9 +211,9 @@ void Salt::setType(Salt::Type type) {
    return;
 }
 
-void Salt::setAmountIsWeight(bool val) {
-   SET_AND_NOTIFY(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, val);
-}
+///void Salt::setAmountIsWeight(bool val) {
+///   SET_AND_NOTIFY(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, val);
+///}
 
 void Salt::setIsAcid(bool val) {
    SET_AND_NOTIFY(PropertyNames::Salt::isAcid, this->m_is_acid, val);
@@ -201,97 +224,177 @@ void Salt::setPercentAcid(double val) {
    SET_AND_NOTIFY(PropertyNames::Salt::percentAcid, this->m_percent_acid, val);
 }
 
-void Salt::setAmountWithUnits(MassOrVolumeAmt const   val) {
-   SET_AND_NOTIFY(PropertyNames::Salt::amount        , this->m_amount        , val.quantity);
-   SET_AND_NOTIFY(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
-   return;
-}
+///void Salt::setAmountWithUnits(MassOrVolumeAmt const   val) {
+///   SET_AND_NOTIFY(PropertyNames::Salt::amount        , this->m_amount        , val.quantity);
+///   SET_AND_NOTIFY(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
+///   return;
+///}
 
 //====== maths ===========
-// All of these the per gram, per liter
-// these values are taken from Bru'n Water's execellent water knowledge page
-// https://sites.google.com/site/brunwater/water-knowledge
-// the numbers are derived by dividing the molecular weight of the ion by the
-// molecular weight of the molecule in grams and then multiplying by 1000 to
-// mg
+//
+// It's common to see the use of "parts per million (ppm)" used as a measure of concentration, but, as explained in
+// measurement/PhysicalQuantity.h and at https://en.wikipedia.org/wiki/Parts-per_notation, we need to clarify whether we
+// mean mass fraction, mole fraction or volume fraction.
+//
+// Note below that '.' is decimal separator and ',' is thousands separator.
+//
+//  • The Avogadro constant (6.022×10²³ = 6.022×10^23) says how many entities in 1 mole of something.
+//
+//  • The weight in grams of one mole of a substance is the same as its mean atomic mass.
+//    Eg the mean molecular weight of water is 18.015 atomic mass units (amu), aka g/mol, so one mole of water weighs
+//    18.015 grams.
+//
+//  • We also know that a liter of water weighs 1000 grams (at standard temperature and pressure).  So 1 liter of water
+//    contains 1000/18,015 mol water molecules.
+//
+//  • Thus if we know the atomic weights of a salt and its constituent ions, we can calculate how many ions per million
+//    water molecules (aka parts per million) we get from adding 1 gram of the salt to 1 liter of water.
+//
+//  • Various things cancel out to make the calculation relatively simple.
+//    Let S be the salt, and I be the constituent ion we're interested in.  Call the molecular masses of the salt and
+//    the ion Ms and Mi respectively.  We'll write L for The Avogadro constant.  We have:
+//      ◦ 1 mol of S weighs Ms grams
+//      ◦ 1 gram of S contains 1/Ms mol of S molecules, and thus 1/Ms mol of I ions
+//      ◦ Thus 1 gram of S in 1 liter of water is 1/Ms mol of I ions in 1000/18.015 mol water molecules
+//          = 1/Ms I ions per 1,000/18.015 mol water molecules
+//          = 18.015/Ms I ions per 1,000 water molecules
+//          = 18,015/Ms I ions per 1,000,000 water molecules
+//          = 18,015/Ms ppm mole fraction I ions
+//
+//  • If we want the mass concentration, it's simpler.
+//      ◦ 1 gram of S contains Mi/Ms grams of I ions
+//      ◦ 1 liter of water weighs 1000 grams
+//      ◦ So 1 gram of S in 1 liter of water gives a mass concentration of Mi/Ms parts per thousand
+//          = 1000 × Mi/Ms parts per million mass concentration
+//
+// See also Bru'n Water's execellent water knowledge page (previously at
+// https://sites.google.com/site/brunwater/water-knowledge, currently at https://www.brunwater.com/) for more info on
+// water adjustments.
+//
 // eg:
 //    NaHCO3 84 g/mol
 //       Na provides    23 g/mol
 //       HCO3 provides  61 g/mol (ish)
 //     So 1 g of NaHCO3 in 1L of water provides 1000*(61/84) = 726 ppm HCO3
 //
-// the magic 1000 is here because masses are stored as kg. We need it in grams
-// for this part
-double Salt::Ca() const {
-   if ( m_whenToAdd == Salt::WhenToAdd::NEVER ) {
-      return 0.0;
+// Remember, we store masses in kilograms, so the results of these functions need to be multiplied by 1000.  (Yes,
+// that's two multiplications by 1000.  Inside the functions here we do it to to go from parts per thousand to parts per
+// million.  The caller typically needs to do it again to go from kilograms to grams.)
+//
+double Salt::massConcPpm_Ca_perGramPerLiter() const {
+   switch (this->m_type) {
+      case Salt::Type::CaCl2         : return (molarMass_Ca / molarMass_CaCl2) * 1000.0;
+      case Salt::Type::CaCO3         : return (molarMass_Ca / molarMass_CaCO3) * 1000.0;
+      case Salt::Type::CaSO4         : return (molarMass_Ca / molarMass_CaSO4) * 1000.0;
+      case Salt::Type::MgSO4         : return 0.0;
+      case Salt::Type::NaCl          : return 0.0;
+      case Salt::Type::NaHCO3        : return 0.0;
+      case Salt::Type::LacticAcid    : return 0.0;
+      case Salt::Type::H3PO4         : return 0.0;
+      case Salt::Type::AcidulatedMalt: return 0.0;
+      // No default case as we want the compiler to warn us if we missed one
    }
-
-   switch (m_type) {
-      case Salt::Type::CaCl2: return 272.0 * m_amount * 1000.0;
-      case Salt::Type::CaCO3: return 200.0 * m_amount * 1000.0;
-      case Salt::Type::CaSO4: return 232.0 * m_amount * 1000.0;
-      default: return 0.0;
-   }
+   return 0.0; // Should be unreachable, but GCC gives a warning if we don't have this
 }
 
-double Salt::Cl() const {
-   if ( m_whenToAdd == Salt::WhenToAdd::NEVER ) {
-      return 0.0;
+double Salt::massConcPpm_Cl_perGramPerLiter() const {
+   switch (this->m_type) {
+      case Salt::Type::CaCl2         : return (molarMass_Cl * 2.0 / molarMass_CaCl2) * 1000.0;
+      case Salt::Type::CaCO3         : return 0.0;
+      case Salt::Type::CaSO4         : return 0.0;
+      case Salt::Type::MgSO4         : return 0.0;
+      case Salt::Type::NaCl          : return (molarMass_Cl       / molarMass_NaCl ) * 1000.0;
+      case Salt::Type::NaHCO3        : return 0.0;
+      case Salt::Type::LacticAcid    : return 0.0;
+      case Salt::Type::H3PO4         : return 0.0;
+      case Salt::Type::AcidulatedMalt: return 0.0;
    }
-
-   switch (m_type) {
-      case Salt::Type::CaCl2: return 483 * m_amount * 1000.0;
-      case Salt::Type::NaCl: return 607 * m_amount * 1000.0;
-      default: return 0.0;
-   }
+   return 0.0; // Should be unreachable, but GCC gives a warning if we don't have this
 }
 
-double Salt::CO3() const {
-   if ( m_whenToAdd == Salt::WhenToAdd::NEVER ) {
-      return 0.0;
+double Salt::massConcPpm_CO3_perGramPerLiter() const {
+   switch (this->m_type) {
+      case Salt::Type::CaCl2         : return 0.0;
+      case Salt::Type::CaCO3         : return (molarMass_CO3 / molarMass_CaCO3) * 1000.0;
+      case Salt::Type::CaSO4         : return 0.0;
+      case Salt::Type::MgSO4         : return 0.0;
+      case Salt::Type::NaCl          : return 0.0;
+      case Salt::Type::NaHCO3        : return 0.0;
+      case Salt::Type::LacticAcid    : return 0.0;
+      case Salt::Type::H3PO4         : return 0.0;
+      case Salt::Type::AcidulatedMalt: return 0.0;
+      // No default case as we want the compiler to warn us if we missed one
    }
-
-   return m_type == Salt::Type::CaCO3 ? 610.0  * m_amount * 1000.0: 0.0;
+   return 0.0; // Should be unreachable, but GCC gives a warning if we don't have this
 }
 
-double Salt::HCO3() const {
-   if ( m_whenToAdd == Salt::WhenToAdd::NEVER ) {
-      return 0.0;
+double Salt::massConcPpm_HCO3_perGramPerLiter() const {
+   switch (this->m_type) {
+      case Salt::Type::CaCl2         : return 0.0;
+      case Salt::Type::CaCO3         : return 0.0;
+      case Salt::Type::CaSO4         : return 0.0;
+      case Salt::Type::MgSO4         : return 0.0;
+      case Salt::Type::NaCl          : return 0.0;
+      case Salt::Type::NaHCO3        : return (molarMass_HCO3 / molarMass_NaHCO3) * 1000.0;
+      case Salt::Type::LacticAcid    : return 0.0;
+      case Salt::Type::H3PO4         : return 0.0;
+      case Salt::Type::AcidulatedMalt: return 0.0;
+      // No default case as we want the compiler to warn us if we missed one
    }
-
-   return m_type == Salt::Type::NaHCO3 ? 726.0 * m_amount * 1000.0: 0.0;
+   return 0.0; // Should be unreachable, but GCC gives a warning if we don't have this
 }
 
-double Salt::Mg() const {
-   if ( m_whenToAdd == Salt::WhenToAdd::NEVER ) {
-      return 0.0;
+double Salt::massConcPpm_Mg_perGramPerLiter() const {
+   switch (this->m_type) {
+      case Salt::Type::CaCl2         : return 0.0;
+      case Salt::Type::CaCO3         : return 0.0;
+      case Salt::Type::CaSO4         : return 0.0;
+      case Salt::Type::MgSO4         : return (molarMass_Mg / molarMass_MgSO4) * 1000.0;
+      case Salt::Type::NaCl          : return 0.0;
+      case Salt::Type::NaHCO3        : return 0.0;
+      case Salt::Type::LacticAcid    : return 0.0;
+      case Salt::Type::H3PO4         : return 0.0;
+      case Salt::Type::AcidulatedMalt: return 0.0;
+      // No default case as we want the compiler to warn us if we missed one
    }
-   return m_type == Salt::Type::MgSO4 ? 99.0 * m_amount * 1000.0: 0.0;
+   return 0.0; // Should be unreachable, but GCC gives a warning if we don't have this
 }
 
-double Salt::Na() const {
-   if ( m_whenToAdd == Salt::WhenToAdd::NEVER ) {
-      return 0.0;
+double Salt::massConcPpm_Na_perGramPerLiter() const {
+   switch (this->m_type) {
+      case Salt::Type::CaCl2         : return 0.0;
+      case Salt::Type::CaCO3         : return 0.0;
+      case Salt::Type::CaSO4         : return 0.0;
+      case Salt::Type::MgSO4         : return 0.0;
+      case Salt::Type::NaCl          : return (molarMass_Na / molarMass_NaCl  ) * 1000.0;
+      case Salt::Type::NaHCO3        : return (molarMass_Na / molarMass_NaHCO3) * 1000.0;
+      case Salt::Type::LacticAcid    : return 0.0;
+      case Salt::Type::H3PO4         : return 0.0;
+      case Salt::Type::AcidulatedMalt: return 0.0;
+      // No default case as we want the compiler to warn us if we missed one
    }
-   switch (m_type) {
-      case Salt::Type::NaCl: return 393.0 * m_amount * 1000.0;
-      case Salt::Type::NaHCO3: return 274.0 * m_amount * 1000.0;
-      default: return 0.0;
-   }
+   return 0.0; // Should be unreachable, but GCC gives a warning if we don't have this
 }
 
-double Salt::SO4() const {
-   if ( m_whenToAdd == Salt::WhenToAdd::NEVER ) {
-      return 0.0;
+double Salt::massConcPpm_SO4_perGramPerLiter() const {
+   switch (this->m_type) {
+      case Salt::Type::CaCl2         : return 0.0;
+      case Salt::Type::CaCO3         : return 0.0;
+      case Salt::Type::CaSO4         : return (molarMass_SO4 / molarMass_CaSO4)  * 1000.0;
+      case Salt::Type::MgSO4         : return (molarMass_SO4 / molarMass_MgSO4)  * 1000.0;
+      case Salt::Type::NaCl          : return 0.0;
+      case Salt::Type::NaHCO3        : return 0.0;
+      case Salt::Type::LacticAcid    : return 0.0;
+      case Salt::Type::H3PO4         : return 0.0;
+      case Salt::Type::AcidulatedMalt: return 0.0;
+      // No default case as we want the compiler to warn us if we missed one
    }
-   switch (m_type) {
-      case Salt::Type::CaSO4: return 558.0 * m_amount * 1000.0;
-      case Salt::Type::MgSO4: return 389.0 * m_amount * 1000.0;
-      default: return 0.0;
-   }
+   return 0.0; // Should be unreachable, but GCC gives a warning if we don't have this
 }
 
 ///Recipe * Salt::getOwningRecipe() const {
 ///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 ///}
+
+// Insert the boiler-plate stuff for inventory
+INGREDIENT_BASE_COMMON_CODE(Salt)

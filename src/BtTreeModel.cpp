@@ -70,6 +70,47 @@ namespace {
    }
 }
 
+namespace FolderUtils {
+
+   std::optional<QString> getFolder(NamedEntity const * ne) {
+      if (!ne) {
+         return std::nullopt;
+      }
+
+      QMetaObject const * neMetaObject = ne->metaObject();
+      int propertyIndex = neMetaObject->indexOfProperty(*PropertyNames::FolderBase::folder);
+      if (propertyIndex >= 0) {
+         QMetaProperty neMetaProperty = neMetaObject->property(propertyIndex);
+         Q_ASSERT(neMetaProperty.isReadable());
+         QVariant val = ne->property(*PropertyNames::FolderBase::folder);
+         return val.toString();
+      }
+      return std::nullopt;
+   }
+
+   void setFolder(NamedEntity * ne, QString const & val) {
+      if (!ne) {
+         return;
+      }
+      QMetaObject const * neMetaObject = ne->metaObject();
+      int propertyIndex = neMetaObject->indexOfProperty(*PropertyNames::FolderBase::folder);
+      if (propertyIndex >= 0) {
+         QMetaProperty neMetaProperty = neMetaObject->property(propertyIndex);
+         Q_ASSERT(neMetaProperty.isReadable());
+
+         bool succeeded = ne->setProperty(*PropertyNames::FolderBase::folder, val);
+         if (!succeeded) {
+            qCritical() <<
+               Q_FUNC_INFO << "Error trying to set" << PropertyNames::FolderBase::folder << "on" <<
+               neMetaObject->className() << "to" << val << "; property type =" <<
+               neMetaProperty.typeName() << "; writable =" << neMetaProperty.isWritable();
+         }
+      }
+      return;
+   }
+
+}
+
 // =========================================================================
 // ============================ CLASS STUFF ================================
 // =========================================================================
@@ -548,10 +589,11 @@ void BtTreeModel::loadTreeModel() {
    qDebug() << Q_FUNC_INFO << "Got " << elems.length() << "elements matching type mask" << this->m_treeMask;
 
    for (NamedEntity * elem : elems) {
-      auto elemWithFolder = qobject_cast<NamedEntityWithFolder *>(elem);
-
-      if (elemWithFolder && !elemWithFolder->folder().isEmpty()) {
-         ndxLocal = findFolder(elemWithFolder->folder(), rootItem->child(0), true);
+      // TODO: At some point we should refactor this code so that we have separate handling for objects that have
+      //       folders from ones that don't.
+      auto folder = FolderUtils::getFolder(elem);
+      if (folder && !folder->isEmpty()) {
+         ndxLocal = findFolder(*folder, rootItem->child(0), true);
          // I cannot imagine this failing, but what the hell
          if (! ndxLocal.isValid()) {
             qWarning() << Q_FUNC_INFO << "Invalid return from findFolder in loadTreeModel()";
@@ -886,11 +928,14 @@ void BtTreeModel::folderChanged(NamedEntity * test) {
    // Find the new parent
    // That's awkward, but dropping a folder prolly does need a the folder
    // created.
-   auto elemWithFolder = qobject_cast<NamedEntityWithFolder *>(test);
-   if (!elemWithFolder) {
+   //
+   // TODO: At some point we should refactor this code so that we have separate handling for objects that have
+   //       folders from ones that don't.
+   auto folder = FolderUtils::getFolder(test);
+   if (!folder || folder->isEmpty()) {
       return;
    }
-   QModelIndex newNdx = findFolder(elemWithFolder->folder(), rootItem->child(0), true);
+   QModelIndex newNdx = findFolder(*folder, rootItem->child(0), true);
    if (! newNdx.isValid()) {
       newNdx = createIndex(0, 0, rootItem->child(0));
       expand = false;
@@ -1014,9 +1059,13 @@ bool BtTreeModel::renameFolder(BtFolder * victim, QString newName) {
             src++;
          } else {
             // Leafnode
-            auto elemWithFolder = qobject_cast<NamedEntityWithFolder *>(next->thing());
-            if (elemWithFolder) {
-               elemWithFolder->setFolder(targetPath);
+            //
+            // TODO: At some point we should refactor this code so that we have separate handling for objects that have
+            //       folders from ones that don't.
+            auto item = next->thing();
+            auto folder = FolderUtils::getFolder(item);
+            if (folder) {
+               FolderUtils::setFolder(item, targetPath);
             }
          }
       }
@@ -1213,7 +1262,7 @@ void BtTreeModel::elementAdded(NamedEntity * victim) {
    auto lType = this->itemType;
    if (qobject_cast<BrewNote *>(victim)) {
       auto brewNote = qobject_cast<BrewNote *>(victim);
-      Recipe * recipe = ObjectStoreWrapper::getByIdRaw<Recipe>(brewNote->getRecipeId());
+      Recipe * recipe = ObjectStoreWrapper::getByIdRaw<Recipe>(brewNote->recipeId());
       pIdx = findElement(recipe);
       lType = BtTreeItem::Type::BrewNote;
    } else {
@@ -1390,13 +1439,12 @@ bool BtTreeModel::dropMimeData(QMimeData const * data,
          qDebug() << Q_FUNC_INFO << "Invalid drop location";
          return false;
       }
-      auto elemWithFolder = qobject_cast<NamedEntityWithFolder *>(something);
-      if (!elemWithFolder) {
+      auto folder = FolderUtils::getFolder(something);
+      if (!folder) {
          qDebug() << Q_FUNC_INFO << "Dragged element" << something << "cannot have folder";
          return false;
       }
-
-      target = elemWithFolder->folder();
+      target = *folder;
    }
 
    qDebug() << Q_FUNC_INFO << "Target:" << target;
@@ -1410,8 +1458,9 @@ bool BtTreeModel::dropMimeData(QMimeData const * data,
       BtTreeItem::Type oType = static_cast<BtTreeItem::Type>(oTypeRaw);
       qDebug() << Q_FUNC_INFO << "Name:" << name << ", ID:" << id << ", Type:" << oTypeRaw;
 
-      auto elemWithFolder = qobject_cast<NamedEntityWithFolder *>(getElement(oType, id));
-      if (!elemWithFolder && oType != BtTreeItem::Type::Folder) {
+      auto item = getElement(oType, id);
+      auto folder = FolderUtils::getFolder(item);
+      if (!folder) {
          qDebug() << Q_FUNC_INFO << "No matching element";
          return false;
       }
@@ -1419,12 +1468,11 @@ bool BtTreeModel::dropMimeData(QMimeData const * data,
       // this is the work.
       if (oType != BtTreeItem::Type::Folder) {
          qDebug() <<
-            Q_FUNC_INFO << "Moving" << elemWithFolder << "from folder" << elemWithFolder->folder() << "to folder" <<
-            target;
+            Q_FUNC_INFO << "Moving" << item << "from folder" << folder << "to folder" << target;
          // Dropping an item in a folder just means setting the folder name on that item
-         elemWithFolder->setFolder(target);
+         FolderUtils::setFolder(item, target);
          // Now we have to update our own model (ie that of BtTreeModel) so that the display will update!
-         this->folderChanged(elemWithFolder);
+         this->folderChanged(item);
 
       } else {
          // I need the actual folder object that got dropped.

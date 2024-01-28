@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/InventoryFermentable.h is part of Brewken, and is copyright the following authors 2023-2024:
+ * model/InventorySalt.h is part of Brewken, and is copyright the following authors 2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,26 +13,25 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef MODEL_INVENTORYFERMENTABLE_H
-#define MODEL_INVENTORYFERMENTABLE_H
+#ifndef MODEL_INVENTORYSALT_H
+#define MODEL_INVENTORYSALT_H
 #pragma once
 
 #include <QObject>
 #include <QString>
 
-#include "model/Fermentable.h"
+#include "model/Salt.h"
 #include "model/Inventory.h"
 #include "model/IngredientAmount.h"
 
 /**
- * \brief Inventory of \c Fermentable
+ * \brief Inventory of \c Salt
  */
-class InventoryFermentable : public Inventory, public IngredientAmount<InventoryFermentable, Fermentable> {
+class InventorySalt : public Inventory, public IngredientAmount<InventorySalt, Salt> {
    Q_OBJECT
 
-   INGREDIENT_AMOUNT_DECL(InventoryFermentable, Fermentable)
-   INVENTORY_DECL(Fermentable, fermentable)
-
+   INGREDIENT_AMOUNT_DECL(InventorySalt, Salt)
+   INVENTORY_DECL(Salt, salt)
 };
 
 #endif

@@ -88,5 +88,8 @@ void Fermentation::acceptStepChange([[maybe_unused]] QMetaProperty prop,
    return;
 }
 
+// Boilerplate code for FolderBase
+FOLDER_BASE_COMMON_CODE(Fermentation)
+
 // Insert fermentationer-plate wrapper functions that call down to StepOwnerBase
 STEP_OWNER_COMMON_CODE(Fermentation, fermentation)

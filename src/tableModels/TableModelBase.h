@@ -26,6 +26,7 @@
 #include "database/ObjectStoreWrapper.h"
 #include "MainWindow.h"
 #include "measurement/Measurement.h"
+#include "model/IngredientAmount.h"
 #include "model/Inventory.h"
 #include "tableModels/BtTableModel.h"
 #include "tableModels/BtTableModelInventory.h"
@@ -154,7 +155,7 @@ public:
    }
 
    /**
-    * \brief Observe a recipe's list of NE (hops, fermentables, etc.  Mostly called from Derived::observeRecipe.
+    * \brief Observe a recipe's list of NE (hops, fermentables, etc).  Mostly called from Derived::observeRecipe.
     */
    template<class Caller>
    void doObserveRecipe(Recipe * rec) requires IsTableModel<Caller> && ObservesRecipe<Caller> {
@@ -298,13 +299,13 @@ public:
          return;
       }
 
-      // If we are watching a Recipe and the new item does not belong to it then there is nothing for us to do
-      if (observedRecipe && !observedRecipe->uses(*item)) {
-         qDebug() <<
-            Q_FUNC_INFO << "Ignoring signal about new" << NE::staticMetaObject.className() << "#" << item->key() <<
-            "as it does not belong to the Recipe we are watching: #" << observedRecipe->key();
-         return;
-      }
+///      // If we are watching a Recipe and the new item does not belong to it then there is nothing for us to do
+///      if (observedRecipe && !observedRecipe->uses(*item)) {
+///         qDebug() <<
+///            Q_FUNC_INFO << "Ignoring signal about new" << NE::staticMetaObject.className() << "#" << item->key() <<
+///            "as it does not belong to the Recipe we are watching: #" << observedRecipe->key();
+///         return;
+///      }
 
       int size = this->rows.size();
       this->derived().beginInsertRows(QModelIndex(), size, size);

@@ -43,6 +43,7 @@
 int constexpr DatabaseSchemaHelper::dbVersion = 11;
 
 namespace {
+   // TODO It would be neat to be able to supply folder name as a parameter to XML/JSON import
    char const * const FOLDER_FOR_SUPPLIED_RECIPES = "brewken";
 
    struct QueryAndParameters {
@@ -634,6 +635,37 @@ namespace {
          {QString("UPDATE misc        SET inventory_id = CAST(inventory_id AS int) WHERE inventory_id IS NOT null")},
          {QString("UPDATE yeast       SET inventory_id = CAST(inventory_id AS int) WHERE inventory_id IS NOT null")},
          //
+         // Salt::Type is currently stored as a raw number.  We convert it to a string to bring it into line with other
+         // enums.  Current values are:
+         //     0 == NONE
+         //     1 == CACL2
+         //     2 == CACO3
+         //     3 == CASO4
+         //     4 == MGSO4
+         //     5 == NACL
+         //     6 == NAHCO3
+         //     7 == LACTIC
+         //     8 == H3PO4
+         //     9 == ACIDMLT
+         //    10 == numTypes
+         //
+         {QString("ALTER TABLE salt RENAME COLUMN stype TO numeric_type")},
+         {QString("ALTER TABLE salt    ADD COLUMN stype %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("UPDATE salt "
+                  "SET stype = "
+                  "CASE "
+                     "WHEN numeric_type = 1 THEN 'CaCl2'          "
+                     "WHEN numeric_type = 2 THEN 'CaCO3'          "
+                     "WHEN numeric_type = 3 THEN 'CaSO4'          "
+                     "WHEN numeric_type = 4 THEN 'MgSO4'          "
+                     "WHEN numeric_type = 5 THEN 'NaCl'           "
+                     "WHEN numeric_type = 6 THEN 'NaHCO3'         "
+                     "WHEN numeric_type = 7 THEN 'LacticAcid'     "
+                     "WHEN numeric_type = 8 THEN 'H3PO4'          "
+                     "WHEN numeric_type = 9 THEN 'AcidulatedMalt' "
+                  "END")},
+         {QString("ALTER TABLE salt DROP COLUMN numeric_type")},
+         //
          // Hop: Extended and additional fields for BeerJSON
          //
          // We only need to update the old Hop type and form mappings.  The new ones should "just work".
@@ -1028,11 +1060,11 @@ namespace {
          ), {QVariant{false}, QVariant{true}}},
          //
          // Now comes the tricky stuff where we change the hop_in_recipe, fermentable_in_recipe, misc_in_recipe,
-         // yeast_in_recipe and water_in_recipe junction tables to full-blown object tables, and remove hop_children,
-         // fermentable_children, misc_children, yeast_children and water_children.  We do water last (out of
-         // alphabetical order) because it's a bit different from the other ingredients.  In particular, water additions
-         // don't have any timing info (because that's in the mash / mash step data) and there is no inventory for
-         // water.
+         // yeast_in_recipe, salt_in_recipe and water_in_recipe junction tables to full-blown object tables, and remove
+         // hop_children, fermentable_children, misc_children, yeast_children and water_children.  (NB: There is no
+         // salt_children table!)  We do salt and water last (out of alphabetical order) because they are a bit
+         // different from the other ingredients.  In particular, water additions don't have any timing info (because
+         // that's in the mash / mash step data) and there is no inventory for water.
          //
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN name              %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE hop_in_recipe ADD COLUMN display           %1").arg(db.getDbNativeTypeName<bool   >())},
@@ -1087,6 +1119,14 @@ namespace {
          {QString("ALTER TABLE yeast_in_recipe ADD COLUMN attenuation_pct   %1").arg(db.getDbNativeTypeName<double >())}, // NB: Extra column for yeast_in_recipe
          {QString("     UPDATE yeast_in_recipe SET display = ?"), {QVariant{true}}},
          {QString("     UPDATE yeast_in_recipe SET deleted = ?"), {QVariant{false}}},
+         {QString("ALTER TABLE salt_in_recipe ADD COLUMN name              %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE salt_in_recipe ADD COLUMN display           %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE salt_in_recipe ADD COLUMN deleted           %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE salt_in_recipe ADD COLUMN quantity          %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE salt_in_recipe ADD COLUMN unit              %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
+         {QString("ALTER TABLE salt_in_recipe ADD COLUMN when_to_add       %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
+         {QString("     UPDATE salt_in_recipe SET display = ?"), {QVariant{true}}},
+         {QString("     UPDATE salt_in_recipe SET deleted = ?"), {QVariant{false}}},
          {QString("ALTER TABLE water_in_recipe ADD COLUMN name              %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE water_in_recipe ADD COLUMN display           %1").arg(db.getDbNativeTypeName<bool   >())},
          {QString("ALTER TABLE water_in_recipe ADD COLUMN deleted           %1").arg(db.getDbNativeTypeName<bool   >())},
@@ -1126,6 +1166,8 @@ namespace {
          // Now do the same for misc and yeast tables.  Here, the existing schema _does_ support weight and volume, so
          // we have to account for that.
          //
+         // TBD: How do "quanta" (ie number of packets) of yeast get stored in DB?
+         //
          {QString("UPDATE misc_in_recipe "
                   "SET quantity = m.amount, "
                       "unit = m.unit "
@@ -1147,6 +1189,41 @@ namespace {
                   ") AS y "
                   "WHERE yeast_in_recipe.yeast_id = y.id")},
          //
+         // Salt is similar to misc and yeast, except we have the possibility of "WhenToAdd == Never" (addTo == 0) which
+         // means don't add the salt at all(!)
+         //
+         // It's convenient to bring the WhenToAdd property across at the same time as the quantity.  It's stored
+         // numerically in the salt.addTo column:
+         //    0 == Never  == Do not add at all
+         //    1 == Mash   == Add at start of mash
+         //    2 == Sparge == Add to sparge water (at end of mash)
+         //    3 == Ratio  == Add at mash and sparge, pro rata to the amounts of water (I think!)
+         //    4 == Equal  == Add at mash and sparge, equal amounts (I think!)
+         //
+         // We ditch the "Never" value and store in when_to_add as a string.
+         //
+         {QString("UPDATE salt_in_recipe "
+                  "SET quantity    = s.amount, "
+                      "unit        = s.unit, "
+                      "when_to_add = s.when_to_add "
+                  "FROM ("
+                     "SELECT id, "
+                            "amount, "
+                            "CASE "
+                               "WHEN amount_is_weight THEN 'kilograms' "
+                               "ELSE 'liters' "
+                            "END AS unit, "
+                            "CASE "
+                               "WHEN addTo = 1 THEN 'Mash'   "
+                               "WHEN addTo = 2 THEN 'Sparge' "
+                               "WHEN addTo = 3 THEN 'Ratio'  "
+                               "WHEN addTo = 4 THEN 'Equal'  "
+                            "END AS when_to_add "
+                     "FROM salt"
+                  ") AS s "
+                  "WHERE salt_in_recipe.salt_id = s.id "
+                  "AND s.addTo != 0")},
+         //
          // For water both the source and target are volume in liters
          //
          {QString("UPDATE water_in_recipe "
@@ -1158,7 +1235,8 @@ namespace {
                   ") AS w "
                   "WHERE water_in_recipe.hop_id = w.id")},
          //
-         // Now we brought the amounts across, we can drop them on the hop, fermentable, misc and yeast tables.
+         // Now we brought the amounts across, we can drop them on the hop, fermentable, misc, yeast, salt and water
+         // tables.
          //
          // NB: Do NOT drop the amount_is_weight columns yet!  We need them below to update inventory.
          //
@@ -1170,6 +1248,7 @@ namespace {
          {QString("ALTER TABLE hop         DROP COLUMN amount")},
          {QString("ALTER TABLE fermentable DROP COLUMN amount")},
          {QString("ALTER TABLE misc        DROP COLUMN amount")},
+         {QString("ALTER TABLE salt        DROP COLUMN amount")},
          {QString("ALTER TABLE yeast       DROP COLUMN amount")},
          {QString("ALTER TABLE water       DROP COLUMN amount")},
          //
@@ -1193,11 +1272,14 @@ namespace {
                   ") AS m "
                   "WHERE misc_in_recipe.misc_id = m.id")},
          //
-         // Existing data doesn't have an addition time for fermentables or yeast, so we set it to 0 for all of them
+         // Existing data doesn't have an addition time for fermentable, yeast or salt, so we set it to 0 for all of
+         // them.
          //
          {QString("UPDATE fermentable_in_recipe "
                   "SET add_at_time_mins = 0.0 ")},
          {QString("UPDATE yeast_in_recipe "
+                  "SET add_at_time_mins = 0.0 ")},
+         {QString("UPDATE salt_in_recipe "
                   "SET add_at_time_mins = 0.0 ")},
          //
          // And, as above, drop the time column on the hop and misc tables now we pulled the data across.
@@ -1506,9 +1588,13 @@ namespace {
          {QString("ALTER TABLE misc        DROP COLUMN display_scale")},
          {QString("ALTER TABLE yeast       DROP COLUMN display_unit")},
          {QString("ALTER TABLE yeast       DROP COLUMN display_scale")},
+         {QString("ALTER TABLE salt        DROP COLUMN misc_id")},
          //
          // Now we sort out inventory.  We move the hop ID and by-volume/by-mass info from the hop table to the
          // inventory table.  Same thing for fermentables, misc and, to some extent, yeast.
+         //
+         // NB: Inventory table for salt is brand new -- ie there never used to be one -- and gets created below just
+         //     after we fix up the foreign keys on the other inventory tables.
          //
          // NB: No inventory for water!
          //
@@ -1645,6 +1731,17 @@ namespace {
          {QString("DROP TABLE yeast_in_inventory")},
          {QString("ALTER TABLE tmp_yeast_in_inventory "
                   "RENAME TO yeast_in_inventory")},
+         // Note that there isn't yet a salt_in_inventory table so we don't have to change it -- just create it!
+         {QString("CREATE TABLE salt_in_inventory ( "
+                    "id        %1, "
+                    "salt_id   %2, "
+                    "quantity  %3, "
+                    "unit      %4, "
+                    "FOREIGN KEY(salt_id)   REFERENCES salt(id)"
+                 ");").arg(db.getDbNativePrimaryKeyDeclaration(),
+                           db.getDbNativeTypeName<int    >(),
+                           db.getDbNativeTypeName<double >(),
+                           db.getDbNativeTypeName<QString>())},
          //
          // Finally, since we're doing a big update and a bit of a clean up, it is time to drop tables that have not
          // been used for a long time and are not mentioned anywhere else in the current code base.

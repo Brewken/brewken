@@ -25,7 +25,8 @@
 #include <QString>
 #include <QSqlRecord>
 
-#include "model/NamedEntityWithFolder.h"
+#include "model/FolderBase.h"
+#include "model/NamedEntity.h"
 #include "utils/EnumStringMapping.h"
 
 //======================================================================================================================
@@ -56,8 +57,10 @@ AddPropertyName(type            )
  *
  * \brief Model for water records in the database.
  */
-class Water : public NamedEntityWithFolder {
+class Water : public NamedEntity,
+              public FolderBase<Water> {
    Q_OBJECT
+   FOLDER_BASE_DECL(Water)
 
 public:
    /**
@@ -91,6 +94,9 @@ public:
 
    /**
     * \brief
+    *
+    * .:TBD:. If we could add CO3 to this list and move the enum to \c Salt, it would help us template a bunch of very
+    *         similar functions in Salt.cpp and RecipeAdjustmentSaltTableModel.cpp.
     */
    enum class Ion {
       Ca  ,

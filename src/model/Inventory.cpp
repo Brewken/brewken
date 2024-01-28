@@ -32,6 +32,7 @@
 #include "moc_InventoryFermentable.cpp"
 #include "moc_InventoryHop.cpp"
 #include "moc_InventoryMisc.cpp"
+#include "moc_InventorySalt.cpp"
 #include "moc_InventoryYeast.cpp"
 
 QString const Inventory::LocalisedName = tr("Inventory");
@@ -102,91 +103,16 @@ void Inventory::hardDeleteOwnedEntities() {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Inventory sub classes
-//
-// It would be nice to find a way to reduce the amount of copy-and-paste here
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-QString const InventoryFermentable::LocalisedName = tr("Fermentable Inventory");
-QString const InventoryHop        ::LocalisedName = tr("Hop Inventory");
-QString const InventoryMisc       ::LocalisedName = tr("Misc Inventory");
-QString const InventoryYeast      ::LocalisedName = tr("Yeast Inventory");
-
-char const * InventoryFermentable::getIngredientClass() const { return "Fermentable"; }
-char const * InventoryHop        ::getIngredientClass() const { return "Hop"        ; }
-char const * InventoryMisc       ::getIngredientClass() const { return "Misc"       ; }
-char const * InventoryYeast      ::getIngredientClass() const { return "Yeast"      ; }
-
-ObjectStore & InventoryFermentable::getObjectStoreTypedInstance() const { return ObjectStoreTyped<InventoryFermentable>::getInstance(); }
-ObjectStore & InventoryHop        ::getObjectStoreTypedInstance() const { return ObjectStoreTyped<InventoryHop        >::getInstance(); }
-ObjectStore & InventoryMisc       ::getObjectStoreTypedInstance() const { return ObjectStoreTyped<InventoryMisc       >::getInstance(); }
-ObjectStore & InventoryYeast      ::getObjectStoreTypedInstance() const { return ObjectStoreTyped<InventoryYeast      >::getInstance(); }
-
-bool InventoryFermentable::isEqualTo(NamedEntity const & other) const {
-   InventoryFermentable const & rhs = static_cast<InventoryFermentable const &>(other);
-   return (this->m_amount == rhs.m_amount && this->Inventory::isEqualTo(other));
-}
-bool InventoryHop::isEqualTo(NamedEntity const & other) const {
-   InventoryHop const & rhs = static_cast<InventoryHop const &>(other);
-   return (this->m_amount == rhs.m_amount && this->Inventory::isEqualTo(other));
-}
-bool InventoryMisc::isEqualTo(NamedEntity const & other) const {
-   InventoryMisc const & rhs = static_cast<InventoryMisc const &>(other);
-   return (this->m_amount == rhs.m_amount && this->Inventory::isEqualTo(other));
-}
-bool InventoryYeast::isEqualTo(NamedEntity const & other) const {
-   InventoryYeast const & rhs = static_cast<InventoryYeast const &>(other);
-   return (this->m_amount == rhs.m_amount && this->Inventory::isEqualTo(other));
-}
-
-// All properties are defined in base classes
-TypeLookup const InventoryFermentable::typeLookup {
-   "InventoryFermentable", { },
-   {&Inventory::typeLookup, std::addressof(IngredientAmount<InventoryFermentable, Fermentable>::typeLookup)}
-};
-static_assert(std::is_base_of<Inventory, InventoryFermentable>::value);
-TypeLookup const InventoryHop::typeLookup {
-   "InventoryHop", { },
-   {&Inventory::typeLookup, std::addressof(IngredientAmount<InventoryHop, Hop>::typeLookup)}
-};
-static_assert(std::is_base_of<Inventory, InventoryHop>::value);
-TypeLookup const InventoryMisc::typeLookup {
-   "InventoryMisc", { },
-   {&Inventory::typeLookup, std::addressof(IngredientAmount<InventoryMisc, Misc>::typeLookup)}
-};
-static_assert(std::is_base_of<Inventory, InventoryMisc>::value);
-TypeLookup const InventoryYeast::typeLookup {
-   "InventoryYeast", { },
-   {&Inventory::typeLookup, std::addressof(IngredientAmount<InventoryYeast, Yeast>::typeLookup)}
-};
-static_assert(std::is_base_of<Inventory, InventoryYeast>::value);
-
-InventoryFermentable::InventoryFermentable() : Inventory(), IngredientAmount<InventoryFermentable, Fermentable>() { return; }
-InventoryHop        ::InventoryHop        () : Inventory(), IngredientAmount<InventoryHop        , Hop        >() { return; }
-InventoryMisc       ::InventoryMisc       () : Inventory(), IngredientAmount<InventoryMisc       , Misc       >() { return; }
-InventoryYeast      ::InventoryYeast      () : Inventory(), IngredientAmount<InventoryYeast      , Yeast      >() { return; }
-
-InventoryFermentable::InventoryFermentable(NamedParameterBundle const & npb) : Inventory {npb}, IngredientAmount<InventoryFermentable, Fermentable>{npb} { return; }
-InventoryHop        ::InventoryHop        (NamedParameterBundle const & npb) : Inventory {npb}, IngredientAmount<InventoryHop        , Hop        >{npb} { return; }
-InventoryMisc       ::InventoryMisc       (NamedParameterBundle const & npb) : Inventory {npb}, IngredientAmount<InventoryMisc       , Misc       >{npb} { return; }
-InventoryYeast      ::InventoryYeast      (NamedParameterBundle const & npb) : Inventory {npb}, IngredientAmount<InventoryYeast      , Yeast      >{npb} { return; }
-
-InventoryFermentable::InventoryFermentable(InventoryFermentable const & other) : Inventory {other}, IngredientAmount<InventoryFermentable, Fermentable>{other} { return; }
-InventoryHop        ::InventoryHop        (InventoryHop         const & other) : Inventory {other}, IngredientAmount<InventoryHop        , Hop        >{other} { return; }
-InventoryMisc       ::InventoryMisc       (InventoryMisc        const & other) : Inventory {other}, IngredientAmount<InventoryMisc       , Misc       >{other} { return; }
-InventoryYeast      ::InventoryYeast      (InventoryYeast       const & other) : Inventory {other}, IngredientAmount<InventoryYeast      , Yeast      >{other} { return; }
-
-InventoryFermentable::~InventoryFermentable() = default;
-InventoryHop        ::~InventoryHop        () = default;
-InventoryMisc       ::~InventoryMisc       () = default;
-InventoryYeast      ::~InventoryYeast      () = default;
-
-Fermentable * InventoryFermentable::fermentable() const { return ObjectStoreWrapper::getByIdRaw<Fermentable>(this->m_ingredientId); }
-Hop         * InventoryHop        ::hop        () const { return ObjectStoreWrapper::getByIdRaw<Hop        >(this->m_ingredientId); }
-Misc        * InventoryMisc       ::misc       () const { return ObjectStoreWrapper::getByIdRaw<Misc       >(this->m_ingredientId); }
-Yeast       * InventoryYeast      ::yeast      () const { return ObjectStoreWrapper::getByIdRaw<Yeast      >(this->m_ingredientId); }
+INVENTORY_COMMON_CODE(Fermentable, fermentable)
+INVENTORY_COMMON_CODE(Hop        , hop        )
+INVENTORY_COMMON_CODE(Misc       , misc       )
+INVENTORY_COMMON_CODE(Salt       , salt       )
+INVENTORY_COMMON_CODE(Yeast      , yeast      )
 
 // Boilerplate code for IngredientAmount
 INGREDIENT_AMOUNT_COMMON_CODE(InventoryFermentable, Fermentable)
 INGREDIENT_AMOUNT_COMMON_CODE(InventoryHop        , Hop        )
 INGREDIENT_AMOUNT_COMMON_CODE(InventoryMisc       , Misc       )
+INGREDIENT_AMOUNT_COMMON_CODE(InventorySalt       , Salt       )
 INGREDIENT_AMOUNT_COMMON_CODE(InventoryYeast      , Yeast      )

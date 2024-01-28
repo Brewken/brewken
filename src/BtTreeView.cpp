@@ -127,9 +127,9 @@ QString BtTreeView::folderName(QModelIndex index) {
    // TBD: The qobject_cast here is a bit clunky but, for the moment, is necessary now that we removed folders from
    //      BrewNotes.
    //
-   auto thing = qobject_cast<NamedEntityWithFolder *>(m_model->thing(m_filter->mapToSource(index)));
-   if (thing) {
-      return thing->folder();
+   auto folder = FolderUtils::getFolder(m_model->thing(m_filter->mapToSource(index)));
+   if (folder) {
+      return *folder;
    } else {
       return "";
    }

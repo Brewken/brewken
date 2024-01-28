@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Ingredient.h is part of Brewken, and is copyright the following authors 2023-2024:
+ * model/IngredientInRecipe.h is part of Brewken, and is copyright the following authors 2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,36 +13,27 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef MODEL_INGREDIENT_H
-#define MODEL_INGREDIENT_H
+#ifndef MODEL_INGREDIENTINRECIPE_H
+#define MODEL_INGREDIENTINRECIPE_H
 #pragma once
 
-#include "model/FolderBase.h"
-#include "model/NamedEntity.h"
-#include "utils/EnumStringMapping.h"
-#include "utils/TypeTraits.h"
-
-class NamedParameterBundle;
+#include "model/OwnedByRecipe.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::Ingredient { BtStringConst const property{#property}; }
-AddPropertyName(totalInventory)
+#define AddPropertyName(property) namespace PropertyNames::IngredientInRecipe { BtStringConst const property{#property}; }
+AddPropertyName(ingredientId   )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
 
-
 /**
- * \brief Subclasses of this class are actual ingredients in a recipe (eg \c Hop, \c Fermentable).
- *
- *        Ingredients are the objects for which we keep inventory.
+ * \brief This is a "lite" version of \c RecipeAddition that serves as a common base to \c RecipeAddition,
+ *        \c RecipeAdjustmentSalt and \c RecipeUseOfWater
  */
-class Ingredient : public NamedEntity,
-                   public FolderBase<Ingredient> {
+class IngredientInRecipe : public OwnedByRecipe {
    Q_OBJECT
-   FOLDER_BASE_DECL(Ingredient)
 
 public:
    /**
@@ -56,34 +47,34 @@ public:
     */
    static TypeLookup const typeLookup;
 
-   Ingredient(QString name = "");
-   Ingredient(NamedParameterBundle const & namedParameterBundle);
-   Ingredient(Ingredient const & other);
+   IngredientInRecipe(QString name = "", int const recipeId = -1, int const ingredientId = -1);
+   IngredientInRecipe(NamedParameterBundle const & namedParameterBundle);
+   IngredientInRecipe(IngredientInRecipe const & other);
 
-   virtual ~Ingredient();
+   virtual ~IngredientInRecipe();
 
    //=================================================== PROPERTIES ====================================================
    /**
-    * \brief For the moment, we have a single "total amount" inventory for a given \c Ingredient instance (eg \c Hop etc
-    *        instance).  This property and its associated accessors allow the total to be read and modified without
-    *        directly obtaining an \c Inventory object (eg \c InventoryHop object etc).
+    * \brief The ID of the ingredient (ie \c Hop, \c Fermentable, \c Misc or \c Yeast) or \c Salt or \c Water being
+    *        added.
+    *
+    *        Strictly, water isn't quite the same as other ingredients, but calling it an ingredient here allows us to
+    *        minimise code duplication in \c Recipe
     */
-   Q_PROPERTY(Measurement::Amount totalInventory   READ totalInventory   WRITE setTotalInventory)
+   Q_PROPERTY(int ingredientId READ ingredientId WRITE setIngredientId)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-   virtual Measurement::Amount totalInventory() const = 0;
+   int ingredientId() const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   virtual void setTotalInventory(Measurement::Amount const & val) = 0;
+   void setIngredientId(int const val);
+
+protected:
+   virtual bool isEqualTo(NamedEntity const & other) const;
+
+protected:
+   int m_ingredientId;
 
 };
-
-/**
- * \brief For templates that require a parameter to be a subclass of \c Ingredient, this makes the concept requirement
- *        slightly more concise.
- *
- *        See comment in utils/TypeTraits.h for definition of CONCEPT_FIX_UP (and why, for now, we need it).
- */
-template <typename T> concept CONCEPT_FIX_UP IsIngredient = std::is_base_of_v<Ingredient, T>;
 
 #endif

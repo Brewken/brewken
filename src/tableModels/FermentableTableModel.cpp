@@ -56,7 +56,7 @@ FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) 
          TABLE_MODEL_HEADER(Fermentable, Yield             , tr("Yield %"    ), PropertyNames::Fermentable::yield_pct                      , PrecisionInfo{1}),
          TABLE_MODEL_HEADER(Fermentable, Color             , tr("Color"      ), PropertyNames::Fermentable::color_srm                      , PrecisionInfo{1}),
          TABLE_MODEL_HEADER(Fermentable, TotalInventory    , tr("Inventory"  ), PropertyNames::Ingredient::totalInventory, PrecisionInfo{1}),
-         TABLE_MODEL_HEADER(Fermentable, TotalInventoryType, tr("Amount Type"), PropertyNames::Ingredient::totalInventory, Hop::validMeasures),
+         TABLE_MODEL_HEADER(Fermentable, TotalInventoryType, tr("Amount Type"), PropertyNames::Ingredient::totalInventory, Fermentable::validMeasures),
 
       }
    },

@@ -33,11 +33,12 @@
 #include <QObject>
 #include <QVariant>
 
+#include "model/FolderBase.h"
 #include "utils/BtStringConst.h"
 #include "utils/MetaTypes.h"
 #include "utils/TypeLookup.h"
 
-class NamedEntityWithFolder;
+class NamedEntity;
 class NamedParameterBundle;
 class ObjectStore;
 class Recipe;
@@ -50,7 +51,7 @@ class Recipe;
 // Note that, because we are both declaring and defining these in the header file, I don't think we can guarantee on
 // every platform there is always exactly one instance of each property name.  So, whilst it's always valid to compare
 // the values of two property names, we cannot _guarantee_ that two identical property names always have the same
-// address in memory.  In other words, _don't_ do `if (&somePropName == &PropertyNames::NamedEntity::Folder) ...`.
+// address in memory.  In other words, _don't_ do `if (&somePropName == &PropertyNames::NamedEntity::name) ...`.
 //
 // I did also think about creating a macro that would combine this with Q_PROPERTY, but I didn't see an elegant way to
 // do it given that these need to be outside the class and Q_PROPERTY needs to be inside it.
@@ -73,36 +74,8 @@ AddPropertyName(parentKey)
  *
  * \brief The base class for our substantive storable items.  There are really two sorts of storable items: ones that
  *        are freestanding and ones that are owned by other storable items.  Eg, a Hop exists in its own right and may
- *        or may not be used in one or more Recipes, but a MashStep only exists as part of a single Mash.
- *           \c Boil
- *           \c BoilStep is owned by its \c Boil
- *           \c BrewNote is owned by its \c Recipe
- *           \c Equipment
- *           \c Fermentable
- *           \c Fermentation
- *           \c FermentationStep is owned by its \c Fermentation
- *           \c Hop
- *           \c Instruction is owned by its \c Recipe
- *           \c InventoryFermentable is owned by its \c Fermentable
- *           \c InventoryHop         is owned by its \c Hop
- *           \c InventoryMisc        is owned by its \c Misc
- *           \c InventoryYeast       is owned by its \c Yeast
- *           \c Mash
- *           \c MashStep is owned by its \c Mash
- *           \c Misc
- *           \c RecipeAdditionFermentable is owned by its \c Recipe
- *           \c RecipeAdditionHop         is owned by its \c Recipe
- *           \c RecipeAdditionMisc        is owned by its \c Recipe
- *           \c RecipeAdditionYeast       is owned by its \c Recipe
- *           \c Recipe
- *           \c RecipeUseOfWater          is owned by its \c Recipe
- *           \c Salt
- *           \c Style
- *           \c Water
- *           \c Yeast
- *        Broadly speaking, items in the above list that are not owned by something else can be placed in a folder (or a
- *        subfolder etc), and thus inherit from \c NamedEntityWithFolder.  Folders work in a somewhat primitive way at
- *        the moment, but we might revisit this in future.
+ *        or may not be used in one or more Recipes, but a MashStep only exists as part of a single Mash.  See comment
+ *        on \c owningRecipe below for more on this.
  *
  *        I know \b NamedEntity isn't the snappiest name, but it's the best we've come up with so far.  If you look at
  *        older versions of the code, you'll see that this class has previously been called \b Ingredient and
@@ -267,8 +240,6 @@ public:
    virtual void setKey(int key);
    [[deprecated]] void setParentKey(int parentKey);
 
-   //!
-
    /**
     * \brief This sets or unsets the "being modified" flag on the object.  Callers should preferably access this via
     *        the \c NamedEntityModifyingMarker RAII wrapper.
@@ -291,14 +262,72 @@ public:
    //! Convenience method to get a meta property by name.
    QMetaProperty metaProperty(char const * const name) const;
 
-///   /**
-///    * \brief Subclasses need to override this to return the Recipe, if any, to which this object belongs.
-///    *
-///    *        TODO: This is not meaningful on all subclasses of \c NamedEntity and should be moved to another class
-///    *
-///    * \return \c nullptr if this object is not, and does not belong to, any Recipe
-///    */
-///   virtual Recipe * getOwningRecipe() const = 0;
+   /**
+    * \brief Subclasses need to override this to return the \c Recipe, if any, to which this object belongs.  (Note that
+    *        a \c Recipe belongs to itself for the purposes of this function.)
+    *
+    *        Broadly speaking, there are three categories of \c NamedEntity:
+    *
+    *         - Dependent items such as \c BrewNote, \c Instruction and \c RecipeAdditionHop which \b always belong to
+    *           exactly one \c Recipe and which get deleted if that \c Recipe is deleted.  A change to one of these
+    *           items is treated as a change to the \c Recipe.
+    *
+    *         - Independent items such as \c Equipment, \c Hop, \c InventoryHop which exist independently of any
+    *           \c Recipe.  Even if all recipes were deleted, these things would continue to exist.  (However the
+    *           reverse is not necessarily true, in that we should not delete, eg, a \c Hop if it is being used, via
+    *           \c RecipeAdditionHop, in one or more \c Recipes.)  A change to one of these items \b may affect one or
+    *           more \c Recipes, requiring recalculations therein, but is not treated as a \c change in a \c Recipe.
+    *
+    *         - Semi-Independent items such as \c Mash, \c MashStep, \c Boil, \c BoilStep, \c Fermentation,
+    *           \c FermentationStep which, strictly, exist independently of any \c Recipe but which are often used only
+    *           by one \c Recipe.  Although deletion of a \c Recipe never causes deletion of a semi-independent item, we
+    *           may treat a change to a semi-independent item used in only one \c Recipe as a change to that \c Recipe
+    *           (because this is what most users would expect, I think).
+    *
+    *        NOTE that, although semi-independent of \c Recipe, \c MashStep is entirely dependent on its \c Mash and has
+    *        no independent existence from it.  Same for \c BoilStep and \c Boil, \c FermentationStep and
+    *        \c Fermentation, etc.
+    *
+    *        NOTE too that Independent (and Semi-Independent) items have folders unless they are owned by another item
+    *        (eg \c Mash has a folder but \c MashStep does not).  Dependent items do not have folders (because they are
+    *        owned by \c Recipe).  See model/FolderBase.h for more.
+    *
+    *        The following pseudo-inheritance diagram shows which \c NamedEntity classes are Dependent, Independent and
+    *        Semi-Independent.  (The class \c OwnedByRecipe exists, but \c IndependentOfRecipe does not.)
+    *
+    *           OwnedByRecipe                          IndependentOfRecipe († = semi-independent)
+    *             ├── BrewNote                           ├── Boil †
+    *             ├── Instruction                        ├── Equipment
+    *             ├── RecipeAddition                     ├── Fermentation †
+    *             │    ├── RecipeAdditionFermentable     ├── Ingredient
+    *             │    ├── RecipeAdditionHop             │    ├── Fermentable
+    *             │    ├── RecipeAdditionMisc            │    ├── Hop
+    *             │    ├── RecipeAdjustmentSalt            │    ├── Misc
+    *             │    └── RecipeAdditionYeast           │    ├── Salt
+    *             └── RecipeUseOfWater                   │    └── Yeast
+    *                                                    ├── Inventory
+    *                                                    │    ├── InventoryFermentable (owned by its Fermentable)
+    *                                                    │    ├── InventoryHop         (owned by its Hop        )
+    *                                                    │    ├── InventoryMisc        (owned by its Misc       )
+    *                                                    │    └── InventoryYeast       (owned by its Yeast      )
+    *                                                    ├── Mash †
+    *                                                    ├── Recipe (but owns itself for the purpose of changes)
+    *                                                    ├── Step
+    *                                                    │    ├── MashStep † (owned by its Mash)
+    *                                                    │    └── StepExtended
+    *                                                    │         ├── BoilStep † (owned by its Boil)
+    *                                                    │         └── FermentationStep † (owned by its Fermentation)
+    *                                                    ├── Style
+    *                                                    └── Water
+    *
+    *        HOWEVER, even aside from the case of semi-independent items, we want run-time determination of whether an
+    *        object has an owning \c Recipe to make it easy to determine whether a change to a base class property
+    *        constitutes a change to a \c Recipe (and if so which one).  Hence this function.
+    *
+    * \return \c std::nullopt if this object does not belong to a \c Recipe (ie it is an Independent Item or a
+    *         Semi-Independent Item that is either used in more than one \c Recipe or not used in any \c Recipe)
+    */
+   virtual std::optional<std::shared_ptr<Recipe>> owningRecipe() const;
 
    /*!
     * \brief Some entities (eg Fermentable, Hop) get copied when added to a recipe, but others (eg Instruction) don't.
@@ -495,7 +524,7 @@ protected:
     *        create a new version of a Recipe - eg because we are modifying some ingredient or other attribute of the
     *        Recipe and automatic versioning is enabled.
     */
-   template<typename NE> void prepareForPropertyChange(NE * ne, BtStringConst const & propertyName);
+   void prepareForPropertyChange(BtStringConst const & propertyName);
 
    /**
     * \brief This is intended to be called from setter member functions (including those of derived classes), \b after
@@ -534,16 +563,14 @@ protected:
     *         value to what it already was.  This is useful for the caller if, eg, there might be recalculations
     *         required when a value changes
     */
-   template<typename NE, typename T>
-   bool setAndNotify(NE * ne,
-                     BtStringConst const & propertyName,
+   template<typename T>
+   bool setAndNotify(BtStringConst const & propertyName,
                      T & memberVariable,
                      T const newValue) {
-      Q_ASSERT(this == static_cast<NamedEntity *>(ne));
       if (this->newValueMatchesExisting(propertyName, memberVariable, newValue)) {
          return false;
       }
-      this->prepareForPropertyChange<NE>(ne, propertyName);
+      this->prepareForPropertyChange(propertyName);
       memberVariable = newValue;
       this->propagatePropertyChange(propertyName);
       return true;
@@ -691,7 +718,7 @@ Q_DECLARE_METATYPE(std::shared_ptr<NamedEntity>)
 /**
  * \brief Convenience macro
  */
-#define SET_AND_NOTIFY(...) this->setAndNotify(this, __VA_ARGS__)
+#define SET_AND_NOTIFY(...) this->setAndNotify(__VA_ARGS__)
 
 /**
  * \brief For some templated functions, it's useful at compile time to have one version for NE classes with folders and
@@ -699,7 +726,7 @@ Q_DECLARE_METATYPE(std::shared_ptr<NamedEntity>)
  *
  *        See comment in utils/TypeTraits.h for definition of CONCEPT_FIX_UP (and why, for now, we need it).
  */
-template <typename T> concept CONCEPT_FIX_UP HasFolder   = std::is_base_of_v<NamedEntityWithFolder, T>;
-template <typename T> concept CONCEPT_FIX_UP HasNoFolder = std::negation_v<std::is_base_of<NamedEntityWithFolder, T>>;
+template <typename T> concept CONCEPT_FIX_UP HasFolder   = std::is_base_of_v<FolderBase<T>, T>;
+template <typename T> concept CONCEPT_FIX_UP HasNoFolder = std::negation_v<std::is_base_of<FolderBase<T>, T>>;
 
 #endif

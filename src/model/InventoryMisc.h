@@ -31,33 +31,7 @@ class InventoryMisc : public Inventory, public IngredientAmount<InventoryMisc, M
    Q_OBJECT
 
    INGREDIENT_AMOUNT_DECL(InventoryMisc, Misc)
-
-public:
-   /**
-    * \brief See comment in model/NamedEntity.h
-    */
-   static QString const LocalisedName;
-
-   /**
-    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
-    *        info.
-    */
-   static TypeLookup const typeLookup;
-
-   InventoryMisc();
-   InventoryMisc(NamedParameterBundle const & namedParameterBundle);
-   InventoryMisc(InventoryMisc const & other);
-
-   virtual ~InventoryMisc();
-
-public:
-   virtual char const * getIngredientClass() const;
-   Misc * misc() const ;
-
-protected:
-   virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual ObjectStore & getObjectStoreTypedInstance() const;
-
+   INVENTORY_DECL(Misc, misc)
 };
 
 #endif

@@ -952,7 +952,7 @@ namespace BeerJson {
    template void Exporter::add(QList<Mash        const *> const & nes);
    template void Exporter::add(QList<Equipment   const *> const & nes);
    template void Exporter::add(QList<Instruction const *> const & nes);
-   template void Exporter::add(QList<BrewNote    const *> const & nes);
+   template void Exporter::add(QList<BrewNote    const *> const & nes); // TBD: Not part of BeerJSON
    template void Exporter::add(QList<Recipe      const *> const & nes);
 
    void Exporter::close() {

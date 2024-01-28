@@ -45,8 +45,7 @@ EnumStringMapping const Water::ionStringMapping {
 
 // Not sure there is really anything to translate here!
 // 2023-06-01: MY: I tried HCO₃ and SO₄ as display names, but the unicode subscript numbers seemed somewhat too small in
-//                 the fonts I use.  Nonetheless, I am open to persuasion on this if others feel strongly about using
-//                 them in display names.
+//                 the fonts I use.  Nonetheless, I am open to persuasion on this if others feel strongly.
 EnumStringMapping const Water::ionDisplayNames {
    {Water::Ion::Ca  , tr("Ca  ")},
    {Water::Ion::Cl  , tr("Cl  ")},
@@ -55,7 +54,6 @@ EnumStringMapping const Water::ionDisplayNames {
    {Water::Ion::Na  , tr("Na  ")},
    {Water::Ion::SO4 , tr("SO4 ")},
 };
-
 
 bool Water::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
@@ -96,11 +94,12 @@ TypeLookup const Water::typeLookup {
 
    },
    // Parent class lookup
-   {&NamedEntityWithFolder::typeLookup}
+   {&NamedEntity::typeLookup}
 };
 
 Water::Water(QString name) :
-   NamedEntityWithFolder{name, true},
+   NamedEntity{name, true},
+   FolderBase<Water>{},
 ///   m_amount             {0.0         },
    m_calcium_ppm        {0.0         },
    m_bicarbonate_ppm    {0.0         },
@@ -119,7 +118,8 @@ Water::Water(QString name) :
 }
 
 Water::Water(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntityWithFolder{namedParameterBundle},
+   NamedEntity{namedParameterBundle},
+   FolderBase<Water>{namedParameterBundle},
 ///   SET_REGULAR_FROM_NPB (m_amount            , namedParameterBundle, PropertyNames::Water::amount          ),
    SET_REGULAR_FROM_NPB (m_calcium_ppm       , namedParameterBundle, PropertyNames::Water::calcium_ppm     ),
    SET_REGULAR_FROM_NPB (m_bicarbonate_ppm   , namedParameterBundle, PropertyNames::Water::bicarbonate_ppm ),
@@ -138,7 +138,8 @@ Water::Water(NamedParameterBundle const & namedParameterBundle) :
 }
 
 Water::Water(Water const& other) :
-   NamedEntityWithFolder{other                     },
+   NamedEntity{other                     },
+   FolderBase<Water>{other},
 ///   m_amount             {other.m_amount            },
    m_calcium_ppm        {other.m_calcium_ppm       },
    m_bicarbonate_ppm    {other.m_bicarbonate_ppm   },
@@ -157,7 +158,7 @@ Water::Water(Water const& other) :
 }
 
 void Water::swap(Water & other) noexcept {
-   this->NamedEntityWithFolder::swap(other);
+   this->NamedEntity::swap(other);
 ///   std::swap(this->m_amount            , other.m_amount            );
    std::swap(this->m_calcium_ppm       , other.m_calcium_ppm       );
    std::swap(this->m_bicarbonate_ppm   , other.m_bicarbonate_ppm   );
@@ -274,3 +275,6 @@ double Water::ppm(Water::Ion const ion) const {
 ///Recipe * Water::getOwningRecipe() const {
 ///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 ///}
+
+// Boilerplate code for FolderBase
+FOLDER_BASE_COMMON_CODE(Water)

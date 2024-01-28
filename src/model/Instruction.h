@@ -49,6 +49,8 @@ AddPropertyName(timerValue)
  * \brief Model class for an instruction record in the database.
  *
  *        This class is completely outside the BeerXML spec.
+ *
+ *        TODO: We should make this inherit from \c OwnedByRecipe and bring it more into line with \c BrewNote
  */
 class Instruction : public NamedEntity {
    Q_OBJECT
@@ -71,35 +73,34 @@ public:
 
    virtual ~Instruction();
 
-   Q_PROPERTY( QString directions READ directions WRITE setDirections /*NOTIFY changed*/ /*changedDirections*/ )
-   Q_PROPERTY( bool hasTimer READ hasTimer WRITE setHasTimer /*NOTIFY changed*/ /*changedHasTimer*/ )
-   Q_PROPERTY( QString timerValue READ timerValue WRITE setTimerValue /*NOTIFY changed*/ /*changedTimerValue*/ )
-   Q_PROPERTY( bool completed READ completed WRITE setCompleted /*NOTIFY changed*/ /*changedCompleted*/ )
-   Q_PROPERTY( double interval READ interval WRITE setInterval /*NOTIFY changed*/ /*changedInterval*/ )
-   Q_PROPERTY( QList<QString> reagents READ reagents /*WRITE*/ /*NOTIFY changed*/ /*changedReagents*/ )
-
-   Q_PROPERTY( int instructionNumber READ instructionNumber /*WRITE*/ /*NOTIFY changed*/ STORED false )
+   Q_PROPERTY(QString        directions        READ directions WRITE setDirections /*NOTIFY changed*/ /*changedDirections*/ )
+   Q_PROPERTY(bool           hasTimer          READ hasTimer   WRITE setHasTimer /*NOTIFY changed*/ /*changedHasTimer*/ )
+   Q_PROPERTY(QString        timerValue        READ timerValue WRITE setTimerValue /*NOTIFY changed*/ /*changedTimerValue*/ )
+   Q_PROPERTY(bool           completed         READ completed  WRITE setCompleted /*NOTIFY changed*/ /*changedCompleted*/ )
+   Q_PROPERTY(double         interval          READ interval   WRITE setInterval /*NOTIFY changed*/ /*changedInterval*/ )
+   Q_PROPERTY(QList<QString> reagents          READ reagents /*WRITE*/ /*NOTIFY changed*/ /*changedReagents*/ )
+   Q_PROPERTY(int            instructionNumber READ instructionNumber /*WRITE*/ /*NOTIFY changed*/ STORED false )
 
    // "set" methods.
    void setDirections(const QString& dir);
-   void setHasTimer(bool has);
+   void setHasTimer  (bool has);
    void setTimerValue(const QString& timerVal);
-   void setCompleted(bool comp);
-   void setInterval(double interval);
-   void addReagent(const QString& reagent);
+   void setCompleted (bool comp);
+   void setInterval  (double interval);
+   void addReagent   (const QString& reagent);
 
    // "get" methods.
    QString directions();
-   bool hasTimer();
+   bool    hasTimer();
    QString timerValue();
-   bool completed();
+   bool    completed();
    //! This is a non-stored temporary in-memory set.
    QList<QString> reagents();
    double interval();
 
    int instructionNumber() const;
 
-///   virtual Recipe * getOwningRecipe() const;
+   virtual std::optional<std::shared_ptr<Recipe>> owningRecipe() const;
 
 signals:
 

@@ -23,48 +23,50 @@ ObjectStore & RecipeUseOfWater::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<RecipeUseOfWater>::getInstance();
 }
 
+bool RecipeUseOfWater::isEqualTo(NamedEntity const & other) const {
+   // Base class (NamedEntity) will have ensured this cast is valid
+   RecipeUseOfWater const & rhs = static_cast<RecipeUseOfWater const &>(other);
+   // Base class will already have ensured names are equal
+   return (
+      this->m_volume_l == rhs.m_volume_l &&
+      // Parent classes have to be equal too
+      this->IngredientInRecipe::isEqualTo(other)
+   );
+}
+
 TypeLookup const RecipeUseOfWater::typeLookup {
    "RecipeUseOfWater",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeUseOfWater::recipeId       , RecipeUseOfWater::m_recipeId    ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeUseOfWater::ingredientId   , RecipeUseOfWater::m_ingredientId),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeUseOfWater::volume_l       , RecipeUseOfWater::m_volume_l    , Measurement::PhysicalQuantity::Volume),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeUseOfWater::volume_l, RecipeUseOfWater::m_volume_l, Measurement::PhysicalQuantity::Volume),
    },
    // Parent classes lookup.
-   {&NamedEntity::typeLookup}
+   {&IngredientInRecipe::typeLookup}
 };
-static_assert(std::is_base_of<NamedEntity, RecipeUseOfWater>::value);
+static_assert(std::is_base_of<IngredientInRecipe, RecipeUseOfWater>::value);
 
 RecipeUseOfWater::RecipeUseOfWater(QString name, int const recipeId, int const ingredientId) :
-   NamedEntity{name, true},
-   m_recipeId       {recipeId},
-   m_ingredientId   {ingredientId},
+   IngredientInRecipe{name, recipeId, ingredientId},
    m_volume_l       {0.0} {
    return;
 }
 
 RecipeUseOfWater::RecipeUseOfWater(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity{namedParameterBundle},
-   SET_REGULAR_FROM_NPB (m_recipeId    , namedParameterBundle, PropertyNames::RecipeUseOfWater::recipeId    ),
-   SET_REGULAR_FROM_NPB (m_ingredientId, namedParameterBundle, PropertyNames::RecipeUseOfWater::ingredientId),
+   IngredientInRecipe{namedParameterBundle},
    SET_REGULAR_FROM_NPB (m_volume_l    , namedParameterBundle, PropertyNames::RecipeUseOfWater::volume_l    ) {
    return;
 }
 
 RecipeUseOfWater::RecipeUseOfWater(RecipeUseOfWater const & other) :
-   NamedEntity   {other               },
-   m_recipeId    {other.m_recipeId    },
-   m_ingredientId{other.m_ingredientId},
-   m_volume_l    {other.m_volume_l    } {
+   IngredientInRecipe{other               },
+   m_volume_l        {other.m_volume_l    } {
    return;
 }
 
 RecipeUseOfWater::~RecipeUseOfWater() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
-int     RecipeUseOfWater::recipeId() const { return this->m_recipeId; }
-double  RecipeUseOfWater::volume_l() const { return this->m_volume_l; }
-Water * RecipeUseOfWater::water   () const {
+double  RecipeUseOfWater::volume_l    () const { return this->m_volume_l;     }
+Water * RecipeUseOfWater::water       () const {
    // Normally there should always be a valid Water in a RecipeUseOfWater.  (The Recipe ID may be -1 if the addition is
    // only just about to be added to the Recipe or has just been removed from it, but there's no great reason for the
    // Water ID not to be valid).
@@ -78,8 +80,7 @@ Water * RecipeUseOfWater::water   () const {
 
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void RecipeUseOfWater::setRecipeId(int     const val) { this->m_recipeId = val; return; }
-void RecipeUseOfWater::setVolume_l(double  const val) { this->m_volume_l = val; return; }
+void RecipeUseOfWater::setVolume_l    (double const val) { this->m_volume_l     = val; return; }
 
 void RecipeUseOfWater::setWater(Water * const val) {
    if (val) {

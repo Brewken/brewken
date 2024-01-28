@@ -27,7 +27,8 @@
 #include <QDomNode>
 #include <QSqlRecord>
 
-#include "model/NamedEntityWithFolder.h"
+#include "model/FolderBase.h"
+#include "model/NamedEntity.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
@@ -118,8 +119,10 @@ AddPropertyName(kettleTrubChillerLoss_l    )
  *              where there is a separate lautering tun, lautering losses will be associated with that tun.
  * TODO: Make the above NOTE true!
  */
-class Equipment : public NamedEntityWithFolder {
+class Equipment : public NamedEntity,
+                  public FolderBase<Equipment> {
    Q_OBJECT
+   FOLDER_BASE_DECL(Equipment)
 
 public:
    /**

@@ -2001,34 +2001,6 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
-    <name>InventoryFermentable</name>
-    <message>
-        <source>Fermentable Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>InventoryHop</name>
-    <message>
-        <source>Hop Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>InventoryMisc</name>
-    <message>
-        <source>Misc Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>InventoryYeast</name>
-    <message>
-        <source>Yeast Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>MainWindow</name>
     <message>
         <source>Open</source>
@@ -2720,13 +2692,6 @@ If you need help, please open an issue at %1</source>
     </message>
 </context>
 <context>
-    <name>NamedEntityWithFolder</name>
-    <message>
-        <source>Named Entity With Folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>OldInventory</name>
     <message>
         <source>Inventory</source>
@@ -2969,6 +2934,13 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Please restart Brewken to connect to the new database</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OwnedByRecipe</name>
+    <message>
+        <source>Owned By Recipe</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4150,11 +4122,15 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 %2, </source>
+        <source>Put %1 %2 into packaging for %3.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Put %1 %2 into packaging for %3.</source>
+        <source>%1 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>, </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4487,6 +4463,56 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Step</source>
         <translation type="unfinished">Этап</translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdjustmentSalt</name>
+    <message>
+        <source>Salt Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished">Затор</translation>
+    </message>
+    <message>
+        <source>Sparge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ratio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Equal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Addition of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdjustmentSaltTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>% Acid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Инвентарь</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished">Количество</translation>
     </message>
 </context>
 <context>
@@ -4873,6 +4899,14 @@ The final volume in the primary is %1.</source>
         <source>Recipe Use Of Water</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Use of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid!</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RefractoDialog</name>
@@ -4924,24 +4958,8 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Never</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mash</source>
-        <translation type="unfinished">Затор</translation>
-    </message>
-    <message>
-        <source>Sparge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ratio</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Equal</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Затор</translation>
     </message>
     <message>
         <source>Salt</source>
@@ -4963,14 +4981,18 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished">Количество</translation>
-    </message>
-    <message>
-        <source>Added To</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Количество</translation>
     </message>
     <message>
         <source>% Acid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Инвентарь</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5475,7 +5497,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Количество</translation>
+        <translation type="vanished">Количество</translation>
     </message>
     <message>
         <source>Calcium (ppm)</source>

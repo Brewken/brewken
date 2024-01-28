@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/RecipeAdditionFermentable.cpp is part of Brewken, and is copyright the following authors 2023:
+ * model/RecipeAdditionFermentable.cpp is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -46,8 +46,8 @@ static_assert(std::is_base_of<IngredientAmount<RecipeAdditionFermentable, Fermen
 static_assert(HasTypeLookup<Fermentable>);
 static_assert(!HasTypeLookup<QString>);
 
-RecipeAdditionFermentable::RecipeAdditionFermentable(QString name, int const recipeId, int const hopId) :
-   RecipeAddition{name, recipeId, hopId},
+RecipeAdditionFermentable::RecipeAdditionFermentable(QString name, int const recipeId, int const ingredientId) :
+   RecipeAddition{name, recipeId, ingredientId},
    RecipeAdditionBase<RecipeAdditionFermentable, Fermentable>{},
    IngredientAmount<RecipeAdditionFermentable, Fermentable>{} {
    return;

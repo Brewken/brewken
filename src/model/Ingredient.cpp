@@ -26,22 +26,28 @@ TypeLookup const Ingredient::typeLookup {
       // BtFieldType value for it depends on the Ingredient subclass.  Hence, it is instead done in IngredientBase.
    },
    // Parent class lookup
-   {&NamedEntityWithFolder::typeLookup}
+   {&NamedEntity::typeLookup}
 };
 
 Ingredient::Ingredient(QString name) :
-   NamedEntityWithFolder{name, true} {
+   NamedEntity{name, true},
+   FolderBase<Ingredient>{} {
    return;
 }
 
 Ingredient::Ingredient(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntityWithFolder{namedParameterBundle} {
+   NamedEntity{namedParameterBundle},
+   FolderBase<Ingredient>{namedParameterBundle} {
    return;
 }
 
 Ingredient::Ingredient(Ingredient const & other) :
-   NamedEntityWithFolder{other} {
+   NamedEntity{other},
+   FolderBase<Ingredient>{other} {
    return;
 }
 
 Ingredient::~Ingredient() = default;
+
+// Boilerplate code for FolderBase
+FOLDER_BASE_COMMON_CODE(Ingredient)

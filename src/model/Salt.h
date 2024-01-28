@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Salt.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/Salt.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -25,21 +25,25 @@
 #include <QSqlRecord>
 #include <QSqlRecord>
 
-#include "measurement/ConstrainedAmount.h"
-#include "model/NamedEntity.h"
+#include "model/Ingredient.h"
+#include "model/IngredientBase.h"
+#include "model/IngredientAmount.h"
 #include "utils/EnumStringMapping.h"
+
+class InventorySalt;
+class RecipeAdjustmentSalt;
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Salt { BtStringConst const property{#property}; }
-AddPropertyName(amount         )
-AddPropertyName(amountIsWeight )
-AddPropertyName(amountWithUnits)
+///AddPropertyName(amount         )
+///AddPropertyName(amountIsWeight )
+///AddPropertyName(amountWithUnits)
 AddPropertyName(isAcid         )
 AddPropertyName(percentAcid    )
 AddPropertyName(type           )
-AddPropertyName(whenToAdd      )
+///AddPropertyName(whenToAdd      )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -50,8 +54,10 @@ AddPropertyName(whenToAdd      )
  *
  * \brief Model for salt records in the database.
  */
-class Salt : public NamedEntity {
+class Salt : public Ingredient, public IngredientBase<Salt> {
    Q_OBJECT
+
+   INGREDIENT_BASE_DECL(Salt)
 
 public:
    /**
@@ -86,19 +92,18 @@ public:
     */
    static EnumStringMapping const typeDisplayNames;
 
-   // .:TBD:. I think we can eliminate the 'NEVER' option as it's not very useful!
-   enum class WhenToAdd {
-      NEVER ,
-      MASH  ,
-      SPARGE,
-      RATIO ,
-      EQUAL ,
-   };
-   // This allows us to store the above enum class in a QVariant
-   Q_ENUM(WhenToAdd)
+   /**
+    * \brief This is where we centrally define how \c Salt objects can be measured.  See also suggestedMeasure() below
+    */
+   static constexpr auto validMeasures  = Measurement::ChoiceOfPhysicalQuantity::Mass_Volume;
+   static constexpr auto defaultMeasure = Measurement::PhysicalQuantity::Mass;
 
-   static EnumStringMapping const whenToAddStringMapping;
-   static EnumStringMapping const whenToAddDisplayNames;
+   //
+   // These aliases make it easier to template a number of functions that are essentially the same for all subclasses of
+   // Ingredient.
+   //
+   using InventoryClass      = InventorySalt;
+   using RecipeAdditionClass = RecipeAdjustmentSalt;
 
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
@@ -113,47 +118,76 @@ public:
    virtual ~Salt();
 
    // On a base or target profile, bicarbonate and alkalinity cannot both be used. I'm gonna have fun figuring that out
-   //! \brief The amount of salt to be added (always a weight)
-   Q_PROPERTY(double    amount         READ amount         WRITE setAmount          )
-   //! \brief When to add the salt (mash or sparge)
-   Q_PROPERTY(WhenToAdd whenToAdd      READ whenToAdd      WRITE setWhenToAdd       )
+///   //! \brief The amount of salt to be added (always a weight)
+///   Q_PROPERTY(double    amount         READ amount         WRITE setAmount          )
+///   //! \brief When to add the salt (mash or sparge)
+///   Q_PROPERTY(WhenToAdd whenToAdd      READ whenToAdd      WRITE setWhenToAdd       )
    //! \brief What kind of salt this is
    Q_PROPERTY(Type      type           READ type           WRITE setType            )
-   //! \brief Is this a weight (like CaCO3) or a volume (like H3PO3)
-   Q_PROPERTY(bool      amountIsWeight READ amountIsWeight WRITE setAmountIsWeight  )
+///   //! \brief Is this a weight (like CaCO3) or a volume (like H3PO3)
+///   Q_PROPERTY(bool      amountIsWeight READ amountIsWeight WRITE setAmountIsWeight  )
    //! \brief What percent is acid (used for lactic acid, H3PO4 and acid malts)
    Q_PROPERTY(double    percentAcid    READ percentAcid    WRITE setPercentAcid     )
    //! \brief Is this an acid or salt?
    Q_PROPERTY(bool      isAcid         READ isAcid         WRITE setIsAcid          )
+   Q_PROPERTY(Measurement::PhysicalQuantity suggestedMeasure READ suggestedMeasure)
 
-   Q_PROPERTY(Measurement::Amount    amountWithUnits   READ amountWithUnits   WRITE setAmountWithUnits)
+///   Q_PROPERTY(Measurement::Amount    amountWithUnits   READ amountWithUnits   WRITE setAmountWithUnits)
 
-   double          amount()         const;
-   Salt::WhenToAdd whenToAdd()      const;
-   Salt::Type     type()           const;
-   bool            amountIsWeight() const;
+///   double          amount()         const;
+///   Salt::WhenToAdd whenToAdd()      const;
+   Salt::Type      type()           const;
+///   bool            amountIsWeight() const;
    double          percentAcid()    const;
    bool            isAcid()         const;
-   int             miscId()         const;
+///   int             miscId()         const;
+   Measurement::PhysicalQuantity suggestedMeasure() const;
 
-   MassOrVolumeAmt                             amountWithUnits    () const;
+///   MassOrVolumeAmt amountWithUnits    () const;
 
-   void setAmount        (double          val);
-   void setWhenToAdd     (Salt::WhenToAdd val);
-   void setType          (Salt::Type     val);
-   void setAmountIsWeight(bool            val);
+///   void setAmount        (double          val);
+///   void setWhenToAdd     (Salt::WhenToAdd val);
+   void setType          (Salt::Type      val);
+///   void setAmountIsWeight(bool            val);
    void setPercentAcid   (double          val);
    void setIsAcid        (bool            val);
 
-   void setAmountWithUnits    (MassOrVolumeAmt                             const   val);
+///   void setAmountWithUnits(MassOrVolumeAmt const   val);
 
-   double Ca  () const;
-   double Cl  () const;
-   double CO3 () const;
-   double HCO3() const;
-   double Mg  () const;
-   double Na  () const;
-   double SO4 () const;
+   /**
+    * \return Mass concentration (in parts per million) of Calcium (Ca) for one gram of this salt in one liter of water
+    */
+   double massConcPpm_Ca_perGramPerLiter  () const;
+
+   /**
+    * \return Mass concentration (in parts per million) of Chloride (Cl⁻) for one gram of this salt in one liter of water
+    */
+   double massConcPpm_Cl_perGramPerLiter  () const;
+
+   /**
+    * \return Mass concentration (in parts per million) of Carbonate (CO₃) for one gram of this salt in one liter of water
+    */
+   double massConcPpm_CO3_perGramPerLiter () const;
+
+   /**
+    * \return Mass concentration (in parts per million) of Bicarbonate (HCO₃) for one gram of this salt in one liter of water
+    */
+   double massConcPpm_HCO3_perGramPerLiter() const;
+
+   /**
+    * \return Mass concentration (in parts per million) of Magnesium (Mg) for one gram of this salt in one liter of water
+    */
+   double massConcPpm_Mg_perGramPerLiter  () const;
+
+   /**
+    * \return Mass concentration (in parts per million) of Sodium (Na⁺) for one gram of this salt in one liter of water
+    */
+   double massConcPpm_Na_perGramPerLiter  () const;
+
+   /**
+    * \return Mass concentration (in parts per million) of Sulfate (SO₄) for one gram of this salt in one liter of water
+    */
+   double massConcPpm_SO4_perGramPerLiter () const;
 
 ///   virtual Recipe * getOwningRecipe() const;
 
@@ -164,10 +198,10 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   double m_amount;
-   Salt::WhenToAdd m_whenToAdd;
+///   double m_amount;
+///   Salt::WhenToAdd m_whenToAdd;
    Salt::Type m_type;
-   bool m_amountIsWeight;
+///   bool m_amountIsWeight;
    double m_percent_acid;
    bool m_is_acid;
 };

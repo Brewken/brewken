@@ -61,6 +61,7 @@ TypeLookup const Boil::typeLookup {
 
 Boil::Boil(QString name) :
    NamedEntity{name, true},
+   FolderBase<Boil>{},
    StepOwnerBase<Boil, BoilStep>{},
    m_description  {""          },
    m_notes        {""          },
@@ -71,6 +72,7 @@ Boil::Boil(QString name) :
 
 Boil::Boil(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity                {namedParameterBundle},
+   FolderBase<Boil>{namedParameterBundle},
    StepOwnerBase<Boil, BoilStep>{},
    SET_REGULAR_FROM_NPB (m_description  , namedParameterBundle, PropertyNames::Boil::description  ),
    SET_REGULAR_FROM_NPB (m_notes        , namedParameterBundle, PropertyNames::Boil::notes        ),
@@ -81,6 +83,7 @@ Boil::Boil(NamedParameterBundle const & namedParameterBundle) :
 
 Boil::Boil(Boil const & other) :
    NamedEntity{other},
+   FolderBase<Boil>{other},
    StepOwnerBase<Boil, BoilStep>{other},
    m_description  {other.m_description  },
    m_notes        {other.m_notes        },
@@ -165,6 +168,8 @@ void Boil::ensureStandardProfile() {
    return;
 }
 
+// Boilerplate code for FolderBase
+FOLDER_BASE_COMMON_CODE(Boil)
 
 // Insert boiler-plate wrapper functions that call down to StepOwnerBase
 STEP_OWNER_COMMON_CODE(Boil, boil)

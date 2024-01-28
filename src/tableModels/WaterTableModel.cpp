@@ -65,15 +65,15 @@ BtTableModel::ColumnInfo const & WaterTableModel::getColumnInfo(WaterTableModel:
 }
 
 void WaterTableModel::observeRecipe(Recipe * rec) {
-   if (recObs) {
-      disconnect(recObs, nullptr, this, nullptr);
+   if (this->recObs) {
+      disconnect(this->recObs, nullptr, this, nullptr);
       removeAll();
    }
 
-   recObs = rec;
-   if (recObs) {
-      connect(recObs, &NamedEntity::changed, this, &WaterTableModel::changed);
-      addWaters(recObs->getAll<Water>());
+   this->recObs = rec;
+   if (this->recObs) {
+      connect(this->recObs, &NamedEntity::changed, this, &WaterTableModel::changed);
+      this->addWaters(*this->recObs);
    }
    return;
 }
@@ -158,8 +158,18 @@ void WaterTableModel::addWaters(QList<std::shared_ptr<Water> > waters) {
       m_parentTableWidget->resizeColumnsToContents();
       m_parentTableWidget->resizeRowsToContents();
    }
-
+   return;
 }
+
+void WaterTableModel::addWaters(Recipe const & recipe) {
+   QList<std::shared_ptr<Water> > waters;
+   for (auto waterUse : recipe.waterUses()) {
+      waters.append(ObjectStoreWrapper::getSharedFromRaw<Water>(waterUse->water()));
+   }
+   this->addWaters(waters);
+   return;
+}
+
 
 void WaterTableModel::removeWater([[maybe_unused]] int waterId,
                                   std::shared_ptr<QObject> object) {

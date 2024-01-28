@@ -1962,34 +1962,6 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
 </context>
 <context>
-    <name>InventoryFermentable</name>
-    <message>
-        <source>Fermentable Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>InventoryHop</name>
-    <message>
-        <source>Hop Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>InventoryMisc</name>
-    <message>
-        <source>Misc Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>InventoryYeast</name>
-    <message>
-        <source>Yeast Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>MainWindow</name>
     <message>
         <source>Open</source>
@@ -2685,13 +2657,6 @@ If you need help, please open an issue at %1</source>
     </message>
 </context>
 <context>
-    <name>NamedEntityWithFolder</name>
-    <message>
-        <source>Named Entity With Folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>OldInventory</name>
     <message>
         <source>Inventory</source>
@@ -2930,6 +2895,13 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Please restart Brewken to connect to the new database</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OwnedByRecipe</name>
+    <message>
+        <source>Owned By Recipe</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4107,11 +4079,15 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <translation type="unfinished">Vin</translation>
     </message>
     <message>
-        <source>%1 %2, </source>
+        <source>Put %1 %2 into packaging for %3.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Put %1 %2 into packaging for %3.</source>
+        <source>%1 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>, </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4424,6 +4400,60 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     <message>
         <source>Step</source>
         <translation type="unfinished">Trinn</translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdjustmentSalt</name>
+    <message>
+        <source>Salt Addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished">Mesk</translation>
+    </message>
+    <message>
+        <source>Sparge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ratio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Equal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Addition of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeAdjustmentSaltTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Navn</translation>
+    </message>
+    <message>
+        <source>% Acid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Lagerbeholdning</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="obsolete">Enhetstype</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished">Mengde</translation>
     </message>
 </context>
 <context>
@@ -4810,6 +4840,14 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <source>Recipe Use Of Water</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Use of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid!</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RefractoDialog</name>
@@ -4861,24 +4899,8 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Never</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mash</source>
-        <translation type="unfinished">Mesk</translation>
-    </message>
-    <message>
-        <source>Sparge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ratio</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Equal</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Mesk</translation>
     </message>
     <message>
         <source>Salt</source>
@@ -4900,15 +4922,19 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished">Mengde</translation>
-    </message>
-    <message>
-        <source>Added To</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Mengde</translation>
     </message>
     <message>
         <source>% Acid</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Lagerbeholdning</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Enhetstype</translation>
     </message>
 </context>
 <context>
@@ -5405,7 +5431,7 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Mengde</translation>
+        <translation type="vanished">Mengde</translation>
     </message>
     <message>
         <source>Calcium (ppm)</source>

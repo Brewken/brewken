@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/InventoryHop.h is part of Brewken, and is copyright the following authors 2023:
+ * model/InventoryHop.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -31,32 +31,7 @@ class InventoryHop : public Inventory, public IngredientAmount<InventoryHop, Hop
    Q_OBJECT
 
    INGREDIENT_AMOUNT_DECL(InventoryHop, Hop)
-
-public:
-   /**
-    * \brief See comment in model/NamedEntity.h
-    */
-   static QString const LocalisedName;
-
-   /**
-    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
-    *        info.
-    */
-   static TypeLookup const typeLookup;
-
-   InventoryHop();
-   InventoryHop(NamedParameterBundle const & namedParameterBundle);
-   InventoryHop(InventoryHop const & other);
-
-   virtual ~InventoryHop();
-
-public:
-   virtual char const * getIngredientClass() const;
-   Hop * hop() const ;
-
-protected:
-   virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual ObjectStore & getObjectStoreTypedInstance() const;
+   INVENTORY_DECL(Hop, hop)
 
 };
 

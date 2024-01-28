@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/InventoryFermentable.h is part of Brewken, and is copyright the following authors 2023-2024:
+ * listModels/RecipeAdjustmentSaltListModel.cpp is part of Brewken, and is copyright the following authors 2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,26 +13,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef MODEL_INVENTORYFERMENTABLE_H
-#define MODEL_INVENTORYFERMENTABLE_H
-#pragma once
+#include "listModels/RecipeAdjustmentSaltListModel.h"
 
-#include <QObject>
-#include <QString>
-
-#include "model/Fermentable.h"
-#include "model/Inventory.h"
-#include "model/IngredientAmount.h"
-
-/**
- * \brief Inventory of \c Fermentable
- */
-class InventoryFermentable : public Inventory, public IngredientAmount<InventoryFermentable, Fermentable> {
-   Q_OBJECT
-
-   INGREDIENT_AMOUNT_DECL(InventoryFermentable, Fermentable)
-   INVENTORY_DECL(Fermentable, fermentable)
-
-};
-
-#endif
+// Insert the boiler-plate stuff that we cannot do in ListModelBase
+LIST_MODEL_COMMON_CODE(RecipeAdjustmentSalt, PropertyNames::Recipe::saltAdjustments)

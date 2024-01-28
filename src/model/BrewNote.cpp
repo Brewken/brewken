@@ -33,7 +33,7 @@
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/NamedParameterBundle.h"
-#include "model/Recipe.h"
+///#include "model/Recipe.h"
 #include "model/RecipeAdditionYeast.h"
 
 // These belong here, because they really just are constant strings for
@@ -91,18 +91,19 @@ TypeLookup const BrewNote::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::projStrikeTemp_c , BrewNote::m_projStrikeTemp_c , Measurement::PhysicalQuantity::Temperature),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::projVolIntoBK_l  , BrewNote::m_projVolIntoBK_l  , Measurement::PhysicalQuantity::Volume     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::projVolIntoFerm_l, BrewNote::m_projVolIntoFerm_l, Measurement::PhysicalQuantity::Volume     ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::recipeId         , BrewNote::m_recipeId                                                     ),
+///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::recipeId         , BrewNote::m_recipeId                                                     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::sg               , BrewNote::m_sg               , Measurement::PhysicalQuantity::Density    ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::strikeTemp_c     , BrewNote::m_strikeTemp_c     , Measurement::PhysicalQuantity::Temperature),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::volumeIntoBK_l   , BrewNote::m_volumeIntoBK_l   , Measurement::PhysicalQuantity::Volume     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::volumeIntoFerm_l , BrewNote::m_volumeIntoFerm_l , Measurement::PhysicalQuantity::Volume     ),
    },
    // Parent class lookup
-   {&NamedEntity::typeLookup}
+   {&OwnedByRecipe::typeLookup}
 };
 
 // Initializers
-BrewNote::BrewNote(QString name) : BrewNote(QDate(), name) {
+BrewNote::BrewNote(QString name) :
+   BrewNote(QDate(), name) {
    return;
 }
 
@@ -113,7 +114,7 @@ BrewNote::BrewNote(Recipe const & recipe) :
 }
 
 BrewNote::BrewNote(QDate dateNow, QString const & name) :
-   NamedEntity        {name, true},
+   OwnedByRecipe      {name},
    loading            {false  },
    m_brewDate         {dateNow},
    m_fermentDate      {       },
@@ -144,13 +145,14 @@ BrewNote::BrewNote(QDate dateNow, QString const & name) :
    m_projABV_pct      {0.0    },
    m_projPoints       {0.0    },
    m_projFermPoints   {0.0    },
-   m_projAtten        {0.0    },
-   m_recipeId         {-1     } {
+   m_projAtten        {0.0    }
+///   , m_recipeId         {-1     }
+   {
    return;
 }
 
 BrewNote::BrewNote(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity{namedParameterBundle},
+   OwnedByRecipe{namedParameterBundle},
    loading            {false},
    SET_REGULAR_FROM_NPB (m_brewDate         , namedParameterBundle, PropertyNames::BrewNote::brewDate         ),
    SET_REGULAR_FROM_NPB (m_fermentDate      , namedParameterBundle, PropertyNames::BrewNote::fermentDate      ),
@@ -181,8 +183,44 @@ BrewNote::BrewNote(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_projABV_pct      , namedParameterBundle, PropertyNames::BrewNote::projABV_pct      ),
    SET_REGULAR_FROM_NPB (m_projPoints       , namedParameterBundle, PropertyNames::BrewNote::projPoints       ),
    SET_REGULAR_FROM_NPB (m_projFermPoints   , namedParameterBundle, PropertyNames::BrewNote::projFermPoints   ),
-   SET_REGULAR_FROM_NPB (m_projAtten        , namedParameterBundle, PropertyNames::BrewNote::projAtten        ),
-   SET_REGULAR_FROM_NPB (m_recipeId         , namedParameterBundle, PropertyNames::BrewNote::recipeId         ) {
+   SET_REGULAR_FROM_NPB (m_projAtten        , namedParameterBundle, PropertyNames::BrewNote::projAtten        )
+///   , SET_REGULAR_FROM_NPB (m_recipeId         , namedParameterBundle, PropertyNames::BrewNote::recipeId         ) {
+   {
+   return;
+}
+
+BrewNote::BrewNote(BrewNote const & other) :
+   OwnedByRecipe      {other                    },
+   m_brewDate         {other.m_brewDate         },
+   m_fermentDate      {other.m_fermentDate      },
+   m_notes            {other.m_notes            },
+   m_sg               {other.m_sg               },
+   m_abv              {other.m_abv              },
+   m_effIntoBK_pct    {other.m_effIntoBK_pct    },
+   m_brewhouseEff_pct {other.m_brewhouseEff_pct },
+   m_volumeIntoBK_l   {other.m_volumeIntoBK_l   },
+   m_strikeTemp_c     {other.m_strikeTemp_c     },
+   m_mashFinTemp_c    {other.m_mashFinTemp_c    },
+   m_og               {other.m_og               },
+   m_postBoilVolume_l {other.m_postBoilVolume_l },
+   m_volumeIntoFerm_l {other.m_volumeIntoFerm_l },
+   m_pitchTemp_c      {other.m_pitchTemp_c      },
+   m_fg               {other.m_fg               },
+   m_attenuation      {other.m_attenuation      },
+   m_finalVolume_l    {other.m_finalVolume_l    },
+   m_boilOff_l        {other.m_boilOff_l        },
+   m_projBoilGrav     {other.m_projBoilGrav     },
+   m_projVolIntoBK_l  {other.m_projVolIntoBK_l  },
+   m_projStrikeTemp_c {other.m_projStrikeTemp_c },
+   m_projMashFinTemp_c{other.m_projMashFinTemp_c},
+   m_projOg           {other.m_projOg           },
+   m_projVolIntoFerm_l{other.m_projVolIntoFerm_l},
+   m_projFg           {other.m_projFg           },
+   m_projEff_pct      {other.m_projEff_pct      },
+   m_projABV_pct      {other.m_projABV_pct      },
+   m_projPoints       {other.m_projPoints       },
+   m_projFermPoints   {other.m_projFermPoints   },
+   m_projAtten        {other.m_projAtten        } {
    return;
 }
 
@@ -291,40 +329,43 @@ void BrewNote::recalculateEff(Recipe* parent)
    calculateBrewHouseEff_pct();
 }
 
-BrewNote::BrewNote(BrewNote const& other) :
-   NamedEntity        {other                    },
-   m_brewDate         {other.m_brewDate         },
-   m_fermentDate      {other.m_fermentDate      },
-   m_notes            {other.m_notes            },
-   m_sg               {other.m_sg               },
-   m_abv              {other.m_abv              },
-   m_effIntoBK_pct    {other.m_effIntoBK_pct    },
-   m_brewhouseEff_pct {other.m_brewhouseEff_pct },
-   m_volumeIntoBK_l   {other.m_volumeIntoBK_l   },
-   m_strikeTemp_c     {other.m_strikeTemp_c     },
-   m_mashFinTemp_c    {other.m_mashFinTemp_c    },
-   m_og               {other.m_og               },
-   m_postBoilVolume_l {other.m_postBoilVolume_l },
-   m_volumeIntoFerm_l {other.m_volumeIntoFerm_l },
-   m_pitchTemp_c      {other.m_pitchTemp_c      },
-   m_fg               {other.m_fg               },
-   m_attenuation      {other.m_attenuation      },
-   m_finalVolume_l    {other.m_finalVolume_l    },
-   m_boilOff_l        {other.m_boilOff_l        },
-   m_projBoilGrav     {other.m_projBoilGrav     },
-   m_projVolIntoBK_l  {other.m_projVolIntoBK_l  },
-   m_projStrikeTemp_c {other.m_projStrikeTemp_c },
-   m_projMashFinTemp_c{other.m_projMashFinTemp_c},
-   m_projOg           {other.m_projOg           },
-   m_projVolIntoFerm_l{other.m_projVolIntoFerm_l},
-   m_projFg           {other.m_projFg           },
-   m_projEff_pct      {other.m_projEff_pct      },
-   m_projABV_pct      {other.m_projABV_pct      },
-   m_projPoints       {other.m_projPoints       },
-   m_projFermPoints   {other.m_projFermPoints   },
-   m_projAtten        {other.m_projAtten        } {
-   return;
-}
+//============================================= "GETTER" MEMBER FUNCTIONS ==============================================
+QDate   BrewNote::brewDate         () const { return this->m_brewDate; }
+QString BrewNote::brewDate_str     () const { return this->m_brewDate.toString(); }
+QString BrewNote::brewDate_short   () const { return Localization::displayDateUserFormated(this->m_brewDate); }
+QDate   BrewNote::fermentDate      () const { return this->m_fermentDate; }
+QString BrewNote::fermentDate_str  () const { return this->m_fermentDate.toString(); }
+QString BrewNote::fermentDate_short() const { return Localization::displayDateUserFormated(this->m_fermentDate); }
+QString BrewNote::notes            () const { return this->m_notes; }
+double  BrewNote::sg               () const { return this->m_sg               ; }
+double  BrewNote::abv              () const { return this->m_abv              ; }
+double  BrewNote::attenuation      () const { return this->m_attenuation      ; }
+double  BrewNote::volumeIntoBK_l   () const { return this->m_volumeIntoBK_l   ; }
+double  BrewNote::effIntoBK_pct    () const { return this->m_effIntoBK_pct    ; }
+double  BrewNote::brewhouseEff_pct () const { return this->m_brewhouseEff_pct ; }
+double  BrewNote::strikeTemp_c     () const { return this->m_strikeTemp_c     ; }
+double  BrewNote::mashFinTemp_c    () const { return this->m_mashFinTemp_c    ; }
+double  BrewNote::og               () const { return this->m_og               ; }
+double  BrewNote::volumeIntoFerm_l () const { return this->m_volumeIntoFerm_l ; }
+double  BrewNote::postBoilVolume_l () const { return this->m_postBoilVolume_l ; }
+double  BrewNote::pitchTemp_c      () const { return this->m_pitchTemp_c      ; }
+double  BrewNote::fg               () const { return this->m_fg               ; }
+double  BrewNote::finalVolume_l    () const { return this->m_finalVolume_l    ; }
+double  BrewNote::projBoilGrav     () const { return this->m_projBoilGrav     ; }
+double  BrewNote::projVolIntoBK_l  () const { return this->m_projVolIntoFerm_l; }
+double  BrewNote::projStrikeTemp_c () const { return this->m_projStrikeTemp_c ; }
+double  BrewNote::projMashFinTemp_c() const { return this->m_projMashFinTemp_c; }
+double  BrewNote::projOg           () const { return this->m_projOg           ; }
+double  BrewNote::projVolIntoFerm_l() const { return this->m_projVolIntoFerm_l; }
+double  BrewNote::projFg           () const { return this->m_projFg           ; }
+double  BrewNote::projEff_pct      () const { return this->m_projEff_pct      ; }
+double  BrewNote::projABV_pct      () const { return this->m_projABV_pct      ; }
+double  BrewNote::projPoints       () const { return this->m_projPoints       ; }
+double  BrewNote::projFermPoints   () const { return this->m_projFermPoints   ; }
+double  BrewNote::projAtten        () const { return this->m_projAtten        ; }
+double  BrewNote::boilOff_l        () const { return this->m_boilOff_l        ; }
+///int    BrewNote::getRecipeId() const { return this->m_recipeId; }
+
 
 // Setters=====================================================================
 void BrewNote::setBrewDate(QDate const & date) {
@@ -424,138 +465,38 @@ void BrewNote::setProjFermPoints(double var) {
    }
 }
 
-void BrewNote::setABV(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::abv, this->m_abv, var);
-}
-
-void BrewNote::setAttenuation(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::attenuation, this->m_attenuation, var);
-}
-
-void BrewNote::setEffIntoBK_pct(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::effIntoBK_pct, this->m_effIntoBK_pct, var);
-}
-
-void BrewNote::setBrewhouseEff_pct(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::brewhouseEff_pct, this->m_brewhouseEff_pct, var);
-}
-
-void BrewNote::setStrikeTemp_c(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::strikeTemp_c, this->m_strikeTemp_c, var);
-}
-
-void BrewNote::setMashFinTemp_c(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::mashFinTemp_c, this->m_mashFinTemp_c, var);
-}
-
-void BrewNote::setPostBoilVolume_l(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::postBoilVolume_l, this->m_postBoilVolume_l, var);
-}
-
-void BrewNote::setPitchTemp_c(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::pitchTemp_c, this->m_pitchTemp_c, var);
-}
-
-void BrewNote::setFinalVolume_l(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::finalVolume_l, this->m_finalVolume_l, var);
-}
-
-void BrewNote::setProjBoilGrav(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::projBoilGrav, this->m_projBoilGrav, var);
-}
-
-void BrewNote::setProjVolIntoBK_l(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::projVolIntoBK_l, this->m_projVolIntoBK_l, var);
-}
-
-void BrewNote::setProjStrikeTemp_c(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::projStrikeTemp_c, this->m_projStrikeTemp_c, var);
-}
-
-void BrewNote::setProjMashFinTemp_c(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::projMashFinTemp_c, this->m_projMashFinTemp_c, var);
-}
-
-void BrewNote::setProjOg(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::projOg, this->m_projOg, var);
-}
-
-void BrewNote::setProjVolIntoFerm_l(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::projVolIntoFerm_l, this->m_projVolIntoFerm_l, var);
-}
-
-void BrewNote::setProjFg(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::projFg, this->m_projFg, var);
-}
-
-void BrewNote::setProjEff_pct(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::projEff_pct, this->m_projEff_pct, var);
-}
-
-void BrewNote::setProjABV_pct(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::projABV_pct, this->m_projABV_pct, var);
-}
-
-void BrewNote::setProjAtten(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::projAtten, this->m_projAtten, var);
-}
-
-void BrewNote::setBoilOff_l(double var) {
-   SET_AND_NOTIFY(PropertyNames::BrewNote::boilOff_l, this->m_boilOff_l, var);
-}
-
-void BrewNote::setRecipeId(int recipeId) { this->m_recipeId = recipeId; }
-void BrewNote::setRecipe(Recipe * recipe) {
-   Q_ASSERT(nullptr != recipe);
-   this->m_recipeId = recipe->key();
-   return;
-}
+void BrewNote::setABV              (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::abv              , this->m_abv              , var); }
+void BrewNote::setAttenuation      (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::attenuation      , this->m_attenuation      , var); }
+void BrewNote::setEffIntoBK_pct    (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::effIntoBK_pct    , this->m_effIntoBK_pct    , var); }
+void BrewNote::setBrewhouseEff_pct (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::brewhouseEff_pct , this->m_brewhouseEff_pct , var); }
+void BrewNote::setStrikeTemp_c     (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::strikeTemp_c     , this->m_strikeTemp_c     , var); }
+void BrewNote::setMashFinTemp_c    (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::mashFinTemp_c    , this->m_mashFinTemp_c    , var); }
+void BrewNote::setPostBoilVolume_l (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::postBoilVolume_l , this->m_postBoilVolume_l , var); }
+void BrewNote::setPitchTemp_c      (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::pitchTemp_c      , this->m_pitchTemp_c      , var); }
+void BrewNote::setFinalVolume_l    (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::finalVolume_l    , this->m_finalVolume_l    , var); }
+void BrewNote::setProjBoilGrav     (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::projBoilGrav     , this->m_projBoilGrav     , var); }
+void BrewNote::setProjVolIntoBK_l  (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::projVolIntoBK_l  , this->m_projVolIntoBK_l  , var); }
+void BrewNote::setProjStrikeTemp_c (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::projStrikeTemp_c , this->m_projStrikeTemp_c , var); }
+void BrewNote::setProjMashFinTemp_c(double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::projMashFinTemp_c, this->m_projMashFinTemp_c, var); }
+void BrewNote::setProjOg           (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::projOg           , this->m_projOg           , var); }
+void BrewNote::setProjVolIntoFerm_l(double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::projVolIntoFerm_l, this->m_projVolIntoFerm_l, var); }
+void BrewNote::setProjFg           (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::projFg           , this->m_projFg           , var); }
+void BrewNote::setProjEff_pct      (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::projEff_pct      , this->m_projEff_pct      , var); }
+void BrewNote::setProjABV_pct      (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::projABV_pct      , this->m_projABV_pct      , var); }
+void BrewNote::setProjAtten        (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::projAtten        , this->m_projAtten        , var); }
+void BrewNote::setBoilOff_l        (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::boilOff_l        , this->m_boilOff_l        , var); }
+///void BrewNote::setRecipeId(int recipeId) { this->m_recipeId = recipeId; }
+///void BrewNote::setRecipe(Recipe * recipe) {
+///   Q_ASSERT(nullptr != recipe);
+///   this->m_recipeId = recipe->key();
+///   return;
+///}
 
 ///Recipe * BrewNote::getOwningRecipe() const {
 ///   // getById will return nullptr if the recipe ID is invalid, which is what we want here
 ///   return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
 ///}
 
-
-// Getters
-QDate BrewNote::brewDate() const { return m_brewDate; }
-QString BrewNote::brewDate_str() const { return m_brewDate.toString(); }
-QString BrewNote::brewDate_short() const { return Localization::displayDateUserFormated(m_brewDate); }
-
-QDate BrewNote::fermentDate() const { return m_fermentDate; }
-QString BrewNote::fermentDate_str() const { return m_fermentDate.toString(); }
-QString BrewNote::fermentDate_short() const { return Localization::displayDateUserFormated(m_fermentDate); }
-
-QString BrewNote::notes() const { return m_notes; }
-
-double BrewNote::sg() const { return m_sg; }
-double BrewNote::abv() const { return m_abv; }
-double BrewNote::attenuation() const { return m_attenuation; }
-double BrewNote::volumeIntoBK_l() const { return m_volumeIntoBK_l; }
-double BrewNote::effIntoBK_pct() const { return m_effIntoBK_pct; }
-double BrewNote::brewhouseEff_pct() const { return m_brewhouseEff_pct; }
-double BrewNote::strikeTemp_c() const { return m_strikeTemp_c; }
-double BrewNote::mashFinTemp_c() const { return m_mashFinTemp_c; }
-double BrewNote::og() const { return m_og; }
-double BrewNote::volumeIntoFerm_l() const { return m_volumeIntoFerm_l; }
-double BrewNote::postBoilVolume_l() const { return m_postBoilVolume_l; }
-double BrewNote::pitchTemp_c() const { return m_pitchTemp_c; }
-double BrewNote::fg() const { return m_fg; }
-double BrewNote::finalVolume_l() const { return m_finalVolume_l; }
-double BrewNote::projBoilGrav() const { return m_projBoilGrav; }
-double BrewNote::projVolIntoBK_l() const { return m_projVolIntoFerm_l; }
-double BrewNote::projStrikeTemp_c() const { return m_projStrikeTemp_c; }
-double BrewNote::projMashFinTemp_c() const { return m_projMashFinTemp_c; }
-double BrewNote::projOg() const { return m_projOg; }
-double BrewNote::projVolIntoFerm_l() const { return m_projVolIntoFerm_l; }
-double BrewNote::projFg() const { return m_projFg; }
-double BrewNote::projEff_pct() const { return m_projEff_pct; }
-double BrewNote::projABV_pct() const { return m_projABV_pct; }
-double BrewNote::projPoints() const { return m_projPoints; }
-double BrewNote::projFermPoints() const { return m_projFermPoints; }
-double BrewNote::projAtten() const { return m_projAtten; }
-double BrewNote::boilOff_l() const { return m_boilOff_l; }
-int    BrewNote::getRecipeId() const { return this->m_recipeId; }
 
 // calculators -- these kind of act as both setters and getters.  Likely bad
 // form

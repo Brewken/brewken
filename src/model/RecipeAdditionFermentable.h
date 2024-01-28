@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/RecipeAdditionFermentable.h is part of Brewken, and is copyright the following authors 2023:
+ * model/RecipeAdditionFermentable.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -60,7 +60,7 @@ public:
     */
    static TypeLookup const typeLookup;
 
-   RecipeAdditionFermentable(QString name = "", int const recipeId = -1, int const hopId = -1);
+   RecipeAdditionFermentable(QString name = "", int const recipeId = -1, int const ingredientId = -1);
    RecipeAdditionFermentable(NamedParameterBundle const & namedParameterBundle);
    RecipeAdditionFermentable(RecipeAdditionFermentable const & other);
 

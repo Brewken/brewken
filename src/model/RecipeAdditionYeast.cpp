@@ -47,8 +47,8 @@ static_assert(HasTypeLookup<Yeast>);
 static_assert(!HasTypeLookup<QString>);
 
 
-RecipeAdditionYeast::RecipeAdditionYeast(QString name, int const recipeId, int const hopId) :
-   RecipeAddition{name, recipeId, hopId},
+RecipeAdditionYeast::RecipeAdditionYeast(QString name, int const recipeId, int const ingredientId) :
+   RecipeAddition{name, recipeId, ingredientId},
    RecipeAdditionBase<RecipeAdditionYeast, Yeast>{},
    IngredientAmount<RecipeAdditionYeast, Yeast>{},
    m_attenuation_pct{std::nullopt} {

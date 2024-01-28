@@ -127,6 +127,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/listModels/RecipeAdditionHopListModel.cpp
     ${repoDir}/src/listModels/RecipeAdditionMiscListModel.cpp
     ${repoDir}/src/listModels/RecipeAdditionYeastListModel.cpp
+    ${repoDir}/src/listModels/RecipeAdjustmentSaltListModel.cpp
     ${repoDir}/src/listModels/SaltListModel.cpp
     ${repoDir}/src/listModels/StyleListModel.cpp
     ${repoDir}/src/listModels/WaterListModel.cpp
@@ -149,19 +150,21 @@ set(filesToCompile_cpp
     ${repoDir}/src/model/FermentationStep.cpp
     ${repoDir}/src/model/Hop.cpp
     ${repoDir}/src/model/Ingredient.cpp
+    ${repoDir}/src/model/IngredientInRecipe.cpp
     ${repoDir}/src/model/Instruction.cpp
     ${repoDir}/src/model/Inventory.cpp
     ${repoDir}/src/model/Mash.cpp
     ${repoDir}/src/model/MashStep.cpp
     ${repoDir}/src/model/Misc.cpp
     ${repoDir}/src/model/NamedEntity.cpp
-    ${repoDir}/src/model/NamedEntityWithFolder.cpp
     ${repoDir}/src/model/NamedParameterBundle.cpp
+    ${repoDir}/src/model/OwnedByRecipe.cpp
     ${repoDir}/src/model/Recipe.cpp
     ${repoDir}/src/model/RecipeAddition.cpp
     ${repoDir}/src/model/RecipeAdditionFermentable.cpp
     ${repoDir}/src/model/RecipeAdditionHop.cpp
     ${repoDir}/src/model/RecipeAdditionMisc.cpp
+    ${repoDir}/src/model/RecipeAdjustmentSalt.cpp
     ${repoDir}/src/model/RecipeAdditionYeast.cpp
     ${repoDir}/src/model/RecipeUseOfWater.cpp
     ${repoDir}/src/model/Salt.cpp
@@ -211,6 +214,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/tableModels/RecipeAdditionHopTableModel.cpp
     ${repoDir}/src/tableModels/RecipeAdditionMiscTableModel.cpp
     ${repoDir}/src/tableModels/RecipeAdditionYeastTableModel.cpp
+    ${repoDir}/src/tableModels/RecipeAdjustmentSaltTableModel.cpp
     ${repoDir}/src/tableModels/SaltTableModel.cpp
     ${repoDir}/src/tableModels/StyleTableModel.cpp
     ${repoDir}/src/tableModels/WaterTableModel.cpp

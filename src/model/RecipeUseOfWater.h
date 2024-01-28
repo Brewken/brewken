@@ -19,7 +19,7 @@
 
 #include <QString>
 
-#include "model/NamedEntity.h"
+#include "model/IngredientInRecipe.h"
 #include "model/RecipeAdditionBase.h"
 #include "model/Water.h"
 
@@ -27,7 +27,6 @@
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::RecipeUseOfWater { BtStringConst const property{#property}; }
-AddPropertyName(ingredientId)
 AddPropertyName(recipeId    )
 AddPropertyName(water       )
 AddPropertyName(volume_l    )
@@ -46,7 +45,7 @@ AddPropertyName(volume_l    )
  *        However, \b technically, both BeerJSON and BeerXML allow for multiple different waters to be added to a
  *        recipe, so we align with that.
  */
-class RecipeUseOfWater : public NamedEntity,
+class RecipeUseOfWater : public IngredientInRecipe,
                          public RecipeAdditionBase<RecipeUseOfWater, Water> {
    Q_OBJECT
 
@@ -76,13 +75,7 @@ public:
    /**
     * \brief The ID of the recipe in which the addition is being made
     */
-   Q_PROPERTY(int recipeId READ recipeId WRITE setRecipeId)
-
-   /**
-    * \brief The ID of the \c Water being used.  Strictly, the water isn't quite the same as other ingredients, but
-    *        keeping the same naming here allows us to share code in places (eg inside Recipe) with \c RecipeAddition
-    */
-   Q_PROPERTY(int ingredientId READ ingredientId WRITE setIngredientId)
+///   Q_PROPERTY(int recipeId READ recipeId WRITE setRecipeId)
 
    Q_PROPERTY(Water * water   READ water   WRITE setWater)
 
@@ -92,16 +85,16 @@ public:
    Q_PROPERTY(int volume_l READ volume_l WRITE setVolume_l)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-   int     recipeId    () const;
-   int     ingredientId() const;
+///   int     recipeId    () const;
+///   int     ingredientId() const;
    Water * water       () const;
    double  volume_l    () const;
 
-   Recipe * recipe      () const;
+///   Recipe * recipe      () const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   void setRecipeId    (int     const val);
-   void setIngredientId(int     const val);
+///   void setRecipeId    (int     const val);
+///   void setIngredientId(int     const val);
    void setWater       (Water * const val);
    void setVolume_l    (double  const val);
 
@@ -110,8 +103,7 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 protected:
-   int    m_recipeId    ;
-   int    m_ingredientId;
+///   int    m_recipeId    ;
    double m_volume_l    ;
 
 };

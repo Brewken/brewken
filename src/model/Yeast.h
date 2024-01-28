@@ -181,7 +181,7 @@ public:
    static EnumStringMapping const flocculationDisplayNames;
 
    /**
-    * \brief This is where we centrally define how \c Misc objects can be measured.
+    * \brief This is where we centrally define how \c Yeast objects can be measured.
     */
    static constexpr auto validMeasures  = Measurement::ChoiceOfPhysicalQuantity::Mass_Volume_Count;
    static constexpr auto defaultMeasure = Measurement::PhysicalQuantity::Mass;

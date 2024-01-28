@@ -36,6 +36,7 @@
 // Forward declarations.
 class Water;
 class Recipe;
+class RecipeUseOfWater;
 
 class WaterItemDelegate;
 
@@ -65,6 +66,7 @@ public:
    ColumnInfo const & getColumnInfo(ColumnIndex const columnIndex) const;
 
    void addWaters(QList<std::shared_ptr<Water> > waters);
+   void addWaters(Recipe const & recipe);
    void observeRecipe(Recipe* rec);
    void observeDatabase(bool val);
    void removeAll();

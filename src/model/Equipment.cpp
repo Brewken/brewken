@@ -103,12 +103,12 @@ TypeLookup const Equipment::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::packagingVesselNotes       , Equipment::m_packagingVesselNotes       ,           NonPhysicalQuantity::String              ),
    },
    // Parent class lookup
-   {&NamedEntityWithFolder::typeLookup}
+   {&NamedEntity::typeLookup}
 };
 
 //=============================CONSTRUCTORS=====================================
 Equipment::Equipment(QString name) :
-   NamedEntityWithFolder        {name, true},
+   NamedEntity        {name, true},
    m_kettleBoilSize_l           {22.927      },
    m_fermenterBatchSize_l       {18.927      },
    m_mashTunVolume_l            {0.0         },
@@ -166,7 +166,7 @@ Equipment::Equipment(QString name) :
 //    - boilingPoint_c
 //
 Equipment::Equipment(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntityWithFolder{namedParameterBundle},
+   NamedEntity{namedParameterBundle},
    SET_REGULAR_FROM_NPB (m_kettleBoilSize_l           , namedParameterBundle, PropertyNames::Equipment::kettleBoilSize_l           ),
    SET_REGULAR_FROM_NPB (m_fermenterBatchSize_l       , namedParameterBundle, PropertyNames::Equipment::fermenterBatchSize_l       ),
    SET_REGULAR_FROM_NPB (m_mashTunVolume_l            , namedParameterBundle, PropertyNames::Equipment::mashTunVolume_l            ),
@@ -218,7 +218,7 @@ Equipment::Equipment(NamedParameterBundle const & namedParameterBundle) :
 }
 
 Equipment::Equipment(Equipment const & other) :
-   NamedEntityWithFolder        {other                              },
+   NamedEntity        {other                              },
    m_kettleBoilSize_l           {other.m_kettleBoilSize_l           },
    m_fermenterBatchSize_l       {other.m_fermenterBatchSize_l       },
    m_mashTunVolume_l            {other.m_mashTunVolume_l            },
@@ -348,7 +348,7 @@ void Equipment::setKettleEvaporationPerHour_l(std::optional<double> const val) {
    // NOTE: We never use evapRate_pctHr, but we maintain here anyway.
    // Because both values are stored in the DB, and because we only want to call prepareForPropertyChange() once, we
    // can't use the setAndNotify() helper function
-   this->prepareForPropertyChange(this, PropertyNames::Equipment::kettleEvaporationPerHour_l);
+   this->prepareForPropertyChange(PropertyNames::Equipment::kettleEvaporationPerHour_l);
    this->m_kettleEvaporationPerHour_l = this->enforceMin(val, "evap rate");
    if (this->m_kettleEvaporationPerHour_l) {
       this->m_evapRate_pctHr = *this->m_kettleEvaporationPerHour_l/this->m_fermenterBatchSize_l * 100.0; // We don't use it, but keep it current.
@@ -432,3 +432,7 @@ double Equipment::wortEndOfBoil_l( double kettleWort_l ) const {
 ///Recipe * Equipment::getOwningRecipe() const {
 ///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
 ///}
+
+
+// Boilerplate code for FolderBase
+FOLDER_BASE_COMMON_CODE(Equipment)

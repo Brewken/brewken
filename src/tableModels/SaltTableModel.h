@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/SaltTableModel.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * tableModels/SaltTableModel.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -45,9 +45,11 @@ class SaltTableModel;
 template <> struct TableModelTraits<SaltTableModel> {
    enum class ColumnIndex {
       Name   ,
-      Amount ,
-      AddTo  ,
+///      Amount ,
+///      AddTo  ,
       PctAcid,
+      TotalInventory    ,
+      TotalInventoryType,
    };
 };
 
@@ -56,35 +58,35 @@ template <> struct TableModelTraits<SaltTableModel> {
  *
  * \brief Table model for salts.
  */
-class SaltTableModel : public BtTableModelRecipeObserver, public TableModelBase<SaltTableModel, Salt> {
+class SaltTableModel : public BtTableModel, public TableModelBase<SaltTableModel, Salt> {
    Q_OBJECT
 
    TABLE_MODEL_COMMON_DECL(Salt)
 
-public:
-   double total_Ca() const;
-   double total_Cl() const;
-   double total_CO3() const;
-   double total_HCO3() const;
-   double total_Mg() const;
-   double total_Na() const;
-   double total_SO4() const;
-
-   double total(Water::Ion ion) const;
-   double total( Salt::Type type ) const;
-   double totalAcidWeight(Salt::Type type) const;
-
-   void saveAndClose();
-
-public slots:
-   void catchSalt();
-
-signals:
-   void newTotals();
-
-private:
-///   double spargePct;
-   double multiplier(Salt & salt) const;
+///public:
+///   double total_Ca() const;
+///   double total_Cl() const;
+///   double total_CO3() const;
+///   double total_HCO3() const;
+///   double total_Mg() const;
+///   double total_Na() const;
+///   double total_SO4() const;
+///
+///   double total(Water::Ion ion) const;
+///   double total( Salt::Type type ) const;
+///   double totalAcidWeight(Salt::Type type) const;
+///
+///   void saveAndClose();
+///
+///public slots:
+///   void catchSalt();
+///
+///signals:
+///   void newTotals();
+///
+///private:
+//////   double spargePct;
+///   double multiplier(Salt & salt) const;
 };
 
 //=============================================== CLASS SaltItemDelegate ===============================================
@@ -94,7 +96,7 @@ private:
  * \sa SaltTableModel.
  */
 class SaltItemDelegate : public QItemDelegate,
-                                public ItemDelegate<SaltItemDelegate, SaltTableModel> {
+                         public ItemDelegate<SaltItemDelegate, SaltTableModel> {
    Q_OBJECT
 
    ITEM_DELEGATE_COMMON_DECL(Salt)

@@ -19,15 +19,15 @@
 
 #include <QString>
 
-#include "model/NamedEntity.h"
+#include "model/IngredientInRecipe.h"
 #include "utils/EnumStringMapping.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::RecipeAddition { BtStringConst const property{#property}; }
-AddPropertyName(recipeId       )
-AddPropertyName(ingredientId   )
+///AddPropertyName(recipeId       )
+///AddPropertyName(ingredientId   )
 AddPropertyName(stage          )
 AddPropertyName(step           )
 AddPropertyName(addAtTime_mins )
@@ -86,7 +86,7 @@ AddPropertyName(duration_mins  )
  *              \c Water addition in a \c Recipe essentially just says how much water of a particular profile that
  *              recipe uses.  Hence we have \c RecipeUseOfWater not \c RecipeAdditionWater.
  */
-class RecipeAddition : public NamedEntity {
+class RecipeAddition : public IngredientInRecipe {
    Q_OBJECT
 
 public:
@@ -143,15 +143,10 @@ public:
 
    //=================================================== PROPERTIES ====================================================
 
-   /**
-    * \brief The ID of the recipe in which the addition is being made
-    */
-   Q_PROPERTY(int recipeId READ recipeId WRITE setRecipeId)
-
-   /**
-    * \brief The ID of the ingredient (ie \c Hop, \c Fermentable, \c Misc or \c Yeast) being added
-    */
-   Q_PROPERTY(int ingredientId READ ingredientId WRITE setIngredientId)
+///   /**
+///    * \brief The ID of the recipe in which the addition is being made
+///    */
+///   Q_PROPERTY(int recipeId READ recipeId WRITE setRecipeId)
 
    /**
     * \brief Strictly speaking in BeerJSON, this is an optional parameter, but we have to assume something if it's not
@@ -200,13 +195,12 @@ public:
 
    /**
     * \brief If set, tells us how long an ingredient addition remains.  This corresponds to the TIME attribute in
-    *        BeerXML.
+    *        BeerXML.  Obviously this does not make sense for every addition.
     */
    Q_PROPERTY(std::optional<double> duration_mins   READ duration_mins    WRITE setDuration_mins)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-   int                   recipeId       () const;
-   int                   ingredientId   () const;
+///   int                   recipeId       () const;
    Stage                 stage          () const;
    std::optional<int>    step           () const;
    std::optional<double> addAtTime_mins () const;
@@ -214,11 +208,10 @@ public:
    std::optional<double> addAtAcidity_pH() const;
    std::optional<double> duration_mins  () const;
 
-   Recipe *              recipe         () const;
+///   Recipe *              recipe         () const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   void setRecipeId       (int                   const val);
-   void setIngredientId   (int                   const val);
+///   void setRecipeId       (int                   const val);
    void setStage          (Stage                 const val);
    void setStep           (std::optional<int>    const val);
    void setAddAtTime_mins (std::optional<double> const val);
@@ -230,8 +223,7 @@ protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
 
 protected:
-   int                   m_recipeId       ;
-   int                   m_ingredientId   ;
+///   int                   m_recipeId       ;
    Stage                 m_stage          ;
    std::optional<int>    m_step           ;
    std::optional<double> m_addAtTime_mins ;
@@ -239,6 +231,5 @@ protected:
    std::optional<double> m_addAtAcidity_pH;
    std::optional<double> m_duration_mins  ;
 };
-
 
 #endif

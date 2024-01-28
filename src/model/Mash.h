@@ -32,6 +32,7 @@
 #include <QVariant>
 #include <QVector>
 
+#include "model/FolderBase.h"
 #include "model/NamedEntity.h"
 #include "model/StepOwnerBase.h"
 
@@ -67,9 +68,11 @@ class MashStep;
  *        .:TBD:. Mashes have a freestanding existence and can, in principle, be shared between Recipes but the UI does
  *        not currently enforce them having non-empty names.
  */
-class Mash : public NamedEntity, public StepOwnerBase<Mash, MashStep> {
+class Mash : public NamedEntity,
+             public FolderBase<Mash>,
+             public StepOwnerBase<Mash, MashStep> {
    Q_OBJECT
-
+   FOLDER_BASE_DECL(Mash)
    STEP_OWNER_COMMON_DECL(Mash, mash)
 
 public:

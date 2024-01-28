@@ -49,7 +49,7 @@ MiscTableModel::MiscTableModel(QTableView* parent, bool editable) :
 ///         TABLE_MODEL_HEADER(Misc, Use               , tr("Use"        ), PropertyNames::Misc::use                                   , EnumInfo{Misc:: useStringMapping, Misc:: useDisplayNames}),
 ///         TABLE_MODEL_HEADER(Misc, Time              , tr("Time"       ), PropertyNames::Misc::time_min                              ),
          TABLE_MODEL_HEADER(Misc, TotalInventory    , tr("Inventory"  ), PropertyNames::Ingredient::totalInventory, PrecisionInfo{1}),
-         TABLE_MODEL_HEADER(Misc, TotalInventoryType, tr("Amount Type"), PropertyNames::Ingredient::totalInventory, Hop::validMeasures),
+         TABLE_MODEL_HEADER(Misc, TotalInventoryType, tr("Amount Type"), PropertyNames::Ingredient::totalInventory, Misc::validMeasures),
       }
    },
    TableModelBase<MiscTableModel, Misc>{} {

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Boil.h is part of Brewken, and is copyright the following authors 2023:
+ * model/Boil.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #include <QString>
 
 #include "model/BoilStep.h"
+#include "model/FolderBase.h"
 #include "model/NamedEntity.h"
 #include "model/StepOwnerBase.h"
 
@@ -42,7 +43,6 @@ AddPropertyName(boilStepsDowncast)
 //======================================================================================================================
 
 
-
 /**
  * \class Boil is a collection of steps providing process information for common boil procedures.  It is introduced as
  *             part of BeerJSON.  It shares a number of characteristics with \c Mash.
@@ -59,9 +59,12 @@ AddPropertyName(boilStepsDowncast)
  *             Additionally, there is a short-term benefit, which is that we can share a lot of the logic between
  *             MashStep and BoilStep, which saves us duplicating code.
  */
-class Boil : public NamedEntity, public StepOwnerBase<Boil, BoilStep> {
+class Boil : public NamedEntity,
+             public FolderBase<Boil>,
+             public StepOwnerBase<Boil, BoilStep> {
    Q_OBJECT
 
+   FOLDER_BASE_DECL(Boil)
    STEP_OWNER_COMMON_DECL(Boil, boil)
 
 public:

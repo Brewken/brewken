@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedEntity.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/NamedEntity.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -436,50 +436,19 @@ void NamedEntity::setEitherOrOptParams(NamedParameterBundle const & namedParamet
    return;
 }
 
-template<typename NE> void NamedEntity::prepareForPropertyChange(NE * ne, BtStringConst const & propertyName) {
+void NamedEntity::prepareForPropertyChange(BtStringConst const & propertyName) {
    //
    // At the moment, the only thing we want to do in this pre-change check is to see whether we need to version a
    // Recipe.  Obviously we leave all the details of that to the Recipe-related namespace.
    //
    // Obviously nothing gets versioned if it's not yet in the DB
    //
-   if (ne->key() > 0) {
-      RecipeHelper::prepareForPropertyChange<NE>(*ne, propertyName);
+   auto owningRecipe = this->owningRecipe();
+   if (owningRecipe) {
+      RecipeHelper::prepareForPropertyChange(*this, propertyName);
    }
    return;
 }
-//
-// Instantiate the above template function for the types that are going to use it
-// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
-// helps us avoid circular dependencies.)
-//
-template void NamedEntity::prepareForPropertyChange(Boil                      * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(BoilStep                  * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(BrewNote                  * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(Equipment                 * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(Fermentable               * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(Fermentation              * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(FermentationStep          * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(Hop                       * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(Instruction               * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(InventoryFermentable      * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(InventoryHop              * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(InventoryMisc             * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(InventoryYeast            * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(Mash                      * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(MashStep                  * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(Misc                      * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(RecipeAdditionFermentable * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(RecipeAdditionHop         * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(RecipeAdditionMisc        * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(RecipeAdditionYeast       * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(Recipe                    * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(RecipeUseOfWater          * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(Salt                      * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(Style                     * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(Water                     * ne, BtStringConst const & propertyName);
-template void NamedEntity::prepareForPropertyChange(Yeast                     * ne, BtStringConst const & propertyName);
-
 
 void NamedEntity::propagatePropertyChange(BtStringConst const & propertyName, bool notify) const {
    // If we're already stored in the object store, tell it about the property change so that it can write it to the
@@ -500,6 +469,11 @@ void NamedEntity::propagatePropertyChange(BtStringConst const & propertyName, bo
    }
 
    return;
+}
+
+std::optional<std::shared_ptr<Recipe>> NamedEntity::owningRecipe() const {
+   // Default is for NamedEntity not to be owned.
+   return std::nullopt;
 }
 
 NamedEntity * NamedEntity::getParent() const {

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/RecipeAdditionMisc.h is part of Brewken, and is copyright the following authors 2023-2024:
+ * model/RecipeAdjustmentSalt.h is part of Brewken, and is copyright the following authors 2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,40 +13,48 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef MODEL_RECIPEADDITIONMISC_H
-#define MODEL_RECIPEADDITIONMISC_H
+#ifndef MODEL_RECIPEADJUSTMENTSALT_H
+#define MODEL_RECIPEADJUSTMENTSALT_H
 #pragma once
 
 #include <memory>
 
 #include "model/IngredientAmount.h"
-#include "model/Misc.h"
-#include "model/RecipeAddition.h"
+#include "model/IngredientInRecipe.h"
 #include "model/RecipeAdditionBase.h"
 #include "model/Recipe.h"
+#include "model/Salt.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::RecipeAdditionMisc { BtStringConst const property{#property}; }
-AddPropertyName(misc)
-AddPropertyName(use) // Deprecated - retained only for BeerXML
-
+#define AddPropertyName(property) namespace PropertyNames::RecipeAdjustmentSalt { BtStringConst const property{#property}; }
+AddPropertyName(salt     )
+AddPropertyName(whenToAdd)
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
 
 /**
- * \brief Represents the addition of a \c Misc to a \c Recipe
+ * \brief Represents the addition of a \c Salt to a \c Recipe to adjust a water profile.
+ *
+ *        Salts, and the timing of their additions, are different from other ingredients, so we do not inherit from
+ *        \c RecipeAddition, though, as with \c RecipeUseOfWater, we do try to align with it where that makes sense and
+ *        reduces code duplication.
+ *
+ *        In BeerXML and BeerJSON, salt additions are not part of the recipe.  Arguably they are an adaptation to allow
+ *        a recipe to be brewed from a different water profile, thus two different brewers brewing the same beer in
+ *        different locations might need different salt additions.
  */
-class RecipeAdditionMisc : public RecipeAddition,
-                           public RecipeAdditionBase<RecipeAdditionMisc, Misc>,
-                           public IngredientAmount<RecipeAdditionMisc, Misc> {
+class RecipeAdjustmentSalt : public IngredientInRecipe,
+                             public RecipeAdditionBase<RecipeAdjustmentSalt, Salt>,
+                             public IngredientAmount<RecipeAdjustmentSalt, Salt> {
    Q_OBJECT
 
-   RECIPE_ADDITION_DECL(Misc)
+   // This allows RecipeAdditionBase to call protected and private members of RecipeAdjustmentSalt
+   friend class RecipeAdditionBase<RecipeAdjustmentSalt, Salt>;
 
-   INGREDIENT_AMOUNT_DECL(RecipeAdditionMisc, Misc)
+   INGREDIENT_AMOUNT_DECL(RecipeAdjustmentSalt, Salt)
 
 public:
    /**
@@ -54,34 +62,17 @@ public:
     */
    static QString const LocalisedName;
 
-   /*!
-    * \brief This is the old (BeerXML) way of specifying the stage at which the misc addition happens.  It is retained
-    *        for BeerXML but otherwise deprecated.  With the arrival of BeerJSON, we now use \c RecipeAddition::Stage
-    *        and \c RecipeAddition::Step to hold this information with more consistency and precision.
-    *
-    *        See also \c RecipeAdditionHop::Use.
-    */
-   enum class Use {Mash     ,
-                   Boil     ,
-                   Primary  ,
-                   Secondary,
-                   Bottling ,};
+   enum class WhenToAdd {
+      Mash  ,
+      Sparge,
+      Ratio ,
+      Equal ,
+   };
    // This allows us to store the above enum class in a QVariant
-   Q_ENUM(Use)
+   Q_ENUM(WhenToAdd)
 
-   /*!
-    * \brief Mapping between \c RecipeAdditionMisc::Use and string values suitable for serialisation in DB, BeerXML, etc
-    *        (but \b not used in BeerJSON)
-    *
-    *        This can also be used to obtain the number of values of \c Type, albeit at run-time rather than
-    *        compile-time.  (One day, C++ will have reflection and we won't need to do things this way.)
-    */
-   static EnumStringMapping const useStringMapping;
-
-   /*!
-    * \brief Localised names of \c RecipeAdditionMisc::Use values suitable for displaying to the end user
-    */
-   static EnumStringMapping const useDisplayNames;
+   static EnumStringMapping const whenToAddStringMapping;
+   static EnumStringMapping const whenToAddDisplayNames;
 
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
@@ -89,19 +80,14 @@ public:
     */
    static TypeLookup const typeLookup;
 
-   RecipeAdditionMisc(QString name = "", int const recipeId = -1, int const ingredientId = -1);
-   RecipeAdditionMisc(NamedParameterBundle const & namedParameterBundle);
-   RecipeAdditionMisc(RecipeAdditionMisc const & other);
+   RecipeAdjustmentSalt(QString name = "", int const recipeId = -1, int const saltId = -1);
+   RecipeAdjustmentSalt(NamedParameterBundle const & namedParameterBundle);
+   RecipeAdjustmentSalt(RecipeAdjustmentSalt const & other);
 
-   virtual ~RecipeAdditionMisc();
+   virtual ~RecipeAdjustmentSalt();
 
    //=================================================== PROPERTIES ====================================================
-   /**
-    * \brief The \c Use.  This is moved from \c Misc with the introduction of BeerJSON.  It is required for BeerXML, but
-    *        \b deprecated for other use.
-    */
-   Q_PROPERTY(Use   use   READ use   WRITE setUse STORED false)
-   Q_PROPERTY(Misc * misc   READ misc   WRITE setMisc             )
+   Q_PROPERTY(Salt * salt   READ salt   WRITE setSalt             )
 
    // See model/IngredientAmount.h
    Q_PROPERTY(Measurement::Amount           amount    READ amount     WRITE setAmount  )
@@ -110,16 +96,20 @@ public:
    Q_PROPERTY(Measurement::PhysicalQuantity measure   READ measure    WRITE setMeasure )
    Q_PROPERTY(bool                          isWeight  READ isWeight   WRITE setIsWeight)
 
+   /**
+    * \brief The \c Use.  This is moved from \c Salt.  It is retained for our non-standard BeerXML extensions, but
+    *        \b deprecated for other use.
+    */
+   //! \brief When to add the salt (mash or sparge)
+   Q_PROPERTY(WhenToAdd whenToAdd      READ whenToAdd      WRITE setWhenToAdd       )
+
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-   // Ideally this too would be marked [[deprecated]], but we do need to refer to it in RecipeAdditionMisc::typeLookup
-   Use use() const;
-   Misc * misc () const;
+   Salt *               salt          () const;
+   RecipeAdjustmentSalt::WhenToAdd whenToAdd()      const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   [[deprecated]] void setUse(Use const val);
-   void setMisc(Misc * const val);
-
-///   virtual Recipe * getOwningRecipe() const;
+   void setSalt          (Salt *               const val);
+   void setWhenToAdd     (RecipeAdjustmentSalt::WhenToAdd val);
 
    virtual NamedEntity * ensureExists(BtStringConst const & property);
 
@@ -127,10 +117,12 @@ protected:
    // Note that we don't override isEqualTo, as we don't have any non-inherited member variables
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
+private:
+   WhenToAdd m_whenToAdd;
 };
 
-Q_DECLARE_METATYPE(Misc)
-Q_DECLARE_METATYPE(Misc *)
-Q_DECLARE_METATYPE(QList<std::shared_ptr<RecipeAdditionMisc> >)
+Q_DECLARE_METATYPE(Salt)
+Q_DECLARE_METATYPE(Salt *)
+Q_DECLARE_METATYPE(QList<std::shared_ptr<RecipeAdjustmentSalt> >)
 
 #endif

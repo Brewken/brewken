@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/RecipeAdditionHop.h is part of Brewken, and is copyright the following authors 2023:
+ * model/RecipeAdditionHop.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -89,7 +89,7 @@ public:
     */
    static TypeLookup const typeLookup;
 
-   RecipeAdditionHop(QString name = "", int const recipeId = -1, int const hopId = -1);
+   RecipeAdditionHop(QString name = "", int const recipeId = -1, int const ingredientId = -1);
    RecipeAdditionHop(NamedParameterBundle const & namedParameterBundle);
    RecipeAdditionHop(RecipeAdditionHop const & other);
 

@@ -64,8 +64,8 @@ static_assert(HasTypeLookup<Misc>);
 static_assert(!HasTypeLookup<QString>);
 
 
-RecipeAdditionMisc::RecipeAdditionMisc(QString name, int const recipeId, int const hopId) :
-   RecipeAddition{name, recipeId, hopId},
+RecipeAdditionMisc::RecipeAdditionMisc(QString name, int const recipeId, int const ingredientId) :
+   RecipeAddition{name, recipeId, ingredientId},
    RecipeAdditionBase<RecipeAdditionMisc, Misc>{},
    IngredientAmount<RecipeAdditionMisc, Misc>{} {
    return;
@@ -77,7 +77,7 @@ RecipeAdditionMisc::RecipeAdditionMisc(NamedParameterBundle const & namedParamet
    IngredientAmount<RecipeAdditionMisc, Misc>{namedParameterBundle} {
    //
    // If the addition stage is not specified then we assume it is boil, as this is the first stage at which it is usual
-   // to add hops.
+   // to add miscs.
    //
    m_stage = namedParameterBundle.val<RecipeAddition::Stage>(PropertyNames::RecipeAddition::stage,
                                                              RecipeAddition::Stage::Boil);

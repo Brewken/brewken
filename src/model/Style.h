@@ -26,7 +26,8 @@
 #include <QStringList>
 #include <QSqlRecord>
 
-#include "model/NamedEntityWithFolder.h"
+#include "model/FolderBase.h"
+#include "model/NamedEntity.h"
 #include "utils/EnumStringMapping.h"
 
 //======================================================================================================================
@@ -70,8 +71,10 @@ AddPropertyName(typeString       )
  *
  * \brief Model for style records in the database.
  */
-class Style : public NamedEntityWithFolder {
+class Style : public NamedEntity,
+              public FolderBase<Style> {
    Q_OBJECT
+   FOLDER_BASE_DECL(Style)
 
 public:
    /**
