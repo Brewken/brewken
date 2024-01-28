@@ -167,13 +167,18 @@ namespace {
       ObjectStoreWrapper::insert(copy);
       return copy;
    }
-   template<> std::shared_ptr<RecipeAdditionHop> copyIfNeeded(RecipeAdditionHop & var) {
-      qDebug() << Q_FUNC_INFO << "Making copy of " << var.metaObject()->className() << "#" << var.key();
-
-      auto copy = std::make_shared<RecipeAdditionHop>(var);
-      ObjectStoreWrapper::insert(copy);
-      return copy;
-   }
+   template<> std::shared_ptr<RecipeAdditionFermentable> copyIfNeeded(RecipeAdditionFermentable & var) = delete;
+   template<> std::shared_ptr<RecipeAdditionHop        > copyIfNeeded(RecipeAdditionHop         & var) = delete;
+   template<> std::shared_ptr<RecipeAdditionMisc       > copyIfNeeded(RecipeAdditionMisc        & var) = delete;
+   template<> std::shared_ptr<RecipeAdditionYeast      > copyIfNeeded(RecipeAdditionYeast       & var) = delete;
+   template<> std::shared_ptr<RecipeAdjustmentSalt     > copyIfNeeded(RecipeAdjustmentSalt      & var) = delete;
+   template<> std::shared_ptr<RecipeUseOfWater         > copyIfNeeded(RecipeUseOfWater          & var) = delete;
+   template<> std::shared_ptr<Fermentable> copyIfNeeded(Fermentable & var) = delete;
+   template<> std::shared_ptr<Hop        > copyIfNeeded(Hop         & var) = delete;
+   template<> std::shared_ptr<Misc       > copyIfNeeded(Misc        & var) = delete;
+   template<> std::shared_ptr<Yeast      > copyIfNeeded(Yeast       & var) = delete;
+   template<> std::shared_ptr<Salt       > copyIfNeeded(Salt        & var) = delete;
+   template<> std::shared_ptr<Water      > copyIfNeeded(Water       & var) = delete;
 
    //
    // After we modified a property via a templated member function of Recipe, we need to tell the object store to
@@ -189,8 +194,8 @@ namespace {
    template<> BtStringConst const & propertyToPropertyName<RecipeAdditionHop        >() { return PropertyNames::Recipe::hopAdditionIds        ; }
    template<> BtStringConst const & propertyToPropertyName<RecipeAdditionMisc       >() { return PropertyNames::Recipe::miscAdditionIds       ; }
    template<> BtStringConst const & propertyToPropertyName<RecipeAdditionYeast      >() { return PropertyNames::Recipe::yeastAdditionIds      ; }
-   template<> BtStringConst const & propertyToPropertyName<RecipeUseOfWater         >() { return PropertyNames::Recipe::waterUseIds           ; }
    template<> BtStringConst const & propertyToPropertyName<RecipeAdjustmentSalt     >() { return PropertyNames::Recipe::saltAdjustmentIds     ; }
+   template<> BtStringConst const & propertyToPropertyName<RecipeUseOfWater         >() { return PropertyNames::Recipe::waterUseIds           ; }
    template<> BtStringConst const & propertyToPropertyName<Style                    >() { return PropertyNames::Recipe::styleId               ; }
 
 ///   QHash<QString, Recipe::Type> const RECIPE_TYPE_STRING_TO_TYPE {
@@ -906,9 +911,9 @@ public:
 
 };
 
+template<> QVector<int> & Recipe::impl::accessIds<Instruction>() { return this->instructionIds; }
 ///template<> QVector<int> & Recipe::impl::accessIds<Fermentable>() { return this->fermentableIds; }
 ///template<> QVector<int> & Recipe::impl::accessIds<RecipeAdditionHop>()         { return this->m_hopAdditionIds; }
-template<> QVector<int> & Recipe::impl::accessIds<Instruction>() { return this->instructionIds; }
 ///template<> QVector<int> & Recipe::impl::accessIds<Misc>()        { return this->miscIds; }
 ///template<> QVector<int> & Recipe::impl::accessIds<Salt>()        { return this->saltIds; }
 ///template<> QVector<int> & Recipe::impl::accessIds<Water>()       { return this->waterIds; }
@@ -1067,12 +1072,15 @@ TypeLookup const Recipe::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::boilSize_l            , Recipe::boilSize_l            , Measurement::PhysicalQuantity::Volume        ),
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::boilTime_min          , Recipe::boilTime_min          , Measurement::PhysicalQuantity::Time          ),
    },
-   // Parent class lookup
-   {&NamedEntity::typeLookup}
+   // Parent classes lookup
+   {&NamedEntity::typeLookup,
+    std::addressof(FolderBase<Recipe>::typeLookup)}
 };
+static_assert(std::is_base_of<FolderBase<Recipe>, Recipe>::value);
 
 Recipe::Recipe(QString name) :
    NamedEntity{name, true                   },
+   FolderBase<Recipe>{},
    pimpl               {std::make_unique<impl>(*this)},
    m_type              {Recipe::Type::AllGrain       },
    m_brewer            {""                           },
@@ -1114,6 +1122,7 @@ Recipe::Recipe(QString name) :
 
 Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity{namedParameterBundle         },
+   FolderBase<Recipe>{namedParameterBundle},
    pimpl               {std::make_unique<impl>(*this)},
    SET_REGULAR_FROM_NPB (m_type              , namedParameterBundle, PropertyNames::Recipe::type              ),
    SET_REGULAR_FROM_NPB (m_brewer            , namedParameterBundle, PropertyNames::Recipe::brewer            ),
@@ -1168,6 +1177,7 @@ Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
 
 Recipe::Recipe(Recipe const & other) :
    NamedEntity{other},
+   FolderBase<Recipe>{other},
    pimpl{std::make_unique<impl>(*this)},
    m_type              {other.m_type              },
    m_brewer            {other.m_brewer            },

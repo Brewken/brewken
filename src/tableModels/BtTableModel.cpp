@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/BtTableModel.cpp is part of Brewken, and is copyright the following authors 2021-2023:
+ * tableModels/BtTableModel.cpp is part of Brewken, and is copyright the following authors 2021-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -89,6 +89,12 @@ BtTableModel::ColumnInfo const & BtTableModel::getColumnInfo(size_t const column
    Q_ASSERT(columnIndex < this->m_columnInfos.size());
 
    BtTableModel::ColumnInfo const & columnInfo = this->m_columnInfos[columnIndex];
+
+   // Normally the following log statement should be left commented, as it generates a _lot_ of logging.  Uncomment it
+   // temporarily if the assert below is firing.
+//   qDebug().noquote() <<
+//      Q_FUNC_INFO << "columnInfo.index:" << columnInfo.index << ", columnIndex:" << columnIndex <<
+//      Logging::getStackTrace();
 
    // It's a coding error if the info for column N isn't at position N in the vector (in both cases counting from 0)
    Q_ASSERT(columnInfo.index == columnIndex);

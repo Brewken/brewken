@@ -67,14 +67,17 @@ TypeLookup const Mash::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Mash::mashSteps        , Mash::mashSteps        ),
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Mash::mashStepsDowncast, Mash::mashStepsDowncast),
    },
-   // Parent class lookup
-   {&NamedEntity::typeLookup}
+   // Parent classes lookup
+   {&NamedEntity::typeLookup,
+    std::addressof(FolderBase<Mash>::typeLookup)}
 };
+static_assert(std::is_base_of<FolderBase<Mash>, Mash>::value);
 
 //==================================================== CONSTRUCTORS ====================================================
 
 Mash::Mash(QString name) :
    NamedEntity{name, true},
+   FolderBase<Mash>{},
    StepOwnerBase<Mash, MashStep>{},
    m_grainTemp_c              {0.0 },
    m_notes                    {""  },
@@ -89,6 +92,7 @@ Mash::Mash(QString name) :
 
 Mash::Mash(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity                {namedParameterBundle},
+   FolderBase<Mash>{namedParameterBundle},
    StepOwnerBase<Mash, MashStep>{},
    SET_REGULAR_FROM_NPB (m_grainTemp_c              , namedParameterBundle, PropertyNames::Mash::grainTemp_c              ),
    SET_REGULAR_FROM_NPB (m_notes                    , namedParameterBundle, PropertyNames::Mash::notes                    ),
@@ -103,6 +107,7 @@ Mash::Mash(NamedParameterBundle const & namedParameterBundle) :
 
 Mash::Mash(Mash const & other) :
    NamedEntity{other},
+   FolderBase<Mash>{other},
    StepOwnerBase<Mash, MashStep>{other},
    m_grainTemp_c              {other.m_grainTemp_c              },
    m_notes                    {other.m_notes                    },

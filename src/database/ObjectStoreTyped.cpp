@@ -633,17 +633,17 @@ namespace {
          {ObjectStore::FieldType::Bool  , "as_hco3"    , PropertyNames::Water::alkalinityAsHCO3},
       }
    };
-   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Water> {
-      {
-         "water_children",
-         {
-            {ObjectStore::FieldType::Int, "id"                                                                              },
-            {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Water>},
-            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, &PRIMARY_TABLE<Water>},
-         },
-         ObjectStore::MAX_ONE_ENTRY
-      }
-   };
+///   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Water> {
+///      {
+///         "water_children",
+///         {
+///            {ObjectStore::FieldType::Int, "id"                                                                              },
+///            {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Water>},
+///            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, &PRIMARY_TABLE<Water>},
+///         },
+///         ObjectStore::MAX_ONE_ENTRY
+///      }
+///   };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Yeast
@@ -939,13 +939,13 @@ namespace {
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<RecipeUseOfWater> {
       "water_in_recipe",
       {
-         {ObjectStore::FieldType::Int   , "id"           , PropertyNames::NamedEntity::key                    },
-         {ObjectStore::FieldType::String, "name"         , PropertyNames::NamedEntity::name                   },
-         {ObjectStore::FieldType::Bool  , "display"      , PropertyNames::NamedEntity::display                },
-         {ObjectStore::FieldType::Bool  , "deleted"      , PropertyNames::NamedEntity::deleted                },
-         {ObjectStore::FieldType::Int   , "recipe_id"    , PropertyNames::OwnedByRecipe::recipeId            , &PRIMARY_TABLE<Recipe>},
-         {ObjectStore::FieldType::Int   , "water_id"     , PropertyNames::IngredientInRecipe::ingredientId        , &PRIMARY_TABLE<Yeast>   },
-         {ObjectStore::FieldType::Double, "volume_liters", PropertyNames::RecipeUseOfWater::volume_l          },
+         {ObjectStore::FieldType::Int   , "id"       , PropertyNames::NamedEntity::key                },
+         {ObjectStore::FieldType::String, "name"     , PropertyNames::NamedEntity::name               },
+         {ObjectStore::FieldType::Bool  , "display"  , PropertyNames::NamedEntity::display            },
+         {ObjectStore::FieldType::Bool  , "deleted"  , PropertyNames::NamedEntity::deleted            },
+         {ObjectStore::FieldType::Int   , "recipe_id", PropertyNames::OwnedByRecipe::recipeId         , &PRIMARY_TABLE<Recipe>},
+         {ObjectStore::FieldType::Int   , "water_id" , PropertyNames::IngredientInRecipe::ingredientId, &PRIMARY_TABLE<Water>   },
+         {ObjectStore::FieldType::Double, "volume_l" , PropertyNames::RecipeUseOfWater::volume_l      },
       }
    };
 

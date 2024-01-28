@@ -1130,23 +1130,23 @@ namespace {
       //      XmlRecordDefinition::create<XmlNamedEntityRecord<Recipe>>,
       XmlRecordDefinition::create<XmlRecipeRecord>,
       {
-         // Type                                            XPath                       Q_PROPERTY                                   Value Decoder
-         {XmlRecordDefinition::FieldType::String          , "NAME"                    , PropertyNames::NamedEntity::name           },
-         {XmlRecordDefinition::FieldType::RequiredConstant, "VERSION"                 , VERSION1                                   },
-         {XmlRecordDefinition::FieldType::Enum            , "TYPE"                    , PropertyNames::Recipe::type                , &BEER_XML_RECIPE_STEP_TYPE_MAPPER},
-         {XmlRecordDefinition::FieldType::Record          , "STYLE"                   , PropertyNames::Recipe::style               , &BEER_XML_RECORD_DEFINITION<Style>},
-         {XmlRecordDefinition::FieldType::Record          , "EQUIPMENT"               , PropertyNames::Recipe::equipment           , &BEER_XML_RECORD_DEFINITION<Equipment>},
-         {XmlRecordDefinition::FieldType::String          , "BREWER"                  , PropertyNames::Recipe::brewer              },
-         {XmlRecordDefinition::FieldType::String          , "ASST_BREWER"             , PropertyNames::Recipe::asstBrewer          },
-         {XmlRecordDefinition::FieldType::Double          , "BATCH_SIZE"              , PropertyNames::Recipe::batchSize_l         },
-         {XmlRecordDefinition::FieldType::Double          , "BOIL_SIZE"               , PropertyNames::Recipe::boilSize_l          },
-         {XmlRecordDefinition::FieldType::Double          , "BOIL_TIME"               , PropertyNames::Recipe::boilTime_min        },
-         {XmlRecordDefinition::FieldType::Double          , "EFFICIENCY"              , PropertyNames::Recipe::efficiency_pct      },
-         {XmlRecordDefinition::FieldType::ListOfRecords   , "HOPS/HOP"                , PropertyNames::Recipe::hopAdditions        , &BEER_XML_RECORD_DEFINITION<RecipeAdditionHop>  }, // Additional logic for "HOPS" is handled in xml/XmlRecipeRecord.cpp
+         // Type                                            XPath                       Q_PROPERTY                                 Value Decoder
+         {XmlRecordDefinition::FieldType::String          , "NAME"                    , PropertyNames::NamedEntity::name         },
+         {XmlRecordDefinition::FieldType::RequiredConstant, "VERSION"                 , VERSION1                                 },
+         {XmlRecordDefinition::FieldType::Enum            , "TYPE"                    , PropertyNames::Recipe::type              , &BEER_XML_RECIPE_STEP_TYPE_MAPPER},
+         {XmlRecordDefinition::FieldType::Record          , "STYLE"                   , PropertyNames::Recipe::style             , &BEER_XML_RECORD_DEFINITION<Style>},
+         {XmlRecordDefinition::FieldType::Record          , "EQUIPMENT"               , PropertyNames::Recipe::equipment         , &BEER_XML_RECORD_DEFINITION<Equipment>},
+         {XmlRecordDefinition::FieldType::String          , "BREWER"                  , PropertyNames::Recipe::brewer            },
+         {XmlRecordDefinition::FieldType::String          , "ASST_BREWER"             , PropertyNames::Recipe::asstBrewer        },
+         {XmlRecordDefinition::FieldType::Double          , "BATCH_SIZE"              , PropertyNames::Recipe::batchSize_l       },
+         {XmlRecordDefinition::FieldType::Double          , "BOIL_SIZE"               , PropertyNames::Recipe::boilSize_l        },
+         {XmlRecordDefinition::FieldType::Double          , "BOIL_TIME"               , PropertyNames::Recipe::boilTime_min      },
+         {XmlRecordDefinition::FieldType::Double          , "EFFICIENCY"              , PropertyNames::Recipe::efficiency_pct    },
+         {XmlRecordDefinition::FieldType::ListOfRecords   , "HOPS/HOP"                , PropertyNames::Recipe::hopAdditions      , &BEER_XML_RECORD_DEFINITION<RecipeAdditionHop>  }, // Additional logic for "HOPS" is handled in xml/XmlRecipeRecord.cpp
          {XmlRecordDefinition::FieldType::ListOfRecords   , "FERMENTABLES/FERMENTABLE", PropertyNames::Recipe::fermentableAdditions, &BEER_XML_RECORD_DEFINITION<RecipeAdditionFermentable>}, // Additional logic for "FERMENTABLES" is handled in xml/XmlRecipeRecord.cpp
-         {XmlRecordDefinition::FieldType::ListOfRecords   , "MISCS/MISC"              , PropertyNames::Recipe::miscAdditions       , &BEER_XML_RECORD_DEFINITION<RecipeAdditionMisc> }, // Additional logic for "MISCS" is handled in xml/XmlRecipeRecord.cpp
-         {XmlRecordDefinition::FieldType::ListOfRecords   , "YEASTS/YEAST"            , PropertyNames::Recipe::yeastAdditions      , &BEER_XML_RECORD_DEFINITION<RecipeAdditionYeast>}, // Additional logic for "YEASTS" is handled in xml/XmlRecipeRecord.cpp
-         {XmlRecordDefinition::FieldType::ListOfRecords   , "WATERS/WATER"            , PropertyNames::Recipe::waterUses           , &BEER_XML_RECORD_DEFINITION<RecipeUseOfWater>   }, // Additional logic for "WATERS" is handled in xml/XmlRecipeRecord.cpp
+         {XmlRecordDefinition::FieldType::ListOfRecords   , "MISCS/MISC"              , PropertyNames::Recipe::miscAdditions     , &BEER_XML_RECORD_DEFINITION<RecipeAdditionMisc> }, // Additional logic for "MISCS" is handled in xml/XmlRecipeRecord.cpp
+         {XmlRecordDefinition::FieldType::ListOfRecords   , "YEASTS/YEAST"            , PropertyNames::Recipe::yeastAdditions    , &BEER_XML_RECORD_DEFINITION<RecipeAdditionYeast>}, // Additional logic for "YEASTS" is handled in xml/XmlRecipeRecord.cpp
+         {XmlRecordDefinition::FieldType::ListOfRecords   , "WATERS/WATER"            , PropertyNames::Recipe::waterUses         , &BEER_XML_RECORD_DEFINITION<RecipeUseOfWater>   }, // Additional logic for "WATERS" is handled in xml/XmlRecipeRecord.cpp
          {XmlRecordDefinition::FieldType::Record          , "MASH"                    , PropertyNames::Recipe::mash              , &BEER_XML_RECORD_DEFINITION<Mash>             },
          {XmlRecordDefinition::FieldType::ListOfRecords   , "INSTRUCTIONS/INSTRUCTION", PropertyNames::Recipe::instructions      , &BEER_XML_RECORD_DEFINITION<Instruction>      }, // Additional logic for "INSTRUCTIONS" is handled in xml/XmlNamedEntityRecord.h
          {XmlRecordDefinition::FieldType::ListOfRecords   , "BREWNOTES/BREWNOTE"      , PropertyNames::Recipe::brewNotes         , &BEER_XML_RECORD_DEFINITION<BrewNote>         }, // Additional logic for "BREWNOTES" is handled in xml/XmlNamedEntityRecord.h

@@ -53,9 +53,11 @@ TypeLookup const Boil::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Boil::boilSteps        , Boil::boilSteps        ),
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Boil::boilStepsDowncast, Boil::boilStepsDowncast),
    },
-   // Parent class lookup
-   {&NamedEntity::typeLookup}
+   // Parent classes lookup
+   {&NamedEntity::typeLookup,
+    std::addressof(FolderBase<Boil>::typeLookup)}
 };
+static_assert(std::is_base_of<FolderBase<Boil>, Boil>::value);
 
 //==================================================== CONSTRUCTORS ====================================================
 

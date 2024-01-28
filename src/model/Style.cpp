@@ -93,9 +93,11 @@ TypeLookup const Style::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::mouthfeel        , Style::m_mouthfeel        ,           NonPhysicalQuantity::String     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::overallImpression, Style::m_overallImpression,           NonPhysicalQuantity::String     ),
    },
-   // Parent class lookup
-   {&NamedEntity::typeLookup}
+   // Parent classes lookup
+   {&NamedEntity::typeLookup,
+    std::addressof(FolderBase<Style>::typeLookup)}
 };
+static_assert(std::is_base_of<FolderBase<Style>, Style>::value);
 
 //====== Constructors =========
 

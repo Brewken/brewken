@@ -43,14 +43,17 @@ TypeLookup const Fermentation::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentation::fermentationSteps        , Fermentation::fermentationSteps        ),
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentation::fermentationStepsDowncast, Fermentation::fermentationStepsDowncast),
    },
-   // Parent class lookup
-   {&NamedEntity::typeLookup}
+   // Parent classes lookup
+   {&NamedEntity::typeLookup,
+    std::addressof(FolderBase<Fermentation>::typeLookup)}
 };
+static_assert(std::is_base_of<FolderBase<Fermentation>, Fermentation>::value);
 
 //==================================================== CONSTRUCTORS ====================================================
 
 Fermentation::Fermentation(QString name) :
    NamedEntity{name, true},
+   FolderBase<Fermentation>{},
    StepOwnerBase<Fermentation, FermentationStep>{},
    m_description  {""          },
    m_notes        {""          } {
@@ -59,6 +62,7 @@ Fermentation::Fermentation(QString name) :
 
 Fermentation::Fermentation(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity                {namedParameterBundle},
+   FolderBase<Fermentation>{namedParameterBundle},
    StepOwnerBase<Fermentation, FermentationStep>{},
    SET_REGULAR_FROM_NPB (m_description  , namedParameterBundle, PropertyNames::Fermentation::description  ),
    SET_REGULAR_FROM_NPB (m_notes        , namedParameterBundle, PropertyNames::Fermentation::notes        ) {
@@ -67,6 +71,7 @@ Fermentation::Fermentation(NamedParameterBundle const & namedParameterBundle) :
 
 Fermentation::Fermentation(Fermentation const & other) :
    NamedEntity{other},
+   FolderBase<Fermentation>{other},
    StepOwnerBase<Fermentation, FermentationStep>{other},
    m_description  {other.m_description  },
    m_notes        {other.m_notes        } {

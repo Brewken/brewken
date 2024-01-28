@@ -93,9 +93,11 @@ TypeLookup const Water::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::alkalinityAsHCO3, Water::m_alkalinity_as_hco3,           NonPhysicalQuantity::Bool               ),
 
    },
-   // Parent class lookup
-   {&NamedEntity::typeLookup}
+   // Parent classes lookup
+   {&NamedEntity::typeLookup,
+    std::addressof(FolderBase<Water>::typeLookup)}
 };
+static_assert(std::is_base_of<FolderBase<Water>, Water>::value);
 
 Water::Water(QString name) :
    NamedEntity{name, true},

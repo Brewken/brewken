@@ -102,13 +102,16 @@ TypeLookup const Equipment::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::agingVesselNotes           , Equipment::m_agingVesselNotes           ,           NonPhysicalQuantity::String              ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Equipment::packagingVesselNotes       , Equipment::m_packagingVesselNotes       ,           NonPhysicalQuantity::String              ),
    },
-   // Parent class lookup
-   {&NamedEntity::typeLookup}
+   // Parent classes lookup
+   {&NamedEntity::typeLookup,
+    std::addressof(FolderBase<Equipment>::typeLookup)}
 };
+static_assert(std::is_base_of<FolderBase<Equipment>, Equipment>::value);
 
 //=============================CONSTRUCTORS=====================================
 Equipment::Equipment(QString name) :
    NamedEntity        {name, true},
+   FolderBase<Equipment>{},
    m_kettleBoilSize_l           {22.927      },
    m_fermenterBatchSize_l       {18.927      },
    m_mashTunVolume_l            {0.0         },
@@ -167,6 +170,7 @@ Equipment::Equipment(QString name) :
 //
 Equipment::Equipment(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity{namedParameterBundle},
+   FolderBase<Equipment>{namedParameterBundle},
    SET_REGULAR_FROM_NPB (m_kettleBoilSize_l           , namedParameterBundle, PropertyNames::Equipment::kettleBoilSize_l           ),
    SET_REGULAR_FROM_NPB (m_fermenterBatchSize_l       , namedParameterBundle, PropertyNames::Equipment::fermenterBatchSize_l       ),
    SET_REGULAR_FROM_NPB (m_mashTunVolume_l            , namedParameterBundle, PropertyNames::Equipment::mashTunVolume_l            ),
@@ -219,6 +223,7 @@ Equipment::Equipment(NamedParameterBundle const & namedParameterBundle) :
 
 Equipment::Equipment(Equipment const & other) :
    NamedEntity        {other                              },
+   FolderBase<Equipment>{other},
    m_kettleBoilSize_l           {other.m_kettleBoilSize_l           },
    m_fermenterBatchSize_l       {other.m_fermenterBatchSize_l       },
    m_mashTunVolume_l            {other.m_mashTunVolume_l            },

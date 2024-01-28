@@ -53,16 +53,21 @@ RecipeAdjustmentSaltTableModel::RecipeAdjustmentSaltTableModel(QTableView* paren
          //
          // Note too that, for the purposes of these columns, the "name" of a RecipeAdjustmentSalt is not its "NamedEntity name" but actually its type
          TABLE_MODEL_HEADER(RecipeAdjustmentSalt, Name          , tr("Name"       ), PropertyPath{{PropertyNames::RecipeAdjustmentSalt::salt,
-                                                                                                 PropertyNames::NamedEntity::name         }}),
+                                                                                                   PropertyNames::NamedEntity::name         }}),
          TABLE_MODEL_HEADER(RecipeAdjustmentSalt, Type          , tr("Type"       ), PropertyPath{{PropertyNames::RecipeAdjustmentSalt::salt,
-                                                                                                 PropertyNames::Salt::type                 }}, EnumInfo{Salt::typeStringMapping, Salt::typeDisplayNames}),
+                                                                                                   PropertyNames::Salt::type                 }},
+                            EnumInfo{Salt::typeStringMapping,
+                                     Salt::typeDisplayNames}),
          TABLE_MODEL_HEADER(RecipeAdjustmentSalt, Amount        , tr("Amount"     ), PropertyNames::IngredientAmount::amount                  , PrecisionInfo{1}),
          TABLE_MODEL_HEADER(RecipeAdjustmentSalt, AmountType    , tr("Amount Type"), PropertyNames::IngredientAmount::amount                  , Salt::validMeasures),
-         TABLE_MODEL_HEADER(RecipeAdjustmentSalt, AddTo  , tr("Added To"), PropertyNames::RecipeAdjustmentSalt::whenToAdd      , EnumInfo{RecipeAdjustmentSalt::whenToAddStringMapping, RecipeAdjustmentSalt::whenToAddDisplayNames}),
-         TABLE_MODEL_HEADER(RecipeAdjustmentSalt, PctAcid, tr("% Acid"  ), PropertyPath{{PropertyNames::RecipeAdjustmentSalt::salt,
-                                                                                                 PropertyNames::Salt::percentAcid         }}),
          // In this table, inventory is read-only, so there is intentionally no TotalInventoryType column
-         TABLE_MODEL_HEADER(RecipeAdjustmentSalt, TotalInventory    , tr("Inventory"  ), PropertyNames::Ingredient::totalInventory, PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(RecipeAdjustmentSalt, TotalInventory, tr("Inventory"  ), PropertyPath{{PropertyNames::RecipeAdjustmentSalt::salt,
+                                                                                                   PropertyNames::Ingredient::totalInventory}}, PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(RecipeAdjustmentSalt, AddTo         , tr("Added To"   ), PropertyNames::RecipeAdjustmentSalt::whenToAdd      ,
+                            EnumInfo{RecipeAdjustmentSalt::whenToAddStringMapping,
+                                     RecipeAdjustmentSalt::whenToAddDisplayNames}),
+         TABLE_MODEL_HEADER(RecipeAdjustmentSalt, PctAcid       , tr("% Acid"     ), PropertyPath{{PropertyNames::RecipeAdjustmentSalt::salt,
+                                                                                                   PropertyNames::Salt::percentAcid         }}),
       }
    },
    TableModelBase<RecipeAdjustmentSaltTableModel, RecipeAdjustmentSalt>{} {
