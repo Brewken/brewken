@@ -164,7 +164,7 @@ void MashDesigner::saveStep() {
    this->mashStep->setType(static_cast<MashStep::Type>(comboBox_type->currentIndex()));
    // Bound the target temperature to what can be achieved
    this->mashStep->setStepTemp_c(this->bound_temp_c(this->lineEdit_temp->getNonOptCanonicalQty()));
-   this->mashStep->setStepTime_min(lineEdit_time->getNonOptCanonicalQty());
+   this->mashStep->setStepTime_mins(lineEdit_time->getNonOptCanonicalQty());
 
    // finish a few things -- this may be premature optimization
    if (isInfusion()) {

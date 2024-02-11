@@ -50,7 +50,7 @@ MashStepTableModel::MashStepTableModel(QTableView * parent, bool editable) :
          TABLE_MODEL_HEADER(MashStep, Amount    , tr("Amount"       ), PropertyNames::MashStep::amount_l    ),
          TABLE_MODEL_HEADER(MashStep, Temp      , tr("Infusion Temp"), PropertyNames::MashStep::infuseTemp_c),
          TABLE_MODEL_HEADER(MashStep, TargetTemp, tr("Target Temp"  ), PropertyNames::MashStep::stepTemp_c  ),
-         TABLE_MODEL_HEADER(MashStep, Time      , tr("Time"         ), PropertyNames::    Step::stepTime_min),
+         TABLE_MODEL_HEADER(MashStep, Time      , tr("Time"         ), PropertyNames::    Step::stepTime_mins),
       }
    },
    TableModelBase<MashStepTableModel, MashStep>{},
@@ -320,7 +320,7 @@ QVariant MashStepTableModel::data(QModelIndex const & index, int role) const {
 ///         );
 ///      case MashStepTableModel::ColumnIndex::Time:
 ///         return QVariant(
-///            Measurement::displayAmount(Measurement::Amount{row->stepTime_min(), Measurement::Units::minutes},
+///            Measurement::displayAmount(Measurement::Amount{row->stepTime_mins(), Measurement::Units::minutes},
 ///                                       3,
 ///                                       std::nullopt,
 ///                                       this->getColumnInfo(columnIndex).getForcedRelativeScale())
@@ -466,7 +466,7 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
 ///         if (value.canConvert(QVariant::String)) {
 ///            MainWindow::instance().doOrRedoUpdate(
 ///               *row,
-///               TYPE_INFO(MashStep, stepTime_min),
+///               TYPE_INFO(MashStep, stepTime_mins),
 ///               Measurement::qStringToSI(value.toString(),
 ///                                        Measurement::PhysicalQuantity::Time,
 ///                                        this->getColumnInfo(columnIndex).getForcedSystemOfMeasurement(),

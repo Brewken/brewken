@@ -31,7 +31,7 @@ MashStepEditor::MashStepEditor(QWidget* parent) :
    SMART_FIELD_INIT(MashStepEditor, label_stepTemp       , lineEdit_stepTemp       , MashStep, PropertyNames::MashStep::stepTemp_c            , 1);
    SMART_FIELD_INIT(MashStepEditor, label_amount         , lineEdit_amount         , MashStep, PropertyNames::MashStep::amount_l              );
    SMART_FIELD_INIT(MashStepEditor, label_infuseTemp     , lineEdit_infuseTemp     , MashStep, PropertyNames::MashStep::infuseTemp_c          , 1);
-   SMART_FIELD_INIT(MashStepEditor, label_stepTime       , lineEdit_stepTime       , MashStep, PropertyNames::    Step::stepTime_min          , 0);
+   SMART_FIELD_INIT(MashStepEditor, label_stepTime       , lineEdit_stepTime       , MashStep, PropertyNames::    Step::stepTime_mins          , 0);
    SMART_FIELD_INIT(MashStepEditor, label_rampTime       , lineEdit_rampTime       , MashStep, PropertyNames::    Step::rampTime_mins         , 0);
    SMART_FIELD_INIT(MashStepEditor, label_endTemp        , lineEdit_endTemp        , MashStep, PropertyNames::    Step::endTemp_c             , 1);
    // ⮜⮜⮜ All three below added for BeerJSON support ⮞⮞⮞
@@ -56,7 +56,7 @@ void MashStepEditor::readFieldsFromEditItem(std::optional<QString> propName) {
    if (!propName || *propName == PropertyNames::MashStep::infuseAmount_l        ) { this->lineEdit_amount      ->setQuantity    (m_editItem->amount_l              ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::MashStep::infuseTemp_c          ) { this->lineEdit_infuseTemp  ->setQuantity    (m_editItem->infuseTemp_c          ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::MashStep::stepTemp_c            ) { this->lineEdit_stepTemp    ->setQuantity    (m_editItem->stepTemp_c            ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::    Step::stepTime_min          ) { this->lineEdit_stepTime    ->setQuantity    (m_editItem->stepTime_min          ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::    Step::stepTime_mins          ) { this->lineEdit_stepTime    ->setQuantity    (m_editItem->stepTime_mins          ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::    Step::rampTime_mins         ) { this->lineEdit_rampTime    ->setQuantity    (m_editItem->rampTime_mins         ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::    Step::endTemp_c             ) { this->lineEdit_endTemp     ->setQuantity    (m_editItem->endTemp_c             ()); if (propName) { return; } }
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -73,7 +73,7 @@ void MashStepEditor::writeFieldsToEditItem() {
    this->m_editItem->setAmount_l              (this->lineEdit_amount      ->getNonOptCanonicalQty());
    this->m_editItem->setInfuseTemp_c          (this->lineEdit_infuseTemp  ->getOptCanonicalQty   ());
    this->m_editItem->setStepTemp_c            (this->lineEdit_stepTemp    ->getNonOptCanonicalQty());
-   this->m_editItem->setStepTime_min          (this->lineEdit_stepTime    ->getNonOptCanonicalQty());
+   this->m_editItem->setStepTime_mins          (this->lineEdit_stepTime    ->getNonOptCanonicalQty());
    this->m_editItem->setRampTime_mins         (this->lineEdit_rampTime    ->getOptCanonicalQty   ());
    this->m_editItem->setEndTemp_c             (this->lineEdit_endTemp     ->getOptCanonicalQty   ());
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞

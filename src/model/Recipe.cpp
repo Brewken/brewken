@@ -493,12 +493,12 @@ public:
                   .arg(Measurement::displayAmount(Measurement::Amount{step->stepTemp_c(), Measurement::Units::celsius}));
          }
 
-         str += tr(" Hold for %1.").arg(Measurement::displayAmount(Measurement::Amount{step->stepTime_min(),
+         str += tr(" Hold for %1.").arg(Measurement::displayAmount(Measurement::Amount{step->stepTime_mins(),
                                                                                        Measurement::Units::minutes}));
 
          preins.push_back(PreInstruction(str, QString("%1 - %2").arg(MashStep::typeDisplayNames[step->type()]).arg(step->name()),
                                        timeRemaining));
-         timeRemaining -= step->stepTime_min();
+         timeRemaining -= step->stepTime_mins();
       }
       return preins;
    }

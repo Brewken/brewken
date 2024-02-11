@@ -348,14 +348,14 @@ namespace {
          {ObjectStore::FieldType::Bool  , "deleted"                  , PropertyNames::NamedEntity::deleted            },
          {ObjectStore::FieldType::Bool  , "display"                  , PropertyNames::NamedEntity::display            },
          // NB: MashSteps don't have folders, as each one is owned by a Mash
-         {ObjectStore::FieldType::Double, "end_temp"                 , PropertyNames::    Step::endTemp_c             },
-         {ObjectStore::FieldType::Double, "infuse_temp"              , PropertyNames::MashStep::infuseTemp_c          },
+         {ObjectStore::FieldType::Double, "end_temp_c"               , PropertyNames::    Step::endTemp_c             },
+         {ObjectStore::FieldType::Double, "infuse_temp_c"            , PropertyNames::MashStep::infuseTemp_c          },
          {ObjectStore::FieldType::Int   , "mash_id"                  , PropertyNames::    Step::ownerId               , &PRIMARY_TABLE<Mash>},
          {ObjectStore::FieldType::Enum  , "mstype"                   , PropertyNames::MashStep::type                  , &MashStep::typeStringMapping},
          {ObjectStore::FieldType::Double, "ramp_time_mins"           , PropertyNames::    Step::rampTime_mins         },
          {ObjectStore::FieldType::Int   , "step_number"              , PropertyNames::    Step::stepNumber            },
-         {ObjectStore::FieldType::Double, "step_temp"                , PropertyNames::MashStep::stepTemp_c            },
-         {ObjectStore::FieldType::Double, "step_time"                , PropertyNames::    Step::stepTime_min          },
+         {ObjectStore::FieldType::Double, "step_temp_c"              , PropertyNames::MashStep::stepTemp_c            },
+         {ObjectStore::FieldType::Double, "step_time_mins"           , PropertyNames::    Step::stepTime_mins          },
          // Now we support BeerJSON, amount_l unifies and replaces infuseAmount_l and decoctionAmount_l
          // See comment in model/MashStep.h for more info
          {ObjectStore::FieldType::Double, "amount_l"                 , PropertyNames::MashStep::amount_l              },
@@ -401,7 +401,7 @@ namespace {
          {ObjectStore::FieldType::Bool  , "deleted"         , PropertyNames::NamedEntity::deleted         },
          {ObjectStore::FieldType::Bool  , "display"         , PropertyNames::NamedEntity::display         },
          // NB: BoilSteps don't have folders, as each one is owned by a Boil
-         {ObjectStore::FieldType::Double, "step_time_min"   , PropertyNames::Step::stepTime_min           },
+         {ObjectStore::FieldType::Double, "step_time_mins"  , PropertyNames::Step::stepTime_mins           },
          {ObjectStore::FieldType::Double, "end_temp_c"      , PropertyNames::Step::endTemp_c              },
          {ObjectStore::FieldType::Double, "ramp_time_mins"  , PropertyNames::Step::rampTime_mins          },
          {ObjectStore::FieldType::Int   , "step_number"     , PropertyNames::Step::stepNumber             },
@@ -448,7 +448,7 @@ namespace {
          {ObjectStore::FieldType::Bool  , "deleted"         , PropertyNames::NamedEntity::deleted         },
          {ObjectStore::FieldType::Bool  , "display"         , PropertyNames::NamedEntity::display         },
          // NB: FermentationSteps don't have folders, as each one is owned by a Fermentation
-         {ObjectStore::FieldType::Double, "step_time_min"   , PropertyNames::Step::stepTime_min           },
+         {ObjectStore::FieldType::Double, "step_time_mins"  , PropertyNames::Step::stepTime_mins           },
          {ObjectStore::FieldType::Double, "end_temp_c"      , PropertyNames::Step::endTemp_c              },
          {ObjectStore::FieldType::Double, "ramp_time_mins"  , PropertyNames::Step::rampTime_mins          },
          {ObjectStore::FieldType::Int   , "step_number"     , PropertyNames::Step::stepNumber             },
@@ -459,6 +459,7 @@ namespace {
          {ObjectStore::FieldType::Double, "start_temp_c"    , PropertyNames::StepExtended::startTemp_c    },
          {ObjectStore::FieldType::Double, "start_gravity_sg", PropertyNames::StepExtended::startGravity_sg},
          {ObjectStore::FieldType::Double, "end_gravity_sg"  , PropertyNames::StepExtended::  endGravity_sg},
+         {ObjectStore::FieldType::Bool  , "free_rise"       , PropertyNames::FermentationStep::freeRise   },
          {ObjectStore::FieldType::String, "vessel"          , PropertyNames::FermentationStep::vessel     },
       }
    };

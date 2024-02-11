@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/FermentationStep.cpp is part of Brewken, and is copyright the following authors 2023:
+ * model/FermentationStep.cpp is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -25,7 +25,8 @@ bool FermentationStep::isEqualTo(NamedEntity const & other) const {
    FermentationStep const & rhs = static_cast<FermentationStep const &>(other);
    // Base class will already have ensured names are equal
    return (
-      this->m_vessel == rhs.m_vessel &&
+      this->m_freeRise == rhs.m_freeRise &&
+      this->m_vessel   == rhs.m_vessel   &&
       // Parent classes have to be equal too
       this->StepExtended::isEqualTo(other)
    );
@@ -34,7 +35,9 @@ bool FermentationStep::isEqualTo(NamedEntity const & other) const {
 TypeLookup const FermentationStep::typeLookup {
    "FermentationStep",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::FermentationStep::vessel, FermentationStep::m_vessel, NonPhysicalQuantity::String),
+
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::FermentationStep::freeRise, FermentationStep::m_freeRise, NonPhysicalQuantity::Bool  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::FermentationStep::vessel  , FermentationStep::m_vessel  , NonPhysicalQuantity::String),
    },
    // Parent class lookup.  NB: StepExtended not NamedEntity!
    {&StepExtended::typeLookup}
@@ -45,29 +48,34 @@ static_assert(std::is_base_of<StepExtended, FermentationStep>::value);
 
 FermentationStep::FermentationStep(QString name) :
    StepExtended{name},
-   m_vessel    {""  } {
+   m_freeRise  {std::nullopt},
+   m_vessel    {""} {
    return;
 }
 
 FermentationStep::FermentationStep(NamedParameterBundle const & namedParameterBundle) :
    StepExtended  (namedParameterBundle                                                                ),
-   SET_REGULAR_FROM_NPB (m_vessel, namedParameterBundle, PropertyNames::FermentationStep::vessel, QString()) {
+   SET_REGULAR_FROM_NPB (m_freeRise, namedParameterBundle, PropertyNames::FermentationStep::freeRise, std::nullopt),
+   SET_REGULAR_FROM_NPB (m_vessel  , namedParameterBundle, PropertyNames::FermentationStep::vessel    , QString()   ) {
    return;
 }
 
 FermentationStep::FermentationStep(FermentationStep const & other) :
-   StepExtended{other         },
-   m_vessel    {other.m_vessel} {
+   StepExtended{other           },
+   m_freeRise  {other.m_freeRise},
+   m_vessel    {other.m_vessel  } {
    return;
 }
 
 FermentationStep::~FermentationStep() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
-QString FermentationStep::vessel() const { return this->m_vessel; }
+std::optional<bool> FermentationStep::freeRise() const { return this->m_freeRise; }
+QString             FermentationStep::vessel  () const { return this->m_vessel  ; }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void FermentationStep::setVessel(QString const & val) { SET_AND_NOTIFY(PropertyNames::FermentationStep::vessel, this->m_vessel, val ); return; }
+void FermentationStep::setFreeRise(std::optional<bool> const   val) { SET_AND_NOTIFY(PropertyNames::FermentationStep::freeRise, this->m_freeRise, val); return; }
+void FermentationStep::setVessel  (QString             const & val) { SET_AND_NOTIFY(PropertyNames::FermentationStep::vessel  , this->m_vessel  , val); return; }
 
 // Insert boiler-plate wrapper functions that call down to StepBase
 STEP_COMMON_CODE(Fermentation)

@@ -573,7 +573,7 @@ namespace {
             "name"             " " << db.getDbNativeTypeName<QString>()     << ", "
             "deleted"          " " << db.getDbNativeTypeName<bool>()        << ", "
             "display"          " " << db.getDbNativeTypeName<bool>()        << ", "
-            "step_time_min"    " " << db.getDbNativeTypeName<double>()      << ", "
+            "step_time_mins"   " " << db.getDbNativeTypeName<double>()      << ", "
             "end_temp_c"       " " << db.getDbNativeTypeName<double>()      << ", "
             "ramp_time_mins"   " " << db.getDbNativeTypeName<double>()      << ", "
             "step_number"      " " << db.getDbNativeTypeName<int>()         << ", "
@@ -610,7 +610,7 @@ namespace {
             "name"             " " << db.getDbNativeTypeName<QString>()     << ", "
             "deleted"          " " << db.getDbNativeTypeName<bool>()        << ", "
             "display"          " " << db.getDbNativeTypeName<bool>()        << ", "
-            "step_time_min"    " " << db.getDbNativeTypeName<double>()      << ", "
+            "step_time_mins"   " " << db.getDbNativeTypeName<double>()      << ", "
             "end_temp_c"       " " << db.getDbNativeTypeName<double>()      << ", "
             "ramp_time_mins"   " " << db.getDbNativeTypeName<double>()      << ", "
             "step_number"      " " << db.getDbNativeTypeName<int>()         << ", "
@@ -621,6 +621,7 @@ namespace {
             "start_temp_c"     " " << db.getDbNativeTypeName<double>()      << ", "
             "start_gravity_sg" " " << db.getDbNativeTypeName<double>()      << ", "
             "end_gravity_sg"   " " << db.getDbNativeTypeName<double>()      << ", "
+            "free_rise"        " " << db.getDbNativeTypeName<bool>()        << ", "
             "vessel"           " " << db.getDbNativeTypeName<QString>()     << ", "
             "FOREIGN KEY(fermentation_id) REFERENCES fermentation(id)" <<
          ");";
@@ -853,6 +854,11 @@ namespace {
          {QString("ALTER TABLE mash_step ADD COLUMN end_acidity_ph            %1").arg(db.getDbNativeTypeName<double >())},
          // Now that we properly support optional fields, we can fix "zero means not set" on certain fields
          {QString("     UPDATE mash_step SET end_temp = NULL WHERE end_temp = 0")},
+         // Give some other columns more consistent names
+         {QString("ALTER TABLE mash_step RENAME COLUMN    end_temp TO    end_temp_c"   )},
+         {QString("ALTER TABLE mash_step RENAME COLUMN infuse_temp TO infuse_temp_c"   )},
+         {QString("ALTER TABLE mash_step RENAME COLUMN   step_temp TO   step_temp_c"   )},
+         {QString("ALTER TABLE mash_step RENAME COLUMN   step_time TO   step_time_mins")},
          //
          // Recipe
          //
@@ -868,8 +874,10 @@ namespace {
 
          //
          // We have to create and populate the boil and boil_step tables before we do hop_in_recipe as we need pre-boil
-         // steps to attach first wort hops to.  So we might as well do fermentation and fermentation_step at the same
-         // time.
+         // steps to attach first wort hops to.
+         //
+         // We do not however need fermentation and fermentation_step to be populated as it is optional for a Recipe to
+         // have a Fermentation.
          //
          // As noted above, we use a temporary column on the new tables to simplify populating them with data linked to
          // recipe.
@@ -900,30 +908,10 @@ namespace {
                      "id "
                   "FROM recipe"
          ), {QVariant{false}, QVariant{true}}},
-         {QString("INSERT INTO fermentation ("
-                      "name, "
-                      "deleted, "
-                      "display, "
-                      "folder, "
-                      "description, "
-                      "notes, "
-                      "temp_recipe_id "
-                  ") SELECT "
-                     "'Fermentation for ' || name, "
-                     "?, "
-                     "?, "
-                     "'', "
-                     "'', "
-                     "'', "
-                     "id "
-                  "FROM recipe"
-         ), {QVariant{false}, QVariant{true}}},
          {QString("UPDATE recipe SET boil_id         = (SELECT boil.id         FROM boil        , recipe WHERE recipe.id = boil.temp_recipe_id        )")},
-         {QString("UPDATE recipe SET fermentation_id = (SELECT fermentation.id FROM fermentation, recipe WHERE recipe.id = fermentation.temp_recipe_id)")},
 
          // Get rid of the temporary columns now that they have served their purpose.
          {QString("ALTER TABLE boil         DROP COLUMN temp_recipe_id")},
-         {QString("ALTER TABLE fermentation DROP COLUMN temp_recipe_id")},
          //
          // Now we copied two recipe columns onto the boil table, we can drop them from the recipe table
          //
@@ -937,8 +925,8 @@ namespace {
          // data migration.  When the main code needs to add a new BoilStep, it does the right thing and uses tr().
          //
          // For the pre-boil step, ie ramping up from mash temperature to boil temperature, we take the end temperature
-         // of the last mash step as the starting point.  This will be mash_step.end_temp IF SET, and
-         // mash_step.step_temp otherwise.
+         // of the last mash step as the starting point.  This will be mash_step.end_temp_c IF SET, and
+         // mash_step.step_temp_c otherwise.
          //
          // Note that, because mash_id is stored in both the mash_step and recipe tables, we don't actually have to look
          // at the mash table here.
@@ -952,7 +940,7 @@ namespace {
                      "name            ,"
                      "deleted         ,"
                      "display         ,"
-                     "step_time_min   ,"
+                     "step_time_mins  ,"
                      "end_temp_c      ,"
                      "ramp_time_mins  ,"
                      "step_number     ,"
@@ -968,7 +956,7 @@ namespace {
                      "'Pre-boil for ' || recipe.name, "                              // name
                      "?, "                                                           // deleted
                      "?, "                                                           // display
-                     "NULL, "                                                        // step_time_min
+                     "NULL, "                                                        // step_time_mins
                      "100.0, "                                                       // end_temp_c
                      "NULL, "                                                        // ramp_time_mins
                      "1, "                                                           // step_number
@@ -983,10 +971,10 @@ namespace {
                   "FROM recipe, "
                        "("
                           "SELECT mash_id, "
-                                 "step_temp, "
-                                 "end_temp, "
+                                 "step_temp_c, "
+                                 "end_temp_c, "
                                  "step_number, "
-                                 "IIF(step_temp < end_temp, step_temp, end_temp) AS temperature, "
+                                 "IIF(step_temp_c < end_temp_c, step_temp_c, end_temp_c) AS temperature, "
                                  "ROW_NUMBER() OVER ("
                                     "PARTITION BY mash_id "
                                     "ORDER BY step_number DESC"
@@ -1001,7 +989,7 @@ namespace {
                      "name            ,"
                      "deleted         ,"
                      "display         ,"
-                     "step_time_min   ,"
+                     "step_time_mins  ,"
                      "end_temp_c      ,"
                      "ramp_time_mins  ,"
                      "step_number     ,"
@@ -1017,7 +1005,7 @@ namespace {
                      "'Boil proper for ' || recipe.name, "                              // name
                      "?, "                                                              // deleted
                      "?, "                                                              // display
-                     "NULL, "                                                           // step_time_min
+                     "NULL, "                                                           // step_time_mins
                      "100.0, "                                                          // end_temp_c
                      "NULL, "                                                           // ramp_time_mins
                      "2, "                                                              // step_number
@@ -1037,7 +1025,7 @@ namespace {
                      "name            ,"
                      "deleted         ,"
                      "display         ,"
-                     "step_time_min   ,"
+                     "step_time_mins   ,"
                      "end_temp_c      ,"
                      "ramp_time_mins  ,"
                      "step_number     ,"
@@ -1053,7 +1041,7 @@ namespace {
                      "'Boil proper for ' || recipe.name, "                            // name
                      "?, "                                                            // deleted
                      "?, "                                                            // display
-                     "NULL, "                                                         // step_time_min
+                     "NULL, "                                                         // step_time_mins
                      "IIF(recipe.primary_temp > 0.0, recipe.primary_temp, 30.0), "    // end_temp_c
                      "NULL, "                                                         // ramp_time_mins
                      "3, "                                                            // step_number

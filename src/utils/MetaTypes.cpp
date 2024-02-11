@@ -66,6 +66,7 @@ void registerMetaTypes() {
 
    qRegisterMetaType<std::optional<std::shared_ptr<Boil>>>();
    qRegisterMetaType<Fermentation *>();
+   qRegisterMetaType<std::shared_ptr<Fermentation>>();
 
    return;
 }

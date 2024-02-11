@@ -371,7 +371,7 @@ void MashWizard::wizardry() {
             newMashStep->setInfuseTemp_c(tempWater);
             newMashStep->setEndTemp_c(tempWater);
             newMashStep->setStepTemp_c(tempFinal);
-            newMashStep->setStepTime_min(15);
+            newMashStep->setStepTime_mins(15);
             newMashStep->setOwnerId(mash->key());
             ObjectStoreWrapper::insert(newMashStep);
             steps.append(newMashStep);
@@ -392,7 +392,7 @@ void MashWizard::wizardry() {
          newMashStep->setInfuseTemp_c(tempWater);
          newMashStep->setEndTemp_c(tempWater);
          newMashStep->setStepTemp_c(tempFinal);
-         newMashStep->setStepTime_min(15);
+         newMashStep->setStepTime_mins(15);
          newMashStep->setOwnerId(mash->key());
          ObjectStoreWrapper::insert(newMashStep);
          steps.append(newMashStep);

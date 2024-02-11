@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/Database.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * database/Database.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
@@ -412,9 +412,29 @@ public:
             PersistentSettings::getUserDataDir().canonicalPath(),
             PersistentSettings::Sections::backups
          ).toString();
-         QString backupName =
-            QString("%1 database.sqlite backup (before upgrade from v%2 to v%3)").arg(QDate::currentDate().toString("yyyy-MM-dd")).arg(currentVersion).arg(newVersion);
-         database.backupToDir(backupDir, backupName);
+         //
+         // It's probably enough for most users to put the date on the backup file name to make it unique.  But we put
+         // the time too just in case.
+         //
+         // NOTE: We do not currently check whether the file we are creating already exists...
+         //
+         QString backupName = QString(
+            "%1 database.sqlite backup (before upgrade from v%2 to v%3)"
+         ).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")).arg(currentVersion).arg(newVersion);
+         bool succeeded = database.backupToDir(backupDir, backupName);
+         if (!succeeded) {
+            qCritical() << Q_FUNC_INFO << "Unable to create DB backup";
+            if (Application::isInteractive()) {
+               QMessageBox upgradeBackupFailedMessageBox;
+               upgradeBackupFailedMessageBox.setIcon(QMessageBox::Icon::Critical);
+               upgradeBackupFailedMessageBox.setWindowTitle(tr("Unable to back up database before upgrading"));
+               upgradeBackupFailedMessageBox.setText(
+                  tr("Could not backup database prior to required upgrade.  See logs for more details.")
+               );
+               upgradeBackupFailedMessageBox.exec();
+            }
+            exit(1);
+         }
 
          if (Application::isInteractive()) {
             QMessageBox dbUpgradeMessageBox;

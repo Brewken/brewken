@@ -34,16 +34,11 @@
 #include <QTextStream>
 
 #include "database/ObjectStoreWrapper.h"
-#include "serialization/json/JsonCoding.h"
-#include "serialization/json/JsonMeasureableUnitsMapping.h"
-#include "serialization/json/JsonNamedEntityRecord.h"
-#include "serialization/json/JsonRecord.h"
-#include "serialization/json/JsonRecordDefinition.h"
-#include "serialization/json/JsonSchema.h"
-#include "serialization/json/JsonUtils.h"
 #include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
+#include "model/Fermentation.h"
+#include "model/FermentationStep.h"
 #include "model/Hop.h"
 #include "model/Misc.h"
 #include "model/Recipe.h"
@@ -55,6 +50,13 @@
 #include "model/Style.h"
 #include "model/Water.h"
 #include "model/Yeast.h"
+#include "serialization/json/JsonCoding.h"
+#include "serialization/json/JsonMeasureableUnitsMapping.h"
+#include "serialization/json/JsonNamedEntityRecord.h"
+#include "serialization/json/JsonRecord.h"
+#include "serialization/json/JsonRecordDefinition.h"
+#include "serialization/json/JsonSchema.h"
+#include "serialization/json/JsonUtils.h"
 #include "utils/OStreamWriterForQFile.h"
 
 // TODO: WE should upgrade our copy of the BeerJSON schema to the 1.0.2 release at https://github.com/beerjson/beerjson/releases/tag/v1.0.2
@@ -587,7 +589,7 @@ namespace {
          {JsonRecordDefinition::FieldType::Enum                , "type"              , PropertyNames::MashStep::type                  , &MashStep::typeStringMapping          },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "amount"            , PropertyNames::MashStep::amount_l              , &BEER_JSON_VOLUME_UNIT_MAPPER         },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "step_temperature"  , PropertyNames::MashStep::stepTemp_c            , &BEER_JSON_TEMPERATURE_UNIT_MAPPER    },
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "step_time"         , PropertyNames::    Step::stepTime_min          , &BEER_JSON_TIME_UNIT_MAPPER           },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "step_time"         , PropertyNames::    Step::stepTime_mins          , &BEER_JSON_TIME_UNIT_MAPPER           },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "ramp_time"         , PropertyNames::    Step::rampTime_mins         , &BEER_JSON_TIME_UNIT_MAPPER           },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "end_temperature"   , PropertyNames::    Step::endTemp_c             , &BEER_JSON_TEMPERATURE_UNIT_MAPPER    },
          {JsonRecordDefinition::FieldType::String              , "description"       , PropertyNames::    Step::description           },
@@ -618,37 +620,39 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for fermentation_steps BeerJSON records
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<FermentationSteps> {
-      std::in_place_type_t<FermentationSteps>{},
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<FermentationStep> {
+      std::in_place_type_t<FermentationStep>{},
       "fermentation_steps", // JSON record name
-      JsonRecordDefinition::create< JsonNamedEntityRecord< FermentationSteps > >,
+      JsonRecordDefinition::create< JsonNamedEntityRecord< FermentationStep > >,
       {
-         // Type                                                 XPath                Q_PROPERTY                                Value Decoder
-         {JsonRecordDefinition::FieldType::String              , "name"             , PropertyNames::NamedEntity::name        },
-         {JsonRecordDefinition::FieldType::String              , "description"      , PropertyNames::Step::description        },
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "start_temperature", PropertyNames::StepExtended::startTemp_c, &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits,   "end_temperature", PropertyNames::        Step::  endTemp_c, &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
-¥¥¥
-
-        /// {JsonRecordDefinition::FieldType::String       , "notes"             , PropertyNames::Fermantation::notes            },
-        /// {JsonRecordDefinition::FieldType::ListOfRecords, "fermentation_steps", PropertyNames::Fermantation::fermentationSteps, &BEER_JSON_RECORD_DEFN<FermentationSteps>},
+         // Type                                                 XPath                Q_PROPERTY                                    Value Decoder
+         {JsonRecordDefinition::FieldType::String              , "name"             , PropertyNames::NamedEntity::name            },
+         {JsonRecordDefinition::FieldType::String              , "description"      , PropertyNames::Step::description            },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "start_temperature", PropertyNames::StepExtended::startTemp_c    , &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits,   "end_temperature", PropertyNames::        Step::  endTemp_c    , &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "step_time"        , PropertyNames::Step::stepTime_mins          , &BEER_JSON_TIME_UNIT_MAPPER       },
+         {JsonRecordDefinition::FieldType::Bool                , "free_rise  "      , PropertyNames::FermentationStep::freeRise   },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "start_gravity"    , PropertyNames::StepExtended::startGravity_sg,  &BEER_JSON_DENSITY_UNIT_MAPPER   },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits,   "end_gravity"    , PropertyNames::StepExtended::  endGravity_sg,  &BEER_JSON_DENSITY_UNIT_MAPPER   },
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "start_ph"         , PropertyNames::Step::startAcidity_pH        ,  &BEER_JSON_ACIDITY_UNIT          },
+         {JsonRecordDefinition::FieldType::SingleUnitValue     ,   "end_ph"         , PropertyNames::Step::  endAcidity_pH        ,  &BEER_JSON_ACIDITY_UNIT          },
+         {JsonRecordDefinition::FieldType::String              , "vessel"           , PropertyNames::FermentationStep::vessel     },
       }
    };
-
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for fermentations BeerJSON records
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<Fermantation> {
-      std::in_place_type_t<Fermantation>{},
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<Fermentation> {
+      std::in_place_type_t<Fermentation>{},
       "fermentations", // JSON record name
-      JsonRecordDefinition::create< JsonNamedEntityRecord< Fermantation > >,
+      JsonRecordDefinition::create< JsonNamedEntityRecord< Fermentation > >,
       {
          // Type                                          XPath                 Q_PROPERTY                                      Value Decoder
          {JsonRecordDefinition::FieldType::String       , "name"              , PropertyNames::NamedEntity::name              },
-         {JsonRecordDefinition::FieldType::String       , "description"       , PropertyNames::Fermantation::description      },
-         {JsonRecordDefinition::FieldType::String       , "notes"             , PropertyNames::Fermantation::notes            },
-         {JsonRecordDefinition::FieldType::ListOfRecords, "fermentation_steps", PropertyNames::Fermantation::fermentationSteps, &BEER_JSON_RECORD_DEFN<FermentationSteps>},
+         {JsonRecordDefinition::FieldType::String       , "description"       , PropertyNames::Fermentation::description      },
+         {JsonRecordDefinition::FieldType::String       , "notes"             , PropertyNames::Fermentation::notes            },
+         {JsonRecordDefinition::FieldType::ListOfRecords, "fermentation_steps", PropertyNames::Fermentation::fermentationSteps, &BEER_JSON_RECORD_DEFN<FermentationStep>},
       }
    };
 

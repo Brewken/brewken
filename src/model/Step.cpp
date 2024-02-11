@@ -25,7 +25,7 @@ bool Step::isEqualTo(NamedEntity const & other) const {
    Step const & rhs = static_cast<Step const &>(other);
    // Base class will already have ensured names are equal
    return (
-      this->m_stepTime_min    == rhs.m_stepTime_min    &&
+      this->m_stepTime_mins    == rhs.m_stepTime_mins    &&
       this->m_endTemp_c       == rhs.m_endTemp_c       &&
       this->m_stepNumber      == rhs.m_stepNumber      &&
       this->m_ownerId         == rhs.m_ownerId         &&
@@ -39,7 +39,7 @@ bool Step::isEqualTo(NamedEntity const & other) const {
 TypeLookup const Step::typeLookup {
    "Step",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::stepTime_min   , Step::m_stepTime_min   , Measurement::PhysicalQuantity::Time          ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::stepTime_mins   , Step::m_stepTime_mins   , Measurement::PhysicalQuantity::Time          ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::endTemp_c      , Step::m_endTemp_c      , Measurement::PhysicalQuantity::Temperature   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::stepNumber     , Step::m_stepNumber     ,           NonPhysicalQuantity::OrdinalNumeral),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Step::ownerId        , Step::m_ownerId        ),
@@ -56,7 +56,7 @@ TypeLookup const Step::typeLookup {
 //==================================================== CONSTRUCTORS ====================================================
 Step::Step(QString name) :
    NamedEntity      {name, true},
-   m_stepTime_min   {0.0         },
+   m_stepTime_mins   {0.0         },
    m_endTemp_c      {std::nullopt},
    m_stepNumber     {0           },
    m_ownerId        {-1          },
@@ -70,7 +70,7 @@ Step::Step(QString name) :
 
 Step::Step(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity      (namedParameterBundle                                                             ),
-   SET_REGULAR_FROM_NPB (m_stepTime_min   , namedParameterBundle, PropertyNames::Step::stepTime_min   ),
+   SET_REGULAR_FROM_NPB (m_stepTime_mins   , namedParameterBundle, PropertyNames::Step::stepTime_mins   ),
    SET_REGULAR_FROM_NPB (m_endTemp_c      , namedParameterBundle, PropertyNames::Step::endTemp_c      ),
    SET_REGULAR_FROM_NPB (m_stepNumber     , namedParameterBundle, PropertyNames::Step::stepNumber     ),
    SET_REGULAR_FROM_NPB (m_ownerId        , namedParameterBundle, PropertyNames::Step::ownerId        ),
@@ -84,7 +84,7 @@ Step::Step(NamedParameterBundle const & namedParameterBundle) :
 
 Step::Step(Step const & other) :
    NamedEntity      {other},
-   m_stepTime_min   {other.m_stepTime_min   },
+   m_stepTime_mins   {other.m_stepTime_mins   },
    m_endTemp_c      {other.m_endTemp_c      },
    m_stepNumber     {other.m_stepNumber     },
    m_ownerId        {other.m_ownerId        },
@@ -99,7 +99,7 @@ Step::Step(Step const & other) :
 Step::~Step() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
-double                Step::stepTime_min   () const { return this->m_stepTime_min   ; }
+double                Step::stepTime_mins   () const { return this->m_stepTime_mins   ; }
 std::optional<double> Step::endTemp_c      () const { return this->m_endTemp_c      ; }
 int                   Step::stepNumber     () const { return this->m_stepNumber     ; }
 int                   Step::ownerId        () const { return this->m_ownerId        ; }
@@ -110,7 +110,7 @@ std::optional<double> Step::startAcidity_pH() const { return this->m_startAcidit
 std::optional<double> Step::endAcidity_pH  () const { return this->m_endAcidity_pH  ; }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-void Step::setStepTime_min          (double                const   val) { SET_AND_NOTIFY(PropertyNames::Step::stepTime_min   , this->m_stepTime_min   , val                                                                ); return; }
+void Step::setStepTime_mins          (double                const   val) { SET_AND_NOTIFY(PropertyNames::Step::stepTime_mins   , this->m_stepTime_mins   , val                                                                ); return; }
 void Step::setEndTemp_c             (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Step::endTemp_c      , this->m_endTemp_c      , this->enforceMin(val, "end temp" , PhysicalConstants::absoluteZero)); return; }
 void Step::setStepNumber            (int                   const   val) { SET_AND_NOTIFY(PropertyNames::Step::stepNumber     , this->m_stepNumber     , val                                                                ); return; }
 void Step::setOwnerId               (int                   const   val) { this->m_ownerId = val;    this->propagatePropertyChange(PropertyNames::Step::ownerId, false);    return; }

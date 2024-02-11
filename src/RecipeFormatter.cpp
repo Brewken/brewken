@@ -828,7 +828,7 @@ public:
 
          tmp = tmp.arg( Measurement::displayAmount(Measurement::Amount{step->stepTemp_c(),
                                                                        Measurement::Units::celsius}));
-         tmp = tmp.arg( Measurement::displayAmount(Measurement::Amount{step->stepTime_min(),
+         tmp = tmp.arg( Measurement::displayAmount(Measurement::Amount{step->stepTime_mins(),
                                                                        Measurement::Units::minutes}, 0));
 
          mtable += tmp + "</tr>";
@@ -877,7 +877,7 @@ public:
             }
             targets.append(Measurement::displayAmount(Measurement::Amount{step->stepTemp_c(),
                                                                           Measurement::Units::celsius}));
-            times.append(Measurement::displayAmount(Measurement::Amount{step->stepTime_min(),
+            times.append(Measurement::displayAmount(Measurement::Amount{step->stepTime_mins(),
                                                                         Measurement::Units::minutes}, 0));
          }
 

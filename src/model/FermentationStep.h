@@ -28,7 +28,8 @@
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::FermentationStep { BtStringConst const property{#property}; }
-AddPropertyName(vessel)
+AddPropertyName(freeRise)
+AddPropertyName(vessel  )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -64,16 +65,20 @@ public:
 
    //=================================================== PROPERTIES ====================================================
    // ⮜⮜⮜ All below added for BeerJSON support(!) ⮞⮞⮞
-   /**
-    * \brief This is purely descriptive, and there is currently no direct link with \c Equipment
+   /** \brief If \c true, indicates a fermentation step where the exothermic fermentation is allowed to raise the
+    *         temperature without restriction.
     */
+   Q_PROPERTY(std::optional<bool> freeRise READ freeRise WRITE setFreeRise)
+   //! \brief This is purely descriptive, and there is currently no direct link with \c Equipment
    Q_PROPERTY(QString vessel  READ vessel  WRITE setVessel)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-   QString vessel() const;
+   std::optional<bool> freeRise() const;
+   QString             vessel  () const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   void setVessel(QString const & val);
+   void setFreeRise(std::optional<bool> const   val);
+   void setVessel  (QString             const & val);
 
 signals:
 
@@ -81,7 +86,8 @@ protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
 
 private:
-   QString m_vessel;
+   std::optional<bool> m_freeRise;
+   QString             m_vessel  ;
 };
 
 Q_DECLARE_METATYPE(QList<std::shared_ptr<FermentationStep>>)

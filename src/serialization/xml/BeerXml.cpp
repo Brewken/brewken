@@ -746,7 +746,7 @@ namespace {
          {XmlRecordDefinition::FieldType::Enum            , "TYPE"                     , PropertyNames::MashStep::type                  , &BEER_XML_MASH_STEP_TYPE_MAPPER},
          {XmlRecordDefinition::FieldType::Double          , "INFUSE_AMOUNT"            , PropertyNames::MashStep::infuseAmount_l        }, // Should not be supplied if TYPE is "Decoction"
          {XmlRecordDefinition::FieldType::Double          , "STEP_TEMP"                , PropertyNames::MashStep::stepTemp_c            },
-         {XmlRecordDefinition::FieldType::Double          , "STEP_TIME"                , PropertyNames::    Step::stepTime_min          },
+         {XmlRecordDefinition::FieldType::Double          , "STEP_TIME"                , PropertyNames::    Step::stepTime_mins          },
          {XmlRecordDefinition::FieldType::Double          , "RAMP_TIME"                , PropertyNames::    Step::rampTime_mins         },
          {XmlRecordDefinition::FieldType::Double          , "END_TEMP"                 , PropertyNames::    Step::endTemp_c             },
          {XmlRecordDefinition::FieldType::String          , "DESCRIPTION"              , PropertyNames::    Step::description           }, // Extension tag ⮜⮜⮜ Support added as part of BeerJSON work ⮞⮞⮞

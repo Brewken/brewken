@@ -36,7 +36,7 @@ AddPropertyName(ownerId          )
 AddPropertyName(rampTime_mins    )
 AddPropertyName(startAcidity_pH  )
 AddPropertyName(stepNumber       )
-AddPropertyName(stepTime_min     )
+AddPropertyName(stepTime_mins     )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -69,7 +69,7 @@ public:
 
    //=================================================== PROPERTIES ====================================================
    //! \brief The time of the step in min.
-   Q_PROPERTY(double                stepTime_min           READ stepTime_min           WRITE setStepTime_min                    )
+   Q_PROPERTY(double                stepTime_mins           READ stepTime_mins           WRITE setStepTime_mins                    )
    //! \brief The target ending temp of the step in C.                       ⮜⮜⮜ Optional in BeerXML & BeerJSON ⮞⮞⮞
    Q_PROPERTY(std::optional<double> endTemp_c              READ endTemp_c              WRITE setEndTemp_c                       )
    /**
@@ -98,7 +98,7 @@ public:
    Q_PROPERTY(std::optional<double>   endAcidity_pH        READ   endAcidity_pH        WRITE   setEndAcidity_pH                 )
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-   double                stepTime_min          () const;
+   double                stepTime_mins          () const;
    std::optional<double> endTemp_c             () const;
    int                   stepNumber            () const;
    int                   ownerId               () const;
@@ -109,7 +109,7 @@ public:
    std::optional<double> endAcidity_pH         () const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   void setStepTime_min          (double                const   val       );
+   void setStepTime_mins          (double                const   val       );
    void setEndTemp_c             (std::optional<double> const   val       );
    void setStepNumber            (int                   const   stepNumber);
    void setOwnerId               (int                   const   ownerId   );
@@ -125,7 +125,7 @@ protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
 
 protected:
-   double                m_stepTime_min          ;
+   double                m_stepTime_mins          ;
    std::optional<double> m_endTemp_c             ;
    int                   m_stepNumber            ;
    int                   m_ownerId               ;
