@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/FermentableEditor.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * editors/FermentableEditor.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -71,18 +71,14 @@ FermentableEditor::FermentableEditor(QWidget* parent) :
    SMART_FIELD_INIT(FermentableEditor, label_friability_pct        , lineEdit_friability_pct        , Fermentable, PropertyNames::Fermentable::friability_pct        , 1);
    SMART_FIELD_INIT(FermentableEditor, label_di_ph                 , lineEdit_di_ph                 , Fermentable, PropertyNames::Fermentable::di_ph                 , 1);
    SMART_FIELD_INIT(FermentableEditor, label_viscosity_cP          , lineEdit_viscosity_cP          , Fermentable, PropertyNames::Fermentable::viscosity_cP             );
-   SMART_FIELD_INIT(FermentableEditor, label_dmsP                  , lineEdit_dmsP                  , Fermentable, PropertyNames::Fermentable::dmsP                  , 1);
-   SMART_FIELD_INIT(FermentableEditor, label_fan                   , lineEdit_fan                   , Fermentable, PropertyNames::Fermentable::fan                   , 1);
+   SMART_FIELD_INIT(FermentableEditor, label_dmsP                  , lineEdit_dmsP                  , Fermentable, PropertyNames::Fermentable::dmsP_ppm              , 1);
+   SMART_FIELD_INIT(FermentableEditor, label_fan                   , lineEdit_fan                   , Fermentable, PropertyNames::Fermentable::fan_ppm               , 1);
    SMART_FIELD_INIT(FermentableEditor, label_fermentability_pct    , lineEdit_fermentability_pct    , Fermentable, PropertyNames::Fermentable::fermentability_pct    , 1);
-   SMART_FIELD_INIT(FermentableEditor, label_betaGlucan            , lineEdit_betaGlucan            , Fermentable, PropertyNames::Fermentable::betaGlucan            , 1);
+   SMART_FIELD_INIT(FermentableEditor, label_betaGlucan            , lineEdit_betaGlucan            , Fermentable, PropertyNames::Fermentable::betaGlucan_ppm        , 1);
 
 ///   SMART_CHECK_BOX_INIT(FermentableEditor, checkBox_amountIsWeight           , label_amountIsWeight           , lineEdit_inventory , Fermentable, amountIsWeight           );
 
 ///   BT_COMBO_BOX_INIT_COPQ(FermentableEditor, comboBox_amountType, Fermentable, PropertyNames::Ingredient::totalInventory, lineEdit_inventory);
-
-   SMART_CHECK_BOX_INIT(FermentableEditor, checkBox_dmsPIsMassPerVolume      , label_dmsPIsMassPerVolume      , lineEdit_dmsP      , Fermentable, dmsPIsMassPerVolume      );
-   SMART_CHECK_BOX_INIT(FermentableEditor, checkBox_fanIsMassPerVolume       , label_fanIsMassPerVolume       , lineEdit_fan       , Fermentable, fanIsMassPerVolume       );
-   SMART_CHECK_BOX_INIT(FermentableEditor, checkBox_betaGlucanIsMassPerVolume, label_betaGlucanIsMassPerVolume, lineEdit_betaGlucan, Fermentable, betaGlucanIsMassPerVolume);
 
    this->connectSignalsAndSlots();
    return;
@@ -95,13 +91,13 @@ void FermentableEditor::writeFieldsToEditItem() {
 
    this->m_editItem->setName                  (this->lineEdit_name          ->text                  ());
    this->m_editItem->setYield_pct             (this->lineEdit_yield         ->getNonOptValue<double>());
-   this->m_editItem->setColor_srm             (this->lineEdit_color         ->getNonOptValue<double>());
+   this->m_editItem->setColor_srm             (this->lineEdit_color         ->getNonOptCanonicalQty ());
 ///   this->m_editItem->setAddAfterBoil          (this->checkBox_addAfterBoil  ->checkState() == Qt::Checked);
    this->m_editItem->setOrigin                (this->lineEdit_origin        ->text                  ());
    this->m_editItem->setSupplier              (this->lineEdit_supplier      ->text                  ());
    this->m_editItem->setCoarseFineDiff_pct    (this->lineEdit_coarseFineDiff->getNonOptValue<double>());
    this->m_editItem->setMoisture_pct          (this->lineEdit_moisture      ->getNonOptValue<double>());
-   this->m_editItem->setDiastaticPower_lintner(this->lineEdit_diastaticPower->getNonOptValue<double>());
+   this->m_editItem->setDiastaticPower_lintner(this->lineEdit_diastaticPower->getNonOptCanonicalQty ());
    this->m_editItem->setProtein_pct           (this->lineEdit_protein       ->getNonOptValue<double>());
    this->m_editItem->setMaxInBatch_pct        (this->lineEdit_maxInBatch    ->getNonOptValue<double>());
    this->m_editItem->setRecommendMash         (this->checkBox_recommendMash ->checkState() == Qt::Checked);
@@ -126,13 +122,10 @@ void FermentableEditor::writeFieldsToEditItem() {
    this->m_editItem->setFriability_pct           (this->lineEdit_friability_pct           ->getOptValue<double>());
    this->m_editItem->setDi_ph                    (this->lineEdit_di_ph                    ->getOptValue<double>());
    this->m_editItem->setViscosity_cP             (this->lineEdit_viscosity_cP             ->getOptValue<double>());
-   this->m_editItem->setDmsP                     (this->lineEdit_dmsP                     ->getOptValue<double>());
-   this->m_editItem->setDmsPIsMassPerVolume      (this->checkBox_dmsPIsMassPerVolume      ->isChecked          ());
-   this->m_editItem->setFan                      (this->lineEdit_fan                      ->getOptValue<double>());
-   this->m_editItem->setFanIsMassPerVolume       (this->checkBox_fanIsMassPerVolume       ->isChecked          ());
+   this->m_editItem->setDmsP_ppm                 (this->lineEdit_dmsP                     ->getOptCanonicalQty());
+   this->m_editItem->setFan_ppm                  (this->lineEdit_fan                      ->getOptCanonicalQty());
    this->m_editItem->setFermentability_pct       (this->lineEdit_fermentability_pct       ->getOptValue<double>());
-   this->m_editItem->setBetaGlucan               (this->lineEdit_betaGlucan               ->getOptValue<double>());
-   this->m_editItem->setBetaGlucanIsMassPerVolume(this->checkBox_betaGlucanIsMassPerVolume->isChecked          ());
+   this->m_editItem->setBetaGlucan_ppm           (this->lineEdit_betaGlucan               ->getOptCanonicalQty());
 
    return;
 }
@@ -179,13 +172,10 @@ void FermentableEditor::readFieldsFromEditItem(std::optional<QString> propName) 
    if (!propName || *propName == PropertyNames::Fermentable::friability_pct           ) { this->lineEdit_friability_pct           ->setQuantity    (m_editItem->friability_pct           ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Fermentable::di_ph                    ) { this->lineEdit_di_ph                    ->setQuantity    (m_editItem->di_ph                    ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Fermentable::viscosity_cP             ) { this->lineEdit_viscosity_cP             ->setQuantity    (m_editItem->viscosity_cP             ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::dmsP                     ) { this->lineEdit_dmsP                     ->setQuantity    (m_editItem->dmsP                     ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::dmsPIsMassPerVolume      ) { this->checkBox_dmsPIsMassPerVolume      ->setChecked   (m_editItem->dmsPIsMassPerVolume      ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::fan                      ) { this->lineEdit_fan                      ->setQuantity    (m_editItem->fan                      ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::fanIsMassPerVolume       ) { this->checkBox_fanIsMassPerVolume       ->setChecked   (m_editItem->fanIsMassPerVolume       ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::dmsP_ppm                 ) { this->lineEdit_dmsP                     ->setQuantity    (m_editItem->dmsP_ppm                     ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::fan_ppm                  ) { this->lineEdit_fan                      ->setQuantity    (m_editItem->fan_ppm                      ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Fermentable::fermentability_pct       ) { this->lineEdit_fermentability_pct       ->setQuantity    (m_editItem->fermentability_pct       ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::betaGlucan               ) { this->lineEdit_betaGlucan               ->setQuantity    (m_editItem->betaGlucan               ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::betaGlucanIsMassPerVolume) { this->checkBox_betaGlucanIsMassPerVolume->setChecked   (m_editItem->betaGlucanIsMassPerVolume()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Fermentable::betaGlucan_ppm           ) { this->lineEdit_betaGlucan               ->setQuantity    (m_editItem->betaGlucan_ppm               ()); if (propName) { return; } }
 
    return;
 }

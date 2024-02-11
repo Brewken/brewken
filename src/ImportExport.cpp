@@ -58,14 +58,20 @@ namespace {
       // also has the advantage that we remember the same directory for both reading and writing.
       //
       static QString fileChooserDirectory{QDir::homePath()};
+      bool const importing{importOrExport == ImportOrExport::IMPORT};
+      // Note that we can't have the "both" formats filter for exporting, because QFileDialog will just slap a .json
+      // extension on, even if you specified myfile.xml.  .:TBD:. There is probably a better way of handling this that
+      // we should look into at some point.
       QFileDialog fileChooser{
          &MainWindow::instance(),
-         importOrExport == ImportOrExport::IMPORT ? QObject::tr("Open") : QObject::tr("Save"),
+         importing ? QObject::tr("Open") : QObject::tr("Save"),
          fileChooserDirectory,
-         QObject::tr("BeerJSON and BeerXML files (*.json *.xml);;BeerJSON files (*.json);;BeerXML files (*.xml)")
+         importing ?
+            QObject::tr("BeerJSON and BeerXML files (*.json *.xml);;BeerJSON files (*.json);;BeerXML files (*.xml)") :
+            QObject::tr("BeerJSON format (*.json);;BeerXML format (*.xml)")
       };
       fileChooser.setViewMode(QFileDialog::List);
-      if (importOrExport == ImportOrExport::IMPORT) {
+      if (importing) {
          fileChooser.setAcceptMode(QFileDialog::AcceptOpen);
          fileChooser.setFileMode(QFileDialog::ExistingFiles);
       } else {

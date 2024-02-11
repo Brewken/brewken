@@ -51,6 +51,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/BtDatePopup.cpp
     ${repoDir}/src/BtFieldType.cpp
     ${repoDir}/src/BtFolder.cpp
+    ${repoDir}/src/BtHorizontalTabs.cpp
     ${repoDir}/src/BtSplashScreen.cpp
     ${repoDir}/src/BtTabWidget.cpp
     ${repoDir}/src/BtTextEdit.cpp

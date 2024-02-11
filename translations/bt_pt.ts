@@ -877,10 +877,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>To XML</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Show Snapshots</source>
         <translation type="unfinished"></translation>
     </message>
@@ -898,6 +894,10 @@
     </message>
     <message>
         <source>Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To File (BeerXML or BeerJSON)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3805,6 +3805,10 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BeerJSON format (*.json);;BeerXML format (*.xml)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

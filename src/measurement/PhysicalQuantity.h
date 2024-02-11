@@ -137,26 +137,41 @@ namespace Measurement {
       // separate.
       Carbonation,
 
+      //
       // As explained at https://en.wikipedia.org/wiki/Concentration, there are several types of concentration,
       // including "mass concentration", which is expressed as mass-per-volume, and "volume concentration", which is
       // strictly-speaking a dimensionless number (because volume-per-volume cancels out) but is often expressed as
       // parts per million (or similar) or sometimes as a percentage.
       //
-      // BeerJSON just bundles mass concentration and volume concentration scales together under "concentration", which
-      // is sufficient for its purposes.  However, we don't want to do that, as we'd end up doing some contrived and
-      // incorrect conversion between the two -- because there is no generic conversion between milligrams-per-litre and
-      // parts-per-xxx.  (Converting mass-per-volume to volume-per-volume (or mass-per-mass) involves temperature and
-      // the molar masses of the two substances in question.  Hence why a chemist would use
-      // https://en.wikipedia.org/wiki/Molar_concentration instead.
+      // Additionally, there is "mass fraction" (see https://en.wikipedia.org/wiki/Mass_fraction_(chemistry)) and
+      // "volume fraction" (see https://en.wikipedia.org/wiki/Volume_fraction), both of which are dimensionless (because
+      // mass-per-mass and volume-per-volume cancel out).
       //
-      // (Various converters on the internet will tell you that 1 mg/L is "the same as" 1 ppm, but this is only really
-      // true if everything has the density of water.  In fairness to such converters, in practice, in brewing, for
-      // small concentrations, it's often not hugely wrong to approximate 1 milligram-per-litre with 1
-      // part-per-million.)
+      // Volume fraction is, strictly, different than volume concentration because the former is measured before mixing
+      // everything together and the latter afterwards.  So they are only the same in an "ideal solution", where the
+      // volumes of the constituents are additive (the volume of the solution is equal to the sum of the volumes of its
+      // ingredients).
       //
-      // See also https://en.wikipedia.org/wiki/Parts-per_notation.
-      MassConcentration,
-      VolumeConcentration,
+      // In BeerJSON, there is only ConcentrationType, and its units are "ppm", "ppb" and "mg/l".  Since the last of
+      // these is mass concentration, we assume that the first two are mass fraction.  In the context of brewing, the
+      // concentrations we are measuring are typically dilute aqueous solutions -- ie mostly water.  In that context,
+      // it's approximately true that 1 mg/L mass concentration = 1 parts per million (ppm) mass fraction.  This is
+      // because one liter of water weighs about a kilogram.  (Of course it actually depends on the water temperature
+      // and pressure -- eg see table at https://en.wikipedia.org/wiki/Density#Water, but this is a reasonable
+      // approximation.)
+      //
+      // So, we go with the flow and treat "ppm", "ppb" and "mg/l" as all measures of mass fraction or mass
+      // concentration.  Moreover, we assume that, in the context of brewing software we can convert between mass
+      // fraction and mass concentration per the formula above.  (We _could_ insist that mass fraction and mass
+      // concentration are different things, but the implication of the BeerJSON unit groupings is that it's not what
+      // users would want or expect.)
+      //
+      // Per https://en.wikipedia.org/wiki/Parts-per_notation, strictly speaking for a mass fraction, we should use
+      // "mg/kg" as instead of the more ambiguous "ppm" and "μg/kg" instead of "ppb".  However, users are going to
+      // expect to be able to type "ppm" and "ppb" as these are the more day-to-day terms used in brewing.  So, again we
+      // take the pragmatic rather than pedantic route.
+      //
+      MassFractionOrConc,
 
       // Viscosity -- see https://en.wikipedia.org/wiki/Viscosity
       Viscosity,
@@ -201,16 +216,14 @@ namespace Measurement {
     *        cases:
     *          \c Mass || \c Volume (eg measurements of \c Fermentable and \c Hop)
     *          \c Mass || \c Volume || \c Count (eg measurements of \c Misc and \c Yeast)
-    *          \c MassConcentration || \c VolumeConcentration  (used on a few properties of \c \c Fermentable)
     *
-    *        Since it also seems unlikely that the number of cases will grow very much, I think this enum is simpler and
+    *        Since it also seems unlikely that the number of cases will grow very much (even if we change our minds
+    *        about distinguishing between Mass Concentration and Mass Fraction), I think this enum is simpler and
     *        sufficient (with the helper functions below).
     */
    enum class ChoiceOfPhysicalQuantity {
       Mass_Volume        ,
       Mass_Volume_Count  ,
-      // Measurement::ChoiceOfPhysicalQuantity::MassConcentration_VolumeConcentration would be a bit long!
-      MassConc_VolumeConc,
    };
 
    /*!
@@ -268,13 +281,6 @@ namespace Measurement {
     */
    std::vector<PhysicalQuantity> const & allPossibilities(ChoiceOfPhysicalQuantity const val);
    std::vector<int> const & allPossibilitiesAsInt(ChoiceOfPhysicalQuantity const val);
-
-   /**
-    * \brief We have a number of places where we have a boolean \c amountIsWeight.  This array converts such a flag to
-    *        a localised displayable string, relying on the fact that static_cast<int>(false) == 0 and
-    *        static_cast<int>(true) == 1.
-    */
-   [[deprecated]] extern std::array<QString const, 2> descAmountIsWeight;;
 
    /**
     * \return \c true if \c physicalQuantity is a valid option for \c variantPhysicalQuantity, false otherwise

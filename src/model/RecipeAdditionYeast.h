@@ -29,9 +29,11 @@
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::RecipeAdditionYeast { BtStringConst const property{#property}; }
-AddPropertyName(addToSecondary )  // Deprecated - retained only for BeerXML
-AddPropertyName(attenuation_pct)
-AddPropertyName(yeast          )
+AddPropertyName(addToSecondary   )  // Deprecated - retained only for BeerXML
+AddPropertyName(attenuation_pct  )
+AddPropertyName(yeast            )
+AddPropertyName(timesCultured    )
+AddPropertyName(cellCountBillions)
 
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
@@ -78,19 +80,28 @@ public:
    Q_PROPERTY(bool                          isWeight  READ isWeight   WRITE setIsWeight)
 
    //! \brief The apparent attenuation in percent (moved from \c Yeast).  ⮜⮜⮜ Optional in BeerJSON and BeerXML ⮞⮞⮞
-   Q_PROPERTY(std::optional<double>  attenuation_pct           READ attenuation_pct           WRITE setAttenuation_pct          )
-   //! \brief Whether the yeast is added to secondary or primary.  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-   Q_PROPERTY(std::optional<bool>    addToSecondary            READ addToSecondary            WRITE setAddToSecondary           )
+   Q_PROPERTY(std::optional<double>  attenuation_pct           READ attenuation_pct           WRITE setAttenuation_pct  )
+   //! \brief The number of times recultured (moved from \c Yeast).       ⮜⮜⮜ Optional in BeerXML and BeerJSON ⮞⮞⮞
+   Q_PROPERTY(std::optional<int>     timesCultured             READ timesCultured             WRITE setTimesCultured    )
+   //! \brief A more fundamental way of measuring how much yeast is being added.  ⮜⮜⮜ Optional in BeerJSON, not part of BeerXML ⮞⮞⮞
+   Q_PROPERTY(std::optional<int>     cellCountBillions         READ cellCountBillions         WRITE setCellCountBillions)
+
+   //! \brief Whether the yeast is added to secondary or primary.  ⮜⮜⮜ Optional in BeerXML, not part of BeerJSON ⮞⮞⮞
+   Q_PROPERTY(std::optional<bool>    addToSecondary            READ addToSecondary            WRITE setAddToSecondary   )
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-   Yeast *               yeast          () const;
-   std::optional<double> attenuation_pct() const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-   std::optional<bool>   addToSecondary () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+   Yeast *               yeast            () const;
+   std::optional<double> attenuation_pct  () const;
+   std::optional<int   > timesCultured    () const;
+   std::optional<int   > cellCountBillions() const;
+   std::optional<bool  > addToSecondary   () const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   void setYeast          (Yeast *               const val);
-   void setAttenuation_pct(std::optional<double> const val); // ⮜⮜⮜ Optional in BeerJSON and BeerXML ⮞⮞⮞
-   void setAddToSecondary (std::optional<bool  > const val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+   void setYeast            (Yeast *               const val);
+   void setAttenuation_pct  (std::optional<double> const val);
+   void setTimesCultured    (std::optional<int   > const val);
+   void setCellCountBillions(std::optional<int   > const val);
+   void setAddToSecondary   (std::optional<bool  > const val);
 
 ///   virtual Recipe * getOwningRecipe() const;
 
@@ -101,7 +112,9 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   std::optional<double>       m_attenuation_pct          ; // ⮜⮜⮜ Optional in BeerJSON and BeerXML ⮞⮞⮞
+   std::optional<double> m_attenuation_pct  ;
+   std::optional<int   > m_timesCultured    ;
+   std::optional<int   > m_cellCountBillions;
 };
 
 Q_DECLARE_METATYPE(Yeast)

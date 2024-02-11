@@ -62,7 +62,7 @@ AddPropertyName(minTemperature_c         )
 AddPropertyName(notes                    )
 AddPropertyName(phenolicOffFlavorPositive)
 AddPropertyName(productId                )
-AddPropertyName(timesCultured            )
+///AddPropertyName(timesCultured            ) Moved to RecipeAdditionYeast
 AddPropertyName(type                     )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
@@ -236,8 +236,6 @@ public:
    Q_PROPERTY(QString                notes                     READ notes                     WRITE setNotes                    )
    //! \brief What styles the strain is best for.
    Q_PROPERTY(QString                bestFor                   READ bestFor                   WRITE setBestFor                  )
-   //! \brief The number of times recultured.                      ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-   Q_PROPERTY(std::optional<int>     timesCultured             READ timesCultured             WRITE setTimesCultured            )
    //! \brief The maximum recommended number of reculturings.      ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    Q_PROPERTY(std::optional<int>     maxReuse                  READ maxReuse                  WRITE setMaxReuse                 )
    //! \brief Whether the yeast is added to secondary or primary.  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
@@ -287,7 +285,6 @@ public:
    std::optional<int>          flocculationAsInt        () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    QString                     notes                    () const;
    QString                     bestFor                  () const;
-   std::optional<int>          timesCultured            () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    std::optional<int>          maxReuse                 () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
 ///   std::optional<bool>         addToSecondary           () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -316,7 +313,6 @@ public:
    void setFlocculationAsInt        (std::optional<int>          const   val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    void setNotes                    (QString                     const & val);
    void setBestFor                  (QString                     const & val);
-   void setTimesCultured            (std::optional<int>          const   val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    void setMaxReuse                 (std::optional<int>          const   val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
 ///   void setAddToSecondary           (std::optional<bool>         const   val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -368,7 +364,7 @@ private:
    std::optional<Flocculation> m_flocculation             ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    QString                     m_notes                    ;
    QString                     m_bestFor                  ;
-   std::optional<int>          m_timesCultured            ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+///   std::optional<int>          m_timesCultured            ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    std::optional<int>          m_maxReuse                 ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
 ///   std::optional<bool>         m_addToSecondary           ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
 ///   int                         m_inventory_id             ;

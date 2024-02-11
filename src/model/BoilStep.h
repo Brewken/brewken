@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/BoilStep.h is part of Brewken, and is copyright the following authors 2023:
+ * model/BoilStep.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -110,5 +110,7 @@ private:
    std::optional<ChillingType> m_chillingType;
 
 };
+
+Q_DECLARE_METATYPE(QList<std::shared_ptr<BoilStep>>)
 
 #endif

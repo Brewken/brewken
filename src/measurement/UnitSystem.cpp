@@ -489,17 +489,13 @@ namespace Measurement::UnitSystems {
                                               "carbonation_MassPerVolume",
                                               Measurement::SystemOfMeasurement::CarbonationMassPerVolume};
 
-   UnitSystem const concentration_PartsPer{PhysicalQuantity::VolumeConcentration,
-                                           &Measurement::Units::partsPerMillion,
-                                           "concentration_PartsPer",
-                                           Measurement::SystemOfMeasurement::MetricConcentration,
-                                           {{UnitSystem::RelativeScale::Small,  &Measurement::Units::partsPerBillion},
-                                            {UnitSystem::RelativeScale::Medium, &Measurement::Units::partsPerMillion}}};
-
-   UnitSystem const concentration_MassPerVolume{PhysicalQuantity::MassConcentration,
-                                                &Measurement::Units::milligramsPerLiter,
-                                                "concentration_MassPerVolume",
-                                                Measurement::SystemOfMeasurement::MetricConcentration};
+   UnitSystem const massFractionOrConc_Brewing{PhysicalQuantity::MassFractionOrConc,
+                                               &Measurement::Units::partsPerMillionMass,
+                                               "massFractionOrConc_Brewing",
+                                               Measurement::SystemOfMeasurement::BrewingConcentration,
+                                               {{UnitSystem::RelativeScale::Small,  &Measurement::Units::partsPerBillionMass},
+                                                {UnitSystem::RelativeScale::Medium, &Measurement::Units::partsPerMillionMass},
+                                                {UnitSystem::RelativeScale::Large , &Measurement::Units::milligramsPerLiter}}};
 
    UnitSystem const viscosity_Metric{PhysicalQuantity::Viscosity,
                                      &Measurement::Units::centipoise,

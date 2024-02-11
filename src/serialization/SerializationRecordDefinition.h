@@ -42,12 +42,14 @@ public:
                                  TypeLookup const * const   typeLookup,
                                  char       const * const   namedEntityClassName,
                                  QString            const & localisedEntityName,
-                                 QVariant                 (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &)) :
+                                 QVariant                 (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
+                                 QList<std::shared_ptr<NamedEntity>> (*listDowncaster)(QVariant const &)) :
       m_recordName          {recordName},
       m_typeLookup          {typeLookup},
       m_namedEntityClassName{namedEntityClassName},
       m_localisedEntityName {localisedEntityName},
-      m_listUpcaster        {listUpcaster} {
+      m_listUpcaster        {listUpcaster},
+      m_listDowncaster      {listDowncaster} {
       return;
    }
    ~SerializationRecordDefinition() = default;
@@ -68,7 +70,10 @@ public:
     */
    QString const m_localisedEntityName;
 
-   QVariant (*m_listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &);
+   //! Pointer to relevant NamedEntity::upcastListToVariant function
+   QVariant                            (*m_listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &);
+   //! Pointer to relevant NamedEntity::downcastListFromVariant function
+   QList<std::shared_ptr<NamedEntity>> (*m_listDowncaster)(QVariant const &);
 
 };
 

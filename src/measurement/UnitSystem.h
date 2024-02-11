@@ -284,8 +284,9 @@ namespace Measurement {
       extern UnitSystem const carbonation_Volumes;
       extern UnitSystem const carbonation_MassPerVolume;
 
-      extern UnitSystem const concentration_PartsPer;
-      extern UnitSystem const concentration_MassPerVolume;
+      // See comment in measurement/PhysicalQuantity.h for why we combine "mass concentration" and "mass fraction" into
+      // one grouping.
+      extern UnitSystem const massFractionOrConc_Brewing;
 
       // This is one of the few places we need to pay attention that there is more than one metric system -- see
       // comments in measurement/SystemOfMeasurement.h

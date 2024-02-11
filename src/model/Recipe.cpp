@@ -1062,6 +1062,9 @@ TypeLookup const Recipe::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::wortFromMash_l    , Recipe::m_wortFromMash_l    , Measurement::PhysicalQuantity::Volume        ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::yeastIds          , Recipe::impl::yeastIds      ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::yeasts            , Recipe::m_yeasts            ),
+      // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::beerAcidity_pH         , Recipe::m_beerAcidity_pH         , Measurement::PhysicalQuantity::Acidity   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::apparentAttenuation_pct, Recipe::m_apparentAttenuation_pct,           NonPhysicalQuantity::Percentage),
 
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::fermentableAdditionIds, Recipe::fermentableAdditionIds),
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::hopAdditionIds        , Recipe::hopAdditionIds        ),
@@ -1079,86 +1082,114 @@ TypeLookup const Recipe::typeLookup {
 static_assert(std::is_base_of<FolderBase<Recipe>, Recipe>::value);
 
 Recipe::Recipe(QString name) :
-   NamedEntity{name, true                   },
-   FolderBase<Recipe>{},
-   pimpl               {std::make_unique<impl>(*this)},
-   m_type              {Recipe::Type::AllGrain       },
-   m_brewer            {""                           },
-   m_asstBrewer        {"Brewken: free beer software"},
-   m_batchSize_l       {0.0                          },
-   m_efficiency_pct    {0.0                          },
-   m_fermentationStages{1                            },
-   m_primaryAge_days   {0.0                          },
-   m_primaryTemp_c     {0.0                          },
-   m_secondaryAge_days {0.0                          },
-   m_secondaryTemp_c   {0.0                          },
-   m_tertiaryAge_days  {0.0                          },
-   m_tertiaryTemp_c    {0.0                          },
-   m_age               {0.0                          },
-   m_ageTemp_c         {0.0                          },
-   m_date              {QDate::currentDate()         },
-   m_carbonation_vols  {0.0                          },
-   m_forcedCarbonation {false                        },
-   m_primingSugarName  {""                           },
-   m_carbonationTemp_c {0.0                          },
-   m_primingSugarEquiv {0.0                          },
-   m_kegPrimingFactor  {0.0                          },
-   m_notes             {""                           },
-   m_tasteNotes        {""                           },
-   m_tasteRating       {0.0                          },
-   m_styleId           {-1                           },
-   m_equipmentId       {-1                           },
-   m_mashId            {-1                           },
-   m_boilId            {-1                           },
-   m_fermentationId    {-1                           },
-   m_og                {1.0                          },
-   m_fg                {1.0                          },
-   m_locked            {false                        },
-   m_ancestor_id       {-1                           },
-   m_ancestors         {},
-   m_hasDescendants    {false                        } {
+   NamedEntity              {name, true                   },
+   FolderBase<Recipe>       {},
+   pimpl                    {std::make_unique<impl>(*this)},
+   m_type                   {Recipe::Type::AllGrain       },
+   m_brewer                 {""                           },
+   m_asstBrewer             {"Brewken: free beer software"},
+   m_batchSize_l            {0.0                 },
+   m_efficiency_pct         {0.0                 },
+   m_fermentationStages     {1                   },
+   m_primaryAge_days        {0.0                 },
+   m_primaryTemp_c          {0.0                 },
+   m_secondaryAge_days      {0.0                 },
+   m_secondaryTemp_c        {0.0                 },
+   m_tertiaryAge_days       {0.0                 },
+   m_tertiaryTemp_c         {0.0                 },
+   m_age                    {0.0                 },
+   m_ageTemp_c              {0.0                 },
+   m_date                   {QDate::currentDate()},
+   m_carbonation_vols       {0.0                 },
+   m_forcedCarbonation      {false               },
+   m_primingSugarName       {""                  },
+   m_carbonationTemp_c      {0.0                 },
+   m_primingSugarEquiv      {0.0                 },
+   m_kegPrimingFactor       {0.0                 },
+   m_notes                  {""                  },
+   m_tasteNotes             {""                  },
+   m_tasteRating            {0.0                 },
+   m_styleId                {-1                  },
+   m_equipmentId            {-1                  },
+   m_mashId                 {-1                  },
+   m_boilId                 {-1                  },
+   m_fermentationId         {-1                  },
+   m_beerAcidity_pH         {std::nullopt        },
+   m_apparentAttenuation_pct{std::nullopt        },
+   m_ABV_pct                {0.0                 },
+   m_color_srm              {0.0                 },
+   m_boilGrav               {0.0                 },
+   m_IBU                    {0.0                 },
+   m_ibus                   {0.0                 },
+   m_wortFromMash_l         {0.0                 },
+   m_boilVolume_l           {0.0                 },
+   m_postBoilVolume_l       {0.0                 },
+   m_finalVolume_l          {0.0                 },
+   m_finalVolumeNoLosses_l  {0.0                 },
+   m_calories               {0.0                 },
+   m_grainsInMash_kg        {0.0                 },
+   m_grains_kg              {0.0                 },
+   m_SRMColor               {},
+   m_og                     {1.0                 },
+   m_fg                     {1.0                 },
+   m_og_fermentable         {0.0                 },
+   m_fg_fermentable         {0.0                 },
+   m_locked                 {false               },
+   m_uninitializedCalcs     {true                },
+   m_uninitializedCalcsMutex{},
+   m_recalcMutex            {},
+   m_ancestor_id            {-1                  },
+   m_ancestors              {},
+   m_hasDescendants         {false               } {
    return;
 }
 
 Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity{namedParameterBundle         },
-   FolderBase<Recipe>{namedParameterBundle},
-   pimpl               {std::make_unique<impl>(*this)},
-   SET_REGULAR_FROM_NPB (m_type              , namedParameterBundle, PropertyNames::Recipe::type              ),
-   SET_REGULAR_FROM_NPB (m_brewer            , namedParameterBundle, PropertyNames::Recipe::brewer            ),
-   SET_REGULAR_FROM_NPB (m_asstBrewer        , namedParameterBundle, PropertyNames::Recipe::asstBrewer        ),
-   SET_REGULAR_FROM_NPB (m_batchSize_l       , namedParameterBundle, PropertyNames::Recipe::batchSize_l       ),
-   SET_REGULAR_FROM_NPB (m_efficiency_pct    , namedParameterBundle, PropertyNames::Recipe::efficiency_pct    ),
-   SET_REGULAR_FROM_NPB (m_fermentationStages, namedParameterBundle, PropertyNames::Recipe::fermentationStages),
-   SET_REGULAR_FROM_NPB (m_primaryAge_days   , namedParameterBundle, PropertyNames::Recipe::primaryAge_days   ),
-   SET_REGULAR_FROM_NPB (m_primaryTemp_c     , namedParameterBundle, PropertyNames::Recipe::primaryTemp_c     ),
-   SET_REGULAR_FROM_NPB (m_secondaryAge_days , namedParameterBundle, PropertyNames::Recipe::secondaryAge_days ),
-   SET_REGULAR_FROM_NPB (m_secondaryTemp_c   , namedParameterBundle, PropertyNames::Recipe::secondaryTemp_c   ),
-   SET_REGULAR_FROM_NPB (m_tertiaryAge_days  , namedParameterBundle, PropertyNames::Recipe::tertiaryAge_days  ),
-   SET_REGULAR_FROM_NPB (m_tertiaryTemp_c    , namedParameterBundle, PropertyNames::Recipe::tertiaryTemp_c    ),
-   SET_REGULAR_FROM_NPB (m_age               , namedParameterBundle, PropertyNames::Recipe::age_days          ),
-   SET_REGULAR_FROM_NPB (m_ageTemp_c         , namedParameterBundle, PropertyNames::Recipe::ageTemp_c         ),
-   SET_REGULAR_FROM_NPB (m_date              , namedParameterBundle, PropertyNames::Recipe::date              ),
-   SET_REGULAR_FROM_NPB (m_carbonation_vols  , namedParameterBundle, PropertyNames::Recipe::carbonation_vols  ),
-   SET_REGULAR_FROM_NPB (m_forcedCarbonation , namedParameterBundle, PropertyNames::Recipe::forcedCarbonation ),
-   SET_REGULAR_FROM_NPB (m_primingSugarName  , namedParameterBundle, PropertyNames::Recipe::primingSugarName  ),
-   SET_REGULAR_FROM_NPB (m_carbonationTemp_c , namedParameterBundle, PropertyNames::Recipe::carbonationTemp_c ),
-   SET_REGULAR_FROM_NPB (m_primingSugarEquiv , namedParameterBundle, PropertyNames::Recipe::primingSugarEquiv ),
-   SET_REGULAR_FROM_NPB (m_kegPrimingFactor  , namedParameterBundle, PropertyNames::Recipe::kegPrimingFactor  ),
-   SET_REGULAR_FROM_NPB (m_notes             , namedParameterBundle, PropertyNames::Recipe::notes             ),
-   SET_REGULAR_FROM_NPB (m_tasteNotes        , namedParameterBundle, PropertyNames::Recipe::tasteNotes        ),
-   SET_REGULAR_FROM_NPB (m_tasteRating       , namedParameterBundle, PropertyNames::Recipe::tasteRating       ),
-   SET_REGULAR_FROM_NPB (m_styleId           , namedParameterBundle, PropertyNames::Recipe::styleId           ),
-   SET_REGULAR_FROM_NPB (m_equipmentId       , namedParameterBundle, PropertyNames::Recipe::equipmentId       ),
-   SET_REGULAR_FROM_NPB (m_mashId            , namedParameterBundle, PropertyNames::Recipe::mashId            ),
-   SET_REGULAR_FROM_NPB (m_boilId            , namedParameterBundle, PropertyNames::Recipe::boilId            , -1),
-   SET_REGULAR_FROM_NPB (m_fermentationId    , namedParameterBundle, PropertyNames::Recipe::fermentationId    , -1),
-   SET_REGULAR_FROM_NPB (m_og                , namedParameterBundle, PropertyNames::Recipe::og                ),
-   SET_REGULAR_FROM_NPB (m_fg                , namedParameterBundle, PropertyNames::Recipe::fg                ),
-   SET_REGULAR_FROM_NPB (m_locked            , namedParameterBundle, PropertyNames::Recipe::locked            ),
-   SET_REGULAR_FROM_NPB (m_ancestor_id       , namedParameterBundle, PropertyNames::Recipe::ancestorId        ),
-   m_ancestors         {},
-   m_hasDescendants    {false} {
+   NamedEntity          {namedParameterBundle},
+   FolderBase<Recipe>   {namedParameterBundle},
+   pimpl                {std::make_unique<impl>(*this)},
+   SET_REGULAR_FROM_NPB (m_type                   , namedParameterBundle, PropertyNames::Recipe::type                   ),
+   SET_REGULAR_FROM_NPB (m_brewer                 , namedParameterBundle, PropertyNames::Recipe::brewer                 ),
+   SET_REGULAR_FROM_NPB (m_asstBrewer             , namedParameterBundle, PropertyNames::Recipe::asstBrewer             ),
+   SET_REGULAR_FROM_NPB (m_batchSize_l            , namedParameterBundle, PropertyNames::Recipe::batchSize_l            ),
+   SET_REGULAR_FROM_NPB (m_efficiency_pct         , namedParameterBundle, PropertyNames::Recipe::efficiency_pct         ),
+   SET_REGULAR_FROM_NPB (m_fermentationStages     , namedParameterBundle, PropertyNames::Recipe::fermentationStages     ),
+   SET_REGULAR_FROM_NPB (m_primaryAge_days        , namedParameterBundle, PropertyNames::Recipe::primaryAge_days        ),
+   SET_REGULAR_FROM_NPB (m_primaryTemp_c          , namedParameterBundle, PropertyNames::Recipe::primaryTemp_c          ),
+   SET_REGULAR_FROM_NPB (m_secondaryAge_days      , namedParameterBundle, PropertyNames::Recipe::secondaryAge_days      ),
+   SET_REGULAR_FROM_NPB (m_secondaryTemp_c        , namedParameterBundle, PropertyNames::Recipe::secondaryTemp_c        ),
+   SET_REGULAR_FROM_NPB (m_tertiaryAge_days       , namedParameterBundle, PropertyNames::Recipe::tertiaryAge_days       ),
+   SET_REGULAR_FROM_NPB (m_tertiaryTemp_c         , namedParameterBundle, PropertyNames::Recipe::tertiaryTemp_c         ),
+   SET_REGULAR_FROM_NPB (m_age                    , namedParameterBundle, PropertyNames::Recipe::age_days               ),
+   SET_REGULAR_FROM_NPB (m_ageTemp_c              , namedParameterBundle, PropertyNames::Recipe::ageTemp_c              ),
+   SET_REGULAR_FROM_NPB (m_date                   , namedParameterBundle, PropertyNames::Recipe::date                   ),
+   SET_REGULAR_FROM_NPB (m_carbonation_vols       , namedParameterBundle, PropertyNames::Recipe::carbonation_vols       ),
+   SET_REGULAR_FROM_NPB (m_forcedCarbonation      , namedParameterBundle, PropertyNames::Recipe::forcedCarbonation      ),
+   SET_REGULAR_FROM_NPB (m_primingSugarName       , namedParameterBundle, PropertyNames::Recipe::primingSugarName       ),
+   SET_REGULAR_FROM_NPB (m_carbonationTemp_c      , namedParameterBundle, PropertyNames::Recipe::carbonationTemp_c      ),
+   SET_REGULAR_FROM_NPB (m_primingSugarEquiv      , namedParameterBundle, PropertyNames::Recipe::primingSugarEquiv      ),
+   SET_REGULAR_FROM_NPB (m_kegPrimingFactor       , namedParameterBundle, PropertyNames::Recipe::kegPrimingFactor       ),
+   SET_REGULAR_FROM_NPB (m_notes                  , namedParameterBundle, PropertyNames::Recipe::notes                  ),
+   SET_REGULAR_FROM_NPB (m_tasteNotes             , namedParameterBundle, PropertyNames::Recipe::tasteNotes             ),
+   SET_REGULAR_FROM_NPB (m_tasteRating            , namedParameterBundle, PropertyNames::Recipe::tasteRating            ),
+   SET_REGULAR_FROM_NPB (m_styleId                , namedParameterBundle, PropertyNames::Recipe::styleId                ),
+   SET_REGULAR_FROM_NPB (m_equipmentId            , namedParameterBundle, PropertyNames::Recipe::equipmentId            ),
+   SET_REGULAR_FROM_NPB (m_mashId                 , namedParameterBundle, PropertyNames::Recipe::mashId                 ),
+   SET_REGULAR_FROM_NPB (m_boilId                 , namedParameterBundle, PropertyNames::Recipe::boilId                 , -1),
+   SET_REGULAR_FROM_NPB (m_fermentationId         , namedParameterBundle, PropertyNames::Recipe::fermentationId         , -1),
+   SET_REGULAR_FROM_NPB (m_beerAcidity_pH         , namedParameterBundle, PropertyNames::Recipe::beerAcidity_pH         ),
+   SET_REGULAR_FROM_NPB (m_apparentAttenuation_pct, namedParameterBundle, PropertyNames::Recipe::apparentAttenuation_pct),
+   SET_REGULAR_FROM_NPB (m_og                     , namedParameterBundle, PropertyNames::Recipe::og                     ),
+   SET_REGULAR_FROM_NPB (m_fg                     , namedParameterBundle, PropertyNames::Recipe::fg                     ),
+                         m_og_fermentable         {0.0},
+                         m_fg_fermentable         {0.0},
+   SET_REGULAR_FROM_NPB (m_locked                 , namedParameterBundle, PropertyNames::Recipe::locked                 ),
+                         m_uninitializedCalcs     {true},
+                         m_uninitializedCalcsMutex{},
+                         m_recalcMutex            {},
+   SET_REGULAR_FROM_NPB (m_ancestor_id            , namedParameterBundle, PropertyNames::Recipe::ancestorId             ),
+                         m_ancestors              {},
+                         m_hasDescendants         {false} {
    // At this stage, we haven't set any Hops, Fermentables, etc.  This is deliberate because the caller typically needs
    // to access subsidiary records to obtain this info.   Callers will usually use setters (setHopIds, etc but via
    // setProperty) to finish constructing the object.
@@ -1174,48 +1205,54 @@ Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
    return;
 }
 
-
 Recipe::Recipe(Recipe const & other) :
    NamedEntity{other},
    FolderBase<Recipe>{other},
    pimpl{std::make_unique<impl>(*this)},
-   m_type              {other.m_type              },
-   m_brewer            {other.m_brewer            },
-   m_asstBrewer        {other.m_asstBrewer        },
-   m_batchSize_l       {other.m_batchSize_l       },
-   m_efficiency_pct    {other.m_efficiency_pct    },
-   m_fermentationStages{other.m_fermentationStages},
-   m_primaryAge_days   {other.m_primaryAge_days   },
-   m_primaryTemp_c     {other.m_primaryTemp_c     },
-   m_secondaryAge_days {other.m_secondaryAge_days },
-   m_secondaryTemp_c   {other.m_secondaryTemp_c   },
-   m_tertiaryAge_days  {other.m_tertiaryAge_days  },
-   m_tertiaryTemp_c    {other.m_tertiaryTemp_c    },
-   m_age               {other.m_age               },
-   m_ageTemp_c         {other.m_ageTemp_c         },
-   m_date              {other.m_date              },
-   m_carbonation_vols  {other.m_carbonation_vols  },
-   m_forcedCarbonation {other.m_forcedCarbonation },
-   m_primingSugarName  {other.m_primingSugarName  },
-   m_carbonationTemp_c {other.m_carbonationTemp_c },
-   m_primingSugarEquiv {other.m_primingSugarEquiv },
-   m_kegPrimingFactor  {other.m_kegPrimingFactor  },
-   m_notes             {other.m_notes             },
-   m_tasteNotes        {other.m_tasteNotes        },
-   m_tasteRating       {other.m_tasteRating       },
-   m_styleId           {other.m_styleId           },  // But see additional logic in body
-   m_equipmentId       {other.m_equipmentId       },  // But see additional logic in body
-   m_mashId            {other.m_mashId            },  // But see additional logic in body
-   m_boilId            {other.m_boilId            },  // But see additional logic in body
-   m_fermentationId    {other.m_fermentationId     },  // But see additional logic in body
-   m_og                {other.m_og                },
-   m_fg                {other.m_fg                },
-   m_locked            {other.m_locked            },
+   m_type                   {other.m_type              },
+   m_brewer                 {other.m_brewer            },
+   m_asstBrewer             {other.m_asstBrewer        },
+   m_batchSize_l            {other.m_batchSize_l       },
+   m_efficiency_pct         {other.m_efficiency_pct    },
+   m_fermentationStages     {other.m_fermentationStages},
+   m_primaryAge_days        {other.m_primaryAge_days   },
+   m_primaryTemp_c          {other.m_primaryTemp_c     },
+   m_secondaryAge_days      {other.m_secondaryAge_days },
+   m_secondaryTemp_c        {other.m_secondaryTemp_c   },
+   m_tertiaryAge_days       {other.m_tertiaryAge_days  },
+   m_tertiaryTemp_c         {other.m_tertiaryTemp_c    },
+   m_age                    {other.m_age               },
+   m_ageTemp_c              {other.m_ageTemp_c         },
+   m_date                   {other.m_date              },
+   m_carbonation_vols       {other.m_carbonation_vols  },
+   m_forcedCarbonation      {other.m_forcedCarbonation },
+   m_primingSugarName       {other.m_primingSugarName  },
+   m_carbonationTemp_c      {other.m_carbonationTemp_c },
+   m_primingSugarEquiv      {other.m_primingSugarEquiv },
+   m_kegPrimingFactor       {other.m_kegPrimingFactor  },
+   m_notes                  {other.m_notes             },
+   m_tasteNotes             {other.m_tasteNotes        },
+   m_tasteRating            {other.m_tasteRating       },
+   m_styleId                {other.m_styleId           },  // But see additional logic in body
+   m_equipmentId            {other.m_equipmentId       },  // But see additional logic in body
+   m_mashId                 {other.m_mashId            },  // But see additional logic in body
+   m_boilId                 {other.m_boilId            },  // But see additional logic in body
+   m_fermentationId         {other.m_fermentationId    },  // But see additional logic in body
+   m_beerAcidity_pH         {other.m_beerAcidity_pH    },
+   m_apparentAttenuation_pct{other.m_apparentAttenuation_pct},
+   m_og                     {other.m_og                },
+   m_fg                     {other.m_fg                },
+   m_og_fermentable         {0.0},
+   m_fg_fermentable         {0.0},
+   m_locked                 {other.m_locked            },
+   m_uninitializedCalcs     {true                      },
+   m_uninitializedCalcsMutex{},
+   m_recalcMutex            {},
    // Copying a Recipe doesn't copy its descendants
-   m_ancestor_id       {-1                        },
-   m_ancestors         {},
-   m_hasDescendants    {false                     } {
-   setObjectName("Recipe"); // .:TBD:. Would be good to understand why we need this
+   m_ancestor_id            {-1                        },
+   m_ancestors              {},
+   m_hasDescendants         {false                     } {
+   setObjectName("Recipe"); // .:TBD:. Would be good to understand whether/why we need this
 
    //
    // We don't want to be versioning something while we're still constructing it
@@ -1853,10 +1890,10 @@ void Recipe::setBatchSize_l(double var) {
 ///   return;
 ///}
 
-void Recipe::setEfficiency_pct(double var) {
+void Recipe::setEfficiency_pct(double val) {
    SET_AND_NOTIFY(PropertyNames::Recipe::efficiency_pct,
                       this->m_efficiency_pct,
-                      this->enforceMinAndMax(var, "efficiency", 0.0, 100.0, 70.0));
+                      this->enforceMinAndMax(val, "efficiency", 0.0, 100.0, 70.0));
 
    // If you change the efficency, you really should recalc. And I'm afraid it
    // means recalc all, since og and fg will change, which means your ratios
@@ -1864,118 +1901,121 @@ void Recipe::setEfficiency_pct(double var) {
    recalcAll();
 }
 
-void Recipe::setAsstBrewer(const QString & var) {
+void Recipe::setAsstBrewer(const QString & val) {
    SET_AND_NOTIFY(PropertyNames::Recipe::asstBrewer,
                       this->m_asstBrewer,
-                      var);
+                      val);
    return;
 }
 
-void Recipe::setNotes(const QString & var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::notes, this->m_notes, var);
+void Recipe::setNotes(const QString & val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::notes, this->m_notes, val);
    return;
 }
 
-void Recipe::setTasteNotes(const QString & var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::tasteNotes, this->m_tasteNotes, var);
+void Recipe::setTasteNotes(const QString & val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::tasteNotes, this->m_tasteNotes, val);
    return;
 }
 
-void Recipe::setTasteRating(double var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::tasteRating, this->m_tasteRating, this->enforceMinAndMax(var, "taste rating", 0.0, 50.0, 0.0));
+void Recipe::setTasteRating(double val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::tasteRating, this->m_tasteRating, this->enforceMinAndMax(val, "taste rating", 0.0, 50.0, 0.0));
    return;
 }
 
-void Recipe::setOg(double var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::og, this->m_og, this->enforceMin(var, "og", 0.0, 1.0));
+void Recipe::setOg(double val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::og, this->m_og, this->enforceMin(val, "og", 0.0, 1.0));
    return;
 }
 
-void Recipe::setFg(double var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::fg, this->m_fg, this->enforceMin(var, "fg", 0.0, 1.0));
+void Recipe::setFg(double val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::fg, this->m_fg, this->enforceMin(val, "fg", 0.0, 1.0));
    return;
 }
 
-void Recipe::setFermentationStages(int var) {
+void Recipe::setFermentationStages(int val) {
    SET_AND_NOTIFY(PropertyNames::Recipe::fermentationStages, this->m_fermentationStages,
-                                   this->enforceMin(var, "stages"));
+                                   this->enforceMin(val, "stages"));
    return;
 }
 
-void Recipe::setPrimaryAge_days(double var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::primaryAge_days, this->m_primaryAge_days, this->enforceMin(var, "primary age"));
+void Recipe::setPrimaryAge_days(double val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::primaryAge_days, this->m_primaryAge_days, this->enforceMin(val, "primary age"));
    return;
 }
 
-void Recipe::setPrimaryTemp_c(double var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::primaryTemp_c, this->m_primaryTemp_c, var);
+void Recipe::setPrimaryTemp_c(double val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::primaryTemp_c, this->m_primaryTemp_c, val);
    return;
 }
 
-void Recipe::setSecondaryAge_days(double var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::secondaryAge_days, this->m_secondaryAge_days, this->enforceMin(var, "secondary age"));
+void Recipe::setSecondaryAge_days(double val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::secondaryAge_days, this->m_secondaryAge_days, this->enforceMin(val, "secondary age"));
    return;
 }
 
-void Recipe::setSecondaryTemp_c(double var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::secondaryTemp_c, this->m_secondaryTemp_c, var);
+void Recipe::setSecondaryTemp_c(double val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::secondaryTemp_c, this->m_secondaryTemp_c, val);
    return;
 }
 
-void Recipe::setTertiaryAge_days(double var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::tertiaryAge_days, this->m_tertiaryAge_days, this->enforceMin(var, "tertiary age"));
+void Recipe::setTertiaryAge_days(double val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::tertiaryAge_days, this->m_tertiaryAge_days, this->enforceMin(val, "tertiary age"));
    return;
 }
 
-void Recipe::setTertiaryTemp_c(double var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::tertiaryTemp_c, this->m_tertiaryTemp_c, var);
+void Recipe::setTertiaryTemp_c(double val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::tertiaryTemp_c, this->m_tertiaryTemp_c, val);
    return;
 }
 
-void Recipe::setAge_days(double var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::age_days, this->m_age, this->enforceMin(var, "age"));
+void Recipe::setAge_days(double val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::age_days, this->m_age, this->enforceMin(val, "age"));
    return;
 }
 
-void Recipe::setAgeTemp_c(double var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::ageTemp_c, this->m_ageTemp_c, var);
+void Recipe::setAgeTemp_c(double val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::ageTemp_c, this->m_ageTemp_c, val);
    return;
 }
 
-void Recipe::setDate(const QDate & var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::date, this->m_date, var);
+void Recipe::setDate(const QDate & val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::date, this->m_date, val);
    return;
 }
 
-void Recipe::setCarbonation_vols(double var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::carbonation_vols, this->m_carbonation_vols, this->enforceMin(var, "carb"));
+void Recipe::setCarbonation_vols(double val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::carbonation_vols, this->m_carbonation_vols, this->enforceMin(val, "carb"));
    return;
 }
 
-void Recipe::setForcedCarbonation(bool var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::forcedCarbonation, this->m_forcedCarbonation, var);
+void Recipe::setForcedCarbonation(bool val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::forcedCarbonation, this->m_forcedCarbonation, val);
    return;
 }
 
-void Recipe::setPrimingSugarName(const QString & var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::primingSugarName, this->m_primingSugarName, var);
+void Recipe::setPrimingSugarName(const QString & val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::primingSugarName, this->m_primingSugarName, val);
    return;
 }
 
-void Recipe::setCarbonationTemp_c(double var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::carbonationTemp_c, this->m_carbonationTemp_c, var);
+void Recipe::setCarbonationTemp_c(double val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::carbonationTemp_c, this->m_carbonationTemp_c, val);
    return;
 }
 
-void Recipe::setPrimingSugarEquiv(double var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::primingSugarEquiv, this->m_primingSugarEquiv, this->enforceMin(var, "priming sugar equiv", 0.0, 1.0));
+void Recipe::setPrimingSugarEquiv(double val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::primingSugarEquiv, this->m_primingSugarEquiv, this->enforceMin(val, "priming sugar equiv", 0.0, 1.0));
    return;
 }
 
-void Recipe::setKegPrimingFactor(double var) {
-   SET_AND_NOTIFY(PropertyNames::Recipe::kegPrimingFactor, this->m_kegPrimingFactor, this->enforceMin(var, "keg priming factor", 0.0, 1.0));
+void Recipe::setKegPrimingFactor(double val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::kegPrimingFactor, this->m_kegPrimingFactor, this->enforceMin(val, "keg priming factor", 0.0, 1.0));
    return;
 }
+
+void Recipe::setBeerAcidity_pH         (std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::Recipe::beerAcidity_pH         , this->m_beerAcidity_pH         , val); return; }
+void Recipe::setApparentAttenuation_pct(std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::Recipe::apparentAttenuation_pct, this->m_apparentAttenuation_pct, val); return; }
 
 void Recipe::setLocked(bool isLocked) {
    // Locking a Recipe doesn't count as changing it for the purposes of versioning or the UI, so no call to setAndNotify
@@ -2339,6 +2379,9 @@ double  Recipe::kegPrimingFactor()   const { return m_kegPrimingFactor;   }
 int     Recipe::fermentationStages() const { return m_fermentationStages; }
 QDate   Recipe::date()               const { return m_date;               }
 bool    Recipe::locked()             const { return m_locked;             }
+// ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+std::optional<double> Recipe::beerAcidity_pH         () const { return m_beerAcidity_pH         ; }
+std::optional<double> Recipe::apparentAttenuation_pct() const { return m_apparentAttenuation_pct; }
 
 //=============================Adders and Removers========================================
 

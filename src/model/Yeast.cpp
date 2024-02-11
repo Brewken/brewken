@@ -130,7 +130,7 @@ TypeLookup const Yeast::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::flocculation             , Yeast::m_flocculation             ,           NonPhysicalQuantity::Enum          ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::notes                    , Yeast::m_notes                    ,           NonPhysicalQuantity::String        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::bestFor                  , Yeast::m_bestFor                  ,           NonPhysicalQuantity::String        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::timesCultured            , Yeast::m_timesCultured            ,           NonPhysicalQuantity::OrdinalNumeral),
+///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::timesCultured            , Yeast::m_timesCultured            ,           NonPhysicalQuantity::OrdinalNumeral),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::maxReuse                 , Yeast::m_maxReuse                 ,           NonPhysicalQuantity::OrdinalNumeral),
 ///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Yeast::addToSecondary           , Yeast::m_addToSecondary           ,           NonPhysicalQuantity::Bool          ),
       // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -169,7 +169,7 @@ Yeast::Yeast(QString name) :
    m_flocculation             {std::nullopt},
    m_notes                    {""},
    m_bestFor                  {""},
-   m_timesCultured            {std::nullopt},
+///   m_timesCultured            {std::nullopt},
    m_maxReuse                 {std::nullopt},
 ///   m_addToSecondary           {std::nullopt},
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -199,7 +199,7 @@ Yeast::Yeast(NamedParameterBundle const & namedParameterBundle) :
    SET_OPT_ENUM_FROM_NPB(m_flocculation, Yeast::Flocculation, namedParameterBundle, PropertyNames::Yeast::flocculation             ),
    SET_REGULAR_FROM_NPB (m_notes                            , namedParameterBundle, PropertyNames::Yeast::notes                    ),
    SET_REGULAR_FROM_NPB (m_bestFor                          , namedParameterBundle, PropertyNames::Yeast::bestFor                  ),
-   SET_REGULAR_FROM_NPB (m_timesCultured                    , namedParameterBundle, PropertyNames::Yeast::timesCultured            ),
+///   SET_REGULAR_FROM_NPB (m_timesCultured                    , namedParameterBundle, PropertyNames::Yeast::timesCultured            ),
    SET_REGULAR_FROM_NPB (m_maxReuse                         , namedParameterBundle, PropertyNames::Yeast::maxReuse                 ),
 ///   SET_REGULAR_FROM_NPB (m_addToSecondary                   , namedParameterBundle, PropertyNames::Yeast::addToSecondary           ),
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -229,7 +229,7 @@ Yeast::Yeast(Yeast const & other) :
    m_flocculation             {other.m_flocculation             },
    m_notes                    {other.m_notes                    },
    m_bestFor                  {other.m_bestFor                  },
-   m_timesCultured            {other.m_timesCultured            },
+///   m_timesCultured            {other.m_timesCultured            },
    m_maxReuse                 {other.m_maxReuse                 },
 ///   m_addToSecondary           {other.m_addToSecondary           },
    m_alcoholTolerance_pct     {other.m_alcoholTolerance_pct     },
@@ -260,7 +260,7 @@ std::optional<Yeast::Flocculation> Yeast::flocculation             () const { re
 std::optional<int>                 Yeast::flocculationAsInt        () const { return Optional::toOptInt(m_flocculation)            ; } // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
 QString                            Yeast::notes                    () const { return                    m_notes                    ; }
 QString                            Yeast::bestFor                  () const { return                    m_bestFor                  ; }
-std::optional<int>                 Yeast::timesCultured            () const { return                    m_timesCultured            ; } // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+///std::optional<int>                 Yeast::timesCultured            () const { return                    m_timesCultured            ; } // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
 std::optional<int>                 Yeast::maxReuse                 () const { return                    m_maxReuse                 ; } // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
 ///std::optional<bool>                Yeast::addToSecondary           () const { return                    m_addToSecondary           ; } // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -291,7 +291,7 @@ void Yeast::setFlocculation             (std::optional<Flocculation> const   val
 void Yeast::setFlocculationAsInt        (std::optional<int>          const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::flocculation             , m_flocculation    , Optional::fromOptInt<Flocculation>(val)); return; }
 void Yeast::setNotes                    (QString                     const & val) { SET_AND_NOTIFY(PropertyNames::Yeast::notes                    , m_notes           , val); return; }
 void Yeast::setBestFor                  (QString                     const & val) { SET_AND_NOTIFY(PropertyNames::Yeast::bestFor                  , m_bestFor         , val); return; }
-void Yeast::setTimesCultured            (std::optional<int>          const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::timesCultured            , m_timesCultured   , this->enforceMin      (val, "times cultured" )); return; }
+//void Yeast::setTimesCultured            (std::optional<int>          const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::timesCultured            , m_timesCultured   , this->enforceMin      (val, "times cultured" )); return; }
 void Yeast::setMaxReuse                 (std::optional<int>          const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::maxReuse                 , m_maxReuse        , this->enforceMin      (val, "max reuse"      )); return; }
 ///void Yeast::setAddToSecondary           (std::optional<bool>         const   val) { SET_AND_NOTIFY(PropertyNames::Yeast::addToSecondary           , m_addToSecondary  , val); return; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞

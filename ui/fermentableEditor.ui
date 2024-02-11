@@ -866,23 +866,6 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="3">
-        <widget class="QLabel" name="label_dmsPIsMassPerVolume">
-         <property name="text">
-          <string>DMS precursors is mass concentration?</string>
-         </property>
-         <property name="buddy">
-          <cstring>checkBox_dmsPIsMassPerVolume</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="4">
-        <widget class="SmartCheckBox" name="checkBox_dmsPIsMassPerVolume">
-         <property name="toolTip">
-          <string>DMS precursors is mass concentration?</string>
-         </property>
-        </widget>
-       </item>
        <item row="9" column="0">
         <widget class="SmartLabel" name="label_fan">
          <property name="text">
@@ -900,23 +883,6 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="3">
-        <widget class="QLabel" name="label_fanIsMassPerVolume">
-         <property name="text">
-          <string>FAN is mass concentration?</string>
-         </property>
-         <property name="buddy">
-          <cstring>checkBox_fanIsMassPerVolume</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="4">
-        <widget class="SmartCheckBox" name="checkBox_fanIsMassPerVolume">
-         <property name="toolTip">
-          <string>Free Amino Nitrogen is mass concentration?</string>
-         </property>
-        </widget>
-       </item>
        <item row="10" column="0">
         <widget class="SmartLabel" name="label_betaGlucan">
          <property name="text">
@@ -931,23 +897,6 @@
         <widget class="SmartLineEdit" name="lineEdit_betaGlucan">
          <property name="toolTip">
           <string>Beta-glucans</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="3">
-        <widget class="QLabel" name="label_betaGlucanIsMassPerVolume">
-         <property name="text">
-          <string>Beta-glucans is mass concentration?</string>
-         </property>
-         <property name="buddy">
-          <cstring>checkBox_betaGlucanIsMassPerVolume</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="4">
-        <widget class="SmartCheckBox" name="checkBox_betaGlucanIsMassPerVolume">
-         <property name="toolTip">
-          <string>Beta-glucans is mass concentration?</string>
          </property>
         </widget>
        </item>

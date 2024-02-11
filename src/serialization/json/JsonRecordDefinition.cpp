@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * serialization/json/JsonRecordDefinition.cpp is part of Brewken, and is copyright the following authors 2020-2023:
+ * serialization/json/JsonRecordDefinition.cpp is part of Brewken, and is copyright the following authors 2020-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -57,11 +57,12 @@ JsonRecordDefinition::JsonRecordDefinition(
    TypeLookup const * const   typeLookup,
    char const *       const   namedEntityClassName,
    QString            const & localisedEntityName,
-   QVariant               (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
-   JsonRecordConstructorWrapper jsonRecordConstructorWrapper,
+   QVariant                            (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
+   QList<std::shared_ptr<NamedEntity>> (*listDowncaster)(QVariant const &),
+   JsonRecordConstructorWrapper        jsonRecordConstructorWrapper,
    std::initializer_list<JsonRecordDefinition::FieldDefinition> fieldDefinitions
 ) :
-   SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName, localisedEntityName, listUpcaster},
+   SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName, localisedEntityName, listUpcaster, listDowncaster},
    jsonRecordConstructorWrapper{jsonRecordConstructorWrapper},
    fieldDefinitions{fieldDefinitions} {
    return;
@@ -72,11 +73,12 @@ JsonRecordDefinition::JsonRecordDefinition(
    TypeLookup const * const   typeLookup,
    char const *       const   namedEntityClassName,
    QString            const & localisedEntityName,
-   QVariant               (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
-   JsonRecordConstructorWrapper jsonRecordConstructorWrapper,
+   QVariant                            (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
+   QList<std::shared_ptr<NamedEntity>> (*listDowncaster)(QVariant const &),
+   JsonRecordConstructorWrapper        jsonRecordConstructorWrapper,
    std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists
 ) :
-   SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName, localisedEntityName, listUpcaster},
+   SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName, localisedEntityName, listUpcaster, listDowncaster},
    jsonRecordConstructorWrapper{jsonRecordConstructorWrapper},
    fieldDefinitions{} {
    // This is a bit clunky, but it works and the inefficiency is a one-off cost at start-up

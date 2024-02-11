@@ -188,13 +188,10 @@ namespace {
          {ObjectStore::FieldType::Double, "friability_pct"                , PropertyNames::Fermentable::friability_pct           },
          {ObjectStore::FieldType::Double, "di_ph"                         , PropertyNames::Fermentable::di_ph                    },
          {ObjectStore::FieldType::Double, "viscosity_cp"                  , PropertyNames::Fermentable::viscosity_cP             },
-         {ObjectStore::FieldType::Double, "dmsp"                          , PropertyNames::Fermentable::dmsP                     },
-         {ObjectStore::FieldType::Bool  , "dmsp_is_mass_per_volume"       , PropertyNames::Fermentable::dmsPIsMassPerVolume      },
-         {ObjectStore::FieldType::Double, "fan"                           , PropertyNames::Fermentable::fan                      },
-         {ObjectStore::FieldType::Bool  , "fan_is_mass_per_volume"        , PropertyNames::Fermentable::fanIsMassPerVolume       },
+         {ObjectStore::FieldType::Double, "dmsp_ppm"                      , PropertyNames::Fermentable::dmsP_ppm                 },
+         {ObjectStore::FieldType::Double, "fan_ppm"                       , PropertyNames::Fermentable::fan_ppm                  },
          {ObjectStore::FieldType::Double, "fermentability_pct"            , PropertyNames::Fermentable::fermentability_pct       },
-         {ObjectStore::FieldType::Double, "beta_glucan"                   , PropertyNames::Fermentable::betaGlucan               },
-         {ObjectStore::FieldType::Bool  , "beta_glucan_is_mass_per_volume", PropertyNames::Fermentable::betaGlucanIsMassPerVolume},
+         {ObjectStore::FieldType::Double, "beta_glucan_ppm"               , PropertyNames::Fermentable::betaGlucan_ppm           },
       }
    };
 ///   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Fermentable> {
@@ -612,25 +609,32 @@ namespace {
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<Water> {
       "water",
       {
-         {ObjectStore::FieldType::Int   , "id"         , PropertyNames::NamedEntity::key       },
-         {ObjectStore::FieldType::String, "name"       , PropertyNames::NamedEntity::name      },
-         {ObjectStore::FieldType::Bool  , "display"    , PropertyNames::NamedEntity::display   },
-         {ObjectStore::FieldType::Bool  , "deleted"    , PropertyNames::NamedEntity::deleted   },
-         {ObjectStore::FieldType::String, "folder"     , PropertyNames::FolderBase::folder    },
-         {ObjectStore::FieldType::String, "notes"      , PropertyNames::Water::notes           },
-///         {ObjectStore::FieldType::Double, "amount"     , PropertyNames::Water::amount          },
-         {ObjectStore::FieldType::Double, "calcium"    , PropertyNames::Water::calcium_ppm     },
-         {ObjectStore::FieldType::Double, "bicarbonate", PropertyNames::Water::bicarbonate_ppm },
-         {ObjectStore::FieldType::Double, "sulfate"    , PropertyNames::Water::sulfate_ppm     },
-         {ObjectStore::FieldType::Double, "sodium"     , PropertyNames::Water::sodium_ppm      },
-         {ObjectStore::FieldType::Double, "chloride"   , PropertyNames::Water::chloride_ppm    },
-         {ObjectStore::FieldType::Double, "magnesium"  , PropertyNames::Water::magnesium_ppm   },
-         {ObjectStore::FieldType::Double, "ph"         , PropertyNames::Water::ph              },
-         {ObjectStore::FieldType::Double, "alkalinity" , PropertyNames::Water::alkalinity_ppm  },
-         {ObjectStore::FieldType::Int   , "wtype"      , PropertyNames::Water::type            }, // TODO: Would be less fragile to store this as text than a number
-         {ObjectStore::FieldType::Double, "mash_ro"    , PropertyNames::Water::mashRo_pct      },
-         {ObjectStore::FieldType::Double, "sparge_ro"  , PropertyNames::Water::spargeRo_pct    },
-         {ObjectStore::FieldType::Bool  , "as_hco3"    , PropertyNames::Water::alkalinityAsHCO3},
+         {ObjectStore::FieldType::Int   , "id"           , PropertyNames::NamedEntity::key       },
+         {ObjectStore::FieldType::String, "name"         , PropertyNames::NamedEntity::name      },
+         {ObjectStore::FieldType::Bool  , "display"      , PropertyNames::NamedEntity::display   },
+         {ObjectStore::FieldType::Bool  , "deleted"      , PropertyNames::NamedEntity::deleted   },
+         {ObjectStore::FieldType::String, "folder"       , PropertyNames::FolderBase::folder    },
+         {ObjectStore::FieldType::String, "notes"        , PropertyNames::Water::notes           },
+///         {ObjectStore::FieldType::Double, "amount"       , PropertyNames::Water::amount          },
+         {ObjectStore::FieldType::Double, "calcium"      , PropertyNames::Water::calcium_ppm     },
+         {ObjectStore::FieldType::Double, "bicarbonate"  , PropertyNames::Water::bicarbonate_ppm },
+         {ObjectStore::FieldType::Double, "sulfate"      , PropertyNames::Water::sulfate_ppm     },
+         {ObjectStore::FieldType::Double, "sodium"       , PropertyNames::Water::sodium_ppm      },
+         {ObjectStore::FieldType::Double, "chloride"     , PropertyNames::Water::chloride_ppm    },
+         {ObjectStore::FieldType::Double, "magnesium"    , PropertyNames::Water::magnesium_ppm   },
+         {ObjectStore::FieldType::Double, "ph"           , PropertyNames::Water::ph              },
+         {ObjectStore::FieldType::Double, "alkalinity"   , PropertyNames::Water::alkalinity_ppm  },
+         {ObjectStore::FieldType::Int   , "wtype"        , PropertyNames::Water::type            }, // TODO: Would be less fragile to store this as text than a number
+         {ObjectStore::FieldType::Double, "mash_ro"      , PropertyNames::Water::mashRo_pct      },
+         {ObjectStore::FieldType::Double, "sparge_ro"    , PropertyNames::Water::spargeRo_pct    },
+         {ObjectStore::FieldType::Bool  , "as_hco3"      , PropertyNames::Water::alkalinityAsHCO3},
+         // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+         {ObjectStore::FieldType::Double, "carbonate_ppm", PropertyNames::Water::carbonate_ppm   },
+         {ObjectStore::FieldType::Double, "potassium_ppm", PropertyNames::Water::potassium_ppm   },
+         {ObjectStore::FieldType::Double, "iron_ppm"     , PropertyNames::Water::iron_ppm        },
+         {ObjectStore::FieldType::Double, "nitrate_ppm"  , PropertyNames::Water::nitrate_ppm     },
+         {ObjectStore::FieldType::Double, "nitrite_ppm"  , PropertyNames::Water::nitrite_ppm     },
+         {ObjectStore::FieldType::Double, "flouride_ppm" , PropertyNames::Water::flouride_ppm    },
       }
    };
 ///   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Water> {
@@ -667,7 +671,7 @@ namespace {
          {ObjectStore::FieldType::Enum  , "form"                        , PropertyNames::Yeast::form                          , &Yeast::formStringMapping        },
          {ObjectStore::FieldType::Enum  , "ytype"                       , PropertyNames::Yeast::type                          , &Yeast::typeStringMapping        },
          {ObjectStore::FieldType::Int   , "max_reuse"                   , PropertyNames::Yeast::maxReuse                      },
-         {ObjectStore::FieldType::Int   , "times_cultured"              , PropertyNames::Yeast::timesCultured                 },
+///         {ObjectStore::FieldType::Int   , "times_cultured"              , PropertyNames::Yeast::timesCultured                 },
          {ObjectStore::FieldType::String, "best_for"                    , PropertyNames::Yeast::bestFor                       },
          {ObjectStore::FieldType::String, "laboratory"                  , PropertyNames::Yeast::laboratory                    },
          {ObjectStore::FieldType::String, "notes"                       , PropertyNames::Yeast::notes                         },
@@ -757,6 +761,10 @@ namespace {
          {ObjectStore::FieldType::Bool  , "locked"             , PropertyNames::Recipe::locked            },
          {ObjectStore::FieldType::Int   , "boil_id"            , PropertyNames::Recipe::boilId            , &PRIMARY_TABLE<Boil>},
          {ObjectStore::FieldType::Int   , "fermentation_id"    , PropertyNames::Recipe::fermentationId    , &PRIMARY_TABLE<Fermentation>},
+         // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+         {ObjectStore::FieldType::Double, "beer_acidity_ph"         , PropertyNames::Recipe::beerAcidity_pH         },
+         {ObjectStore::FieldType::Double, "apparent_attenuation_pct", PropertyNames::Recipe::apparentAttenuation_pct},
+
       }
    };
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Recipe> {
@@ -897,21 +905,23 @@ namespace {
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<RecipeAdditionYeast> {
       "yeast_in_recipe",
       {
-         {ObjectStore::FieldType::Int   , "id"               , PropertyNames::NamedEntity::key                    },
-         {ObjectStore::FieldType::String, "name"             , PropertyNames::NamedEntity::name                   },
-         {ObjectStore::FieldType::Bool  , "display"          , PropertyNames::NamedEntity::display                },
-         {ObjectStore::FieldType::Bool  , "deleted"          , PropertyNames::NamedEntity::deleted                },
-         {ObjectStore::FieldType::Int   , "recipe_id"        , PropertyNames::OwnedByRecipe::recipeId             , &PRIMARY_TABLE<Recipe>},
-         {ObjectStore::FieldType::Int   , "yeast_id"         , PropertyNames::IngredientInRecipe::ingredientId    , &PRIMARY_TABLE<Yeast>   },
-         {ObjectStore::FieldType::Enum  , "stage"            , PropertyNames::RecipeAddition::stage               , &RecipeAddition::stageStringMapping},
-         {ObjectStore::FieldType::Double, "quantity"         , PropertyNames::IngredientAmount::quantity          },
-         {ObjectStore::FieldType::Unit  , "unit"             , PropertyNames::IngredientAmount::unit              , &Measurement::Units::unitStringMapping},
-         {ObjectStore::FieldType::Int   , "step"             , PropertyNames::RecipeAddition::step                },
-         {ObjectStore::FieldType::Double, "add_at_time_mins" , PropertyNames::RecipeAddition::addAtTime_mins      },
-         {ObjectStore::FieldType::Double, "add_at_gravity_sg", PropertyNames::RecipeAddition::addAtGravity_sg     },
-         {ObjectStore::FieldType::Double, "add_at_acidity_ph", PropertyNames::RecipeAddition::addAtAcidity_pH     },
-         {ObjectStore::FieldType::Double, "duration_mins"    , PropertyNames::RecipeAddition::duration_mins       },
-         {ObjectStore::FieldType::Double, "attenuation_pct"  , PropertyNames::RecipeAdditionYeast::attenuation_pct},
+         {ObjectStore::FieldType::Int   , "id"                 , PropertyNames::NamedEntity::key                      },
+         {ObjectStore::FieldType::String, "name"               , PropertyNames::NamedEntity::name                     },
+         {ObjectStore::FieldType::Bool  , "display"            , PropertyNames::NamedEntity::display                  },
+         {ObjectStore::FieldType::Bool  , "deleted"            , PropertyNames::NamedEntity::deleted                  },
+         {ObjectStore::FieldType::Int   , "recipe_id"          , PropertyNames::OwnedByRecipe::recipeId               , &PRIMARY_TABLE<Recipe>},
+         {ObjectStore::FieldType::Int   , "yeast_id"           , PropertyNames::IngredientInRecipe::ingredientId      , &PRIMARY_TABLE<Yeast>   },
+         {ObjectStore::FieldType::Enum  , "stage"              , PropertyNames::RecipeAddition::stage                 , &RecipeAddition::stageStringMapping},
+         {ObjectStore::FieldType::Double, "quantity"           , PropertyNames::IngredientAmount::quantity            },
+         {ObjectStore::FieldType::Unit  , "unit"               , PropertyNames::IngredientAmount::unit                , &Measurement::Units::unitStringMapping},
+         {ObjectStore::FieldType::Int   , "step"               , PropertyNames::RecipeAddition::step                  },
+         {ObjectStore::FieldType::Double, "add_at_time_mins"   , PropertyNames::RecipeAddition::addAtTime_mins        },
+         {ObjectStore::FieldType::Double, "add_at_gravity_sg"  , PropertyNames::RecipeAddition::addAtGravity_sg       },
+         {ObjectStore::FieldType::Double, "add_at_acidity_ph"  , PropertyNames::RecipeAddition::addAtAcidity_pH       },
+         {ObjectStore::FieldType::Double, "duration_mins"      , PropertyNames::RecipeAddition::duration_mins         },
+         {ObjectStore::FieldType::Double, "attenuation_pct"    , PropertyNames::RecipeAdditionYeast::attenuation_pct  },
+         {ObjectStore::FieldType::Int   , "times_cultured"     , PropertyNames::RecipeAdditionYeast::timesCultured    },
+         {ObjectStore::FieldType::Int   , "cell_count_billions", PropertyNames::RecipeAdditionYeast::cellCountBillions},
       }
    };
 

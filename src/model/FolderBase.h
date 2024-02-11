@@ -66,7 +66,7 @@ protected:
    }
 
    void doSetFolder(QString const & val) {
-      this->m_folder = val;
+      this->derived().setAndNotify(PropertyNames::FolderBase::folder, this->m_folder, val);
       return;
    }
 

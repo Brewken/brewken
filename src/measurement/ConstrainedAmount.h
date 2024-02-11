@@ -114,7 +114,4 @@ using MassOrVolumeAmt = Measurement::ConstrainedAmount<Measurement::ChoiceOfPhys
 using MassVolumeOrCountAmt = Measurement::ConstrainedAmount<Measurement::ChoiceOfPhysicalQuantity const,
                                                             Measurement::ChoiceOfPhysicalQuantity::Mass_Volume_Count>;
 
-using MassOrVolumeConcentrationAmt = Measurement::ConstrainedAmount<Measurement::ChoiceOfPhysicalQuantity const,
-                                                                    Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc>;
-
 #endif

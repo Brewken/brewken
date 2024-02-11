@@ -602,6 +602,7 @@ commonSourceFiles = files([
    'src/BtDatePopup.cpp',
    'src/BtFieldType.cpp',
    'src/BtFolder.cpp',
+   'src/BtHorizontalTabs.cpp',
    'src/BtSplashScreen.cpp',
    'src/BtTabWidget.cpp',
    'src/BtTextEdit.cpp',

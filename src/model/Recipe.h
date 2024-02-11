@@ -45,75 +45,77 @@
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Recipe { BtStringConst const property{#property}; }
-AddPropertyName(ABV_pct               )
-AddPropertyName(age_days              )
-AddPropertyName(ageTemp_c             )
-AddPropertyName(ancestorId            )
-AddPropertyName(asstBrewer            )
-AddPropertyName(batchSize_l           )
-AddPropertyName(boil                  )
-AddPropertyName(boilGrav              )
-AddPropertyName(boilId                )
-AddPropertyName(boilSize_l            ) // Deprecated, but retained for BeerXML -- see comments below
-AddPropertyName(boilTime_min          ) // Deprecated, but retained for BeerXML -- see comments below
-AddPropertyName(boilVolume_l          )
-AddPropertyName(brewer                )
-AddPropertyName(brewNotes             )
-AddPropertyName(calories              )
-AddPropertyName(carbonationTemp_c     )
-AddPropertyName(carbonation_vols      )
-AddPropertyName(color_srm             )
-AddPropertyName(date                  )
-AddPropertyName(efficiency_pct        )
-AddPropertyName(equipment             )
-AddPropertyName(equipmentId           )
-AddPropertyName(fermentableAdditionIds)
-AddPropertyName(fermentableAdditions  )
-AddPropertyName(fermentation          )
-AddPropertyName(fermentationId        )
-AddPropertyName(fermentationStages    )
-AddPropertyName(fg                    )
-AddPropertyName(finalVolume_l         )
-AddPropertyName(forcedCarbonation     )
-AddPropertyName(grainsInMash_kg       )
-AddPropertyName(grains_kg             )
-AddPropertyName(hopAdditionIds        )
-AddPropertyName(hopAdditions          )
-AddPropertyName(IBU                   )
-AddPropertyName(IBUs                  )
-AddPropertyName(instructionIds        )
-AddPropertyName(instructions          )
-AddPropertyName(kegPrimingFactor      )
-AddPropertyName(locked                )
-AddPropertyName(mash                  )
-AddPropertyName(mashId                )
-AddPropertyName(miscAdditionIds       )
-AddPropertyName(miscAdditions         )
-AddPropertyName(notes                 )
-AddPropertyName(og                    )
-AddPropertyName(points                )
-AddPropertyName(postBoilVolume_l      )
-AddPropertyName(primaryAge_days       )
-AddPropertyName(primaryTemp_c         )
-AddPropertyName(primingSugarEquiv     )
-AddPropertyName(primingSugarName      )
-AddPropertyName(saltAdjustmentIds     )
-AddPropertyName(saltAdjustments       )
-AddPropertyName(secondaryAge_days     )
-AddPropertyName(secondaryTemp_c       )
-AddPropertyName(SRMColor              )
-AddPropertyName(style                 )
-AddPropertyName(styleId               )
-AddPropertyName(tasteNotes            )
-AddPropertyName(tasteRating           )
-AddPropertyName(tertiaryAge_days      )
-AddPropertyName(tertiaryTemp_c        )
-AddPropertyName(type                  )
-AddPropertyName(waterUseIds           )
-AddPropertyName(waterUses             )
-AddPropertyName(wortFromMash_l        )
-AddPropertyName(yeastAdditionIds      )
-AddPropertyName(yeastAdditions        )
+AddPropertyName(ABV_pct                )
+AddPropertyName(age_days               )
+AddPropertyName(ageTemp_c              )
+AddPropertyName(ancestorId             )
+AddPropertyName(apparentAttenuation_pct)
+AddPropertyName(asstBrewer             )
+AddPropertyName(batchSize_l            )
+AddPropertyName(beerAcidity_pH         )
+AddPropertyName(boil                   )
+AddPropertyName(boilGrav               )
+AddPropertyName(boilId                 )
+AddPropertyName(boilSize_l             ) // Deprecated, but retained for BeerXML -- see comments below
+AddPropertyName(boilTime_min           ) // Deprecated, but retained for BeerXML -- see comments below
+AddPropertyName(boilVolume_l           )
+AddPropertyName(brewer                 )
+AddPropertyName(brewNotes              )
+AddPropertyName(calories               )
+AddPropertyName(carbonationTemp_c      )
+AddPropertyName(carbonation_vols       )
+AddPropertyName(color_srm              )
+AddPropertyName(date                   )
+AddPropertyName(efficiency_pct         )
+AddPropertyName(equipment              )
+AddPropertyName(equipmentId            )
+AddPropertyName(fermentableAdditionIds )
+AddPropertyName(fermentableAdditions   )
+AddPropertyName(fermentation           )
+AddPropertyName(fermentationId         )
+AddPropertyName(fermentationStages     )
+AddPropertyName(fg                     )
+AddPropertyName(finalVolume_l          )
+AddPropertyName(forcedCarbonation      )
+AddPropertyName(grainsInMash_kg        )
+AddPropertyName(grains_kg              )
+AddPropertyName(hopAdditionIds         )
+AddPropertyName(hopAdditions           )
+AddPropertyName(IBU                    )
+AddPropertyName(IBUs                   )
+AddPropertyName(instructionIds         )
+AddPropertyName(instructions           )
+AddPropertyName(kegPrimingFactor       )
+AddPropertyName(locked                 )
+AddPropertyName(mash                   )
+AddPropertyName(mashId                 )
+AddPropertyName(miscAdditionIds        )
+AddPropertyName(miscAdditions          )
+AddPropertyName(notes                  )
+AddPropertyName(og                     )
+AddPropertyName(points                 )
+AddPropertyName(postBoilVolume_l       )
+AddPropertyName(primaryAge_days        )
+AddPropertyName(primaryTemp_c          )
+AddPropertyName(primingSugarEquiv      )
+AddPropertyName(primingSugarName       )
+AddPropertyName(saltAdjustmentIds      )
+AddPropertyName(saltAdjustments        )
+AddPropertyName(secondaryAge_days      )
+AddPropertyName(secondaryTemp_c        )
+AddPropertyName(SRMColor               )
+AddPropertyName(style                  )
+AddPropertyName(styleId                )
+AddPropertyName(tasteNotes             )
+AddPropertyName(tasteRating            )
+AddPropertyName(tertiaryAge_days       )
+AddPropertyName(tertiaryTemp_c         )
+AddPropertyName(type                   )
+AddPropertyName(waterUseIds            )
+AddPropertyName(waterUses              )
+AddPropertyName(wortFromMash_l         )
+AddPropertyName(yeastAdditionIds       )
+AddPropertyName(yeastAdditions         )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -272,7 +274,10 @@ public:
     *        ⮜⮜⮜ TODO In both BeerXML and BeerJSON, this is an optional field ⮞⮞⮞
     */
    Q_PROPERTY(QDate   date               READ date               WRITE setDate             )
-   //! \brief The carbonation in volumes of CO2 at standard temperature and pressure (STP).
+   /**
+    * \brief The carbonation in volumes of CO2 at standard temperature and pressure (STP).
+    *        ⮜⮜⮜ TODO In both BeerXML and BeerJSON, this is an optional field ⮞⮞⮞
+    */
    Q_PROPERTY(double  carbonation_vols   READ carbonation_vols   WRITE setCarbonation_vols )
    //! \brief Whether the beer is force carbonated.
    Q_PROPERTY(bool    forcedCarbonation  READ forcedCarbonation  WRITE setForcedCarbonation)
@@ -286,6 +291,12 @@ public:
    Q_PROPERTY(double  kegPrimingFactor   READ kegPrimingFactor   WRITE setKegPrimingFactor )
    //! \brief Whether the recipe is locked against changes
    Q_PROPERTY(bool    locked             READ locked             WRITE setLocked           )
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   //! \brief The final beer pH at the end of fermentation.  TODO: This is not yet exposed in the UI
+   Q_PROPERTY(std::optional<double> beerAcidity_pH               READ beerAcidity_pH                WRITE setBeerAcidity_pH)
+   //! \brief The total apparent attenuation of the finished beer after fermentation.  TODO: This is not yet exposed in the UI
+   Q_PROPERTY(std::optional<double> apparentAttenuation_pct      READ apparentAttenuation_pct       WRITE setApparentAttenuation_pct)
+
 
    //=========================================== CALCULATED STORED PROPERTIES ==========================================
    //! \brief The calculated OG.
@@ -507,6 +518,9 @@ public:
    double  primingSugarEquiv () const;
    double  kegPrimingFactor  () const;
    bool    locked            () const;
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   std::optional<double> beerAcidity_pH()          const;
+   std::optional<double> apparentAttenuation_pct() const;
 
    // Calculated getters.
    double        points                  ();
@@ -645,6 +659,9 @@ public:
    void setKegPrimingFactor  (double  const   val);
    void setLocked            (bool    const   val);
    void setHasDescendants    (bool    const   val);
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   void setBeerAcidity_pH         (std::optional<double> const val);
+   void setApparentAttenuation_pct(std::optional<double> const val);
 
 ///   virtual Recipe * getOwningRecipe() const;
 
@@ -675,73 +692,77 @@ private:
    std::unique_ptr<impl> pimpl;
 
    // Cached properties that are written directly to db
-   Type    m_type;
-   QString m_brewer;
-   QString m_asstBrewer;
-   double  m_batchSize_l;
+   Type                  m_type                   ;
+   QString               m_brewer                 ;
+   QString               m_asstBrewer             ;
+   double                m_batchSize_l            ;
 ///   double  m_boilTime_min;
-   double  m_efficiency_pct;
-   int     m_fermentationStages;
-   double  m_primaryAge_days;
-   double  m_primaryTemp_c;
-   double  m_secondaryAge_days;
-   double  m_secondaryTemp_c;
-   double  m_tertiaryAge_days;
-   double  m_tertiaryTemp_c;
-   double  m_age;
-   double  m_ageTemp_c;
-   QDate   m_date;
-   double  m_carbonation_vols;
-   bool    m_forcedCarbonation;
-   QString m_primingSugarName;
-   double  m_carbonationTemp_c;
-   double  m_primingSugarEquiv;
-   double  m_kegPrimingFactor;
-   QString m_notes;
-   QString m_tasteNotes;
-   double  m_tasteRating;
+   double                m_efficiency_pct         ;
+   int                   m_fermentationStages     ;
+   double                m_primaryAge_days        ;
+   double                m_primaryTemp_c          ;
+   double                m_secondaryAge_days      ;
+   double                m_secondaryTemp_c        ;
+   double                m_tertiaryAge_days       ;
+   double                m_tertiaryTemp_c         ;
+   double                m_age                    ;
+   double                m_ageTemp_c              ;
+   QDate                 m_date                   ;
+   double                m_carbonation_vols       ;
+   bool                  m_forcedCarbonation      ;
+   QString               m_primingSugarName       ;
+   double                m_carbonationTemp_c      ;
+   double                m_primingSugarEquiv      ;
+   double                m_kegPrimingFactor       ;
+   QString               m_notes                  ;
+   QString               m_tasteNotes             ;
+   double                m_tasteRating            ;
 
-   int m_styleId;
-   int m_equipmentId;
-   int m_mashId;
+   int                   m_styleId                ;
+   int                   m_equipmentId            ;
+   int                   m_mashId                 ;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   int m_boilId;
-   int m_fermentationId;
+   int                   m_boilId                 ;
+   int                   m_fermentationId         ;
+   std::optional<double> m_beerAcidity_pH         ;
+   std::optional<double> m_apparentAttenuation_pct;
 
    // Calculated properties.
-   double m_ABV_pct;
-   double m_color_srm;
-   double m_boilGrav;
-   double m_IBU;
-   QList<double> m_ibus;
-   double m_wortFromMash_l;
-   double m_boilVolume_l;
-   double m_postBoilVolume_l;
-   double m_finalVolume_l;
+   double        m_ABV_pct              ;
+   double        m_color_srm            ;
+   double        m_boilGrav             ;
+   double        m_IBU                  ;
+   QList<double> m_ibus                 ;
+   double        m_wortFromMash_l       ;
+   double        m_boilVolume_l         ;
+   double        m_postBoilVolume_l     ;
+   double        m_finalVolume_l        ;
    // Final volume before any losses out of the kettle, used in calculations for sg/ibu/etc.
-   double m_finalVolumeNoLosses_l;
-   double m_calories;
-   double m_grainsInMash_kg;
-   double m_grains_kg;
-   QColor m_SRMColor;
+   double        m_finalVolumeNoLosses_l;
+   double        m_calories             ;
+   double        m_grainsInMash_kg      ;
+   double        m_grains_kg            ;
+   QColor        m_SRMColor             ;
 
    // Calculated, but stored...BeerXML is weird sometimes.
-   double m_og;
-   double m_fg;
-   double m_og_fermentable;
-   double m_fg_fermentable;
+   double        m_og            ;
+   double        m_fg            ;
 
-   bool m_locked;
+   double        m_og_fermentable;
+   double        m_fg_fermentable;
+
+   bool          m_locked;
 
    // True when constructed, indicates whether recalcAll has been called.
-   bool   m_uninitializedCalcs;
-   QMutex m_uninitializedCalcsMutex;
-   QMutex m_recalcMutex;
+   bool                    m_uninitializedCalcs     ;
+   QMutex                  m_uninitializedCalcsMutex;
+   QMutex                  m_recalcMutex            ;
 
    // version things
-   int m_ancestor_id;
+   int                     m_ancestor_id;
    mutable QList<Recipe *> m_ancestors;
-   mutable bool m_hasDescendants;
+   mutable bool            m_hasDescendants;
+
 
    // Batch size without losses.
    double batchSizeNoLosses_l();

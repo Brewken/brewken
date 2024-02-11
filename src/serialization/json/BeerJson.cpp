@@ -47,7 +47,11 @@
 #include "model/Hop.h"
 #include "model/Misc.h"
 #include "model/Recipe.h"
+#include "model/RecipeAdditionFermentable.h"
 #include "model/RecipeAdditionHop.h"
+#include "model/RecipeAdditionMisc.h"
+#include "model/RecipeAdditionYeast.h"
+#include "model/RecipeUseOfWater.h"
 #include "model/Style.h"
 #include "model/Water.h"
 #include "model/Yeast.h"
@@ -92,8 +96,24 @@ namespace {
        {"ibbl" , &Measurement::Units::imperial_barrels    }}
    };
 
+   JsonMeasureableUnitsMapping const BEER_JSON_COUNT_UNIT_MAPPER {
+      //
+      // Strictly, we can ignore the "unit" field of a BeerJSON UnitType, but it's easier to just do the trivial mapping
+      // here so that we can reuse all the same measurement handling code.
+      //
+      {{"1"            , &Measurement::Units::numberOf},
+       {"unit"         , &Measurement::Units::numberOf},
+       {"each"         , &Measurement::Units::numberOf},
+       {"dimensionless", &Measurement::Units::numberOf},
+       {"pkg"          , &Measurement::Units::numberOf}}
+   };
+
    ListOfJsonMeasureableUnitsMappings const BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER {
       {&BEER_JSON_MASS_UNIT_MAPPER, &BEER_JSON_VOLUME_UNIT_MAPPER}
+   };
+
+   ListOfJsonMeasureableUnitsMappings const BEER_JSON_MASS_VOLUME_OR_COUNT_UNIT_MAPPER {
+      {&BEER_JSON_MASS_UNIT_MAPPER, &BEER_JSON_VOLUME_UNIT_MAPPER, &BEER_JSON_COUNT_UNIT_MAPPER}
    };
 
    JsonMeasureableUnitsMapping const BEER_JSON_TEMPERATURE_UNIT_MAPPER {
@@ -124,21 +144,11 @@ namespace {
        {"g/l" , &Measurement::Units::carbonationGramsPerLiter}}
    };
 
-   JsonMeasureableUnitsMapping const BEER_JSON_VOLUME_CONCENTRATION_UNIT_MAPPER {
+   JsonMeasureableUnitsMapping const BEER_JSON_MASS_FRACT_OR_CONC_UNIT_MAPPER {
       // ConcentrationUnitType in measurable_units.json in BeerJSON schema
-      {{"ppm",  &Measurement::Units::partsPerMillion},
-       {"ppb",  &Measurement::Units::partsPerBillion}}
-   };
-
-   JsonMeasureableUnitsMapping const BEER_JSON_MASS_CONCENTRATION_UNIT_MAPPER {
-      // ConcentrationUnitType in measurable_units.json in BeerJSON schema
-      {{"ppm" , &Measurement::Units::partsPerMillion   },
-       {"ppb" , &Measurement::Units::partsPerBillion   },
-       {"mg/l", &Measurement::Units::milligramsPerLiter}}
-   };
-
-   ListOfJsonMeasureableUnitsMappings const BEER_JSON_CONCENTRATION_UNIT_MAPPER {
-      {&BEER_JSON_VOLUME_CONCENTRATION_UNIT_MAPPER, &BEER_JSON_MASS_CONCENTRATION_UNIT_MAPPER}
+      {{"ppm" , &Measurement::Units::partsPerMillionMass},
+       {"ppb" , &Measurement::Units::partsPerBillionMass},
+       {"mg/l", &Measurement::Units::milligramsPerLiter }}
    };
 
    JsonMeasureableUnitsMapping const BEER_JSON_DENSITY_UNIT_MAPPER {
@@ -195,46 +205,47 @@ namespace {
    //
    // We use a templated variable name as small short-cut for exporting lists of top-level objects.  Eg, if we have a
    // `QList<Hop const *>` and `QList<Fermentable const *>` that we want to export, then the compiler can automatically
-   // work out that the JsonRecordDefinition objects for mapping them to BeerJSON are BEER_JSON_RECORD_DEFINITION<Hop>
-   // and BEER_JSON_RECORD_DEFINITION<Fermentable> respectively.  This saves us having to have a look-up table in
+   // work out that the JsonRecordDefinition objects for mapping them to BeerJSON are BEER_JSON_RECORD_DEFN<Hop>
+   // and BEER_JSON_RECORD_DEFN<Fermentable> respectively.  This saves us having to have a look-up table in
    // BeerJson::Exporter::add().
    //
    // Note, however, that for reading things in from a JSON, things work differently (because we can't know at compile
    // time what a JSON file contains!), so the templated names don't buy us anything there.  Instead,
-   // BEER_JSON_RECORD_DEFINITION_ROOT tells us how to read in top-level records from a BeerJSON file.
+   // BEER_JSON_RECORD_DEFN_ROOT tells us how to read in top-level records from a BeerJSON file.
    //
    // In both cases, each JsonRecordDefinition object contains links to any other JsonRecordDefinition objects needed to
-   // read/write contained records (eg BEER_JSON_RECORD_DEFINITION<Mash> contains a link to
-   // BEER_JSON_RECORD_DEFINITION<MashStep>).
+   // read/write contained records (eg BEER_JSON_RECORD_DEFN<Mash> contains a link to
+   // BEER_JSON_RECORD_DEFN<MashStep>).
    //
    // Note too, that although we mostly use them for consistency, not all of the JsonRecordDefinition objects _need_
    // templated names.  It's only used for top-level records (see ../schemas/beerjson/1.0/beer.json and the parameters
-   // of ImportExport::exportToFile).  So, eg, BEER_JSON_RECORD_DEFINITION<MashStep> could just as easily be called
-   // BEER_JSON_RECORD_DEFINITION_MASH_STEP because it's only referred to inside the BEER_JSON_RECORD_DEFINITION<Mash>
+   // of ImportExport::exportToFile).  So, eg, BEER_JSON_RECORD_DEFN<MashStep> could just as easily be called
+   // BEER_JSON_RECORD_DEFN_MASH_STEP because it's only referred to inside the BEER_JSON_RECORD_DEFN<Mash>
    // definition.
    //
-   // Also, some JsonRecordDefinition objects _cannot_ have templated BEER_JSON_RECORD_DEFINITION names, because they
-   // would clash.  Eg, we need a slightly different Hop record mapping from BEER_JSON_RECORD_DEFINITION<Hop> inside
-   // BEER_JSON_RECORD_DEFINITION<RecipeAdditionHop> (recipes/ingredients/hop_additions) than we do at
-   // top level, so we need a separate BEER_JSON_RECORD_DEFINITION_HOP_IN_ADDITION record.
+   // Also, some JsonRecordDefinition objects _cannot_ have templated BEER_JSON_RECORD_DEFN names, because they
+   // would clash.  Eg, we need a slightly different Hop record mapping from BEER_JSON_RECORD_DEFN<Hop> inside
+   // BEER_JSON_RECORD_DEFN<RecipeAdditionHop> (recipes/ingredients/hop_additions) than we do at
+   // top level, so we need a separate BEER_JSON_RECORD_DEFN_HOP_IN_ADDITION record.
    //
    //
    // We only use specialisations of this template.  GCC doesn't mind not having a definition for the default cases (as
    // it's not used) but other compilers do.
    //
-   template<class NE> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION {
+   template<class NE> JsonRecordDefinition const BEER_JSON_RECORD_DEFN {
       "not_used", // JSON record name
       nullptr,
       "not_used", // namedEntityClassName
       "not_used", // localisedEntityName
-      nullptr,
+      nullptr,    // listUpcaster
+      nullptr,    // listDowncaster
       JsonRecordDefinition::create<JsonRecord>,
       std::initializer_list<JsonRecordDefinition::FieldDefinition>{}
    };
 
    // NOTE: Field mappings below are mostly in the same order as in schemas/beerjson/1.0/beer.json  HOWEVER, we vary the
    //       order slightly to allow for the fact that some records need to refer to each other -- eg
-   //       BEER_JSON_RECORD_DEFINITION<Mash> refers to BEER_JSON_RECORD_DEFINITION<MashStep>, so the latter is defined
+   //       BEER_JSON_RECORD_DEFN<Mash> refers to BEER_JSON_RECORD_DEFN<MashStep>, so the latter is defined
    //       before the former.
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Top-level field mappings for BeerJSON files
@@ -331,41 +342,18 @@ namespace {
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "friability"      , PropertyNames::Fermentable::friability_pct        , &BEER_JSON_PERCENT_UNIT               },
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "di_ph"           , PropertyNames::Fermentable::di_ph                 , &BEER_JSON_ACIDITY_UNIT               },
       {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "viscosity"       , PropertyNames::Fermentable::viscosity_cP          , &BEER_JSON_VISCOSITY_UNIT_MAPPER      },
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "dms_p"           , PropertyNames::Fermentable::dmsPWithUnits         , &BEER_JSON_CONCENTRATION_UNIT_MAPPER  },
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "fan"             , PropertyNames::Fermentable::fanWithUnits          , &BEER_JSON_CONCENTRATION_UNIT_MAPPER  },
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "dms_p"           , PropertyNames::Fermentable::dmsP_ppm              , &BEER_JSON_MASS_FRACT_OR_CONC_UNIT_MAPPER},
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "fan"             , PropertyNames::Fermentable::fan_ppm               , &BEER_JSON_MASS_FRACT_OR_CONC_UNIT_MAPPER},
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "fermentability"  , PropertyNames::Fermentable::fermentability_pct    , &BEER_JSON_PERCENT_UNIT               },
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "beta_glucan"     , PropertyNames::Fermentable::betaGlucanWithUnits   , &BEER_JSON_CONCENTRATION_UNIT_MAPPER  },
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "beta_glucan"     , PropertyNames::Fermentable::betaGlucan_ppm        , &BEER_JSON_MASS_FRACT_OR_CONC_UNIT_MAPPER},
    };
 
    // As mentioned above, it would be really nice to do this at compile time, but haven't yet found a nice way to do so
-   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Fermentable> {
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<Fermentable> {
       std::in_place_type_t<Fermentable>{},
       "fermentables", // JSON record name
-      JsonRecordDefinition::create< JsonNamedEntityRecord< Fermentable > >,
+      JsonRecordDefinition::create<JsonNamedEntityRecord<Fermentable>>,
       {BeerJson_FermentableBase, BeerJson_FermentableType_ExclBase}
-   };
-
-   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // Field mappings for miscellaneous_ingredients BeerJSON records - see schemas/beerjson/1.0/misc.json
-   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_MiscellaneousBase {
-      // Type                                         XPath               Q_PROPERTY                        Value Decoder
-      {JsonRecordDefinition::FieldType::String,       "name"      ,       PropertyNames::NamedEntity::name},
-      {JsonRecordDefinition::FieldType::String,       "producer"  ,       PropertyNames::Misc::producer   },
-      {JsonRecordDefinition::FieldType::String,       "product_id",       PropertyNames::Misc::productId  },
-      {JsonRecordDefinition::FieldType::Enum  ,       "type"      ,       PropertyNames::Fermentable::type, &Misc::typeStringMapping},
-   };
-   std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_MiscellaneousType_ExclBase {
-      // Type                                                       XPath               Q_PROPERTY                            Value Decoder
-      {JsonRecordDefinition::FieldType::String                    , "use_for"         , PropertyNames::Misc::useFor         },
-      {JsonRecordDefinition::FieldType::String                    , "notes"           , PropertyNames::Misc::notes          },
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount", PropertyNames::IngredientAmount::amount, &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
-   };
-   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Misc> {
-      std::in_place_type_t<Misc>{},
-      "miscellaneous_ingredients", // JSON record name
-      JsonRecordDefinition::create< JsonNamedEntityRecord< Misc > >,
-      {BeerJson_MiscellaneousBase, BeerJson_MiscellaneousType_ExclBase}
    };
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -406,7 +394,7 @@ namespace {
 
       // .:TODO.JSON:. Note that we'll need to look at HopAdditionType, IBUEstimateType, IBUMethodType when we use Hops in Recipes
    };
-   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Hop> {
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<Hop> {
       std::in_place_type_t<Hop>{},
       "hop_varieties", // JSON record name
       JsonRecordDefinition::create< JsonNamedEntityRecord< Hop > >,
@@ -414,75 +402,144 @@ namespace {
    };
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // Field mappings for cultures BeerJSON records - see schemas/beerjson/1.0/culture.json
+   // Field mappings for miscellaneous_ingredients BeerJSON records - see schemas/beerjson/1.0/misc.json
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Yeast> {
-      std::in_place_type_t<Yeast>{},
-      "cultures", // JSON record name
-      JsonRecordDefinition::create< JsonNamedEntityRecord< Yeast > >,
-      {
-         // Type                                                       XPath                        Q_PROPERTY                                      Value Decoder
-         {JsonRecordDefinition::FieldType::String                    , "name"                     , PropertyNames::NamedEntity::name               },
-         {JsonRecordDefinition::FieldType::Enum                      , "type"                     , PropertyNames::Yeast::type                     , &Yeast::typeStringMapping},
-         {JsonRecordDefinition::FieldType::Enum                      , "form"                     , PropertyNames::Yeast::form                     , &Yeast::formStringMapping},
-         {JsonRecordDefinition::FieldType::String                    , "producer"                 , PropertyNames::Yeast::laboratory               },
-         {JsonRecordDefinition::FieldType::String                    , "product_id"               , PropertyNames::Yeast::productId                },
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "temperature_range/minimum", PropertyNames::Yeast::minTemperature_c         , &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "temperature_range/maximum", PropertyNames::Yeast::maxTemperature_c         , &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::SingleUnitValue           , "alcohol_tolerance"        , PropertyNames::Yeast::alcoholTolerance_pct     , &BEER_JSON_PERCENT_UNIT           },
-         {JsonRecordDefinition::FieldType::Enum                      , "flocculation"             , PropertyNames::Yeast::flocculation             , &Yeast::flocculationStringMapping },
-         {JsonRecordDefinition::FieldType::SingleUnitValue           , "attenuation_range/minimum", PropertyNames::Yeast::attenuationMin_pct       , &BEER_JSON_PERCENT_UNIT           },
-         {JsonRecordDefinition::FieldType::SingleUnitValue           , "attenuation_range/maximum", PropertyNames::Yeast::attenuationMax_pct       , &BEER_JSON_PERCENT_UNIT           },
-         {JsonRecordDefinition::FieldType::String                    , "notes"                    , PropertyNames::Yeast::notes                    },
-         {JsonRecordDefinition::FieldType::String                    , "best_for"                 , PropertyNames::Yeast::bestFor                  },
-         {JsonRecordDefinition::FieldType::Int                       , "max_reuse"                , PropertyNames::Yeast::maxReuse                 },
-         {JsonRecordDefinition::FieldType::Bool                      , "pof"                      , PropertyNames::Yeast::phenolicOffFlavorPositive},
-         {JsonRecordDefinition::FieldType::Bool                      , "glucoamylase"             , PropertyNames::Yeast::glucoamylasePositive     },
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount"         , PropertyNames::IngredientAmount::amount        , &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
-         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no1"             , PropertyNames::Yeast::killerProducingK1Toxin   },
-         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no2"             , PropertyNames::Yeast::killerProducingK2Toxin   },
-         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no28"            , PropertyNames::Yeast::killerProducingK28Toxin  },
-         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/klus"            , PropertyNames::Yeast::killerProducingKlusToxin },
-         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/neutral"         , PropertyNames::Yeast::killerNeutral            },
-         // Note that there is, AFAICT, no equivalent in BeerJSON to the following optional BeerXML properties:
-         //  • Int:  TIMES_CULTURED   / PropertyNames::Yeast::timesCultured
-         //  • Bool: ADD_TO_SECONDARY / PropertyNames::Yeast::addToSecondary
-      }
+   std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_MiscBase {
+      // Type                                   XPath         Q_PROPERTY                        Value Decoder
+      {JsonRecordDefinition::FieldType::String, "name"      , PropertyNames::NamedEntity::name},
+      {JsonRecordDefinition::FieldType::String, "producer"  , PropertyNames::Misc::producer   },
+      {JsonRecordDefinition::FieldType::String, "product_id", PropertyNames::Misc::productId  },
+      {JsonRecordDefinition::FieldType::Enum  , "type"      , PropertyNames::Fermentable::type, &Misc::typeStringMapping},
+   };
+   std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_MiscType_ExclBase {
+      // Type                                                       XPath               Q_PROPERTY                               Value Decoder
+      {JsonRecordDefinition::FieldType::String                    , "use_for"         , PropertyNames::Misc::useFor            },
+      {JsonRecordDefinition::FieldType::String                    , "notes"           , PropertyNames::Misc::notes             },
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount", PropertyNames::IngredientAmount::amount, &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
+   };
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<Misc> {
+      std::in_place_type_t<Misc>{},
+      "miscellaneous_ingredients", // JSON record name
+      JsonRecordDefinition::create< JsonNamedEntityRecord< Misc > >,
+      {BeerJson_MiscBase, BeerJson_MiscType_ExclBase}
    };
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // Field mappings for profiles BeerJSON records - see schemas/beerjson/1.0/water.json
+   // Field mappings for cultures BeerJSON records - see schemas/beerjson/1.0/culture.json
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Water> {
-      std::in_place_type_t<Water>{},
-      "profiles", // JSON record name
-      JsonRecordDefinition::create< JsonNamedEntityRecord< Water > >,
-      {
-         // Type                                                       XPath          Q_PROPERTY                             Value Decoder
-         {JsonRecordDefinition::FieldType::String                    , "name"       , PropertyNames::NamedEntity::name     },
-         {JsonRecordDefinition::FieldType::String                    , "producer"   , BtString::NULL_STR                   }, // Not sure what this means for water...
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "calcium"    , PropertyNames::Water::calcium_ppm    , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "bicarbonate", PropertyNames::Water::bicarbonate_ppm, &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "potassium"  , BtString::NULL_STR                   , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "iron"       , BtString::NULL_STR                   , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "nitrate"    , BtString::NULL_STR                   , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "nitrite"    , BtString::NULL_STR                   , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "flouride"   , BtString::NULL_STR                   , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Add this to Water
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "sulfate"    , PropertyNames::Water::sulfate_ppm    , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "chloride"   , PropertyNames::Water::chloride_ppm   , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "sodium"     , PropertyNames::Water::sodium_ppm     , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
-         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "magnesium"  , PropertyNames::Water::magnesium_ppm  , &BEER_JSON_CONCENTRATION_UNIT_MAPPER}, // .:TODO.JSON:. Extend water to allow mg/L on this field
-         {JsonRecordDefinition::FieldType::SingleUnitValue           , "ph"         , PropertyNames::Water::ph             , &BEER_JSON_ACIDITY_UNIT},
-         {JsonRecordDefinition::FieldType::String                    , "notes"      , PropertyNames::Water::notes          },
+   std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_YeastBase {
+      // Type                                   XPath         Q_PROPERTY                        Value Decoder
+      {JsonRecordDefinition::FieldType::String, "name"      , PropertyNames::NamedEntity::name},
+      {JsonRecordDefinition::FieldType::Enum  , "type"      , PropertyNames::Yeast::type      , &Yeast::typeStringMapping},
+      {JsonRecordDefinition::FieldType::Enum  , "form"      , PropertyNames::Yeast::form      , &Yeast::formStringMapping},
+      {JsonRecordDefinition::FieldType::String, "producer"  , PropertyNames::Yeast::laboratory},
+      {JsonRecordDefinition::FieldType::String, "product_id", PropertyNames::Yeast::productId },
+   };
+   std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_YeastType_ExclBase {
+      // Type                                                       XPath               Q_PROPERTY                                          Value Decoder
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "temperature_range/minimum", PropertyNames::Yeast::minTemperature_c         , &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "temperature_range/maximum", PropertyNames::Yeast::maxTemperature_c         , &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "alcohol_tolerance"        , PropertyNames::Yeast::alcoholTolerance_pct     , &BEER_JSON_PERCENT_UNIT           },
+      {JsonRecordDefinition::FieldType::Enum                      , "flocculation"             , PropertyNames::Yeast::flocculation             , &Yeast::flocculationStringMapping },
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "attenuation_range/minimum", PropertyNames::Yeast::attenuationMin_pct       , &BEER_JSON_PERCENT_UNIT           },
+      {JsonRecordDefinition::FieldType::SingleUnitValue           , "attenuation_range/maximum", PropertyNames::Yeast::attenuationMax_pct       , &BEER_JSON_PERCENT_UNIT           },
+      {JsonRecordDefinition::FieldType::String                    , "notes"                    , PropertyNames::Yeast::notes                    },
+      {JsonRecordDefinition::FieldType::String                    , "best_for"                 , PropertyNames::Yeast::bestFor                  },
+      {JsonRecordDefinition::FieldType::Int                       , "max_reuse"                , PropertyNames::Yeast::maxReuse                 },
+      {JsonRecordDefinition::FieldType::Bool                      , "pof"                      , PropertyNames::Yeast::phenolicOffFlavorPositive},
+      {JsonRecordDefinition::FieldType::Bool                      , "glucoamylase"             , PropertyNames::Yeast::glucoamylasePositive     },
+//    TODO: Another complexity is that, for yeast/culture, inventory/amount has sub-fields:
+//          liquid  -- VolumeType
+//          dry     -- MassType
+//          slant   -- VolumeType
+//          culture -- VolumeType
+//      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount"         , PropertyNames::IngredientAmount::amount        , &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
+      {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no1"             , PropertyNames::Yeast::killerProducingK1Toxin   },
+      {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no2"             , PropertyNames::Yeast::killerProducingK2Toxin   },
+      {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no28"            , PropertyNames::Yeast::killerProducingK28Toxin  },
+      {JsonRecordDefinition::FieldType::Bool                      , "zymocide/klus"            , PropertyNames::Yeast::killerProducingKlusToxin },
+      {JsonRecordDefinition::FieldType::Bool                      , "zymocide/neutral"         , PropertyNames::Yeast::killerNeutral            },
+   };
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<Yeast> {
+      std::in_place_type_t<Yeast>{},
+      "cultures", // JSON record name
+      JsonRecordDefinition::create<JsonNamedEntityRecord<Yeast>>,
+      {BeerJson_YeastBase, BeerJson_YeastType_ExclBase}
+   };
 
-         // .:TODO.JSON:. Note that we'll need to look at WaterAdditionType at some point...
-      }
+///   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<Yeast> {
+///      std::in_place_type_t<Yeast>{},
+///      "cultures", // JSON record name
+///      JsonRecordDefinition::create< JsonNamedEntityRecord< Yeast > >,
+///      {
+///         // Type                                                       XPath                        Q_PROPERTY                                      Value Decoder
+///         {JsonRecordDefinition::FieldType::String                    , "name"                     , PropertyNames::NamedEntity::name               },
+///         {JsonRecordDefinition::FieldType::Enum                      , "type"                     , PropertyNames::Yeast::type                     , &Yeast::typeStringMapping},
+///         {JsonRecordDefinition::FieldType::Enum                      , "form"                     , PropertyNames::Yeast::form                     , &Yeast::formStringMapping},
+///         {JsonRecordDefinition::FieldType::String                    , "producer"                 , PropertyNames::Yeast::laboratory               },
+///         {JsonRecordDefinition::FieldType::String                    , "product_id"               , PropertyNames::Yeast::productId                },
+///         {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "temperature_range/minimum", PropertyNames::Yeast::minTemperature_c         , &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
+///         {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "temperature_range/maximum", PropertyNames::Yeast::maxTemperature_c         , &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
+///         {JsonRecordDefinition::FieldType::SingleUnitValue           , "alcohol_tolerance"        , PropertyNames::Yeast::alcoholTolerance_pct     , &BEER_JSON_PERCENT_UNIT           },
+///         {JsonRecordDefinition::FieldType::Enum                      , "flocculation"             , PropertyNames::Yeast::flocculation             , &Yeast::flocculationStringMapping },
+///         {JsonRecordDefinition::FieldType::SingleUnitValue           , "attenuation_range/minimum", PropertyNames::Yeast::attenuationMin_pct       , &BEER_JSON_PERCENT_UNIT           },
+///         {JsonRecordDefinition::FieldType::SingleUnitValue           , "attenuation_range/maximum", PropertyNames::Yeast::attenuationMax_pct       , &BEER_JSON_PERCENT_UNIT           },
+///         {JsonRecordDefinition::FieldType::String                    , "notes"                    , PropertyNames::Yeast::notes                    },
+///         {JsonRecordDefinition::FieldType::String                    , "best_for"                 , PropertyNames::Yeast::bestFor                  },
+///         {JsonRecordDefinition::FieldType::Int                       , "max_reuse"                , PropertyNames::Yeast::maxReuse                 },
+///         {JsonRecordDefinition::FieldType::Bool                      , "pof"                      , PropertyNames::Yeast::phenolicOffFlavorPositive},
+///         {JsonRecordDefinition::FieldType::Bool                      , "glucoamylase"             , PropertyNames::Yeast::glucoamylasePositive     },
+///         {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "inventory/amount"         , PropertyNames::IngredientAmount::amount        , &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
+///         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no1"             , PropertyNames::Yeast::killerProducingK1Toxin   },
+///         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no2"             , PropertyNames::Yeast::killerProducingK2Toxin   },
+///         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/no28"            , PropertyNames::Yeast::killerProducingK28Toxin  },
+///         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/klus"            , PropertyNames::Yeast::killerProducingKlusToxin },
+///         {JsonRecordDefinition::FieldType::Bool                      , "zymocide/neutral"         , PropertyNames::Yeast::killerNeutral            },
+///         // Note that there is, AFAICT, no equivalent in BeerJSON to the following optional BeerXML properties:
+///         //  • Int:  TIMES_CULTURED   / PropertyNames::Yeast::timesCultured
+///         //  • Bool: ADD_TO_SECONDARY / PropertyNames::Yeast::addToSecondary
+///      }
+///   };
+
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Field mappings for water BeerJSON records - see schemas/beerjson/1.0/water.json
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_WaterBase {
+      // Type                                                 XPath          Q_PROPERTY                             Value Decoder
+      {JsonRecordDefinition::FieldType::String              , "name"       , PropertyNames::NamedEntity::name     },
+      {JsonRecordDefinition::FieldType::String              , "producer"   , BtString::NULL_STR                   }, // Not supported as not sure what this means for water...
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits, "calcium"    , PropertyNames::Water::calcium_ppm    , &BEER_JSON_MASS_FRACT_OR_CONC_UNIT_MAPPER},
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits, "bicarbonate", PropertyNames::Water::bicarbonate_ppm, &BEER_JSON_MASS_FRACT_OR_CONC_UNIT_MAPPER},
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits, "carbonate"  , PropertyNames::Water::carbonate_ppm  , &BEER_JSON_MASS_FRACT_OR_CONC_UNIT_MAPPER},
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits, "potassium"  , PropertyNames::Water::potassium_ppm  , &BEER_JSON_MASS_FRACT_OR_CONC_UNIT_MAPPER},
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits, "iron"       , PropertyNames::Water::iron_ppm       , &BEER_JSON_MASS_FRACT_OR_CONC_UNIT_MAPPER},
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits, "nitrate"    , PropertyNames::Water::nitrate_ppm    , &BEER_JSON_MASS_FRACT_OR_CONC_UNIT_MAPPER},
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits, "nitrite"    , PropertyNames::Water::nitrite_ppm    , &BEER_JSON_MASS_FRACT_OR_CONC_UNIT_MAPPER},
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits, "flouride"   , PropertyNames::Water::flouride_ppm   , &BEER_JSON_MASS_FRACT_OR_CONC_UNIT_MAPPER},
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits, "sulfate"    , PropertyNames::Water::sulfate_ppm    , &BEER_JSON_MASS_FRACT_OR_CONC_UNIT_MAPPER},
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits, "chloride"   , PropertyNames::Water::chloride_ppm   , &BEER_JSON_MASS_FRACT_OR_CONC_UNIT_MAPPER},
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits, "sodium"     , PropertyNames::Water::sodium_ppm     , &BEER_JSON_MASS_FRACT_OR_CONC_UNIT_MAPPER},
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits, "magnesium"  , PropertyNames::Water::magnesium_ppm  , &BEER_JSON_MASS_FRACT_OR_CONC_UNIT_MAPPER},
+   };
+   std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_WaterType_ExclBase {
+      // Type                                            XPath    Q_PROPERTY                   Value Decoder
+      {JsonRecordDefinition::FieldType::SingleUnitValue, "pH"   , PropertyNames::Water::ph   , &BEER_JSON_ACIDITY_UNIT},
+      {JsonRecordDefinition::FieldType::String         , "notes", PropertyNames::Water::notes,                        },
+   };
+
+   // As mentioned above, it would be really nice to do this at compile time, but haven't yet found a nice way to do so
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<Water> {
+      std::in_place_type_t<Water>{},
+      "profiles", // JSON record name -- note that it's "profiles" NOT "waters".  (But in a Recipe, it's "water_additions"!)
+      JsonRecordDefinition::create<JsonNamedEntityRecord<Water>>,
+      {BeerJson_WaterBase, BeerJson_WaterType_ExclBase}
    };
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for styles BeerJSON records - see schemas/beerjson/1.0/style.json
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Style> {
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<Style> {
       std::in_place_type_t<Style>{},
       "styles", // JSON record name
       JsonRecordDefinition::create< JsonNamedEntityRecord< Style > >,
@@ -520,7 +577,7 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for mash steps BeerJSON records
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<MashStep> {
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<MashStep> {
       std::in_place_type_t<MashStep>{},
       "MashStepType", // JSON record name
       JsonRecordDefinition::create<JsonNamedEntityRecord<MashStep>>,
@@ -544,33 +601,66 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for mashes BeerJSON records TODO
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Mash> {
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<Mash> {
       std::in_place_type_t<Mash>{},
       "mashes", // JSON record name
       JsonRecordDefinition::create<JsonNamedEntityRecord<Mash>>,
       {
-         // Type                                                 XPath                Q_PROPERTY                              Value Decoder
-         {JsonRecordDefinition::FieldType::String              , "name"             , PropertyNames::NamedEntity::name      },
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "grain_temperature", PropertyNames::Mash::grainTemp_c      , &BEER_JSON_TEMPERATURE_UNIT_MAPPER    },
-         {JsonRecordDefinition::FieldType::String              , "notes"            , PropertyNames::Mash::notes            },
-         {JsonRecordDefinition::FieldType::ListOfRecords       , "mash_steps"       , PropertyNames::Mash::mashStepsDowncast, &BEER_JSON_RECORD_DEFINITION<MashStep>}
+         // Type                                                 XPath                Q_PROPERTY                        Value Decoder
+         {JsonRecordDefinition::FieldType::String              , "name"             , PropertyNames::NamedEntity::name},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "grain_temperature", PropertyNames::Mash::grainTemp_c, &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::String              , "notes"            , PropertyNames::Mash::notes      },
+         {JsonRecordDefinition::FieldType::ListOfRecords       , "mash_steps"       , PropertyNames::Mash::mashSteps  , &BEER_JSON_RECORD_DEFN<MashStep>  }
+      }
+   };
+
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Field mappings for fermentation_steps BeerJSON records
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<FermentationSteps> {
+      std::in_place_type_t<FermentationSteps>{},
+      "fermentation_steps", // JSON record name
+      JsonRecordDefinition::create< JsonNamedEntityRecord< FermentationSteps > >,
+      {
+         // Type                                                 XPath                Q_PROPERTY                                Value Decoder
+         {JsonRecordDefinition::FieldType::String              , "name"             , PropertyNames::NamedEntity::name        },
+         {JsonRecordDefinition::FieldType::String              , "description"      , PropertyNames::Step::description        },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "start_temperature", PropertyNames::StepExtended::startTemp_c, &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits,   "end_temperature", PropertyNames::        Step::  endTemp_c, &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
+¥¥¥
+
+        /// {JsonRecordDefinition::FieldType::String       , "notes"             , PropertyNames::Fermantation::notes            },
+        /// {JsonRecordDefinition::FieldType::ListOfRecords, "fermentation_steps", PropertyNames::Fermantation::fermentationSteps, &BEER_JSON_RECORD_DEFN<FermentationSteps>},
+      }
+   };
+
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Field mappings for fermentations BeerJSON records
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<Fermantation> {
+      std::in_place_type_t<Fermantation>{},
+      "fermentations", // JSON record name
+      JsonRecordDefinition::create< JsonNamedEntityRecord< Fermantation > >,
+      {
+         // Type                                          XPath                 Q_PROPERTY                                      Value Decoder
+         {JsonRecordDefinition::FieldType::String       , "name"              , PropertyNames::NamedEntity::name              },
+         {JsonRecordDefinition::FieldType::String       , "description"       , PropertyNames::Fermantation::description      },
+         {JsonRecordDefinition::FieldType::String       , "notes"             , PropertyNames::Fermantation::notes            },
+         {JsonRecordDefinition::FieldType::ListOfRecords, "fermentation_steps", PropertyNames::Fermantation::fermentationSteps, &BEER_JSON_RECORD_DEFN<FermentationSteps>},
       }
    };
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // Field mappings for fermentations BeerJSON records TODO
-   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//      JsonRecordDefinition::create< JsonNamedEntityRecord< Fermantation > >,
-
-   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // Field mappings for equipments BeerJSON records TODO
+   // Field mappings for equipments BeerJSON records
    //
    // Yes, all the permutations below are technically allowed in BeerJSON.  I think this is a place where simplifying
-   // the schema won out over precision.  Where possible we simply ignore the field permutations that don't seem to make
-   // sense (eg grain_absorption_rate on Hot Liquor Tank) or seem unimportant (eg drain_rate_per_minute on HLT).
+   // the schema won out over precision.  Where possible, we simply ignore the field permutations that don't seem to
+   // make sense (eg grain_absorption_rate on Hot Liquor Tank) or seem unimportant (eg drain_rate_per_minute on HLT).
    // However, note that some fields are required on all vessels, in particular "loss" and "maximum_volume".
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Equipment> {
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<Equipment> {
       std::in_place_type_t<Equipment>{},
       "equipments", // JSON record name
       JsonRecordDefinition::create< JsonNamedEntityRecord< Equipment > >,
@@ -653,21 +743,60 @@ namespace {
 
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Field mappings for the FermentableBase part of FermentableAdditionType BeerJSON records
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   JsonRecordDefinition const BEER_JSON_RECORD_DEFN_FERMENTABLE_IN_ADDITION {
+      std::in_place_type_t<Fermentable>{},
+      "fermentable base", // JSON record name
+      JsonRecordDefinition::create< JsonNamedEntityRecord< Fermentable > >,
+      {BeerJson_FermentableBase}
+   };
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for the HopBase part of HopAdditionType BeerJSON records
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION_HOP_IN_ADDITION {
+   JsonRecordDefinition const BEER_JSON_RECORD_DEFN_HOP_IN_ADDITION {
       std::in_place_type_t<Hop>{},
       "hop base", // JSON record name
       JsonRecordDefinition::create< JsonNamedEntityRecord< Hop > >,
       {BeerJson_HopBase}
    };
 
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Field mappings for the MiscBase part of MiscAdditionType BeerJSON records
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   JsonRecordDefinition const BEER_JSON_RECORD_DEFN_MISC_IN_ADDITION {
+      std::in_place_type_t<Misc>{},
+      "misc base", // JSON record name
+      JsonRecordDefinition::create< JsonNamedEntityRecord< Misc > >,
+      {BeerJson_MiscBase}
+   };
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // Field mappings for hop_additions BeerJSON records
+   // Field mappings for the YeastBase part of YeastAdditionType BeerJSON records
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // This is the same across Fermentable, Hop, Misc
-   std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_IngredientAdditionType_ExclBase {
+   JsonRecordDefinition const BEER_JSON_RECORD_DEFN_YEAST_IN_ADDITION {
+      std::in_place_type_t<Yeast>{},
+      "yeast base", // JSON record name
+      JsonRecordDefinition::create< JsonNamedEntityRecord< Yeast > >,
+      {BeerJson_YeastBase}
+   };
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Field mappings for the WaterBase part of WaterAdditionType BeerJSON records
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   JsonRecordDefinition const BEER_JSON_RECORD_DEFN_WATER_IN_ADDITION {
+      std::in_place_type_t<Water>{},
+      "water base", // JSON record name
+      JsonRecordDefinition::create< JsonNamedEntityRecord< Water > >,
+      {BeerJson_WaterBase}
+   };
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Field mappings for fermentable_additions, hop_additions, misc_additions, yeast_additions, water_additions BeerJSON records
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // The timing bit is the same across Fermentable, Hop, Misc and Yeast
+   std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_IngredientAdditionType_Timing {
       // Type                                                       XPath                      Q_PROPERTY                                       Value Decoder
       {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "timing/time"            , PropertyNames::RecipeAddition::addAtTime_mins ,  &BEER_JSON_TIME_UNIT_MAPPER          },
       {JsonRecordDefinition::FieldType::MeasurementWithUnits      , "timing/duration"        , PropertyNames::RecipeAddition::duration_mins  ,  &BEER_JSON_TIME_UNIT_MAPPER          },
@@ -676,23 +805,84 @@ namespace {
       {JsonRecordDefinition::FieldType::SingleUnitValue           , "timing/pH"              , PropertyNames::RecipeAddition::addAtAcidity_pH,  &BEER_JSON_ACIDITY_UNIT              },
       {JsonRecordDefinition::FieldType::Int                       , "timing/step"            , PropertyNames::RecipeAddition::step           },
       {JsonRecordDefinition::FieldType::Enum                      , "timing/use"             , PropertyNames::RecipeAddition::stage          ,  &RecipeAddition::stageStringMapping  },
-      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "amount"                 , PropertyNames::IngredientAmount::amount       ,  &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
    };
+
+   std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_IngredientAdditionType_Volume {
+      // Type                                                 XPath     Q_PROPERTY                                Value Decoder
+      {JsonRecordDefinition::FieldType::MeasurementWithUnits, "amount", PropertyNames::IngredientAmount::amount,  &BEER_JSON_VOLUME_UNIT_MAPPER},
+   };
+
+   std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_IngredientAdditionType_MassOrVolume {
+      // Type                                                       XPath     Q_PROPERTY                                Value Decoder
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "amount", PropertyNames::IngredientAmount::amount,  &BEER_JSON_MASS_OR_VOLUME_UNIT_MAPPER},
+   };
+
+   std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_IngredientAdditionType_MassVolumeOrCount {
+      // Type                                                       XPath     Q_PROPERTY                                Value Decoder
+      {JsonRecordDefinition::FieldType::OneOfMeasurementsWithUnits, "amount", PropertyNames::IngredientAmount::amount,  &BEER_JSON_MASS_VOLUME_OR_COUNT_UNIT_MAPPER},
+   };
+
+   std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_FermentableAdditionType_Base {
+      // Type                                   XPath  Q_PROPERTY                                              Value Decoder
+      {JsonRecordDefinition::FieldType::Record, ""   , PropertyNames::RecipeAdditionFermentable::fermentable,  &BEER_JSON_RECORD_DEFN_FERMENTABLE_IN_ADDITION},
+   };
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<RecipeAdditionFermentable> {
+      std::in_place_type_t<RecipeAdditionFermentable>{},
+      "fermentable_additions", // JSON record name
+      JsonRecordDefinition::create< JsonNamedEntityRecord<RecipeAdditionFermentable> >,
+      {BeerJson_IngredientAdditionType_Timing, BeerJson_IngredientAdditionType_MassOrVolume, BeerJson_FermentableAdditionType_Base}
+   };
+
    std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_HopAdditionType_Base {
-      // Type                                                       XPath                      Q_PROPERTY                              Value Decoder
-      {JsonRecordDefinition::FieldType::Record                    , ""                       , PropertyNames::RecipeAdditionHop::hop,  &BEER_JSON_RECORD_DEFINITION_HOP_IN_ADDITION},
+      // Type                                   XPath  Q_PROPERTY                              Value Decoder
+      {JsonRecordDefinition::FieldType::Record, ""   , PropertyNames::RecipeAdditionHop::hop,  &BEER_JSON_RECORD_DEFN_HOP_IN_ADDITION},
    };
-   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<RecipeAdditionHop> {
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<RecipeAdditionHop> {
       std::in_place_type_t<RecipeAdditionHop>{},
       "hop_additions", // JSON record name
       JsonRecordDefinition::create< JsonNamedEntityRecord<RecipeAdditionHop> >,
-      {BeerJson_IngredientAdditionType_ExclBase, BeerJson_HopAdditionType_Base}
+      {BeerJson_IngredientAdditionType_Timing, BeerJson_IngredientAdditionType_MassOrVolume, BeerJson_HopAdditionType_Base}
+   };
+
+   std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_MiscAdditionType_Base {
+      // Type                                   XPath  Q_PROPERTY                                Value Decoder
+      {JsonRecordDefinition::FieldType::Record, ""   , PropertyNames::RecipeAdditionMisc::misc,  &BEER_JSON_RECORD_DEFN_MISC_IN_ADDITION},
+   };
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<RecipeAdditionMisc> {
+      std::in_place_type_t<RecipeAdditionMisc>{},
+      "misc_additions", // JSON record name
+      JsonRecordDefinition::create< JsonNamedEntityRecord<RecipeAdditionMisc> >,
+      {BeerJson_IngredientAdditionType_Timing, BeerJson_IngredientAdditionType_MassVolumeOrCount, BeerJson_MiscAdditionType_Base}
+   };
+
+   std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_YeastAdditionType_Base {
+      // Type                                   XPath  Q_PROPERTY                                  Value Decoder
+      {JsonRecordDefinition::FieldType::Record, ""   , PropertyNames::RecipeAdditionYeast::yeast,  &BEER_JSON_RECORD_DEFN_YEAST_IN_ADDITION},
+   };
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<RecipeAdditionYeast> {
+      std::in_place_type_t<RecipeAdditionYeast>{},
+      "yeast_additions", // JSON record name
+      JsonRecordDefinition::create< JsonNamedEntityRecord<RecipeAdditionYeast> >,
+      {BeerJson_IngredientAdditionType_Timing, BeerJson_IngredientAdditionType_MassVolumeOrCount, BeerJson_YeastAdditionType_Base}
+   };
+
+
+   std::initializer_list<JsonRecordDefinition::FieldDefinition> const BeerJson_WaterUseType_Base {
+      // Type                                   XPath  Q_PROPERTY                               Value Decoder
+      {JsonRecordDefinition::FieldType::Record, ""   , PropertyNames::RecipeUseOfWater::water,  &BEER_JSON_RECORD_DEFN_WATER_IN_ADDITION},
+   };
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<RecipeUseOfWater> {
+      std::in_place_type_t<RecipeUseOfWater>{},
+      "water_additions", // JSON record name
+      JsonRecordDefinition::create< JsonNamedEntityRecord<RecipeUseOfWater> >,
+      // NB: No timing for water_additions
+      {BeerJson_IngredientAdditionType_Volume, BeerJson_WaterUseType_Base}
    };
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // Field mappings for recipes BeerJSON records TODO
+   // Field mappings for recipes BeerJSON records
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION<Recipe> {
+   template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<Recipe> {
       std::in_place_type_t<Recipe>{},
       "recipes", // JSON record name
       JsonRecordDefinition::create< JsonNamedEntityRecord<Recipe> >,
@@ -708,8 +898,45 @@ namespace {
          {JsonRecordDefinition::FieldType::SingleUnitValue     , "efficiency/conversion", BtString::NULL_STR                      , &BEER_JSON_PERCENT_UNIT      }, // .:TBD:. Do we want to support this optional BeerJSON field?
          {JsonRecordDefinition::FieldType::SingleUnitValue     , "efficiency/lauter"    , BtString::NULL_STR                      , &BEER_JSON_PERCENT_UNIT      }, // .:TBD:. Do we want to support this optional BeerJSON field?
          {JsonRecordDefinition::FieldType::SingleUnitValue     , "efficiency/mash"      , BtString::NULL_STR                      , &BEER_JSON_PERCENT_UNIT      }, // .:TBD:. Do we want to support this optional BeerJSON field?
-         // TODO Finish this!
-         {JsonRecordDefinition::FieldType::ListOfRecords       , "ingredients/hop_additions", PropertyNames::Recipe::hopAdditions, &BEER_JSON_RECORD_DEFINITION<RecipeAdditionHop> },
+         {JsonRecordDefinition::FieldType::Record              , "style"                  , PropertyNames::Recipe::style,
+                                                                                            &BEER_JSON_RECORD_DEFN<Style>},
+         {JsonRecordDefinition::FieldType::ListOfRecords       , "ingredients/"
+                                                                 "fermentable_additions"  , PropertyNames::Recipe::fermentableAdditions,
+                                                                                            &BEER_JSON_RECORD_DEFN<RecipeAdditionFermentable>},
+         {JsonRecordDefinition::FieldType::ListOfRecords       , "ingredients/"
+                                                                 "hop_additions"          , PropertyNames::Recipe::hopAdditions,
+                                                                                            &BEER_JSON_RECORD_DEFN<RecipeAdditionHop>},
+         {JsonRecordDefinition::FieldType::ListOfRecords       , "ingredients/"
+                                                                 "miscellaneous_additions", PropertyNames::Recipe::miscAdditions,
+                                                                                            &BEER_JSON_RECORD_DEFN<RecipeAdditionMisc>},
+         {JsonRecordDefinition::FieldType::ListOfRecords       , "ingredients/"
+                                                                 "culture_additions"      , PropertyNames::Recipe::yeastAdditions,
+                                                                                            &BEER_JSON_RECORD_DEFN<RecipeAdditionYeast>},
+         {JsonRecordDefinition::FieldType::ListOfRecords       , "ingredients/"
+                                                                 "water_additions"        , PropertyNames::Recipe::waterUses,
+                                                                                            &BEER_JSON_RECORD_DEFN<RecipeUseOfWater>},
+         {JsonRecordDefinition::FieldType::Record              , "mash"                   , PropertyNames::Recipe::mash,
+                                                                                            &BEER_JSON_RECORD_DEFN<Mash>},
+         {JsonRecordDefinition::FieldType::String              , "notes"               , PropertyNames::Recipe::notes         },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "original_gravity"    , PropertyNames::Recipe::og            , &BEER_JSON_DENSITY_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "final_gravity"       , PropertyNames::Recipe::og            , &BEER_JSON_DENSITY_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "alcohol_by_volume"   , PropertyNames::Recipe::ABV_pct       , &BEER_JSON_PERCENT_UNIT       },
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "ibu_estimate"        , PropertyNames::Recipe::IBU           , &BEER_JSON_BITTERNESS_UNIT    },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "color_estimate"      , PropertyNames::Recipe::color_srm     , &BEER_JSON_COLOR_UNIT_MAPPER  },
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "beer_pH"             , PropertyNames::Recipe::beerAcidity_pH, &BEER_JSON_ACIDITY_UNIT       },
+         // TBD: IDK why this has no units in contrast with styles/carbonation/minimum and styles/carbonation/maximum
+         //      See https://github.com/beerjson/beerjson/issues/207
+         {JsonRecordDefinition::FieldType::Double              , "carbonation"         , PropertyNames::Recipe::carbonation_vols       },
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "apparent_attenuation", PropertyNames::Recipe::apparentAttenuation_pct,
+                                                                                         &BEER_JSON_PERCENT_UNIT                       },
+         {JsonRecordDefinition::FieldType::Record              , "fermentation"        , PropertyNames::Recipe::fermentation           ,
+                                                                                         &BEER_JSON_RECORD_DEFN<Fermentation>    },
+         {JsonRecordDefinition::FieldType::Record              , "packaging"           , BtString::NULL_STR                }, // .:TODO:. We should add support for this
+         {JsonRecordDefinition::FieldType::Record              , "boil"                , PropertyNames::Recipe::boil       ,
+                                                                                         &BEER_JSON_RECORD_DEFN<Boil>},
+         {JsonRecordDefinition::FieldType::String              , "taste/notes"         , PropertyNames::Recipe::tasteNotes},
+         {JsonRecordDefinition::FieldType::Double              , "taste/rating"        , PropertyNames::Recipe::tasteRating},
+         {JsonRecordDefinition::FieldType::Double              , "calories_per_pint"   , BtString::NULL_STR                }, // .:TODO:. We should perhaps add support for this
       }
    };
 
@@ -723,25 +950,26 @@ namespace {
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for root of BeerJSON document
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   JsonRecordDefinition const BEER_JSON_RECORD_DEFINITION_ROOT {
+   JsonRecordDefinition const BEER_JSON_RECORD_DEFN_ROOT {
       "beerjson", // JSON record name
       nullptr,
       "",         // NamedEntity class name
       "",         // Localised name
-      nullptr,
+      nullptr,    // listUpcaster
+      nullptr,    // listDowncaster
       JsonRecordDefinition::create<JsonRecord>,
       {
          // Type                                             Name                         Q_PROPERTY            Value Decoder
          {JsonRecordDefinition::FieldType::RequiredConstant, "version"                  , jsonVersionWeSupport},
-         {JsonRecordDefinition::FieldType::ListOfRecords   , "fermentables"             , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Fermentable>},
-         {JsonRecordDefinition::FieldType::ListOfRecords   , "miscellaneous_ingredients", BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Misc       >},
-         {JsonRecordDefinition::FieldType::ListOfRecords   , "hop_varieties"            , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Hop        >},
-         {JsonRecordDefinition::FieldType::ListOfRecords   , "cultures"                 , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Yeast      >},
+         {JsonRecordDefinition::FieldType::ListOfRecords   , "fermentables"             , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFN<Fermentable>},
+         {JsonRecordDefinition::FieldType::ListOfRecords   , "miscellaneous_ingredients", BtString::NULL_STR  , &BEER_JSON_RECORD_DEFN<Misc       >},
+         {JsonRecordDefinition::FieldType::ListOfRecords   , "hop_varieties"            , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFN<Hop        >},
+         {JsonRecordDefinition::FieldType::ListOfRecords   , "cultures"                 , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFN<Yeast      >},
          {JsonRecordDefinition::FieldType::ListOfRecords   , "profiles"                 , BtString::NULL_STR  , /* TODO */},
-         {JsonRecordDefinition::FieldType::ListOfRecords   , "styles"                   , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Style      >},
-         {JsonRecordDefinition::FieldType::ListOfRecords   , "mashes"                   , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Mash       >},
-         {JsonRecordDefinition::FieldType::ListOfRecords   , "recipes"                  , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Recipe     >},
-         {JsonRecordDefinition::FieldType::ListOfRecords   , "equipments"               , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFINITION<Equipment  >},
+         {JsonRecordDefinition::FieldType::ListOfRecords   , "styles"                   , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFN<Style      >},
+         {JsonRecordDefinition::FieldType::ListOfRecords   , "mashes"                   , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFN<Mash       >},
+         {JsonRecordDefinition::FieldType::ListOfRecords   , "recipes"                  , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFN<Recipe     >},
+         {JsonRecordDefinition::FieldType::ListOfRecords   , "equipments"               , BtString::NULL_STR  , &BEER_JSON_RECORD_DEFN<Equipment  >},
          {JsonRecordDefinition::FieldType::ListOfRecords   , "fermentations"            , BtString::NULL_STR  , /* TODO */},
          {JsonRecordDefinition::FieldType::ListOfRecords   , "boil"                     , BtString::NULL_STR  , /* TODO */},
          {JsonRecordDefinition::FieldType::ListOfRecords   , "packaging"                , BtString::NULL_STR  , /* TODO */}
@@ -757,7 +985,7 @@ namespace {
       "BeerJSON 1.0",
       *jsonVersionWeSupport, // "2.06",
       JsonSchema::Id::BEER_JSON_2_1,
-      BEER_JSON_RECORD_DEFINITION_ROOT
+      BEER_JSON_RECORD_DEFN_ROOT
    };
 
    //=-=-=-=-=-=-=-=-
@@ -932,8 +1160,8 @@ namespace BeerJson {
          );
       }
       boost::json::array outputArray;
-      JsonRecord::listToJson(objectsToWrite, outputArray, BEER_JSON_1_CODING, BEER_JSON_RECORD_DEFINITION<NE>);
-      this->pimpl->outputDocument["beerjson"].get_object()[*BEER_JSON_RECORD_DEFINITION<NE>.m_recordName] = outputArray;
+      JsonRecord::listToJson(objectsToWrite, outputArray, BEER_JSON_1_CODING, BEER_JSON_RECORD_DEFN<NE>);
+      this->pimpl->outputDocument["beerjson"].get_object()[*BEER_JSON_RECORD_DEFN<NE>.m_recordName] = outputArray;
       return;
    }
 

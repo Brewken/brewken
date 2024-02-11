@@ -28,9 +28,11 @@ ObjectStore & RecipeAdditionYeast::getObjectStoreTypedInstance() const {
 TypeLookup const RecipeAdditionYeast::typeLookup {
    "RecipeAdditionYeast",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionYeast::yeast          , RecipeAdditionYeast::yeast            ),
-      PROPERTY_TYPE_LOOKUP_ENTRY      (PropertyNames::RecipeAdditionYeast::attenuation_pct, RecipeAdditionYeast::m_attenuation_pct,  NonPhysicalQuantity::Percentage),
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionYeast::addToSecondary , RecipeAdditionYeast::addToSecondary   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionYeast::yeast            , RecipeAdditionYeast::yeast              ),
+      PROPERTY_TYPE_LOOKUP_ENTRY      (PropertyNames::RecipeAdditionYeast::attenuation_pct  , RecipeAdditionYeast::m_attenuation_pct  , NonPhysicalQuantity::Percentage),
+      PROPERTY_TYPE_LOOKUP_ENTRY      (PropertyNames::RecipeAdditionYeast::timesCultured    , RecipeAdditionYeast::m_timesCultured    , NonPhysicalQuantity::OrdinalNumeral),
+      PROPERTY_TYPE_LOOKUP_ENTRY      (PropertyNames::RecipeAdditionYeast::cellCountBillions, RecipeAdditionYeast::m_cellCountBillions, NonPhysicalQuantity::OrdinalNumeral),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::RecipeAdditionYeast::addToSecondary   , RecipeAdditionYeast::addToSecondary     ),
    },
    // Parent classes lookup.  NB: RecipeAddition not NamedEntity!
    {&RecipeAddition::typeLookup,
@@ -51,7 +53,9 @@ RecipeAdditionYeast::RecipeAdditionYeast(QString name, int const recipeId, int c
    RecipeAddition{name, recipeId, ingredientId},
    RecipeAdditionBase<RecipeAdditionYeast, Yeast>{},
    IngredientAmount<RecipeAdditionYeast, Yeast>{},
-   m_attenuation_pct{std::nullopt} {
+   m_attenuation_pct  {std::nullopt},
+   m_timesCultured    {std::nullopt},
+   m_cellCountBillions{std::nullopt} {
    return;
 }
 
@@ -59,7 +63,9 @@ RecipeAdditionYeast::RecipeAdditionYeast(NamedParameterBundle const & namedParam
    RecipeAddition{namedParameterBundle},
    RecipeAdditionBase<RecipeAdditionYeast, Yeast>{},
    IngredientAmount<RecipeAdditionYeast, Yeast>{namedParameterBundle},
-   SET_REGULAR_FROM_NPB (m_attenuation_pct, namedParameterBundle, PropertyNames::RecipeAdditionYeast::attenuation_pct) {
+   SET_REGULAR_FROM_NPB (m_attenuation_pct  , namedParameterBundle, PropertyNames::RecipeAdditionYeast::attenuation_pct  ),
+   SET_REGULAR_FROM_NPB (m_timesCultured    , namedParameterBundle, PropertyNames::RecipeAdditionYeast::timesCultured    ),
+   SET_REGULAR_FROM_NPB (m_cellCountBillions, namedParameterBundle, PropertyNames::RecipeAdditionYeast::cellCountBillions) {
    //
    // If the addition stage is not specified then we assume it is fermentation, as this is the first stage at which it is usual
    // to add yeast.
@@ -74,7 +80,9 @@ RecipeAdditionYeast::RecipeAdditionYeast(RecipeAdditionYeast const & other) :
    RecipeAddition{other},
    RecipeAdditionBase<RecipeAdditionYeast, Yeast>{},
    IngredientAmount<RecipeAdditionYeast, Yeast>{other},
-   m_attenuation_pct{other.m_attenuation_pct          } {
+   m_attenuation_pct  {other.m_attenuation_pct  },
+   m_timesCultured    {other.m_timesCultured    },
+   m_cellCountBillions{other.m_cellCountBillions} {
    return;
 }
 
@@ -94,9 +102,10 @@ Yeast * RecipeAdditionYeast::yeast() const {
    return ObjectStoreWrapper::getByIdRaw<Yeast>(this->m_ingredientId);
 }
 
-std::optional<double> RecipeAdditionYeast::attenuation_pct() const { return m_attenuation_pct; }
-
-std::optional<bool>   RecipeAdditionYeast::addToSecondary () const {
+std::optional<double> RecipeAdditionYeast::attenuation_pct  () const { return m_attenuation_pct; }
+std::optional<int>    RecipeAdditionYeast::timesCultured    () const { return m_timesCultured  ; }
+std::optional<int>    RecipeAdditionYeast::cellCountBillions() const { return m_cellCountBillions  ; }
+std::optional<bool>   RecipeAdditionYeast::addToSecondary   () const {
    if (1 == this->step()) {
       return false;
    }
@@ -142,10 +151,13 @@ void RecipeAdditionYeast::setYeast(Yeast * const val) {
 
 void RecipeAdditionYeast::setAttenuation_pct(std::optional<double> const val) {
    SET_AND_NOTIFY(PropertyNames::RecipeAdditionYeast::attenuation_pct,
-                      m_attenuation_pct,
-                      this->enforceMinAndMax(val, "pct attenuation", 0.0, 100.0, 0.0));
+                  m_attenuation_pct,
+                  this->enforceMinAndMax(val, "pct attenuation", 0.0, 100.0, 0.0));
    return;
 }
+void RecipeAdditionYeast::setTimesCultured(std::optional<int>     const val) { SET_AND_NOTIFY(PropertyNames::RecipeAdditionYeast::timesCultured    , m_timesCultured    , this->enforceMin      (val, "times cultured" )); return; }
+void RecipeAdditionYeast::setCellCountBillions(std::optional<int> const val) { SET_AND_NOTIFY(PropertyNames::RecipeAdditionYeast::cellCountBillions, m_cellCountBillions, this->enforceMin      (val, "cell count billions" )); return; }
+
 
 void RecipeAdditionYeast::setAddToSecondary (std::optional<bool  > const val) {
    if (val && *val) {

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * serialization/json/JsonRecord.cpp is part of Brewken, and is copyright the following authors 2020-2023:
+ * serialization/json/JsonRecord.cpp is part of Brewken, and is copyright the following authors 2020-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -1224,6 +1224,9 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport) {
    // BeerJSON doesn't care about field order, so we don't either (though it would be relatively small additional work
    // to control field order precisely).
    for (auto & fieldDefinition : this->m_recordDefinition.fieldDefinitions) {
+      qDebug() << Q_FUNC_INFO <<
+         "fieldDefinition.xPath:" << fieldDefinition.xPath << ", fieldDefinition.propertyPath:" <<
+         fieldDefinition.propertyPath;
 ///      // It should not be possible for propertyName to be a null pointer.  (It may well be a pointer to
 ///      // BtString::NULL_STR, in which case propertyName->isNull() will return true, but that's fine.)
 ///      //
@@ -1250,9 +1253,13 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport) {
       // reverse.  So passing the value makes things easier in the function we're calling.)
       //
       boost::json::value * valuePointer = &this->m_recordData;
+//      qDebug() <<
+//         Q_FUNC_INFO << "valuePointer (" << valuePointer->kind() << ") pre move:" << *valuePointer;
       auto key = fieldDefinition.xPath.makePointerToLeaf(&valuePointer);
 
       // valuePointer should now be pointing at an object in which we can insert a key:value pair
+//      qDebug() <<
+//         Q_FUNC_INFO << "valuePointer (" << valuePointer->kind() << ") post move:" << *valuePointer;
       Q_ASSERT(valuePointer->is_object());
 
       if (JsonRecordDefinition::FieldType::Record        == fieldDefinition.type ||
@@ -1268,27 +1275,46 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport) {
             NamedEntity * childNamedEntity =
                fieldDefinition.propertyPath.getValue(namedEntityToExport).value<NamedEntity *>();
             if (childNamedEntity) {
+               boost::json::value outputObject(boost::json::object_kind); // Can't use braces on this constructor until Boost 1.81!
+
                // This looks a little odd at first glance, but the point is that JsonRecordDefinition::makeRecord
                // returns std::unique_ptr<JsonRecord>
+               qDebug() << Q_FUNC_INFO << "Creating JsonRecord for" << fieldDefinition.propertyPath;
                std::unique_ptr<JsonRecord> subRecord{
-                  childRecordDefinition.makeRecord(this->m_coding, *valuePointer)
+                  childRecordDefinition.makeRecord(this->m_coding, outputObject)
                };
                subRecord->toJson(*childNamedEntity);
+
+               valuePointer->get_object().emplace(key, outputObject);
+
+            } else {
+               qDebug() <<
+                  Q_FUNC_INFO << "No child NamedEntity for xPath" << fieldDefinition.xPath << "/ propertyPath:" <<
+                  fieldDefinition.propertyPath;
             }
          } else {
             boost::json::array outputArray;
 
             //
-            // We have to be careful about how we get the list of objects we want to write out.  If we just accessed the
-            // "regular" getters via the Qt Property system, we'd get a bunch of different things inside the returned
-            // QVariant (QList<BrewNote *>, QList<Hop *> etc) that have no common base class.  So we would not be able to
-            // easily extract from the QVariant in generic code here.
+            // We have to be careful about how we get the list of objects we want to write out.  Accessing lists of
+            // objects via the Qt Property system, we'd get a bunch of different things inside the returned QVariant
+            // (QList<std::shared_ptr<BrewNote>>, QList<std::shared_ptr<RecipeAdditionHop>> etc) that have no common
+            // base class.  So we would not normally be able to easily extract from the QVariant in generic code here.
+            // However, we have a pointer to the relevant instantiation of NamedEntity::downcastListFromVariant, which
+            // will correctly convert the QVariant to QList<std::shared_ptr<NamedEntity>>.
             //
-            // We get round this by adding a property that returns QList<std::shared_ptr<NamedEntity>>.
-            //
-            QList< std::shared_ptr<NamedEntity> > objectsToWrite = value.value< QList< std::shared_ptr<NamedEntity> > >();
-            JsonRecord::listToJson(objectsToWrite, outputArray, this->m_coding, childRecordDefinition);
+            qDebug() << Q_FUNC_INFO << "value: " << value;
+            Q_ASSERT(childRecordDefinition.m_listDowncaster);
+            QList< std::shared_ptr<NamedEntity> > objectsToWrite = childRecordDefinition.m_listDowncaster(value);
+            qDebug() << Q_FUNC_INFO << "value (" << value << ") gives" << objectsToWrite.size() << "objects";
 
+            //
+            // In theory we could add some logic here to decide whether to write the array out if it is of zero length.
+            // However, we would need to know whether the field is optional or required in the JSON schema and we do not
+            // currently record this.  For now, we write out all arrays, even if they are empty, as some of them are
+            // required fields (eg recipe/ingredients/fermentable_additions in BeerJSON).
+            //
+            JsonRecord::listToJson(objectsToWrite, outputArray, this->m_coding, childRecordDefinition);
             valuePointer->get_object().emplace(key, outputArray);
          }
 

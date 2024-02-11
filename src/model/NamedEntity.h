@@ -597,7 +597,7 @@ public:
     *        `QList<shared_ptr<NamedEntity>>`.
     */
    template<typename T>
-   static QList< std::shared_ptr<NamedEntity> > downcastList(QList< std::shared_ptr<T> > const & inputList) {
+   static QList< std::shared_ptr<NamedEntity> > downcastList(QList<std::shared_ptr<T>> const & inputList) {
       QList< std::shared_ptr<NamedEntity> > outputList;
       outputList.reserve(inputList.size());
       for (std::shared_ptr<T> ii : inputList) {
@@ -628,8 +628,19 @@ public:
     *        depend on T (even though it points to a templated function).
     */
    template<typename T>
-   static QVariant upcastListToVariant(QList< std::shared_ptr<NamedEntity> > const & inputList) {
+   static QVariant upcastListToVariant(QList< std::shared_ptr<NamedEntity>> const & inputList) {
       return QVariant::fromValue(NamedEntity::upcastList<T>(inputList));
+   }
+
+   /**
+    * \brief In counterpart to \c upcastListToVariant, we need to be able to cast in the opposite direction.  Again, we
+    *        don't want the function \b signature to depend on T, and again the use of \c QVariant allows this.
+    *
+    * \param inputList A \c QVariant holding QList< std::shared_ptr<T>>
+    */
+   template<typename T>
+   static QList< std::shared_ptr<NamedEntity>> downcastListFromVariant(QVariant const & inputList) {
+      return NamedEntity::downcastList<T>(inputList.value<QList<std::shared_ptr<T>>>());
    }
 
 private:

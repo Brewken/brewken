@@ -99,13 +99,13 @@ WaterDialog::WaterDialog(QWidget* parent) :
    m_target_filter->sort(0);
    targetProfileCombo->setModel(m_target_filter);
 
-   SMART_FIELD_INIT_FS(WaterDialog, label_ca  , btDigit_ca  , double, Measurement::PhysicalQuantity::VolumeConcentration, 2);
-   SMART_FIELD_INIT_FS(WaterDialog, label_cl  , btDigit_cl  , double, Measurement::PhysicalQuantity::VolumeConcentration, 2);
-   SMART_FIELD_INIT_FS(WaterDialog, label_hco3, btDigit_hco3, double, Measurement::PhysicalQuantity::VolumeConcentration, 2);
-   SMART_FIELD_INIT_FS(WaterDialog, label_mg  , btDigit_mg  , double, Measurement::PhysicalQuantity::VolumeConcentration, 2);
-   SMART_FIELD_INIT_FS(WaterDialog, label_na  , btDigit_na  , double, Measurement::PhysicalQuantity::VolumeConcentration, 2);
-   SMART_FIELD_INIT_FS(WaterDialog, label_so4 , btDigit_so4 , double, Measurement::PhysicalQuantity::VolumeConcentration, 2);
-   SMART_FIELD_INIT_FS(WaterDialog, label_pH  , btDigit_ph  , double, Measurement::PhysicalQuantity::Acidity            , 1);
+   SMART_FIELD_INIT_FS(WaterDialog, label_ca  , btDigit_ca  , double, Measurement::PhysicalQuantity::MassFractionOrConc, 2);
+   SMART_FIELD_INIT_FS(WaterDialog, label_cl  , btDigit_cl  , double, Measurement::PhysicalQuantity::MassFractionOrConc, 2);
+   SMART_FIELD_INIT_FS(WaterDialog, label_hco3, btDigit_hco3, double, Measurement::PhysicalQuantity::MassFractionOrConc, 2);
+   SMART_FIELD_INIT_FS(WaterDialog, label_mg  , btDigit_mg  , double, Measurement::PhysicalQuantity::MassFractionOrConc, 2);
+   SMART_FIELD_INIT_FS(WaterDialog, label_na  , btDigit_na  , double, Measurement::PhysicalQuantity::MassFractionOrConc, 2);
+   SMART_FIELD_INIT_FS(WaterDialog, label_so4 , btDigit_so4 , double, Measurement::PhysicalQuantity::MassFractionOrConc, 2);
+   SMART_FIELD_INIT_FS(WaterDialog, label_pH  , btDigit_ph  , double, Measurement::PhysicalQuantity::Acidity           , 1);
 
    SMART_FIELD_INIT_FS(WaterDialog, label_totalcacl2 , btDigit_totalcacl2 , double, Measurement::PhysicalQuantity::Mass, 2);
    SMART_FIELD_INIT_FS(WaterDialog, label_totalcaco3 , btDigit_totalcaco3 , double, Measurement::PhysicalQuantity::Mass, 2);

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * serialization/json/JsonXPath.cpp is part of Brewken, and is copyright the following authors 2022-2023:
+ * serialization/json/JsonXPath.cpp is part of Brewken, and is copyright the following authors 2022-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -143,7 +143,7 @@ JsonXPath::JsonXPath(char const * const xPath) :
          std::string value = namedArrayItemId_match[2].str();
          // See comment above about logging!
 //         std::cout << "***** Key: " << key << ", value: " << value << "\n";
-         NamedArrayItemId namedArrayItemId{key, value};
+         JsonXPath::NamedArrayItemId namedArrayItemId{key, value};
          this->m_pathParts.push_back(namedArrayItemId);
          // A named array item identifier doesn't need any further splitting, so it goes as-is onto the list of path
          // nodes.
@@ -156,17 +156,17 @@ JsonXPath::JsonXPath(char const * const xPath) :
 
    // It's a coding error if the first path part is not a JSON Pointer.  This is because a named array item identifier
    // is meaningless without a preceding array name.
-   Q_ASSERT(std::holds_alternative<JsonPointer>(this->m_pathParts.front()));
+   Q_ASSERT(std::holds_alternative<JsonXPath::JsonPointer>(this->m_pathParts.front()));
 
    // Belive it or not, it's also a coding error if the last path part is not a JSON Pointer.  This is because a named
    // array item identifier gets us to a specific object in an array but it doesn't identify any field of the object to
    // read or write, so it's always followed by something else, viz JSON Pointer.
-   Q_ASSERT(std::holds_alternative<JsonPointer>(this->m_pathParts.back()));
+   Q_ASSERT(std::holds_alternative<JsonXPath::JsonPointer>(this->m_pathParts.back()));
 
    // Similar assertions apply for path nodes
    Q_ASSERT(this->m_pathNodes.size() > 0);
-   Q_ASSERT(std::holds_alternative<JsonKey>(this->m_pathNodes.front()));
-   Q_ASSERT(std::holds_alternative<JsonKey>(this->m_pathNodes.back()));
+   Q_ASSERT(std::holds_alternative<JsonXPath::JsonKey>(this->m_pathNodes.front()));
+   Q_ASSERT(std::holds_alternative<JsonXPath::JsonKey>(this->m_pathNodes.back()));
 
 
    return;
@@ -184,9 +184,9 @@ boost::json::value const * JsonXPath::followPathFrom(boost::json::value const * 
    // return startingValue, which is the desired behaviour.
    boost::json::value const * destinationValue = startingValue;
    for (auto const & pathPart : this->m_pathParts) {
-      if (std::holds_alternative<JsonPointer>(pathPart)) {
+      if (std::holds_alternative<JsonXPath::JsonPointer>(pathPart)) {
          // For a JSON Pointer, Boost.JSON does all the work
-         auto jsonPointer{std::get<JsonPointer>(pathPart)};
+         auto jsonPointer{std::get<JsonXPath::JsonPointer>(pathPart)};
          destinationValue = destinationValue->find_pointer(std::string_view{jsonPointer}, errorCode);
          // If we already know there's no result, stop looping through the path parts
          // This is not an error per se, just that nothing was found
@@ -200,7 +200,7 @@ boost::json::value const * JsonXPath::followPathFrom(boost::json::value const * 
             return nullptr;
          }
       } else {
-         Q_ASSERT(std::holds_alternative<NamedArrayItemId>(pathPart));
+         Q_ASSERT(std::holds_alternative<JsonXPath::NamedArrayItemId>(pathPart));
 
          // For a named array item identifier, we have to do things by hand
          auto const & namedArrayItemId = std::get<JsonXPath::NamedArrayItemId>(pathPart);
@@ -288,6 +288,7 @@ std::string JsonXPath::makePointerToLeaf(boost::json::value ** valuePointer) con
    // Start with the special case of the empty XPath, in which case we want valuePointer to be unchanged
    //
    if (this->isEmpty()) {
+      qDebug() << Q_FUNC_INFO << "Empty XPath";
       return "";
    }
 
@@ -370,7 +371,7 @@ std::string JsonXPath::makePointerToLeaf(boost::json::value ** valuePointer) con
    // (or rather I couldn't see a way that the net result would be simpler than our approach below).
    //
    boost::json::value * previousValue = *valuePointer;
-   PathNode priorNode{};
+   JsonXPath::PathNode priorNode{};
    for (auto const & currentNode : this->m_pathNodes) {
       // It's a coding error for any node other than the initial "previous node" to be null
       Q_ASSERT(!std::holds_alternative<std::monostate>(currentNode));
@@ -379,20 +380,21 @@ std::string JsonXPath::makePointerToLeaf(boost::json::value ** valuePointer) con
       // First we look at the previous path node, if there was one, to see if a JSON value needs creating for it
       //
       if (!std::holds_alternative<std::monostate>(priorNode)) {
-         if (std::holds_alternative<JsonKey>(priorNode)) {
-            auto const & previousKey{std::get<JsonKey>(priorNode)};
+         if (std::holds_alternative<JsonXPath::JsonKey>(priorNode)) {
+            auto const & previousKey{std::get<JsonXPath::JsonKey>(priorNode)};
+            qDebug() << Q_FUNC_INFO << "previousKey:" << previousKey.c_str();
             Q_ASSERT(previousValue->is_object());
             boost::json::value * currentValue = previousValue->get_object().if_contains(previousKey);
             if (!currentValue) {
                // Previous key does not exist, so we need to create an entry for it.  The type depends on the _current_
                // key (see examples in comment above)
-               if (std::holds_alternative<JsonKey>(currentNode)) {
+               if (std::holds_alternative<JsonXPath::JsonKey>(currentNode)) {
                   // This is case (1) Node follows Node
                   qDebug() << Q_FUNC_INFO << "Making sub-object for" << previousKey.c_str();
                   previousValue->get_object()[previousKey].emplace_object();
                } else {
                   // This is case (2) Named Array Item Id follows Node
-                  Q_ASSERT(std::holds_alternative<NamedArrayItemId>(currentNode));
+                  Q_ASSERT(std::holds_alternative<JsonXPath::NamedArrayItemId>(currentNode));
                   qDebug() << Q_FUNC_INFO << "Making sub-array for" << previousKey.c_str();
                   previousValue->get_object()[previousKey].emplace_array();
                }
@@ -402,10 +404,13 @@ std::string JsonXPath::makePointerToLeaf(boost::json::value ** valuePointer) con
             }
             previousValue = currentValue;
          } else {
-            Q_ASSERT(std::holds_alternative<NamedArrayItemId>(priorNode));
-            auto const & namedArrayItemId{std::get<NamedArrayItemId>(priorNode)};
+            Q_ASSERT(std::holds_alternative<JsonXPath::NamedArrayItemId>(priorNode));
+            auto const & namedArrayItemId{std::get<JsonXPath::NamedArrayItemId>(priorNode)};
+            qDebug() <<
+               Q_FUNC_INFO << "namedArrayItemId.key:" << namedArrayItemId.key.c_str() << ", namedArrayItemId.value:" <<
+               namedArrayItemId.value.c_str();
             // As noted above, we cannot have Named Array Item Id follows Named Array Item Id, so we assert that here
-            Q_ASSERT(std::holds_alternative<JsonKey>(currentNode));
+            Q_ASSERT(std::holds_alternative<JsonXPath::JsonKey>(currentNode));
             //
             // In this case, previousValue points to the array holding priorNode.  We need to search through the
             // array to find an entry holding the right key:value entry
@@ -472,8 +477,8 @@ std::string JsonXPath::makePointerToLeaf(boost::json::value ** valuePointer) con
 
    // As discussed above, it's a coding error if we didn't end up in a JSON Pointer which must, by definition, have at
    // least one key.
-   Q_ASSERT(std::holds_alternative<JsonKey>(priorNode));
-   return std::get<JsonKey>(priorNode);
+   Q_ASSERT(std::holds_alternative<JsonXPath::JsonKey>(priorNode));
+   return std::get<JsonXPath::JsonKey>(priorNode);
 }
 
 std::string_view JsonXPath::asKey() const {
@@ -486,7 +491,7 @@ std::string_view JsonXPath::asKey() const {
    // We need to get the first path part (m_pathParts[0]) and then strip the beginning '/' character from it
    // (.substr(1)) before we pass it to the string_view constructor.  (Maybe there is a slick way to skip over the '/'
    // in the string_view constructor, but I didn't yet find it.)
-   std::string_view key{std::get<JsonKey>(this->m_pathParts[0]).substr(1)};
+   std::string_view key{std::get<JsonXPath::JsonKey>(this->m_pathParts[0]).substr(1)};
    return key;
 }
 

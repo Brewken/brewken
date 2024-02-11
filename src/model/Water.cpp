@@ -66,7 +66,14 @@ bool Water::isEqualTo(NamedEntity const & other) const {
       this->m_chloride_ppm     == rhs.m_chloride_ppm     &&
       this->m_sodium_ppm       == rhs.m_sodium_ppm       &&
       this->m_magnesium_ppm    == rhs.m_magnesium_ppm    &&
-      this->m_ph               == rhs.m_ph
+      this->m_ph               == rhs.m_ph               &&
+      // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+      this->m_carbonate_ppm    == rhs.m_carbonate_ppm    &&
+      this->m_potassium_ppm    == rhs.m_potassium_ppm    &&
+      this->m_iron_ppm         == rhs.m_iron_ppm         &&
+      this->m_nitrate_ppm      == rhs.m_nitrate_ppm      &&
+      this->m_nitrite_ppm      == rhs.m_nitrite_ppm      &&
+      this->m_flouride_ppm     == rhs.m_flouride_ppm
    );
 }
 
@@ -78,20 +85,26 @@ TypeLookup const Water::typeLookup {
    "Water",
    {
 ///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::amount          , Water::m_amount            , Measurement::PhysicalQuantity::Volume             ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::calcium_ppm     , Water::m_calcium_ppm       , Measurement::PhysicalQuantity::VolumeConcentration),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::bicarbonate_ppm , Water::m_bicarbonate_ppm   , Measurement::PhysicalQuantity::VolumeConcentration),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::sulfate_ppm     , Water::m_sulfate_ppm       , Measurement::PhysicalQuantity::VolumeConcentration),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::chloride_ppm    , Water::m_chloride_ppm      , Measurement::PhysicalQuantity::VolumeConcentration),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::sodium_ppm      , Water::m_sodium_ppm        , Measurement::PhysicalQuantity::VolumeConcentration),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::magnesium_ppm   , Water::m_magnesium_ppm     , Measurement::PhysicalQuantity::VolumeConcentration),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::ph              , Water::m_ph                , Measurement::PhysicalQuantity::Acidity            ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::alkalinity_ppm  , Water::m_alkalinity_ppm    , Measurement::PhysicalQuantity::VolumeConcentration),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::notes           , Water::m_notes             ,           NonPhysicalQuantity::String             ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::type            , Water::m_type              ,           NonPhysicalQuantity::Enum               ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::mashRo_pct      , Water::m_mashRo_pct        ,           NonPhysicalQuantity::Percentage         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::spargeRo_pct    , Water::m_spargeRo_pct      ,           NonPhysicalQuantity::Percentage         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::alkalinityAsHCO3, Water::m_alkalinity_as_hco3,           NonPhysicalQuantity::Bool               ),
-
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::calcium_ppm     , Water::m_calcium_ppm       , Measurement::PhysicalQuantity::MassFractionOrConc),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::bicarbonate_ppm , Water::m_bicarbonate_ppm   , Measurement::PhysicalQuantity::MassFractionOrConc),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::sulfate_ppm     , Water::m_sulfate_ppm       , Measurement::PhysicalQuantity::MassFractionOrConc),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::chloride_ppm    , Water::m_chloride_ppm      , Measurement::PhysicalQuantity::MassFractionOrConc),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::sodium_ppm      , Water::m_sodium_ppm        , Measurement::PhysicalQuantity::MassFractionOrConc),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::magnesium_ppm   , Water::m_magnesium_ppm     , Measurement::PhysicalQuantity::MassFractionOrConc),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::ph              , Water::m_ph                , Measurement::PhysicalQuantity::Acidity           ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::alkalinity_ppm  , Water::m_alkalinity_ppm    , Measurement::PhysicalQuantity::MassFractionOrConc),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::notes           , Water::m_notes             ,           NonPhysicalQuantity::String            ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::type            , Water::m_type              ,           NonPhysicalQuantity::Enum              ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::mashRo_pct      , Water::m_mashRo_pct        ,           NonPhysicalQuantity::Percentage        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::spargeRo_pct    , Water::m_spargeRo_pct      ,           NonPhysicalQuantity::Percentage        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::alkalinityAsHCO3, Water::m_alkalinity_as_hco3,           NonPhysicalQuantity::Bool              ),
+      // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::carbonate_ppm   , Water::m_carbonate_ppm     , Measurement::PhysicalQuantity::MassFractionOrConc),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::potassium_ppm   , Water::m_potassium_ppm     , Measurement::PhysicalQuantity::MassFractionOrConc),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::iron_ppm        , Water::m_iron_ppm          , Measurement::PhysicalQuantity::MassFractionOrConc),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::nitrate_ppm     , Water::m_nitrate_ppm       , Measurement::PhysicalQuantity::MassFractionOrConc),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::nitrite_ppm     , Water::m_nitrite_ppm       , Measurement::PhysicalQuantity::MassFractionOrConc),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::flouride_ppm    , Water::m_flouride_ppm      , Measurement::PhysicalQuantity::MassFractionOrConc),
    },
    // Parent classes lookup
    {&NamedEntity::typeLookup,
@@ -115,7 +128,14 @@ Water::Water(QString name) :
    m_type               {std::nullopt},
    m_mashRo_pct         {0.0         },
    m_spargeRo_pct       {0.0         },
-   m_alkalinity_as_hco3 {true        } {
+   m_alkalinity_as_hco3 {true        },
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   m_carbonate_ppm      {std::nullopt},
+   m_potassium_ppm      {std::nullopt},
+   m_iron_ppm           {std::nullopt},
+   m_nitrate_ppm        {std::nullopt},
+   m_nitrite_ppm        {std::nullopt},
+   m_flouride_ppm       {std::nullopt} {
    return;
 }
 
@@ -135,7 +155,14 @@ Water::Water(NamedParameterBundle const & namedParameterBundle) :
    SET_OPT_ENUM_FROM_NPB(m_type , Water::Type, namedParameterBundle, PropertyNames::Water::type            ),
    SET_REGULAR_FROM_NPB (m_mashRo_pct        , namedParameterBundle, PropertyNames::Water::mashRo_pct      ),
    SET_REGULAR_FROM_NPB (m_spargeRo_pct      , namedParameterBundle, PropertyNames::Water::spargeRo_pct    ),
-   SET_REGULAR_FROM_NPB (m_alkalinity_as_hco3, namedParameterBundle, PropertyNames::Water::alkalinityAsHCO3) {
+   SET_REGULAR_FROM_NPB (m_alkalinity_as_hco3, namedParameterBundle, PropertyNames::Water::alkalinityAsHCO3),
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   SET_REGULAR_FROM_NPB (m_carbonate_ppm     , namedParameterBundle, PropertyNames::Water::carbonate_ppm   ),
+   SET_REGULAR_FROM_NPB (m_potassium_ppm     , namedParameterBundle, PropertyNames::Water::potassium_ppm   ),
+   SET_REGULAR_FROM_NPB (m_iron_ppm          , namedParameterBundle, PropertyNames::Water::iron_ppm        ),
+   SET_REGULAR_FROM_NPB (m_nitrate_ppm       , namedParameterBundle, PropertyNames::Water::nitrate_ppm     ),
+   SET_REGULAR_FROM_NPB (m_nitrite_ppm       , namedParameterBundle, PropertyNames::Water::nitrite_ppm     ),
+   SET_REGULAR_FROM_NPB (m_flouride_ppm      , namedParameterBundle, PropertyNames::Water::flouride_ppm    ) {
    return;
 }
 
@@ -155,7 +182,14 @@ Water::Water(Water const& other) :
    m_type               {other.m_type              },
    m_mashRo_pct         {other.m_mashRo_pct        },
    m_spargeRo_pct       {other.m_spargeRo_pct      },
-   m_alkalinity_as_hco3 {other.m_alkalinity_as_hco3} {
+   m_alkalinity_as_hco3 {other.m_alkalinity_as_hco3},
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   m_carbonate_ppm      {other.m_carbonate_ppm     },
+   m_potassium_ppm      {other.m_potassium_ppm     },
+   m_iron_ppm           {other.m_iron_ppm          },
+   m_nitrate_ppm        {other.m_nitrate_ppm       },
+   m_nitrite_ppm        {other.m_nitrite_ppm       },
+   m_flouride_ppm       {other.m_flouride_ppm      } {
    return;
 }
 
@@ -175,6 +209,13 @@ void Water::swap(Water & other) noexcept {
    std::swap(this->m_mashRo_pct        , other.m_mashRo_pct        );
    std::swap(this->m_spargeRo_pct      , other.m_spargeRo_pct      );
    std::swap(this->m_alkalinity_as_hco3, other.m_alkalinity_as_hco3);
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   std::swap(this->m_carbonate_ppm     , other.m_carbonate_ppm     );
+   std::swap(this->m_potassium_ppm     , other.m_potassium_ppm     );
+   std::swap(this->m_iron_ppm          , other.m_iron_ppm          );
+   std::swap(this->m_nitrate_ppm       , other.m_nitrate_ppm       );
+   std::swap(this->m_nitrite_ppm       , other.m_nitrite_ppm       );
+   std::swap(this->m_flouride_ppm      , other.m_flouride_ppm      );
    return;
 }
 
@@ -220,6 +261,13 @@ Water & Water::operator=(Water other) {
    if (this->m_mashRo_pct         != other.m_mashRo_pct        ) { this->propagatePropertyChange(PropertyNames::Water::mashRo_pct      ); }
    if (this->m_spargeRo_pct       != other.m_spargeRo_pct      ) { this->propagatePropertyChange(PropertyNames::Water::spargeRo_pct    ); }
    if (this->m_alkalinity_as_hco3 != other.m_alkalinity_as_hco3) { this->propagatePropertyChange(PropertyNames::Water::alkalinityAsHCO3); }
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   if (this->m_carbonate_ppm      != other.m_carbonate_ppm     ) { this->propagatePropertyChange(PropertyNames::Water::carbonate_ppm); }
+   if (this->m_potassium_ppm      != other.m_potassium_ppm     ) { this->propagatePropertyChange(PropertyNames::Water::potassium_ppm); }
+   if (this->m_iron_ppm           != other.m_iron_ppm          ) { this->propagatePropertyChange(PropertyNames::Water::iron_ppm     ); }
+   if (this->m_nitrate_ppm        != other.m_nitrate_ppm       ) { this->propagatePropertyChange(PropertyNames::Water::nitrate_ppm  ); }
+   if (this->m_nitrite_ppm        != other.m_nitrite_ppm       ) { this->propagatePropertyChange(PropertyNames::Water::nitrite_ppm  ); }
+   if (this->m_flouride_ppm       != other.m_flouride_ppm      ) { this->propagatePropertyChange(PropertyNames::Water::flouride_ppm ); }
 
    return *this;
 }
@@ -240,24 +288,37 @@ std::optional<int>         Water::typeAsInt       () const { return Optional::to
 double                     Water::mashRo_pct      () const { return                    m_mashRo_pct        ; }
 double                     Water::spargeRo_pct    () const { return                    m_spargeRo_pct      ; }
 bool                       Water::alkalinityAsHCO3() const { return                    m_alkalinity_as_hco3; }
+// ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+std::optional<double>      Water::carbonate_ppm   () const { return                    m_carbonate_ppm; }
+std::optional<double>      Water::potassium_ppm   () const { return                    m_potassium_ppm; }
+std::optional<double>      Water::iron_ppm        () const { return                    m_iron_ppm     ; }
+std::optional<double>      Water::nitrate_ppm     () const { return                    m_nitrate_ppm  ; }
+std::optional<double>      Water::nitrite_ppm     () const { return                    m_nitrite_ppm  ; }
+std::optional<double>      Water::flouride_ppm    () const { return                    m_flouride_ppm ; }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
 ///void Water::setAmount          (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::amount          , m_amount            ,                            val ); return; }
-void Water::setCalcium_ppm     (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::calcium_ppm     , m_calcium_ppm       ,                            val ); return; }
-void Water::setBicarbonate_ppm (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::bicarbonate_ppm , m_bicarbonate_ppm   ,                            val ); return; }
-void Water::setSulfate_ppm     (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::sulfate_ppm     , m_sulfate_ppm       ,                            val ); return; }
-void Water::setChloride_ppm    (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::chloride_ppm    , m_chloride_ppm      ,                            val ); return; }
-void Water::setSodium_ppm      (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::sodium_ppm      , m_sodium_ppm        ,                            val ); return; }
-void Water::setMagnesium_ppm   (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::magnesium_ppm   , m_magnesium_ppm     ,                            val ); return; }
-void Water::setPh              (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::ph              , m_ph                ,                            val ); return; }
-void Water::setAlkalinity_ppm  (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::alkalinity_ppm  , m_alkalinity_ppm    ,                            val ); return; }
-void Water::setNotes           (QString             const & val) { SET_AND_NOTIFY(PropertyNames::Water::notes           , m_notes             ,                            val ); return; }
-void Water::setType            (std::optional<Type> const   val) { SET_AND_NOTIFY(PropertyNames::Water::type            , m_type              ,                            val ); return; }
+void Water::setCalcium_ppm     (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::calcium_ppm     , m_calcium_ppm       , val); return; }
+void Water::setBicarbonate_ppm (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::bicarbonate_ppm , m_bicarbonate_ppm   , val); return; }
+void Water::setSulfate_ppm     (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::sulfate_ppm     , m_sulfate_ppm       , val); return; }
+void Water::setChloride_ppm    (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::chloride_ppm    , m_chloride_ppm      , val); return; }
+void Water::setSodium_ppm      (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::sodium_ppm      , m_sodium_ppm        , val); return; }
+void Water::setMagnesium_ppm   (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::magnesium_ppm   , m_magnesium_ppm     , val); return; }
+void Water::setPh              (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::ph              , m_ph                , val); return; }
+void Water::setAlkalinity_ppm  (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::alkalinity_ppm  , m_alkalinity_ppm    , val); return; }
+void Water::setNotes           (QString             const & val) { SET_AND_NOTIFY(PropertyNames::Water::notes           , m_notes             , val); return; }
+void Water::setType            (std::optional<Type> const   val) { SET_AND_NOTIFY(PropertyNames::Water::type            , m_type              , val); return; }
 void Water::setTypeAsInt       (std::optional<int>  const   val) { SET_AND_NOTIFY(PropertyNames::Water::type            , m_type              , Optional::fromOptInt<Type>(val)); return; }
-void Water::setMashRo_pct      (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::mashRo_pct      , m_mashRo_pct        ,                            val ); return; }
-void Water::setSpargeRo_pct    (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::spargeRo_pct    , m_spargeRo_pct      ,                            val ); return; }
-void Water::setAlkalinityAsHCO3(bool                const   val) { SET_AND_NOTIFY(PropertyNames::Water::alkalinityAsHCO3, m_alkalinity_as_hco3,                            val ); return; }
-
+void Water::setMashRo_pct      (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::mashRo_pct      , m_mashRo_pct        , val); return; }
+void Water::setSpargeRo_pct    (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::spargeRo_pct    , m_spargeRo_pct      , val); return; }
+void Water::setAlkalinityAsHCO3(bool                const   val) { SET_AND_NOTIFY(PropertyNames::Water::alkalinityAsHCO3, m_alkalinity_as_hco3, val); return; }
+// ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+void Water::setCarbonate_ppm   (std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::Water::carbonate_ppm   , m_carbonate_ppm     , val); return; }
+void Water::setPotassium_ppm   (std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::Water::potassium_ppm   , m_potassium_ppm     , val); return; }
+void Water::setIron_ppm        (std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::Water::iron_ppm        , m_iron_ppm          , val); return; }
+void Water::setNitrate_ppm     (std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::Water::nitrate_ppm     , m_nitrate_ppm       , val); return; }
+void Water::setNitrite_ppm     (std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::Water::nitrite_ppm     , m_nitrite_ppm       , val); return; }
+void Water::setFlouride_ppm    (std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::Water::flouride_ppm    , m_flouride_ppm      , val); return; }
 
 double Water::ppm(Water::Ion const ion) const {
    switch (ion) {

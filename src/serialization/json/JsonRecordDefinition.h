@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * serialization/json/JsonRecordDefinition.h is part of Brewken, and is copyright the following authors 2020-2023:
+ * serialization/json/JsonRecordDefinition.h is part of Brewken, and is copyright the following authors 2020-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -327,6 +327,8 @@ public:
     * \param namedEntityClassName The class name of the \c NamedEntity to which this record relates, eg "Fermentable",
     *                             or empty string if there is none
     * \param listUpcaster is a pointer to \c NamedEntity::upcastListToVariant for the class to which this record relates
+    * \param listDowncaster is a pointer to \c NamedEntity::downcastListFromVariant for the class to which this record
+    *                       relates
     * \param jsonRecordConstructorWrapper
     * \param fieldDefinitions A list of fields we expect to find in this record (other fields will be ignored) and how
     *                         to parse them.
@@ -336,6 +338,7 @@ public:
                         char                   const * const   namedEntityClassName,
                         QString                        const & localisedEntityName,
                         QVariant                             (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
+                        QList<std::shared_ptr<NamedEntity>>  (*listDowncaster)(QVariant const &),
                         JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
                         std::initializer_list<FieldDefinition> fieldDefinitions);
 
@@ -354,6 +357,7 @@ public:
                            T::staticMetaObject.className(),
                            T::LocalisedName,
                            NamedEntity::upcastListToVariant<T>,
+                           NamedEntity::downcastListFromVariant<T>,
                            jsonRecordConstructorWrapper,
                            fieldDefinitions) {
       return;
@@ -370,6 +374,7 @@ public:
                         char                   const * const   namedEntityClassName,
                         QString                        const & localisedEntityName,
                         QVariant                             (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
+                        QList<std::shared_ptr<NamedEntity>>  (*listDowncaster)(QVariant const &),
                         JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
                         std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists);
    template<typename T>
@@ -382,6 +387,7 @@ public:
                            T::staticMetaObject.className(),
                            T::LocalisedName,
                            NamedEntity::upcastListToVariant<T>,
+                           NamedEntity::downcastListFromVariant<T>,
                            jsonRecordConstructorWrapper,
                            fieldDefinitionLists) {
       return;

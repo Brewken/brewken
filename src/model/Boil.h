@@ -159,5 +159,6 @@ private:
 };
 
 Q_DECLARE_METATYPE(Boil *)
+Q_DECLARE_METATYPE(std::optional<std::shared_ptr<Boil> >)
 
 #endif

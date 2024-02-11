@@ -37,7 +37,6 @@
 AddPropertyName(description              )
 AddPropertyName(notes                    )
 AddPropertyName(fermentationSteps        )
-AddPropertyName(fermentationStepsDowncast)
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -72,12 +71,10 @@ public:
    virtual ~Fermentation();
 
    //=================================================== PROPERTIES ====================================================
-   Q_PROPERTY(QString               description            READ description     WRITE setDescription   )
-   Q_PROPERTY(QString               notes                  READ notes           WRITE setNotes         )
+   Q_PROPERTY(QString                                    description         READ description     WRITE setDescription)
+   Q_PROPERTY(QString                                    notes               READ notes           WRITE setNotes      )
    //! \brief The individual fermentation steps.
-   Q_PROPERTY(QList<std::shared_ptr<FermentationStep>>    fermentationSteps         READ fermentationSteps  STORED false )
-   //! \brief The individual fermentation steps downcast as pointers to \c NamedEntity, which is used for BeerJSON processing.
-   Q_PROPERTY(QList<std::shared_ptr<NamedEntity>> fermentationStepsDowncast READ fermentationStepsDowncast WRITE setFermentationStepsDowncast STORED false )
+   Q_PROPERTY(QList<std::shared_ptr<FermentationStep>>   fermentationSteps   READ fermentationSteps   STORED false)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    QString               description  () const;

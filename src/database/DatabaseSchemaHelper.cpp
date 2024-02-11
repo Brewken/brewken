@@ -713,13 +713,10 @@ namespace {
          {QString("ALTER TABLE fermentable ADD COLUMN friability_pct                 %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE fermentable ADD COLUMN di_ph                          %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE fermentable ADD COLUMN viscosity_cp                   %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN dmsp                           %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN dmsp_is_mass_per_volume        %1").arg(db.getDbNativeTypeName<bool   >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN fan                            %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN fan_is_mass_per_volume         %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN dmsp_ppm                       %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN fan_ppm                        %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE fermentable ADD COLUMN fermentability_pct             %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN beta_glucan                    %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE fermentable ADD COLUMN beta_glucan_is_mass_per_volume %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE fermentable ADD COLUMN beta_glucan_ppm                %1").arg(db.getDbNativeTypeName<double >())},
          // Also on Fermentable, diastaticPower_lintner is now optional (as it should have been all along) and we convert
          // 0 values to NULL
          {QString("     UPDATE fermentable SET diastatic_power = NULL where diastatic_power = 0.0")},
@@ -780,6 +777,15 @@ namespace {
          {QString("ALTER TABLE style ADD COLUMN appearance         %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE style ADD COLUMN mouthfeel          %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE style ADD COLUMN overall_impression %1").arg(db.getDbNativeTypeName<QString>())},
+         //
+         // Water: additional fields for BeerJSON
+         //
+         {QString("ALTER TABLE water ADD COLUMN carbonate_ppm %1").arg(db.getDbNativeTypeName<double>())},
+         {QString("ALTER TABLE water ADD COLUMN potassium_ppm %1").arg(db.getDbNativeTypeName<double>())},
+         {QString("ALTER TABLE water ADD COLUMN iron_ppm      %1").arg(db.getDbNativeTypeName<double>())},
+         {QString("ALTER TABLE water ADD COLUMN nitrate_ppm   %1").arg(db.getDbNativeTypeName<double>())},
+         {QString("ALTER TABLE water ADD COLUMN nitrite_ppm   %1").arg(db.getDbNativeTypeName<double>())},
+         {QString("ALTER TABLE water ADD COLUMN flouride_ppm  %1").arg(db.getDbNativeTypeName<double>())},
          //
          // Equipment: Extended and additional fields for BeerJSON.  This includes changing a lot of column names as
          // BeerJSON essentially has a record per vessel ("HLT", "Mash Tun", etc)
@@ -857,6 +863,9 @@ namespace {
          // TODO: Add boii_id and fermentation_id columns
          {QString("ALTER TABLE recipe ADD COLUMN boil_id         %1 REFERENCES boil         (id)").arg(db.getDbNativeTypeName<int>())},
          {QString("ALTER TABLE recipe ADD COLUMN fermentation_id %1 REFERENCES fermentation (id)").arg(db.getDbNativeTypeName<int>())},
+         {QString("ALTER TABLE recipe ADD COLUMN beer_acidity_ph          %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE recipe ADD COLUMN apparent_attenuation_pct %1").arg(db.getDbNativeTypeName<double >())},
+
          //
          // We have to create and populate the boil and boil_step tables before we do hop_in_recipe as we need pre-boil
          // steps to attach first wort hops to.  So we might as well do fermentation and fermentation_step at the same
@@ -1105,18 +1114,20 @@ namespace {
          {QString("ALTER TABLE misc_in_recipe ADD COLUMN duration_mins     %1").arg(db.getDbNativeTypeName<double >())},
          {QString("     UPDATE misc_in_recipe SET display = ?"), {QVariant{true}}},
          {QString("     UPDATE misc_in_recipe SET deleted = ?"), {QVariant{false}}},
-         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN name              %1").arg(db.getDbNativeTypeName<QString>())},
-         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN display           %1").arg(db.getDbNativeTypeName<bool   >())},
-         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN deleted           %1").arg(db.getDbNativeTypeName<bool   >())},
-         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN quantity          %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN unit              %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
-         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN stage             %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
-         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN step              %1").arg(db.getDbNativeTypeName<int    >())},
-         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN add_at_time_mins  %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN add_at_gravity_sg %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN add_at_acidity_ph %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN duration_mins     %1").arg(db.getDbNativeTypeName<double >())},
-         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN attenuation_pct   %1").arg(db.getDbNativeTypeName<double >())}, // NB: Extra column for yeast_in_recipe
+         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN name                %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN display             %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN deleted             %1").arg(db.getDbNativeTypeName<bool   >())},
+         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN quantity            %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN unit                %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
+         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN stage               %1").arg(db.getDbNativeTypeName<QString>())}, // Enums are stored as strings
+         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN step                %1").arg(db.getDbNativeTypeName<int    >())},
+         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN add_at_time_mins    %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN add_at_gravity_sg   %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN add_at_acidity_ph   %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN duration_mins       %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN attenuation_pct     %1").arg(db.getDbNativeTypeName<double >())}, // NB: Extra column for yeast_in_recipe
+         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN times_cultured      %1").arg(db.getDbNativeTypeName<int    >())}, // NB: Extra column for yeast_in_recipe
+         {QString("ALTER TABLE yeast_in_recipe ADD COLUMN cell_count_billions %1").arg(db.getDbNativeTypeName<int    >())}, // NB: Extra column for yeast_in_recipe
          {QString("     UPDATE yeast_in_recipe SET display = ?"), {QVariant{true}}},
          {QString("     UPDATE yeast_in_recipe SET deleted = ?"), {QVariant{false}}},
          {QString("ALTER TABLE salt_in_recipe ADD COLUMN name              %1").arg(db.getDbNativeTypeName<QString>())},
@@ -1166,6 +1177,8 @@ namespace {
          // Now do the same for misc and yeast tables.  Here, the existing schema _does_ support weight and volume, so
          // we have to account for that.
          //
+         // We also bring across yeast.times_cultured to yeast_in_recipe.times_cultured, as that's where it now lives.
+         //
          // TBD: How do "quanta" (ie number of packets) of yeast get stored in DB?
          //
          {QString("UPDATE misc_in_recipe "
@@ -1180,11 +1193,13 @@ namespace {
                   "WHERE misc_in_recipe.misc_id = m.id")},
          {QString("UPDATE yeast_in_recipe "
                   "SET quantity = y.amount, "
-                      "unit = y.unit "
+                      "unit = y.unit, "
+                      "times_cultured = y.times_cultured "
                   "FROM ("
                      "SELECT id, "
                             "amount, "
-                            "CASE WHEN amount_is_weight THEN 'kilograms' ELSE 'liters' END AS unit "
+                            "CASE WHEN amount_is_weight THEN 'kilograms' ELSE 'liters' END AS unit, "
+                            "times_cultured "
                      "FROM yeast"
                   ") AS y "
                   "WHERE yeast_in_recipe.yeast_id = y.id")},
@@ -1252,6 +1267,8 @@ namespace {
          {QString("ALTER TABLE salt        DROP COLUMN amount")},
          {QString("ALTER TABLE yeast       DROP COLUMN amount")},
          {QString("ALTER TABLE water       DROP COLUMN amount")},
+         // Also drop the other column on yeast that we brought across
+         {QString("ALTER TABLE yeast       DROP COLUMN times_cultured")},
          //
          // Bring the addition times across from the hop and misc tables.  Do this before setting stage etc, as it's
          // similar to the queries we've just done.

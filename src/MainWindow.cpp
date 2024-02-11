@@ -118,6 +118,7 @@
 #include "model/Fermentation.h"
 #include "model/Mash.h"
 #include "model/Recipe.h"
+#include "model/RecipeAdditionYeast.h"
 #include "model/Style.h"
 #include "model/Yeast.h"
 #include "OgAdjuster.h"
@@ -596,8 +597,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), pimpl{std::make_u
    // Stop things looking ridiculously tiny on high DPI displays
    this->setSizesInPixelsBasedOnDpi();
 
-   // Horizontal tabs, please
-   tabWidget_Trees->tabBar()->setStyle(new BtHorizontalTabs);
+   // Horizontal tabs, please -- even on Mac OS, as the tabs contain square icons
+   tabWidget_Trees->tabBar()->setStyle(new BtHorizontalTabs(true));
 
    /* PLEASE DO NOT REMOVE.
     This code is left here, commented out, intentionally. The only way I can

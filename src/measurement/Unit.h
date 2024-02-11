@@ -297,15 +297,13 @@ namespace Measurement {
       // == Carbonation ==
       extern Unit const carbonationVolumes;
       extern Unit const carbonationGramsPerLiter;
-      // === Concentration ===
-      // BeerJSON bundles "mass concentration" (milligrams-per-liter) and "volume concentration" (parts-per-million,
-      // parts-per-billion) together under ConcentrationUnitType.  However, as explained in
-      // measurement/PhysicalQuantity.h, we need to be more precise.
-      // == Mass Concentration ==
+      // == Mass Fraction & Mass Concentration ==
+      // See comment in measurement/PhysicalQuantity.h for why we combine "mass concentration" and "mass fraction" into
+      // one grouping, why we treat 1 mg/L as equal to 1 ppm, and why we use the vernacular "ppm" and "ppb" instead of
+      // the SI units "mg/kg" and "μg/kg".
+      extern Unit const partsPerMillionMass;
+      extern Unit const partsPerBillionMass;
       extern Unit const milligramsPerLiter;
-      // == Volume Concentration ==
-      extern Unit const partsPerMillion;
-      extern Unit const partsPerBillion;
       // == Viscosity ==
       // Per https://en.wikipedia.org/wiki/Viscosity#Measurement, the SI unit of dynamic viscosity is the newton-second
       // per square meter (N·s/m²), which is (by definition) equivalent to a pascal-second (Pa·s).
@@ -388,6 +386,16 @@ namespace Measurement {
       /**
        * \brief Serialisation of \c Unit IDs suitable for database storage -- eg maps between "kilograms" (untranslated)
        *        and \c Measurement::Units::kilograms.
+       *
+       *        We use this a little, but not a lot.  Normally, when something has only one way of being measured, we
+       *        store in canonical units (eg °C for a temperature) and the unit names are a suffix of the DB column name
+       *        (eg \c carbonationtemp_c).  However, when something can be measured more than one way (eg by mass or by
+       *        volume) then we need to store more info.  We still always use canonical units (eg kilograms for mass and
+       *        liters for volume) but we store a human-readable string of what the units are (eg in \c unit column of
+       *        the \c fermentable_in_recipe table) so that units are obvious to someone looking at the DB without
+       *        having to delve into the C++ code.  Amongst other things, this can help with bug reports -- eg a user
+       *        might be able to tell us that data in the DB is wrong even though s/he is not familiar with the C++
+       *        code.)
        */
       extern UnitStringMapping const unitStringMapping;
    }

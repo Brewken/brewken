@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/YeastEditor.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * editors/YeastEditor.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -44,7 +44,7 @@ YeastEditor::YeastEditor(QWidget * parent) :
    SMART_FIELD_INIT(YeastEditor, label_minTemperature, lineEdit_minTemperature, Yeast, PropertyNames::Yeast::minTemperature_c, 1);
 ///   SMART_FIELD_INIT(YeastEditor, label_attenuation   , lineEdit_attenuation   , Yeast, PropertyNames::Yeast::attenuation_pct , 0);
    SMART_FIELD_INIT(YeastEditor, label_maxTemperature, lineEdit_maxTemperature, Yeast, PropertyNames::Yeast::maxTemperature_c, 1);
-   SMART_FIELD_INIT(YeastEditor, label_timesCultured , lineEdit_timesCultured , Yeast, PropertyNames::Yeast::timesCultured   , 0);
+///   SMART_FIELD_INIT(YeastEditor, label_timesCultured , lineEdit_timesCultured , Yeast, PropertyNames::Yeast::timesCultured   , 0);
    SMART_FIELD_INIT(YeastEditor, label_maxReuse      , lineEdit_maxReuse      , Yeast, PropertyNames::Yeast::maxReuse        , 0);
 
    BT_COMBO_BOX_INIT(HopEditor, comboBox_yeastType        , Yeast, type        );
@@ -87,13 +87,22 @@ void YeastEditor::writeFieldsToEditItem() {
    this->m_editItem->setMaxTemperature_c(lineEdit_maxTemperature   ->getOptCanonicalQty()              ); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    this->m_editItem->setFlocculation    (comboBox_yeastFlocculation->getOptValue<Yeast::Flocculation>());
 ///   this->m_editItem->setAttenuation_pct (lineEdit_attenuation      ->getOptValue<double>()             ); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-   this->m_editItem->setTimesCultured   (lineEdit_timesCultured    ->getOptValue<int>()                ); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
+///   this->m_editItem->setTimesCultured   (lineEdit_timesCultured    ->getOptValue<int>()                ); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    this->m_editItem->setMaxReuse        (lineEdit_maxReuse         ->getOptValue<int>()                ); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
 ///   this->m_editItem->setAddToSecondary  (boolCombo_addToSecondary  ->getOptBoolValue()                 ); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    this->m_editItem->setBestFor         (textEdit_bestFor          ->toPlainText()                     );
    this->m_editItem->setNotes           (textEdit_notes            ->toPlainText()                     );
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-
+   this->m_editItem->setAlcoholTolerance_pct     (this->lineEdit_alcoholTolerance          ->getOptValue<double>());
+   this->m_editItem->setAttenuationMin_pct       (this->lineEdit_attenuationMin            ->getOptValue<double>());
+   this->m_editItem->setAttenuationMax_pct       (this->lineEdit_attenuationMax            ->getOptValue<double>());
+   this->m_editItem->setPhenolicOffFlavorPositive(this->boolCombo_phenolicOffFlavorPositive->getOptBoolValue    ());
+   this->m_editItem->setGlucoamylasePositive     (this->boolCombo_glucoamylasePositive     ->getOptBoolValue    ());
+   this->m_editItem->setKillerProducingK1Toxin   (this->boolCombo_killerProducingK1Toxin   ->getOptBoolValue    ());
+   this->m_editItem->setKillerProducingK2Toxin   (this->boolCombo_killerProducingK2Toxin   ->getOptBoolValue    ());
+   this->m_editItem->setKillerProducingK28Toxin  (this->boolCombo_killerProducingK28Toxin  ->getOptBoolValue    ());
+   this->m_editItem->setKillerProducingKlusToxin (this->boolCombo_killerProducingKlusToxin ->getOptBoolValue    ());
+   this->m_editItem->setKillerNeutral            (this->boolCombo_killerNeutral            ->getOptBoolValue    ());
 
    return;
 }
@@ -119,7 +128,7 @@ void YeastEditor::readFieldsFromEditItem(std::optional<QString> propName) {
    if (!propName || *propName == PropertyNames::Yeast::maxTemperature_c   ) { this->lineEdit_maxTemperature   ->setQuantity (m_editItem->maxTemperature_c()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Yeast::flocculation       ) { this->comboBox_yeastFlocculation->setValue    (m_editItem->flocculation    ()); if (propName) { return; } }
 ///   if (!propName || *propName == PropertyNames::Yeast::attenuation_pct    ) { this->lineEdit_attenuation      ->setQuantity (m_editItem->attenuation_pct ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Yeast::timesCultured      ) { this->lineEdit_timesCultured    ->setQuantity (m_editItem->timesCultured   ()); if (propName) { return; } }
+///   if (!propName || *propName == PropertyNames::Yeast::timesCultured      ) { this->lineEdit_timesCultured    ->setQuantity (m_editItem->timesCultured   ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Yeast::maxReuse           ) { this->lineEdit_maxReuse         ->setQuantity (m_editItem->maxReuse        ()); if (propName) { return; } }
 ///   if (!propName || *propName == PropertyNames::Yeast::addToSecondary     ) { this->boolCombo_addToSecondary  ->setValue    (m_editItem->addToSecondary  ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Yeast::bestFor            ) { this->textEdit_bestFor          ->setPlainText(m_editItem->bestFor         ()); if (propName) { return; } }

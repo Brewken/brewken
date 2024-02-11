@@ -62,10 +62,11 @@ XmlRecordDefinition::XmlRecordDefinition(
    char const *       const   namedEntityClassName,
    QString            const & localisedEntityName,
    QVariant                 (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
+   QList<std::shared_ptr<NamedEntity>> (*listDowncaster)(QVariant const &),
    XmlRecordConstructorWrapper xmlRecordConstructorWrapper,
    std::initializer_list<XmlRecordDefinition::FieldDefinition> fieldDefinitions
 ) :
-   SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName, localisedEntityName, listUpcaster},
+   SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName, localisedEntityName, listUpcaster, listDowncaster},
    xmlRecordConstructorWrapper{xmlRecordConstructorWrapper},
    fieldDefinitions{fieldDefinitions} {
    return;
@@ -77,10 +78,11 @@ XmlRecordDefinition::XmlRecordDefinition(
    char const *       const namedEntityClassName,
    QString                        const & localisedEntityName,
    QVariant               (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
+   QList<std::shared_ptr<NamedEntity>> (*listDowncaster)(QVariant const &),
    XmlRecordConstructorWrapper xmlRecordConstructorWrapper,
    std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists
 ) :
-   SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName, localisedEntityName, listUpcaster},
+   SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName, localisedEntityName, listUpcaster, listDowncaster},
    xmlRecordConstructorWrapper{xmlRecordConstructorWrapper},
    fieldDefinitions{} {
    // This is a bit clunky, but it works and the inefficiency is a one-off cost at start-up

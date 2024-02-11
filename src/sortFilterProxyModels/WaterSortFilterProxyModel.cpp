@@ -39,8 +39,8 @@ bool WaterSortFilterProxyModel::isLessThan(WaterTableModel::ColumnIndex const co
       case WaterTableModel::ColumnIndex::Chloride   :
       case WaterTableModel::ColumnIndex::Sodium     :
       case WaterTableModel::ColumnIndex::Magnesium  :
-         return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::VolumeConcentration) <
-                Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::VolumeConcentration);
+         return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::MassFractionOrConc) <
+                Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::MassFractionOrConc);
 
       // No default case as we want the compiler to warn us if we missed one
    }

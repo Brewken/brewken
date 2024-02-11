@@ -43,7 +43,7 @@
 AddPropertyName(equipAdjust              )
 AddPropertyName(grainTemp_c              )
 AddPropertyName(mashSteps                )
-AddPropertyName(mashStepsDowncast        )
+///AddPropertyName(mashStepsDowncast        )
 AddPropertyName(mashTunSpecificHeat_calGC)
 AddPropertyName(mashTunWeight_kg         )
 AddPropertyName(notes                    )
@@ -116,8 +116,8 @@ public:
    Q_PROPERTY(double                totalTime                 READ totalTime  STORED false )
    //! \brief The individual mash steps.
    Q_PROPERTY(QList<std::shared_ptr<MashStep>>    mashSteps         READ mashSteps         WRITE setMashSteps         STORED false )
-   //! \brief The individual mash steps downcast as pointers to \c NamedEntity, which is used (TBD OR IS IT?) for BeerJSON and BeerXML processing.
-   Q_PROPERTY(QList<std::shared_ptr<NamedEntity>> mashStepsDowncast READ mashStepsDowncast WRITE setMashStepsDowncast STORED false )
+///   //! \brief The individual mash steps downcast as pointers to \c NamedEntity, which is used (TBD OR IS IT?) for BeerJSON and BeerXML processing.
+///   Q_PROPERTY(QList<std::shared_ptr<NamedEntity>> mashStepsDowncast READ mashStepsDowncast WRITE setMashStepsDowncast STORED false )
 
    // ⮜⮜⮜ BeerJSON support does not require any additional properties on this class! ⮞⮞⮞
 

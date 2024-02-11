@@ -141,18 +141,12 @@ TypeLookup const Fermentable::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::friability_pct           , Fermentable::m_friability_pct           ,           NonPhysicalQuantity::Percentage     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::di_ph                    , Fermentable::m_di_ph                    , Measurement::PhysicalQuantity::Acidity        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::viscosity_cP             , Fermentable::m_viscosity_cP             , Measurement::PhysicalQuantity::Viscosity      ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::dmsP                     , Fermentable::m_dmsP                     , Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::dmsPIsMassPerVolume      , Fermentable::m_dmsPIsMassPerVolume      ,           NonPhysicalQuantity::Bool           ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::fan                      , Fermentable::m_fan                      , Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::fanIsMassPerVolume       , Fermentable::m_fanIsMassPerVolume       ,           NonPhysicalQuantity::Bool           ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::dmsP_ppm                 , Fermentable::m_dmsP_ppm                 , Measurement::PhysicalQuantity::MassFractionOrConc),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::fan_ppm                  , Fermentable::m_fan_ppm                  , Measurement::PhysicalQuantity::MassFractionOrConc),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::fermentability_pct       , Fermentable::m_fermentability_pct       ,           NonPhysicalQuantity::Percentage     ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::betaGlucan               , Fermentable::m_betaGlucan               , Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::betaGlucanIsMassPerVolume, Fermentable::m_betaGlucanIsMassPerVolume,           NonPhysicalQuantity::Bool           ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::betaGlucan_ppm           , Fermentable::m_betaGlucan_ppm           , Measurement::PhysicalQuantity::MassFractionOrConc),
 
 ///      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::amountWithUnits    , Fermentable::amountWithUnits            , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::dmsPWithUnits      , Fermentable::dmsPWithUnits              , Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc),
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::fanWithUnits       , Fermentable::fanWithUnits               , Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc),
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::betaGlucanWithUnits, Fermentable::betaGlucanWithUnits        , Measurement::ChoiceOfPhysicalQuantity::MassConc_VolumeConc),
    },
    // Parent classes lookup
    {&Ingredient::typeLookup,
@@ -196,13 +190,10 @@ Fermentable::Fermentable(QString name) :
    m_friability_pct           {std::nullopt            },
    m_di_ph                    {std::nullopt            },
    m_viscosity_cP             {std::nullopt            },
-   m_dmsP                     {std::nullopt            },
-   m_dmsPIsMassPerVolume      {true                    },
-   m_fan                      {std::nullopt            },
-   m_fanIsMassPerVolume       {true                    },
+   m_dmsP_ppm                 {std::nullopt            },
+   m_fan_ppm                  {std::nullopt            },
    m_fermentability_pct       {std::nullopt            },
-   m_betaGlucan               {std::nullopt            },
-   m_betaGlucanIsMassPerVolume{true                    } {
+   m_betaGlucan_ppm           {std::nullopt            } {
    return;
 }
 
@@ -240,7 +231,10 @@ Fermentable::Fermentable(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_friability_pct                     , namedParameterBundle, PropertyNames::Fermentable::friability_pct                   ),
    SET_REGULAR_FROM_NPB (m_di_ph                              , namedParameterBundle, PropertyNames::Fermentable::di_ph                            ),
    SET_REGULAR_FROM_NPB (m_viscosity_cP                       , namedParameterBundle, PropertyNames::Fermentable::viscosity_cP                     ),
-   SET_REGULAR_FROM_NPB (m_fermentability_pct                 , namedParameterBundle, PropertyNames::Fermentable::fermentability_pct               ) {
+   SET_REGULAR_FROM_NPB (m_dmsP_ppm                           , namedParameterBundle, PropertyNames::Fermentable::dmsP_ppm                         ),
+   SET_REGULAR_FROM_NPB (m_fan_ppm                            , namedParameterBundle, PropertyNames::Fermentable::fan_ppm                          ),
+   SET_REGULAR_FROM_NPB (m_fermentability_pct                 , namedParameterBundle, PropertyNames::Fermentable::fermentability_pct               ),
+   SET_REGULAR_FROM_NPB (m_betaGlucan_ppm                     , namedParameterBundle, PropertyNames::Fermentable::betaGlucan_ppm                   ) {
 
 ///   this->setEitherOrReqParams(namedParameterBundle,
 ///                              PropertyNames::Fermentable::amount    ,
@@ -249,27 +243,6 @@ Fermentable::Fermentable(NamedParameterBundle const & namedParameterBundle) :
 ///                              Measurement::PhysicalQuantity::Mass,
 ///                              this->m_amount    ,
 ///                              this->m_amountIsWeight           );
-   this->setEitherOrOptParams(namedParameterBundle,
-                              PropertyNames::Fermentable::dmsP      ,
-                              PropertyNames::Fermentable::dmsPIsMassPerVolume      ,
-                              PropertyNames::Fermentable::dmsPWithUnits      ,
-                              Measurement::PhysicalQuantity::MassConcentration,
-                              this->m_dmsP      ,
-                              this->m_dmsPIsMassPerVolume      );
-   this->setEitherOrOptParams(namedParameterBundle,
-                              PropertyNames::Fermentable::fan       ,
-                              PropertyNames::Fermentable::fanIsMassPerVolume       ,
-                              PropertyNames::Fermentable::fanWithUnits       ,
-                              Measurement::PhysicalQuantity::MassConcentration,
-                              this->m_fan       ,
-                              this->m_fanIsMassPerVolume       );
-   this->setEitherOrOptParams(namedParameterBundle,
-                              PropertyNames::Fermentable::betaGlucan,
-                              PropertyNames::Fermentable::betaGlucanIsMassPerVolume,
-                              PropertyNames::Fermentable::betaGlucanWithUnits,
-                              Measurement::PhysicalQuantity::MassConcentration,
-                              this->m_betaGlucan,
-                              this->m_betaGlucanIsMassPerVolume);
    return;
 }
 
@@ -309,13 +282,10 @@ Fermentable::Fermentable(Fermentable const & other) :
    m_friability_pct           {other.m_friability_pct        },
    m_di_ph                    {other.m_di_ph                 },
    m_viscosity_cP             {other.m_viscosity_cP          },
-   m_dmsP                     {other.m_dmsP                     },
-   m_dmsPIsMassPerVolume      {other.m_dmsPIsMassPerVolume      },
-   m_fan                      {other.m_fan                      },
-   m_fanIsMassPerVolume       {other.m_fanIsMassPerVolume       },
-   m_fermentability_pct       {other.m_fermentability_pct       },
-   m_betaGlucan               {other.m_betaGlucan               },
-   m_betaGlucanIsMassPerVolume{other.m_betaGlucanIsMassPerVolume} {
+   m_dmsP_ppm                 {other.m_dmsP_ppm              },
+   m_fan_ppm                  {other.m_fan_ppm               },
+   m_fermentability_pct       {other.m_fermentability_pct    },
+   m_betaGlucan_ppm           {other.m_betaGlucan_ppm        } {
    return;
 }
 
@@ -357,20 +327,13 @@ std::optional<double>                  Fermentable::kernelSizePrpThin_pct    () 
 std::optional<double>                  Fermentable::friability_pct           () const { return                    this->m_friability_pct           ; }
 std::optional<double>                  Fermentable::di_ph                    () const { return                    this->m_di_ph                    ; }
 std::optional<double>                  Fermentable::viscosity_cP             () const { return                    this->m_viscosity_cP             ; }
-std::optional<double>                  Fermentable::dmsP                     () const { return                    this->m_dmsP                     ; }
-bool                                   Fermentable::dmsPIsMassPerVolume      () const { return                    this->m_dmsPIsMassPerVolume      ; }
-std::optional<double>                  Fermentable::fan                      () const { return                    this->m_fan                      ; }
-bool                                   Fermentable::fanIsMassPerVolume       () const { return                    this->m_fanIsMassPerVolume       ; }
+std::optional<double>                  Fermentable::dmsP_ppm                 () const { return                    this->m_dmsP_ppm                 ; }
+std::optional<double>                  Fermentable::fan_ppm                  () const { return                    this->m_fan_ppm                  ; }
 std::optional<double>                  Fermentable::fermentability_pct       () const { return                    this->m_fermentability_pct       ; }
-std::optional<double>                  Fermentable::betaGlucan               () const { return                    this->m_betaGlucan               ; }
-bool                                   Fermentable::betaGlucanIsMassPerVolume() const { return                    this->m_betaGlucanIsMassPerVolume; }
+std::optional<double>                  Fermentable::betaGlucan_ppm           () const { return                    this->m_betaGlucan_ppm           ; }
 
 // Combined getters (all added for BeerJSON support)
 ///Measurement::Amount                             Fermentable::amountWithUnits    () const { return MassOrVolumeAmt{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
-std::optional<Measurement::Amount> Fermentable::dmsPWithUnits      () const { return Optional::eitherOr<MassOrVolumeConcentrationAmt>(this->m_dmsP      , this->m_dmsPIsMassPerVolume      , Measurement::Units::milligramsPerLiter, Measurement::Units::partsPerMillion); }
-std::optional<Measurement::Amount> Fermentable::fanWithUnits       () const { return Optional::eitherOr<MassOrVolumeConcentrationAmt>(this->m_fan       , this->m_fanIsMassPerVolume       , Measurement::Units::milligramsPerLiter, Measurement::Units::partsPerMillion); }
-std::optional<Measurement::Amount> Fermentable::betaGlucanWithUnits() const { return Optional::eitherOr<MassOrVolumeConcentrationAmt>(this->m_betaGlucan, this->m_betaGlucanIsMassPerVolume, Measurement::Units::milligramsPerLiter, Measurement::Units::partsPerMillion); }
-
 
 bool Fermentable::isExtract() const {
    return ((type() == Fermentable::Type::Extract) || (type() == Fermentable::Type::Dry_Extract));
@@ -416,40 +379,16 @@ void Fermentable::setKernelSizePrpThin_pct    (std::optional<double>     const  
 void Fermentable::setFriability_pct           (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::friability_pct           , this->m_friability_pct           , val                                  ); return; }
 void Fermentable::setDi_ph                    (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::di_ph                    , this->m_di_ph                    , val                                  ); return; }
 void Fermentable::setViscosity_cP             (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::viscosity_cP             , this->m_viscosity_cP             , val                                  ); return; }
-void Fermentable::setDmsP                     (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::dmsP                     , this->m_dmsP                     , val                                  ); return; }
-void Fermentable::setDmsPIsMassPerVolume      (bool                      const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::dmsPIsMassPerVolume      , this->m_dmsPIsMassPerVolume      , val                                  ); return; }
-void Fermentable::setFan                      (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::fan                      , this->m_fan                      , val                                  ); return; }
-void Fermentable::setFanIsMassPerVolume       (bool                      const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::fanIsMassPerVolume       , this->m_fanIsMassPerVolume       , val                                  ); return; }
+void Fermentable::setDmsP_ppm                 (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::dmsP_ppm                 , this->m_dmsP_ppm                     , val                                  ); return; }
+void Fermentable::setFan_ppm                  (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::fan_ppm                  , this->m_fan_ppm                      , val                                  ); return; }
 void Fermentable::setFermentability_pct       (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::fermentability_pct       , this->m_fermentability_pct       , val                                  ); return; }
-void Fermentable::setBetaGlucan               (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::betaGlucan               , this->m_betaGlucan               , val                                  ); return; }
-void Fermentable::setBetaGlucanIsMassPerVolume(bool                      const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::betaGlucanIsMassPerVolume, this->m_betaGlucanIsMassPerVolume, val                                  ); return; }
+void Fermentable::setBetaGlucan_ppm           (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::betaGlucan_ppm           , this->m_betaGlucan_ppm               , val                                  ); return; }
 
 ///void Fermentable::setAmountWithUnits          (Measurement::Amount           const   val) {
 ///   SET_AND_NOTIFY(PropertyNames::Fermentable::amount        , this->m_amount        , val.quantity);
 ///   SET_AND_NOTIFY(PropertyNames::Fermentable::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
 ///   return;
 ///}
-void Fermentable::setDmsPWithUnits      (std::optional<Measurement::Amount> const   val) {
-   std::optional<double> quantity = std::nullopt; // Gets set by Optional::eitherOr
-   bool const isMassPerVolume = Optional::eitherOr(val, quantity, Measurement::PhysicalQuantity::MassConcentration);
-   SET_AND_NOTIFY(PropertyNames::Fermentable::dmsP               , this->m_dmsP               , quantity       );
-   SET_AND_NOTIFY(PropertyNames::Fermentable::dmsPIsMassPerVolume, this->m_dmsPIsMassPerVolume, isMassPerVolume);
-   return;
-}
-void Fermentable::setFanWithUnits       (std::optional<Measurement::Amount> const   val) {
-   std::optional<double> quantity = std::nullopt; // Gets set by Optional::eitherOr
-   bool const isMassPerVolume = Optional::eitherOr(val, quantity, Measurement::PhysicalQuantity::MassConcentration);
-   SET_AND_NOTIFY(PropertyNames::Fermentable::fan               , this->m_fan               , quantity       );
-   SET_AND_NOTIFY(PropertyNames::Fermentable::fanIsMassPerVolume, this->m_fanIsMassPerVolume, isMassPerVolume);
-   return;
-}
-void Fermentable::setBetaGlucanWithUnits(std::optional<Measurement::Amount> const   val) {
-   std::optional<double> quantity = std::nullopt; // Gets set by Optional::eitherOr
-   bool const isMassPerVolume = Optional::eitherOr(val, quantity, Measurement::PhysicalQuantity::MassConcentration);
-   SET_AND_NOTIFY(PropertyNames::Fermentable::betaGlucan               , this->m_betaGlucan               , quantity       );
-   SET_AND_NOTIFY(PropertyNames::Fermentable::betaGlucanIsMassPerVolume, this->m_betaGlucanIsMassPerVolume, isMassPerVolume);
-   return;
-}
 
 ///Recipe * Fermentable::getOwningRecipe() const {
 //////   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );

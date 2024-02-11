@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * Application.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * Application.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Chris Pavetto <chrispavetto@gmail.com>
@@ -333,7 +333,7 @@ namespace {
             "constant for resource dir:" << CONFIG_DATA_DIR;
          path = QString(CONFIG_DATA_DIR);
       }
-#elif defined(Q_OS_MAC)
+#elif defined(Q_OS_MACOS)
       // === Mac ===
       // We should be inside an app bundle.
       path += "../Resources/";
@@ -393,7 +393,7 @@ bool Application::initialize() {
       "Locale:" << locale.name() << "(Decimal point:" << locale.decimalPoint() << "/ Thousands separator:" <<
       locale.groupSeparator() << ")";
 
-#if defined(Q_OS_MAC)
+#if defined(Q_OS_MACOS)
    qt_set_sequence_auto_mnemonic(true); // turns on Mac Keyboard shortcuts
 #endif
 

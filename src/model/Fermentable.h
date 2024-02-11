@@ -53,20 +53,14 @@ AddPropertyName(alphaAmylase_dextUnits   )
 ///AddPropertyName(amount                   )
 ///AddPropertyName(amountIsWeight           )
 ///AddPropertyName(amountWithUnits          )
-AddPropertyName(betaGlucan               )
-AddPropertyName(betaGlucanIsMassPerVolume)
-AddPropertyName(betaGlucanWithUnits      )
+AddPropertyName(betaGlucan_ppm           )
 AddPropertyName(coarseFineDiff_pct       )
 AddPropertyName(coarseGrindYield_pct     )
 AddPropertyName(color_srm                )
 AddPropertyName(diastaticPower_lintner   )
 AddPropertyName(di_ph                    )
-AddPropertyName(dmsP                     )
-AddPropertyName(dmsPIsMassPerVolume      )
-AddPropertyName(dmsPWithUnits            )
-AddPropertyName(fan                      )
-AddPropertyName(fanIsMassPerVolume       )
-AddPropertyName(fanWithUnits             )
+AddPropertyName(dmsP_ppm                 )
+AddPropertyName(fan_ppm                  )
 AddPropertyName(fermentability_pct       )
 AddPropertyName(fineGrindYield_pct       )
 AddPropertyName(friability_pct           )
@@ -420,17 +414,11 @@ public:
     *        Measurement of DMS-P is often performed by heating "congress wort" samples (see above) in closed vials,
     *        sampling the headspace after incubation, and quantifying DMS using gas chromatography.
     *
-    *        BeerJSON allows this attribute to be specified as either volume concentration (ppm or ppb) or mass
-    *        concentration (mg / L)
-    *
-    *        You might argue that, strictly speaking, \c dmsPIsMassPerVolume should also be optional and set
-    *        if-and-only-if \c dmsP is set.  However, that would be a whole bunch of additional complexity for almost no
-    *        gain.  Instead, we say the value of \c dmsPIsMassPerVolume is ignored as meaningless when \c dmsP is not
-    *        set.  Same applies for \c fan / \c fanIsMassPerVolume and \c betaGlucan / \c betaGlucanIsMassPerVolume.
+    *        BeerJSON allows this attribute to be specified as either mass fraction (ppm or ppb) or mass concentration
+    *        (mg / L).  Per the comments in measurement/PhysicalQuantity.h, we treat the latter as easily convertible to
+    *        the former in the context of brewing.
     */
-   Q_PROPERTY(std::optional<double>                       dmsP                  READ dmsP                  WRITE setDmsP               )
-   Q_PROPERTY(bool                                        dmsPIsMassPerVolume   READ dmsPIsMassPerVolume   WRITE setDmsPIsMassPerVolume)
-   Q_PROPERTY(std::optional<Measurement::Amount> dmsPWithUnits         READ dmsPWithUnits         WRITE setDmsPWithUnits      )
+   Q_PROPERTY(std::optional<double> dmsP_ppm                  READ dmsP_ppm                  WRITE setDmsP_ppm               )
 
    /**
     * \brief Free Amino Nitrogen (FAN) is a measure of the concentration of nitrogen-containing compounds -- including
@@ -441,12 +429,11 @@ public:
     *        As a diagnostic test, low FAN measurements indicate slow or incomplete fermentation, while high FAN
     *        measurements may indicate haze issues and/or diacetyl formation.
     *
-    *        BeerJSON allows this attribute to be specified as either volume concentration (ppm or ppb) or mass
-    *        concentration (mg / L)
+    *        BeerJSON allows this attribute to be specified as either mass fraction (ppm or ppb) or mass concentration
+    *        (mg / L).  Per the comments in measurement/PhysicalQuantity.h, we treat the latter as easily convertible to
+    *        the former in the context of brewing.
     */
-   Q_PROPERTY(std::optional<double>                       fan                  READ fan                  WRITE setFan               )
-   Q_PROPERTY(bool                                        fanIsMassPerVolume   READ fanIsMassPerVolume   WRITE setFanIsMassPerVolume)
-   Q_PROPERTY(std::optional<Measurement::Amount> fanWithUnits         READ fanWithUnits         WRITE setFanWithUnits      )
+   Q_PROPERTY(std::optional<double> fan_ppm                  READ fan_ppm                  WRITE setFan_ppm               )
 
    /**
     * \brief Fermentability is used in Extracts to indicate a baseline typical apparent attenuation for a typical medium
@@ -462,15 +449,14 @@ public:
     *        As with some of the other measures here, the concentration of β-glucans is measured in the wort, so, in the
     *        context of a fermentable, it is measure of a congress wort produced from this malt.
     *
-    *        BeerJSON allows this attribute to be specified as either volume concentration (ppm or ppb) or mass
-    *        concentration (mg / L)
+    *        BeerJSON allows this attribute to be specified as either mass fraction (ppm or ppb) or mass concentration
+    *        (mg / L).  Per the comments in measurement/PhysicalQuantity.h, we treat the latter as easily convertible to
+    *        the former in the context of brewing.
     *
-    *        Yes, it would be neat to include β in the property, variable and function names etc, but I think the Qt MOC
-    *        doesn't like it.
+    *        Yes, it would be neat to include β in the property, variable and function names etc, but the Qt MOC doesn't
+    *        appear to like it.
     */
-   Q_PROPERTY(std::optional<double>                         betaGlucan                  READ betaGlucan                  WRITE setBetaGlucan               )
-   Q_PROPERTY(bool                                          betaGlucanIsMassPerVolume   READ betaGlucanIsMassPerVolume   WRITE setBetaGlucanIsMassPerVolume)
-   Q_PROPERTY(std::optional<Measurement::Amount>   betaGlucanWithUnits         READ betaGlucanWithUnits         WRITE setBetaGlucanWithUnits      )
+   Q_PROPERTY(std::optional<double> betaGlucan_ppm                  READ betaGlucan_ppm                  WRITE setBetaGlucan_ppm               )
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    Type    type                                       () const;
@@ -508,19 +494,10 @@ public:
    std::optional<double>     friability_pct           () const;
    std::optional<double>     di_ph                    () const;
    std::optional<double>     viscosity_cP             () const;
-   std::optional<double>     dmsP                     () const;
-   bool                      dmsPIsMassPerVolume      () const;
-   std::optional<double>     fan                      () const;
-   bool                      fanIsMassPerVolume       () const;
+   std::optional<double>     dmsP_ppm                 () const;
+   std::optional<double>     fan_ppm                  () const;
    std::optional<double>     fermentability_pct       () const;
-   std::optional<double>     betaGlucan               () const;
-   bool                      betaGlucanIsMassPerVolume() const;
-
-   // Combined getters (all added for BeerJSON support)
-///   Measurement::Amount                             amountWithUnits    () const;
-   std::optional<Measurement::Amount> dmsPWithUnits      () const;
-   std::optional<Measurement::Amount> fanWithUnits       () const;
-   std::optional<Measurement::Amount> betaGlucanWithUnits() const;
+   std::optional<double>     betaGlucan_ppm           () const;
 
    // Calculated getters.
    bool    isExtract             () const;
@@ -562,19 +539,10 @@ public:
    void setFriability_pct           (std::optional<double>     const   val);
    void setDi_ph                    (std::optional<double>     const   val);
    void setViscosity_cP             (std::optional<double>     const   val);
-   void setDmsP                     (std::optional<double>     const   val);
-   void setDmsPIsMassPerVolume      (bool                      const   val);
-   void setFan                      (std::optional<double>     const   val);
-   void setFanIsMassPerVolume       (bool                      const   val);
+   void setDmsP_ppm                 (std::optional<double>     const   val);
+   void setFan_ppm                  (std::optional<double>     const   val);
    void setFermentability_pct       (std::optional<double>     const   val);
-   void setBetaGlucan               (std::optional<double>     const   val);
-   void setBetaGlucanIsMassPerVolume(bool                      const   val);
-
-   // Combined setters (all added for BeerJSON support)
-///   void setAmountWithUnits    (Measurement::Amount                             const   val);
-   void setDmsPWithUnits      (std::optional<Measurement::Amount> const   val);
-   void setFanWithUnits       (std::optional<Measurement::Amount> const   val);
-   void setBetaGlucanWithUnits(std::optional<Measurement::Amount> const   val);
+   void setBetaGlucan_ppm           (std::optional<double>     const   val);
 
    // Insert boiler-plate declarations for inventory
 ///   INVENTORY_COMMON_HEADER_DECLS
@@ -620,13 +588,10 @@ private:
    std::optional<double>     m_friability_pct           ;
    std::optional<double>     m_di_ph                    ;
    std::optional<double>     m_viscosity_cP             ;
-   std::optional<double>     m_dmsP                     ; // MassOrVolumeConcentrationAmt
-   bool                      m_dmsPIsMassPerVolume      ;
-   std::optional<double>     m_fan                      ; // MassOrVolumeConcentrationAmt
-   bool                      m_fanIsMassPerVolume       ;
+   std::optional<double>     m_dmsP_ppm                 ;
+   std::optional<double>     m_fan_ppm                  ;
    std::optional<double>     m_fermentability_pct       ;
-   std::optional<double>     m_betaGlucan               ; // MassOrVolumeConcentrationAmt
-   bool                      m_betaGlucanIsMassPerVolume;
+   std::optional<double>     m_betaGlucan_ppm           ;
 };
 
 Q_DECLARE_METATYPE(QList<                Fermentable *>)

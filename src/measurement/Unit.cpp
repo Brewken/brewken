@@ -538,12 +538,10 @@ namespace Measurement::Units {
    Unit const carbonationVolumes      {Measurement::UnitSystems::carbonation_Volumes,                 QObject::tr("vol"),  [](double x){return x;},               [](double y){return y;},                1.0};
    Unit const carbonationGramsPerLiter{Measurement::UnitSystems::carbonation_MassPerVolume,           QObject::tr("mg/L"), [](double x){return x / 1.96;},        [](double y){return y * 1.96;},         1.0,  &carbonationVolumes};
 
-   // == Mass Concentration ==
-   Unit const milligramsPerLiter  {Measurement::UnitSystems::concentration_MassPerVolume,             QObject::tr("mg/L"), [](double x){return x;},               [](double y){return y;},                1.0};
-
-   // == Volume Concentration ==
-   Unit const partsPerMillion     {Measurement::UnitSystems::concentration_PartsPer,                  QObject::tr("ppm"),  [](double x){return x;},               [](double y){return y;},                1.0};
-   Unit const partsPerBillion     {Measurement::UnitSystems::concentration_PartsPer,                  QObject::tr("ppb"),  [](double x){return x * 1000.0;},      [](double y){return y/1000.0;},         1.0,  &partsPerMillion};
+   // == Mass Fraction & Mass Concentration ==
+   Unit const partsPerMillionMass {Measurement::UnitSystems::massFractionOrConc_Brewing,             QObject::tr("ppm"),  [](double x){return x;},               [](double y){return y;},                1.0};
+   Unit const partsPerBillionMass {Measurement::UnitSystems::massFractionOrConc_Brewing,             QObject::tr("ppb"),  [](double x){return x * 1000.0;},      [](double y){return y/1000.0;},         1.0,  &partsPerMillionMass};
+   Unit const milligramsPerLiter  {Measurement::UnitSystems::massFractionOrConc_Brewing,             QObject::tr("mg/L"), [](double x){return x;},               [](double y){return y;},                1.0,  &partsPerMillionMass};
 
    // == Viscosity ==
    // Yes, 1 centipoise = 1 millipascal-second.  See comment in measurement/Unit.h for more info
@@ -624,12 +622,10 @@ namespace Measurement::Units {
          // == Carbonation ==
          {carbonationVolumes            , "carbonation_volumes"          },
          {carbonationGramsPerLiter      , "carbonation_grams_per_liter"  },
-         // === Concentration ===
-         // == Mass Concentration ==
+         // == Mass Fraction & Mass Concentration ==
+         {partsPerMillionMass           , "parts_per_million_mass"       },
+         {partsPerBillionMass           , "parts_per_billion_mass"       },
          {milligramsPerLiter            , "milligrams_per_liter"         },
-         // == Volume Concentration ==
-         {partsPerMillion               , "parts_per_million"            },
-         {partsPerBillion               , "parts_per_billion"            },
          // == Viscosity ==
          {centipoise                    , "centipoise"                   },
          {millipascalSecond             , "millipascal_second"           },
