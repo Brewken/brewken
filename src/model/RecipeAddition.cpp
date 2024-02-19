@@ -135,11 +135,11 @@ RecipeAddition::~RecipeAddition() = default;
 ///int                        RecipeAddition::recipeId       () const { return this->m_recipeId       ; }
 ///int                        RecipeAddition::ingredientId   () const { return this->m_ingredientId   ; }
 RecipeAddition::Stage RecipeAddition::stage          () const { return this->m_stage          ; }
-std::optional<int>         RecipeAddition::step           () const { return this->m_step           ; }
-std::optional<double>      RecipeAddition::addAtTime_mins () const { return this->m_addAtTime_mins ; }
-std::optional<double>      RecipeAddition::addAtGravity_sg() const { return this->m_addAtGravity_sg; }
-std::optional<double>      RecipeAddition::addAtAcidity_pH() const { return this->m_addAtAcidity_pH; }
-std::optional<double>      RecipeAddition::duration_mins  () const { return this->m_duration_mins  ; }
+std::optional<int>    RecipeAddition::step           () const { return this->m_step           ; }
+std::optional<double> RecipeAddition::addAtTime_mins () const { return this->m_addAtTime_mins ; }
+std::optional<double> RecipeAddition::addAtGravity_sg() const { return this->m_addAtGravity_sg; }
+std::optional<double> RecipeAddition::addAtAcidity_pH() const { return this->m_addAtAcidity_pH; }
+std::optional<double> RecipeAddition::duration_mins  () const { return this->m_duration_mins  ; }
 
 ///Recipe * RecipeAddition::recipe() const {
 ///   return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);

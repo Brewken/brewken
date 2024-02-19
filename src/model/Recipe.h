@@ -61,7 +61,10 @@ AddPropertyName(boilTime_min           ) // Deprecated, but retained for BeerXML
 AddPropertyName(boilVolume_l           )
 AddPropertyName(brewer                 )
 AddPropertyName(brewNotes              )
-AddPropertyName(calories               )
+AddPropertyName(caloriesPer33cl        )
+AddPropertyName(caloriesPerLiter       )
+AddPropertyName(caloriesPerUs12oz      )
+AddPropertyName(caloriesPerUsPint      )
 AddPropertyName(carbonationTemp_c      )
 AddPropertyName(carbonation_vols       )
 AddPropertyName(color_srm              )
@@ -281,7 +284,14 @@ public:
    Q_PROPERTY(double  carbonation_vols   READ carbonation_vols   WRITE setCarbonation_vols )
    //! \brief Whether the beer is force carbonated.
    Q_PROPERTY(bool    forcedCarbonation  READ forcedCarbonation  WRITE setForcedCarbonation)
-   //! \brief The name of the priming sugar.
+   /**
+    * \brief The name of the priming sugar.
+    *
+    *        TBD: This is not currently exposed in the UI.
+    *
+    *        The field is optional in BeerXML and not supported in BeerJSON (where instead you would have an extra entry
+    *        in fermentable_additions with timing.use == add_to_package).
+    */
    Q_PROPERTY(QString primingSugarName   READ primingSugarName   WRITE setPrimingSugarName )
    //! \brief The temperature in C while carbonating.
    Q_PROPERTY(double  carbonationTemp_c  READ carbonationTemp_c  WRITE setCarbonationTemp_c)
@@ -327,8 +337,14 @@ public:
    Q_PROPERTY(double  postBoilVolume_l READ postBoilVolume_l /*WRITE*/ /*NOTIFY changed*/ /*changedEstimatePostBoilVolume_l*/ STORED false)
    //! \brief The calculated final volume into the primary in liters.
    Q_PROPERTY(double  finalVolume_l READ finalVolume_l /*WRITE*/ /*NOTIFY changed*/ /*changedEstimateFinalVolume_l*/ STORED false)
-   //! \brief The calculated Calories per 12 oz. (kcal).
-   Q_PROPERTY(double  calories READ calories12oz /*WRITE*/ /*NOTIFY changed*/ /*changedEstimateCalories*/ STORED false)
+   //! \brief The calculated Calories per liter. (kcal).
+   Q_PROPERTY(double  caloriesPerLiter    READ caloriesPerLiter    STORED false)
+   //! \brief The calculated Calories per 33cl. (kcal).
+   Q_PROPERTY(double  caloriesPer33cl     READ caloriesPer33cl     STORED false)
+   //! \brief The calculated Calories per (US) 12 oz. (kcal).
+   Q_PROPERTY(double  caloriesPerUs12oz   READ caloriesPerUs12oz   STORED false)
+   //! \brief The calculated Calories per US pint (16 US fl oz). (kcal).
+   Q_PROPERTY(double  caloriesPerUsPint   READ caloriesPerUsPint   STORED false)
    //! \brief The amount of grains in the mash in kg.
    Q_PROPERTY(double  grainsInMash_kg READ grainsInMash_kg /*WRITE*/ /*NOTIFY changed*/ /*changedGrainsInMash_kg*/ STORED false)
    //! \brief The total amount of grains in the recipe in kg.
@@ -535,8 +551,10 @@ public:
    double        boilVolume_l            ();
    double        postBoilVolume_l        ();
    double        finalVolume_l           ();
-   double        calories12oz            ();
-   double        calories33cl            ();
+   double        caloriesPer33cl         ();
+   double        caloriesPerLiter        ();
+   double        caloriesPerUs12oz       ();
+   double        caloriesPerUsPint       ();
    double        grainsInMash_kg         ();
    double        grains_kg               ();
    QList<double> IBUs                    ();
@@ -739,7 +757,7 @@ private:
    double        m_finalVolume_l        ;
    // Final volume before any losses out of the kettle, used in calculations for sg/ibu/etc.
    double        m_finalVolumeNoLosses_l;
-   double        m_calories             ;
+   double        m_caloriesPerLiter     ;
    double        m_grainsInMash_kg      ;
    double        m_grains_kg            ;
    QColor        m_SRMColor             ;
@@ -805,7 +823,7 @@ private:
 // Need specialisations for abstract types
 template<> inline Recipe * Recipe::findOwningRecipe([[maybe_unused]] NamedEntity const & var) { return nullptr; }
 
-Q_DECLARE_METATYPE(QList<std::shared_ptr<Recipe> >)
+BT_DECLARE_METATYPES(Recipe)
 
 /**
  * \brief Non-member functions for \c Recipe

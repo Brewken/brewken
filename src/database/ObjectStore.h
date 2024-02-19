@@ -134,11 +134,7 @@ public:
       QVector<TableField> const tableFields;
       //! Constructor
       TableDefinition(char const * const tableName = nullptr,
-                      std::initializer_list<TableField> const tableFields = {}) :
-         tableName{tableName},
-         tableFields{tableFields} {
-         return;
-      }
+                      std::initializer_list<TableField> const tableFields = {});
    };
 
    /**

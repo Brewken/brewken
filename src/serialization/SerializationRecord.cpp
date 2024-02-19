@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * serialization/SerializationRecord.cpp is part of Brewken, and is copyright the following authors 2020-2023:
+ * serialization/SerializationRecord.cpp is part of Brewken, and is copyright the following authors 2020-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -38,7 +38,7 @@ void SerializationRecord::constructNamedEntity() {
    // Stictly, it's a coding error if this function is called, as caller should first check whether there is a
    // NamedEntity, and subclasses that do have one should override this function.
 ///   qCritical() <<
-///      Q_FUNC_INFO << this->m_recordDefinition.namedEntityClassName << "this->m_namedParameterBundle:" <<
+///      Q_FUNC_INFO << this->m_recordDefinition.m_namedEntityClassName << "this->m_namedParameterBundle:" <<
 ///      this->m_namedParameterBundle;
    qDebug().noquote() << Q_FUNC_INFO << Logging::getStackTrace();
    Q_ASSERT(false && "Trying to construct named entity for base record");

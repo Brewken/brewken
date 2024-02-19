@@ -59,8 +59,10 @@ namespace {
    // foreign key references).  However, as long as we don't want circular foreign key references in the database,
    // there should always be an order that works!
    //
-   template<class NE> ObjectStore::TableDefinition const PRIMARY_TABLE;
-   template<class NE> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES;
+   // We only use specialisations of these templates (PRIMARY_TABLE and JUNCTION_TABLES)
+   //
+   template<class NE> ObjectStore::TableDefinition const PRIMARY_TABLE {};
+   template<class NE> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES {};
 
    //
    // NOTE: Unlike C++, SQL is generally case-insensitive, so we have slightly different naming conventions.
@@ -170,12 +172,12 @@ namespace {
          {ObjectStore::FieldType::String, "supplier"                      , PropertyNames::Fermentable::supplier                 },
          {ObjectStore::FieldType::Double, "protein"                       , PropertyNames::Fermentable::protein_pct              },
          {ObjectStore::FieldType::Bool  , "recommend_mash"                , PropertyNames::Fermentable::recommendMash            },
-         {ObjectStore::FieldType::Double, "yield"                         , PropertyNames::Fermentable::yield_pct                },
+///         {ObjectStore::FieldType::Double, "yield"                         , PropertyNames::Fermentable::yield_pct                },
          // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
          {ObjectStore::FieldType::Enum  , "grain_group"                   , PropertyNames::Fermentable::grainGroup               , &Fermentable::grainGroupStringMapping},
          {ObjectStore::FieldType::String, "producer"                      , PropertyNames::Fermentable::producer                 },
          {ObjectStore::FieldType::String, "product_id"                    , PropertyNames::Fermentable::productId                },
-         {ObjectStore::FieldType::Double, "fine_grind_yield_pct"          , PropertyNames::Fermentable::fineGrindYield_pct       },
+         {ObjectStore::FieldType::Double, "fine_grind_yield_pct"          , PropertyNames::Fermentable::fineGrindYield_pct       }, // Replaces yield / yield_pct
          {ObjectStore::FieldType::Double, "coarse_grind_yield_pct"        , PropertyNames::Fermentable::coarseGrindYield_pct     },
          {ObjectStore::FieldType::Double, "potential_yield_sg"            , PropertyNames::Fermentable::potentialYield_sg        },
          {ObjectStore::FieldType::Double, "alpha_amylase_dext_units"      , PropertyNames::Fermentable::alphaAmylase_dextUnits   },

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * unitTests/Testing.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * unitTests/Testing.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -449,7 +449,7 @@ void Testing::initTestCase() {
       this->pimpl->m_twoRow = std::make_shared<Fermentable>();
       this->pimpl->m_twoRow->setName("Two Row");
       this->pimpl->m_twoRow->setType(Fermentable::Type::Grain);
-      this->pimpl->m_twoRow->setYield_pct(70.0);
+      this->pimpl->m_twoRow->setFineGrindYield_pct(70.0);
       this->pimpl->m_twoRow->setColor_srm(2.0);
       this->pimpl->m_twoRow->setMoisture_pct(0);
 ///      this->pimpl->m_twoRow->setIsMashed(true);
@@ -534,7 +534,7 @@ void Testing::recipeCalcTest_allGrain() {
    // Ground-truth plato (~12)
    double plato =
       grain_kg
-      * this->pimpl->m_twoRow->yield_pct()/100.0
+      * *this->pimpl->m_twoRow->fineGrindYield_pct()/100.0
       * rec->efficiency_pct()/100.0
       / (rec->batchSize_l() * og) // Total wort mass in kg (not L)
       * 100; // Convert to percent

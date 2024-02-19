@@ -131,6 +131,6 @@ protected:
 
 Q_DECLARE_METATYPE(Misc)
 Q_DECLARE_METATYPE(Misc *)
-Q_DECLARE_METATYPE(QList<std::shared_ptr<RecipeAdditionMisc> >)
+BT_DECLARE_METATYPES(RecipeAdditionMisc)
 
 #endif

@@ -48,11 +48,7 @@ class RecipeAdditionFermentable;
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Fermentable { BtStringConst const property{#property}; }
-///AddPropertyName(addAfterBoil             )
 AddPropertyName(alphaAmylase_dextUnits   )
-///AddPropertyName(amount                   )
-///AddPropertyName(amountIsWeight           )
-///AddPropertyName(amountWithUnits          )
 AddPropertyName(betaGlucan_ppm           )
 AddPropertyName(coarseFineDiff_pct       )
 AddPropertyName(coarseGrindYield_pct     )
@@ -85,7 +81,7 @@ AddPropertyName(recommendMash            )
 AddPropertyName(supplier                 )
 AddPropertyName(type                     )
 AddPropertyName(viscosity_cP             )
-AddPropertyName(yield_pct                )
+///AddPropertyName(yield_pct                )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -199,20 +195,15 @@ public:
    //=================================================== PROPERTIES ====================================================
    //! \brief The \c Type.
    Q_PROPERTY(Type           type                   READ type                   WRITE setType                               )
-///   //! \brief The amount in kg or litres
-///   Q_PROPERTY(double         amount                 READ amount                 WRITE setAmount                             )
-///   Q_PROPERTY(bool           amountIsWeight         READ amountIsWeight         WRITE setAmountIsWeight                     )
-   //! \brief The yield (when finely milled) as a percentage of equivalent glucose.
-   Q_PROPERTY(double         yield_pct              READ yield_pct              WRITE setYield_pct                          )
+///   /**
+///    * \brief Percent dry yield (fine grain) for the grain, or the raw yield by weight if this is an extract adjunct or
+///    *        sugar.
+///    *
+///    *        NB: Not supported by BeerJSON -- see fineGrindYield_pct instead
+///    */
+///   Q_PROPERTY(double         yield_pct              READ yield_pct              WRITE setYield_pct                          )
    //! \brief The color in SRM.
    Q_PROPERTY(double         color_srm              READ color_srm              WRITE setColor_srm                          )
-///   /**
-///    * \brief Whether to add after the boil: \c true if this Fermentable is normally added after the boil.  The default
-///    *        value is \c false since most grains are added during the mash or boil.
-///    *
-///    *        Note that this is stored in BeerXML but not in BeerJSON.
-///    */
-///   Q_PROPERTY(bool           addAfterBoil           READ addAfterBoil           WRITE setAddAfterBoil                       )
    //! \brief The origin.
    Q_PROPERTY(QString        origin                 READ origin                 WRITE setOrigin                             )
    //! \brief The supplier.  NB: Not supported by BeerJSON (which does have Producer and Product ID)
@@ -264,7 +255,13 @@ public:
    Q_PROPERTY(std::optional<int>    grainGroup              READ grainGroupAsInt         WRITE setGrainGroupAsInt       )
    Q_PROPERTY(QString               producer                READ producer                WRITE setProducer              )
    Q_PROPERTY(QString               productId               READ productId               WRITE setProductId             )
-   //! \brief Extract Yield Dry Basis Fine Grind (DBFG) - aka percentage yield, compared to sucrose, of a fine grind
+   /**
+    * \brief Extract Yield Dry Basis Fine Grind (DBFG) - aka percentage yield, compared to sucrose, of a fine grind.
+    *
+    *        We treat this as synonymous with the BeerXML field YIELD, defined as "Percent dry yield (fine grain) for
+    *        the grain, or the raw yield by weight if this is an extract adjunct or sugar."  HOWEVER, note that the
+    *        BeerXML field is required whereas internally, and in BeerJSON, this is an optional field.
+    */
    Q_PROPERTY(std::optional<double> fineGrindYield_pct      READ fineGrindYield_pct      WRITE setFineGrindYield_pct    )
    //! \brief Extract Yield Dry Basis Coarse Grind (DBCG) - aka percentage yield, compared to sucrose, of a coarse grind
    Q_PROPERTY(std::optional<double> coarseGrindYield_pct    READ coarseGrindYield_pct    WRITE setCoarseGrindYield_pct  )
@@ -291,14 +288,6 @@ public:
     *        malt may require multiple step mashes or decoction.
     */
    Q_PROPERTY(std::optional<double> kolbachIndex_pct   READ kolbachIndex_pct   WRITE setKolbachIndex_pct      )
-
-///   /**
-///    * \brief Amounts of a \c Fermentable can be measured by mass or by volume (depending usually on what it is)
-///    *
-///    * .:TBD JSON:. Check what else we need to do to tie in to Mixed2PhysicalQuantities, plus look at how we force weight
-///    * for BeerXML.
-///    */
-///   Q_PROPERTY(Measurement::Amount    amountWithUnits   READ amountWithUnits   WRITE setAmountWithUnits)
 
    /**
     * \brief Percentage of malt that is "glassy".  For a malt, % "glassy" + % "half glassy" + % "mealy" = 100%.
@@ -460,11 +449,8 @@ public:
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    Type    type                                       () const;
-///   double  amount                                     () const;
-///   bool    amountIsWeight                             () const; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-   double  yield_pct                                  () const;
+///   double  yield_pct                                  () const;
    double  color_srm                                  () const;
-///   bool    addAfterBoil                               () const;
    QString origin                                     () const;
    QString supplier                                   () const;
    QString notes                                      () const;
@@ -505,11 +491,8 @@ public:
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setType                     (Type                      const   val);
-///   void setAmount                   (double                    const   val);
-///   void setAmountIsWeight           (bool                      const   val); // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-   void setYield_pct                (double                    const   val);
+///   void setYield_pct                (double                    const   val);
    void setColor_srm                (double                    const   val);
-///   void setAddAfterBoil             (bool                      const   val);
    void setOrigin                   (QString                   const & val);
    void setSupplier                 (QString                   const & val);
    void setNotes                    (QString                   const & val);
@@ -555,11 +538,9 @@ protected:
 
 private:
    Type                      m_type                     ;
-///   double                    m_amount                   ; // Primarily valid in "Use Of" instance
-///   bool                      m_amountIsWeight           ; // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
-   double                    m_yield_pct                ;
+///   double                    m_yield_pct                ;
    double                    m_color_srm                ;
-   bool                      m_addAfterBoil             ; // Primarily valid in "Use Of" instance
+///   bool                      m_addAfterBoil             ; // Primarily valid in "Use Of" instance
    QString                   m_origin                   ;
    QString                   m_supplier                 ;
    QString                   m_notes                    ;
@@ -594,7 +575,6 @@ private:
    std::optional<double>     m_betaGlucan_ppm           ;
 };
 
-Q_DECLARE_METATYPE(QList<                Fermentable *>)
-Q_DECLARE_METATYPE(QList<std::shared_ptr<Fermentable> >)
+BT_DECLARE_METATYPES(Fermentable)
 
 #endif

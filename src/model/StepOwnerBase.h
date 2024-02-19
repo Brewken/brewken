@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/StepOwnerBase.h is part of Brewken, and is copyright the following authors 2023:
+ * model/StepOwnerBase.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -245,22 +245,9 @@ public:
       return step;
    }
 
-   QList<std::shared_ptr<NamedEntity>> stepsDowncast() const {
-      return NamedEntity::downcastList(this->steps());
-   }
-
    void setSteps(QList<std::shared_ptr<DerivedStep>> const & val) {
       this->removeAllSteps();
       for (auto step : val) {
-         this->addStep(step);
-      }
-      return;
-   }
-
-   void setStepsDowncast(QList<std::shared_ptr<NamedEntity>> const & val) {
-      this->removeAllSteps();
-      QList<std::shared_ptr<DerivedStep>> steps = NamedEntity::upcastList<DerivedStep>(val);
-      for (auto step : steps) {
          this->addStep(step);
       }
       return;
@@ -405,9 +392,7 @@ protected:
    public:                                                                               \
       /* Relational getters and setters */                                               \
       QList<std::shared_ptr<NeName##Step>> LcNeName##Steps        () const;              \
-      QList<std::shared_ptr<NamedEntity >> LcNeName##StepsDowncast() const;              \
       void set##NeName##Steps        (QList<std::shared_ptr<NeName##Step>> const & val); \
-      void set##NeName##StepsDowncast(QList<std::shared_ptr<NamedEntity >> const & val); \
                                                                                          \
       /** \brief Connect DerivedStep changed signals to their parent Mashes. */          \
       /*         Needs to be called \b after all the calls to             */             \
@@ -426,12 +411,8 @@ protected:
  */
 #define STEP_OWNER_COMMON_CODE(NeName, LcNeName) \
    QList<std::shared_ptr<NeName##Step>> NeName::LcNeName##Steps        () const { return this->steps(); }         \
-   QList<std::shared_ptr<NamedEntity >> NeName::LcNeName##StepsDowncast() const { return this->stepsDowncast(); } \
    void NeName::set##NeName##Steps(QList<std::shared_ptr<NeName##Step>> const & val) {                            \
       this->setSteps(val); return;                                                                                \
-   }                                                                                                              \
-   void NeName::set##NeName##StepsDowncast(QList<std::shared_ptr<NamedEntity>> const & val) {                     \
-      this->setStepsDowncast(val); return;                                                                        \
    }                                                                                                              \
                                                                                                                   \
    void NeName::connectSignals() { StepOwnerBase<NeName, NeName##Step>::doConnectSignals(); return; }             \

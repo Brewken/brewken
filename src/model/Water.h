@@ -267,7 +267,7 @@ private:
    std::optional<double> m_flouride_ppm    ;
 };
 
-Q_DECLARE_METATYPE(QList<std::shared_ptr<Water> >)
+BT_DECLARE_METATYPES(Water)
 
 static_assert(HasFolder<Water>);
 static_assert(!HasNoFolder<Water>);

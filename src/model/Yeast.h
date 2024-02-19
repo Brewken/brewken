@@ -381,6 +381,6 @@ private:
    std::optional<bool>         m_killerNeutral            ;
 };
 
-Q_DECLARE_METATYPE(QList<                Yeast *>)
-Q_DECLARE_METATYPE(QList<std::shared_ptr<Yeast> >)
+BT_DECLARE_METATYPES(Yeast)
+
 #endif

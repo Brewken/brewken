@@ -46,7 +46,7 @@ FermentableEditor::FermentableEditor(QWidget* parent) :
    SMART_FIELD_INIT(FermentableEditor, label_maxInBatch    , lineEdit_maxInBatch    , Fermentable, PropertyNames::Fermentable::maxInBatch_pct        , 0);
    SMART_FIELD_INIT(FermentableEditor, label_moisture      , lineEdit_moisture      , Fermentable, PropertyNames::Fermentable::moisture_pct          , 0);
    SMART_FIELD_INIT(FermentableEditor, label_protein       , lineEdit_protein       , Fermentable, PropertyNames::Fermentable::protein_pct           , 0);
-   SMART_FIELD_INIT(FermentableEditor, label_yield         , lineEdit_yield         , Fermentable, PropertyNames::Fermentable::yield_pct             , 1);
+///   SMART_FIELD_INIT(FermentableEditor, label_yield         , lineEdit_yield         , Fermentable, PropertyNames::Fermentable::yield_pct             , 1);
    SMART_FIELD_INIT(FermentableEditor, label_inventory     , lineEdit_inventory     , Fermentable, PropertyNames::Ingredient::totalInventory         , 1);
    SMART_FIELD_INIT(FermentableEditor, label_origin        , lineEdit_origin        , Fermentable, PropertyNames::Fermentable::origin                   );
    SMART_FIELD_INIT(FermentableEditor, label_supplier      , lineEdit_supplier      , Fermentable, PropertyNames::Fermentable::supplier                 );
@@ -90,7 +90,7 @@ void FermentableEditor::writeFieldsToEditItem() {
    this->m_editItem->setType(this->comboBox_type      ->getNonOptValue<Fermentable::Type      >());
 
    this->m_editItem->setName                  (this->lineEdit_name          ->text                  ());
-   this->m_editItem->setYield_pct             (this->lineEdit_yield         ->getNonOptValue<double>());
+///   this->m_editItem->setYield_pct             (this->lineEdit_yield         ->getNonOptValue<double>());
    this->m_editItem->setColor_srm             (this->lineEdit_color         ->getNonOptCanonicalQty ());
 ///   this->m_editItem->setAddAfterBoil          (this->checkBox_addAfterBoil  ->checkState() == Qt::Checked);
    this->m_editItem->setOrigin                (this->lineEdit_origin        ->text                  ());
@@ -140,7 +140,7 @@ void FermentableEditor::readFieldsFromEditItem(std::optional<QString> propName) 
    if (!propName || *propName == PropertyNames::NamedEntity::name                  ) { this->lineEdit_name          ->setTextCursor(m_editItem->name                  ()); // Continues to next line
                                                                                        this->tabWidget_editor->setTabText(0, m_editItem->name());                                               if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Fermentable::type                  ) { this->comboBox_type          ->setValue     (m_editItem->type                  ());                      if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Fermentable::yield_pct             ) { this->lineEdit_yield         ->setQuantity    (m_editItem->yield_pct             ());                      if (propName) { return; } }
+///   if (!propName || *propName == PropertyNames::Fermentable::yield_pct             ) { this->lineEdit_yield         ->setQuantity    (m_editItem->yield_pct             ());                      if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Fermentable::color_srm             ) { this->lineEdit_color         ->setQuantity    (m_editItem->color_srm             ());                      if (propName) { return; } }
 ///   if (!propName || *propName == PropertyNames::Fermentable::addAfterBoil          ) { this->checkBox_addAfterBoil  ->setCheckState(m_editItem->addAfterBoil() ? Qt::Checked : Qt::Unchecked);  if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Fermentable::origin                ) { this->lineEdit_origin        ->setTextCursor(m_editItem->origin                ());                      if (propName) { return; } }

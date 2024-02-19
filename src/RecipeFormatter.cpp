@@ -355,7 +355,7 @@ public:
       body += QString("<td align=\"right\" class=\"right\">%1</td>"
                      "<td class=\"value\">%2</td></tr>")
             .arg(displayMetricVolumes ? tr("Estimated calories (per 33 cl)") : tr("Estimated calories (per 12 oz)"))
-            .arg(Measurement::displayQuantity(displayMetricVolumes ? rec->calories33cl() : rec->calories12oz(), 0) );
+            .arg(Measurement::displayQuantity(displayMetricVolumes ? rec->caloriesPer33cl() : rec->caloriesPerUs12oz(), 0) );
 
       body += "</table>";
 
@@ -445,18 +445,19 @@ public:
             .arg(tr("Amount"))
             .arg(tr("Mashed"))
             .arg(tr("Late"))
-            .arg(tr("Yield"))
+            .arg(tr("Extract Yield Dry Basis Fine Grind (DBFG)"))
             .arg(tr("Color"));
       // Now add a row for each fermentable
       for (auto const & fermentableAddition : fermentableAdditions) {
          auto const & fermentable = fermentableAddition->fermentable();
+         auto const yield = fermentable->fineGrindYield_pct();
          ftable += QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td><td>%6%</td><td>%7</td></tr>")
                .arg(fermentable->name())
                .arg(Fermentable::typeDisplayNames[fermentable->type()])
                .arg(Measurement::displayAmount(fermentableAddition->amount()))
                .arg(fermentableAddition->stage() == RecipeAddition::Stage::Mash ? tr("Yes") : tr("No") )
                .arg(fermentableAddition->addAfterBoil() ? tr("Yes") : tr("No"))
-               .arg(Measurement::displayQuantity(fermentable->yield_pct(), 0) )
+               .arg(yield ? Measurement::displayQuantity(*yield, 0) : "?")
                .arg(Measurement::displayAmount(Measurement::Amount{fermentable->color_srm(), Measurement::Units::srm}, 1));
       }
       // One row for the total grain (QTextBrowser does not know the caption tag)
@@ -496,7 +497,11 @@ public:
             amounts.append(Measurement::displayAmount(fermentableAddition->amount()));
             masheds.append(fermentableAddition->stage() == RecipeAddition::Stage::Mash ? tr("Yes") : tr("No"));
             lates.append(fermentableAddition->addAfterBoil() ? tr("Yes") : tr("No"));
-            yields.append( QString("%1%").arg(Measurement::displayQuantity(fermentable->yield_pct(), 0) ) );
+            if (fermentable->fineGrindYield_pct()) {
+               yields.append(QString("%1%").arg(Measurement::displayQuantity(*fermentable->fineGrindYield_pct(), 0)));
+            } else {
+               yields.append("?");
+            }
             colors.append( QString("%1").arg(Measurement::displayAmount(Measurement::Amount{fermentable->color_srm(),
                                                                                             Measurement::Units::srm}, 1)));
          }
@@ -1307,8 +1312,8 @@ QString RecipeFormatter::getToolTip(Equipment* kit) {
 }
 
 // Once we do inventory, this needs to be fixed to show amount on hand
-QString RecipeFormatter::getToolTip(Fermentable* ferm) {
-   if (ferm == nullptr) {
+QString RecipeFormatter::getToolTip(Fermentable* fermentable) {
+   if (fermentable == nullptr) {
       return "";
    }
 
@@ -1322,23 +1327,24 @@ QString RecipeFormatter::getToolTip(Fermentable* ferm) {
    body += QString("<div id=\"headerdiv\">");
    body += QString("<table id=\"tooltip\">");
    body += QString("<caption>%1</caption>")
-         .arg( ferm->name() );
+         .arg( fermentable->name() );
 
    // First row -- type and color
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
            .arg(tr("Type"))
-           .arg(Fermentable::typeDisplayNames[ferm->type()]);
+           .arg(Fermentable::typeDisplayNames[fermentable->type()]);
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
            .arg(tr("Color"))
-           .arg(Measurement::displayAmount(Measurement::Amount{ferm->color_srm(), Measurement::Units::srm}, 1));
+           .arg(Measurement::displayAmount(Measurement::Amount{fermentable->color_srm(), Measurement::Units::srm}, 1));
    // Second row -- isMashed and yield?
 //   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
 //           .arg(tr("Mashed"))
-//           .arg( ferm->stage() == RecipeAddition::Stage::Mash ? tr("Yes") : tr("No") );
+//           .arg( fermentable->stage() == RecipeAddition::Stage::Mash ? tr("Yes") : tr("No") );
    body += QString("<tr><td class=\"left\">.</td><td class=\"value\">.</td>");
+   auto const yield = fermentable->fineGrindYield_pct();
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-           .arg(tr("Yield"))
-           .arg(Measurement::displayQuantity(ferm->yield_pct(), 3));
+           .arg(tr("Extract Yield Dry Basis Fine Grind (DBFG)"))
+           .arg(yield ? Measurement::displayQuantity(*yield, 3) : "?");
 
    body += "</table></body></html>";
 

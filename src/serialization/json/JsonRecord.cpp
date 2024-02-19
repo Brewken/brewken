@@ -300,13 +300,19 @@ JsonRecord::~JsonRecord() = default;
    // Loop through all the fields that we know/care about.  Anything else is intentionally ignored.  (We won't know
    // what to do with it, and, if it weren't allowed to be there, it would have generated an error at schema parsing.)
    //
+   // Note that it's a coding error if there are no fields in the record definition.  (This usually means a template
+   // specialisation was omitted in serialization/json/BeerJson.cpp.)
+   //
    qDebug() <<
-      Q_FUNC_INFO << "Examining" << this->m_recordDefinition.fieldDefinitions.size() << "field definitions";
+      Q_FUNC_INFO << "Examining" << this->m_recordDefinition.fieldDefinitions.size() << "field definitions for" <<
+      this->m_recordDefinition.m_recordName;
+   Q_ASSERT(this->m_recordDefinition.fieldDefinitions.size() > 0);
    for (auto & fieldDefinition : this->m_recordDefinition.fieldDefinitions) {
       //
       // NB: As with XML processing in XmlRecord::load, if we don't find a node, there's nothing for us to do.  The
       // schema validation should already flagged up an error if there are missing _required_ fields.  Equally,
-      // although we only look for nodes we know about, some of these we won't use for one reason or another.
+      // although we only look for nodes we know about, some of these we won't use for one reason or another (eg "write
+      // only" fields such as IBU on Recipe).
       //
       std::error_code errorCode;
       boost::json::value * container = fieldDefinition.xPath.followPathFrom(&this->m_recordData, errorCode);
@@ -559,7 +565,7 @@ JsonRecord::~JsonRecord() = default;
                   // In BeerJSON, DateType is a string matching this regexp:
                   //   "\\d{4}-\\d{2}-\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
                   // This is One True Date Format™ (aka ISO 8601), which makes our life somewhat easier
-                  Q_ASSERT(!container->is_string());
+                  Q_ASSERT(container->is_string());
                   {
                      QString value{container->get_string().c_str()};
                      QDate rawValue = QDate::fromString(value, Qt::ISODate);
@@ -764,7 +770,7 @@ JsonRecord::~JsonRecord() = default;
          qDebug() << Q_FUNC_INFO << "Top-level record has" << childRecordSet.records.size() << "entries";
       }
 
-      QList< std::shared_ptr<NamedEntity> > processedChildren;
+      QList<std::shared_ptr<NamedEntity>> processedChildren;
       for (auto & childRecord : childRecordSet.records) {
          // The childRecord variable is a reference to a std::unique_ptr (because the vector we're looping over owns the
          // records it contains), which is why we have all the "member of pointer" (->) operators below.
@@ -790,7 +796,14 @@ JsonRecord::~JsonRecord() = default;
       // JSON to work.  However, we can tell whether a property is read-only by calling QMetaProperty::isWritable().
       //
       if (childRecordSet.parentFieldDefinition) {
-         auto const & propertyPath = childRecordSet.parentFieldDefinition->propertyPath;
+         auto const & fieldDefinition{*childRecordSet.parentFieldDefinition};
+         Q_ASSERT(std::holds_alternative<JsonRecordDefinition const *>(fieldDefinition.valueDecoder));
+         Q_ASSERT(std::get              <JsonRecordDefinition const *>(fieldDefinition.valueDecoder));
+         JsonRecordDefinition const & childRecordDefinition{
+            *std::get<JsonRecordDefinition const *>(fieldDefinition.valueDecoder)
+         };
+
+         auto const & propertyPath = fieldDefinition.propertyPath;
          if (!propertyPath.isNull()) {
             // It's a coding error if we had a property defined for a record that's not trying to populate a NamedEntity
             // (ie for the root record).
@@ -800,7 +813,7 @@ JsonRecord::~JsonRecord() = default;
             //
             // How we set the property depends on whether this is a single child record or an array of them
             //
-            if (childRecordSet.parentFieldDefinition->type != JsonRecordDefinition::FieldType::ListOfRecords) {
+            if (fieldDefinition.type != JsonRecordDefinition::FieldType::ListOfRecords) {
                // It's a coding error if we ended up with more than on child when there's only supposed to be one!
                if (processedChildren.size() > 1) {
                   qCritical() <<
@@ -808,11 +821,53 @@ JsonRecord::~JsonRecord() = default;
                      this->m_recordDefinition.m_namedEntityClassName << "object, but found" << processedChildren.size();
                   Q_ASSERT(false);
                }
-               // TBD: For the moment we are assuming single-item setters always take raw pointers
-               valueToSet = QVariant::fromValue(processedChildren.first().get());
+
+               //
+               // We need to pass a pointer to the relevant subclass of NamedEntity (call it of class ChildEntity for
+               // the sake of argument) in to the property setter (inside a QVariant).  As in JsonRecord::toJson, we
+               // need to handle any of the following forms:
+               //    ChildEntity *                               -- eg Equipment *
+               //    std::shared_ptr<ChildEntity>                -- eg std::shared_ptr<Mash>
+               //    std::optional<std::shared_ptr<ChildEntity>> -- eg std::optional<std::shared_ptr<Boil>>
+               //
+               // First we assert that they type is _some_ sort of pointer, otherwise it's a coding error.
+               //
+               auto const & typeInfo = fieldDefinition.propertyPath.getTypeInfo(*this->m_recordDefinition.m_typeLookup);
+               Q_ASSERT(typeInfo.pointerType != TypeInfo::PointerType::NotPointer);
+
+               if (typeInfo.pointerType == TypeInfo::PointerType::RawPointer) {
+                  // For a raw pointer, we don't have to upcast as the pointer will get upcast in the setter during the
+                  // extraction from QVariant
+                  valueToSet = QVariant::fromValue(processedChildren.first().get());
+               } else if (typeInfo.pointerType == TypeInfo::PointerType::RequiredSharedPointer) {
+                  Q_ASSERT(childRecordDefinition.m_upAndDownCasters.m_pointerUpcaster);
+                  valueToSet = QVariant::fromValue(
+                     childRecordDefinition.m_upAndDownCasters.m_pointerUpcaster(processedChildren.first())
+                  );
+               } else {
+                  // Should be the only possibility left.
+                  Q_ASSERT(typeInfo.pointerType == TypeInfo::PointerType::OptionalSharedPointer);
+                  Q_ASSERT(childRecordDefinition.m_upAndDownCasters.m_optionalPointerUpcaster);
+                  std::optional<std::shared_ptr<NamedEntity>> processedChild {processedChildren.first()};
+                  valueToSet = QVariant::fromValue(
+                     childRecordDefinition.m_upAndDownCasters.m_optionalPointerUpcaster(processedChild)
+                  );
+               }
+
             } else {
+               //
                // Multi-item setters all take a list of shared pointers
-               valueToSet = QVariant::fromValue(processedChildren);
+               //
+               // At this point we have QList<std::shared_ptr<NamedEntity>>, which the setter will not be able to
+               // handle.  We need to convert it to a list of upcast elements -- eg QList<shared_ptr<Hop>>
+               //
+               Q_ASSERT(std::holds_alternative<JsonRecordDefinition const *>(fieldDefinition.valueDecoder));
+               Q_ASSERT(std::get              <JsonRecordDefinition const *>(fieldDefinition.valueDecoder));
+               JsonRecordDefinition const & childRecordDefinition{
+                  *std::get<JsonRecordDefinition const *>(fieldDefinition.valueDecoder)
+               };
+               Q_ASSERT(childRecordDefinition.m_upAndDownCasters.m_listUpcaster);
+               valueToSet = childRecordDefinition.m_upAndDownCasters.m_listUpcaster(processedChildren);
             }
 
             if (!propertyPath.setValue(*this->m_namedEntity, valueToSet)) {
@@ -1042,10 +1097,10 @@ void JsonRecord::insertValue(JsonRecordDefinition::FieldDefinition const & field
          if (Optional::removeOptionalWrapperIfPresent<QString>(value, propertyIsOptional)) {
 
             std::string valueAsString = value.toString().toStdString();
-            // On the whole, there's no benefit in writing out a field for which we don't have a value
-            if (!valueAsString.empty()) {
-               recordDataAsObject.emplace(key, valueAsString);
-            }
+            // You might think there's no benefit in writing out a field for which we don't have a value.  However, some
+            // string fields are required in the BeerJSON schema, which means a file won't validate if they are not
+            // present.
+            recordDataAsObject.emplace(key, valueAsString);
          }
          break;
 
@@ -1191,7 +1246,7 @@ void JsonRecord::insertValue(JsonRecordDefinition::FieldDefinition const & field
    return;
 }
 
-void JsonRecord::listToJson(QList< std::shared_ptr<NamedEntity> > const & objectsToWrite,
+bool JsonRecord::listToJson(QList< std::shared_ptr<NamedEntity> > const & objectsToWrite,
                             boost::json::array & outputArray,
                             JsonCoding const & coding,
                             JsonRecordDefinition const & recordDefinition) {
@@ -1203,17 +1258,18 @@ void JsonRecord::listToJson(QList< std::shared_ptr<NamedEntity> > const & object
       std::unique_ptr<JsonRecord> jsonRecord{
          recordDefinition.makeRecord(coding, neJson)
       };
-      jsonRecord->toJson(*obj);
+      if (!jsonRecord->toJson(*obj)) {
+         return false;
+      }
 
       // boost::json::array::push_back() appends a copy of its argument to the array, so we don't have to worry
       // that neJson and jsonRecord are about to go out of scope
       outputArray.push_back(neJson);
    }
-   return;
+   return true;
 }
 
-// TODO Finish this!
-void JsonRecord::toJson(NamedEntity const & namedEntityToExport) {
+bool JsonRecord::toJson(NamedEntity const & namedEntityToExport) {
    Q_ASSERT(this->m_recordData.is_object());
    qDebug() <<
       Q_FUNC_INFO << "Exporting JSON for" << namedEntityToExport.metaObject()->className() << "#" <<
@@ -1223,6 +1279,15 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport) {
 
    // BeerJSON doesn't care about field order, so we don't either (though it would be relatively small additional work
    // to control field order precisely).
+   //
+   // Note that it's a coding error if there are no fields in the record definition.  (This usually means a template
+   // specialisation was omitted in serialization/json/BeerJson.cpp.)
+   //
+   qDebug() <<
+      Q_FUNC_INFO << "Examining" << this->m_recordDefinition.fieldDefinitions.size() << "field definitions for" <<
+      this->m_recordDefinition.m_recordName;
+   Q_ASSERT(this->m_recordDefinition.fieldDefinitions.size() > 0);
+
    for (auto & fieldDefinition : this->m_recordDefinition.fieldDefinitions) {
       qDebug() << Q_FUNC_INFO <<
          "fieldDefinition.xPath:" << fieldDefinition.xPath << ", fieldDefinition.propertyPath:" <<
@@ -1244,9 +1309,33 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport) {
       Q_ASSERT(value.isValid());
 
       //
+      // Normally, for each field, we are creating a key:value pair to insert in the current JSON object, where the key
+      // comes from fieldDefinition.xPath and the value comes from reading fieldDefinition.propertyPath.  However, there
+      // is special case where we are doing something different.
+      //
+      // If the current field has an empty XPath then it should be a JsonRecordDefinition::FieldType::Record that we are
+      // treating differently.  Instead of inserting the subrecord against a key, we insert all the fields (ie all the
+      // key:value pairs) of the subrecord into the current object.
+      //
+      // This is to handle cases such as hop_additions in BeerJSON, where each element of the hop_additions array
+      // contains fields both from a RecipeAdditionHop and from a Hop "contained" in that RecipeAdditionHop.
+      //
+      // See also comment on JsonRecordDefinition::FieldType::Record in serialization/json/JsonRecordDefinition.h
+      //
+      if (fieldDefinition.xPath.isEmpty()) {
+         // It's a coding error if we're trying to give something other than a Record an empty XPath
+         Q_ASSERT(JsonRecordDefinition::FieldType::Record == fieldDefinition.type);
+
+         qDebug() <<
+            Q_FUNC_INFO << "Empty XPath for property path" << fieldDefinition.propertyPath << "means put its fields in "
+            "this record";
+      }
+
+      //
       // If we have a non-trivial XPath then we'll need to traverse through any sub-objects and sub-arrays (creating
       // any that are not present) before arriving at the leaf object where we can set the value.
-      // JsonXPath::makePointerToLeaf() does all the heaving lifting here.
+      // JsonXPath::makePointerToLeaf() does all the heaving lifting here -- including correctly handling the case of an
+      // empty XPath (where it will just return empty string and leave valuePointer unmodified).
       //
       // Note that, although we start and end with an object, we need to pass in the containing value.  (If you have
       // a boost::json::value, you can trivially get to its contained boost::json::object, but you can't do the
@@ -1272,20 +1361,86 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport) {
          };
 
          if (JsonRecordDefinition::FieldType::Record == fieldDefinition.type) {
-            NamedEntity * childNamedEntity =
-               fieldDefinition.propertyPath.getValue(namedEntityToExport).value<NamedEntity *>();
-            if (childNamedEntity) {
-               boost::json::value outputObject(boost::json::object_kind); // Can't use braces on this constructor until Boost 1.81!
+            //
+            // Things get a bit tricky here because we want a pointer to the child entity (call it of class ChildEntity
+            // for the sake of argument) and moreover we need to be able to cast that pointer to a pointer to
+            // NamedEntity.  However, the pointer we get back could be any of the following forms:
+            //    ChildEntity *                               -- eg Equipment *
+            //    std::shared_ptr<ChildEntity>                -- eg std::shared_ptr<Mash>
+            //    std::optional<std::shared_ptr<ChildEntity>> -- eg std::optional<std::shared_ptr<Boil>>
+            //
+            // So we need to handle each possibility.
+            //
+            // First we assert that they type is _some_ sort of pointer, otherwise it's a coding error.
+            //
+            auto const & typeInfo = fieldDefinition.propertyPath.getTypeInfo(*this->m_recordDefinition.m_typeLookup);
+            Q_ASSERT(typeInfo.pointerType != TypeInfo::PointerType::NotPointer);
+            QVariant childNamedEntityVariant = fieldDefinition.propertyPath.getValue(namedEntityToExport);
 
-               // This looks a little odd at first glance, but the point is that JsonRecordDefinition::makeRecord
-               // returns std::unique_ptr<JsonRecord>
+            // Normally leave this log statement commented out to avoid cluttering the logs
+            qDebug() <<
+               Q_FUNC_INFO << "childNamedEntityVariant:" << childNamedEntityVariant << ", childRecordDefinition:" <<
+               childRecordDefinition;
+
+            std::shared_ptr<NamedEntity> childNamedEntitySp{};
+            NamedEntity * childNamedEntity{};
+            if (typeInfo.pointerType == TypeInfo::PointerType::RawPointer) {
+               // For a raw pointer, the cast is simple as it can happen during the extraction from QVariant
+               childNamedEntity = childNamedEntityVariant.value<NamedEntity *>();
+            } else if (typeInfo.pointerType == TypeInfo::PointerType::RequiredSharedPointer) {
+               // For a shared pointer it's a bit more tricky as we can't directly extract the uncast pointer from the
+               // QVariant, so we need a little help to apply std::static_pointer_cast.
+               Q_ASSERT(childRecordDefinition.m_upAndDownCasters.m_pointerDowncaster);
+               childNamedEntitySp =
+                  childRecordDefinition.m_upAndDownCasters.m_pointerDowncaster(childNamedEntityVariant);
+               childNamedEntity = childNamedEntitySp.get();
+            } else {
+               // Should be the only possibility left
+               Q_ASSERT(typeInfo.pointerType == TypeInfo::PointerType::OptionalSharedPointer);
+               Q_ASSERT(childRecordDefinition.m_upAndDownCasters.m_optionalPointerDowncaster);
+               std::optional<std::shared_ptr<NamedEntity>> temp =
+                  childRecordDefinition.m_upAndDownCasters.m_optionalPointerDowncaster(childNamedEntityVariant);
+               if (temp) {
+                  childNamedEntitySp = *temp;
+                  childNamedEntity = childNamedEntitySp.get();
+               }
+            }
+
+            if (childNamedEntity) {
+               //
+               // We can share more code with the "empty XPath" case if we get any JSON object creation and insertion
+               // done first.
+               //
+               if (!fieldDefinition.xPath.isEmpty()) {
+                  boost::json::value newObject(boost::json::object_kind); // Can't use braces on this constructor until Boost 1.81!
+                  // boost::json::object::emplace copies the object being inserted, and returns a std::pair where first
+                  // is an iterator to the existing or inserted element, and second is true if the insertion took place
+                  // or false otherwise.
+                  auto emplaceResult = valuePointer->get_object().emplace(key, newObject);
+                  if (!emplaceResult.second) {
+                     // In the general case, we would expect failure to occur if the key is already present.  Here, it's
+                     // probably a coding error but, for now at least, we'll allow for the possibility that there was a
+                     // run-time error.
+                     qCritical() << Q_FUNC_INFO << "Error inserting new JSON object at key" << key.c_str();
+                     return false;
+                  }
+
+                  valuePointer = &emplaceResult.first->value();
+               }
+
+               //
+               // If we made a new sub-object in the JSON document (non-empty XPath), valuePointer is now pointing to
+               // it.
+               //
+               // Otherwise (empty XPath), valuePointer is still pointing to the "current" object.
+               //
                qDebug() << Q_FUNC_INFO << "Creating JsonRecord for" << fieldDefinition.propertyPath;
                std::unique_ptr<JsonRecord> subRecord{
-                  childRecordDefinition.makeRecord(this->m_coding, outputObject)
+                  childRecordDefinition.makeRecord(this->m_coding, *valuePointer)
                };
-               subRecord->toJson(*childNamedEntity);
-
-               valuePointer->get_object().emplace(key, outputObject);
+               if (!subRecord->toJson(*childNamedEntity)) {
+                  return false;
+               }
 
             } else {
                qDebug() <<
@@ -1304,8 +1459,9 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport) {
             // will correctly convert the QVariant to QList<std::shared_ptr<NamedEntity>>.
             //
             qDebug() << Q_FUNC_INFO << "value: " << value;
-            Q_ASSERT(childRecordDefinition.m_listDowncaster);
-            QList< std::shared_ptr<NamedEntity> > objectsToWrite = childRecordDefinition.m_listDowncaster(value);
+            Q_ASSERT(childRecordDefinition.m_upAndDownCasters.m_listDowncaster);
+            QList< std::shared_ptr<NamedEntity> > objectsToWrite =
+               childRecordDefinition.m_upAndDownCasters.m_listDowncaster(value);
             qDebug() << Q_FUNC_INFO << "value (" << value << ") gives" << objectsToWrite.size() << "objects";
 
             //
@@ -1323,7 +1479,7 @@ void JsonRecord::toJson(NamedEntity const & namedEntityToExport) {
       }
 
    }
-   return;
+   return true;
 }
 
 ///void JsonRecord::subRecordToJson(JsonRecordDefinition::FieldDefinition const & fieldDefinition,

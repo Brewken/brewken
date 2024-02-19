@@ -38,18 +38,16 @@ public:
     * \param recordName The name of the XML or JSON object for this type of record, eg "fermentables" for a list of
     *                   fermentables in BeerXML.
     */
-   SerializationRecordDefinition(char       const * const   recordName,
-                                 TypeLookup const * const   typeLookup,
-                                 char       const * const   namedEntityClassName,
-                                 QString            const & localisedEntityName,
-                                 QVariant                 (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
-                                 QList<std::shared_ptr<NamedEntity>> (*listDowncaster)(QVariant const &)) :
+   SerializationRecordDefinition(char       const *            const   recordName,
+                                 TypeLookup const *            const   typeLookup,
+                                 char       const *            const   namedEntityClassName,
+                                 QString                       const & localisedEntityName,
+                                 NamedEntity::UpAndDownCasters const   upAndDownCasters) :
       m_recordName          {recordName},
       m_typeLookup          {typeLookup},
       m_namedEntityClassName{namedEntityClassName},
       m_localisedEntityName {localisedEntityName},
-      m_listUpcaster        {listUpcaster},
-      m_listDowncaster      {listDowncaster} {
+      m_upAndDownCasters    {upAndDownCasters} {
       return;
    }
    ~SerializationRecordDefinition() = default;
@@ -70,10 +68,12 @@ public:
     */
    QString const m_localisedEntityName;
 
-   //! Pointer to relevant NamedEntity::upcastListToVariant function
-   QVariant                            (*m_listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &);
-   //! Pointer to relevant NamedEntity::downcastListFromVariant function
-   QList<std::shared_ptr<NamedEntity>> (*m_listDowncaster)(QVariant const &);
+   NamedEntity::UpAndDownCasters const m_upAndDownCasters;
+
+///   //! Pointer to relevant NamedEntity::upcastListToVariant function
+///   QVariant                            (*m_listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &);
+///   //! Pointer to relevant NamedEntity::downcastListFromVariant function
+///   QList<std::shared_ptr<NamedEntity>> (*m_listDowncaster)(QVariant const &);
 
 };
 

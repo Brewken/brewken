@@ -37,6 +37,7 @@
 #include "database/ObjectStoreWrapper.h"
 #include "HeatCalculations.h"
 #include "Localization.h"
+#include "measurement/Amount.h"
 #include "measurement/ColorMethods.h"
 #include "measurement/IbuMethods.h"
 #include "measurement/Measurement.h"
@@ -66,6 +67,8 @@
 #include "PhysicalConstants.h"
 
 namespace {
+   double const us12ozInLiters = Measurement::Units::us_fluidOunces.toCanonical(12.0).quantity;
+   double const usPintInLiters = Measurement::Units::us_fluidOunces.toCanonical(16.0).quantity;
 
    /**
     * \brief This is used to assist the creation of instructions.
@@ -416,13 +419,13 @@ public:
 
       std::shared_ptr<NE> valToAdd = copyIfNeeded(*val);
       ourId = valToAdd->key();
+      qDebug() << Q_FUNC_INFO << "Setting" << propertyToPropertyName<NE>() << "to" << ourId;
       this->m_self.propagatePropertyChange(propertyToPropertyName<NE>());
 
       connect(valToAdd.get(), &NamedEntity::changed, &this->m_self, &Recipe::acceptChangeToContainedObject);
       emit this->m_self.changed(this->m_self.metaProperty(*property), QVariant::fromValue<NE *>(valToAdd.get()));
 
       this->m_self.recalcAll();
-
       return;
    }
 
@@ -457,13 +460,13 @@ public:
 
       std::shared_ptr<NE> valToAdd = copyIfNeeded(**val);
       ourId = valToAdd->key();
+      qDebug() << Q_FUNC_INFO << "Setting" << propertyToPropertyName<NE>() << "to" << ourId;
       this->m_self.propagatePropertyChange(propertyToPropertyName<NE>());
 
       connect(valToAdd.get(), &NamedEntity::changed, &this->m_self, &Recipe::acceptChangeToContainedObject);
       emit this->m_self.changed(this->m_self.metaProperty(*property), QVariant::fromValue<NE *>(valToAdd.get()));
 
       this->m_self.recalcAll();
-
       return;
    }
 
@@ -1021,48 +1024,47 @@ TypeLookup const Recipe::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::notes             , Recipe::m_notes             ,           NonPhysicalQuantity::String        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::tasteNotes        , Recipe::m_tasteNotes        ,           NonPhysicalQuantity::String        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::tasteRating       , Recipe::m_tasteRating       ,           NonPhysicalQuantity::Dimensionless ),
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::style             , Recipe::m_style             ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::styleId           , Recipe::m_styleId             ), //<<
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::mash              , Recipe::m_mash              ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::mashId            , Recipe::m_mashId              ), //<<
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::boilId            , Recipe::m_boilId              ), //<<
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::fermentationId    , Recipe::m_fermentationId      ), //<<
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::equipment         , Recipe::m_equipment         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::equipmentId       , Recipe::m_equipmentId         ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::styleId           , Recipe::m_styleId           ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::mashId            , Recipe::m_mashId            ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::boilId            , Recipe::m_boilId            ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::fermentationId    , Recipe::m_fermentationId    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::equipmentId       , Recipe::m_equipmentId       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::og                , Recipe::m_og                , Measurement::PhysicalQuantity::Density       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::fg                , Recipe::m_fg                , Measurement::PhysicalQuantity::Density       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::locked            , Recipe::m_locked            ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::ancestorId        , Recipe::m_ancestor_id       ), //<<
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::ancestors        , Recipe::m_ancestor_id       ), //<<
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::ancestorId        , Recipe::m_ancestor_id       ),
 
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::ABV_pct           , Recipe::m_ABV_pct           ,           NonPhysicalQuantity::Percentage    ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::boilGrav          , Recipe::m_boilGrav          , Measurement::PhysicalQuantity::Density       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::boilVolume_l      , Recipe::m_boilVolume_l      , Measurement::PhysicalQuantity::Volume        ),
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::brewNotes         , Recipe::m_brewNotes         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::calories          , Recipe::m_calories          ,           NonPhysicalQuantity::Dimensionless ), // .:TBD:. One day this should perhaps become Measurement::PhysicalQuantity::Energy
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::caloriesPerLiter  , Recipe::m_caloriesPerLiter  ,           NonPhysicalQuantity::Dimensionless ), // .:TBD:. One day this should perhaps become Measurement::PhysicalQuantity::Energy
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::caloriesPerUs12oz, Recipe::caloriesPerUs12oz,         NonPhysicalQuantity::Dimensionless ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::caloriesPerUsPint, Recipe::caloriesPerUsPint,         NonPhysicalQuantity::Dimensionless ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::color_srm         , Recipe::m_color_srm         , Measurement::PhysicalQuantity::Color         ),
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::fermentableIds    , Recipe::impl::fermentableIds),
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::fermentables      , Recipe::m_fermentables      ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::finalVolume_l     , Recipe::m_finalVolume_l     , Measurement::PhysicalQuantity::Volume        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::grainsInMash_kg   , Recipe::m_grainsInMash_kg   , Measurement::PhysicalQuantity::Mass          ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::grains_kg         , Recipe::m_grains_kg         , Measurement::PhysicalQuantity::Mass          ),
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::hops              , Recipe::m_hops              ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::IBU               , Recipe::m_IBU               , Measurement::PhysicalQuantity::Bitterness    ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::IBUs              , Recipe::m_IBUs              ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::instructionIds    , Recipe::impl::instructionIds),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::instructions      , Recipe::m_instructions      ),
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::miscIds           , Recipe::impl::miscIds       ),
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::miscs             , Recipe::m_miscs             ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::points            , Recipe::m_points            ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::postBoilVolume_l  , Recipe::m_postBoilVolume_l  , Measurement::PhysicalQuantity::Volume        ),
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::saltIds           , Recipe::impl::saltIds       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::SRMColor          , Recipe::m_SRMColor          ), // NB: This is an RGB display color
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::waterIds          , Recipe::impl::waterIds      ),
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::waters            , Recipe::m_waters            ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::wortFromMash_l    , Recipe::m_wortFromMash_l    , Measurement::PhysicalQuantity::Volume        ),
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::yeastIds          , Recipe::impl::yeastIds      ),
-//      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::yeasts            , Recipe::m_yeasts            ),
-      // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::style               , Recipe::style               ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::mash                , Recipe::mash                ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::boil                , Recipe::boil                ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::fermentation        , Recipe::fermentation        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::equipment           , Recipe::equipment           ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::brewNotes           , Recipe::brewNotes           ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::fermentableAdditions, Recipe::fermentableAdditions),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::hopAdditions        , Recipe::hopAdditions        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::miscAdditions       , Recipe::miscAdditions       ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::waterUses           , Recipe::waterUses           ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::yeastAdditions      , Recipe::yeastAdditions      ),
+
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::beerAcidity_pH         , Recipe::m_beerAcidity_pH         , Measurement::PhysicalQuantity::Acidity   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::apparentAttenuation_pct, Recipe::m_apparentAttenuation_pct,           NonPhysicalQuantity::Percentage),
 
@@ -1126,7 +1128,7 @@ Recipe::Recipe(QString name) :
    m_postBoilVolume_l       {0.0                 },
    m_finalVolume_l          {0.0                 },
    m_finalVolumeNoLosses_l  {0.0                 },
-   m_calories               {0.0                 },
+   m_caloriesPerLiter       {0.0                 },
    m_grainsInMash_kg        {0.0                 },
    m_grains_kg              {0.0                 },
    m_SRMColor               {},
@@ -1165,7 +1167,7 @@ Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_date                   , namedParameterBundle, PropertyNames::Recipe::date                   ),
    SET_REGULAR_FROM_NPB (m_carbonation_vols       , namedParameterBundle, PropertyNames::Recipe::carbonation_vols       ),
    SET_REGULAR_FROM_NPB (m_forcedCarbonation      , namedParameterBundle, PropertyNames::Recipe::forcedCarbonation      ),
-   SET_REGULAR_FROM_NPB (m_primingSugarName       , namedParameterBundle, PropertyNames::Recipe::primingSugarName       ),
+   SET_REGULAR_FROM_NPB (m_primingSugarName       , namedParameterBundle, PropertyNames::Recipe::primingSugarName       , ""),
    SET_REGULAR_FROM_NPB (m_carbonationTemp_c      , namedParameterBundle, PropertyNames::Recipe::carbonationTemp_c      ),
    SET_REGULAR_FROM_NPB (m_primingSugarEquiv      , namedParameterBundle, PropertyNames::Recipe::primingSugarEquiv      ),
    SET_REGULAR_FROM_NPB (m_kegPrimingFactor       , namedParameterBundle, PropertyNames::Recipe::kegPrimingFactor       ),
@@ -1179,6 +1181,8 @@ Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_fermentationId         , namedParameterBundle, PropertyNames::Recipe::fermentationId         , -1),
    SET_REGULAR_FROM_NPB (m_beerAcidity_pH         , namedParameterBundle, PropertyNames::Recipe::beerAcidity_pH         ),
    SET_REGULAR_FROM_NPB (m_apparentAttenuation_pct, namedParameterBundle, PropertyNames::Recipe::apparentAttenuation_pct),
+   // Note that, although we read them in here, the OG and FG are going to get recalculated when someone first tries to
+   // access them.
    SET_REGULAR_FROM_NPB (m_og                     , namedParameterBundle, PropertyNames::Recipe::og                     ),
    SET_REGULAR_FROM_NPB (m_fg                     , namedParameterBundle, PropertyNames::Recipe::fg                     ),
                          m_og_fermentable         {0.0},
@@ -1795,9 +1799,9 @@ void Recipe::setEquipment(Equipment * var) {
 
 // .:TBD:. We need to think about when/how we're going to detect changes to the Boil object referred to by this->m_boilId...
 
-void Recipe::setMash        (std::shared_ptr<Mash        > val) { this->pimpl->setStepOwner<Mash        >(val, this->m_mashId        , PropertyNames::Recipe::mash        ); return; }
-void Recipe::setMash        (Mash *                        val) { this->pimpl->setStepOwner<Mash        >(val, this->m_mashId        , PropertyNames::Recipe::mash        ); return; }
-void Recipe::setBoil        (std::optional<std::shared_ptr<Boil>> val) { this->pimpl->setStepOwner<Boil        >(val, this->m_boilId        , PropertyNames::Recipe::boil        ); return; }
+void Recipe::setMash(              std::shared_ptr<Mash>  val) { this->pimpl->setStepOwner<Mash>(val, this->m_mashId, PropertyNames::Recipe::mash); return; }
+void Recipe::setMash(Mash *                               val) { this->pimpl->setStepOwner<Mash>(val, this->m_mashId, PropertyNames::Recipe::mash); return; }
+void Recipe::setBoil(std::optional<std::shared_ptr<Boil>> val) { this->pimpl->setStepOwner<Boil>(val, this->m_boilId, PropertyNames::Recipe::boil); return; }
 ///void Recipe::setBoil        (Boil *                        val) { this->pimpl->setStepOwner<Boil        >(val, this->m_boilId        , PropertyNames::Recipe::boil        ); return; }
 void Recipe::setFermentation(std::shared_ptr<Fermentation> val) { this->pimpl->setStepOwner<Fermentation>(val, this->m_fermentationId, PropertyNames::Recipe::fermentation); return; }
 void Recipe::setFermentation(Fermentation *                val) { this->pimpl->setStepOwner<Fermentation>(val, this->m_fermentationId, PropertyNames::Recipe::fermentation); return; }
@@ -2191,19 +2195,10 @@ double Recipe::boilGrav() {
    return m_boilGrav;
 }
 
-double Recipe::calories12oz() {
-   if (m_uninitializedCalcs) {
-      recalcAll();
-   }
-   return m_calories;
-}
-
-double Recipe::calories33cl() {
-   if (m_uninitializedCalcs) {
-      recalcAll();
-   }
-   return m_calories * 3.3 / 3.55;
-}
+double Recipe::caloriesPer33cl  () { if (m_uninitializedCalcs) { recalcAll(); } return m_caloriesPerLiter * 0.33          ; }
+double Recipe::caloriesPerLiter () { if (m_uninitializedCalcs) { recalcAll(); } return m_caloriesPerLiter                 ; }
+double Recipe::caloriesPerUs12oz() { if (m_uninitializedCalcs) { recalcAll(); } return m_caloriesPerLiter * us12ozInLiters; }
+double Recipe::caloriesPerUsPint() { if (m_uninitializedCalcs) { recalcAll(); } return m_caloriesPerLiter * usPintInLiters; }
 
 double Recipe::wortFromMash_l() {
    if (m_uninitializedCalcs) {
@@ -2271,10 +2266,12 @@ Mash *                        Recipe::mash             () const { return ObjectS
 int                           Recipe::getMashId        () const { return                                              this->m_mashId ; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 std::optional<std::shared_ptr<Boil>> Recipe::boil() const {
+   qDebug() << Q_FUNC_INFO << "Recipe #" << this->key() << "boil ID" << this->m_boilId;
    // In BeerJSON, boil is an optional record.  There are people making beer without boiling -- eg see
    // https://byo.com/article/raw-ale/.  So we ought to support it.
    if (this->m_boilId < 0) {
       // Negative ID just means there isn't one -- because this is how we store "NULL" for a foreign key
+      qDebug() << Q_FUNC_INFO << "No boil on Recipe #" << this->key();
       return std::nullopt;
    }
    auto retVal = ObjectStoreWrapper::getById<Boil>(this->m_boilId);
@@ -2658,7 +2655,8 @@ void Recipe::recalcGrainsInMash_kg() {
    double ret = 0.0;
 
    for (auto const & fermentableAddition : this->fermentableAdditions()) {
-      if (fermentableAddition->fermentable()->type() == Fermentable::Type::Grain &&
+      if (fermentableAddition->fermentable() &&
+          fermentableAddition->fermentable()->type() == Fermentable::Type::Grain &&
           fermentableAddition->stage() == RecipeAddition::Stage::Mash) {
          if (fermentableAddition->amountIsWeight()) {
             ret += fermentableAddition->amount().quantity;
@@ -2717,27 +2715,38 @@ void Recipe::recalcSRMColor() {
    return;
 }
 
+//
+// The Journal of the Institute of Brewing (JIB) is published by the Institute of Brewing and Distilling.
+// On pages 320-321 of Volume 88 of the JIB, dated "September - October 1982", there is an article on "Calculation of
+// Calorific Value of Beer" submitted by P A Martin on behalf of the IOB (Institute of Brewing) Analysis Committee.
+//
+// The article discusses four methods for calculating the calories in beer, and, in summary, recommends calculating
+// Calories/100ml as follows:
+//    1.1 Estimate the alcohol content of the beer ... [and] convert ... to alcohol g/100ml
+//    1.2 Estimate total carbohydrate of the beer (g/100ml as glucose) ...
+//    1.3 Estimate protein content of the beer (g/100ml)
+//    2.1 Calories/100ml = [alcohol (g/100ml) × 7] +
+//                         [total carbohydrate (as glucose g/100ml) × 3.75] +
+//                         [protein (g/100ml) × 4]
+//    2.2 In a collaborative trial the precision of the method was ±2.02 Calories for highly attenuated beers and
+//        ±3.06 Calories for normally fermented products.
+//
+// We should come back to this at some point...
+//
 // the formula in here are taken from http://hbd.org/ensmingr/
 void Recipe::recalcCalories() {
-   double startPlato, finishPlato, RE, abw, oog, ffg, tmp;
-
-   oog = m_og;
-   ffg = m_fg;
 
    // Need to translate OG and FG into plato
-   startPlato  = -463.37 + (668.72 * oog) - (205.35 * oog * oog);
-   finishPlato = -463.37 + (668.72 * ffg) - (205.35 * ffg * ffg);
-
-   // RE (real extract)
-   RE = (0.1808 * startPlato) + (0.8192 * finishPlato);
+   double const startPlato  = -463.37 + (668.72 * this->m_og) - (205.35 * this->m_og * this->m_og);
+   double const finishPlato = -463.37 + (668.72 * this->m_fg) - (205.35 * this->m_fg * this->m_fg);
+   double const realExtract = (0.1808 * startPlato) + (0.8192 * finishPlato);
 
    // Alcohol by weight?
-   abw = (startPlato - RE) / (2.0665 - (0.010665 * startPlato));
+   double const abw = (startPlato - realExtract) / (2.0665 - (0.010665 * startPlato));
 
-   // The final results of this formular are calories per 100 ml.
-   // The 3.55 puts it in terms of 12 oz. I really should have stored it
-   // without that adjust.
-   tmp = ((6.9 * abw) + 4.0 * (RE - 0.1)) * ffg * 3.55;
+   // The final results of this formula are calories per 100 ml.
+   // The 10.0 puts it in terms of liters.
+   double tmp = ((6.9 * abw) + 4.0 * (realExtract - 0.1)) * this->m_fg * 10.0;
 
    //! If there are no fermentables in the recipe, if there is no mash, etc.,
    //  then the calories/12 oz ends up negative. Since negative doesn't make
@@ -2746,10 +2755,10 @@ void Recipe::recalcCalories() {
       tmp = 0;
    }
 
-   if (! qFuzzyCompare(tmp, m_calories)) {
-      m_calories = tmp;
-      if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(*PropertyNames::Recipe::calories), m_calories);
+   if (!qFuzzyCompare(tmp, this->m_caloriesPerLiter)) {
+      this->m_caloriesPerLiter = tmp;
+      if (!this->m_uninitializedCalcs) {
+         emit changed(metaProperty(*PropertyNames::Recipe::caloriesPerLiter), this->m_caloriesPerLiter);
       }
    }
    return;

@@ -110,6 +110,6 @@ protected:
 
 Q_DECLARE_METATYPE(Water)
 Q_DECLARE_METATYPE(Water *)
-Q_DECLARE_METATYPE(QList<std::shared_ptr<RecipeUseOfWater> >)
+BT_DECLARE_METATYPES(RecipeUseOfWater)
 
 #endif

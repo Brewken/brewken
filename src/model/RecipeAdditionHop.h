@@ -143,6 +143,6 @@ protected:
 
 Q_DECLARE_METATYPE(Hop)
 Q_DECLARE_METATYPE(Hop *)
-Q_DECLARE_METATYPE(QList<std::shared_ptr<RecipeAdditionHop> >)
+BT_DECLARE_METATYPES(RecipeAdditionHop)
 
 #endif

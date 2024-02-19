@@ -181,8 +181,7 @@ public:
       //
       // This Base Record special case sounds more painful than it is(!)  Actually, because we always drive reading and
       // writing from our side of the model (ie we loop through the fields of each of our objects and either write them
-      // to the output file or see if they are present in the input file), the two-records-in-one pretty much "just
-      // works".
+      // to the output file or see if they are present in the input file), the two-records-in-one largely "just works".
       //
       Record,
       ListOfRecords,    // An array containing Zero, one or more contained records in an array structure
@@ -326,9 +325,7 @@ public:
     *                   this object type are "optional" (ie wrapped in \c std::optional)
     * \param namedEntityClassName The class name of the \c NamedEntity to which this record relates, eg "Fermentable",
     *                             or empty string if there is none
-    * \param listUpcaster is a pointer to \c NamedEntity::upcastListToVariant for the class to which this record relates
-    * \param listDowncaster is a pointer to \c NamedEntity::downcastListFromVariant for the class to which this record
-    *                       relates
+    * \param upAndDownCasters gives us all the up- and down-cast functions for the class to which this record relates
     * \param jsonRecordConstructorWrapper
     * \param fieldDefinitions A list of fields we expect to find in this record (other fields will be ignored) and how
     *                         to parse them.
@@ -337,8 +334,7 @@ public:
                         TypeLookup             const * const   typeLookup,
                         char                   const * const   namedEntityClassName,
                         QString                        const & localisedEntityName,
-                        QVariant                             (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
-                        QList<std::shared_ptr<NamedEntity>>  (*listDowncaster)(QVariant const &),
+                        NamedEntity::UpAndDownCasters  const   upAndDownCasters,
                         JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
                         std::initializer_list<FieldDefinition> fieldDefinitions);
 
@@ -350,15 +346,13 @@ public:
    template<typename T>
    JsonRecordDefinition(std::in_place_type_t<T>,
                         char                     const * const recordName,
-                        JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
                         std::initializer_list<FieldDefinition> fieldDefinitions) :
       JsonRecordDefinition(recordName,
                            &T::typeLookup,
                            T::staticMetaObject.className(),
                            T::LocalisedName,
-                           NamedEntity::upcastListToVariant<T>,
-                           NamedEntity::downcastListFromVariant<T>,
-                           jsonRecordConstructorWrapper,
+                           NamedEntity::makeUpAndDownCasters<T>(),
+                           JsonRecordDefinition::create<JsonNamedEntityRecord<T>>,
                            fieldDefinitions) {
       return;
    }
@@ -373,22 +367,19 @@ public:
                         TypeLookup             const * const   typeLookup,
                         char                   const * const   namedEntityClassName,
                         QString                        const & localisedEntityName,
-                        QVariant                             (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
-                        QList<std::shared_ptr<NamedEntity>>  (*listDowncaster)(QVariant const &),
+                        NamedEntity::UpAndDownCasters  const   upAndDownCasters,
                         JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
                         std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists);
    template<typename T>
    JsonRecordDefinition(std::in_place_type_t<T>,
                         char                     const * const recordName,
-                        JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
                         std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists) :
       JsonRecordDefinition(recordName,
                            &T::typeLookup,
                            T::staticMetaObject.className(),
                            T::LocalisedName,
-                           NamedEntity::upcastListToVariant<T>,
-                           NamedEntity::downcastListFromVariant<T>,
-                           jsonRecordConstructorWrapper,
+                           NamedEntity::makeUpAndDownCasters<T>(),
+                           JsonRecordDefinition::create<JsonNamedEntityRecord<T>>,
                            fieldDefinitionLists) {
       return;
    }

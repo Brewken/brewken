@@ -37,7 +37,6 @@ AddPropertyName(notes            )
 AddPropertyName(preBoilSize_l    )
 AddPropertyName(boilTime_mins    )
 AddPropertyName(boilSteps        )
-AddPropertyName(boilStepsDowncast)
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -111,9 +110,7 @@ public:
    Q_PROPERTY(std::optional<double> preBoilSize_l          READ preBoilSize_l   WRITE setPreBoilSize_l )
    Q_PROPERTY(double                boilTime_mins          READ boilTime_mins   WRITE setBoilTime_mins )
    //! \brief The individual boil steps.
-   Q_PROPERTY(QList<std::shared_ptr<BoilStep>>    boilSteps         READ boilSteps  STORED false )
-   //! \brief The individual boil steps downcast as pointers to \c NamedEntity, which is used for BeerJSON processing.
-   Q_PROPERTY(QList<std::shared_ptr<NamedEntity>> boilStepsDowncast READ boilStepsDowncast WRITE setBoilStepsDowncast STORED false )
+   Q_PROPERTY(QList<std::shared_ptr<BoilStep>>    boilSteps         READ boilSteps    WRITE setBoilSteps STORED false )
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    QString               description  () const;
@@ -158,7 +155,6 @@ private:
    double                m_boilTime_mins;
 };
 
-Q_DECLARE_METATYPE(Boil *)
-Q_DECLARE_METATYPE(std::optional<std::shared_ptr<Boil> >)
+BT_DECLARE_METATYPES(Boil)
 
 #endif

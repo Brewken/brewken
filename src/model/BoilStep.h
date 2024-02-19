@@ -111,6 +111,6 @@ private:
 
 };
 
-Q_DECLARE_METATYPE(QList<std::shared_ptr<BoilStep>>)
+BT_DECLARE_METATYPES(BoilStep)
 
 #endif

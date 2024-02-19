@@ -937,7 +937,6 @@ mocHeaders = files([
    'src/model/Step.h',
    'src/model/StepBase.h',
    'src/model/StepExtended.h',
-   'src/model/StepOwnerBase.h',
    'src/model/Style.h',
    'src/model/Water.h',
    'src/model/Yeast.h',

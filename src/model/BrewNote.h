@@ -275,7 +275,9 @@ private:
 
 };
 
-Q_DECLARE_METATYPE(QList<                BrewNote *>)
-Q_DECLARE_METATYPE(QList<std::shared_ptr<BrewNote> >)
+BT_DECLARE_METATYPES(BrewNote)
+
+//Q_DECLARE_METATYPE(QList<                BrewNote *>)
+//Q_DECLARE_METATYPE(QList<std::shared_ptr<BrewNote> >)
 
 #endif

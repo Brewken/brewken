@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * utils/TypeTraits.h is part of Brewken, and is copyright the following authors 2023:
+ * utils/TypeTraits.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -17,6 +17,7 @@
 #define UTILS_TYPETRAITS_H
 #pragma once
 
+#include <memory>
 #include <optional>
 #include <type_traits>
 
@@ -53,17 +54,16 @@
  *        functions where we need different versions for optional and non-optional, such as \c SmartField::setAmount.
  */
 template <typename T> struct is_optional : public std::false_type{};
-template <typename T> struct is_optional< std::optional<T> > : public std::true_type{};
+template <typename T> struct is_optional<std::optional<T>> : public std::true_type{};
 
 template <typename T> struct is_non_optional : public std::true_type{};
-template <typename T> struct is_non_optional< std::optional<T> > : public std::false_type{};
+template <typename T> struct is_non_optional<std::optional<T>> : public std::false_type{};
 
 template <typename T> struct is_optional_enum : public std::false_type{};
-template <typename T> struct is_optional_enum< std::optional<T> > : public std::is_enum<T>{};
+template <typename T> struct is_optional_enum<std::optional<T>> : public std::is_enum<T>{};
 
 // This is not strictly needed, as it duplicates std::is_enum, but it helps document intent
 template <typename T> struct is_non_optional_enum : public std::is_enum<T>{};
-
 
 //
 // This bit requires C++20 or later.  It makes the specialisations of TypeInfo::construct() below a bit less clunky
@@ -79,9 +79,28 @@ template <typename T> struct is_non_optional_enum : public std::is_enum<T>{};
 #define CONCEPT_FIX_UP
 #endif
 
+template <typename T> concept CONCEPT_FIX_UP IsOptional      = is_optional<T>::value;
 template <typename T> concept CONCEPT_FIX_UP IsRequiredEnum  = std::is_enum<T>::value;
 template <typename T> concept CONCEPT_FIX_UP IsRequiredOther = !std::is_enum<T>::value && !is_optional<T>::value;
 template <typename T> concept CONCEPT_FIX_UP IsOptionalEnum  = is_optional_enum<T>::value;
 template <typename T> concept CONCEPT_FIX_UP IsOptionalOther = !is_optional_enum<T>::value && is_optional<T>::value;
+
+//
+// In a similar vein it's useful at compile time to be able to know if something is a raw pointer, a shared pointer, or
+// an optional shared pointer.  (I can't think of a situation where we would want use an optional raw pointer, so we
+// don't cover that case.)
+//
+// Already std::is_pointer tells us whether something is a raw pointer, so we just need the other two cases.
+//
+template<typename T> struct is_shared_ptr : public std::false_type{};
+template<typename T> struct is_shared_ptr<std::shared_ptr<T>> : public std::true_type{};
+
+template<typename T> struct is_optional_shared_ptr : public std::false_type{};
+template<typename T> struct is_optional_shared_ptr<std::optional<T>> : public is_shared_ptr<T>{};
+
+template <typename T> concept CONCEPT_FIX_UP IsRawPointer            = std::is_pointer       <T>::value;
+template <typename T> concept CONCEPT_FIX_UP IsRequiredSharedPointer = is_shared_ptr         <T>::value;
+template <typename T> concept CONCEPT_FIX_UP IsOptionalSharedPointer = is_optional_shared_ptr<T>::value;
+
 
 #endif

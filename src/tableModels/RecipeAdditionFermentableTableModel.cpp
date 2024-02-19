@@ -61,7 +61,7 @@ RecipeAdditionFermentableTableModel::RecipeAdditionFermentableTableModel(QTableV
          TABLE_MODEL_HEADER(RecipeAdditionFermentable, Type          , tr("Type"       ), PropertyPath{{PropertyNames::RecipeAdditionFermentable::fermentable,
                                                                                                         PropertyNames::Fermentable::type                 }}, EnumInfo{Fermentable::typeStringMapping, Fermentable::typeDisplayNames}),
          TABLE_MODEL_HEADER(RecipeAdditionFermentable, Yield         , tr("Yield"      ), PropertyPath{{PropertyNames::RecipeAdditionFermentable::fermentable,
-                                                                                                        PropertyNames::Fermentable::yield_pct            }}, PrecisionInfo{1}),
+                                                                                                        PropertyNames::Fermentable::fineGrindYield_pct   }}, PrecisionInfo{1}),
          TABLE_MODEL_HEADER(RecipeAdditionFermentable, Color         , tr("Color"      ), PropertyPath{{PropertyNames::RecipeAdditionFermentable::fermentable,
                                                                                                         PropertyNames::Fermentable::color_srm            }}),
          TABLE_MODEL_HEADER(RecipeAdditionFermentable, Amount        , tr("Amount"     ), PropertyNames::IngredientAmount::amount                  , PrecisionInfo{1}),

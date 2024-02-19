@@ -147,7 +147,9 @@ double RecipeAdditionFermentable::equivSucrose_kg() const {
       qWarning() << Q_FUNC_INFO << "Trying to calculate equivSucrose_kg for Fermentable amount of" << amount;
    }
    auto const & fermentable = this->fermentable();
-   double const ret = amount.quantity * fermentable->yield_pct() * (1.0 - fermentable->moisture_pct() / 100.0) / 100.0;
+   double const ret =
+      amount.quantity * fermentable->fineGrindYield_pct().value_or(0.0) *
+      (1.0 - fermentable->moisture_pct() / 100.0) / 100.0;
 
    // If this is a steeped grain...
    if (fermentable->type() == Fermentable::Type::Grain && this->stage() != RecipeAddition::Stage::Mash) {

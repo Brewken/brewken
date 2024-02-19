@@ -100,7 +100,6 @@ private:
    QString               m_notes        ;
 };
 
-Q_DECLARE_METATYPE(Fermentation *)
-Q_DECLARE_METATYPE(std::shared_ptr<Fermentation>)
+BT_DECLARE_METATYPES(Fermentation)
 
 #endif

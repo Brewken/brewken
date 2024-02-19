@@ -97,7 +97,7 @@ public:
                                                                 QTextStream & userMessage,
                                                                 ImportRecordCount & stats);
 
-   static void listToJson(QList< std::shared_ptr<NamedEntity> > const & objectsToWrite,
+   static bool listToJson(QList< std::shared_ptr<NamedEntity> > const & objectsToWrite,
                           boost::json::array & outputArray,
                           JsonCoding const & coding,
                           JsonRecordDefinition const & recordDefinition);
@@ -105,8 +105,10 @@ public:
    /**
     * \brief Convert a \c NamedEntity to JSON
     * \param namedEntityToExport The object that we want to convert to JSON
+    *
+    * \return \c true if succeeded, \c false otherwise
     */
-   void toJson(NamedEntity const & namedEntityToExport);
+   [[nodiscard]] bool toJson(NamedEntity const & namedEntityToExport);
 
 private:
    /**

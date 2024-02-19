@@ -206,6 +206,6 @@ private:
    bool m_is_acid;
 };
 
-Q_DECLARE_METATYPE( QList<Salt*> )
+BT_DECLARE_METATYPES(Salt)
 
 #endif

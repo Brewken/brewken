@@ -16,6 +16,7 @@
 #include "database/ObjectStore.h"
 
 #include <cstring>
+#include <iostream> // For start-up errors!
 #include <tuple>
 
 #include <QDebug>
@@ -573,6 +574,39 @@ ObjectStore::TableField::TableField(ObjectStore::FieldType                 const
    columnName{columnName},
    propertyName{propertyName},
    valueDecoder{valueDecoder} {
+
+
+   return;
+}
+
+ObjectStore::TableDefinition::TableDefinition(char const * const tableName,
+                                              std::initializer_list<TableField> const tableFields) :
+         tableName{tableName},
+         tableFields{tableFields} {
+
+   //
+   // Uncomment the following if trying to debug issues with foreign keys.
+   //
+//   for (auto const & fieldDefn: this->tableFields) {
+//      if (std::holds_alternative<ObjectStore::TableDefinition const *>(fieldDefn.valueDecoder)) {
+//         auto tableDefinition{std::get<ObjectStore::TableDefinition const *>(fieldDefn.valueDecoder)};
+//         // If something is wrong we need to log diagnostics before we exit, otherwise it will be hard to know which
+//         // field definition caused the problem!
+//         if (tableDefinition->tableName.isNull()) {
+//            qCritical() << Q_FUNC_INFO << "Foreign key table for column" << fieldDefn.columnName << "has no name!";
+//            exit(EXIT_FAILURE);
+//         }
+//         if (0 == tableDefinition->tableFields.size()) {
+//            qCritical() << Q_FUNC_INFO << "Foreign key table for column" << fieldDefn.columnName << "has no columns!";
+//            exit(EXIT_FAILURE);
+//         }
+//         qDebug() <<
+//            Q_FUNC_INFO << "Table" << tableName << "foreign key" << fieldDefn.columnName << "points to table "
+//            "definition for table" << *tableDefinition->tableName << "with" << tableDefinition->tableFields.size() <<
+//            "columns";
+//      }
+//   }
+
    return;
 }
 

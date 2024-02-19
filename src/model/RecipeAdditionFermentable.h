@@ -102,6 +102,6 @@ protected:
 
 Q_DECLARE_METATYPE(Fermentable)
 Q_DECLARE_METATYPE(Fermentable *)
-Q_DECLARE_METATYPE(QList<std::shared_ptr<RecipeAdditionFermentable> >)
+BT_DECLARE_METATYPES(RecipeAdditionFermentable)
 
 #endif

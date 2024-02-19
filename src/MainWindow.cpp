@@ -1672,7 +1672,13 @@ void MainWindow::showChanges(QMetaProperty* prop) {
    ibuGuSlider->setValue(recipeObs->IBU()/gravityUnits);
 
    label_calories->setText(
-      QString("%1").arg(Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Volume) == Measurement::UnitSystems::volume_Metric ? recipeObs->calories33cl() : recipeObs->calories12oz(),0,'f',0)
+      QString("%1").arg(
+         Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Volume) == Measurement::UnitSystems::volume_Metric ?
+         recipeObs->caloriesPer33cl() : recipeObs->caloriesPerUs12oz(),
+         0,
+         'f',
+         0
+      )
    );
 
    // See if we need to change the mash in the table.

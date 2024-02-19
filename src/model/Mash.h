@@ -43,7 +43,6 @@
 AddPropertyName(equipAdjust              )
 AddPropertyName(grainTemp_c              )
 AddPropertyName(mashSteps                )
-///AddPropertyName(mashStepsDowncast        )
 AddPropertyName(mashTunSpecificHeat_calGC)
 AddPropertyName(mashTunWeight_kg         )
 AddPropertyName(notes                    )
@@ -110,14 +109,12 @@ public:
    Q_PROPERTY(std::optional<double> mashTunSpecificHeat_calGC READ mashTunSpecificHeat_calGC WRITE setMashTunSpecificHeat_calGC  )
    //! \brief Whether to adjust strike temperatures to account for the tun.   ⮜⮜⮜ Optional in BeerXML.  Not part of BeerJSON. ⮞⮞⮞
    Q_PROPERTY(bool                  equipAdjust               READ equipAdjust               WRITE setEquipAdjust  )
-   //! \brief The total water that went into the mash in liters. Calculated.
+   //! \brief The total water that went into the mash (ie all the mash water, sparge and strike) in liters. Calculated.
    Q_PROPERTY(double                totalMashWater_l          READ totalMashWater_l  STORED false )
    //! \brief The total mash time in minutes. Calculated.
    Q_PROPERTY(double                totalTime                 READ totalTime  STORED false )
    //! \brief The individual mash steps.
    Q_PROPERTY(QList<std::shared_ptr<MashStep>>    mashSteps         READ mashSteps         WRITE setMashSteps         STORED false )
-///   //! \brief The individual mash steps downcast as pointers to \c NamedEntity, which is used (TBD OR IS IT?) for BeerJSON and BeerXML processing.
-///   Q_PROPERTY(QList<std::shared_ptr<NamedEntity>> mashStepsDowncast READ mashStepsDowncast WRITE setMashStepsDowncast STORED false )
 
    // ⮜⮜⮜ BeerJSON support does not require any additional properties on this class! ⮞⮞⮞
 
@@ -143,8 +140,7 @@ public:
 
    // Calculated getters
    unsigned int numMashSteps() const;
-   //! \brief all the mash water, sparge and strike
-   double totalMashWater_l();
+   double totalMashWater_l() const;
    //! \brief all the infusion water, excluding sparge
    double totalInfusionAmount_l() const;
    //! \brief all the sparge water
@@ -152,18 +148,6 @@ public:
    double totalTime();
 
    bool hasSparge() const;
-
-///   // Relational getters and setters
-///   QList<std::shared_ptr<MashStep>> mashSteps() const;
-///   QList<std::shared_ptr<NamedEntity>> mashStepsDowncast() const;
-///   void setMashStepsDowncast(QList<std::shared_ptr<NamedEntity>> const & val);
-
-///   virtual Recipe * getOwningRecipe() const;
-///
-///   /**
-///    * \brief A Mash owns its MashSteps so needs to delete those if it itself is being deleted
-///    */
-///   virtual void hardDeleteOwnedEntities();
 
 public slots:
    void acceptStepChange(QMetaProperty, QVariant);
@@ -187,7 +171,6 @@ private:
    bool                  m_equipAdjust              ;
 };
 
-Q_DECLARE_METATYPE(Mash *)
-Q_DECLARE_METATYPE(QList<std::shared_ptr<Mash> >)
+BT_DECLARE_METATYPES(Mash)
 
 #endif

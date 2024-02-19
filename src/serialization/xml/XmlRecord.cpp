@@ -88,6 +88,13 @@ bool XmlRecord::load(xalanc::DOMSupport & domSupport,
    // Loop through all the fields that we know/care about.  Anything else is intentionally ignored.  (We won't know
    // what to do with it, and, if it weren't allowed to be there, it would have generated an error at XSD parsing.)
    //
+   // Note that it's a coding error if there are no fields in the record definition.  (This usually means a template
+   // specialisation was omitted in serialization/xml/BeerXml.cpp.)
+   //
+   qDebug() <<
+      Q_FUNC_INFO << "Examining" << this->m_recordDefinition.fieldDefinitions.size() << "field definitions for" <<
+      this->m_recordDefinition.m_recordName;
+   Q_ASSERT(this->m_recordDefinition.fieldDefinitions.size() > 0);
    for (auto & fieldDefinition : this->m_recordDefinition.fieldDefinitions) {
       //
       // NB: If we don't find a node, there's nothing for us to do.  The XSD parsing should already flagged up an error
@@ -666,7 +673,14 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
       // property, and ListOfRecords, which can't.
       //
       if (childRecordSet.parentFieldDefinition) {
-         auto const & propertyPath = childRecordSet.parentFieldDefinition->propertyPath;
+         auto const & fieldDefinition{*childRecordSet.parentFieldDefinition};
+         Q_ASSERT(std::holds_alternative<XmlRecordDefinition const *>(fieldDefinition.valueDecoder));
+         Q_ASSERT(std::get              <XmlRecordDefinition const *>(fieldDefinition.valueDecoder));
+         XmlRecordDefinition const & childRecordDefinition{
+            *std::get<XmlRecordDefinition const *>(fieldDefinition.valueDecoder)
+         };
+
+         auto const & propertyPath = fieldDefinition.propertyPath;
          if (!propertyPath.isNull()) {
             // It's a coding error if we had a property defined for a record that's not trying to populate a NamedEntity
             // (ie for the root record).
@@ -676,7 +690,7 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
             //
             // How we set the property depends on whether this is a single child record or an array of them
             //
-            if (childRecordSet.parentFieldDefinition->type != XmlRecordDefinition::FieldType::ListOfRecords) {
+            if (fieldDefinition.type != XmlRecordDefinition::FieldType::ListOfRecords) {
                // It's a coding error if we ended up with more than on child when there's only supposed to be one!
                if (processedChildren.size() > 1) {
                   qCritical() <<
@@ -684,15 +698,47 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
                      this->m_recordDefinition.m_namedEntityClassName << "object, but found" << processedChildren.size();
                   Q_ASSERT(false);
                }
-               // TBD: For the moment we are assuming single-item setters always take raw pointers
-               valueToSet = QVariant::fromValue(processedChildren.first().get());
+
+               //
+               // We need to pass a pointer to the relevant subclass of NamedEntity (call it of class ChildEntity for
+               // the sake of argument) in to the property setter (inside a QVariant).  As in JsonRecord::toJson, we
+               // need to handle any of the following forms:
+               //    ChildEntity *                               -- eg Equipment *
+               //    std::shared_ptr<ChildEntity>                -- eg std::shared_ptr<Mash>
+               //    std::optional<std::shared_ptr<ChildEntity>> -- eg std::optional<std::shared_ptr<Boil>>
+               //
+               // First we assert that they type is _some_ sort of pointer, otherwise it's a coding error.
+               //
+               auto const & typeInfo = fieldDefinition.propertyPath.getTypeInfo(*this->m_recordDefinition.m_typeLookup);
+               Q_ASSERT(typeInfo.pointerType != TypeInfo::PointerType::NotPointer);
+
+               if (typeInfo.pointerType == TypeInfo::PointerType::RawPointer) {
+                  // For a raw pointer, we don't have to upcast as the pointer will get upcast in the setter during the
+                  // extraction from QVariant
+                  valueToSet = QVariant::fromValue(processedChildren.first().get());
+               } else if (typeInfo.pointerType == TypeInfo::PointerType::RequiredSharedPointer) {
+                  Q_ASSERT(childRecordDefinition.m_upAndDownCasters.m_pointerUpcaster);
+                  valueToSet = QVariant::fromValue(
+                     childRecordDefinition.m_upAndDownCasters.m_pointerUpcaster(processedChildren.first())
+                  );
+               } else {
+                  // Should be the only possibility left.
+                  Q_ASSERT(typeInfo.pointerType == TypeInfo::PointerType::OptionalSharedPointer);
+                  Q_ASSERT(childRecordDefinition.m_upAndDownCasters.m_optionalPointerUpcaster);
+                  std::optional<std::shared_ptr<NamedEntity>> processedChild {processedChildren.first()};
+                  valueToSet = QVariant::fromValue(
+                     childRecordDefinition.m_upAndDownCasters.m_optionalPointerUpcaster(processedChild)
+                  );
+               }
+
             } else {
                // Multi-item setters for class T all take a list of shared pointers to T, so we need to upcast from our
                // list of shared pointers to NamedEntity.  Note that we need the child's upcaster, not the parent's.
                // Eg, if we are setting the hopAdditions property on a Recipe, we need the RecipeAdditionHop upcaster to
                // cast QList<std::shared_ptr<NamedEntity> > to QList<std::shared_ptr<RecipeAdditionHop> >
 //               valueToSet = this->m_recordDefinition.m_listUpcaster(processedChildren);
-               valueToSet = childRecordSet.records.at(0)->m_recordDefinition.m_listUpcaster(processedChildren);
+               valueToSet =
+                  childRecordSet.records.at(0)->m_recordDefinition.m_upAndDownCasters.m_listUpcaster(processedChildren);
             }
 
             qDebug() <<
@@ -841,6 +887,12 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
       // XmlRecord::ListOfRecords need to be handled in part by subclasses.
       if (XmlRecordDefinition::FieldType::Record  == fieldDefinition.type ||
           XmlRecordDefinition::FieldType::ListOfRecords == fieldDefinition.type) {
+         // Comments from the relevant part of JsonRecord::load apply equally here
+         Q_ASSERT(std::holds_alternative<XmlRecordDefinition const *>(fieldDefinition.valueDecoder));
+         Q_ASSERT(std::get              <XmlRecordDefinition const *>(fieldDefinition.valueDecoder));
+         XmlRecordDefinition const & childRecordDefinition{
+            *std::get<XmlRecordDefinition const *>(fieldDefinition.valueDecoder)
+         };
          //
          // Some of the work is generic, so we do it here.  In particular, we can work out what tags are needed to
          // contain the record (from the XPath, if any, prior to the last slash), but also what type of XmlRecord(s) we
@@ -866,8 +918,45 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
          std::unique_ptr<XmlRecord> subRecord{this->m_recordDefinition.makeRecord(this->m_coding)};
 
          if (XmlRecordDefinition::FieldType::Record == fieldDefinition.type) {
-            NamedEntity * childNamedEntity =
-               fieldDefinition.propertyPath.getValue(namedEntityToExport).value<NamedEntity *>();
+            //
+            // Things get a bit tricky here because we want a pointer to the child entity (call it of class ChildEntity
+            // for the sake of argument) and moreover we need to be able to cast that pointer to a pointer to
+            // NamedEntity.  However, the pointer we get back could be any of the following
+            // of the following forms:
+            //    ChildEntity *                               -- eg Equipment *
+            //    std::shared_ptr<ChildEntity>                -- eg std::shared_ptr<Mash>
+            //    std::optional<std::shared_ptr<ChildEntity>> -- eg std::optional<std::shared_ptr<Boil>>
+            //
+            // So we need to handle each possibility.
+            //
+            // First we assert that they type is _some_ sort of pointer, otherwise it's a coding error.
+            //
+            auto const & typeInfo = fieldDefinition.propertyPath.getTypeInfo(*this->m_recordDefinition.m_typeLookup);
+            Q_ASSERT(typeInfo.pointerType != TypeInfo::PointerType::NotPointer);
+            QVariant childNamedEntityVariant = fieldDefinition.propertyPath.getValue(namedEntityToExport);
+
+            std::shared_ptr<NamedEntity> childNamedEntitySp{};
+            NamedEntity * childNamedEntity{};
+            if (typeInfo.pointerType == TypeInfo::PointerType::RawPointer) {
+               // For a raw pointer, the cast is simple as it can happen during the extraction from QVariant
+               childNamedEntity = childNamedEntityVariant.value<NamedEntity *>();
+            } else if (typeInfo.pointerType == TypeInfo::PointerType::RequiredSharedPointer) {
+               // For a shared pointer it's a bit more tricky as we can't directly extract the uncast pointer from the
+               // QVariant, so we need a little help to apply std::static_pointer_cast.
+               childNamedEntitySp =
+                  childRecordDefinition.m_upAndDownCasters.m_pointerDowncaster(childNamedEntityVariant);
+               childNamedEntity = childNamedEntitySp.get();
+            } else {
+               // Should be the only possibility left
+               Q_ASSERT(typeInfo.pointerType == TypeInfo::PointerType::OptionalSharedPointer);
+               std::optional<std::shared_ptr<NamedEntity>> temp =
+                  childRecordDefinition.m_upAndDownCasters.m_optionalPointerDowncaster(childNamedEntityVariant);
+               if (temp) {
+                  childNamedEntitySp = *temp;
+                  childNamedEntity = childNamedEntitySp.get();
+               }
+            }
+
             if (childNamedEntity) {
                // For a "base record", having numContainingTags == -1 means the fourth parameter here is still correct!
                subRecord->toXml(*childNamedEntity,
@@ -969,6 +1058,14 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
                   // scientific notation.
 
                   valueAsText = QString::number(value.toDouble(), 'f', QLocale::FloatingPointShortest);
+               } else {
+                  // There is at least one field (FERMENTABLE/YIELD) that is required in BeerXML but optional in our
+                  // internal data model.  In such a case, if our internal field is not set, we have to have a default
+                  // value to write out for the output BeerXML to be valid.
+                  if (std::holds_alternative<double>(fieldDefinition.valueDecoder)) {
+                     double defaultValue = std::get<double>(fieldDefinition.valueDecoder);
+                     valueAsText = QString::number(defaultValue, 'f', QLocale::FloatingPointShortest);
+                  }
                }
                break;
 

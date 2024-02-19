@@ -1046,6 +1046,14 @@ If you didn&apos;t yet do this, click Abort.</source>
 %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Unable to back up database before upgrading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -3625,7 +3633,7 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation type="unfinished">Peso</translation>
+        <translation type="obsolete">Peso</translation>
     </message>
     <message>
         <source>Diastatic Power</source>
@@ -3649,18 +3657,6 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>J/kg·K</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mass Concentration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Volume Concentration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Metric Concentration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3764,10 +3760,6 @@ Program will now exit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Mass or Volume Concentration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>(№)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3809,6 +3801,14 @@ Program will now exit.</source>
     </message>
     <message>
         <source>BeerJSON format (*.json);;BeerXML format (*.xml)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass Fraction or Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brewing Concentration</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6666,23 +6666,7 @@ O volume final do fermentador primário é %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>DMS precursors is mass concentration?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Free Amino Nitrogen (FAN)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>FAN is mass concentration?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Free Amino Nitrogen is mass concentration?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Beta-glucans is mass concentration?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

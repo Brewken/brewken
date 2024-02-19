@@ -593,6 +593,52 @@ public:
 
 
    /**
+    * \brief Converts a QVariant containing `std::shared_ptr<Hop>` or `std::shared_ptr<Fermentable>` etc to
+    *        `std::shared_ptr<NamedEntity>`.
+    */
+   template<typename T>
+   static std::shared_ptr<NamedEntity> downcastPointer(QVariant const & input) {
+      return std::static_pointer_cast<NamedEntity>(input.value<std::shared_ptr<T>>());
+   }
+
+   /**
+    * \brief Opposite of \c downcastVariant.  Converts `std::shared_ptr<NamedEntity>` to a QVariant containing
+    *        `std::shared_ptr<Hop>` or `std::shared_ptr<Fermentable>` etc.
+    */
+   template<typename T>
+   static QVariant upcastPointer(std::shared_ptr<NamedEntity> input) {
+      return QVariant::fromValue(std::static_pointer_cast<T>(input));
+   }
+
+   /**
+    * \brief Converts a QVariant containing `std::optional<std::shared_ptr<Hop>>` or
+    *        `std::optional<std::shared_ptr<Fermentable>>` etc to
+    *        `std::optional<std::shared_ptr<NamedEntity>>`.
+    */
+   template<typename T>
+   static std::optional<std::shared_ptr<NamedEntity>> downcastOptionalPointer(QVariant const & input) {
+      auto contents{input.value<std::optional<std::shared_ptr<T>>>()};
+      if (contents) {
+         return std::static_pointer_cast<NamedEntity>(*contents);
+      }
+      return std::nullopt;
+   }
+
+   /**
+    * \brief Opposite of \c downcastOptionalPointer. Converts `std::optional<std::shared_ptr<NamedEntity>>` to a
+    *        QVariant containing `std::optional<std::shared_ptr<Hop>>` or `std::optional<std::shared_ptr<Fermentable>>`
+    *        etc.
+    */
+   template<typename T>
+   static QVariant upcastOptionalPointer(std::optional<std::shared_ptr<NamedEntity>> input) {
+      std::optional<std::shared_ptr<T>> output;
+      if (input) {
+         output = std::static_pointer_cast<T>(*input);
+      }
+      return QVariant::fromValue(output);
+   }
+
+   /**
     * \brief Converts `QList<shared_ptr<Hop>>` or `QList<shared_ptr<Fermentable>>` etc to
     *        `QList<shared_ptr<NamedEntity>>`.
     */
@@ -628,7 +674,7 @@ public:
     *        depend on T (even though it points to a templated function).
     */
    template<typename T>
-   static QVariant upcastListToVariant(QList< std::shared_ptr<NamedEntity>> const & inputList) {
+   static QVariant upcastListToVariant(QList<std::shared_ptr<NamedEntity>> const & inputList) {
       return QVariant::fromValue(NamedEntity::upcastList<T>(inputList));
    }
 
@@ -639,8 +685,36 @@ public:
     * \param inputList A \c QVariant holding QList< std::shared_ptr<T>>
     */
    template<typename T>
-   static QList< std::shared_ptr<NamedEntity>> downcastListFromVariant(QVariant const & inputList) {
+   static QList<std::shared_ptr<NamedEntity>> downcastListFromVariant(QVariant const & inputList) {
       return NamedEntity::downcastList<T>(inputList.value<QList<std::shared_ptr<T>>>());
+   }
+
+   /**
+    * \brief It's useful in places to have pointers to all the upcasters and downcasters for a given type
+    */
+   struct UpAndDownCasters{
+      std::shared_ptr<NamedEntity>                (*m_pointerDowncaster        )(QVariant const &                           );
+      QVariant                                    (*m_pointerUpcaster          )(std::shared_ptr<NamedEntity>               );
+      std::optional<std::shared_ptr<NamedEntity>> (*m_optionalPointerDowncaster)(QVariant const &                           );
+      QVariant                                    (*m_optionalPointerUpcaster  )(std::optional<std::shared_ptr<NamedEntity>>);
+      QVariant                                    (*m_listUpcaster             )(QList<std::shared_ptr<NamedEntity>> const &);
+      QList<std::shared_ptr<NamedEntity>>         (*m_listDowncaster           )(QVariant const &                           );
+   };
+
+   /**
+    * \brief And because we can't template the constructor of a non-templated class/struct, we need a templated factory
+    *        function.
+    */
+   template<typename T>
+   static UpAndDownCasters makeUpAndDownCasters() {
+      return {
+         NamedEntity::downcastPointer        <T>,
+         NamedEntity::upcastPointer          <T>,
+         NamedEntity::downcastOptionalPointer<T>,
+         NamedEntity::upcastOptionalPointer  <T>,
+         NamedEntity::upcastListToVariant    <T>,
+         NamedEntity::downcastListFromVariant<T>
+      };
    }
 
 private:
@@ -649,6 +723,18 @@ private:
   bool m_deleted;
   bool m_beingModified;
 };
+
+/**
+ * \brief The downside of the \c UpAndDownCasters is that we now need to declare all sorts of permutations of
+ *        Q_DECLARE_METATYPE, including a lot that we'll never actually use in practice.  So it's simpler to have our
+ *        own macro that generates all the Q_DECLARE_METATYPE macros we think we'll need for a class.
+ */
+#define BT_DECLARE_METATYPES(ClassName) \
+Q_DECLARE_METATYPE(              std::shared_ptr<ClassName> ) \
+Q_DECLARE_METATYPE(std::optional<std::shared_ptr<ClassName>>) \
+Q_DECLARE_METATYPE(QList<                ClassName *>) \
+Q_DECLARE_METATYPE(QList<std::shared_ptr<ClassName> >)
+
 
 /**
  * \brief Convenience typedef for pointer to \c isOptional();

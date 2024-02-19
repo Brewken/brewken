@@ -90,6 +90,6 @@ private:
    QString             m_vessel  ;
 };
 
-Q_DECLARE_METATYPE(QList<std::shared_ptr<FermentationStep>>)
+BT_DECLARE_METATYPES(FermentationStep)
 
 #endif

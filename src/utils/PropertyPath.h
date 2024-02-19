@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * utils/PropertyPath.h is part of Brewken, and is copyright the following authors 2023:
+ * utils/PropertyPath.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -106,7 +106,7 @@ public:
     *
     * \return \c true if the property was writeable, \c false if not (and therefore the setter could not be called)
     */
-   bool setValue(NamedEntity & obj, QVariant const & val) const;
+   [[nodiscard]] bool setValue(NamedEntity & obj, QVariant const & val) const;
 
    /**
     * \brief Counterpart to \c setValue

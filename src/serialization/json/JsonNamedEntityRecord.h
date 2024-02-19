@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * serialization/json/JsonNamedEntityRecord.h is part of Brewken, and is copyright the following authors 2020-2023:
+ * serialization/json/JsonNamedEntityRecord.h is part of Brewken, and is copyright the following authors 2020-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -54,6 +54,10 @@ protected:
       // It's a coding error if this function is called when we already have a NamedEntity
       Q_ASSERT(nullptr == this->m_namedEntity.get());
 
+      // Normally leave the next log statement commented out as it can create very long lines
+//      qDebug() <<
+//         Q_FUNC_INFO << this->m_recordDefinition.m_namedEntityClassName << "this->m_namedParameterBundle:" <<
+//         this->m_namedParameterBundle;
       this->m_namedEntity = std::make_shared<NE>(this->m_namedParameterBundle);
    }
 

@@ -354,7 +354,6 @@ private:
    QString               m_year      ;
 };
 
-Q_DECLARE_METATYPE(QList<                Hop *>)
-Q_DECLARE_METATYPE(QList<std::shared_ptr<Hop> >)
+BT_DECLARE_METATYPES(Hop)
 
 #endif

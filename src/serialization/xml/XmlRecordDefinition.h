@@ -78,7 +78,9 @@ public:
          std::variant<std::monostate,
                       EnumStringMapping              const *,  // FieldType::Enum
                       Measurement::UnitStringMapping const *,  // FieldType::Unit
-                      XmlRecordDefinition            const *>; // FieldType::Array
+                      XmlRecordDefinition            const *,  // FieldType::Array
+                      double                         >;        // Default value (for fields that are required in the XML
+                                                               // but optional in our internal data model).
       ValueDecoder valueDecoder;
       /**
        * Defining a constructor allows us to control the default value of valueDecoder
@@ -124,9 +126,7 @@ public:
     *                   this object type are "optional" (ie wrapped in \c std::optional)
     * \param namedEntityClassName The class name of the \c NamedEntity to which this record relates, eg "Fermentable",
     *                             or empty string if there is none
-    * \param listUpcaster is a pointer to \c NamedEntity::upcastListToVariant for the class to which this record relates
-    * \param listDowncaster is a pointer to \c NamedEntity::downcastListFromVariant for the class to which this record
-    *                       relates
+    * \param upAndDownCasters gives us all the up- and down-cast functions for the class to which this record relates
     * \param xmlRecordConstructorWrapper
     * \param fieldDefinitions A list of fields we expect to find in this record (other fields will be ignored) and how
     *                         to parse them.
@@ -135,8 +135,7 @@ public:
                        TypeLookup             const * const   typeLookup,
                        char                   const * const   namedEntityClassName,
                        QString                        const & localisedEntityName,
-                       QVariant                             (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
-                       QList<std::shared_ptr<NamedEntity>>  (*listDowncaster)(QVariant const &),
+                       NamedEntity::UpAndDownCasters  const   upAndDownCasters,
                        XmlRecordConstructorWrapper            xmlRecordConstructorWrapper,
                        std::initializer_list<FieldDefinition> fieldDefinitions);
 
@@ -155,8 +154,7 @@ public:
                           &T::typeLookup,
                           T::staticMetaObject.className(),
                           T::LocalisedName,
-                          NamedEntity::upcastListToVariant<T>,
-                          NamedEntity::downcastListFromVariant<T>,
+                          NamedEntity::makeUpAndDownCasters<T>(),
                           xmlRecordConstructorWrapper,
                           fieldDefinitions) {
       return;
@@ -172,8 +170,7 @@ public:
                        TypeLookup               const * const typeLookup,
                        char                     const * const namedEntityClassName,
                        QString                        const & localisedEntityName,
-                       QVariant                             (*listUpcaster)(QList<std::shared_ptr<NamedEntity>> const &),
-                       QList<std::shared_ptr<NamedEntity>>  (*listDowncaster)(QVariant const &),
+                       NamedEntity::UpAndDownCasters  const   upAndDownCasters,
                        XmlRecordConstructorWrapper            xmlRecordConstructorWrapper,
                        std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists);
    template<typename T>
@@ -185,8 +182,7 @@ public:
                           &T::typeLookup,
                           T::staticMetaObject.className(),
                           T::LocalisedName,
-                          NamedEntity::upcastListToVariant<T>,
-                          NamedEntity::downcastListFromVariant<T>,
+                          NamedEntity::makeUpAndDownCasters<T>(),
                           xmlRecordConstructorWrapper,
                           fieldDefinitionLists) {
       return;

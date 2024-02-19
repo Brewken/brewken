@@ -195,7 +195,7 @@ private:
    std::optional<double> m_liquorToGristRatio_lKg;
 };
 
-Q_DECLARE_METATYPE(QList<std::shared_ptr<MashStep> >)
+BT_DECLARE_METATYPES(MashStep)
 
 static_assert(!HasFolder<MashStep>);
 static_assert(HasNoFolder<MashStep>);

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Boil.cpp is part of Brewken, and is copyright the following authors 2023:
+ * model/Boil.cpp is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -50,8 +50,7 @@ TypeLookup const Boil::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Boil::preBoilSize_l, Boil::m_preBoilSize_l, Measurement::PhysicalQuantity::Volume),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Boil::boilTime_mins, Boil::m_boilTime_mins, Measurement::PhysicalQuantity::Time  ),
 
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Boil::boilSteps        , Boil::boilSteps        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Boil::boilStepsDowncast, Boil::boilStepsDowncast),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Boil::boilSteps, Boil::boilSteps),
    },
    // Parent classes lookup
    {&NamedEntity::typeLookup,

@@ -119,6 +119,6 @@ private:
 
 Q_DECLARE_METATYPE(Yeast)
 Q_DECLARE_METATYPE(Yeast *)
-Q_DECLARE_METATYPE(QList<std::shared_ptr<RecipeAdditionYeast> >)
+BT_DECLARE_METATYPES(RecipeAdditionYeast)
 
 #endif

@@ -285,7 +285,6 @@ private:
    QString               m_overallImpression;
 };
 
-Q_DECLARE_METATYPE(Style *)
-Q_DECLARE_METATYPE(QList<std::shared_ptr<Style> >)
+BT_DECLARE_METATYPES(Style)
 
 #endif

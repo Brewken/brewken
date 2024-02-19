@@ -122,8 +122,7 @@ private:
    QList<QString> m_reagents;
 };
 
-Q_DECLARE_METATYPE(QList<                Instruction *>)
-Q_DECLARE_METATYPE(QList<std::shared_ptr<Instruction> >)
+BT_DECLARE_METATYPES(Instruction)
 
 //! \brief Compares Instruction pointers by Instruction::instructionNumber().
 inline bool insPtrLtByNumber( Instruction* lhs, Instruction* rhs)

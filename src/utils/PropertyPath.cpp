@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * utils/PropertyPath.cpp is part of Brewken, and is copyright the following authors 2023:
+ * utils/PropertyPath.cpp is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -94,7 +94,7 @@ TypeInfo const & PropertyPath::getTypeInfo(TypeLookup const & baseTypeLookup) co
 
 }
 
-bool PropertyPath::setValue(NamedEntity & obj, QVariant const & val) const {
+[[nodiscard]] bool PropertyPath::setValue(NamedEntity & obj, QVariant const & val) const {
    NamedEntity * ne = &obj;
    for (auto const property : this->m_properties) {
       if (property == this->m_properties.last()) {
@@ -106,10 +106,11 @@ bool PropertyPath::setValue(NamedEntity & obj, QVariant const & val) const {
          Q_ASSERT(propertyIndex >= 0);
          QMetaProperty neMetaProperty = neMetaObject->property(propertyIndex);
 
-         qDebug() <<
-            Q_FUNC_INFO << "Request to set" << this->m_path << "on" << obj.metaObject()->className() << "(=" <<
-            *property << "on" << ne->metaObject()->className() << "); property type =" << neMetaProperty.typeName() <<
-            "; writable =" << neMetaProperty.isWritable();
+      // Normally keep this log statement commented out otherwise it generates too many lines in the log file
+//         qDebug() <<
+//            Q_FUNC_INFO << "Request to set" << this->m_path << "on" << obj.metaObject()->className() << "(=" <<
+//            *property << "on" << ne->metaObject()->className() << "); property type =" << neMetaProperty.typeName() <<
+//            "; writable =" << neMetaProperty.isWritable();
 
          if (neMetaProperty.isWritable()) {
             bool succeeded = ne->setProperty(**property, val);
@@ -140,12 +141,28 @@ QVariant PropertyPath::getValue(NamedEntity const & obj) const {
 //      qDebug() << Q_FUNC_INFO << "Looking at" << *property;
 
       if (property == this->m_properties.last()) {
-         retVal = ne->property(**property);
-         if (!retVal.isValid()) {
-            auto mo = ne->metaObject();
-            qWarning() <<
-               Q_FUNC_INFO << "Property" << *property << "on" << mo->className() << "#" << ne->key() <<
-               "not readable.  Property Index =" << mo->indexOfProperty(**property);
+
+         // It's a coding error if we're trying to get a non-existent property on the NamedEntity subclass for this
+         // record.
+         QMetaObject const * neMetaObject = ne->metaObject();
+         int propertyIndex = neMetaObject->indexOfProperty(**property);
+         Q_ASSERT(propertyIndex >= 0);
+         QMetaProperty neMetaProperty = neMetaObject->property(propertyIndex);
+
+      // Normally keep this log statement commented out otherwise it generates too many lines in the log file
+//         qDebug() <<
+//            Q_FUNC_INFO << "Request to get" << this->m_path << "on" << obj.metaObject()->className() << "(=" <<
+//            *property << "on" << ne->metaObject()->className() << "); property type =" << neMetaProperty.typeName() <<
+//            "; readable =" << neMetaProperty.isReadable();
+
+         if (neMetaProperty.isReadable()) {
+            retVal = ne->property(**property);
+            if (!retVal.isValid()) {
+               auto mo = ne->metaObject();
+               qWarning() <<
+                  Q_FUNC_INFO << "Property" << *property << "on" << mo->className() << "#" << ne->key() <<
+                  "not readable.  Property Index =" << mo->indexOfProperty(**property);
+            }
          }
          break;
       }
@@ -163,5 +180,9 @@ QVariant PropertyPath::getValue(NamedEntity const & obj) const {
          break;
       }
    }
+
+   // Normally keep the next line commented out otherwise it generates too many lines in the log file
+//   qDebug() << Q_FUNC_INFO << "Returning" << retVal;
+
    return retVal;
 }

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BrewDayScrollWidget.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * BrewDayScrollWidget.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Carles Muñoz Gorriz <carlesmu@internautas.org>
  *   • Daniel Pettersson <pettson81@gmail.com>
@@ -401,7 +401,7 @@ QString BrewDayScrollWidget::buildTitleTable(bool includeImage) {
             .arg(tr("ABV"))
             .arg(Measurement::displayQuantity(recObs->ABV_pct(), 1) )
             .arg(metricVolume ? tr("Estimated calories (per 33 cl)") : tr("Estimated calories (per 12 oz)"))
-            .arg(Measurement::displayQuantity(metricVolume ? this->recObs->calories33cl() : this->recObs->calories12oz(), 0) );
+            .arg(Measurement::displayQuantity(metricVolume ? this->recObs->caloriesPer33cl() : this->recObs->caloriesPerUs12oz(), 0) );
 
    body += "</table>";
 

@@ -123,6 +123,6 @@ private:
 
 Q_DECLARE_METATYPE(Salt)
 Q_DECLARE_METATYPE(Salt *)
-Q_DECLARE_METATYPE(QList<std::shared_ptr<RecipeAdjustmentSalt> >)
+BT_DECLARE_METATYPES(RecipeAdjustmentSalt)
 
 #endif

@@ -65,7 +65,6 @@ TypeLookup const Mash::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::mashTunWeight_kg     , Mash::m_mashTunWeight_kg     , Measurement::PhysicalQuantity::Mass                ),
 
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Mash::mashSteps        , Mash::mashSteps        ),
-///      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Mash::mashStepsDowncast, Mash::mashStepsDowncast),
    },
    // Parent classes lookup
    {&NamedEntity::typeLookup,
@@ -157,7 +156,7 @@ void Mash::setMashTunSpecificHeat_calGC(std::optional<double> const   val) { SET
 void Mash::setEquipAdjust              (bool                  const   val) { SET_AND_NOTIFY(PropertyNames::Mash::equipAdjust              , this->m_equipAdjust              , val                                              ); return; }
 
 // === other methods ===
-double Mash::totalMashWater_l() {
+double Mash::totalMashWater_l() const {
    double waterAdded_l = 0.0;
 
    for (auto step : this-> mashSteps()) {
@@ -210,19 +209,6 @@ bool Mash::hasSparge() const {
    return false;
 }
 
-///QList<std::shared_ptr<MashStep>> Mash::mashSteps() const {
-///   return this->steps();
-///}
-///
-///QList<std::shared_ptr<NamedEntity>> Mash::mashStepsDowncast() const {
-///   return this->stepsDowncast();
-///}
-///
-///void Mash::setMashStepsDowncast(QList<std::shared_ptr<NamedEntity>> const & val) {
-///   this->setStepsDowncast(val);
-///   return;
-///}
-
 void Mash::acceptStepChange([[maybe_unused]] QMetaProperty prop,
                             [[maybe_unused]] QVariant      val) {
    MashStep * stepSender = qobject_cast<MashStep*>(sender());
@@ -233,28 +219,11 @@ void Mash::acceptStepChange([[maybe_unused]] QMetaProperty prop,
    // If one of our mash steps changed, our calculated properties may also change, so we need to emit some signals
    if (stepSender->ownerId() == this->key()) {
       emit changed(metaProperty(*PropertyNames::Mash::totalMashWater_l), QVariant());
-      emit changed(metaProperty(*PropertyNames::Mash::totalTime), QVariant());
+      emit changed(metaProperty(*PropertyNames::Mash::totalTime       ), QVariant());
    }
 
    return;
 }
-
-///Recipe * Mash::getOwningRecipe() const {
-///   return this->doGetOwningRecipe();
-//////   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
-///}
-
-///void Mash::hardDeleteOwnedEntities() {
-///   this->doHardDeleteOwnedEntities();
-///   return;
-//////   // It's the MashStep that stores its Mash ID, so all we need to do is delete our MashSteps then the subsequent
-//////   // database delete of this Mash won't hit any foreign key problems.
-//////   auto mashSteps = this->mashSteps();
-//////   for (auto mashStep : mashSteps) {
-//////      ObjectStoreWrapper::hardDelete<MashStep>(*mashStep);
-//////   }
-//////   return;
-///}
 
 // Boilerplate code for FolderBase
 FOLDER_BASE_COMMON_CODE(Mash)

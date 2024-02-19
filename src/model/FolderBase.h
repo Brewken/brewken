@@ -50,7 +50,7 @@ protected:
    }
 
    FolderBase(NamedParameterBundle const & namedParameterBundle) :
-      SET_REGULAR_FROM_NPB(m_folder, namedParameterBundle, PropertyNames::FolderBase::folder) {
+      SET_REGULAR_FROM_NPB(m_folder, namedParameterBundle, PropertyNames::FolderBase::folder, "") {
       return;
    }
 

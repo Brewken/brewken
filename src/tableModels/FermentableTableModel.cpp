@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/FermentableTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * tableModels/FermentableTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -51,12 +51,12 @@ FermentableTableModel::FermentableTableModel(QTableView* parent, bool editable) 
       {
          // NOTE: Need PropertyNames::Fermentable::amountWithUnits not PropertyNames::Fermentable::amount below so we
          //       can handle mass-or-volume generically in TableModelBase.  Same for inventoryWithUnits.
-         TABLE_MODEL_HEADER(Fermentable, Name              , tr("Name"       ), PropertyNames::NamedEntity::name                           ),
-         TABLE_MODEL_HEADER(Fermentable, Type              , tr("Type"       ), PropertyNames::Fermentable::type                           , EnumInfo{Fermentable::typeStringMapping, Fermentable::typeDisplayNames}),
-         TABLE_MODEL_HEADER(Fermentable, Yield             , tr("Yield %"    ), PropertyNames::Fermentable::yield_pct                      , PrecisionInfo{1}),
-         TABLE_MODEL_HEADER(Fermentable, Color             , tr("Color"      ), PropertyNames::Fermentable::color_srm                      , PrecisionInfo{1}),
-         TABLE_MODEL_HEADER(Fermentable, TotalInventory    , tr("Inventory"  ), PropertyNames::Ingredient::totalInventory, PrecisionInfo{1}),
-         TABLE_MODEL_HEADER(Fermentable, TotalInventoryType, tr("Amount Type"), PropertyNames::Ingredient::totalInventory, Fermentable::validMeasures),
+         TABLE_MODEL_HEADER(Fermentable, Name              , tr("Name"          ), PropertyNames::NamedEntity::name              ),
+         TABLE_MODEL_HEADER(Fermentable, Type              , tr("Type"          ), PropertyNames::Fermentable::type              , EnumInfo{Fermentable::typeStringMapping, Fermentable::typeDisplayNames}),
+         TABLE_MODEL_HEADER(Fermentable, Yield             , tr("Yield (DBFG) %"), PropertyNames::Fermentable::fineGrindYield_pct, PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(Fermentable, Color             , tr("Color"         ), PropertyNames::Fermentable::color_srm         , PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(Fermentable, TotalInventory    , tr("Inventory"     ), PropertyNames::Ingredient::totalInventory     , PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(Fermentable, TotalInventoryType, tr("Amount Type"   ), PropertyNames::Ingredient::totalInventory     , Fermentable::validMeasures),
 
       }
    },

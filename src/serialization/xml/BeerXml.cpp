@@ -75,8 +75,7 @@ namespace {
       nullptr,
       "not_used", // namedEntityClassName
       "not_used", // localisedEntityName
-      nullptr,    // listUpcaster
-      nullptr,    // listDowncaster
+      {},         // upAndDownCasters
       XmlRecordDefinition::create<XmlRecord>,
       std::initializer_list<XmlRecordDefinition::FieldDefinition>{}
    };
@@ -240,13 +239,24 @@ namespace {
    // <FERMENTABLE>...</FERMENTABLE> record, so we take the same approach.
    //
    std::initializer_list<XmlRecordDefinition::FieldDefinition> const BeerXml_FermentableBase {
+      //
+      // NOTE that, with the introduction of BeerJSON, we no longer support the following BeerXML fields:
+      //    ADD_AFTER_BOIL (Optional boolean) : "May be TRUE if this item is normally added after the boil.  The default
+      //                                         value is FALSE since most grains are added during the mash or boil."
+      //                                        This is not present in BeerJSON, and not needed for recipe formulation.
+      //                                        We assume that, if a fermentable is normally added after the boil, this
+      //                                        should be recorded in the NOTES field.
+      // NOTE too that the yield_pct property of Fermentable is retired, and we now map the required BeerXML YIELD field
+      // to the optional internal fineGrindYield_pct property of Fermentable.  (Hence the need for a default value.)
+      //
+
       // Type                                            XPath                             Q_PROPERTY                                             Value Decoder
       {XmlRecordDefinition::FieldType::String          , "NAME"                          , PropertyNames::NamedEntity::name                     },
       {XmlRecordDefinition::FieldType::RequiredConstant, "VERSION"                       , VERSION1                                             },
       {XmlRecordDefinition::FieldType::Enum            , "TYPE"                          , PropertyNames::Fermentable::type                     , &BEER_XML_FERMENTABLE_TYPE_MAPPER},
-      {XmlRecordDefinition::FieldType::Double          , "YIELD"                         , PropertyNames::Fermentable::yield_pct                },
+      {XmlRecordDefinition::FieldType::Double          , "YIELD"                         , PropertyNames::Fermentable::fineGrindYield_pct       , 0.0},
       {XmlRecordDefinition::FieldType::Double          , "COLOR"                         , PropertyNames::Fermentable::color_srm                },
-///      {XmlRecordDefinition::FieldType::Bool            , "ADD_AFTER_BOIL"                , PropertyNames::Fermentable::addAfterBoil             },
+      {XmlRecordDefinition::FieldType::Bool            , "ADD_AFTER_BOIL"                , BtString::NULL_STR                                   }, // No longer supported
       {XmlRecordDefinition::FieldType::String          , "ORIGIN"                        , PropertyNames::Fermentable::origin                   },
       {XmlRecordDefinition::FieldType::String          , "SUPPLIER"                      , PropertyNames::Fermentable::supplier                 },
       {XmlRecordDefinition::FieldType::String          , "NOTES"                         , PropertyNames::Fermentable::notes                    },
@@ -267,7 +277,6 @@ namespace {
 ///      {XmlRecordDefinition::FieldType::Bool            , "AMOUNT_IS_WEIGHT"              , PropertyNames::Fermentable::amountIsWeight           },
       {XmlRecordDefinition::FieldType::String          , "PRODUCER"                      , PropertyNames::Fermentable::producer                 },
       {XmlRecordDefinition::FieldType::String          , "PRODUCT_ID"                    , PropertyNames::Fermentable::productId                },
-      {XmlRecordDefinition::FieldType::Double          , "FINE_GRIND_YIELD"              , PropertyNames::Fermentable::fineGrindYield_pct       },
       {XmlRecordDefinition::FieldType::Double          , "COARSE_GRIND_YIELD"            , PropertyNames::Fermentable::coarseGrindYield_pct     },
       {XmlRecordDefinition::FieldType::Double          , "POTENTIAL_YIELD"               , PropertyNames::Fermentable::potentialYield_sg        },
       {XmlRecordDefinition::FieldType::Double          , "ALPHA_AMYLASE"                 , PropertyNames::Fermentable::alphaAmylase_dextUnits   },
@@ -1189,6 +1198,8 @@ namespace {
          {XmlRecordDefinition::FieldType::String          , "EST_ABV"                 , BtString::NULL_STR                       }, // Extension tag
          {XmlRecordDefinition::FieldType::String          , "ABV"                     , BtString::NULL_STR                       }, // Extension tag
          {XmlRecordDefinition::FieldType::String          , "ACTUAL_EFFICIENCY"       , BtString::NULL_STR                       }, // Extension tag
+         // We don't write the calories field in BeerXML as it's a free-form text field that would require special processing to
+         // output.  In BeerJSON the equivalent field is more structured, so we do write it.
          {XmlRecordDefinition::FieldType::String          , "CALORIES"                , BtString::NULL_STR                       }, // Extension tag
          {XmlRecordDefinition::FieldType::String          , "DISPLAY_BATCH_SIZE"      , BtString::NULL_STR                       }, // Extension tag
          {XmlRecordDefinition::FieldType::String          , "DISPLAY_BOIL_SIZE"       , BtString::NULL_STR                       }, // Extension tag
@@ -1215,8 +1226,7 @@ namespace {
       nullptr,    // Type Lookup for our corresponding model object
       "",         // NamedEntity class name
       "",         // Localised name
-      nullptr,    // listUpcaster
-      nullptr,    // listDowncaster
+      {},         // upAndDownCasters
       XmlRecordDefinition::create<XmlRecord>,
       {
          // Type                                         XPath                       Q_PROPERTY           Value Decoder

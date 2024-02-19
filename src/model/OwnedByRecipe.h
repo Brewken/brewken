@@ -56,7 +56,7 @@ public:
 
    Q_PROPERTY(int recipeId   READ recipeId   WRITE setRecipeId   STORED false)
 
-   void setRecipeId(int recipeId);
+   void setRecipeId(int const val);
    void setRecipe(Recipe * recipe);
 
    virtual std::optional<std::shared_ptr<Recipe>> owningRecipe() const;

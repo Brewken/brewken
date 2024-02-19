@@ -59,4 +59,4 @@ IngredientInRecipe::~IngredientInRecipe() = default;
 
 int IngredientInRecipe::ingredientId() const { return this->m_ingredientId; }
 
-void IngredientInRecipe::setIngredientId(int ingredientId) { this->m_ingredientId = ingredientId; }
+void IngredientInRecipe::setIngredientId(int const val) { SET_AND_NOTIFY(PropertyNames::IngredientInRecipe::ingredientId, this->m_ingredientId, val); return; }

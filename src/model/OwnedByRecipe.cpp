@@ -73,10 +73,10 @@ std::optional<std::shared_ptr<Recipe>> OwnedByRecipe::owningRecipe() const {
    return std::nullopt;
 }
 
-void OwnedByRecipe::setRecipeId(int recipeId) { this->m_recipeId = recipeId; }
+void OwnedByRecipe::setRecipeId(int const val) { SET_AND_NOTIFY(PropertyNames::OwnedByRecipe::recipeId, this->m_recipeId, val); return; }
 
 void OwnedByRecipe::setRecipe(Recipe * recipe) {
    Q_ASSERT(nullptr != recipe);
-   this->m_recipeId = recipe->key();
+   this->setRecipeId(recipe->key());
    return;
 }

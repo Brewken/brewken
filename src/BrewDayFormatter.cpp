@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BrewDayFormatter.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * BrewDayFormatter.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -107,9 +107,8 @@ QString BrewDayFormatter::buildTitleHtml(bool includeImage) {
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2%</td><td class=\"right\">%3</td><td class=\"value\">%4</tr>")
            .arg(tr("ABV"))
            .arg(Measurement::displayQuantity(recObs->ABV_pct(), 1))
-           .arg(metricVolume ? tr("Estimated calories (per 33 cl)") :
-                tr("Estimated calories (per 12 oz)"))
-           .arg(Measurement::displayQuantity(metricVolume ? recObs->calories33cl() : recObs->calories12oz(), 0));
+           .arg(metricVolume ? tr("Estimated calories (per 33 cl)") : tr("Estimated calories (per 12 oz)"))
+           .arg(Measurement::displayQuantity(metricVolume ? recObs->caloriesPer33cl() : recObs->caloriesPerUs12oz(), 0));
 
    body += "</table>";
 
@@ -177,7 +176,7 @@ QList<QStringList> BrewDayFormatter::buildTitleList() {
       Measurement::UnitSystems::volume_Metric;
 
    row.append(metricVolume ? tr("Estimated calories (per 33 cl)") : tr("Estimated calories (per 12 oz)"));
-   row.append(Measurement::displayQuantity(metricVolume ? recObs->calories33cl() : recObs->calories12oz(), 0));
+   row.append(Measurement::displayQuantity(metricVolume ? recObs->caloriesPer33cl() : recObs->caloriesPerUs12oz(), 0));
    ret.append(row);
    row.clear();
 

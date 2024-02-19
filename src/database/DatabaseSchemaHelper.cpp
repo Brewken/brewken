@@ -701,7 +701,7 @@ namespace {
          {QString("ALTER TABLE fermentable ADD COLUMN grain_group                    %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE fermentable ADD COLUMN producer                       %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE fermentable ADD COLUMN product_id                     %1").arg(db.getDbNativeTypeName<QString>())},
-         {QString("ALTER TABLE fermentable ADD COLUMN fine_grind_yield_pct           %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE fermentable RENAME COLUMN yield TO fine_grind_yield_pct")},
          {QString("ALTER TABLE fermentable ADD COLUMN coarse_grind_yield_pct         %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE fermentable ADD COLUMN potential_yield_sg             %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE fermentable ADD COLUMN alpha_amylase_dext_units       %1").arg(db.getDbNativeTypeName<double >())},
@@ -866,12 +866,10 @@ namespace {
          {QString("     UPDATE recipe SET type = 'extract'      WHERE type = 'Extract'     ")},
          {QString("     UPDATE recipe SET type = 'partial mash' WHERE type = 'Partial Mash'")},
          {QString("     UPDATE recipe SET type = 'all grain'    WHERE type = 'All Grain'   ")},
-         // TODO: Add boii_id and fermentation_id columns
          {QString("ALTER TABLE recipe ADD COLUMN boil_id         %1 REFERENCES boil         (id)").arg(db.getDbNativeTypeName<int>())},
          {QString("ALTER TABLE recipe ADD COLUMN fermentation_id %1 REFERENCES fermentation (id)").arg(db.getDbNativeTypeName<int>())},
          {QString("ALTER TABLE recipe ADD COLUMN beer_acidity_ph          %1").arg(db.getDbNativeTypeName<double >())},
          {QString("ALTER TABLE recipe ADD COLUMN apparent_attenuation_pct %1").arg(db.getDbNativeTypeName<double >())},
-
          //
          // We have to create and populate the boil and boil_step tables before we do hop_in_recipe as we need pre-boil
          // steps to attach first wort hops to.
@@ -905,13 +903,20 @@ namespace {
                      "'', "
                      "boil_size, "
                      "boil_time, "
-                     "id "
+                     "id AS recipe_id "
                   "FROM recipe"
          ), {QVariant{false}, QVariant{true}}},
-         {QString("UPDATE recipe SET boil_id         = (SELECT boil.id         FROM boil        , recipe WHERE recipe.id = boil.temp_recipe_id        )")},
+         {QString("UPDATE recipe "
+                  "SET boil_id = b.id "
+                  "FROM ("
+                     "SELECT id "
+                     "FROM boil"
+                  ") AS b "
+                  "WHERE recipe.id = b.id")},
 
          // Get rid of the temporary columns now that they have served their purpose.
          {QString("ALTER TABLE boil         DROP COLUMN temp_recipe_id")},
+         {QString("ALTER TABLE fermentation DROP COLUMN temp_recipe_id")},
          //
          // Now we copied two recipe columns onto the boil table, we can drop them from the recipe table
          //
@@ -1143,20 +1148,29 @@ namespace {
          //
          // (See Measurement::Units::unitStringMapping for mapping of "kilograms" to Measurement::Units::kilograms etc.)
          //
+         // It's not strictly needed, but we'll give obvious ("Addition of...") names to the hop/fermentable/etc
+         // additions at the same time because it makes the DB easier to browse.  I guess in a perfect world we should
+         // translate these but, for now at least, the name of the addition object (ie the RecipeAdditionHop etc object)
+         // is not shown in the UI, so it's not a big deal that there's an English name in the DB.
+         //
          {QString("UPDATE hop_in_recipe "
                   "SET quantity = h.amount, "
-                      "unit = 'kilograms' "
+                      "unit = 'kilograms', "
+                      "name = 'Addition of ' || h.name "
                   "FROM ("
                      "SELECT id, "
+                            "name, "
                             "amount "
                      "FROM hop"
                   ") AS h "
                   "WHERE hop_in_recipe.hop_id = h.id")},
          {QString("UPDATE fermentable_in_recipe "
                   "SET quantity = f.amount, "
-                      "unit = 'kilograms' "
+                      "unit = 'kilograms', "
+                      "name = 'Addition of ' || f.name "
                   "FROM ("
                      "SELECT id, "
+                            "name, "
                             "amount "
                      "FROM fermentable"
                   ") AS f "
@@ -1171,9 +1185,11 @@ namespace {
          //
          {QString("UPDATE misc_in_recipe "
                   "SET quantity = m.amount, "
-                      "unit = m.unit "
+                      "unit = m.unit, "
+                      "name = 'Addition of ' || m.name "
                   "FROM ("
                      "SELECT id, "
+                            "name, "
                             "amount, "
                             "CASE WHEN amount_is_weight THEN 'kilograms' ELSE 'liters' END AS unit "
                      "FROM misc"
@@ -1182,9 +1198,11 @@ namespace {
          {QString("UPDATE yeast_in_recipe "
                   "SET quantity = y.amount, "
                       "unit = y.unit, "
+                      "name = 'Addition of ' || y.name, "
                       "times_cultured = y.times_cultured "
                   "FROM ("
                      "SELECT id, "
+                            "name, "
                             "amount, "
                             "CASE WHEN amount_is_weight THEN 'kilograms' ELSE 'liters' END AS unit, "
                             "times_cultured "
@@ -1208,9 +1226,11 @@ namespace {
          {QString("UPDATE salt_in_recipe "
                   "SET quantity    = s.amount, "
                       "unit        = s.unit, "
+                      "name = 'Addition of ' || s.name, "
                       "when_to_add = s.when_to_add "
                   "FROM ("
                      "SELECT id, "
+                            "name, "
                             "amount, "
                             "addTo, "
                             "CASE "
@@ -1231,9 +1251,11 @@ namespace {
          // For water both the source and target are volume in liters
          //
          {QString("UPDATE water_in_recipe "
-                  "SET volume_l = w.amount "
+                  "SET volume_l = w.amount, "
+                      "name = 'Use of ' || w.name "
                   "FROM ("
                      "SELECT id, "
+                            "name, "
                             "amount "
                      "FROM water"
                   ") AS w "
