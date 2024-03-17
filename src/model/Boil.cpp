@@ -127,13 +127,12 @@ void Boil::ensureStandardProfile() {
       auto preBoil = std::make_shared<BoilStep>(tr("Pre-boil for %1").arg(recipe->name()));
       // Get the starting temperature for the ramp-up from the end temperature of the mash
       double startingTemp = Boil::minimumBoilTemperature_c - 1.0;
-      auto mash = recipe->mash();
-      if (mash) {
-         auto mashSteps = mash->steps();
+      if (recipe->mash()) {
+         auto mashSteps = recipe->mash()->steps();
          if (!mashSteps.isEmpty()) {
             auto lastMashStep = mashSteps.last();
-            // Note that MashStep has the extra stepTemp_c field that BoilStep and FermentationStep do not
-            startingTemp = std::min(lastMashStep->stepTemp_c(), lastMashStep->endTemp_c().value_or(startingTemp));
+            startingTemp = std::min(lastMashStep->startTemp_c().value_or(startingTemp),
+                                    lastMashStep->  endTemp_c().value_or(startingTemp));
          }
       }
       preBoil->setStartTemp_c(startingTemp);
@@ -153,11 +152,10 @@ void Boil::ensureStandardProfile() {
       // We need to add a post-boil step
       auto postBoil = std::make_shared<BoilStep>(tr("Post-boil for %1").arg(recipe->name()));
       double endingTemp = 30.0;
-      auto fermentation = recipe->fermentation();
-      if (fermentation) {
-         auto fermentationSteps = fermentation->steps();
-         if (!fermentationSteps.isEmpty()) {
-            auto firstFermentationStep = fermentationSteps.first();
+      if (recipe->fermentation()) {
+         auto fs = recipe->fermentation()->fermentationSteps();
+         if (!fs.isEmpty()) {
+            auto firstFermentationStep = fs.first();
             endingTemp = firstFermentationStep->startTemp_c().value_or(endingTemp);
          }
       }

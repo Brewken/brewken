@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * WaterButton.h is part of Brewken, and is copyright the following authors 2009-2024:
+ * buttons/WaterButton.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -15,44 +15,22 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef WATERBUTTON_H
-#define WATERBUTTON_H
+#ifndef BUTTONS_WATERBUTTON_H
+#define BUTTONS_WATERBUTTON_H
 #pragma once
 
-#include <QMetaProperty>
-#include <QPushButton>
-#include <QVariant>
-#include <QWidget>
-
+#include "buttons/RecipeAttributeButton.h"
 #include "model/Water.h"
-
-// Forward declarations.
-class Recipe;
 
 /*!
  * \class WaterButton
  *
  * \brief View class that displays the name of a water.  Used in \c WaterDialog (aka Water Chemistry Tool)
  */
-class WaterButton : public QPushButton {
+class WaterButton : public RecipeAttributeButton,
+                    public RecipeAttributeButtonBase<WaterButton, Water> {
    Q_OBJECT
-
-public:
-   WaterButton(QWidget* parent = nullptr);
-   virtual ~WaterButton();
-
-   //! Observe a recipe's water.
-   void setRecipe(Recipe * recipe);
-   //! Observe a particular water.
-   void setWater(Water * water);
-
-private slots:
-   void recChanged(QMetaProperty,QVariant);
-   void waterChanged(QMetaProperty,QVariant);
-
-private:
-   Recipe * m_rec;
-   Water *  m_water;
+   RECIPE_ATTRIBUTE_BUTTON_BASE_DECL(Water)
 };
 
 #endif

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/MashStepTableModel.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * tableModels/MashStepTableModel.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -33,6 +33,7 @@
 #include "model/Mash.h"
 #include "tableModels/BtTableModel.h"
 #include "tableModels/ItemDelegate.h"
+#include "tableModels/StepTableModelBase.h"
 #include "tableModels/TableModelBase.h"
 
 // You have to get the order of everything right with traits classes, but the end result is that we can refer to
@@ -54,23 +55,26 @@ template <> struct TableModelTraits<MashStepTableModel> {
  *
  * \brief Model for the list of mash steps in a mash.
  */
-class MashStepTableModel : public BtTableModel, public TableModelBase<MashStepTableModel, MashStep> {
+class MashStepTableModel : public BtTableModel,
+                           public TableModelBase<MashStepTableModel, MashStep>,
+                           public StepTableModelBase<MashStepTableModel, MashStep, Mash> {
    Q_OBJECT
 
    TABLE_MODEL_COMMON_DECL(MashStep)
+   STEP_TABLE_MODEL_COMMON_DECL(Mash)
 
 public:
 
 ///   //! \brief Casting wrapper for \c BtTableModel::getColumnInfo
 ///   ColumnInfo const & getColumnInfo(ColumnIndex const columnIndex) const;
 
-   /**
-    * \brief Set the mash whose mash steps we want to model or reload steps from an existing mash after they were
-    *        changed.
-    */
-   void setMash(Mash * m);
-
-   Mash * getMash() const;
+///   /**
+///    * \brief Set the mash whose mash steps we want to model or reload steps from an existing mash after they were
+///    *        changed.
+///    */
+///   void setMash(Mash * m);
+///
+///   Mash * getMash() const;
 
 ///   //! Reimplemented from QAbstractTableModel.
 ///   virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
@@ -83,19 +87,19 @@ public:
 ///   //! Reimplemented from QAbstractTableModel.
 ///   virtual bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
 
-   //! \returns true if mashStep is successfully found and removed.
-   bool remove(std::shared_ptr<MashStep> MashStep);
-
-public slots:
-   void moveStepUp(int i);
-   void moveStepDown(int i);
-   void mashChanged();
-   void mashStepChanged(QMetaProperty,QVariant);
+///   //! \returns true if mashStep is successfully found and removed.
+///   bool remove(std::shared_ptr<MashStep> MashStep);
+///
+///public slots:
+///   void moveStepUp(int i);
+///   void moveStepDown(int i);
+///   void mashChanged();
+///   void mashStepChanged(QMetaProperty,QVariant);
 
 private:
-   Mash* mashObs;
+///   Mash* mashObs;
 
-   void reorderMashStep(std::shared_ptr<MashStep> step, int current);
+///   void reorderMashStep(std::shared_ptr<MashStep> step, int current);
 };
 
 //============================================ CLASS MashStepItemDelegate ==============================================
@@ -107,7 +111,7 @@ private:
  * \sa MashStepTableModel
  */
 class MashStepItemDelegate : public QItemDelegate,
-                               public ItemDelegate<MashStepItemDelegate, MashStepTableModel> {
+                             public ItemDelegate<MashStepItemDelegate, MashStepTableModel> {
    Q_OBJECT
 
    ITEM_DELEGATE_COMMON_DECL(MashStep)

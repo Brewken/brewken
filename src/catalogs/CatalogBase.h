@@ -111,7 +111,7 @@ public:
       m_neTableModel          {new NeTableModel(m_tableWidget, false)   },
       m_neTableProxy          {new NeSortFilterProxyModel(m_tableWidget)} {
 
-      this->enableEditableInventory();
+///      this->enableEditableInventory();
       m_neTableProxy->setSourceModel(m_neTableModel);
 
       m_tableWidget->setModel(m_neTableProxy);
@@ -179,12 +179,16 @@ public:
    }
    virtual ~CatalogBase() = default;
 
-   QPushButton * createAddToRecipeButton() requires IsTableModel<NeTableModel> && HasInventory<NeTableModel> {
+///   QPushButton * createAddToRecipeButton() requires IsTableModel<NeTableModel> && HasInventory<NeTableModel> {
+///      return new QPushButton(&this->derived());
+///   }
+///   QPushButton * createAddToRecipeButton() requires IsTableModel<NeTableModel> && HasNoInventory<NeTableModel> {
+///      // No-op version
+///      return nullptr;
+///   }
+
+   QPushButton * createAddToRecipeButton() requires IsTableModel<NeTableModel> {
       return new QPushButton(&this->derived());
-   }
-   QPushButton * createAddToRecipeButton() requires IsTableModel<NeTableModel> && HasNoInventory<NeTableModel> {
-      // No-op version
-      return nullptr;
    }
 
    void retranslateUi() {
@@ -213,14 +217,14 @@ public:
       return;
    }
 
-   void enableEditableInventory() requires IsTableModel<NeTableModel> && HasInventory<NeTableModel> {
-      m_neTableModel->setInventoryEditable(true);
-      return;
-   }
-   void enableEditableInventory() requires IsTableModel<NeTableModel> && HasNoInventory<NeTableModel> {
-      // No-op version
-      return;
-   }
+///   void enableEditableInventory() requires IsTableModel<NeTableModel> && HasInventory<NeTableModel> {
+///      m_neTableModel->setInventoryEditable(true);
+///      return;
+///   }
+///   void enableEditableInventory() requires IsTableModel<NeTableModel> && HasNoInventory<NeTableModel> {
+///      // No-op version
+///      return;
+///   }
 
    /**
     * \brief Subclass should call this from its \c addItem slot

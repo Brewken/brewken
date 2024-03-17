@@ -29,7 +29,7 @@
 #include "model/IngredientAmount.h"
 #include "model/Inventory.h"
 #include "tableModels/BtTableModel.h"
-#include "tableModels/BtTableModelInventory.h"
+///#include "tableModels/BtTableModelInventory.h"
 #include "utils/CuriouslyRecurringTemplateBase.h"
 #include "utils/MetaTypes.h"
 
@@ -39,7 +39,7 @@ class Style;
 
 //
 // Using concepts allows us to tailor the templated TableModelTraits class without having the same inheritance
-// structure as BtTableModel / BtTableModelRecipeObserver / BtTableModelInventory.
+// structure as BtTableModel / BtTableModelRecipeObserver.
 //
 // Note that concepts have some limitations:
 //    - Concepts cannot recursively refer to themselves and cannot be constrained, is you cannot define one concept in
@@ -49,8 +49,8 @@ class Style;
 //
 // See comment in utils/TypeTraits.h for definition of CONCEPT_FIX_UP (and why, for now, we need it)
 template <typename T> concept CONCEPT_FIX_UP IsTableModel   = std::is_base_of_v<BtTableModel, T>;
-template <typename T> concept CONCEPT_FIX_UP HasInventory   = std::is_base_of_v<BtTableModelInventory, T>;
-template <typename T> concept CONCEPT_FIX_UP HasNoInventory = std::negation_v<std::is_base_of<BtTableModelInventory, T>>;
+///template <typename T> concept CONCEPT_FIX_UP HasInventory   = std::is_base_of_v<BtTableModelInventory, T>;
+///template <typename T> concept CONCEPT_FIX_UP HasNoInventory = std::negation_v<std::is_base_of<BtTableModelInventory, T>>;
 template <typename T> concept CONCEPT_FIX_UP ObservesRecipe       = std::is_base_of_v<BtTableModelRecipeObserver, T>;
 template <typename T> concept CONCEPT_FIX_UP DoesNotObserveRecipe = std::negation_v<std::is_base_of<BtTableModelRecipeObserver, T>>;
 
@@ -816,25 +816,25 @@ protected:
       return true;
    }
 
-   template<class Caller>
-   void updateInventory(int invKey, BtStringConst const & propertyName) requires IsTableModel<Caller> && HasInventory<Caller> {
-      // Substantive version
-      if (propertyName == PropertyNames::IngredientAmount::amount) {
-         for (int ii = 0; ii < this->rows.size(); ++ii) {
-            if (invKey == this->rows.at(ii)->inventoryId()) {
-               emit this->derived().dataChanged(this->derived().createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)),
-                                                this->derived().createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)));
-            }
-         }
-      }
-      return;
-   }
-   template<class Caller>
-   void updateInventory([[maybe_unused]] int invKey,
-                        [[maybe_unused]] BtStringConst const & propertyName) requires IsTableModel<Caller> && HasNoInventory<Caller> {
-      // No-op version
-      return;
-   }
+///   template<class Caller>
+///   void updateInventory(int invKey, BtStringConst const & propertyName) requires IsTableModel<Caller> && HasInventory<Caller> {
+///      // Substantive version
+///      if (propertyName == PropertyNames::IngredientAmount::amount) {
+///         for (int ii = 0; ii < this->rows.size(); ++ii) {
+///            if (invKey == this->rows.at(ii)->inventoryId()) {
+///               emit this->derived().dataChanged(this->derived().createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)),
+///                                                this->derived().createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)));
+///            }
+///         }
+///      }
+///      return;
+///   }
+///   template<class Caller>
+///   void updateInventory([[maybe_unused]] int invKey,
+///                        [[maybe_unused]] BtStringConst const & propertyName) requires IsTableModel<Caller> && HasNoInventory<Caller> {
+///      // No-op version
+///      return;
+///   }
 
    template<class Caller>
    void checkRecipeItems(Recipe * recipe) requires IsTableModel<Caller> && ObservesRecipe<Caller>{
@@ -983,9 +983,10 @@ protected:
       this->propertyChanged<NeName##TableModel>(prop, val, RecipePropertyName);                         \
       return;                                                                                           \
    }                                                                                                    \
-   void NeName##TableModel::changedInventory(int invKey, BtStringConst const & propertyName) {          \
-      this->updateInventory<NeName##TableModel>(invKey, propertyName);                                  \
-      return;                                                                                           \
-   }                                                                                                    \
+
+///   void NeName##TableModel::changedInventory(int invKey, BtStringConst const & propertyName) {
+///      this->updateInventory<NeName##TableModel>(invKey, propertyName);
+///      return;
+///   }
 
 #endif

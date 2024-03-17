@@ -93,7 +93,10 @@ set(filesToCompile_cpp
     ${repoDir}/src/WaterDialog.cpp
     ${repoDir}/src/boiltime.cpp
     ${repoDir}/src/buttons/EquipmentButton.cpp
+    ${repoDir}/src/buttons/BoilButton.cpp
+    ${repoDir}/src/buttons/FermentationButton.cpp
     ${repoDir}/src/buttons/MashButton.cpp
+    ${repoDir}/src/buttons/RecipeAttributeButton.cpp
     ${repoDir}/src/buttons/StyleButton.cpp
     ${repoDir}/src/buttons/WaterButton.cpp
     ${repoDir}/src/catalogs/EquipmentCatalog.cpp
@@ -108,8 +111,12 @@ set(filesToCompile_cpp
     ${repoDir}/src/database/DbTransaction.cpp
     ${repoDir}/src/database/ObjectStore.cpp
     ${repoDir}/src/database/ObjectStoreTyped.cpp
+    ${repoDir}/src/editors/BoilEditor.cpp
+    ${repoDir}/src/editors/BoilStepEditor.cpp
     ${repoDir}/src/editors/EquipmentEditor.cpp
     ${repoDir}/src/editors/FermentableEditor.cpp
+    ${repoDir}/src/editors/FermentationEditor.cpp
+    ${repoDir}/src/editors/FermentationStepEditor.cpp
     ${repoDir}/src/editors/HopEditor.cpp
     ${repoDir}/src/editors/MashEditor.cpp
     ${repoDir}/src/editors/MashStepEditor.cpp
@@ -165,8 +172,8 @@ set(filesToCompile_cpp
     ${repoDir}/src/model/RecipeAdditionFermentable.cpp
     ${repoDir}/src/model/RecipeAdditionHop.cpp
     ${repoDir}/src/model/RecipeAdditionMisc.cpp
-    ${repoDir}/src/model/RecipeAdjustmentSalt.cpp
     ${repoDir}/src/model/RecipeAdditionYeast.cpp
+    ${repoDir}/src/model/RecipeAdjustmentSalt.cpp
     ${repoDir}/src/model/RecipeUseOfWater.cpp
     ${repoDir}/src/model/Salt.cpp
     ${repoDir}/src/model/Step.cpp
@@ -204,10 +211,12 @@ set(filesToCompile_cpp
     ${repoDir}/src/sortFilterProxyModels/StyleSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/WaterSortFilterProxyModel.cpp
     ${repoDir}/src/sortFilterProxyModels/YeastSortFilterProxyModel.cpp
+    ${repoDir}/src/tableModels/BoilStepTableModel.cpp
     ${repoDir}/src/tableModels/BtTableModel.cpp
     ${repoDir}/src/tableModels/BtTableModelInventory.cpp
     ${repoDir}/src/tableModels/EquipmentTableModel.cpp
     ${repoDir}/src/tableModels/FermentableTableModel.cpp
+    ${repoDir}/src/tableModels/FermentationStepTableModel.cpp
     ${repoDir}/src/tableModels/HopTableModel.cpp
     ${repoDir}/src/tableModels/MashStepTableModel.cpp
     ${repoDir}/src/tableModels/MiscTableModel.cpp

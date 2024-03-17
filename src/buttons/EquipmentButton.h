@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * EquipmentButton.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * buttons/EquipmentButton.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -15,42 +15,22 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef EQUIPMENTBUTTON_H
-#define EQUIPMENTBUTTON_H
+#ifndef BUTTONS_EQUIPMENTBUTTON_H
+#define BUTTONS_EQUIPMENTBUTTON_H
 #pragma once
 
-#include <QPushButton>
-#include <QMetaProperty>
-#include <QVariant>
-
-// Forward declarations.
-class Equipment;
-class Recipe;
-class QWidget;
+#include "buttons/RecipeAttributeButton.h"
+#include "model/Equipment.h"
 
 /*!
  * \class EquipmentButton
  *
  * \brief This is a view class that displays the name of an equipment.
  */
-class EquipmentButton : public QPushButton {
+class EquipmentButton : public RecipeAttributeButton,
+                        public RecipeAttributeButtonBase<EquipmentButton, Equipment> {
    Q_OBJECT
-public:
-   EquipmentButton(QWidget* parent = nullptr);
-   virtual ~EquipmentButton(){}
-
-   //! Observe a recipe's equipment.
-   void setRecipe(Recipe* recipe);
-   //! Observe a particular equipment.
-   void setEquipment(Equipment* equip);
-
-private slots:
-   void recChanged(QMetaProperty,QVariant);
-   void equipChanged(QMetaProperty,QVariant);
-
-private:
-   Recipe* m_rec;
-   Equipment* m_equip;
+   RECIPE_ATTRIBUTE_BUTTON_BASE_DECL(Equipment)
 };
 
 #endif

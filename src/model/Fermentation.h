@@ -34,9 +34,13 @@
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Fermentation { BtStringConst const property{#property}; }
-AddPropertyName(description              )
-AddPropertyName(notes                    )
-AddPropertyName(fermentationSteps        )
+AddPropertyName(description      )
+AddPropertyName(fermentationSteps)
+AddPropertyName(notes            )
+AddPropertyName(numSteps         )
+AddPropertyName(primary          )
+AddPropertyName(secondary        )
+AddPropertyName(tertiary         )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -73,8 +77,18 @@ public:
    //=================================================== PROPERTIES ====================================================
    Q_PROPERTY(QString                                    description         READ description     WRITE setDescription)
    Q_PROPERTY(QString                                    notes               READ notes           WRITE setNotes      )
-   //! \brief The individual fermentation steps.
-   Q_PROPERTY(QList<std::shared_ptr<FermentationStep>>   fermentationSteps   READ fermentationSteps   STORED false)
+   //! \brief The individual fermentation steps.  (See \c StepOwnerBase for getter/setter implementation.)
+   Q_PROPERTY(QList<std::shared_ptr<FermentationStep>>   fermentationSteps   READ fermentationSteps   WRITE setFermentationSteps   STORED false)
+
+   //! \brief Number of fermentation steps -- for BeerXML.  NB: Read-only.  (See \c StepOwnerBase for getter/setter implementation.)
+   Q_PROPERTY(unsigned int numSteps   READ numSteps   STORED false)
+
+   //! \brief Convenience property for accessing the first fermentation step  (See \c StepOwnerBase for getter/setter implementation.)
+   Q_PROPERTY(std::optional<std::shared_ptr<FermentationStep>>   primary     READ primary     WRITE setPrimary     STORED false)
+   //! \brief Convenience property for accessing the second fermentation step  (See \c StepOwnerBase for getter/setter implementation.)
+   Q_PROPERTY(std::optional<std::shared_ptr<FermentationStep>>   secondary   READ secondary   WRITE setSecondary   STORED false)
+   //! \brief Convenience property for accessing the third fermentation step  (See \c StepOwnerBase for getter/setter implementation.)
+   Q_PROPERTY(std::optional<std::shared_ptr<FermentationStep>>   tertiary    READ tertiary    WRITE setTertiary    STORED false)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    QString               description  () const;
@@ -96,8 +110,8 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   QString               m_description  ;
-   QString               m_notes        ;
+   QString m_description;
+   QString m_notes      ;
 };
 
 BT_DECLARE_METATYPES(Fermentation)

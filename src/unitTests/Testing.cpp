@@ -490,14 +490,14 @@ void Testing::recipeCalcTest_allGrain() {
    singleConversion_sparge->setName("Sparge");
    singleConversion_sparge->setType(MashStep::Type::Infusion);
    singleConversion_sparge->setAmount_l(
-      (*rec->boil())->preBoilSize_l().value_or(0.0)
+      rec->boil()->preBoilSize_l().value_or(0.0)
       + this->pimpl->m_equipFiveGalNoLoss->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg) * grain_kg // Grain absorption
       - conversion_l // Water we already added
    );
    singleConversion->addStep(singleConversion_sparge);
 
    // Add equipment
-   rec->setEquipment(this->pimpl->m_equipFiveGalNoLoss.get());
+   rec->setEquipment(this->pimpl->m_equipFiveGalNoLoss);
 
    // Add hops (85g)
    auto cascadeHopAddition = std::make_shared<RecipeAdditionHop>("Cascade 4% Hop Addition");
@@ -517,7 +517,7 @@ void Testing::recipeCalcTest_allGrain() {
    rec->addAddition(twoRowFermentableAddition);
 
    // Add mash
-   rec->setMash(singleConversion.get());
+   rec->setMash(singleConversion);
 
    // Malt color units
    double mcus =
@@ -551,7 +551,7 @@ void Testing::recipeCalcTest_allGrain() {
       / rec->batchSize_l();
 
    // Verify calculated recipe parameters within some tolerance.
-   QVERIFY2( fuzzyComp(rec->boilVolume_l(),  (*rec->boil())->preBoilSize_l().value_or(0.0),  0.1),     "Wrong boil volume calculation" );
+   QVERIFY2( fuzzyComp(rec->boilVolume_l(),  rec->boil()->preBoilSize_l().value_or(0.0),  0.1),     "Wrong boil volume calculation" );
    QVERIFY2( fuzzyComp(rec->finalVolume_l(), rec->batchSize_l(), 0.1),     "Wrong final volume calculation" );
    QVERIFY2( fuzzyComp(rec->og(),            og,                 0.002),   "Wrong OG calculation" );
    QVERIFY2( fuzzyComp(rec->IBU(),           ibus,               5.0),     "Wrong IBU calculation" );
@@ -564,7 +564,7 @@ void Testing::postBoilLossOgTest() {
    double const grain_kg = 5.0;
    Recipe* recNoLoss = new Recipe(QString("TestRecipe_noLoss"));
    Recipe* recLoss = new Recipe(QString("TestRecipe_loss"));
-   Equipment* eLoss = new Equipment(*this->pimpl->m_equipFiveGalNoLoss.get());
+   auto eLoss = std::make_shared<Equipment>(*this->pimpl->m_equipFiveGalNoLoss.get());
 
    // Only difference between the recipes:
    // - 2 L of post-boil loss
@@ -589,7 +589,7 @@ void Testing::postBoilLossOgTest() {
    ;
 
    // Add equipment
-   recNoLoss->setEquipment(this->pimpl->m_equipFiveGalNoLoss.get());
+   recNoLoss->setEquipment(this->pimpl->m_equipFiveGalNoLoss);
    recLoss->setEquipment(eLoss);
 
    // Add grain
@@ -619,11 +619,11 @@ void Testing::postBoilLossOgTest() {
 
    // Infusion for recNoLoss
    singleConversion_convert->setAmount_l(mashWaterNoLoss_l);
-   recNoLoss->setMash(singleConversion.get());
+   recNoLoss->setMash(singleConversion);
 
    // Infusion for recLoss
    singleConversion_convert->setAmount_l(mashWaterLoss_l);
-   recLoss->setMash(singleConversion.get());
+   recLoss->setMash(singleConversion);
 
    // Verify we hit the right boil/final volumes (that the test is sane)
    QVERIFY2(fuzzyComp(recNoLoss->boilVolume_l(),  *recNoLoss->nonOptBoil()->preBoilSize_l(), 0.1), "Wrong boil volume calculation (recNoLoss)");

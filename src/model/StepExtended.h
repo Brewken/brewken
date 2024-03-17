@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/StepExtended.h is part of Brewken, and is copyright the following authors 2023:
+ * model/StepExtended.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -23,7 +23,6 @@
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::StepExtended { BtStringConst const property{#property}; }
-AddPropertyName(startTemp_c    )
 AddPropertyName(startGravity_sg)
 AddPropertyName(  endGravity_sg)
 #undef AddPropertyName
@@ -59,19 +58,16 @@ public:
 
    //=================================================== PROPERTIES ====================================================
    // ⮜⮜⮜ All below added for BeerJSON support(!) ⮞⮞⮞
-   Q_PROPERTY(std::optional<double> startTemp_c      READ startTemp_c      WRITE setStartTemp_c    )
    Q_PROPERTY(std::optional<double> startGravity_sg  READ startGravity_sg  WRITE setStartGravity_sg)
    Q_PROPERTY(std::optional<double>   endGravity_sg  READ   endGravity_sg  WRITE   setEndGravity_sg)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    // ⮜⮜⮜ All below added for BeerJSON support(!) ⮞⮞⮞
-   std::optional<double> startTemp_c    () const;
    std::optional<double> startGravity_sg() const;
    std::optional<double>   endGravity_sg() const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    // ⮜⮜⮜ All below added for BeerJSON support(!) ⮞⮞⮞
-   void setStartTemp_c    (std::optional<double> const val);
    void setStartGravity_sg(std::optional<double> const val);
    void   setEndGravity_sg(std::optional<double> const val);
 
@@ -82,7 +78,6 @@ protected:
 
 protected:
    // ⮜⮜⮜ All below added for BeerJSON support(!) ⮞⮞⮞
-   std::optional<double> m_startTemp_c    ;
    std::optional<double> m_startGravity_sg;
    std::optional<double> m_endGravity_sg  ;
 };

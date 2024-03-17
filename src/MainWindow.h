@@ -199,16 +199,31 @@ public slots:
 
    //! \brief Invoke the pop-up Window to add a new mash step to (the mash of) the recipe.
    void addMashStep();
+   void addBoilStep();
+   void addFermentationStep();
+
    //! \brief Actually add the new mash step to (the mash of) the recipe (in an undoable way).
-   void addMashStepToMash(std::shared_ptr<MashStep> mashStep);
+   void addMashStepToMash                (std::shared_ptr<MashStep        > step);
+   void addBoilStepToBoil                (std::shared_ptr<BoilStep        > step);
+   void addFermentationStepToFermentation(std::shared_ptr<FermentationStep> step);
+
    //! \brief Move currently selected mash step down.
    void moveSelectedMashStepUp();
+   void moveSelectedBoilStepUp();
+   void moveSelectedFermentationStepUp();
    //! \brief Move currently selected mash step up.
    void moveSelectedMashStepDown();
+   void moveSelectedBoilStepDown();
+   void moveSelectedFermentationStepDown();
    //! \brief Remove currently selected mash step.
-   void removeSelectedMashStep();
+   void removeSelectedMashStep        ();
+   void removeSelectedBoilStep        ();
+   void removeSelectedFermentationStep();
    //! \brief Edit currently selected mash step.
-   void editSelectedMashStep();
+   void editSelectedMashStep        ();
+   void editSelectedBoilStep        ();
+   void editSelectedFermentationStep();
+
    //! \brief Set the current recipe's mash to the one selected in the mash combo box.
    //void setMashToCurrentlySelected();
    //! \brief Save the current recipe's mash to be used in other recipes.
@@ -310,19 +325,14 @@ private:
    // Insert all the usual boilerplate to prevent copy/assignment/move
    NO_COPY_DECLARATIONS(MainWindow)
 
+   //
+   // We only use specialisations of this template, which are all defined in the .cpp file
+   //
    // TODO: At the moment, these need to be in MainWindow itself rather than in the pimpl because of the way function
    // pointers get passed to UndoableAddOrRemove.  We should fix that at some point.
-   void removeHopAddition        (std::shared_ptr<RecipeAdditionHop        > itemToRemove);
-   void removeFermentableAddition(std::shared_ptr<RecipeAdditionFermentable> itemToRemove);
-   void removeMiscAddition       (std::shared_ptr<RecipeAdditionMisc       > itemToRemove);
-   void removeYeastAddition      (std::shared_ptr<RecipeAdditionYeast      > itemToRemove);
-   void removeMashStep(std::shared_ptr<MashStep> itemToRemove);
+   template<typename NE> void remove(std::shared_ptr<NE> itemToRemove);
 
-   Recipe* recipeObs;
-   // TBD: (MY 2020-11-24) Not sure whether we need to store recipe style (since it ought to be available from the
-   //      recipe) or whether this is just for convenience.
-   Style* recStyle;
-   Equipment* recEquip;
+   Recipe* m_recipeObs;
 
    QString highSS, lowSS, goodSS, boldSS; // Palette replacements
 

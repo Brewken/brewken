@@ -549,7 +549,7 @@ namespace {
          {JsonRecordDefinition::FieldType::String              , "name"              , PropertyNames::NamedEntity::name               },
          {JsonRecordDefinition::FieldType::Enum                , "type"              , PropertyNames::MashStep::type                  , &MashStep::typeStringMapping          },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "amount"            , PropertyNames::MashStep::amount_l              , &BEER_JSON_VOLUME_UNIT_MAPPER         },
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "step_temperature"  , PropertyNames::MashStep::stepTemp_c            , &BEER_JSON_TEMPERATURE_UNIT_MAPPER    },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "step_temperature"  , PropertyNames::    Step::startTemp_c           , &BEER_JSON_TEMPERATURE_UNIT_MAPPER    },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "step_time"         , PropertyNames::    Step::stepTime_mins         , &BEER_JSON_TIME_UNIT_MAPPER           },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "ramp_time"         , PropertyNames::    Step::rampTime_mins         , &BEER_JSON_TIME_UNIT_MAPPER           },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "end_temperature"   , PropertyNames::    Step::endTemp_c             , &BEER_JSON_TEMPERATURE_UNIT_MAPPER    },
@@ -579,6 +579,9 @@ namespace {
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for fermentation_steps BeerJSON records
+   //
+   // NB: Although FermentationStep inherits (via StepExtended) from Step, the rampTime_mins field is not used and
+   //     should not be stored in the DB or serialised.  See comment in model/Step.h.
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<FermentationStep> {
       std::in_place_type_t<FermentationStep>{},
@@ -587,7 +590,7 @@ namespace {
          // Type                                                 XPath                Q_PROPERTY                                    Value Decoder
          {JsonRecordDefinition::FieldType::String              , "name"             , PropertyNames::NamedEntity::name            },
          {JsonRecordDefinition::FieldType::String              , "description"      , PropertyNames::Step::description            },
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "start_temperature", PropertyNames::StepExtended::startTemp_c    , &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "start_temperature", PropertyNames::        Step::startTemp_c    , &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
          {JsonRecordDefinition::FieldType::MeasurementWithUnits,   "end_temperature", PropertyNames::        Step::  endTemp_c    , &BEER_JSON_TEMPERATURE_UNIT_MAPPER},
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "step_time"        , PropertyNames::Step::stepTime_mins          , &BEER_JSON_TIME_UNIT_MAPPER       },
          {JsonRecordDefinition::FieldType::Bool                , "free_rise  "      , PropertyNames::FermentationStep::freeRise   },
@@ -830,7 +833,7 @@ namespace {
          // Type                                                 XPath                Q_PROPERTY                                    Value Decoder
          {JsonRecordDefinition::FieldType::String              , "name"             , PropertyNames:: NamedEntity::name           },
          {JsonRecordDefinition::FieldType::String              , "description"      , PropertyNames::        Step::description    },
-         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "start_temperature", PropertyNames::StepExtended::startTemp_c    , &BEER_JSON_TEMPERATURE_UNIT_MAPPER  },
+         {JsonRecordDefinition::FieldType::MeasurementWithUnits, "start_temperature", PropertyNames::        Step::startTemp_c    , &BEER_JSON_TEMPERATURE_UNIT_MAPPER  },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "end_temperature"  , PropertyNames::        Step::endTemp_c      , &BEER_JSON_TEMPERATURE_UNIT_MAPPER  },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "ramp_time"        , PropertyNames::        Step::rampTime_mins  , &BEER_JSON_TIME_UNIT_MAPPER         },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "step_time"        , PropertyNames::        Step::stepTime_mins  , &BEER_JSON_TIME_UNIT_MAPPER         },

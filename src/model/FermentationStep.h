@@ -80,6 +80,12 @@ public:
    void setFreeRise(std::optional<bool> const   val);
    void setVessel  (QString             const & val);
 
+   //========================================== "DON'T USE" MEMBER FUNCTIONS ===========================================
+   // See related Q_PROPERTY in model/Step.h comment above for why these are virtual.  Essentially we inherit them from
+   // Step but want to assert at runtime that it is a coding error if they are every called.
+   [[deprecated]] virtual std::optional<double> rampTime_mins() const;
+   [[deprecated]] virtual void setRampTime_mins(std::optional<double> const val);
+
 signals:
 
 protected:

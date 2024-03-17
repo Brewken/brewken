@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * ScaleRecipeTool.h is part of Brewken, and is copyright the following authors 2009-2015:
+ * ScaleRecipeTool.h is part of Brewken, and is copyright the following authors 2009-2024:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -40,12 +41,11 @@ class Recipe;
 /*!
  * \brief Wizard to scale a recipe's ingredients to match a new \c Equipment
  */
-class ScaleRecipeTool : public QWizard
-{
+class ScaleRecipeTool : public QWizard {
    Q_OBJECT
 
 public:
-   ScaleRecipeTool(QWidget* parent=0);
+   ScaleRecipeTool(QWidget* parent = nullptr);
    //! \brief Set the observed \c Recipe
    void setRecipe(Recipe* rec);
 
@@ -68,20 +68,14 @@ class ScaleRecipeIntroPage : public QWizardPage {
    Q_OBJECT
 
 public:
-   ScaleRecipeIntroPage(QWidget* parent=0);
+   ScaleRecipeIntroPage(QWidget* parent = nullptr);
 
 public slots:
    void doLayout();
    void retranslateUi();
 
 protected:
-
-   virtual void changeEvent(QEvent* event)
-   {
-      if(event->type() == QEvent::LanguageChange)
-         retranslateUi();
-      QWidget::changeEvent(event);
-   }
+   virtual void changeEvent(QEvent* event);
 
 private:
    QVBoxLayout* layout;
@@ -101,12 +95,7 @@ public slots:
 
 protected:
 
-   virtual void changeEvent(QEvent* event)
-   {
-      if(event->type() == QEvent::LanguageChange)
-         retranslateUi();
-      QWidget::changeEvent(event);
-   }
+   virtual void changeEvent(QEvent* event);
 
 private:
 

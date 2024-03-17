@@ -78,6 +78,27 @@
 #include "BtFolder.h"
 #include "BtHorizontalTabs.h"
 #include "BtTabWidget.h"
+#include "ConverterTool.h"
+#include "HelpDialog.h"
+#include "Html.h"
+#include "HydrometerTool.h"
+#include "ImportExport.h"
+#include "InventoryFormatter.h"
+#include "MashDesigner.h"
+#include "MashWizard.h"
+#include "OgAdjuster.h"
+#include "OptionDialog.h"
+#include "PersistentSettings.h"
+#include "PitchDialog.h"
+#include "PrimingDialog.h"
+#include "PrintAndPreviewDialog.h"
+#include "RangedSlider.h"
+#include "RecipeFormatter.h"
+#include "RefractoDialog.h"
+#include "ScaleRecipeTool.h"
+#include "StrikeWaterDialog.h"
+#include "TimerMainDialog.h"
+#include "WaterDialog.h"
 #include "catalogs/EquipmentCatalog.h"
 #include "catalogs/FermentableCatalog.h"
 #include "catalogs/HopCatalog.h"
@@ -85,11 +106,14 @@
 #include "catalogs/StyleCatalog.h"
 #include "catalogs/YeastCatalog.h"
 #include "config.h"
-#include "ConverterTool.h"
 #include "database/Database.h"
 #include "database/ObjectStoreWrapper.h"
+#include "editors/BoilEditor.h"
+#include "editors/BoilStepEditor.h"
 #include "editors/EquipmentEditor.h"
 #include "editors/FermentableEditor.h"
+#include "editors/FermentationEditor.h"
+#include "editors/FermentationStepEditor.h"
 #include "editors/HopEditor.h"
 #include "editors/MashEditor.h"
 #include "editors/MashStepEditor.h"
@@ -98,17 +122,10 @@
 #include "editors/StyleEditor.h"
 #include "editors/WaterEditor.h"
 #include "editors/YeastEditor.h"
-#include "HelpDialog.h"
-#include "Html.h"
-#include "HydrometerTool.h"
-#include "ImportExport.h"
-#include "InventoryFormatter.h"
 #include "listModels/EquipmentListModel.h"
 #include "listModels/MashListModel.h"
 #include "listModels/StyleListModel.h"
 #include "listModels/WaterListModel.h"
-#include "MashDesigner.h"
-#include "MashWizard.h"
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
 #include "model/Boil.h"
@@ -121,36 +138,25 @@
 #include "model/RecipeAdditionYeast.h"
 #include "model/Style.h"
 #include "model/Yeast.h"
-#include "OgAdjuster.h"
-#include "OptionDialog.h"
-#include "PersistentSettings.h"
-#include "PitchDialog.h"
-#include "PrimingDialog.h"
-#include "PrintAndPreviewDialog.h"
-#include "RangedSlider.h"
-#include "RecipeFormatter.h"
-#include "RefractoDialog.h"
-#include "ScaleRecipeTool.h"
 #include "sortFilterProxyModels/FermentableSortFilterProxyModel.h"
 #include "sortFilterProxyModels/RecipeAdditionFermentableSortFilterProxyModel.h"
 #include "sortFilterProxyModels/RecipeAdditionHopSortFilterProxyModel.h"
 #include "sortFilterProxyModels/RecipeAdditionMiscSortFilterProxyModel.h"
 #include "sortFilterProxyModels/RecipeAdditionYeastSortFilterProxyModel.h"
 #include "sortFilterProxyModels/StyleSortFilterProxyModel.h"
-#include "StrikeWaterDialog.h"
+#include "tableModels/BoilStepTableModel.h"
 #include "tableModels/FermentableTableModel.h"
+#include "tableModels/FermentationStepTableModel.h"
+#include "tableModels/MashStepTableModel.h"
 #include "tableModels/RecipeAdditionFermentableTableModel.h"
 #include "tableModels/RecipeAdditionHopTableModel.h"
 #include "tableModels/RecipeAdditionMiscTableModel.h"
 #include "tableModels/RecipeAdditionYeastTableModel.h"
-#include "tableModels/MashStepTableModel.h"
-#include "TimerMainDialog.h"
 #include "undoRedo/RelationalUndoableUpdate.h"
 #include "undoRedo/UndoableAddOrRemove.h"
 #include "undoRedo/UndoableAddOrRemoveList.h"
 #include "utils/BtStringConst.h"
 #include "utils/OptionalHelpers.h"
-#include "WaterDialog.h"
 
 namespace {
 
@@ -236,6 +242,8 @@ public:
       m_fermentableAdditionsTableModel{nullptr},
       m_hopAdditionsTableModel        {nullptr},
       m_mashStepTableModel            {nullptr},
+      m_boilStepTableModel            {nullptr},
+      m_fermentationStepTableModel    {nullptr},
       m_miscAdditionsTableModel       {nullptr},
       m_yeastAdditionsTableModel      {nullptr},
       m_fermentableAdditionsTableProxy{nullptr},
@@ -318,6 +326,26 @@ public:
          }
       });
 
+      // Boils
+      m_boilStepTableModel = std::make_unique<BoilStepTableModel>(m_self.boilStepTableWidget);
+      m_self.boilStepTableWidget->setItemDelegate(new BoilStepItemDelegate(m_self.boilStepTableWidget, *m_boilStepTableModel));
+      m_self.boilStepTableWidget->setModel(m_boilStepTableModel.get());
+      connect(m_self.boilStepTableWidget, &QTableView::doubleClicked, &m_self, [&](const QModelIndex &idx) {
+         if (idx.column() == 0) {
+            m_self.editSelectedBoilStep();
+         }
+      });
+
+      // Fermentations
+      m_fermentationStepTableModel = std::make_unique<FermentationStepTableModel>(m_self.fermentationStepTableWidget);
+      m_self.fermentationStepTableWidget->setItemDelegate(new FermentationStepItemDelegate(m_self.fermentationStepTableWidget, *m_fermentationStepTableModel));
+      m_self.fermentationStepTableWidget->setModel(m_fermentationStepTableModel.get());
+      connect(m_self.fermentationStepTableWidget, &QTableView::doubleClicked, &m_self, [&](const QModelIndex &idx) {
+         if (idx.column() == 0) {
+            m_self.editSelectedFermentationStep();
+         }
+      });
+
       // Enable sorting in the main tables.
       m_self.fermentableAdditionTable->horizontalHeader()->setSortIndicator(static_cast<int>(RecipeAdditionFermentableTableModel::ColumnIndex::Amount), Qt::DescendingOrder );
       m_self.fermentableAdditionTable->setSortingEnabled(true);
@@ -339,41 +367,43 @@ public:
     *        Most dialogs are initialized in here. That should include any initial configurations as well.
     */
    void setupDialogs() {
-      m_aboutDialog           = std::make_unique<AboutDialog          >(&m_self);
-      m_helpDialog            = std::make_unique<HelpDialog           >(&m_self);
-      m_equipCatalog          = std::make_unique<EquipmentCatalog     >(&m_self);
-      m_equipEditor           = std::make_unique<EquipmentEditor      >(&m_self);
-      m_fermCatalog           = std::make_unique<FermentableCatalog   >(&m_self);
-      m_fermentableEditor     = std::make_unique<FermentableEditor    >(&m_self);
-      m_hopCatalog            = std::make_unique<HopCatalog           >(&m_self);
-      m_hopEditor             = std::make_unique<HopEditor            >(&m_self);
-      m_mashEditor            = std::make_unique<MashEditor           >(&m_self);
-      m_mashStepEditor        = std::make_unique<MashStepEditor       >(&m_self);
-      m_mashWizard            = std::make_unique<MashWizard           >(&m_self);
-      m_miscCatalog           = std::make_unique<MiscCatalog          >(&m_self);
-      m_miscEditor            = std::make_unique<MiscEditor           >(&m_self);
-      m_styleCatalog          = std::make_unique<StyleCatalog         >(&m_self);
-      m_styleEditor           = std::make_unique<StyleEditor          >(&m_self);
-      m_yeastCatalog          = std::make_unique<YeastCatalog         >(&m_self);
-      m_yeastEditor           = std::make_unique<YeastEditor          >(&m_self);
-      m_optionDialog          = std::make_unique<OptionDialog         >(&m_self);
-      m_recipeScaler          = std::make_unique<ScaleRecipeTool      >(&m_self);
-      m_recipeFormatter       = std::make_unique<RecipeFormatter      >(&m_self);
-      m_printAndPreviewDialog = std::make_unique<PrintAndPreviewDialog>(&m_self);
-      m_ogAdjuster            = std::make_unique<OgAdjuster           >(&m_self);
-      m_converterTool         = std::make_unique<ConverterTool        >(&m_self);
-      m_hydrometerTool        = std::make_unique<HydrometerTool       >(&m_self);
-      m_alcoholTool           = std::make_unique<AlcoholTool          >(&m_self);
-      m_timerMainDialog       = std::make_unique<TimerMainDialog      >(&m_self);
-      m_primingDialog         = std::make_unique<PrimingDialog        >(&m_self);
-      m_strikeWaterDialog     = std::make_unique<StrikeWaterDialog    >(&m_self);
-      m_refractoDialog        = std::make_unique<RefractoDialog       >(&m_self);
-      m_mashDesigner          = std::make_unique<MashDesigner         >(&m_self);
-      m_pitchDialog           = std::make_unique<PitchDialog          >(&m_self);
-      m_btDatePopup           = std::make_unique<BtDatePopup          >(&m_self);
-      m_waterDialog           = std::make_unique<WaterDialog          >(&m_self);
-      m_waterEditor           = std::make_unique<WaterEditor          >(&m_self);
-      m_ancestorDialog        = std::make_unique<AncestorDialog       >(&m_self);
+      m_aboutDialog            = std::make_unique<AboutDialog           >(&m_self);
+      m_helpDialog             = std::make_unique<HelpDialog            >(&m_self);
+      m_equipCatalog           = std::make_unique<EquipmentCatalog      >(&m_self);
+      m_equipEditor            = std::make_unique<EquipmentEditor       >(&m_self);
+      m_fermCatalog            = std::make_unique<FermentableCatalog    >(&m_self);
+      m_fermentableEditor      = std::make_unique<FermentableEditor     >(&m_self);
+      m_hopCatalog             = std::make_unique<HopCatalog            >(&m_self);
+      m_hopEditor              = std::make_unique<HopEditor             >(&m_self);
+      m_mashEditor             = std::make_unique<MashEditor            >(&m_self);
+      m_mashStepEditor         = std::make_unique<MashStepEditor        >(&m_self);
+      m_boilStepEditor         = std::make_unique<BoilStepEditor        >(&m_self);
+      m_fermentationStepEditor = std::make_unique<FermentationStepEditor>(&m_self);
+      m_mashWizard             = std::make_unique<MashWizard            >(&m_self);
+      m_miscCatalog            = std::make_unique<MiscCatalog           >(&m_self);
+      m_miscEditor             = std::make_unique<MiscEditor            >(&m_self);
+      m_styleCatalog           = std::make_unique<StyleCatalog          >(&m_self);
+      m_styleEditor            = std::make_unique<StyleEditor           >(&m_self);
+      m_yeastCatalog           = std::make_unique<YeastCatalog          >(&m_self);
+      m_yeastEditor            = std::make_unique<YeastEditor           >(&m_self);
+      m_optionDialog           = std::make_unique<OptionDialog          >(&m_self);
+      m_recipeScaler           = std::make_unique<ScaleRecipeTool       >(&m_self);
+      m_recipeFormatter        = std::make_unique<RecipeFormatter       >(&m_self);
+      m_printAndPreviewDialog  = std::make_unique<PrintAndPreviewDialog >(&m_self);
+      m_ogAdjuster             = std::make_unique<OgAdjuster            >(&m_self);
+      m_converterTool          = std::make_unique<ConverterTool         >(&m_self);
+      m_hydrometerTool         = std::make_unique<HydrometerTool        >(&m_self);
+      m_alcoholTool            = std::make_unique<AlcoholTool           >(&m_self);
+      m_timerMainDialog        = std::make_unique<TimerMainDialog       >(&m_self);
+      m_primingDialog          = std::make_unique<PrimingDialog         >(&m_self);
+      m_strikeWaterDialog      = std::make_unique<StrikeWaterDialog     >(&m_self);
+      m_refractoDialog         = std::make_unique<RefractoDialog        >(&m_self);
+      m_mashDesigner           = std::make_unique<MashDesigner          >(&m_self);
+      m_pitchDialog            = std::make_unique<PitchDialog           >(&m_self);
+      m_btDatePopup            = std::make_unique<BtDatePopup           >(&m_self);
+      m_waterDialog            = std::make_unique<WaterDialog           >(&m_self);
+      m_waterEditor            = std::make_unique<WaterEditor           >(&m_self);
+      m_ancestorDialog         = std::make_unique<AncestorDialog        >(&m_self);
 
       return;
    }
@@ -446,7 +476,7 @@ public:
       Q_ASSERT(ne);
 
       this->m_self.doOrRedoUpdate(
-         newUndoableAddOrRemove(*this->m_self.recipeObs,
+         newUndoableAddOrRemove(*this->m_self.m_recipeObs,
                                 &Recipe::addAddition<NE>,
                                 ne,
                                 &Recipe::removeAddition<NE>,
@@ -490,7 +520,7 @@ public:
 
       for (auto item : itemsToRemove) {
          this->m_self.doOrRedoUpdate(
-            newUndoableAddOrRemove(*this->m_self.recipeObs,
+            newUndoableAddOrRemove(*this->m_self.m_recipeObs,
                                     &Recipe::removeAddition<NE>,
                                     item,
                                     &Recipe::addAddition<NE>,
@@ -501,6 +531,209 @@ public:
       return;
    }
 
+   template<class StepOwnerClass, class StepClass>
+   void addStepToStepOwner(std::shared_ptr<StepOwnerClass> stepOwner, std::shared_ptr<StepClass> step) {
+      qDebug() << Q_FUNC_INFO;
+      //
+      // Mash/Boil/Fermentation Steps are a bit different from most other NamedEntity objects in that they don't really
+      // have an independent existence.  Taking Mash as an example, if you ask a Mash to remove a MashStep then it will
+      // also tell the ObjectStore to delete it, but, when we're adding a MashStep to a Mash it's easier (for eg the
+      // implementation of undo/redo) if we add it to the ObjectStore before we call Mash::addMashStep().
+      //
+      ObjectStoreWrapper::insert(step);
+      this->m_self.doOrRedoUpdate(
+         newUndoableAddOrRemove(*stepOwner,
+                                &StepOwnerClass::addStep,
+                                step,
+                                &StepOwnerClass::removeStep,
+                                tr("Add %1 step to recipe").arg(StepOwnerClass::LocalisedName))
+      );
+      // We don't need to call this->pimpl->m_mashStepTableModel->addMashStep(mashStep) etc here because the change to
+      // the mash/boil/ferementation will already have triggered the necessary updates to
+      // this->pimpl->m_mashStepTableModel/this->pimpl->m_boilStepTableModel/etc.
+      return;
+   }
+
+//   template<class StepClass> auto & getStepTableModel() const;
+//   template<std::same_as<MashStep        > T> auto & getTableModel<T>() const { return *this->        m_mashStepTableModel; }
+//   template<std::same_as<BoilStep        > T> auto & getTableModel<T>() const { return *this->        m_boilStepTableModel; }
+//   template<std::same_as<FermentationStep> T> auto & getTableModel<T>() const { return *this->m_fermentationStepTableModel; }
+
+   // This Identifier struct is a "trick" to use overloading to get around the fact that we can't specialise a templated
+   // function inside the class declaration.
+   template<typename T> struct Identifier { typedef T type; };
+   auto & stepTableModel(Identifier<MashStep        > const) const { return *this->        m_mashStepTableModel; }
+   auto & stepTableModel(Identifier<BoilStep        > const) const { return *this->        m_boilStepTableModel; }
+   auto & stepTableModel(Identifier<FermentationStep> const) const { return *this->m_fermentationStepTableModel; }
+   template<class StepClass> auto & getStepTableModel() const { return this->stepTableModel(Identifier<StepClass>{}); }
+
+   auto & stepEditor(Identifier<MashStep        > const) const { return *this->        m_mashStepEditor; }
+   auto & stepEditor(Identifier<BoilStep        > const) const { return *this->        m_boilStepEditor; }
+   auto & stepEditor(Identifier<FermentationStep> const) const { return *this->m_fermentationStepEditor; }
+   template<class StepClass> auto & getStepEditor() const { return this->stepEditor(Identifier<StepClass>{}); }
+
+   auto & tableView(Identifier<MashStep        > const) const { return this->m_self.        mashStepTableWidget; }
+   auto & tableView(Identifier<BoilStep        > const) const { return this->m_self.        boilStepTableWidget; }
+   auto & tableView(Identifier<FermentationStep> const) const { return this->m_self.fermentationStepTableWidget; }
+   template<class StepClass> QTableView * getTableView() const { return this->tableView(Identifier<StepClass>{}); }
+
+   // Here we have a parameter anyway, so we can just use overloading directly
+   void setStepOwner(std::shared_ptr<Mash> stepOwner) {
+      this->m_self.m_recipeObs->setMash(stepOwner);
+      this->m_mashStepTableModel->setMash(stepOwner);
+      this->m_self.mashButton->setMash(stepOwner);
+      return;
+   }
+   void setStepOwner(std::shared_ptr<Boil> stepOwner) {
+      this->m_self.m_recipeObs->setBoil(stepOwner);
+      this->m_boilStepTableModel->setBoil(stepOwner);
+      this->m_self.boilButton->setBoil(stepOwner);
+      return;
+   }
+   void setStepOwner(std::shared_ptr<Fermentation> stepOwner) {
+      this->m_self.m_recipeObs->setFermentation(stepOwner);
+      this->m_fermentationStepTableModel->setFermentation(stepOwner);
+      this->m_self.fermentationButton->setFermentation(stepOwner);
+      return;
+   }
+
+   template<class StepClass> void showStepEditor(std::shared_ptr<StepClass> step) {
+      auto & stepEditor = this->getStepEditor<StepClass>();
+      stepEditor.setEditItem(step);
+      stepEditor.setVisible(true);
+      return;
+   }
+
+   template<class StepClass>
+   void newStep() {
+      if (!this->m_self.m_recipeObs) {
+         return;
+      }
+
+      std::shared_ptr<typename StepClass::StepOwnerClass> stepOwner =
+         this->m_self.m_recipeObs->get<typename StepClass::StepOwnerClass>();
+      if (!stepOwner) {
+///         QMessageBox::information(this, tr("No mash"), tr("Trying to add a mash step without a mash. Please create a mash first.") );
+///         return;
+
+         auto defaultStepOwner = std::make_shared<typename StepClass::StepOwnerClass>();
+         ObjectStoreWrapper::insert(defaultStepOwner);
+         this->setStepOwner(defaultStepOwner);
+      }
+
+      // This ultimately gets stored in MainWindow::addMashStepToMash() etc
+      auto step = std::make_shared<StepClass>("");
+      this->showStepEditor(step);
+      return;
+   }
+
+   //! \return -1 if no row is selected or more than one row is selected
+   template<class StepClass>
+   [[nodiscard]] int getSelectedRowNum() const {
+      QModelIndexList selected = this->getTableView<StepClass>()->selectionModel()->selectedIndexes();
+      int size = selected.size();
+      if (size == 0) {
+         return -1;
+      }
+
+      // Make sure only one row is selected.
+      int const row = selected[0].row();
+      for (int ii = 1; ii < size; ++ii) {
+         if (selected[ii].row() != row) {
+            return -1;
+         }
+      }
+
+      return row;
+   }
+
+   template<class StepClass>
+   void removeSelectedStep() {
+      if (!this->m_self.m_recipeObs) {
+         return;
+      }
+
+      std::shared_ptr<typename StepClass::StepOwnerClass> stepOwner =
+         this->m_self.m_recipeObs->get<typename StepClass::StepOwnerClass>();
+      if (!stepOwner) {
+         return;
+      }
+
+      int const row = getSelectedRowNum<StepClass>();
+      if (row < 0) {
+         return;
+      }
+
+      auto & stepTableModel = this->getStepTableModel<StepClass>();
+      auto step = stepTableModel.getRow(row);
+      this->m_self.doOrRedoUpdate(
+         newUndoableAddOrRemove(*stepOwner,
+                                &StepClass::StepOwnerClass::removeStep,
+                                step,
+                                &StepClass::StepOwnerClass::addStep,
+                                &MainWindow::remove<StepClass>,
+                                static_cast<void (MainWindow::*)(std::shared_ptr<StepClass>)>(nullptr),
+                                tr("Remove %1").arg(StepClass::LocalisedName))
+      );
+
+      return;
+   }
+
+   template<class StepClass>
+   void moveSelectedStepUp() {
+      int const row = getSelectedRowNum<StepClass>();
+
+      // Make sure row is valid and we can actually move it up.
+      if (row < 1) {
+         return;
+      }
+
+      auto & stepTableModel = this->getStepTableModel<StepClass>();
+      stepTableModel.moveStepUp(row);
+      return;
+   }
+
+   template<class StepClass>
+   void moveSelectedStepDown() {
+      int const row = getSelectedRowNum<StepClass>();
+
+      auto & stepTableModel = this->getStepTableModel<StepClass>();
+
+      // Make sure row is valid and it's not the last row so we can move it down.
+      if (row < 0 || row >= stepTableModel.rowCount() - 1) {
+         return;
+      }
+
+      stepTableModel.moveStepDown(row);
+      return;
+   }
+
+   template<class StepClass>
+   void editSelectedStep() {
+      if (!this->m_self.m_recipeObs) {
+         return;
+      }
+
+      auto stepOwner = this->m_self.m_recipeObs->get<typename StepClass::StepOwnerClass>();
+      if (!stepOwner) {
+         return;
+      }
+
+      int const row = getSelectedRowNum<StepClass>();
+      if (row < 0) {
+         return;
+      }
+
+      auto step = this->getStepTableModel<StepClass>().getRow(static_cast<unsigned int>(row));
+      this->showStepEditor(step);
+      return;
+   }
+
+   template<class UiElement>
+   void saveUiState(BtStringConst const & property, UiElement const & uiElement) {
+      PersistentSettings::insert(property, uiElement->saveState(), PersistentSettings::Sections::MainWindow);
+      return;
+   }
 
    //================================================ MEMBER VARIABLES =================================================
 
@@ -512,8 +745,10 @@ public:
 
    // all things tables should go here.
    std::unique_ptr<RecipeAdditionFermentableTableModel> m_fermentableAdditionsTableModel;
-   std::unique_ptr<RecipeAdditionHopTableModel        > m_hopAdditionsTableModel;
-   std::unique_ptr<MashStepTableModel                 > m_mashStepTableModel;
+   std::unique_ptr<RecipeAdditionHopTableModel        > m_hopAdditionsTableModel        ;
+   std::unique_ptr<MashStepTableModel                 > m_mashStepTableModel            ;
+   std::unique_ptr<BoilStepTableModel                 > m_boilStepTableModel            ;
+   std::unique_ptr<FermentationStepTableModel         > m_fermentationStepTableModel    ;
    std::unique_ptr<RecipeAdditionMiscTableModel       > m_miscAdditionsTableModel;
    std::unique_ptr<RecipeAdditionYeastTableModel      > m_yeastAdditionsTableModel;
 
@@ -525,41 +760,45 @@ public:
    std::unique_ptr<RecipeAdditionYeastSortFilterProxyModel      > m_yeastAdditionsTableProxy;
 
    // All initialised in setupDialogs
-   std::unique_ptr<AboutDialog          > m_aboutDialog          ;
-   std::unique_ptr<HelpDialog           > m_helpDialog           ;
-   std::unique_ptr<EquipmentCatalog     > m_equipCatalog         ;
-   std::unique_ptr<EquipmentEditor      > m_equipEditor          ;
-   std::unique_ptr<FermentableCatalog   > m_fermCatalog          ;
-   std::unique_ptr<FermentableEditor    > m_fermentableEditor    ;
-   std::unique_ptr<HopCatalog           > m_hopCatalog           ;
-   std::unique_ptr<HopEditor            > m_hopEditor            ;
-   std::unique_ptr<MashEditor           > m_mashEditor           ;
-   std::unique_ptr<MashStepEditor       > m_mashStepEditor       ;
-   std::unique_ptr<MashWizard           > m_mashWizard           ;
-   std::unique_ptr<MiscCatalog          > m_miscCatalog          ;
-   std::unique_ptr<MiscEditor           > m_miscEditor           ;
-   std::unique_ptr<StyleCatalog         > m_styleCatalog         ;
-   std::unique_ptr<StyleEditor          > m_styleEditor          ;
-   std::unique_ptr<YeastCatalog         > m_yeastCatalog         ;
-   std::unique_ptr<YeastEditor          > m_yeastEditor          ;
-   std::unique_ptr<OptionDialog         > m_optionDialog         ;
-   std::unique_ptr<ScaleRecipeTool      > m_recipeScaler         ;
-   std::unique_ptr<RecipeFormatter      > m_recipeFormatter      ;
-   std::unique_ptr<PrintAndPreviewDialog> m_printAndPreviewDialog;
-   std::unique_ptr<OgAdjuster           > m_ogAdjuster           ;
-   std::unique_ptr<ConverterTool        > m_converterTool        ;
-   std::unique_ptr<HydrometerTool       > m_hydrometerTool       ;
-   std::unique_ptr<AlcoholTool          > m_alcoholTool          ;
-   std::unique_ptr<TimerMainDialog      > m_timerMainDialog      ;
-   std::unique_ptr<PrimingDialog        > m_primingDialog        ;
-   std::unique_ptr<StrikeWaterDialog    > m_strikeWaterDialog    ;
-   std::unique_ptr<RefractoDialog       > m_refractoDialog       ;
-   std::unique_ptr<MashDesigner         > m_mashDesigner         ;
-   std::unique_ptr<PitchDialog          > m_pitchDialog          ;
-   std::unique_ptr<BtDatePopup          > m_btDatePopup          ;
-   std::unique_ptr<WaterDialog          > m_waterDialog          ;
-   std::unique_ptr<WaterEditor          > m_waterEditor          ;
-   std::unique_ptr<AncestorDialog       > m_ancestorDialog       ;
+   std::unique_ptr<AboutDialog           > m_aboutDialog           ;
+   std::unique_ptr<AlcoholTool           > m_alcoholTool           ;
+   std::unique_ptr<AncestorDialog        > m_ancestorDialog        ;
+   std::unique_ptr<BoilEditor            > m_boilEditor            ;
+   std::unique_ptr<BoilStepEditor        > m_boilStepEditor        ;
+   std::unique_ptr<BtDatePopup           > m_btDatePopup           ;
+   std::unique_ptr<ConverterTool         > m_converterTool         ;
+   std::unique_ptr<EquipmentCatalog      > m_equipCatalog          ;
+   std::unique_ptr<EquipmentEditor       > m_equipEditor           ;
+   std::unique_ptr<FermentableCatalog    > m_fermCatalog           ;
+   std::unique_ptr<FermentableEditor     > m_fermentableEditor     ;
+   std::unique_ptr<FermentationEditor    > m_fermentationEditor    ;
+   std::unique_ptr<FermentationStepEditor> m_fermentationStepEditor;
+   std::unique_ptr<HelpDialog            > m_helpDialog            ;
+   std::unique_ptr<HopCatalog            > m_hopCatalog            ;
+   std::unique_ptr<HopEditor             > m_hopEditor             ;
+   std::unique_ptr<HydrometerTool        > m_hydrometerTool        ;
+   std::unique_ptr<MashDesigner          > m_mashDesigner          ;
+   std::unique_ptr<MashEditor            > m_mashEditor            ;
+   std::unique_ptr<MashStepEditor        > m_mashStepEditor        ;
+   std::unique_ptr<MashWizard            > m_mashWizard            ;
+   std::unique_ptr<MiscCatalog           > m_miscCatalog           ;
+   std::unique_ptr<MiscEditor            > m_miscEditor            ;
+   std::unique_ptr<OgAdjuster            > m_ogAdjuster            ;
+   std::unique_ptr<OptionDialog          > m_optionDialog          ;
+   std::unique_ptr<PitchDialog           > m_pitchDialog           ;
+   std::unique_ptr<PrimingDialog         > m_primingDialog         ;
+   std::unique_ptr<PrintAndPreviewDialog > m_printAndPreviewDialog ;
+   std::unique_ptr<RecipeFormatter       > m_recipeFormatter       ;
+   std::unique_ptr<RefractoDialog        > m_refractoDialog        ;
+   std::unique_ptr<ScaleRecipeTool       > m_recipeScaler          ;
+   std::unique_ptr<StrikeWaterDialog     > m_strikeWaterDialog     ;
+   std::unique_ptr<StyleCatalog          > m_styleCatalog          ;
+   std::unique_ptr<StyleEditor           > m_styleEditor           ;
+   std::unique_ptr<TimerMainDialog       > m_timerMainDialog       ;
+   std::unique_ptr<WaterDialog           > m_waterDialog           ;
+   std::unique_ptr<WaterEditor           > m_waterEditor           ;
+   std::unique_ptr<YeastCatalog          > m_yeastCatalog          ;
+   std::unique_ptr<YeastEditor           > m_yeastEditor           ;
 
    // all things lists should go here
    std::unique_ptr<EquipmentListModel> m_equipmentListModel;
@@ -581,18 +820,22 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), pimpl{std::make_u
    // Initialise smart labels etc early, but after call to this->setupUi() because otherwise member variables such as
    // label_name will not yet be set.
    // .:TBD:. We should fix some of these inconsistently-named labels
+   //
+   // TBD: Not sure what original difference was supposed to be between label_targetBatchSize & label_batchSize or
+   //      between label_targetBoilSize and label_boilSize.
+   //
    SMART_FIELD_INIT(MainWindow, label_name           , lineEdit_name      , Recipe, PropertyNames::NamedEntity::name        );
    SMART_FIELD_INIT(MainWindow, label_targetBatchSize, lineEdit_batchSize , Recipe, PropertyNames::Recipe::batchSize_l   , 2);
-   SMART_FIELD_INIT(MainWindow, label_targetBoilSize , lineEdit_boilSize  , Recipe, PropertyNames::Recipe::boilSize_l    , 2);
+   SMART_FIELD_INIT(MainWindow, label_targetBoilSize , lineEdit_boilSize  , Boil  , PropertyNames::Boil::preBoilSize_l   , 2);
    SMART_FIELD_INIT(MainWindow, label_efficiency     , lineEdit_efficiency, Recipe, PropertyNames::Recipe::efficiency_pct, 1);
-   SMART_FIELD_INIT(MainWindow, label_boilTime       , lineEdit_boilTime  , Recipe, PropertyNames::Recipe::boilTime_min  , 1);
+   SMART_FIELD_INIT(MainWindow, label_boilTime       , lineEdit_boilTime  , Boil  , PropertyNames::Boil::boilTime_mins   , 1);
    SMART_FIELD_INIT(MainWindow, label_boilSg         , lineEdit_boilSg    , Recipe, PropertyNames::Recipe::boilGrav      , 3);
 
-   SMART_FIELD_INIT_NO_SF(MainWindow, oGLabel        , Recipe, PropertyNames::Recipe::og        );
-   SMART_FIELD_INIT_NO_SF(MainWindow, fGLabel        , Recipe, PropertyNames::Recipe::fg        );
-   SMART_FIELD_INIT_NO_SF(MainWindow, colorSRMLabel  , Recipe, PropertyNames::Recipe::color_srm );
-   SMART_FIELD_INIT_NO_SF(MainWindow, label_batchSize, Recipe, PropertyNames::Recipe::boilSize_l);
-   SMART_FIELD_INIT_NO_SF(MainWindow, label_boilSize , Recipe, PropertyNames::Recipe::boilSize_l);
+   SMART_FIELD_INIT_NO_SF(MainWindow, oGLabel        , Recipe, PropertyNames::Recipe::og         );
+   SMART_FIELD_INIT_NO_SF(MainWindow, fGLabel        , Recipe, PropertyNames::Recipe::fg         );
+   SMART_FIELD_INIT_NO_SF(MainWindow, colorSRMLabel  , Recipe, PropertyNames::Recipe::color_srm  );
+   SMART_FIELD_INIT_NO_SF(MainWindow, label_batchSize, Recipe, PropertyNames::Recipe::batchSize_l);
+   SMART_FIELD_INIT_NO_SF(MainWindow, label_boilSize , Boil  , PropertyNames::Boil::preBoilSize_l);
 
    // Stop things looking ridiculously tiny on high DPI displays
    this->setSizesInPixelsBasedOnDpi();
@@ -662,7 +905,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), pimpl{std::make_u
    setWindowTitle( QString("Brewken - %1").arg(CONFIG_VERSION_STRING) );
 
    // Null out the recipe
-   recipeObs = nullptr;
+   m_recipeObs = nullptr;
 
    // Set up the printer
    printer = new QPrinter;
@@ -677,7 +920,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), pimpl{std::make_u
 
 void MainWindow::init() {
    qDebug() << Q_FUNC_INFO;
-
 
    this->setupCSS();
    // initialize all of the dialog windows
@@ -886,7 +1128,7 @@ void MainWindow::setupRanges() {
 
    // definitely cheating, but I don't feel like making a whole subclass just to support this
    // or the next.
-   rangeWidget_batchSize->setRange(0, recipeObs == nullptr ? 19.0 : recipeObs->batchSize_l());
+   rangeWidget_batchSize->setRange(0, m_recipeObs == nullptr ? 19.0 : m_recipeObs->batchSize_l());
    rangeWidget_batchSize->setPrecision(1);
    rangeWidget_batchSize->setTickMarks(2,5);
 
@@ -894,7 +1136,7 @@ void MainWindow::setupRanges() {
    rangeWidget_batchSize->setPreferredRangeBrush(QColor(55,138,251));
    rangeWidget_batchSize->setMarkerBrush(QBrush(Qt::NoBrush));
 
-   rangeWidget_boilsize->setRange(0, recipeObs == nullptr? 24.0 : recipeObs->boilVolume_l());
+   rangeWidget_boilsize->setRange(0, m_recipeObs == nullptr? 24.0 : m_recipeObs->boilVolume_l());
    rangeWidget_boilsize->setPrecision(1);
    rangeWidget_boilsize->setTickMarks(2,5);
 
@@ -965,10 +1207,10 @@ void MainWindow::restoreSavedState() {
       }
    }
    if ( key > -1 ) {
-      this->recipeObs = ObjectStoreWrapper::getByIdRaw<Recipe>(key);
-      QModelIndex rIdx = treeView_recipe->findElement(recipeObs);
+      this->m_recipeObs = ObjectStoreWrapper::getByIdRaw<Recipe>(key);
+      QModelIndex rIdx = treeView_recipe->findElement(m_recipeObs);
 
-      setRecipe(recipeObs);
+      setRecipe(m_recipeObs);
       setTreeSelection(rIdx);
    }
 
@@ -1033,6 +1275,19 @@ void MainWindow::restoreSavedState() {
                                                                                       QVariant(),
                                                                                       PersistentSettings::Sections::MainWindow).toByteArray());
    }
+   if (PersistentSettings::contains(PersistentSettings::Names::boilStepTableWidget_headerState,
+                                    PersistentSettings::Sections::MainWindow)) {
+      boilStepTableWidget->horizontalHeader()->restoreState(PersistentSettings::value(PersistentSettings::Names::boilStepTableWidget_headerState,
+                                                                                      QVariant(),
+                                                                                      PersistentSettings::Sections::MainWindow).toByteArray());
+   }
+   if (PersistentSettings::contains(PersistentSettings::Names::fermentationStepTableWidget_headerState,
+                                    PersistentSettings::Sections::MainWindow)) {
+      fermentationStepTableWidget->horizontalHeader()->restoreState(PersistentSettings::value(PersistentSettings::Names::fermentationStepTableWidget_headerState,
+                                                                                      QVariant(),
+                                                                                      PersistentSettings::Sections::MainWindow).toByteArray());
+   }
+   return;
 }
 
 // menu items with a SIGNAL of triggered() should go in here.
@@ -1106,6 +1361,7 @@ void MainWindow::setupClicks() {
    connect(this->pushButton_editMisc      , &QAbstractButton::clicked, this        , &MainWindow::editMiscOfSelectedMiscAddition              );
    connect(this->pushButton_editHop       , &QAbstractButton::clicked, this        , &MainWindow::editHopOfSelectedHopAddition                );
    connect(this->pushButton_editYeast     , &QAbstractButton::clicked, this        , &MainWindow::editYeastOfSelectedYeastAddition            );
+
    connect(this->pushButton_editMash      , &QAbstractButton::clicked, this->pimpl->m_mashEditor  , &MashEditor::showEditor                   );
    connect(this->pushButton_addMashStep   , &QAbstractButton::clicked, this        , &MainWindow::addMashStep              );
    connect(this->pushButton_removeMashStep, &QAbstractButton::clicked, this        , &MainWindow::removeSelectedMashStep   );
@@ -1116,6 +1372,25 @@ void MainWindow::setupClicks() {
    connect(this->pushButton_mashUp        , &QAbstractButton::clicked, this        , &MainWindow::moveSelectedMashStepUp   );
    connect(this->pushButton_mashDown      , &QAbstractButton::clicked, this        , &MainWindow::moveSelectedMashStepDown );
    connect(this->pushButton_mashRemove    , &QAbstractButton::clicked, this        , &MainWindow::removeMash               );
+
+   connect(this->pushButton_editBoil      , &QAbstractButton::clicked, this->pimpl->m_boilEditor  , &BoilEditor::showEditor                   );
+   connect(this->pushButton_addBoilStep   , &QAbstractButton::clicked, this        , &MainWindow::addBoilStep              );
+   connect(this->pushButton_removeBoilStep, &QAbstractButton::clicked, this        , &MainWindow::removeSelectedBoilStep   );
+   connect(this->pushButton_editBoilStep  , &QAbstractButton::clicked, this        , &MainWindow::editSelectedBoilStep     );
+//   connect(this->pushButton_saveBoil      , &QAbstractButton::clicked, this        , &MainWindow::saveBoil                 ); TODO!
+   connect(this->pushButton_boilUp        , &QAbstractButton::clicked, this        , &MainWindow::moveSelectedBoilStepUp   );
+   connect(this->pushButton_boilDown      , &QAbstractButton::clicked, this        , &MainWindow::moveSelectedBoilStepDown );
+//   connect(this->pushButton_boilRemove    , &QAbstractButton::clicked, this        , &MainWindow::removeBoil               ); TODO!
+
+   connect(this->pushButton_editFermentation      , &QAbstractButton::clicked, this->pimpl->m_fermentationEditor, &FermentationEditor::showEditor);
+   connect(this->pushButton_addFermentationStep   , &QAbstractButton::clicked, this, &MainWindow::addFermentationStep              );
+   connect(this->pushButton_removeFermentationStep, &QAbstractButton::clicked, this, &MainWindow::removeSelectedFermentationStep   );
+   connect(this->pushButton_editFermentationStep  , &QAbstractButton::clicked, this, &MainWindow::editSelectedFermentationStep     );
+//   connect(this->pushButton_saveFermentation      , &QAbstractButton::clicked, this, &MainWindow::saveFermentation                 ); TODO!
+   connect(this->pushButton_fermentationUp        , &QAbstractButton::clicked, this, &MainWindow::moveSelectedFermentationStepUp   );
+   connect(this->pushButton_fermentationDown      , &QAbstractButton::clicked, this, &MainWindow::moveSelectedFermentationStepDown );
+//   connect(this->pushButton_fermentationRemove    , &QAbstractButton::clicked, this, &MainWindow::removeFermentation               ); TODO!
+
    return;
 }
 
@@ -1333,8 +1608,8 @@ void MainWindow::setBrewNoteByIndex(const QModelIndex &index)
 
    // this gets complex. Versioning means we can't just clear the open
    // brewnote tabs out.
-   if ( parent != this->recipeObs ) {
-      if ( ! this->recipeObs->isMyAncestor(*parent) ) {
+   if ( parent != this->m_recipeObs ) {
+      if ( ! this->m_recipeObs->isMyAncestor(*parent) ) {
          setRecipe(parent);
       }
       else if ( treeView_recipe->ancestorsAreShowing(pNdx) ) {
@@ -1397,8 +1672,8 @@ void MainWindow::setBrewNote(BrewNote* bNote)
 void MainWindow::setAncestor()
 {
    Recipe* rec;
-   if ( this->recipeObs ) {
-      rec = this->recipeObs;
+   if ( this->m_recipeObs ) {
+      rec = this->m_recipeObs;
    } else {
       QModelIndexList indexes = treeView_recipe->selectionModel()->selectedRows();
       rec = treeView_recipe->getItem<Recipe>(indexes[0]);
@@ -1421,13 +1696,13 @@ void MainWindow::setRecipe(Recipe* recipe) {
    int tabs = 0;
 
    // Make sure this MainWindow is paying attention...
-   if (this->recipeObs) {
-      disconnect(this->recipeObs, nullptr, this, nullptr);
+   if (this->m_recipeObs) {
+      disconnect(this->m_recipeObs, nullptr, this, nullptr);
    }
-   this->recipeObs = recipe;
+   this->m_recipeObs = recipe;
 
-   this->recStyle = recipe->style();
-   recEquip = recipe->equipment();
+///   this->recStyle = recipe->style();
+///   this->recEquip = recipe->equipment();
    this->displayRangesEtcForCurrentRecipeStyle();
 
    // Reset all previous recipe shit.
@@ -1435,7 +1710,9 @@ void MainWindow::setRecipe(Recipe* recipe) {
    this->pimpl->m_hopAdditionsTableModel->observeRecipe(recipe);
    this->pimpl->m_miscAdditionsTableModel->observeRecipe(recipe);
    this->pimpl->m_yeastAdditionsTableModel->observeRecipe(recipe);
-   this->pimpl->m_mashStepTableModel->setMash(recipeObs->mash());
+   this->pimpl->m_mashStepTableModel->setMash(m_recipeObs->mash());
+   this->pimpl->m_boilStepTableModel->setBoil(m_recipeObs->boil());
+   this->pimpl->m_fermentationStepTableModel->setFermentation(m_recipeObs->fermentation());
 
    // Clean out any brew notes
    tabWidget_recipeView->setCurrentIndex(0);
@@ -1456,19 +1733,19 @@ void MainWindow::setRecipe(Recipe* recipe) {
    recipeExtrasWidget->setRecipe(recipe);
    this->pimpl->m_mashDesigner->setRecipe(recipe);
    equipmentButton->setRecipe(recipe);
-   if (recEquip) {
-      this->pimpl->m_equipEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(recEquip));
+   if (recipe->equipment()) {
+      this->pimpl->m_equipEditor->setEditItem(recipe->equipment());
    }
    styleButton->setRecipe(recipe);
    if (recipe->style()) {
-      this->pimpl->m_styleEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(recipe->style()));
+      this->pimpl->m_styleEditor->setEditItem(recipe->style());
    }
 
-   this->pimpl->m_mashEditor->setMash(recipeObs->mash());
-   this->pimpl->m_mashEditor->setRecipe(recipeObs);
+   this->pimpl->m_mashEditor->setMash(m_recipeObs->mash());
+   this->pimpl->m_mashEditor->setRecipe(m_recipeObs);
 
-   mashButton->setMash(recipeObs->mash());
-   this->pimpl->m_recipeScaler->setRecipe(recipeObs);
+   mashButton->setMash(m_recipeObs->mash());
+   this->pimpl->m_recipeScaler->setRecipe(m_recipeObs);
 
    // Set the locked flag as required
    checkBox_locked->setCheckState( recipe->locked() ? Qt::Checked : Qt::Unchecked );
@@ -1494,13 +1771,13 @@ void MainWindow::setRecipe(Recipe* recipe) {
    // If you don't connect this late, every previous set of an attribute
    // causes this signal to be slotted, which then causes showChanges() to be
    // called.
-   connect( recipeObs, SIGNAL(changed(QMetaProperty,QVariant)), this, SLOT(changed(QMetaProperty,QVariant)) );
+   connect(this->m_recipeObs, &NamedEntity::changed, this, &MainWindow::changed);
    showChanges();
 }
 
 // When a recipe is locked, many fields need to be disabled.
 void MainWindow::lockRecipe(int state) {
-   if (!this->recipeObs) {
+   if (!this->m_recipeObs) {
       return;
    }
 
@@ -1514,7 +1791,7 @@ void MainWindow::lockRecipe(int state) {
    // name field as editable. I may regret that, but if you are defining an
    // inheritance tree, you may want to remove strings from the ancestoral
    // names
-   this->recipeObs->setLocked(lockIt);
+   this->m_recipeObs->setLocked(lockIt);
 
    // I could disable tab_recipe, but would not prevent you from unlocking the
    // recipe because that field would also be disabled
@@ -1566,12 +1843,11 @@ void MainWindow::changed(QMetaProperty prop, QVariant val) {
    QString propName(prop.name());
 
    if (propName == PropertyNames::Recipe::equipment) {
-      this->recEquip = val.value<Equipment *>();
-      this->pimpl->m_equipEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(this->recEquip));
+      auto equipment = this->m_recipeObs->equipment();
+      this->pimpl->m_equipEditor->setEditItem(equipment);
    } else if (propName == PropertyNames::Recipe::style) {
-      //recStyle = recipeObs->style();
-      this->recStyle = val.value<Style*>();
-      this->pimpl->m_styleEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(this->recStyle));
+      auto style = this->m_recipeObs->style();
+      this->pimpl->m_styleEditor->setEditItem(style);
    }
 
    this->showChanges(&prop);
@@ -1579,7 +1855,7 @@ void MainWindow::changed(QMetaProperty prop, QVariant val) {
 }
 
 void MainWindow::showChanges(QMetaProperty* prop) {
-   if (recipeObs == nullptr) {
+   if (m_recipeObs == nullptr) {
       return;
    }
 
@@ -1592,66 +1868,66 @@ void MainWindow::showChanges(QMetaProperty* prop) {
 
 
    // May St. Stevens preserve me
-   this->lineEdit_name      ->setText  (this->recipeObs->name          ());
-   this->lineEdit_batchSize ->setQuantity(this->recipeObs->batchSize_l   ());
+   this->lineEdit_name      ->setText  (this->m_recipeObs->name          ());
+   this->lineEdit_batchSize ->setQuantity(this->m_recipeObs->batchSize_l   ());
    // TODO: One day we'll want to do some work to properly handle no-boil recipes....
-   double const boilSize = recipeObs->boil() ? (*recipeObs->boil())->preBoilSize_l().value_or(0.0) : 0.0;
+   double const boilSize = this->m_recipeObs->boil() ? this->m_recipeObs->boil()->preBoilSize_l().value_or(0.0) : 0.0;
    this->lineEdit_boilSize  ->setQuantity(boilSize);
-   this->lineEdit_efficiency->setQuantity(this->recipeObs->efficiency_pct());
-   this->lineEdit_boilTime  ->setQuantity(this->recipeObs->boilTime_min  ());
+   this->lineEdit_efficiency->setQuantity(this->m_recipeObs->efficiency_pct());
+   this->lineEdit_boilTime  ->setQuantity(this->m_recipeObs->boil() ? this->m_recipeObs->boil()->boilTime_mins() : 0.0);
    this->lineEdit_name      ->setCursorPosition(0);
    this->lineEdit_batchSize ->setCursorPosition(0);
    this->lineEdit_boilSize  ->setCursorPosition(0);
    this->lineEdit_efficiency->setCursorPosition(0);
    this->lineEdit_boilTime  ->setCursorPosition(0);
 /*
-   lineEdit_calcBatchSize->setText(recipeObs);
-   lineEdit_calcBoilSize->setText(recipeObs);
+   lineEdit_calcBatchSize->setText(m_recipeObs);
+   lineEdit_calcBoilSize->setText(m_recipeObs);
 */
 
    // Color manipulation
 /*
-   if( 0.95*recipeObs->batchSize_l() <= recipeObs->finalVolume_l() && recipeObs->finalVolume_l() <= 1.05*recipeObs->batchSize_l() )
+   if( 0.95*m_recipeObs->batchSize_l() <= m_recipeObs->finalVolume_l() && m_recipeObs->finalVolume_l() <= 1.05*m_recipeObs->batchSize_l() )
       lineEdit_calcBatchSize->setStyleSheet(goodSS);
-   else if( recipeObs->finalVolume_l() < 0.95*recipeObs->batchSize_l() )
+   else if( m_recipeObs->finalVolume_l() < 0.95*m_recipeObs->batchSize_l() )
       lineEdit_calcBatchSize->setStyleSheet(lowSS);
    else
       lineEdit_calcBatchSize->setStyleSheet(highSS);
 
-   if( 0.95*recipeObs->boilSize_l() <= recipeObs->boilVolume_l() && recipeObs->boilVolume_l() <= 1.05*recipeObs->boilSize_l() )
+   if( 0.95*m_recipeObs->boilSize_l() <= m_recipeObs->boilVolume_l() && m_recipeObs->boilVolume_l() <= 1.05*m_recipeObs->boilSize_l() )
       lineEdit_calcBoilSize->setStyleSheet(goodSS);
-   else if( recipeObs->boilVolume_l() < 0.95* recipeObs->boilSize_l() )
+   else if( m_recipeObs->boilVolume_l() < 0.95* m_recipeObs->boilSize_l() )
       lineEdit_calcBoilSize->setStyleSheet(lowSS);
    else
       lineEdit_calcBoilSize->setStyleSheet(highSS);
 */
-   this->lineEdit_boilSg->setQuantity(this->recipeObs->boilGrav());
+   this->lineEdit_boilSg->setQuantity(this->m_recipeObs->boilGrav());
 
-   Style const * style = this->recipeObs->style();
+   auto style = this->m_recipeObs->style();
    if (style) {
       updateDensitySlider(*this->styleRangeWidget_og, *this->oGLabel, style->ogMin(), style->ogMax(), 1.120);
    }
-   this->styleRangeWidget_og->setValue(this->oGLabel->getAmountToDisplay(recipeObs->og()));
+   this->styleRangeWidget_og->setValue(this->oGLabel->getAmountToDisplay(m_recipeObs->og()));
 
    if (style) {
       updateDensitySlider(*this->styleRangeWidget_fg, *this->fGLabel, style->fgMin(), style->fgMax(), 1.030);
    }
-   this->styleRangeWidget_fg->setValue(this->fGLabel->getAmountToDisplay(recipeObs->fg()));
+   this->styleRangeWidget_fg->setValue(this->fGLabel->getAmountToDisplay(m_recipeObs->fg()));
 
-   this->styleRangeWidget_abv->setValue(recipeObs->ABV_pct());
-   this->styleRangeWidget_ibu->setValue(recipeObs->IBU());
+   this->styleRangeWidget_abv->setValue(m_recipeObs->ABV_pct());
+   this->styleRangeWidget_ibu->setValue(m_recipeObs->IBU());
 
    this->rangeWidget_batchSize->setRange         (0,
-                                                  this->label_batchSize->getAmountToDisplay(this->recipeObs->batchSize_l()));
+                                                  this->label_batchSize->getAmountToDisplay(this->m_recipeObs->batchSize_l()));
    this->rangeWidget_batchSize->setPreferredRange(0,
-                                                  this->label_batchSize->getAmountToDisplay(this->recipeObs->finalVolume_l()));
-   this->rangeWidget_batchSize->setValue         (this->label_batchSize->getAmountToDisplay(this->recipeObs->finalVolume_l()));
+                                                  this->label_batchSize->getAmountToDisplay(this->m_recipeObs->finalVolume_l()));
+   this->rangeWidget_batchSize->setValue         (this->label_batchSize->getAmountToDisplay(this->m_recipeObs->finalVolume_l()));
 
    this->rangeWidget_boilsize->setRange         (0,
                                                  this->label_boilSize->getAmountToDisplay(boilSize));
    this->rangeWidget_boilsize->setPreferredRange(0,
-                                                 this->label_boilSize->getAmountToDisplay(this->recipeObs->boilVolume_l()));
-   this->rangeWidget_boilsize->setValue         (this->label_boilSize->getAmountToDisplay(this->recipeObs->boilVolume_l()));
+                                                 this->label_boilSize->getAmountToDisplay(this->m_recipeObs->boilVolume_l()));
+   this->rangeWidget_boilsize->setValue         (this->label_boilSize->getAmountToDisplay(this->m_recipeObs->boilVolume_l()));
 
    /* Colors need the same basic treatment as gravity */
    if (style) {
@@ -1660,21 +1936,21 @@ void MainWindow::showChanges(QMetaProperty* prop) {
                         style->colorMin_srm(),
                         style->colorMax_srm());
    }
-   this->styleRangeWidget_srm->setValue(this->colorSRMLabel->getAmountToDisplay(this->recipeObs->color_srm()));
+   this->styleRangeWidget_srm->setValue(this->colorSRMLabel->getAmountToDisplay(this->m_recipeObs->color_srm()));
 
    // In some, incomplete, recipes, OG is approximately 1.000, which then makes GU close to 0 and thus IBU/GU insanely
    // large.  Besides being meaningless, such a large number takes up a lot of space.  So, where gravity units are
    // below 1, we just show IBU on the IBU/GU slider.
-   auto gravityUnits = (recipeObs->og()-1)*1000;
+   auto gravityUnits = (m_recipeObs->og()-1)*1000;
    if (gravityUnits < 1) {
       gravityUnits = 1;
    }
-   ibuGuSlider->setValue(recipeObs->IBU()/gravityUnits);
+   ibuGuSlider->setValue(m_recipeObs->IBU()/gravityUnits);
 
    label_calories->setText(
       QString("%1").arg(
          Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Volume) == Measurement::UnitSystems::volume_Metric ?
-         recipeObs->caloriesPer33cl() : recipeObs->caloriesPerUs12oz(),
+         m_recipeObs->caloriesPer33cl() : m_recipeObs->caloriesPerUs12oz(),
          0,
          'f',
          0
@@ -1682,26 +1958,33 @@ void MainWindow::showChanges(QMetaProperty* prop) {
    );
 
    // See if we need to change the mash in the table.
-   if ((updateAll && recipeObs->mash()) ||
-       (propName == "mash" && recipeObs->mash())) {
-      this->pimpl->m_mashStepTableModel->setMash(recipeObs->mash());
+   if (this->m_recipeObs->mash() && (updateAll || propName == PropertyNames::Recipe::mash)) {
+      this->pimpl->m_mashStepTableModel->setMash(m_recipeObs->mash());
+   }
+   // See if we need to change the boil in the table.
+   if (this->m_recipeObs->boil() && (updateAll || propName == PropertyNames::Recipe::boil)) {
+      this->pimpl->m_boilStepTableModel->setBoil(m_recipeObs->boil());
+   }
+   // See if we need to change the fermentation in the table.
+   if (this->m_recipeObs->fermentation() && (updateAll || propName == PropertyNames::Recipe::fermentation)) {
+      this->pimpl->m_fermentationStepTableModel->setFermentation(m_recipeObs->fermentation());
    }
 
    // Not sure about this, but I am annoyed that modifying the hop usage
    // modifiers isn't automatically updating my display
    if (updateAll) {
-     recipeObs->recalcIBU();
+     m_recipeObs->recalcIBU();
      this->pimpl->m_hopAdditionsTableProxy->invalidate();
    }
    return;
 }
 
 void MainWindow::updateRecipeName() {
-   if (recipeObs == nullptr || ! lineEdit_name->isModified()) {
+   if (m_recipeObs == nullptr || ! lineEdit_name->isModified()) {
       return;
    }
 
-   this->doOrRedoUpdate(*this->recipeObs,
+   this->doOrRedoUpdate(*this->m_recipeObs,
                         TYPE_INFO(Recipe, NamedEntity, name),
                         lineEdit_name->text(),
                         tr("Change Recipe Name"));
@@ -1709,12 +1992,12 @@ void MainWindow::updateRecipeName() {
 }
 
 void MainWindow::displayRangesEtcForCurrentRecipeStyle() {
-   if ( this->recipeObs == nullptr ) {
+   if ( this->m_recipeObs == nullptr ) {
       return;
    }
 
-   Style * style = this->recipeObs->style();
-   if ( style == nullptr ) {
+   auto style = this->m_recipeObs->style();
+   if (!style) {
       return;
    }
 
@@ -1733,18 +2016,18 @@ void MainWindow::displayRangesEtcForCurrentRecipeStyle() {
 }
 
 void MainWindow::updateRecipeStyle() {
-   if (recipeObs == nullptr) {
+   if (m_recipeObs == nullptr) {
       return;
    }
 
    QModelIndex proxyIndex( this->pimpl->m_styleProxyModel->index(styleComboBox->currentIndex(),0) );
    QModelIndex sourceIndex( this->pimpl->m_styleProxyModel->mapToSource(proxyIndex) );
-   Style * selected = this->pimpl->m_styleListModel->at(sourceIndex.row());
+   auto selected = ObjectStoreWrapper::getSharedFromRaw(this->pimpl->m_styleListModel->at(sourceIndex.row()));
    if (selected) {
       this->doOrRedoUpdate(
-         newRelationalUndoableUpdate(*this->recipeObs,
+         newRelationalUndoableUpdate(*this->m_recipeObs,
                                      &Recipe::setStyle,
-                                     this->recipeObs->style(),
+                                     this->m_recipeObs->style(),
                                      selected,
                                      &MainWindow::displayRangesEtcForCurrentRecipeStyle,
                                      tr("Change Recipe Style"))
@@ -1754,16 +2037,18 @@ void MainWindow::updateRecipeStyle() {
 }
 
 void MainWindow::updateRecipeMash() {
-   if (this->recipeObs == nullptr) {
+   if (this->m_recipeObs == nullptr) {
       return;
    }
 
-   Mash* selected = this->pimpl->m_mashListModel->at(mashComboBox->currentIndex());
-   if (selected) {
-      // The Recipe will decide whether it needs to make a copy of the Mash, hence why we don't reuse "selected" below
-      this->recipeObs->setMash(selected);
-      this->pimpl->m_mashEditor->setMash(this->recipeObs->mash());
-      mashButton->setMash(this->recipeObs->mash());
+   auto selectedMash = ObjectStoreWrapper::getSharedFromRaw(
+      this->pimpl->m_mashListModel->at(mashComboBox->currentIndex())
+   );
+   if (selectedMash) {
+      // The Recipe will decide whether it needs to make a copy of the Mash, hence why we don't reuse "selectedMash" below
+      this->m_recipeObs->setMash(selectedMash);
+      this->pimpl->m_mashEditor->setMash(this->m_recipeObs->mash());
+      mashButton->setMash(this->m_recipeObs->mash());
    }
    return;
 }
@@ -1774,35 +2059,37 @@ void MainWindow::updateRecipeEquipment() {
 }
 
 void MainWindow::updateEquipmentButton() {
-   if (this->recipeObs != nullptr) {
-      this->equipmentButton->setEquipment(this->recipeObs->equipment());
+   if (this->m_recipeObs != nullptr) {
+      this->equipmentButton->setEquipment(this->m_recipeObs->equipment());
    }
    return;
 }
 
-void MainWindow::droppedRecipeEquipment(Equipment *kit) {
-   if (recipeObs == nullptr) {
+void MainWindow::droppedRecipeEquipment(Equipment * kitRaw) {
+   if (m_recipeObs == nullptr) {
       return;
    }
 
    // equip may be null.
-   if (kit == nullptr) {
+   if (!kitRaw) {
       return;
    }
 
+   auto kit = ObjectStoreWrapper::getSharedFromRaw(kitRaw);
+
    // We need to hang on to this QUndoCommand pointer because there might be other updates linked to it - see below
-   auto equipmentUpdate = newRelationalUndoableUpdate(*this->recipeObs,
+   auto equipmentUpdate = newRelationalUndoableUpdate(*this->m_recipeObs,
                                                       &Recipe::setEquipment,
-                                                      this->recipeObs->equipment(),
+                                                      this->m_recipeObs->equipment(),
                                                       kit,
                                                       &MainWindow::updateEquipmentButton,
                                                       tr("Change Recipe Kit"));
 
    // Keep the mash tun weight and specific heat up to date.
-   Mash * m = recipeObs->mash();
-   if (m) {
-      new SimpleUndoableUpdate(*m, TYPE_INFO(Mash, mashTunWeight_kg         ), kit->mashTunWeight_kg()         , tr("Change Tun Weight")       , equipmentUpdate);
-      new SimpleUndoableUpdate(*m, TYPE_INFO(Mash, mashTunSpecificHeat_calGC), kit->mashTunSpecificHeat_calGC(), tr("Change Tun Specific Heat"), equipmentUpdate);
+   auto mash = m_recipeObs->mash();
+   if (mash) {
+      new SimpleUndoableUpdate(*mash, TYPE_INFO(Mash, mashTunWeight_kg         ), kit->mashTunWeight_kg()         , tr("Change Tun Weight")       , equipmentUpdate);
+      new SimpleUndoableUpdate(*mash, TYPE_INFO(Mash, mashTunSpecificHeat_calGC), kit->mashTunSpecificHeat_calGC(), tr("Change Tun Specific Heat"), equipmentUpdate);
    }
 
    if (QMessageBox::question(this,
@@ -1816,9 +2103,13 @@ void MainWindow::droppedRecipeEquipment(Equipment *kit) {
       // won't ever be seen by the user, but there's no harm in setting them.
       // (The previous call here to this->pimpl->m_mashEditor->setRecipe() was a roundabout way of calling setTunWeight_kg() and
       // setMashTunSpecificHeat_calGC() on the mash.)
-      new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, batchSize_l ), kit->fermenterBatchSize_l() , tr("Change Batch Size"), equipmentUpdate);
-      new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, boilSize_l  ), kit->kettleBoilSize_l()  , tr("Change Boil Size") , equipmentUpdate);
-      new SimpleUndoableUpdate(*this->recipeObs, TYPE_INFO(Recipe, boilTime_min), kit->boilTime_min(), tr("Change Boil Time") , equipmentUpdate);
+      new SimpleUndoableUpdate(*this->m_recipeObs, TYPE_INFO(Recipe, batchSize_l), kit->fermenterBatchSize_l(), tr("Change Batch Size"), equipmentUpdate);
+
+      auto boil = this->m_recipeObs->nonOptBoil();
+      new SimpleUndoableUpdate(*boil, TYPE_INFO(Boil, preBoilSize_l), kit->kettleBoilSize_l(), tr("Change Boil Size"), equipmentUpdate);
+      if (kit->boilTime_min()) {
+         new SimpleUndoableUpdate(*boil, TYPE_INFO(Boil, boilTime_mins), *kit->boilTime_min(), tr("Change Boil Time"), equipmentUpdate);
+      }
    }
 
    // This will do the equipment update and any related updates - see above
@@ -1827,18 +2118,18 @@ void MainWindow::droppedRecipeEquipment(Equipment *kit) {
 }
 
 // This isn't called when we think it is...!
-void MainWindow::droppedRecipeStyle(Style* style) {
-   qDebug() << "MainWindow::droppedRecipeStyle";
-
-   if (!this->recipeObs) {
+void MainWindow::droppedRecipeStyle(Style * styleRaw) {
+   if (!this->m_recipeObs) {
+      qDebug() << Q_FUNC_INFO;
       return;
    }
    // When the style is changed, we also need to update what is shown on the Style button
-   qDebug() << "MainWindow::droppedRecipeStyle - do or redo";
+   qDebug() << Q_FUNC_INFO << "Do or redo";
+   auto style = ObjectStoreWrapper::getSharedFromRaw(styleRaw);
    this->doOrRedoUpdate(
-      newRelationalUndoableUpdate(*this->recipeObs,
+      newRelationalUndoableUpdate(*this->m_recipeObs,
                                   &Recipe::setStyle,
-                                  this->recipeObs->style(),
+                                  this->m_recipeObs->style(),
                                   style,
                                   &MainWindow::displayRangesEtcForCurrentRecipeStyle,
                                   tr("Change Recipe Style"))
@@ -1849,7 +2140,7 @@ void MainWindow::droppedRecipeStyle(Style* style) {
 
 // Well, aint this a kick in the pants. Apparently I can't template a slot
 void MainWindow::droppedRecipeFermentable(QList<Fermentable *> fermentables) {
-   if (!this->recipeObs) {
+   if (!this->m_recipeObs) {
       return;
    }
 
@@ -1857,10 +2148,10 @@ void MainWindow::droppedRecipeFermentable(QList<Fermentable *> fermentables) {
       tabWidget_ingredients->setCurrentWidget(recipeFermentableTab);
    }
 
-   auto fermentableAdditions = RecipeAdditionFermentable::create(*this->recipeObs, fermentables);
+   auto fermentableAdditions = RecipeAdditionFermentable::create(*this->m_recipeObs, fermentables);
 
    this->doOrRedoUpdate(
-      newUndoableAddOrRemoveList(*this->recipeObs,
+      newUndoableAddOrRemoveList(*this->m_recipeObs,
                                  &Recipe::addAddition<RecipeAdditionFermentable>,
                                  fermentableAdditions,
                                  &Recipe::removeAddition<RecipeAdditionFermentable>,
@@ -1870,7 +2161,7 @@ void MainWindow::droppedRecipeFermentable(QList<Fermentable *> fermentables) {
 }
 
 void MainWindow::droppedRecipeHop(QList<Hop *> hops) {
-   if (!this->recipeObs) {
+   if (!this->m_recipeObs) {
       return;
    }
 
@@ -1878,10 +2169,10 @@ void MainWindow::droppedRecipeHop(QList<Hop *> hops) {
       tabWidget_ingredients->setCurrentWidget(recipeHopTab);
    }
 
-   auto hopAdditions = RecipeAdditionHop::create(*this->recipeObs, hops);
+   auto hopAdditions = RecipeAdditionHop::create(*this->m_recipeObs, hops);
 
    this->doOrRedoUpdate(
-      newUndoableAddOrRemoveList(*this->recipeObs,
+      newUndoableAddOrRemoveList(*this->m_recipeObs,
                                  &Recipe::addAddition<RecipeAdditionHop>,
                                  hopAdditions,
                                  &Recipe::removeAddition<RecipeAdditionHop>,
@@ -1891,7 +2182,7 @@ void MainWindow::droppedRecipeHop(QList<Hop *> hops) {
 }
 
 void MainWindow::droppedRecipeMisc(QList<Misc *> miscs) {
-   if (!this->recipeObs) {
+   if (!this->m_recipeObs) {
       return;
    }
 
@@ -1899,10 +2190,10 @@ void MainWindow::droppedRecipeMisc(QList<Misc *> miscs) {
       tabWidget_ingredients->setCurrentWidget(recipeMiscTab);
    }
 
-   auto miscAdditions = RecipeAdditionMisc::create(*this->recipeObs, miscs);
+   auto miscAdditions = RecipeAdditionMisc::create(*this->m_recipeObs, miscs);
 
    this->doOrRedoUpdate(
-      newUndoableAddOrRemoveList(*this->recipeObs,
+      newUndoableAddOrRemoveList(*this->m_recipeObs,
                                  &Recipe::addAddition<RecipeAdditionMisc>,
                                  miscAdditions,
                                  &Recipe::removeAddition<RecipeAdditionMisc>,
@@ -1912,7 +2203,7 @@ void MainWindow::droppedRecipeMisc(QList<Misc *> miscs) {
 }
 
 void MainWindow::droppedRecipeYeast(QList<Yeast *> yeasts) {
-   if (!this->recipeObs) {
+   if (!this->m_recipeObs) {
       return;
    }
 
@@ -1920,54 +2211,59 @@ void MainWindow::droppedRecipeYeast(QList<Yeast *> yeasts) {
       tabWidget_ingredients->setCurrentWidget(recipeYeastTab);
    }
 
-   auto yeastAdditions = RecipeAdditionYeast::create(*this->recipeObs, yeasts);
+   auto yeastAdditions = RecipeAdditionYeast::create(*this->m_recipeObs, yeasts);
 
    this->doOrRedoUpdate(
-      newUndoableAddOrRemoveList(*this->recipeObs,
+      newUndoableAddOrRemoveList(*this->m_recipeObs,
                                  &Recipe::addAddition<RecipeAdditionYeast>,
                                  yeastAdditions,
                                  &Recipe::removeAddition<RecipeAdditionYeast>,
                                  tr("Drop yeast(s) on a recipe"))
    );
+   return;
 }
 
 void MainWindow::updateRecipeBatchSize() {
-   if (!this->recipeObs) {
+   if (!this->m_recipeObs) {
       return;
    }
 
-   this->doOrRedoUpdate(*this->recipeObs,
+   this->doOrRedoUpdate(*this->m_recipeObs,
                         TYPE_INFO(Recipe, batchSize_l),
                         lineEdit_batchSize->getNonOptCanonicalQty(),
                         tr("Change Batch Size"));
+   return;
 }
 
 void MainWindow::updateRecipeBoilSize() {
-   if (!this->recipeObs) {
+   if (!this->m_recipeObs) {
       return;
    }
 
-   this->doOrRedoUpdate(*this->recipeObs,
-                        TYPE_INFO(Recipe, boilSize_l),
+   auto boil = this->m_recipeObs->nonOptBoil();
+   this->doOrRedoUpdate(*boil,
+                        TYPE_INFO(Boil, preBoilSize_l),
                         lineEdit_boilSize->getNonOptCanonicalQty(),
                         tr("Change Boil Size"));
+   return;
 }
 
 void MainWindow::updateRecipeBoilTime() {
-   if (!this->recipeObs) {
+   if (!this->m_recipeObs) {
       return;
    }
 
-   Equipment* kit = recipeObs->equipment();
+   auto kit = m_recipeObs->equipment();
    double boilTime = Measurement::qStringToSI(lineEdit_boilTime->text(), Measurement::PhysicalQuantity::Time).quantity;
 
-   // Here, we rely on a signal/slot connection to propagate the equipment changes to recipeObs->boilTime_min and maybe
-   // recipeObs->boilSize_l
+   // Here, we rely on a signal/slot connection to propagate the equipment changes to m_recipeObs->boilTime_min and maybe
+   // m_recipeObs->boilSize_l
    // NOTE: This works because kit is the recipe's equipment, not the generic equipment in the recipe drop down.
    if (kit) {
       this->doOrRedoUpdate(*kit, TYPE_INFO(Equipment, boilTime_min), boilTime, tr("Change Boil Time"));
    } else {
-      this->doOrRedoUpdate(*this->recipeObs, TYPE_INFO(Recipe, boilTime_min), boilTime, tr("Change Boil Time"));
+      auto boil = this->m_recipeObs->nonOptBoil();
+      this->doOrRedoUpdate(*boil, TYPE_INFO(Boil, boilTime_mins), boilTime, tr("Change Boil Time"));
    }
 
    return;
@@ -1975,11 +2271,11 @@ void MainWindow::updateRecipeBoilTime() {
 
 void MainWindow::updateRecipeEfficiency() {
    qDebug() << Q_FUNC_INFO << lineEdit_efficiency->getNonOptValue<double>();
-   if (!this->recipeObs) {
+   if (!this->m_recipeObs) {
       return;
    }
 
-   this->doOrRedoUpdate(*this->recipeObs,
+   this->doOrRedoUpdate(*this->m_recipeObs,
                         TYPE_INFO(Recipe, efficiency_pct),
                         lineEdit_efficiency->getNonOptValue<unsigned int>(),
                         tr("Change Recipe Efficiency"));
@@ -1991,7 +2287,7 @@ void MainWindow::updateRecipeEfficiency() {
 ///   Q_ASSERT(ne);
 ///
 ///   this->doOrRedoUpdate(
-///      newUndoableAddOrRemove(*this->recipeObs,
+///      newUndoableAddOrRemove(*this->m_recipeObs,
 ///                             &Recipe::add<NE>,
 ///                             ne,
 ///                             &Recipe::remove<NE>,
@@ -2022,10 +2318,10 @@ void MainWindow::updateRecipeEfficiency() {
 
 template<class NE>
 void MainWindow::addIngredientToRecipe(NE * ne) {
-   if (!this->recipeObs) {
+   if (!this->m_recipeObs) {
       return;
    }
-   auto neAddition = std::make_shared<typename NE::RecipeAdditionClass>(*this->recipeObs, *ne);
+   auto neAddition = std::make_shared<typename NE::RecipeAdditionClass>(*this->m_recipeObs, *ne);
    this->pimpl->doRecipeAddition(neAddition);
    return;
 }
@@ -2067,23 +2363,15 @@ void MainWindow::removeSelectedYeastAddition() {
 }
 
 void MainWindow::addMashStepToMash(std::shared_ptr<MashStep> mashStep) {
-   qDebug() << Q_FUNC_INFO;
-   //
-   // Mash Steps are a bit different from most other NamedEntity objects in that they don't really have an independent
-   // existence.  If you ask a Mash to remove a MashStep then it will also tell the ObjectStore to delete it, but, when
-   // we're adding a MashStep to a Mash it's easier (for eg the implementation of undo/redo) if we add it to the
-   // ObjectStore before we call Mash::addMashStep().
-   //
-   ObjectStoreWrapper::insert(mashStep);
-   this->doOrRedoUpdate(
-      newUndoableAddOrRemove(*this->recipeObs->mash(),
-                             &Mash::addStep,
-                             mashStep,
-                             &Mash::removeStep,
-                             tr("Add mash step to recipe"))
-   );
-   // We don't need to call this->pimpl->m_mashStepTableModel->addMashStep(mashStep) here because the change to the mash will already
-   // have triggered the necessary updates to this->pimpl->m_mashStepTableModel.
+   this->pimpl->addStepToStepOwner(this->m_recipeObs->mash(), mashStep);
+   return;
+}
+void MainWindow::addBoilStepToBoil(std::shared_ptr<BoilStep> boilStep) {
+   this->pimpl->addStepToStepOwner(this->m_recipeObs->boil(), boilStep);
+   return;
+}
+void MainWindow::addFermentationStepToFermentation(std::shared_ptr<FermentationStep> fermentationStep) {
+   this->pimpl->addStepToStepOwner(this->m_recipeObs->fermentation(), fermentationStep);
    return;
 }
 
@@ -2091,19 +2379,19 @@ void MainWindow::addMashStepToMash(std::shared_ptr<MashStep> mashStep) {
  * This is akin to a special case of MainWindow::exportSelected()
  */
 void MainWindow::exportRecipe() {
-   if (!this->recipeObs) {
+   if (!this->m_recipeObs) {
       return;
    }
 
    QList<Recipe const *> recipes;
-   recipes.append(this->recipeObs);
+   recipes.append(this->m_recipeObs);
 
    ImportExport::exportToFile(&recipes);
    return;
 }
 
 Recipe* MainWindow::currentRecipe() {
-   return recipeObs;
+   return m_recipeObs;
 }
 
 void MainWindow::setUndoRedoEnable() {
@@ -2170,27 +2458,13 @@ void MainWindow::editRedo() {
    return;
 }
 
-void MainWindow::removeHopAddition(std::shared_ptr<RecipeAdditionHop> itemToRemove) {
-   this->pimpl->m_hopAdditionsTableModel->remove(itemToRemove);
-   return;
-}
-void MainWindow::removeFermentableAddition(std::shared_ptr<RecipeAdditionFermentable> itemToRemove) {
-   this->pimpl->m_fermentableAdditionsTableModel->remove(itemToRemove);
-   return;
-}
-void MainWindow::removeMiscAddition(std::shared_ptr<RecipeAdditionMisc> itemToRemove) {
-   this->pimpl->m_miscAdditionsTableModel->remove(itemToRemove);
-   return;
-}
-void MainWindow::removeYeastAddition(std::shared_ptr<RecipeAdditionYeast> itemToRemove) {
-   this->pimpl->m_yeastAdditionsTableModel->remove(itemToRemove);
-   return;
-}
-
-void MainWindow::removeMashStep(std::shared_ptr<MashStep> itemToRemove) {
-   this->pimpl->m_mashStepTableModel->remove(itemToRemove);
-   return;
-}
+template<> void MainWindow::remove(std::shared_ptr<RecipeAdditionHop        > itemToRemove) { this->pimpl->        m_hopAdditionsTableModel->remove(itemToRemove); return; }
+template<> void MainWindow::remove(std::shared_ptr<RecipeAdditionFermentable> itemToRemove) { this->pimpl->m_fermentableAdditionsTableModel->remove(itemToRemove); return; }
+template<> void MainWindow::remove(std::shared_ptr<RecipeAdditionMisc       > itemToRemove) { this->pimpl->       m_miscAdditionsTableModel->remove(itemToRemove); return; }
+template<> void MainWindow::remove(std::shared_ptr<RecipeAdditionYeast      > itemToRemove) { this->pimpl->      m_yeastAdditionsTableModel->remove(itemToRemove); return; }
+template<> void MainWindow::remove(std::shared_ptr<MashStep                 > itemToRemove) { this->pimpl->            m_mashStepTableModel->remove(itemToRemove); return; }
+template<> void MainWindow::remove(std::shared_ptr<BoilStep                 > itemToRemove) { this->pimpl->            m_boilStepTableModel->remove(itemToRemove); return; }
+template<> void MainWindow::remove(std::shared_ptr<FermentationStep         > itemToRemove) { this->pimpl->    m_fermentationStepTableModel->remove(itemToRemove); return; }
 
 ///void MainWindow::removeSelectedFermentable() {
 ///
@@ -2213,7 +2487,7 @@ void MainWindow::removeMashStep(std::shared_ptr<MashStep> itemToRemove) {
 ///
 ///   for (auto item : itemsToRemove) {
 ///      this->doOrRedoUpdate(
-///         newUndoableAddOrRemove(*this->recipeObs,
+///         newUndoableAddOrRemove(*this->m_recipeObs,
 ///                                &Recipe::remove<Fermentable>,
 ///                                item,
 ///                                &Recipe::add<Fermentable>,
@@ -2318,7 +2592,7 @@ void MainWindow::editYeastOfSelectedYeastAddition() {
 ///
 ///   for (auto item : itemsToRemove) {
 ///      this->doOrRedoUpdate(
-///         newUndoableAddOrRemove(*this->recipeObs,
+///         newUndoableAddOrRemove(*this->m_recipeObs,
 ///                                 &Recipe::remove<Misc>,
 ///                                 item,
 ///                                 &Recipe::add<Misc>,
@@ -2347,7 +2621,7 @@ void MainWindow::editYeastOfSelectedYeastAddition() {
 ///
 ///   for (auto item : itemsToRemove) {
 ///      this->doOrRedoUpdate(
-///         newUndoableAddOrRemove(*this->recipeObs,
+///         newUndoableAddOrRemove(*this->m_recipeObs,
 ///                                 &Recipe::remove<Yeast>,
 ///                                 item,
 ///                                 &Recipe::add<Yeast>,
@@ -2389,19 +2663,17 @@ void MainWindow::newRecipe()
    newRec->setEfficiency_pct(70.0);
 
    // we need a valid key, so insert the recipe before we add equipment
-   if ( defEquipKey != -1 )
-   {
-      Equipment *e = ObjectStoreWrapper::getByIdRaw<Equipment>(defEquipKey.toInt());
+   if (defEquipKey != -1) {
+      auto equipment = ObjectStoreWrapper::getById<Equipment>(defEquipKey.toInt());
       // I really want to do this before we've written the object to the
       // database
-      if ( e ) {
-         newRec->setBatchSize_l( e->fermenterBatchSize_l() );
-         newBoil->setPreBoilSize_l( e->kettleBoilSize_l() );
-         newBoil->setBoilTime_mins( e->boilTime_min().value_or(Equipment::default_boilTime_min) );
-         newRec->setEquipment(e);
+      if ( equipment ) {
+         newRec->setBatchSize_l( equipment->fermenterBatchSize_l() );
+         newBoil->setPreBoilSize_l( equipment->kettleBoilSize_l() );
+         newBoil->setBoilTime_mins( equipment->boilTime_min().value_or(Equipment::default_boilTime_mins) );
+         newRec->setEquipment(equipment);
       }
    }
-
 
    // a new recipe will be put in a folder if you right click on a recipe or
    // folder. Otherwise, it goes into the main window?
@@ -2569,7 +2841,7 @@ void MainWindow::reduceInventory() {
       }
 
       // Make sure everything is properly set and selected
-      if (rec != recipeObs) {
+      if (rec != m_recipeObs) {
          setRecipe(rec);
       }
 
@@ -2616,7 +2888,7 @@ void MainWindow::newBrewNote() {
       }
 
       // Make sure everything is properly set and selected
-      if (rec != recipeObs) {
+      if (rec != m_recipeObs) {
          setRecipe(rec);
       }
 
@@ -2628,10 +2900,12 @@ void MainWindow::newBrewNote() {
       this->setBrewNote(bNote.get());
 
       bIndex = treeView_recipe->findElement(bNote.get());
-      if ( bIndex.isValid() )
+      if (bIndex.isValid()) {
          setTreeSelection(bIndex);
       }
    }
+   return;
+}
 
 void MainWindow::reBrewNote() {
    QModelIndexList indexes = treeView_recipe->selectionModel()->selectedRows();
@@ -2647,7 +2921,7 @@ void MainWindow::reBrewNote() {
       bNote->setBrewDate();
       ObjectStoreWrapper::insert(bNote);
 
-      if (rec != recipeObs) {
+      if (rec != m_recipeObs) {
          setRecipe(rec);
       }
 
@@ -2655,16 +2929,19 @@ void MainWindow::reBrewNote() {
 
       setTreeSelection(treeView_recipe->findElement(bNote.get()));
    }
+   return;
 }
 
 void MainWindow::brewItHelper() {
-   newBrewNote();
-   reduceInventory();
+   this->newBrewNote();
+   this->reduceInventory();
+   return;
 }
 
 void MainWindow::brewAgainHelper() {
-   reBrewNote();
-   reduceInventory();
+   this->reBrewNote();
+   this->reduceInventory();
+   return;
 }
 
 void MainWindow::backup() {
@@ -2683,28 +2960,26 @@ void MainWindow::backup() {
    }
 }
 
-void MainWindow::restoreFromBackup()
-{
-   if( QMessageBox::question(
+void MainWindow::restoreFromBackup() {
+   if (QMessageBox::question(
           this,
           tr("A Warning"),
           tr("This will obliterate your current set of recipes and ingredients. Do you want to continue?"),
           QMessageBox::Yes, QMessageBox::No
-       )
-       == QMessageBox::No
-   )
-   {
+       ) == QMessageBox::No) {
       return;
    }
 
    QString restoreDbFile = QFileDialog::getOpenFileName(this, tr("Choose File"), "", tr("SQLite (*.sqlite)"));
    bool success = Database::instance().restoreFromFile(restoreDbFile);
 
-   if( ! success )
-      QMessageBox::warning( this, tr("Oops!"), tr("For some reason, the operation failed.") );
-   else
+   if (!success) {
+      QMessageBox::warning( this, tr("Oops!"), tr("Operation failed.  See log file for more details.") );
+   } else {
       QMessageBox::information(this, tr("Restart"), tr("Please restart Brewken."));
-   //TODO: do this without requiring restarting :)
+      //TODO: do this without requiring restarting :)
+   }
+   return;
 }
 
 // Imports all the recipes, hops, equipment or whatever from a BeerXML file into the database.
@@ -2713,145 +2988,33 @@ void MainWindow::importFiles() {
    return;
 }
 
-bool MainWindow::verifyImport(QString tag, QString name)
-{
+bool MainWindow::verifyImport(QString tag, QString name) {
    return QMessageBox::question(this, tr("Import %1?").arg(tag), tr("Import %1?").arg(name),
                                 QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes;
 }
 
-void MainWindow::addMashStep() {
-   if( recipeObs == nullptr || recipeObs->mash() == nullptr ) {
-      QMessageBox::information(this, tr("No mash"), tr("Trying to add a mash step without a mash. Please create a mash first.") );
-      return;
-   }
+void MainWindow::addMashStep        () { this->pimpl->newStep<MashStep        >(); return; }
+void MainWindow::addBoilStep        () { this->pimpl->newStep<BoilStep        >(); return; }
+void MainWindow::addFermentationStep() { this->pimpl->newStep<FermentationStep>(); return; }
+void MainWindow::removeSelectedMashStep        () { this->pimpl->removeSelectedStep<MashStep        >(); return; }
+void MainWindow::removeSelectedBoilStep        () { this->pimpl->removeSelectedStep<BoilStep        >(); return; }
+void MainWindow::removeSelectedFermentationStep() { this->pimpl->removeSelectedStep<FermentationStep>(); return; }
+void MainWindow::moveSelectedMashStepUp        () { this->pimpl->moveSelectedStepUp<MashStep        >(); return; }
+void MainWindow::moveSelectedBoilStepUp        () { this->pimpl->moveSelectedStepUp<BoilStep        >(); return; }
+void MainWindow::moveSelectedFermentationStepUp() { this->pimpl->moveSelectedStepUp<FermentationStep>(); return; }
+void MainWindow::moveSelectedMashStepDown        () { this->pimpl->moveSelectedStepDown<MashStep        >(); return; }
+void MainWindow::moveSelectedBoilStepDown        () { this->pimpl->moveSelectedStepDown<BoilStep        >(); return; }
+void MainWindow::moveSelectedFermentationStepDown() { this->pimpl->moveSelectedStepDown<FermentationStep>(); return; }
+void MainWindow::editSelectedMashStep        () { this->pimpl->editSelectedStep<MashStep        >(); return; }
+void MainWindow::editSelectedBoilStep        () { this->pimpl->editSelectedStep<BoilStep        >(); return; }
+void MainWindow::editSelectedFermentationStep() { this->pimpl->editSelectedStep<FermentationStep>(); return; }
 
-   // This ultimately gets stored in MainWindow::addMashStepToMash()
-   auto step = std::make_shared<MashStep>("");
-   this->pimpl->m_mashStepEditor->setEditItem(step);
-   this->pimpl->m_mashStepEditor->setVisible(true);
-   return;
-}
-
-void MainWindow::removeSelectedMashStep() {
-   if (!this->recipeObs) {
-      return;
-   }
-   Mash* mash = this->recipeObs->mash();
-   if (!mash) {
-      return;
-   }
-
-   QModelIndexList selected = mashStepTableWidget->selectionModel()->selectedIndexes();
-
-   int size = selected.size();
-   if (size == 0) {
-      return;
-   }
-
-   // Make sure only one row is selected.
-   int row = selected[0].row();
-   for (int i = 1; i < size; ++i) {
-      if (selected[i].row() != row) {
-         return;
-      }
-   }
-
-   auto step = this->pimpl->m_mashStepTableModel->getRow(row);
-   this->doOrRedoUpdate(
-      newUndoableAddOrRemove(*this->recipeObs->mash(),
-                              &Mash::removeStep,
-                              step,
-                              &Mash::addStep,
-                              &MainWindow::removeMashStep,
-                              static_cast<void (MainWindow::*)(std::shared_ptr<MashStep>)>(nullptr),
-                              tr("Remove mash step"))
-   );
-
-   return;
-}
-
-void MainWindow::moveSelectedMashStepUp()
-{
-   QModelIndexList selected = mashStepTableWidget->selectionModel()->selectedIndexes();
-   int row, size, i;
-
-   size = selected.size();
-   if( size == 0 )
-      return;
-
-   // Make sure only one row is selected.
-   row = selected[0].row();
-   for( i = 1; i < size; ++i )
-   {
-      if( selected[i].row() != row )
-         return;
-   }
-
-   // Make sure we can actually move it up.
-   if( row < 1 ) {
-      return;
-   }
-
-   this->pimpl->m_mashStepTableModel->moveStepUp(row);
-   return;
-}
-
-void MainWindow::moveSelectedMashStepDown()
-{
-   QModelIndexList selected = mashStepTableWidget->selectionModel()->selectedIndexes();
-   int row, size, i;
-
-   size = selected.size();
-   if( size == 0 )
-      return;
-
-   // Make sure only one row is selected.
-   row = selected[0].row();
-   for( i = 1; i < size; ++i )
-   {
-      if( selected[i].row() != row )
-         return;
-   }
-
-   // Make sure it's not the last row so we can move it down.
-   if( row >= this->pimpl->m_mashStepTableModel->rowCount() - 1 ) {
-      return;
-   }
-
-   this->pimpl->m_mashStepTableModel->moveStepDown(row);
-   return;
-}
-
-void MainWindow::editSelectedMashStep() {
-   if (!recipeObs || !recipeObs->mash()) {
-      return;
-   }
-
-   QModelIndexList selected = mashStepTableWidget->selectionModel()->selectedIndexes();
-
-   int size = selected.size();
-   if (size == 0) {
-      return;
-   }
-
-   // Make sure only one row is selected.
-   int row = selected[0].row();
-   for (int i = 1; i < size; ++i) {
-      if (selected[i].row() != row) {
-         return;
-      }
-   }
-
-   auto step = this->pimpl->m_mashStepTableModel->getRow(static_cast<unsigned int>(row));
-   this->pimpl->m_mashStepEditor->setEditItem(step);
-   this->pimpl->m_mashStepEditor->setVisible(true);
-   return;
-}
-
+//
+// .:TBD:. Not sure we should delete the mash just because it's removed from the Recipe
+//
 void MainWindow::removeMash() {
-   Mash *m = mashButton->mash();
-
-   if( m == nullptr) {
+   auto mashToRemove = this->mashButton->getMash();
+   if (!mashToRemove) {
       return;
    }
 
@@ -2860,45 +3023,46 @@ void MainWindow::removeMash() {
    //from the database.
    //remove from db
 
-   m->removeAllSteps();
-   ObjectStoreWrapper::softDelete(*m);
+   mashToRemove->removeAllSteps();
+   ObjectStoreWrapper::softDelete(*mashToRemove);
 
    auto defaultMash = std::make_shared<Mash>();
    ObjectStoreWrapper::insert(defaultMash);
-   this->recipeObs->setMash(defaultMash.get());
+   this->m_recipeObs->setMash(defaultMash);
 
-   this->pimpl->m_mashStepTableModel->setMash(defaultMash.get());
+   this->pimpl->m_mashStepTableModel->setMash(defaultMash);
 
    //remove from combobox handled automatically by qt
-   mashButton->setMash(defaultMash.get());
-
+   this->mashButton->setMash(defaultMash);
+   return;
 }
 
-void MainWindow::closeEvent(QCloseEvent* /*event*/)
-{
+void MainWindow::closeEvent(QCloseEvent* /*event*/) {
    Application::saveSystemOptions();
    PersistentSettings::insert(PersistentSettings::Names::geometry, saveGeometry());
    PersistentSettings::insert(PersistentSettings::Names::windowState, saveState());
-   if ( recipeObs )
-      PersistentSettings::insert(PersistentSettings::Names::recipeKey, recipeObs->key());
+   if ( m_recipeObs )
+      PersistentSettings::insert(PersistentSettings::Names::recipeKey, m_recipeObs->key());
 
-   //UI save state
-   PersistentSettings::insert(PersistentSettings::Names::splitter_vertical_State, splitter_vertical->saveState(), PersistentSettings::Sections::MainWindow);
-   PersistentSettings::insert(PersistentSettings::Names::splitter_horizontal_State, splitter_horizontal->saveState(), PersistentSettings::Sections::MainWindow);
-   PersistentSettings::insert(PersistentSettings::Names::treeView_recipe_headerState, treeView_recipe->header()->saveState(), PersistentSettings::Sections::MainWindow);
-   PersistentSettings::insert(PersistentSettings::Names::treeView_style_headerState, treeView_style->header()->saveState(), PersistentSettings::Sections::MainWindow);
-   PersistentSettings::insert(PersistentSettings::Names::treeView_equip_headerState, treeView_equip->header()->saveState(), PersistentSettings::Sections::MainWindow);
-   PersistentSettings::insert(PersistentSettings::Names::treeView_ferm_headerState, treeView_ferm->header()->saveState(), PersistentSettings::Sections::MainWindow);
-   PersistentSettings::insert(PersistentSettings::Names::treeView_hops_headerState, treeView_hops->header()->saveState(), PersistentSettings::Sections::MainWindow);
-   PersistentSettings::insert(PersistentSettings::Names::treeView_misc_headerState, treeView_misc->header()->saveState(), PersistentSettings::Sections::MainWindow);
-   PersistentSettings::insert(PersistentSettings::Names::treeView_yeast_headerState, treeView_yeast->header()->saveState(), PersistentSettings::Sections::MainWindow);
-   PersistentSettings::insert(PersistentSettings::Names::mashStepTableWidget_headerState, mashStepTableWidget->horizontalHeader()->saveState(), PersistentSettings::Sections::MainWindow);
+   // UI save state
+   this->pimpl->saveUiState(PersistentSettings::Names::splitter_vertical_State                , splitter_vertical                              );
+   this->pimpl->saveUiState(PersistentSettings::Names::splitter_horizontal_State              , splitter_horizontal                            );
+   this->pimpl->saveUiState(PersistentSettings::Names::treeView_recipe_headerState            , treeView_recipe->header()                      );
+   this->pimpl->saveUiState(PersistentSettings::Names::treeView_style_headerState             , treeView_style->header()                       );
+   this->pimpl->saveUiState(PersistentSettings::Names::treeView_equip_headerState             , treeView_equip->header()                       );
+   this->pimpl->saveUiState(PersistentSettings::Names::treeView_ferm_headerState              , treeView_ferm->header()                        );
+   this->pimpl->saveUiState(PersistentSettings::Names::treeView_hops_headerState              , treeView_hops->header()                        );
+   this->pimpl->saveUiState(PersistentSettings::Names::treeView_misc_headerState              , treeView_misc->header()                        );
+   this->pimpl->saveUiState(PersistentSettings::Names::treeView_yeast_headerState             , treeView_yeast->header()                       );
+   this->pimpl->saveUiState(PersistentSettings::Names::mashStepTableWidget_headerState        , mashStepTableWidget->horizontalHeader()        );
+   this->pimpl->saveUiState(PersistentSettings::Names::boilStepTableWidget_headerState        , boilStepTableWidget->horizontalHeader()        );
+   this->pimpl->saveUiState(PersistentSettings::Names::fermentationStepTableWidget_headerState, fermentationStepTableWidget->horizontalHeader());
 
    // After unloading the database, can't make any more queries to it, so first
    // make the main window disappear so that redraw events won't inadvertently
    // cause any more queries.
    setVisible(false);
-
+   return;
 }
 
 void MainWindow::copyRecipe() {
@@ -2907,63 +3071,60 @@ void MainWindow::copyRecipe() {
       return;
    }
 
-   auto newRec = std::make_shared<Recipe>(*this->recipeObs); // Create a deep copy
+   auto newRec = std::make_shared<Recipe>(*this->m_recipeObs); // Create a deep copy
    newRec->setName(name);
    ObjectStoreTyped<Recipe>::getInstance().insert(newRec);
    return;
 }
 
 void MainWindow::saveMash() {
-   if ( recipeObs == nullptr || recipeObs->mash() == nullptr ) {
+   if (!this->m_recipeObs || !this->m_recipeObs->mash()) {
       return;
    }
 
-   Mash* mash = recipeObs->mash();
+   auto mash = m_recipeObs->mash();
    // Ensure the mash has a name.
    if( mash->name() == "" ) {
       QMessageBox::information( this, tr("Oops!"), tr("Please give your mash a name before saving.") );
       return;
    }
 
-
    // The current UI doesn't make this 100% clear, but what we're actually doing here is saving a _copy_ of the current
    // Recipe's mash.
 
-   // NOTE: should NOT displace recipeObs' current mash.
+   // NOTE: should NOT displace m_recipeObs' current mash.
    auto newMash = ObjectStoreWrapper::insertCopyOf(*mash);
    // NOTE: need to set the display to true for the saved, named mash to work
    newMash->setDisplay(true);
-   mashButton->setMash(newMash.get());
+   mashButton->setMash(newMash);
    return;
 }
 
 // We build the menus at start up time.  This just needs to exec the proper
 // menu.
-void MainWindow::contextMenu(const QPoint &point)
-{
+void MainWindow::contextMenu(const QPoint &point) {
    QObject* calledBy = sender();
-   BtTreeView* active;
-   QModelIndex selected;
-   QMenu* tempMenu;
-
    // Not sure how this could happen, but better safe the sigsegv'd
-   if ( calledBy == nullptr )
+   if (calledBy == nullptr) {
       return;
+   }
 
-   active = qobject_cast<BtTreeView*>(calledBy);
-
+   BtTreeView * active = qobject_cast<BtTreeView*>(calledBy);
    // If the sender cannot be morphed into a BtTreeView object
-   if ( active == nullptr )
+   if (active == nullptr) {
       return;
+   }
 
-   selected = active->indexAt(point);
-   if (! selected.isValid())
+   QModelIndex selected = active->indexAt(point);
+   if (!selected.isValid()) {
       return;
+   }
 
-   tempMenu = active->contextMenu(selected);
-
-   if (tempMenu)
+   QMenu * tempMenu = active->contextMenu(selected);
+   if (tempMenu) {
       tempMenu->exec(active->mapToGlobal(point));
+   }
+   return;
 }
 
 void MainWindow::setupContextMenu() {
@@ -3001,14 +3162,15 @@ void MainWindow::setupContextMenu() {
 
    connect( treeView_water, &QAbstractItemView::doubleClicked, this, &MainWindow::treeActivated);
    connect( treeView_water, &QWidget::customContextMenuRequested, this, &MainWindow::contextMenu);
+   return;
 }
 
-void MainWindow::copySelected()
-{
+void MainWindow::copySelected() {
    QModelIndexList selected;
    BtTreeView* active = qobject_cast<BtTreeView*>(tabWidget_Trees->currentWidget()->focusWidget());
 
    active->copySelected(active->selectionModel()->selectedRows());
+   return;
 }
 
 void MainWindow::exportSelected() {
@@ -3111,47 +3273,43 @@ void MainWindow::exportSelected() {
                               &styles,
                               &waters,
                               &yeasts);
-      return;
-   }
-
-void MainWindow::redisplayLabel()
-{
-   // There is a lot of magic going on in the showChanges(). I can either
-   // duplicate that magic or I can just call showChanges().
-   showChanges();
+   return;
 }
 
-void MainWindow::showPitchDialog()
-{
+void MainWindow::redisplayLabel() {
+   // There is a lot of magic going on in the showChanges(). I can either
+   // duplicate that magic or I can just call showChanges().
+   this->showChanges();
+   return;
+}
+
+void MainWindow::showPitchDialog() {
    // First, copy the current recipe og and volume.
-   if( recipeObs )
-   {
-      this->pimpl->m_pitchDialog->setWortVolume_l( recipeObs->finalVolume_l() );
-      this->pimpl->m_pitchDialog->setWortDensity( recipeObs->og() );
+   if (m_recipeObs) {
+      this->pimpl->m_pitchDialog->setWortVolume_l( m_recipeObs->finalVolume_l() );
+      this->pimpl->m_pitchDialog->setWortDensity( m_recipeObs->og() );
       this->pimpl->m_pitchDialog->calculate();
    }
 
    this->pimpl->m_pitchDialog->show();
+   return;
 }
 
-void MainWindow::showEquipmentEditor()
-{
-   if ( recipeObs && ! recipeObs->equipment() )
-   {
+void MainWindow::showEquipmentEditor() {
+   if ( m_recipeObs && ! m_recipeObs->equipment() ) {
       QMessageBox::warning( this, tr("No equipment"), tr("You must select or define an equipment profile first."));
-   }
-   else
-   {
-      this->pimpl->m_equipEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(recipeObs->equipment()));
+   } else {
+      this->pimpl->m_equipEditor->setEditItem(m_recipeObs->equipment());
       this->pimpl->m_equipEditor->show();
    }
+   return;
 }
 
 void MainWindow::showStyleEditor() {
-   if ( recipeObs && ! recipeObs->style() ) {
+   if ( m_recipeObs && ! m_recipeObs->style() ) {
       QMessageBox::warning( this, tr("No style"), tr("You must select a style first."));
    } else {
-      this->pimpl->m_styleEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(recipeObs->style()));
+      this->pimpl->m_styleEditor->setEditItem(m_recipeObs->style());
       this->pimpl->m_styleEditor->show();
    }
    return;
@@ -3227,7 +3385,7 @@ void MainWindow::closeBrewNote([[maybe_unused]] int brewNoteId, std::shared_ptr<
 
    // If this isn't the focused recipe, do nothing because there are no tabs
    // to close.
-   if (parent != recipeObs) {
+   if (parent != m_recipeObs) {
       return;
    }
 
@@ -3237,14 +3395,12 @@ void MainWindow::closeBrewNote([[maybe_unused]] int brewNoteId, std::shared_ptr<
    }
 
    return;
-
 }
 
 void MainWindow::showWaterChemistryTool() {
-   if (this->recipeObs) {
-      Mash * eMash = recipeObs->mash();
-      if (eMash && eMash->mashSteps().size() > 0) {
-         this->pimpl->m_waterDialog->setRecipe(recipeObs);
+   if (this->m_recipeObs) {
+      if (m_recipeObs->mash() && m_recipeObs->mash()->mashSteps().size() > 0) {
+         this->pimpl->m_waterDialog->setRecipe(m_recipeObs);
          this->pimpl->m_waterDialog->show();
          return;
       }

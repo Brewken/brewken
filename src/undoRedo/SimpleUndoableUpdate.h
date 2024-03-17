@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * undoRedo/SimpleUndoableUpdate.h is part of Brewken, and is copyright the following authors 2020-2023:
+ * undoRedo/SimpleUndoableUpdate.h is part of Brewken, and is copyright the following authors 2020-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -87,6 +87,10 @@ public:
       return;
    }
 
+   /**
+    * \brief If the caller supplied an optional value, then we assume they know what they are doing and assert if they
+    *        are trying to set a property that is not optional.
+    */
    template<IsOptionalOther T>
    SimpleUndoableUpdate(NamedEntity & updatee,
                         TypeInfo const & typeInfo,
@@ -94,7 +98,29 @@ public:
                         QString const & description,
                         QUndoCommand * parent = nullptr) :
       SimpleUndoableUpdate(updatee, typeInfo, QVariant::fromValue<T>(newValue), description, parent) {
+      // Uncomment this block if you need to diagnose problems that result in hitting the asserts below
+//      if (!typeInfo.isOptional()) {
+//         qCritical().noquote() << Q_FUNC_INFO << Logging::getStackTrace();
+//      }
       Q_ASSERT(typeInfo.isOptional());
+      return;
+   }
+
+   /**
+    * \brief On the other hand, if the caller supplied a non-optional value then we check whether the property is
+    *        optional and, if do, do the std::optional wrapping.
+    */
+   template<IsRequiredOther T>
+   SimpleUndoableUpdate(NamedEntity & updatee,
+                        TypeInfo const & typeInfo,
+                        T newValue,
+                        QString const & description,
+                        QUndoCommand * parent = nullptr) :
+      SimpleUndoableUpdate(updatee,
+                           typeInfo,
+                           Optional::variantFromRaw(newValue, typeInfo.isOptional()),
+                           description,
+                           parent) {
       return;
    }
 

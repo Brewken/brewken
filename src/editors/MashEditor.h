@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/MashEditor.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * editors/MashEditor.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -18,6 +18,8 @@
 #ifndef EDITORS_MASHEDITOR_H
 #define EDITORS_MASHEDITOR_H
 #pragma once
+
+#include <memory>
 
 #include <QDialog>
 #include <QMetaProperty>
@@ -39,26 +41,25 @@ class Equipment;
 class MashEditor : public QDialog, public Ui::mashEditor {
    Q_OBJECT
 public:
-   MashEditor( QWidget *parent = nullptr );
+   MashEditor(QWidget * parent = nullptr);
 
 public slots:
    void showEditor();
    void closeEditor();
    void saveAndClose();
-   //! Get the tun mass and sp. heat from the equipment.
+   //! Get the tun mass and specific heat from the equipment.
    void fromEquipment();
    //! Set the mash we wish to view/edit.
-   void setMash(Mash* mash);
+   void setMash(std::shared_ptr<Mash> mash);
    void setRecipe(Recipe* r);
 
    void changed(QMetaProperty,QVariant);
 private:
    void showChanges(QMetaProperty* prop = nullptr);
    void clear();
-   Recipe* m_rec;
-   Mash* mashObs;
-   Equipment* m_equip;
 
+   Recipe *              m_recipe;
+   std::shared_ptr<Mash> m_mashObs;
 };
 
 #endif

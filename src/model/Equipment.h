@@ -146,7 +146,7 @@ public:
     * \brief Some default values we use in calculations when no value is set in this record
     */
    //! @{
-   static constexpr double default_boilTime_min               = 60.0;
+   static constexpr double default_boilTime_mins               = 60.0;
    static constexpr double default_hopUtilization_pct         = 100.0;
    static constexpr double default_kettleEvaporationPerHour_l = 4.0;
    static constexpr double default_mashTunGrainAbsorption_LKg = 1.086; // See also PhysicalConstants::grainAbsorption_Lkg

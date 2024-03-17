@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * TimerMainDialog.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * TimerMainDialog.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -258,7 +258,7 @@ void TimerMainDialog::on_loadRecipesButton_clicked() {
       }
    }
    Recipe * recipe = mainWindow->currentRecipe();
-   this->setBoilTimeBox->setValue(recipe->boil() ? (*recipe->boil())->boilTime_mins() : 0.0);
+   this->setBoilTimeBox->setValue(recipe->boil() ? recipe->boil()->boilTime_mins() : 0.0);
    bool timerFound = false;
    int duplicates = 0;
    int timersGenerated = 0;

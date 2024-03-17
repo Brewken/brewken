@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/StepBase.h is part of Brewken, and is copyright the following authors 2023:
+ * model/StepBase.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -62,6 +62,10 @@ protected:
                          NeName>;                                               \
                                                                                 \
    public:                                                                      \
+      /* This alias makes it easier to template a number of functions */        \
+      /* that are essentially the same for all "Step" classes.        */        \
+      using StepOwnerClass = NeName;                                            \
+                                                                                \
       virtual Recipe * getOwningRecipe() const;                                 \
                                                                                 \
    protected:                                                                   \

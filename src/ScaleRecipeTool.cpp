@@ -21,6 +21,7 @@
 #include <QMessageBox>
 #include <QButtonGroup>
 
+#include "database/ObjectStoreWrapper.h"
 #include "listModels/EquipmentListModel.h"
 #include "model/Boil.h"
 #include "model/Equipment.h"
@@ -42,8 +43,7 @@
 ScaleRecipeTool::ScaleRecipeTool(QWidget* parent) :
    QWizard(parent),
    equipListModel(new EquipmentListModel(this)),
-   equipSortProxyModel(new NamedEntitySortProxyModel(equipListModel))
-{
+   equipSortProxyModel(new NamedEntitySortProxyModel(equipListModel)) {
    addPage(new ScaleRecipeIntroPage);
    addPage(new ScaleRecipeEquipmentPage(equipSortProxyModel));
    return;
@@ -63,30 +63,32 @@ void ScaleRecipeTool::accept() {
 }
 
 void ScaleRecipeTool::setRecipe(Recipe* rec) {
-   recObs = rec;
+   this->recObs = rec;
    return;
 }
 
 void ScaleRecipeTool::scale(Equipment* equip, double newEff) {
-   if (!this->recObs || !equip ) {
+   if (!this->recObs || !equip) {
       return;
    }
 
+   auto equipment = ObjectStoreWrapper::getSharedFromRaw(equip);
+
    // Calculate volume ratio
    double currentBatchSize_l = recObs->batchSize_l();
-   double newBatchSize_l = equip->fermenterBatchSize_l();
+   double newBatchSize_l = equipment->fermenterBatchSize_l();
    double volRatio = newBatchSize_l / currentBatchSize_l;
 
    // Calculate efficiency ratio
    double oldEfficiency = recObs->efficiency_pct();
    double effRatio = oldEfficiency / newEff;
 
-   this->recObs->setEquipment(equip);
+   this->recObs->setEquipment(equipment);
    this->recObs->setBatchSize_l(newBatchSize_l);
-   this->recObs->nonOptBoil()->setPreBoilSize_l(equip->kettleBoilSize_l());
+   this->recObs->nonOptBoil()->setPreBoilSize_l(equipment->kettleBoilSize_l());
    this->recObs->setEfficiency_pct(newEff);
    if (this->recObs->boil()) {
-      (*this->recObs->boil())->setBoilTime_mins(equip->boilTime_min().value_or(Equipment::default_boilTime_min));
+      this->recObs->boil()->setBoilTime_mins(equipment->boilTime_min().value_or(Equipment::default_boilTime_mins));
    }
 
    for (auto fermAddition : this->recObs->fermentableAdditions()) {
@@ -112,7 +114,7 @@ void ScaleRecipeTool::scale(Equipment* equip, double newEff) {
       waterUse->setVolume_l(waterUse->volume_l() * volRatio);
    }
 
-   Mash* mash = this->recObs->mash();
+   auto mash = this->recObs->mash();
    if (mash) {
       // Reset all these to zero so that the user
       // will know to re-run the mash wizard.
@@ -161,6 +163,14 @@ void ScaleRecipeIntroPage::retranslateUi() {
    return;
 }
 
+void ScaleRecipeIntroPage::changeEvent(QEvent* event) {
+   if(event->type() == QEvent::LanguageChange) {
+      retranslateUi();
+   }
+   QWidget::changeEvent(event);
+   return;
+}
+
 // ScaleRecipeEquipmentPage ===================================================
 
 ScaleRecipeEquipmentPage::ScaleRecipeEquipmentPage(QAbstractItemModel* listModel, QWidget* parent) :
@@ -196,5 +206,13 @@ void ScaleRecipeEquipmentPage::retranslateUi() {
 
    equipLabel->setText(tr("New Equipment"));
    effLabel->setText(tr("New Efficiency (%)"));
+   return;
+}
+
+void ScaleRecipeEquipmentPage::changeEvent(QEvent* event) {
+   if(event->type() == QEvent::LanguageChange) {
+      retranslateUi();
+   }
+   QWidget::changeEvent(event);
    return;
 }

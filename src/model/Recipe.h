@@ -56,8 +56,8 @@ AddPropertyName(beerAcidity_pH         )
 AddPropertyName(boil                   )
 AddPropertyName(boilGrav               )
 AddPropertyName(boilId                 )
-AddPropertyName(boilSize_l             ) // Deprecated, but retained for BeerXML -- see comments below
-AddPropertyName(boilTime_min           ) // Deprecated, but retained for BeerXML -- see comments below
+///AddPropertyName(boilSize_l             ) // Deprecated, but retained for BeerXML -- see comments below
+///AddPropertyName(boilTime_min           ) // Deprecated, but retained for BeerXML -- see comments below
 AddPropertyName(boilVolume_l           )
 AddPropertyName(brewer                 )
 AddPropertyName(brewNotes              )
@@ -76,7 +76,7 @@ AddPropertyName(fermentableAdditionIds )
 AddPropertyName(fermentableAdditions   )
 AddPropertyName(fermentation           )
 AddPropertyName(fermentationId         )
-AddPropertyName(fermentationStages     )
+///AddPropertyName(fermentationStages     )
 AddPropertyName(fg                     )
 AddPropertyName(finalVolume_l          )
 AddPropertyName(forcedCarbonation      )
@@ -98,21 +98,21 @@ AddPropertyName(notes                  )
 AddPropertyName(og                     )
 AddPropertyName(points                 )
 AddPropertyName(postBoilVolume_l       )
-AddPropertyName(primaryAge_days        )
-AddPropertyName(primaryTemp_c          )
+///AddPropertyName(primaryAge_days        )
+///AddPropertyName(primaryTemp_c          )
 AddPropertyName(primingSugarEquiv      )
 AddPropertyName(primingSugarName       )
 AddPropertyName(saltAdjustmentIds      )
 AddPropertyName(saltAdjustments        )
-AddPropertyName(secondaryAge_days      )
-AddPropertyName(secondaryTemp_c        )
+///AddPropertyName(secondaryAge_days      )
+///AddPropertyName(secondaryTemp_c        )
 AddPropertyName(SRMColor               )
 AddPropertyName(style                  )
 AddPropertyName(styleId                )
 AddPropertyName(tasteNotes             )
 AddPropertyName(tasteRating            )
-AddPropertyName(tertiaryAge_days       )
-AddPropertyName(tertiaryTemp_c         )
+///AddPropertyName(tertiaryAge_days       )
+///AddPropertyName(tertiaryTemp_c         )
 AddPropertyName(type                   )
 AddPropertyName(waterUseIds            )
 AddPropertyName(waterUses              )
@@ -217,6 +217,13 @@ public:
 
 
    //=============================================== REGULAR PROPERTIES ================================================
+   //
+   // Note that boilSize_l and boilTime_min, which were previously properties of Recipe are now moved to Boil.  Given
+   // Recipe r:
+   //   - to SET a boil size of `double boilSizeLiters`, call `r.nonOptBoil()->setPreBoilSize_l(boilSizeLiters)`;
+   //   - to SET a boil time of `double boilTimeMinutes`, call `r.nonOptBoil()->setBoilTime_mins(boilTimeMinutes)`.
+   //
+
    //! \brief The \b Type
    Q_PROPERTY(Type    type               READ type               WRITE setType             )
    //! \brief The brewer.  This becomes "author" in BeerJSON
@@ -225,20 +232,20 @@ public:
     * \brief The batch size is the target size of the finished batch (in liters) aka the volume into the fermenter.
     */
    Q_PROPERTY(double  batchSize_l        READ batchSize_l        WRITE setBatchSize_l      )
-   /**
-    * \brief The boil size is the starting size for the main boil of the wort (in liters).  NOTE: This property is
-    *        retained (and fully functional) for BeerXML support but is \b deprecated for other use as the same
-    *        information is now in the (NB optional) \c preBoilSize_l property of (NB optional) \c Boil.  (To SET a boil
-    *        size of `double boilSizeLiters` on `Recipe r`, call `r.nonOptBoil()->setPreBoilSize_l(boilSizeLiters)`.
-    */
-   Q_PROPERTY(double  boilSize_l         READ boilSize_l         /* WRITE setBoilSize_l */      )
-   /**
-    * \brief The boil time in minutes.    NOTE: This property is retained (and fully functional) for BeerXML support but
-    *        is \b deprecated for other use as the same information is now in the \c boilTime_mins property of (NB
-    *        optional) \c Boil.  (To SET a boil time of `double boilTimeMinutes` on `Recipe r`, call
-    *        `r.nonOptBoil()->setBoilTime_mins(boilTimeMinutes)`.
-    */
-   Q_PROPERTY(double  boilTime_min       READ boilTime_min       /* WRITE setBoilTime_min */    )
+///   /**
+///    * \brief The boil size is the starting size for the main boil of the wort (in liters).  NOTE: This property is
+///    *        retained (and fully functional) for BeerXML support but is \b deprecated for other use as the same
+///    *        information is now in the (NB optional) \c preBoilSize_l property of (NB optional) \c Boil.  To SET a boil
+///    *        size of `double boilSizeLiters` on `Recipe r`, call `r.nonOptBoil()->setPreBoilSize_l(boilSizeLiters)`.
+///    */
+///   Q_PROPERTY(double  boilSize_l         READ boilSize_l         /* WRITE setBoilSize_l */      )
+///   /**
+///    * \brief The boil time in minutes.    NOTE: This property is retained (and fully functional) for BeerXML support but
+///    *        is \b deprecated for other use as the same information is now in the \c boilTime_mins property of (NB
+///    *        optional) \c Boil.  To SET a boil time of `double boilTimeMinutes` on `Recipe r`, call
+///    *        `r.nonOptBoil()->setBoilTime_mins(boilTimeMinutes)`.
+///    */
+///   Q_PROPERTY(double  boilTime_min       READ boilTime_min       /* WRITE setBoilTime_min */    )
    //! \brief The overall efficiency in percent.
    Q_PROPERTY(double  efficiency_pct     READ efficiency_pct     WRITE setEfficiency_pct   )
    //! \brief The assistant brewer.  This becomes "coauthor" in BeerJSON
@@ -253,20 +260,20 @@ public:
     *         .:TBD:. This is stored as a double but the UI constrains it to an unsigned int.
     */
    Q_PROPERTY(double  tasteRating        READ tasteRating        WRITE setTasteRating      )
-   //! \brief The number of fermentation stages.
-   Q_PROPERTY(int     fermentationStages READ fermentationStages WRITE setFermentationStages)
-   //! \brief How many days in primary.
-   Q_PROPERTY(double  primaryAge_days    READ primaryAge_days    WRITE setPrimaryAge_days  )
-   //! \brief The temp in C in the primary.
-   Q_PROPERTY(double  primaryTemp_c      READ primaryTemp_c      WRITE setPrimaryTemp_c    )
-   //! \brief How many days in secondary.
-   Q_PROPERTY(double  secondaryAge_days  READ secondaryAge_days  WRITE setSecondaryAge_days)
-   //! \brief The temp in C in secondary.
-   Q_PROPERTY(double  secondaryTemp_c    READ secondaryTemp_c    WRITE setSecondaryTemp_c  )
-   //! \brief How many days in tertiary.
-   Q_PROPERTY(double  tertiaryAge_days   READ tertiaryAge_days   WRITE setTertiaryAge_days )
-   //! \brief The temp in C in tertiary.
-   Q_PROPERTY(double  tertiaryTemp_c     READ tertiaryTemp_c     WRITE setTertiaryTemp_c   )
+///   //! \brief The number of fermentation stages.
+///   Q_PROPERTY(int     fermentationStages READ fermentationStages WRITE setFermentationStages)
+///   //! \brief How many days in primary.
+///   Q_PROPERTY(double  primaryAge_days    READ primaryAge_days    WRITE setPrimaryAge_days  )
+///   //! \brief The temp in C in the primary.
+///   Q_PROPERTY(double  primaryTemp_c      READ primaryTemp_c      WRITE setPrimaryTemp_c    )
+///   //! \brief How many days in secondary.
+///   Q_PROPERTY(double  secondaryAge_days  READ secondaryAge_days  WRITE setSecondaryAge_days)
+///   //! \brief The temp in C in secondary.
+///   Q_PROPERTY(double  secondaryTemp_c    READ secondaryTemp_c    WRITE setSecondaryTemp_c  )
+///   //! \brief How many days in tertiary.
+///   Q_PROPERTY(double  tertiaryAge_days   READ tertiaryAge_days   WRITE setTertiaryAge_days )
+///   //! \brief The temp in C in tertiary.
+///   Q_PROPERTY(double  tertiaryTemp_c     READ tertiaryTemp_c     WRITE setTertiaryTemp_c   )
    //! \brief The number of days to age the beer after bottling.
    Q_PROPERTY(double  age_days           READ age_days           WRITE setAge_days         )
    //! \brief The temp in C as beer is aging after bottling.
@@ -354,18 +361,19 @@ public:
 
    //============================================== RELATIONAL PROPERTIES ==============================================
    // NB: the setBlahId() calls are needed by ObjectStore and are not intended for more general use.
-   Q_PROPERTY(Mash *         mash            READ mash               WRITE setMash           STORED false)
-   Q_PROPERTY(int            mashId          READ getMashId          WRITE setMashId)
+   // NB: Each of Mash, Boil, Fermentation is technically optional on a Recipe, so it is valid for getters to return
+   //     null pointer (aka "empty shared_ptr").
+   Q_PROPERTY(std::shared_ptr<Mash        > mash            READ mash               WRITE setMash           STORED false)
+   Q_PROPERTY(int                           mashId          READ getMashId          WRITE setMashId)
+   Q_PROPERTY(std::shared_ptr<Boil        > boil            READ boil               WRITE setBoil           STORED false)
+   Q_PROPERTY(int                           boilId          READ getBoilId          WRITE setBoilId)
+   Q_PROPERTY(std::shared_ptr<Fermentation> fermentation    READ fermentation       WRITE setFermentation   STORED false)
+   Q_PROPERTY(int                           fermentationId  READ getFermentationId  WRITE setFermentationId)
    //! \brief \c Equipment an optional \c Recipe field in BeerXML but is not part of \c Recipe at all in BeerJSON
-   Q_PROPERTY(Equipment *    equipment       READ equipment          WRITE setEquipment      STORED false)
+   Q_PROPERTY(std::shared_ptr<Equipment   > equipment       READ equipment          WRITE setEquipment      STORED false)
    Q_PROPERTY(int            equipmentId     READ getEquipmentId     WRITE setEquipmentId)
-   Q_PROPERTY(Style *        style           READ style              WRITE setStyle          STORED false)
+   Q_PROPERTY(std::shared_ptr<Style       > style           READ style              WRITE setStyle          STORED false)
    Q_PROPERTY(int            styleId         READ getStyleId         WRITE setStyleId)
-   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   Q_PROPERTY(std::optional<std::shared_ptr<Boil>> boil     READ boil               WRITE setBoil           STORED false)
-   Q_PROPERTY(int            boilId          READ getBoilId          WRITE setBoilId)
-   Q_PROPERTY(Fermentation * fermentation    READ fermentation       WRITE setFermentation   STORED false)
-   Q_PROPERTY(int            fermentationId  READ getFermentationId  WRITE setFermentationId)
 
    // These QList properties should only emit changed() when their size changes, or when
    // one of their elements is replaced by another with a different key.
@@ -508,8 +516,8 @@ public:
    Type    type              () const;
    QString brewer            () const;
    double  batchSize_l       () const;
-   [[deprecated]] double  boilSize_l        () const;
-   [[deprecated]] double  boilTime_min      () const;
+///   [[deprecated]] double  boilSize_l        () const;
+///   [[deprecated]] double  boilTime_min      () const;
    double  efficiency_pct    () const;
    QString asstBrewer        () const;
    QString notes             () const;
@@ -577,33 +585,49 @@ public:
    QVector<int>                                      getInstructionIds     () const;
    QList<BrewNote *>                                 brewNotes             () const;
    QList<Recipe *>                                   ancestors             () const;
-   std::shared_ptr<Mash>                             getMash               () const;
-   Mash *                                            mash                  () const;
-   int                                               getMashId             () const;
-   Equipment *                                       equipment             () const;
+   std::shared_ptr<Equipment>                        equipment             () const;
    int                                               getEquipmentId        () const;
-   Style *                                           style                 () const;
+   std::shared_ptr<Style>                            style                 () const;
    int                                               getStyleId            () const;
-   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   std::optional<std::shared_ptr<Boil>>      boil             () const;
-   //! \brief This will create a \c Boil object if it doesn't exist
-   std::shared_ptr<Boil>                     nonOptBoil       ();
-   int                                       getBoilId        () const;
-   std::shared_ptr<Fermentation>             getFermentation  () const;
-   Fermentation *                            fermentation     () const;
-   int                                       getFermentationId() const;
 
-   int                                       getAncestorId    () const;
+   std::shared_ptr<Mash        >                mash              () const;
+   //! \brief This will create a \c Mash object if it doesn't exist
+   std::shared_ptr<Mash>                        nonOptMash        ();
+   int                                          getMashId         () const;
+
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   std::shared_ptr<Boil        >                boil              () const;
+   //! \brief This will create a \c Boil object if it doesn't exist
+   std::shared_ptr<Boil>                        nonOptBoil        ();
+   int                                          getBoilId         () const;
+   std::shared_ptr<Fermentation>                fermentation      () const;
+   //! \brief This will create a \c Fermentation object if it doesn't exist
+   std::shared_ptr<Fermentation>                nonOptFermentation();
+   int                                          getFermentationId () const;
+
+   /**
+    * \brief This is used in the class implementation and in \c RecipeAttributeButtonBase to convert a Mash, Boil,
+    *        Fermentation, Equipment, etc class to its corresponding Recipe property name.
+    */
+   template<class NE> static BtStringConst const & propertyNameFor();
+
+   /**
+    * \brief This is used in \c RecipeAttributeButtonBase and also in places where we want to do templated code for
+    *        Mash, Boil, Fermentation.
+    *
+    *        No general implementation.  Only specialisations, all defined in model/Recipe.cpp.
+    */
+   template<class NE> std::shared_ptr<NE> get() const;
+
+   int getAncestorId () const;
 
    // Relational setters
-   void setEquipment   (Equipment *                   val);
-   void setStyle       (Style *                       val);
-   void setMash        (std::shared_ptr<Mash>         val);
-   void setMash        (Mash *                        val);
+   void setEquipment   (std::shared_ptr<Equipment   > val);
+   void setStyle       (std::shared_ptr<Style       > val);
+   void setMash        (std::shared_ptr<Mash        > val);
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   void setBoil        (std::optional<std::shared_ptr<Boil>> val);
+   void setBoil        (std::shared_ptr<Boil        > val);
    void setFermentation(std::shared_ptr<Fermentation> val);
-   void setFermentation(Fermentation *                val);
    template<typename RA> void setAdditions(QList<std::shared_ptr<RA>> val);
    void setFermentableAdditions(QList<std::shared_ptr<RecipeAdditionFermentable>> val);
    void setHopAdditions        (QList<std::shared_ptr<RecipeAdditionHop        >> val);
@@ -660,12 +684,12 @@ public:
    void setOg                (double  const   val);
    void setFg                (double  const   val);
    void setFermentationStages(int     const   val);
-   void setPrimaryAge_days   (double  const   val);
-   void setPrimaryTemp_c     (double  const   val);
-   void setSecondaryAge_days (double  const   val);
-   void setSecondaryTemp_c   (double  const   val);
-   void setTertiaryAge_days  (double  const   val);
-   void setTertiaryTemp_c    (double  const   val);
+///   void setPrimaryAge_days   (double  const   val);
+///   void setPrimaryTemp_c     (double  const   val);
+///   void setSecondaryAge_days (double  const   val);
+///   void setSecondaryTemp_c   (double  const   val);
+///   void setTertiaryAge_days  (double  const   val);
+///   void setTertiaryTemp_c    (double  const   val);
    void setAge_days          (double  const   val);
    void setAgeTemp_c         (double  const   val);
    void setDate              (QDate   const & val);
@@ -717,12 +741,12 @@ private:
 ///   double  m_boilTime_min;
    double                m_efficiency_pct         ;
    int                   m_fermentationStages     ;
-   double                m_primaryAge_days        ;
-   double                m_primaryTemp_c          ;
-   double                m_secondaryAge_days      ;
-   double                m_secondaryTemp_c        ;
-   double                m_tertiaryAge_days       ;
-   double                m_tertiaryTemp_c         ;
+///   double                m_primaryAge_days        ;
+///   double                m_primaryTemp_c          ;
+///   double                m_secondaryAge_days      ;
+///   double                m_secondaryTemp_c        ;
+///   double                m_tertiaryAge_days       ;
+///   double                m_tertiaryTemp_c         ;
    double                m_age                    ;
    double                m_ageTemp_c              ;
    QDate                 m_date                   ;

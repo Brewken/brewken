@@ -79,7 +79,7 @@ namespace {
          case BtTreeItem::EquipmentColumn::Name:
             return lhs->name() < rhs->name();
          case BtTreeItem::EquipmentColumn::BoilTime:
-            return lhs->boilTime_min().value_or(Equipment::default_boilTime_min) < rhs->boilTime_min().value_or(Equipment::default_boilTime_min);
+            return lhs->boilTime_min().value_or(Equipment::default_boilTime_mins) < rhs->boilTime_min().value_or(Equipment::default_boilTime_mins);
       }
       return lhs->name() < rhs->name();
    }

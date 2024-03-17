@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * PersistentSettings.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * PersistentSettings.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -68,6 +68,8 @@ AddSettingName(LogDirectory)
 AddSettingName(LoggingLevel)
 AddSettingName(mashHopAdjustment)
 AddSettingName(mashStepTableWidget_headerState)  // MainWindow section
+AddSettingName(boilStepTableWidget_headerState)  // MainWindow section
+AddSettingName(fermentationStepTableWidget_headerState)  // MainWindow section
 AddSettingName(maximum)                          // backups section
 AddSettingName(productionDate)
 AddSettingName(recipeKey)

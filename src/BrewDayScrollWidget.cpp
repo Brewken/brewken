@@ -54,7 +54,7 @@ namespace {
          return "unknown";
       }
 
-      return Measurement::displayAmount(Measurement::Amount{equipment->boilTime_min().value_or(Equipment::default_boilTime_min), Measurement::Units::minutes});
+      return Measurement::displayAmount(Measurement::Amount{equipment->boilTime_min().value_or(Equipment::default_boilTime_mins), Measurement::Units::minutes});
    }
 }
 
@@ -358,7 +358,7 @@ QString BrewDayScrollWidget::buildTitleTable(bool includeImage) {
    body += QString("<tr><td class=\"left\">%1</td>")
          .arg(tr("Style"));
    body += QString("<td class=\"value\">%1</td>")
-           .arg(styleName(recObs->style()));
+           .arg(styleName(recObs->style().get()));
    body += QString("<td class=\"right\">%1</td>")
          .arg(tr("Date"));
    body += QString("<td class=\"value\">%1</td></tr>")
@@ -367,7 +367,7 @@ QString BrewDayScrollWidget::buildTitleTable(bool includeImage) {
    // second row:  boil time and efficiency.
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
             .arg(tr("Boil Time"))
-            .arg(boilTime(recObs->equipment()))
+            .arg(boilTime(recObs->equipment().get()))
             .arg(tr("Efficiency"))
             .arg(Measurement::displayQuantity(recObs->efficiency_pct(), 0));
 

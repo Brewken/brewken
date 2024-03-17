@@ -108,9 +108,15 @@ public:
    Q_PROPERTY(QString               description            READ description     WRITE setDescription   )
    Q_PROPERTY(QString               notes                  READ notes           WRITE setNotes         )
    Q_PROPERTY(std::optional<double> preBoilSize_l          READ preBoilSize_l   WRITE setPreBoilSize_l )
+   //! \brief The total time to boil the wort.  Hopefully equal to the sum of the times of all the steps
    Q_PROPERTY(double                boilTime_mins          READ boilTime_mins   WRITE setBoilTime_mins )
-   //! \brief The individual boil steps.
-   Q_PROPERTY(QList<std::shared_ptr<BoilStep>>    boilSteps         READ boilSteps    WRITE setBoilSteps STORED false )
+   /**
+    * \brief The individual boil steps.  (See \c StepOwnerBase for getter/setter implementation.)
+    *        Technically this is optional in BeerJSON, but we'll treat it as required (for consistency with
+    *        \c Mash::mashSteps and \c Fermentation::fermentationSteps) and map "no list of boil steps" to "empty list
+    *        of boil steps".
+    */
+   Q_PROPERTY(QList<std::shared_ptr<BoilStep>>    boilSteps         READ boilSteps    WRITE setBoilSteps STORED false)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    QString               description  () const;

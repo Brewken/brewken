@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * StyleButton.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * buttons/StyleButton.h is part of Brewken, and is copyright the following authors 2009-2024:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -14,43 +15,22 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef STYLEBUTTON_H
-#define STYLEBUTTON_H
+#ifndef BUTTONS_STYLEBUTTON_H
+#define BUTTONS_STYLEBUTTON_H
 #pragma once
 
-#include <QMetaProperty>
-#include <QPushButton>
-#include <QVariant>
-
-// Forward declarations.
-class Style;
-class Recipe;
-class QWidget;
+#include "buttons/RecipeAttributeButton.h"
+#include "model/Style.h"
 
 /*!
  * \class StyleButton
  *
  * \brief This is a view class that displays the name of a style
  */
-class StyleButton : public QPushButton
-{
+class StyleButton : public RecipeAttributeButton,
+                    public RecipeAttributeButtonBase<StyleButton, Style> {
    Q_OBJECT
-public:
-   StyleButton(QWidget* parent = nullptr);
-   virtual ~StyleButton(){}
-
-   //! Observe a recipe's equipment.
-   void setRecipe(Recipe* recipe);
-   //! Observe a particular equipment.
-   void setStyle(Style* style);
-
-private slots:
-   void recChanged(QMetaProperty,QVariant);
-   void styleChanged(QMetaProperty,QVariant);
-
-private:
-   Recipe* m_rec;
-   Style* _style;
+   RECIPE_ATTRIBUTE_BUTTON_BASE_DECL(Style)
 };
 
 #endif

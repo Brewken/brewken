@@ -497,20 +497,15 @@ bool BtTreeModel::removeRows(int row, int count, const QModelIndex & parent) {
 
 // One find method for all things. This .. is nice
 QModelIndex BtTreeModel::findElement(NamedEntity * thing, BtTreeItem * parent) {
-   qDebug() << Q_FUNC_INFO << "Find" << thing << "in" << parent;
-   BtTreeItem * pItem;
-   QList<BtTreeItem *> folders;
+   BtTreeItem * pItem = parent ? parent : this->rootItem->child(0);
 
-   if (parent == nullptr) {
-      pItem = rootItem->child(0);
-   } else {
-      pItem = parent;
-   }
+   qDebug() << Q_FUNC_INFO << "Find" << thing << "in" << pItem;
 
    if (! thing) {
       return createIndex(0, 0, pItem);
    }
 
+   QList<BtTreeItem *> folders;
    folders.append(pItem);
 
    // Recursion. Wonderful.

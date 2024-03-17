@@ -63,33 +63,29 @@ template<class Derived, class NE> class TableModelBase; // This forward declarat
  *                           \
  *                            \
  *                          BtTableModel                TableModelBase<NE, xxxTableModel>
- *                                /   \                 /    /      /
- *                               /     \               /    /      /
- *                              /     MashStepTableModel   /      /
- *                             /        HopTableModel     /      /
- *                            /                          /      /
- *              BtTableModelRecipeObserver              /      /
- *                \                   \                /      /
- *                 \                   \              /      /
- *                  \  RecipeAdditionFermentableTableModel  /
- *                   \    RecipeAdditionHopTableModel      /
- *                    \   RecipeAdditionMiscTableModel    /
- *                     \  RecipeAdditionYeastTableModel  /
- *                      \          SaltTableModel       /
- *                       \        WaterTableModel      /
- *                        \                           /
- *                         BtTableModelInventory     /
- *                                 \                /
- *                                  \              /
- *                               FermentableTableModel
- *                                   MiscTableModel
- *                                   YeastTableModel
+ *                                /   \                 /       /
+ *                               /     \               /       /
+ *                              /   FermentableTableModel     /
+ *                             /        HopTableModel        /
+ *                            /      MashStepTableModel     /
+ *                           /         MiscTableModel      /
+ *                          /         YeastTableModel     /
+ *                         /                             /
+ *              BtTableModelRecipeObserver              /
+ *                                    \                /
+ *                                     \              /
+ *                     RecipeAdditionFermentableTableModel
+ *                        RecipeAdditionHopTableModel
+ *                        RecipeAdditionMiscTableModel
+ *                        RecipeAdditionYeastTableModel
+ *                                 SaltTableModel
+ *                                WaterTableModel
+ *
  *
  *        Eg RecipeAdditionHopTableModel inherits from BtTableModelRecipeObserver and
  *        TableModelBase<RecipeAdditionHopTableModel, RecipeAdditionHop>
  *
  *        The \c BtTableModelRecipeObserver class adds a pointer to a \c Recipe to \c BtTableModel.
- *        The \c BtTableModelInventory class adds a boolean \c inventoryEditable flag to \c BtTableModelRecipeObserver. -- TODO We will retire this once we have switched over to RecipeAdditionXyz
  *
  *        You might be wondering why there isn't a corresponding inheritance hierarchy in \c TableModelBase.  This is
  *        because, by the magic of template metaprogramming \c TableModelBase "knows" whether its derived class inherits

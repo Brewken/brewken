@@ -148,9 +148,9 @@ bool RecipeAdditionHop::isFirstWort() const {
    if (!this->step() || *this->step() != 1) { return false; }
 
    Recipe const * recipe = ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
-   if (!recipe->boil()) { return false; }
 
-   auto boil = *recipe->boil();
+   auto boil = recipe->boil();
+   if (!boil) { return false; }
    if (boil->boilSteps().empty()) { return false; }
 
    auto boilStep = boil->boilSteps().first();
@@ -171,9 +171,9 @@ bool RecipeAdditionHop::isAroma() const {
 
    Recipe const * recipe = ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
 
-   if (!recipe->boil()) { return false; }
 
-   auto boil = *recipe->boil();
+   auto boil = recipe->boil();
+   if (!boil) { return false; }
    if (boil->boilSteps().empty()) { return false; }
 
    int const numBoilSteps = boil->boilSteps().size();

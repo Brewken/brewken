@@ -19,6 +19,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <optional>
 
 #include <QDebug>
 #include <QList>
@@ -31,6 +32,21 @@
 /**
  * \brief Templated base class for \c Mash, \c Boil and \c Fermentation to handle manipulation of their component steps
  *        (\c MashStep, \c BoilStep and \c FermentationStep respectively).
+ *
+ *        In BeerJSON, the step owner types have overlapping sets of fields, which correspond to our properties as
+ *        follows (where ‡ means a field is required and * means Mash/Boil/Fermentation as appropriate):
+ *
+ *           MashProcedureType     BoilProcedureType     FermentationProcedureType  |  Property
+ *           -----------------     -----------------     -------------------------  |  --------
+ *         ‡ name                  name                ‡ name                       |   NamedEntity::name
+ *           notes                 notes                 notes                      |             *::notes
+ *                                 description           description                |             *::description
+ *         ‡ grain_temperature                                                      |          Mash::grainTemp_c
+ *                                 pre_boil_size                                    |          Boil::preBoilSize_l
+ *                               ‡ boil_time                                        |          Boil::boilTime_mins
+ *         ‡ mash_steps                                                             |          Mash::mashSteps
+ *                                 boil_steps                                       |          Boil::boilSteps
+ *                                                     ‡ fermentation_steps         |  Fermentation::fermentationSteps
  *
  *        We don't do this as a subclass of \c NamedEntity, because the only common property in \c Mash, \c Boil and
  *        \c Fermentation (apart from the ones they get from \c NamedEntity is the \c notes field.  What we want is
@@ -173,43 +189,6 @@ public:
     */
    std::shared_ptr<DerivedStep> addStep(std::shared_ptr<DerivedStep> step) {
       return this->insertStep(step, this->steps().size() + 1);
-///      if (this->derived().key() > 0) {
-///         qDebug() <<
-///            Q_FUNC_INFO << "Add" << DerivedStep::staticMetaObject.className() << "#" << step->key() << "to" <<
-///            Derived::staticMetaObject.className() << "#" << this->derived().key();
-///         step->setOwnerId(this->derived().key());
-///      }
-///
-///      step->setStepNumber(this->steps().size() + 1);
-///
-///      // DerivedStep needs to be in the DB for us to add it to the Derived
-///      if (step->key() < 0) {
-///         qDebug() <<
-///            Q_FUNC_INFO << "Inserting" << DerivedStep::staticMetaObject.className() << "in DB for" <<
-///            Derived::staticMetaObject.className() << "#" << this->derived().key();
-///         ObjectStoreWrapper::insert(step);
-///      }
-///
-///      Q_ASSERT(step->key() > 0);
-///
-///      //
-///      // If the Derived itself is not yet stored in the DB then it needs to hang on to its list of DerivedSteps so that,
-///      // when the Derived does get stored, it can tell all the DerivedSteps what their Derived ID is (see doSetKey()).
-///      //
-///      // (Conversely, if the Derived is in the DB, then we don't need to do anything further.  We can get all our
-///      // DerivedSteps any time by just asking the relevant ObjectStore for all DerivedSteps with Derived ID the same as
-///      // ours.)
-///      //
-///      if (this->derived().key() < 0) {
-///         qDebug() <<
-///            Q_FUNC_INFO << "Adding" << DerivedStep::staticMetaObject.className() << "#" << step->key() << "to" <<
-///            Derived::staticMetaObject.className() << "#" << this->derived().key();
-///         this->m_stepIds.append(step->key());
-///      }
-///
-///      emit this->derived().stepsChanged();
-///
-///      return step;
    }
 
    std::shared_ptr<DerivedStep> removeStep(std::shared_ptr<DerivedStep> step) {
@@ -251,6 +230,10 @@ public:
          this->addStep(step);
       }
       return;
+   }
+
+   unsigned int numSteps() const {
+      return this->steps().size();
    }
 
    /*!
@@ -359,6 +342,77 @@ public:
       return;
    }
 
+   /**
+    * \brief Returns the step at the specified position, if it exists
+    *
+    * \param stepNumber counted from 1
+    */
+   std::optional<std::shared_ptr<DerivedStep>> stepAt(int const stepNumber) const {
+      Q_ASSERT(stepNumber > 0);
+      auto mySteps = this->steps();
+
+      if (mySteps.size() >= stepNumber) {
+         return mySteps[stepNumber - 1];
+      }
+      return std::nullopt;
+   }
+
+   /**
+    * \brief Sets (or unsets) the step at the specified position.
+    *
+    *        Note this is different from insertStep(), as:
+    *          - If there is a step in the specified position it will be overwritten rather than bumped down the list
+    *          - Calling this with non-null value (ie not std::nullopt) for second and later steps will ensure prior
+    *            step(s) exist by creating default ones if necessary.
+    *          - Calling this with null value (ie std::nullopt) delete any subsequent steps.  (Doesn't make sense for
+    *            third step to become second in the context of this function.)
+    */
+   void setStepAt(std::optional<std::shared_ptr<DerivedStep>> step, int const stepNumber) {
+      Q_ASSERT(stepNumber > 0);
+      auto mySteps = this->steps();
+      if (mySteps.size() >= stepNumber) {
+         // We already have a step of the number supplied, and possibly some subsequent ones
+
+         if (step) {
+            // This is an easy case: we're replacing an existing step
+            this->removeStep(mySteps[stepNumber - 1]);
+            this->insertStep(*step, stepNumber);
+            return;
+         }
+
+         // Caller supplied std::nullopt, so we're deleting this step and all the ones after it
+         for (int stepNumberToDelete = mySteps.size(); stepNumberToDelete >= stepNumber; --stepNumberToDelete) {
+            this->removeStep(mySteps[stepNumberToDelete]);
+         }
+         return;
+      }
+
+      // There isn't a step of the number supplied
+      if (!step) {
+         // Nothing to do if caller supplied std::nullopt
+         return;
+      }
+
+      // We have to ensure any prior steps exist
+      for (int stepNumbertoCreate = mySteps.size(); stepNumbertoCreate < stepNumber; ++stepNumbertoCreate) {
+         this->insertStep(std::make_shared<DerivedStep>(), stepNumbertoCreate);
+      }
+      this->insertStep(*step, stepNumber);
+
+      return;
+   }
+
+   //
+   // A set of convenience functions for accessing the first, second and third steps.  Note that calling setSecondary or
+   // setTertiary with something other than std::nullopt needs to ensure the right number of prior step(s) exist, if
+   // necessary by creating default ones.
+   //
+   std::optional<std::shared_ptr<DerivedStep>> doPrimary  () const { return this->stepAt(1); }
+   std::optional<std::shared_ptr<DerivedStep>> doSecondary() const { return this->stepAt(2); }
+   std::optional<std::shared_ptr<DerivedStep>> doTertiary () const { return this->stepAt(3); }
+   void doSetPrimary  (std::optional<std::shared_ptr<DerivedStep>> val) { this->setStepAt(val, 1); return; }
+   void doSetSecondary(std::optional<std::shared_ptr<DerivedStep>> val) { this->setStepAt(val, 2); return; }
+   void doSetTertiary (std::optional<std::shared_ptr<DerivedStep>> val) { this->setStepAt(val, 3); return; }
 
 private:
    // The ordering of DerivedSteps within a Derived is stored in the DerivedSteps.  If we remove a DerivedStep from the
@@ -366,8 +420,8 @@ private:
    // from 1.
    void setCanonicalStepNumbers() {
       int stepNumber = 1;
-      for (auto ms : this->derived().mashSteps()) {
-         ms->setStepNumber(stepNumber++);
+      for (auto step : this->derived().steps()) {
+         step->setStepNumber(stepNumber++);
       }
       return;
    }
@@ -390,37 +444,56 @@ protected:
                               NeName##Step>;                                             \
                                                                                          \
    public:                                                                               \
+      /* This alias makes it easier to template a number of functions that are */        \
+      /* essentially the same for all "Step Owner" classes.                    */        \
+      using StepClass = NeName##Step;                                                    \
+                                                                                         \
       /* Relational getters and setters */                                               \
       QList<std::shared_ptr<NeName##Step>> LcNeName##Steps        () const;              \
       void set##NeName##Steps        (QList<std::shared_ptr<NeName##Step>> const & val); \
                                                                                          \
       /** \brief Connect DerivedStep changed signals to their parent Mashes. */          \
-      /*         Needs to be called \b after all the calls to             */             \
-      /*         ObjectStoreTyped<FooBar>::getInstance().loadAll()        */             \
+      /*         Needs to be called \b after all the calls to                */          \
+      /*         ObjectStoreTyped<FooBar>::getInstance().loadAll()           */          \
       static void connectSignals();                                                      \
                                                                                          \
       virtual void setKey(int key);                                                      \
                                                                                          \
-      virtual Recipe * getOwningRecipe() const;                                               \
-      /** \brief NeName owns its NeName##Steps so needs to delete them if it itself is being deleted */ \
-      virtual void hardDeleteOwnedEntities();                                           \
-
+      virtual Recipe * getOwningRecipe() const;                                          \
+      /** \brief NeName owns its NeName##Steps so needs to delete them if it */          \
+      /*         itself is being deleted                                     */          \
+      virtual void hardDeleteOwnedEntities();                                            \
+                                                                                         \
+      /* We don't put the step name in these getters/setters as it would become */       \
+      /* unwieldy - eg setSecondaryFermentationStep()                           */       \
+      std::optional<std::shared_ptr<NeName##Step>> primary  () const;                    \
+      std::optional<std::shared_ptr<NeName##Step>> secondary() const;                    \
+      std::optional<std::shared_ptr<NeName##Step>> tertiary () const;                    \
+      void setPrimary  (std::optional<std::shared_ptr<NeName##Step>> val);               \
+      void setSecondary(std::optional<std::shared_ptr<NeName##Step>> val);               \
+      void setTertiary (std::optional<std::shared_ptr<NeName##Step>> val);               \
 
 /**
  * \brief Derived classes should include this in their implementation file
  */
 #define STEP_OWNER_COMMON_CODE(NeName, LcNeName) \
-   QList<std::shared_ptr<NeName##Step>> NeName::LcNeName##Steps        () const { return this->steps(); }         \
-   void NeName::set##NeName##Steps(QList<std::shared_ptr<NeName##Step>> const & val) {                            \
-      this->setSteps(val); return;                                                                                \
-   }                                                                                                              \
-                                                                                                                  \
-   void NeName::connectSignals() { StepOwnerBase<NeName, NeName##Step>::doConnectSignals(); return; }             \
-                                                                                                                  \
-   void NeName::setKey(int key) { this->doSetKey(key); return; }                                                  \
-                                                                                                                  \
-   Recipe * NeName::getOwningRecipe() const { return this->doGetOwningRecipe(); }                                 \
-   void NeName::hardDeleteOwnedEntities() { this->doHardDeleteOwnedEntities(); return; }                          \
-
+   QList<std::shared_ptr<NeName##Step>> NeName::LcNeName##Steps        () const { return this->steps(); }             \
+   void NeName::set##NeName##Steps(QList<std::shared_ptr<NeName##Step>> const & val) {                                \
+      this->setSteps(val); return;                                                                                    \
+   }                                                                                                                  \
+                                                                                                                      \
+   void NeName::connectSignals() { StepOwnerBase<NeName, NeName##Step>::doConnectSignals(); return; }                 \
+                                                                                                                      \
+   void NeName::setKey(int key) { this->doSetKey(key); return; }                                                      \
+                                                                                                                      \
+   Recipe * NeName::getOwningRecipe() const { return this->doGetOwningRecipe(); }                                     \
+   void NeName::hardDeleteOwnedEntities() { this->doHardDeleteOwnedEntities(); return; }                              \
+                                                                                                                      \
+   std::optional<std::shared_ptr<NeName##Step>> NeName::primary  () const { return this->doPrimary  (); }             \
+   std::optional<std::shared_ptr<NeName##Step>> NeName::secondary() const { return this->doSecondary(); }             \
+   std::optional<std::shared_ptr<NeName##Step>> NeName::tertiary () const { return this->doTertiary (); }             \
+   void NeName::setPrimary  (std::optional<std::shared_ptr<NeName##Step>> val) { this->doSetPrimary  (val); return; } \
+   void NeName::setSecondary(std::optional<std::shared_ptr<NeName##Step>> val) { this->doSetSecondary(val); return; } \
+   void NeName::setTertiary (std::optional<std::shared_ptr<NeName##Step>> val) { this->doSetTertiary (val); return; } \
 
 #endif

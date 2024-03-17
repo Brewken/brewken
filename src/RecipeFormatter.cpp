@@ -171,7 +171,7 @@ public:
          return "";
       }
 
-      Style* style = this->rec->style();
+      auto style = this->rec->style();
 
       ret += QString("%1 - %2 (%3%4)\n").arg( rec->name())
             .arg( style ? style->name() : tr("unknown style"))
@@ -262,7 +262,7 @@ public:
          return "";
       }
 
-      Style* style = rec->style();
+      auto style = rec->style();
 
       body += QString("<div id=\"headerdiv\">");
       // NOTE: QTextBrowser does not support the caption tag
@@ -310,7 +310,7 @@ public:
                      "<td class=\"value\">%2</td>")
             .arg(tr("Boil Time"))
             .arg(Measurement::displayAmount(Measurement::Amount{
-                                               rec->equipment() == nullptr ? 0.0 : rec->equipment()->boilTime_min().value_or(Equipment::default_boilTime_min),
+                                               rec->equipment() == nullptr ? 0.0 : rec->equipment()->boilTime_min().value_or(Equipment::default_boilTime_mins),
                                                Measurement::Units::minutes
                                             }));
       body += QString("<td align=\"right\" class=\"right\">%1</td>"
@@ -381,7 +381,7 @@ public:
       entry.append(tr("Boil Time"));
       value.append(
          QString("%1").arg(
-            Measurement::displayAmount(Measurement::Amount{rec->equipment() == nullptr ? 0.0 : rec->equipment()->boilTime_min().value_or(Equipment::default_boilTime_min),
+            Measurement::displayAmount(Measurement::Amount{rec->equipment() == nullptr ? 0.0 : rec->equipment()->boilTime_min().value_or(Equipment::default_boilTime_mins),
                                                            Measurement::Units::minutes})
          )
       );
@@ -821,7 +821,7 @@ public:
          if (step->isInfusion()) {
             tmp = tmp.arg(Measurement::displayAmount(Measurement::Amount{step->amount_l(),
                                                                          Measurement::Units::liters}))
-                     .arg(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c().value_or(step->stepTemp_c()),
+                     .arg(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c().value_or(step->startTemp_c().value_or(0.0)),
                                                                          Measurement::Units::celsius}));
          } else if (step->isDecoction()) {
             tmp = tmp.arg( Measurement::displayAmount(Measurement::Amount{step->amount_l(),
@@ -831,9 +831,9 @@ public:
             tmp = tmp.arg( "---" ).arg("---");
          }
 
-         tmp = tmp.arg( Measurement::displayAmount(Measurement::Amount{step->stepTemp_c(),
+         tmp = tmp.arg( Measurement::displayAmount(Measurement::Amount{step->startTemp_c().value_or(0.0),
                                                                        Measurement::Units::celsius}));
-         tmp = tmp.arg( Measurement::displayAmount(Measurement::Amount{step->stepTime_mins(),
+         tmp = tmp.arg( Measurement::displayAmount(Measurement::Amount{step->stepTime_mins().value_or(0.0),
                                                                        Measurement::Units::minutes}, 0));
 
          mtable += tmp + "</tr>";
@@ -870,7 +870,7 @@ public:
             if ( step->isInfusion() ) {
                amounts.append(Measurement::displayAmount(Measurement::Amount{step->amount_l(),
                                                                              Measurement::Units::liters}));
-               temps.append(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c().value_or(step->stepTemp_c()),
+               temps.append(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c().value_or(step->startTemp_c().value_or(0.0)),
                                                                            Measurement::Units::celsius}));
             } else if( step->isDecoction() ) {
                amounts.append(Measurement::displayAmount(Measurement::Amount{step->amount_l(),
@@ -880,9 +880,9 @@ public:
                amounts.append( "---" );
                temps.append("---");
             }
-            targets.append(Measurement::displayAmount(Measurement::Amount{step->stepTemp_c(),
+            targets.append(Measurement::displayAmount(Measurement::Amount{step->startTemp_c().value_or(0.0),
                                                                           Measurement::Units::celsius}));
-            times.append(Measurement::displayAmount(Measurement::Amount{step->stepTime_mins(),
+            times.append(Measurement::displayAmount(Measurement::Amount{step->stepTime_mins().value_or(0.0),
                                                                         Measurement::Units::minutes}, 0));
          }
 
@@ -1152,7 +1152,7 @@ QString RecipeFormatter::getBBCodeFormat() {
    QString tmp = "";
    QRegExp regexp("(^[^\n]*\n)(.*$)"); //Regexp to match the first line of tables
 
-   Style* style = this->pimpl->rec->style();
+   auto style = this->pimpl->rec->style();
 
    QString ret = "[size=150][color=#004080][b][u]";
    ret += QString("%1 - %2 (%3%4)").arg(this->pimpl->rec->name())
@@ -1203,7 +1203,7 @@ QString RecipeFormatter::getToolTip(Recipe* rec) {
       return "";
    }
 
-   Style* style = rec->style();
+   auto style = rec->style();
 
    // Do the style sheet first
    QString header = "<html><head><style type=\"text/css\">";
@@ -1304,7 +1304,7 @@ QString RecipeFormatter::getToolTip(Equipment* kit) {
            .arg(Measurement::displayAmount(Measurement::Amount{kit->kettleBoilSize_l(), Measurement::Units::liters}) );
    body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
            .arg(tr("BoilTime"))
-           .arg(Measurement::displayAmount(Measurement::Amount{kit->boilTime_min().value_or(Equipment::default_boilTime_min), Measurement::Units::minutes}) );
+           .arg(Measurement::displayAmount(Measurement::Amount{kit->boilTime_min().value_or(Equipment::default_boilTime_mins), Measurement::Units::minutes}) );
 
    body += "</table></body></html>";
 

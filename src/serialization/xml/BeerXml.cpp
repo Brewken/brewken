@@ -29,9 +29,11 @@
 #include <QTextStream>
 
 #include "config.h" // For CONFIG_VERSION_STRING
+#include "model/Boil.h" // But NB model/BoilStep.h is not needed
 #include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
+#include "model/Fermentation.h" // But NB model/FermentationStep.h is not needed
 #include "model/Hop.h"
 #include "model/Instruction.h"
 #include "model/Mash.h"
@@ -79,6 +81,12 @@ namespace {
       XmlRecordDefinition::create<XmlRecord>,
       std::initializer_list<XmlRecordDefinition::FieldDefinition>{}
    };
+
+   //
+   // Note that some parts of our model are completely outside the scope of BeerXML, including:
+   //    - Freestanding BoilStep records
+   //    - Freestanding FermentationStep records
+   //
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Field mappings for <HOP>...</HOP> BeerXML records
@@ -754,8 +762,8 @@ namespace {
          {XmlRecordDefinition::FieldType::RequiredConstant, "VERSION"                  , VERSION1                                       },
          {XmlRecordDefinition::FieldType::Enum            , "TYPE"                     , PropertyNames::MashStep::type                  , &BEER_XML_MASH_STEP_TYPE_MAPPER},
          {XmlRecordDefinition::FieldType::Double          , "INFUSE_AMOUNT"            , PropertyNames::MashStep::infuseAmount_l        }, // Should not be supplied if TYPE is "Decoction"
-         {XmlRecordDefinition::FieldType::Double          , "STEP_TEMP"                , PropertyNames::MashStep::stepTemp_c            },
-         {XmlRecordDefinition::FieldType::Double          , "STEP_TIME"                , PropertyNames::    Step::stepTime_mins          },
+         {XmlRecordDefinition::FieldType::Double          , "STEP_TEMP"                , PropertyNames::    Step::startTemp_c           },
+         {XmlRecordDefinition::FieldType::Double          , "STEP_TIME"                , PropertyNames::    Step::stepTime_mins         },
          {XmlRecordDefinition::FieldType::Double          , "RAMP_TIME"                , PropertyNames::    Step::rampTime_mins         },
          {XmlRecordDefinition::FieldType::Double          , "END_TEMP"                 , PropertyNames::    Step::endTemp_c             },
          {XmlRecordDefinition::FieldType::String          , "DESCRIPTION"              , PropertyNames::    Step::description           }, // Extension tag ⮜⮜⮜ Support added as part of BeerJSON work ⮞⮞⮞
@@ -1158,8 +1166,10 @@ namespace {
          {XmlRecordDefinition::FieldType::String          , "BREWER"                  , PropertyNames::Recipe::brewer            },
          {XmlRecordDefinition::FieldType::String          , "ASST_BREWER"             , PropertyNames::Recipe::asstBrewer        },
          {XmlRecordDefinition::FieldType::Double          , "BATCH_SIZE"              , PropertyNames::Recipe::batchSize_l       },
-         {XmlRecordDefinition::FieldType::Double          , "BOIL_SIZE"               , PropertyNames::Recipe::boilSize_l        },
-         {XmlRecordDefinition::FieldType::Double          , "BOIL_TIME"               , PropertyNames::Recipe::boilTime_min      },
+         {XmlRecordDefinition::FieldType::Double          , "BOIL_SIZE"               , {PropertyNames::Recipe::boil,
+                                                                                         PropertyNames::Boil::preBoilSize_l}     },
+         {XmlRecordDefinition::FieldType::Double          , "BOIL_TIME"               , {PropertyNames::Recipe::boil,
+                                                                                         PropertyNames::Boil::boilTime_mins}     },
          {XmlRecordDefinition::FieldType::Double          , "EFFICIENCY"              , PropertyNames::Recipe::efficiency_pct    },
          {XmlRecordDefinition::FieldType::ListOfRecords   , "HOPS/HOP"                , PropertyNames::Recipe::hopAdditions      , &BEER_XML_RECORD_DEFN<RecipeAdditionHop>  }, // Additional logic for "HOPS" is handled in xml/XmlRecipeRecord.cpp
          {XmlRecordDefinition::FieldType::ListOfRecords   , "FERMENTABLES/FERMENTABLE", PropertyNames::Recipe::fermentableAdditions, &BEER_XML_RECORD_DEFN<RecipeAdditionFermentable>}, // Additional logic for "FERMENTABLES" is handled in xml/XmlRecipeRecord.cpp
@@ -1174,13 +1184,26 @@ namespace {
          {XmlRecordDefinition::FieldType::Double          , "TASTE_RATING"            , PropertyNames::Recipe::tasteRating       },
          {XmlRecordDefinition::FieldType::Double          , "OG"                      , PropertyNames::Recipe::og                },
          {XmlRecordDefinition::FieldType::Double          , "FG"                      , PropertyNames::Recipe::fg                },
-         {XmlRecordDefinition::FieldType::UInt            , "FERMENTATION_STAGES"     , PropertyNames::Recipe::fermentationStages},
-         {XmlRecordDefinition::FieldType::Double          , "PRIMARY_AGE"             , PropertyNames::Recipe::primaryAge_days   },
-         {XmlRecordDefinition::FieldType::Double          , "PRIMARY_TEMP"            , PropertyNames::Recipe::primaryTemp_c     },
-         {XmlRecordDefinition::FieldType::Double          , "SECONDARY_AGE"           , PropertyNames::Recipe::secondaryAge_days },
-         {XmlRecordDefinition::FieldType::Double          , "SECONDARY_TEMP"          , PropertyNames::Recipe::secondaryTemp_c   },
-         {XmlRecordDefinition::FieldType::Double          , "TERTIARY_AGE"            , PropertyNames::Recipe::tertiaryAge_days  },
-         {XmlRecordDefinition::FieldType::Double          , "TERTIARY_TEMP"           , PropertyNames::Recipe::tertiaryTemp_c    },
+         {XmlRecordDefinition::FieldType::UInt            , "FERMENTATION_STAGES"     , {PropertyNames::Recipe::fermentation,
+                                                                                         PropertyNames::Fermentation::numSteps}  }, // We write but ignore on read if present.
+         {XmlRecordDefinition::FieldType::Double          , "PRIMARY_AGE"             , {PropertyNames::Recipe::fermentation ,
+                                                                                         PropertyNames::Fermentation::primary,
+                                                                                         PropertyNames::Step::stepTime_days  }   }, // Replaces PropertyNames::Recipe::primaryAge_days
+         {XmlRecordDefinition::FieldType::Double          , "PRIMARY_TEMP"            , {PropertyNames::Recipe::fermentation ,
+                                                                                         PropertyNames::Fermentation::primary,
+                                                                                         PropertyNames::Step::startTemp_c    }   }, // Replaces PropertyNames::Recipe::primaryTemp_c
+         {XmlRecordDefinition::FieldType::Double          , "SECONDARY_AGE"           , {PropertyNames::Recipe::fermentation   ,
+                                                                                         PropertyNames::Fermentation::secondary,
+                                                                                         PropertyNames::Step::stepTime_days    } }, // Replaces PropertyNames::Recipe::secondaryAge_days
+         {XmlRecordDefinition::FieldType::Double          , "SECONDARY_TEMP"          , {PropertyNames::Recipe::fermentation   ,
+                                                                                         PropertyNames::Fermentation::secondary,
+                                                                                         PropertyNames::Step::startTemp_c      } }, // Replaces PropertyNames::Recipe::secondaryTemp_c
+         {XmlRecordDefinition::FieldType::Double          , "TERTIARY_AGE"            , {PropertyNames::Recipe::fermentation  ,
+                                                                                         PropertyNames::Fermentation::tertiary,
+                                                                                         PropertyNames::Step::stepTime_days   }  }, // Replaces PropertyNames::Recipe::tertiaryAge_days
+         {XmlRecordDefinition::FieldType::Double          , "TERTIARY_TEMP"           , {PropertyNames::Recipe::fermentation  ,
+                                                                                         PropertyNames::Fermentation::tertiary,
+                                                                                         PropertyNames::Step::startTemp_c     }  }, // Replaces PropertyNames::Recipe::tertiaryTemp_c
          {XmlRecordDefinition::FieldType::Double          , "AGE"                     , PropertyNames::Recipe::age_days          },
          {XmlRecordDefinition::FieldType::Double          , "AGE_TEMP"                , PropertyNames::Recipe::ageTemp_c         },
          {XmlRecordDefinition::FieldType::Date            , "DATE"                    , PropertyNames::Recipe::date              },
@@ -1370,7 +1393,6 @@ namespace {
       return BEER_XML_1_CODING.validateLoadAndStoreInDb(documentData, fileName, domErrorHandler, userMessage);
 
    }
-
 
 }
 

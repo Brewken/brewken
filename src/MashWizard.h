@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MashWizard.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * MashWizard.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -44,15 +44,20 @@ public slots:
    void toggleSpinBox(QAbstractButton* button);
 
 private:
-   Recipe* recObs;
-   Measurement::Unit const * weightUnit;
-   Measurement::Unit const * volumeUnit;
+   Recipe* m_recObs;
+   Measurement::Unit const * m_weightUnit;
+   Measurement::Unit const * m_volumeUnit;
 
    //!brief just need a holder for the three buttons
-   QButtonGroup* bGroup;
+   QButtonGroup* m_bGroup;
 
    //!brief helper method to calculate the volume of a decocation step
-   double calcDecoctionAmount( MashStep* step, Mash* mash, double waterMass, double grainMass, double lastTemp, double boiling);
+   double calcDecoctionAmount(MashStep * step,
+                              Mash * mash,
+                              double waterMass,
+                              double grainMass,
+                              double lastTemp,
+                              double boiling);
 
 };
 

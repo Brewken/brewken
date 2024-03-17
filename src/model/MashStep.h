@@ -40,7 +40,7 @@ AddPropertyName(decoctionAmount_l     ) // Should only be used for BeerXML
 AddPropertyName(infuseAmount_l        ) // Should only be used for BeerXML
 AddPropertyName(infuseTemp_c          )
 AddPropertyName(liquorToGristRatio_lKg)
-AddPropertyName(stepTemp_c            )
+///AddPropertyName(stepTemp_c            )
 AddPropertyName(type                  )
 
 #undef AddPropertyName
@@ -132,14 +132,14 @@ public:
    Q_PROPERTY(double                infuseAmount_l         READ infuseAmount_l       /*WRITE setInfuseAmount_l*/    STORED false)
    //! \brief The decoction amount in liters - NB: Retained only for BeerXML; DO NOT USE.
    Q_PROPERTY(double                decoctionAmount_l      READ decoctionAmount_l    /*WRITE setDecoctionAmount_l*/ STORED false)
-   /**
-    * \brief The target temperature of this step in C.
-    *
-    *        This is the main field to use when dealing with the mash step temperature.  The optional \c endTemp_c field
-    *        that we inherit from \c Step is used in BeerXML and BeerJSON to signify "The expected temperature the mash
-    *        falls to after a long mash step."
-    */
-   Q_PROPERTY(double                stepTemp_c             READ stepTemp_c             WRITE setStepTemp_c                      )
+///   /**
+///    * \brief The target temperature of this step in C.
+///    *
+///    *        This is the main field to use when dealing with the mash step temperature.  The optional \c endTemp_c field
+///    *        that we inherit from \c Step is used in BeerXML and BeerJSON to signify "The expected temperature the mash
+///    *        falls to after a long mash step."
+///    */
+///   Q_PROPERTY(double                stepTemp_c             READ stepTemp_c             WRITE setStepTemp_c                      )
    /**
     * \brief The infusion temp in C.                                        ⮜⮜⮜ Not part of BeerXML; optional in BeerJSON ⮞⮞⮞
     *
@@ -159,7 +159,7 @@ public:
    double                amount_l              () const; // ⮜⮜⮜ Added, to replace infuseAmount_l & decoctionAmount_l, for BeerJSON support ⮞⮞⮞
    [[deprecated]] double infuseAmount_l        () const;
    [[deprecated]] double decoctionAmount_l     () const;
-   double                stepTemp_c            () const;
+///   double                stepTemp_c            () const;
    std::optional<double> infuseTemp_c          () const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<double> liquorToGristRatio_lKg() const;
@@ -167,7 +167,7 @@ public:
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setType                  (Type                  const   val);
    void setAmount_l              (double                const   val); // ⮜⮜⮜ Added, to replace setInfuseAmount_l & setDecoctionAmount_l, for BeerJSON support ⮞⮞⮞
-   void setStepTemp_c            (double                const   val);
+///   void setStepTemp_c            (double                const   val);
    void setInfuseTemp_c          (std::optional<double> const   val);
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    void setLiquorToGristRatio_lKg(std::optional<double> const   val);
@@ -185,11 +185,15 @@ signals:
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
 ///   virtual ObjectStore & getObjectStoreTypedInstance() const;
+   //! On \c MashStep, stepTime_mins is required
+   [[nodiscard]] virtual bool stepTimeIsRequired() const;
+   //! On \c MashStep, startTemp_c is required
+   [[nodiscard]] virtual bool startTempIsRequired() const;
 
 private:
    Type                  m_type                  ;
    double                m_amount_l              ;
-   double                m_stepTemp_c            ;
+///   double                m_stepTemp_c            ;
    std::optional<double> m_infuseTemp_c          ;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<double> m_liquorToGristRatio_lKg;

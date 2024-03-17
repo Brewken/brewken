@@ -73,7 +73,7 @@ QString BrewDayFormatter::buildTitleHtml(bool includeImage) {
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
            .arg(tr("Boil Time"))
            .arg(
-              recObs->equipment() ? Measurement::displayAmount(Measurement::Amount{recObs->equipment()->boilTime_min().value_or(Equipment::default_boilTime_min),
+              recObs->equipment() ? Measurement::displayAmount(Measurement::Amount{recObs->equipment()->boilTime_min().value_or(Equipment::default_boilTime_mins),
                                                                                    Measurement::Units::minutes}) : "unknown"
            )
            .arg(tr("Efficiency"))
@@ -134,7 +134,7 @@ QList<QStringList> BrewDayFormatter::buildTitleList() {
    // second row:  boil time and efficiency.
    row.append(tr("Boil Time"));
    row.append(
-      recObs->equipment() ? Measurement::displayAmount(Measurement::Amount{recObs->equipment()->boilTime_min().value_or(Equipment::default_boilTime_min),
+      recObs->equipment() ? Measurement::displayAmount(Measurement::Amount{recObs->equipment()->boilTime_min().value_or(Equipment::default_boilTime_mins),
                                                                            Measurement::Units::minutes}) : "unknown"
    );
    row.append(tr("Efficiency"));
@@ -197,7 +197,6 @@ QString BrewDayFormatter::buildInstructionHtml() {
              .arg(tr("Step"));
 
    QList<Instruction *> instructions = recObs->instructions();
-   auto mashSteps = recObs->mash()->mashSteps();
    int size = instructions.size();
    for (int i = 0; i < size; ++i) {
       QString stepTime, tmp;
@@ -218,7 +217,9 @@ QString BrewDayFormatter::buildInstructionHtml() {
       if (ins->name() == tr("Add grains")) {
          reagents = recObs->getReagents(recObs->fermentableAdditions());
       } else if (ins->name() == tr("Heat water")) {
-         reagents = recObs->getReagents(recObs->mash()->mashSteps());
+         if (recObs->mash()) {
+            reagents = recObs->getReagents(recObs->mash()->mashSteps());
+         }
       } else {
          reagents = ins->reagents();
       }
@@ -262,7 +263,6 @@ QList<QStringList> BrewDayFormatter::buildInstructionList() {
    row.clear();
 
    QList<Instruction *> instructions = recObs->instructions();
-   auto mashSteps = recObs->mash()->mashSteps();
    size = instructions.size();
    for (i = 0; i < size; ++i) {
       QString stepTime, tmp;
@@ -281,7 +281,9 @@ QList<QStringList> BrewDayFormatter::buildInstructionList() {
       if (ins->name() == tr("Add grains")) {
          reagents = recObs->getReagents(recObs->fermentableAdditions());
       } else if (ins->name() == tr("Heat water")) {
-         reagents = recObs->getReagents(recObs->mash()->mashSteps());
+         if (recObs->mash()) {
+            reagents = recObs->getReagents(recObs->mash()->mashSteps());
+         }
       } else {
          reagents = ins->reagents();
       }

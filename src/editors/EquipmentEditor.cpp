@@ -386,7 +386,7 @@ double EquipmentEditor::calcBatchSize() {
    double topUp    = lineEdit_topUpWater              ->getOptCanonicalQty().value_or(Equipment::default_topUpWater_l);
    double trubLoss = lineEdit_kettleTrubChillerLoss   ->getNonOptCanonicalQty();
    double evapRate = lineEdit_kettleEvaporationPerHour->getOptCanonicalQty().value_or(Equipment::default_kettleEvaporationPerHour_l);
-   double time     = lineEdit_boilTime                ->getOptCanonicalQty().value_or(Equipment::default_boilTime_min);
+   double time     = lineEdit_boilTime                ->getOptCanonicalQty().value_or(Equipment::default_boilTime_mins);
 
    return size - topUp + trubLoss + (time/60.0)*evapRate;
 }

@@ -29,15 +29,15 @@
 #include "Algorithms.h"
 #include "database/ObjectStoreWrapper.h"
 #include "Localization.h"
+#include "model/Boil.h"
 #include "model/Equipment.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/NamedParameterBundle.h"
-///#include "model/Recipe.h"
+#include "model/Recipe.h"
 #include "model/RecipeAdditionYeast.h"
 
-// These belong here, because they really just are constant strings for
-// reaching into a hash
+// These belong here, because they really just are constant strings for reaching into a hash
 static const QString kSugarKg("sugar_kg");
 static const QString kSugarKg_IgnoreEff("sugar_kg_ignoreEfficiency");
 
@@ -235,42 +235,44 @@ void BrewNote::populateNote(Recipe * parent) {
 
    // Everything needs volumes of one type or another. But the individual
    // volumes are fairly independent of anything. Do them all first.
-   setProjVolIntoBK_l( parent->boilSize_l() );
-   setVolumeIntoBK_l( parent->boilSize_l() );
-   setPostBoilVolume_l(parent->postBoilVolume_l());
-   setProjVolIntoFerm_l(parent->finalVolume_l());
-   setVolumeIntoFerm_l(parent->finalVolume_l());
-   setFinalVolume_l(parent->finalVolume_l());
+   double const boilSize_l = parent->boil() ? parent->boil()->preBoilSize_l().value_or(0.0) : 0.0;
+   this->setProjVolIntoBK_l  (boilSize_l);
+   this->setVolumeIntoBK_l   (boilSize_l);
+   this->setPostBoilVolume_l (parent->postBoilVolume_l());
+   this->setProjVolIntoFerm_l(parent->finalVolume_l());
+   this->setVolumeIntoFerm_l (parent->finalVolume_l());
+   this->setFinalVolume_l    (parent->finalVolume_l());
 
    auto equip = parent->equipment();
    if (equip) {
-      setBoilOff_l( equip->kettleEvaporationPerHour_l().value_or(Equipment::default_kettleEvaporationPerHour_l) * ( parent->boilTime_min()/60));
+      double const boilTime_mins = parent->boil() ? parent->boil()->boilTime_mins() : Equipment::default_boilTime_mins;
+      this->setBoilOff_l(
+         equip->kettleEvaporationPerHour_l().value_or(Equipment::default_kettleEvaporationPerHour_l) * (boilTime_mins/60.0)
+      );
    }
 
-   QHash<QString,double> sugars;
-   sugars = parent->calcTotalPoints();
-   setProjPoints(sugars.value(kSugarKg) + sugars.value(kSugarKg_IgnoreEff));
+   QHash<QString,double> sugars = parent->calcTotalPoints();
+   this->setProjPoints(sugars.value(kSugarKg) + sugars.value(kSugarKg_IgnoreEff));
 
-   setProjFermPoints(sugars.value(kSugarKg) + sugars.value(kSugarKg_IgnoreEff));
+   this->setProjFermPoints(sugars.value(kSugarKg) + sugars.value(kSugarKg_IgnoreEff));
 
    // Out of the gate, we expect projected to be the measured.
-   setSg( parent->boilGrav() );
-   setProjBoilGrav(parent->boilGrav() );
+   this->setSg( parent->boilGrav() );
+   this->setProjBoilGrav(parent->boilGrav() );
 
-   auto mash = parent->mash();
-   if (mash) {
-      auto steps = mash->mashSteps();
+   if (parent->mash()) {
+      auto steps = parent->mash()->mashSteps();
       if (!steps.isEmpty()) {
          auto mStep = steps.at(0);
 
          if (mStep) {
-            double strikeTemp = mStep->infuseTemp_c().value_or(mStep->stepTemp_c());
-            setStrikeTemp_c(strikeTemp);
-            setProjStrikeTemp_c(strikeTemp);
+            double const strikeTemp = mStep->infuseTemp_c().value_or(mStep->startTemp_c().value_or(0.0));
+            this->setStrikeTemp_c(strikeTemp);
+            this->setProjStrikeTemp_c(strikeTemp);
 
-            double endTemp = mStep->endTemp_c().value_or(mStep->stepTemp_c());
-            setMashFinTemp_c(endTemp);
-            setProjMashFinTemp_c(endTemp);
+            double const endTemp = mStep->endTemp_c().value_or(mStep->startTemp_c().value_or(0.0));
+            this->setMashFinTemp_c(endTemp);
+            this->setProjMashFinTemp_c(endTemp);
          }
 
          if (steps.size() > 2) {
@@ -278,23 +280,23 @@ void BrewNote::populateNote(Recipe * parent) {
             // and therefore the internal assert that the index is positive is
             // bunk. This is OK, as we just checked that we will not underflow.
             mStep = steps.at( steps.size() - 2 );
-            double endTemp = mStep->endTemp_c().value_or(mStep->stepTemp_c());
-            setMashFinTemp_c(endTemp);
-            setProjMashFinTemp_c(endTemp);
+            double const endTemp = mStep->endTemp_c().value_or(mStep->startTemp_c().value_or(0.0));
+            this->setMashFinTemp_c(endTemp);
+            this->setProjMashFinTemp_c(endTemp);
          }
       }
    }
 
-   setOg( parent->og());
-   setProjOg(parent->og());
+   this->setOg( parent->og());
+   this->setProjOg(parent->og());
 
-   setPitchTemp_c(parent->primaryTemp_c());
+   this->setPitchTemp_c(parent->primaryTemp_c());
 
-   setFg( parent->fg());
-   setProjFg( parent->fg() );
+   this->setFg( parent->fg());
+   this->setProjFg( parent->fg() );
 
-   setProjEff_pct(parent->efficiency_pct());
-   setProjABV_pct( parent->ABV_pct());
+   this->setProjEff_pct(parent->efficiency_pct());
+   this->setProjABV_pct( parent->ABV_pct());
 
    double atten_pct = -1.0;
    auto const yeastAdditions = parent->yeastAdditions();
@@ -304,29 +306,27 @@ void BrewNote::populateNote(Recipe * parent) {
       }
    }
 
-   if (yeastAdditions.size() == 0 || atten_pct < 0.0 ) {
+   if (atten_pct < 0.0) {
       atten_pct = Yeast::DefaultAttenuation_pct; // Use an average attenuation;
    }
-   setProjAtten(atten_pct);
+   this->setProjAtten(atten_pct);
    return;
 }
 
 // the v2 release had some bugs in the efficiency calcs. They have been fixed.
 // This should allow the users to redo those calculations
-void BrewNote::recalculateEff(Recipe* parent)
-{
+void BrewNote::recalculateEff(Recipe* parent) {
    this->m_recipeId = parent->key();
 
-   QHash<QString,double> sugars;
+   QHash<QString, double> const sugars = parent->calcTotalPoints();
+   this->setProjPoints(sugars.value(kSugarKg) + sugars.value(kSugarKg_IgnoreEff));
 
-   sugars = parent->calcTotalPoints();
-   setProjPoints(sugars.value(kSugarKg) + sugars.value(kSugarKg_IgnoreEff));
+//   sugars = parent->calcTotalPoints();
+   this->setProjFermPoints(sugars.value(kSugarKg) + sugars.value(kSugarKg_IgnoreEff));
 
-   sugars = parent->calcTotalPoints();
-   setProjFermPoints(sugars.value(kSugarKg) + sugars.value(kSugarKg_IgnoreEff));
-
-   calculateEffIntoBK_pct();
-   calculateBrewHouseEff_pct();
+   this->calculateEffIntoBK_pct();
+   this->calculateBrewHouseEff_pct();
+   return;
 }
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
@@ -374,14 +374,17 @@ void BrewNote::setBrewDate(QDate const & date) {
       // .:TBD:. Do we really need this special signal when we could use the generic changed one?
       emit brewDateChanged(date);
    }
+   return;
 }
 
 void BrewNote::setFermentDate(QDate const & date) {
    SET_AND_NOTIFY(PropertyNames::BrewNote::fermentDate, this->m_fermentDate, date);
+   return;
 }
 
 void BrewNote::setNotes(QString const& var) {
    SET_AND_NOTIFY(PropertyNames::BrewNote::notes, this->m_notes, var);
+   return;
 }
 
 void BrewNote::setLoading(bool flag) { this->loading = flag; }
@@ -395,47 +398,52 @@ void BrewNote::setSg(double var) {
 
    // write the value to the DB if requested
    if ( ! this->loading ) {
-      calculateEffIntoBK_pct();
-      calculateOg();
+      this->calculateEffIntoBK_pct();
+      this->calculateOg();
    }
+   return;
 }
 
 void BrewNote::setVolumeIntoBK_l(double var) {
    SET_AND_NOTIFY(PropertyNames::BrewNote::volumeIntoBK_l, this->m_volumeIntoBK_l, var);
 
    if ( ! loading ) {
-      calculateEffIntoBK_pct();
-      calculateOg();
-      calculateBrewHouseEff_pct();
+      this->calculateEffIntoBK_pct();
+      this->calculateOg();
+      this->calculateBrewHouseEff_pct();
    }
+   return;
 }
 
 void BrewNote::setOg(double var) {
    SET_AND_NOTIFY(PropertyNames::BrewNote::og, this->m_og, var);
 
    if ( ! loading ) {
-      calculateBrewHouseEff_pct();
-      calculateABV_pct();
-      calculateActualABV_pct();
-      calculateAttenuation_pct();
+      this->calculateBrewHouseEff_pct();
+      this->calculateABV_pct();
+      this->calculateActualABV_pct();
+      this->calculateAttenuation_pct();
    }
+   return;
 }
 
 void BrewNote::setVolumeIntoFerm_l(double var) {
    SET_AND_NOTIFY(PropertyNames::BrewNote::volumeIntoFerm_l, this->m_volumeIntoFerm_l, var);
 
    if ( ! loading ) {
-      calculateBrewHouseEff_pct();
+      this->calculateBrewHouseEff_pct();
    }
+   return;
 }
 
 void BrewNote::setFg(double var) {
    SET_AND_NOTIFY(PropertyNames::BrewNote::fg, this->m_fg, var);
 
    if ( !loading ) {
-      calculateActualABV_pct();
-      calculateAttenuation_pct();
+      this->calculateActualABV_pct();
+      this->calculateAttenuation_pct();
    }
+   return;
 }
 
 // This one is a bit of an odd ball. We need to convert to pure glucose points
@@ -445,24 +453,26 @@ void BrewNote::setProjPoints(double var) {
    if ( loading ) {
       this->m_projPoints = var;
    } else {
-      double plato = Algorithms::getPlato(var, m_projVolIntoBK_l);
-      double total_g = Algorithms::PlatoToSG_20C20C( plato );
-      double convertPnts = (total_g - 1.0 ) * 1000;
+      double const plato = Algorithms::getPlato(var, m_projVolIntoBK_l);
+      double const total_g = Algorithms::PlatoToSG_20C20C( plato );
+      double const convertPnts = (total_g - 1.0 ) * 1000;
 
       SET_AND_NOTIFY(PropertyNames::BrewNote::projPoints, this->m_projPoints, convertPnts);
    }
+   return;
 }
 
 void BrewNote::setProjFermPoints(double var) {
    if ( loading ) {
       this->m_projFermPoints = var;
    } else {
-      double plato = Algorithms::getPlato(var, m_projVolIntoFerm_l);
-      double total_g = Algorithms::PlatoToSG_20C20C( plato );
-      double convertPnts = (total_g - 1.0 ) * 1000;
+      double const plato = Algorithms::getPlato(var, m_projVolIntoFerm_l);
+      double const total_g = Algorithms::PlatoToSG_20C20C( plato );
+      double const convertPnts = (total_g - 1.0 ) * 1000;
 
       SET_AND_NOTIFY(PropertyNames::BrewNote::projFermPoints, this->m_projFermPoints, convertPnts);
    }
+   return;
 }
 
 void BrewNote::setABV              (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::abv              , this->m_abv              , var); }
@@ -503,12 +513,12 @@ void BrewNote::setBoilOff_l        (double var) { SET_AND_NOTIFY(PropertyNames::
 double BrewNote::calculateEffIntoBK_pct() {
    // I don't think we need a lot of math here. Points has already been
    // translated from SG into pure glucose points
-   double maxPoints = m_projPoints * m_projVolIntoBK_l;
+   double const maxPoints = m_projPoints * m_projVolIntoBK_l;
    qDebug() <<
       Q_FUNC_INFO << "m_projPoints: " << m_projPoints << ", m_projVolIntoBK_l:" << m_projVolIntoBK_l <<
       ", maxPoints:" << maxPoints;
 
-   double actualPoints = (m_sg - 1) * 1000 * m_volumeIntoBK_l;
+   double const actualPoints = (m_sg - 1) * 1000 * m_volumeIntoBK_l;
    qDebug() <<
       Q_FUNC_INFO << "m_sg:" << m_sg << ", m_volumeIntoBK_l:" << m_volumeIntoBK_l << ", actualPoints:" << actualPoints;
    // this can happen under normal circumstances (eg, load)
@@ -516,83 +526,61 @@ double BrewNote::calculateEffIntoBK_pct() {
       return 0.0;
    }
 
-   double effIntoBK = actualPoints/maxPoints * 100;
+   double const effIntoBK = actualPoints/maxPoints * 100;
    qDebug() << Q_FUNC_INFO << "effIntoBK:" << effIntoBK;
    setEffIntoBK_pct(effIntoBK);
 
    return effIntoBK;
 }
 
-// The idea is that based on the preboil gravity, estimate what the actual OG
-// will be.
-double BrewNote::calculateOg()
-{
-   double cOG;
-   double points, expectedVol, actualVol;
-
-   points = (m_sg-1) * 1000;
-   expectedVol = m_projVolIntoBK_l - m_boilOff_l;
-   actualVol   = m_volumeIntoBK_l;
-
-   if ( expectedVol <= 0.0 )
+// The idea is that based on the preboil gravity, estimate what the actual OG will be.
+double BrewNote::calculateOg() {
+   double const points = (m_sg-1) * 1000;
+   double const expectedVol = m_projVolIntoBK_l - m_boilOff_l;
+   if (expectedVol <= 0.0) {
       return 0.0;
-
-   cOG = 1+ ((points * actualVol / expectedVol) / 1000);
-   setProjOg(cOG);
-
+   }
+   double const actualVol   = m_volumeIntoBK_l;
+   double const cOG = 1+ ((points * actualVol / expectedVol) / 1000);
+   this->setProjOg(cOG);
    return cOG;
 }
 
-double BrewNote::calculateBrewHouseEff_pct()
-{
-   double expectedPoints, actualPoints;
-   double brewhouseEff;
+double BrewNote::calculateBrewHouseEff_pct() {
+   double const expectedPoints = m_projFermPoints * m_projVolIntoFerm_l;
+   double const actualPoints = (m_og-1.0) * 1000.0 * m_volumeIntoFerm_l;
 
-   expectedPoints = m_projFermPoints * m_projVolIntoFerm_l;
-   actualPoints = (m_og-1.0) * 1000.0 * m_volumeIntoFerm_l;
-
-   brewhouseEff = actualPoints/expectedPoints * 100.0;
-   setBrewhouseEff_pct(brewhouseEff);
-
+   double const brewhouseEff = actualPoints/expectedPoints * 100.0;
+   this->setBrewhouseEff_pct(brewhouseEff);
    return brewhouseEff;
 }
 
 // Need to do some work here to figure out what the expected FG will be based
 // on the actual OG, not the calculated.
-double BrewNote::calculateABV_pct()
-{
-   double atten_pct = m_projAtten;
-   double calculatedABV;
-   double estFg;
+double BrewNote::calculateABV_pct() {
+   double const atten_pct = m_projAtten;
 
    // This looks weird, but the math works. (Yes, I am showing my work)
    // 1 + [(og-1) * 1000 * (1.0 - %/100)] / 1000  =
    // 1 + [(og - 1) * (1.0 - %/100)]
-   estFg = 1 + ((m_og-1.0)*(1.0 - atten_pct/100.0));
+   double const estFg = 1 + ((m_og-1.0)*(1.0 - atten_pct/100.0));
 
-   calculatedABV = (m_og-estFg)*130;
-   setProjABV_pct(calculatedABV);
+   double const calculatedABV = (m_og-estFg)*130;
+   this->setProjABV_pct(calculatedABV);
 
    return calculatedABV;
 }
 
-double BrewNote::calculateActualABV_pct()
-{
-   double abv;
-
-   abv = (m_og - m_fg) * 130;
-   setABV(abv);
-
+double BrewNote::calculateActualABV_pct() {
+   double const abv = (m_og - m_fg) * 130;
+   this->setABV(abv);
    return abv;
 }
 
-double BrewNote::calculateAttenuation_pct()
-{
+double BrewNote::calculateAttenuation_pct() {
     // Calculate measured attenuation based on user-reported values for
     // post-boil OG and post-ferment FG
-    double attenuation = ((m_og - m_fg) / (m_og - 1)) * 100;
-
-    setAttenuation(attenuation);
-
+    double const attenuation = ((m_og - m_fg) / (m_og - 1)) * 100;
+    this->setAttenuation(attenuation);
     return attenuation;
 }

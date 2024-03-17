@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/MashStepTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * tableModels/MashStepTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -45,16 +45,16 @@ MashStepTableModel::MashStepTableModel(QTableView * parent, bool editable) :
       parent,
       editable,
       {
-         TABLE_MODEL_HEADER(MashStep, Name      , tr("Name"         ), PropertyNames::NamedEntity::name     ),
-         TABLE_MODEL_HEADER(MashStep, Type      , tr("Type"         ), PropertyNames::MashStep::type        , EnumInfo{MashStep::typeStringMapping, MashStep::typeDisplayNames}),
-         TABLE_MODEL_HEADER(MashStep, Amount    , tr("Amount"       ), PropertyNames::MashStep::amount_l    ),
-         TABLE_MODEL_HEADER(MashStep, Temp      , tr("Infusion Temp"), PropertyNames::MashStep::infuseTemp_c),
-         TABLE_MODEL_HEADER(MashStep, TargetTemp, tr("Target Temp"  ), PropertyNames::MashStep::stepTemp_c  ),
+         TABLE_MODEL_HEADER(MashStep, Name      , tr("Name"         ), PropertyNames::NamedEntity::name      ),
+         TABLE_MODEL_HEADER(MashStep, Type      , tr("Type"         ), PropertyNames::MashStep::type         , EnumInfo{MashStep::typeStringMapping, MashStep::typeDisplayNames}),
+         TABLE_MODEL_HEADER(MashStep, Amount    , tr("Amount"       ), PropertyNames::MashStep::amount_l     ),
+         TABLE_MODEL_HEADER(MashStep, Temp      , tr("Infusion Temp"), PropertyNames::MashStep::infuseTemp_c ),
+         TABLE_MODEL_HEADER(MashStep, TargetTemp, tr("Target Temp"  ), PropertyNames::    Step::startTemp_c  ),
          TABLE_MODEL_HEADER(MashStep, Time      , tr("Time"         ), PropertyNames::    Step::stepTime_mins),
       }
    },
    TableModelBase<MashStepTableModel, MashStep>{},
-   mashObs(nullptr) {
+   StepTableModelBase<MashStepTableModel, MashStep, Mash>{} {
    this->setObjectName("mashStepTableModel");
 
    QHeaderView* headerView = m_parentTableWidget->horizontalHeader();
@@ -83,173 +83,173 @@ void MashStepTableModel::updateTotals()                                      { r
 ///   return this->BtTableModel::getColumnInfo(static_cast<size_t>(columnIndex));
 ///}
 
-bool MashStepTableModel::remove(std::shared_ptr<MashStep> mashStep) {
+///bool MashStepTableModel::remove(std::shared_ptr<MashStep> mashStep) {
+///
+///   int ii {this->rows.indexOf(mashStep)};
+///   if (ii >= 0) {
+///      qDebug() << Q_FUNC_INFO << "Removing MashStep" << mashStep->name() << "(#" << mashStep->key() << ")";
+///      beginRemoveRows( QModelIndex(), ii, ii );
+///      disconnect(mashStep.get(), nullptr, this, nullptr);
+///      this->rows.removeAt(ii);
+///      //reset(); // Tell everybody the table has changed.
+///      endRemoveRows();
+///
+///      return true;
+///   }
+///
+///   return false;
+///}
 
-   int ii {this->rows.indexOf(mashStep)};
-   if (ii >= 0) {
-      qDebug() << Q_FUNC_INFO << "Removing MashStep" << mashStep->name() << "(#" << mashStep->key() << ")";
-      beginRemoveRows( QModelIndex(), ii, ii );
-      disconnect(mashStep.get(), nullptr, this, nullptr);
-      this->rows.removeAt(ii);
-      //reset(); // Tell everybody the table has changed.
-      endRemoveRows();
+///void MashStepTableModel::setMash(Mash * m) {
+///   if (this->mashObs && this->rows.size() > 0) {
+///      qDebug() <<
+///         Q_FUNC_INFO << "Removing" << this->rows.size() << "MashStep rows for old Mash #" << this->mashObs->key();
+///      this->beginRemoveRows(QModelIndex(), 0, this->rows.size() - 1);
+///
+///      for (auto step : this->rows) {
+///         disconnect(step.get(), nullptr, this, nullptr);
+///      }
+///      this->rows.clear();
+///      this->endRemoveRows();
+///   }
+///
+///   // Disconnect old signals if any were connected and we're changing Mash
+///   if (this->mashObs && this->mashObs != m) {
+///      // Remove mashObs and all steps.
+///      disconnect(mashObs, nullptr, this, nullptr);
+///   }
+///
+///   // Connect new signals, unless there is no new Mash or we're not changing Mash
+///   if (m && this->mashObs != m) {
+///      connect(m, &Mash::stepsChanged, this, &MashStepTableModel::mashChanged);
+///   }
+///
+///   this->mashObs = m;
+///   if (this->mashObs) {
+///      qDebug() << Q_FUNC_INFO << "Now watching Mash #" << this->mashObs->key();
+///
+///      auto tmpSteps = this->mashObs->mashSteps();
+///      if (tmpSteps.size() > 0) {
+///         qDebug() << Q_FUNC_INFO << "Inserting" << tmpSteps.size() << "MashStep rows";
+///         this->beginInsertRows(QModelIndex(), 0, tmpSteps.size() - 1);
+///         this->rows = tmpSteps;
+///         for (auto step : this->rows) {
+///            connect(step.get(), &NamedEntity::changed, this, &MashStepTableModel::mashStepChanged);
+///         }
+///         this->endInsertRows();
+///     }
+///   }
+///
+///   if (m_parentTableWidget) {
+///      m_parentTableWidget->resizeColumnsToContents();
+///      m_parentTableWidget->resizeRowsToContents();
+///   }
+///   return;
+///}
 
-      return true;
-   }
+///Mash * MashStepTableModel::getMash() const {
+///   return this->mashObs;
+///}
 
-   return false;
-}
+///void MashStepTableModel::reorderMashStep(std::shared_ptr<MashStep> step, int current) {
+///   // doSomething will be -1 if we are moving up and 1 if we are moving down
+///   // and 0 if nothing is to be done (see next comment)
+///   int destChild   = step->stepNumber();
+///   int doSomething = destChild - current - 1;
+///
+///   qDebug() << Q_FUNC_INFO << "Swapping" << destChild << "with" << current << ", so doSomething=" << doSomething;
+///
+///   // Moving a step up or down generates two signals, one for each row
+///   // impacted. If we move row B above row A:
+///   //    1. The first signal is to move B above A, which will result in A
+///   //    being below B
+///   //    2. The second signal is to move A below B, which we just did.
+///   // Therefore, the second signal mostly needs to be ignored. In those
+///   // circumstances, A->stepNumber() will be the same as its position in the
+///   // steps list, modulo some indexing
+///   if (doSomething == 0) {
+///      return;
+///   }
+///
+///   // beginMoveRows is a little odd. When moving rows within the same parent,
+///   // destChild points one beyond where you want to insert the row. Think of
+///   // it as saying "insert before destChild". If we are moving something up,
+///   // we need to be one less than stepNumber. If we are moving down, it just
+///   // works.
+///   if (doSomething < 0) {
+///      destChild--;
+///   }
+///
+///   // We assert that we are swapping valid locations on the list as, to do otherwise implies a coding error
+///   qDebug() <<
+///      Q_FUNC_INFO << "Swap" << current + doSomething << "with" << current << ", in list of " << this->rows.size();
+///   Q_ASSERT(current >= 0);
+///   Q_ASSERT(current + doSomething >= 0);
+///   Q_ASSERT(current < this->rows.size());
+///   Q_ASSERT(current + doSomething < this->rows.size());
+///
+///   this->beginMoveRows(QModelIndex(), current, current, QModelIndex(), destChild);
+///
+///   // doSomething is -1 if moving up and 1 if moving down. swap current with
+///   // current -1 when moving up, and swap current with current+1 when moving
+///   // down
+///#if QT_VERSION < QT_VERSION_CHECK(5,13,0)
+///   this->rows.swap(current,current+doSomething);
+///#else
+///   this->rows.swapItemsAt(current,current+doSomething);
+///#endif
+///   this->endMoveRows();
+///   return;
+///}
 
-void MashStepTableModel::setMash(Mash * m) {
-   if (this->mashObs && this->rows.size() > 0) {
-      qDebug() <<
-         Q_FUNC_INFO << "Removing" << this->rows.size() << "MashStep rows for old Mash #" << this->mashObs->key();
-      this->beginRemoveRows(QModelIndex(), 0, this->rows.size() - 1);
+///void MashStepTableModel::mashChanged() {
+///   // A mash step was added, removed or change order.  Remove and re-add all steps.
+///   qDebug() << Q_FUNC_INFO << "Re-reading mash steps for" << this->mashObs;
+///   this->setMash(this->mashObs);
+///   return;
+///}
 
-      for (auto step : this->rows) {
-         disconnect(step.get(), nullptr, this, nullptr);
-      }
-      this->rows.clear();
-      this->endRemoveRows();
-   }
-
-   // Disconnect old signals if any were connected and we're changing Mash
-   if (this->mashObs && this->mashObs != m) {
-      // Remove mashObs and all steps.
-      disconnect(mashObs, nullptr, this, nullptr);
-   }
-
-   // Connect new signals, unless there is no new Mash or we're not changing Mash
-   if (m && this->mashObs != m) {
-      connect(m, &Mash::stepsChanged, this, &MashStepTableModel::mashChanged);
-   }
-
-   this->mashObs = m;
-   if (this->mashObs) {
-      qDebug() << Q_FUNC_INFO << "Now watching Mash #" << this->mashObs->key();
-
-      auto tmpSteps = this->mashObs->mashSteps();
-      if (tmpSteps.size() > 0) {
-         qDebug() << Q_FUNC_INFO << "Inserting" << tmpSteps.size() << "MashStep rows";
-         this->beginInsertRows(QModelIndex(), 0, tmpSteps.size() - 1);
-         this->rows = tmpSteps;
-         for (auto step : this->rows) {
-            connect(step.get(), &NamedEntity::changed, this, &MashStepTableModel::mashStepChanged);
-         }
-         this->endInsertRows();
-     }
-   }
-
-   if (m_parentTableWidget) {
-      m_parentTableWidget->resizeColumnsToContents();
-      m_parentTableWidget->resizeRowsToContents();
-   }
-   return;
-}
-
-Mash * MashStepTableModel::getMash() const {
-   return this->mashObs;
-}
-
-void MashStepTableModel::reorderMashStep(std::shared_ptr<MashStep> step, int current) {
-   // doSomething will be -1 if we are moving up and 1 if we are moving down
-   // and 0 if nothing is to be done (see next comment)
-   int destChild   = step->stepNumber();
-   int doSomething = destChild - current - 1;
-
-   qDebug() << Q_FUNC_INFO << "Swapping" << destChild << "with" << current << ", so doSomething=" << doSomething;
-
-   // Moving a step up or down generates two signals, one for each row
-   // impacted. If we move row B above row A:
-   //    1. The first signal is to move B above A, which will result in A
-   //    being below B
-   //    2. The second signal is to move A below B, which we just did.
-   // Therefore, the second signal mostly needs to be ignored. In those
-   // circusmtances, A->stepNumber() will be the same as it's position in the
-   // steps list, modulo some indexing
-   if (doSomething == 0) {
-      return;
-   }
-
-   // beginMoveRows is a little odd. When moving rows within the same parent,
-   // destChild points one beyond where you want to insert the row. Think of
-   // it as saying "insert before destChild". If we are moving something up,
-   // we need to be one less than stepNumber. If we are moving down, it just
-   // works.
-   if (doSomething < 0) {
-      destChild--;
-   }
-
-   // We assert that we are swapping valid locations on the list as, to do otherwise implies a coding error
-   qDebug() <<
-      Q_FUNC_INFO << "Swap" << current + doSomething << "with" << current << ", in list of " << this->rows.size();
-   Q_ASSERT(current >= 0);
-   Q_ASSERT(current + doSomething >= 0);
-   Q_ASSERT(current < this->rows.size());
-   Q_ASSERT(current + doSomething < this->rows.size());
-
-   this->beginMoveRows(QModelIndex(), current, current, QModelIndex(), destChild);
-
-   // doSomething is -1 if moving up and 1 if moving down. swap current with
-   // current -1 when moving up, and swap current with current+1 when moving
-   // down
-#if QT_VERSION < QT_VERSION_CHECK(5,13,0)
-   this->rows.swap(current,current+doSomething);
-#else
-   this->rows.swapItemsAt(current,current+doSomething);
-#endif
-   this->endMoveRows();
-   return;
-}
-
-void MashStepTableModel::mashChanged() {
-   // A mash step was added, removed or change order.  Remove and re-add all steps.
-   qDebug() << Q_FUNC_INFO << "Re-reading mash steps for" << this->mashObs;
-   this->setMash(this->mashObs);
-   return;
-}
-
-void MashStepTableModel::mashStepChanged(QMetaProperty prop,
-                                         [[maybe_unused]] QVariant val) {
-   qDebug() << Q_FUNC_INFO;
-
-   MashStep* stepSender = qobject_cast<MashStep*>(sender());
-   if (stepSender) {
-      if (stepSender->ownerId() != this->mashObs->key()) {
-         // It really shouldn't happen that we get a notification for a MashStep that's not in the Mash we're watching,
-         // but, if we do, then stop trying to process the update.
-         qCritical() <<
-            Q_FUNC_INFO << "Instance @" << static_cast<void *>(this) << "received update for MashStep" <<
-            stepSender->key() << "of Mash" << stepSender->ownerId() << "but we are watching Mash" <<
-            this->mashObs->key();
-         return;
-      }
-
-      int ii = this->findIndexOf(stepSender);
-      if (ii >= 0) {
-         if (prop.name() == PropertyNames::Step::stepNumber) {
-            this->reorderMashStep(this->rows.at(ii), ii);
-         }
-
-         emit dataChanged(QAbstractItemModel::createIndex(ii, 0),
-                          QAbstractItemModel::createIndex(ii, this->columnCount() - 1));
-      }
-
-   }
-
-    if (this->m_parentTableWidget) {
-      this->m_parentTableWidget->resizeColumnsToContents();
-      this->m_parentTableWidget->resizeRowsToContents();
-   }
-   return;
-}
+///void MashStepTableModel::mashStepChanged(QMetaProperty prop,
+///                                         [[maybe_unused]] QVariant val) {
+///   qDebug() << Q_FUNC_INFO;
+///
+///   MashStep* stepSender = qobject_cast<MashStep*>(sender());
+///   if (stepSender) {
+///      if (stepSender->ownerId() != this->mashObs->key()) {
+///         // It really shouldn't happen that we get a notification for a MashStep that's not in the Mash we're watching,
+///         // but, if we do, then stop trying to process the update.
+///         qCritical() <<
+///            Q_FUNC_INFO << "Instance @" << static_cast<void *>(this) << "received update for MashStep" <<
+///            stepSender->key() << "of Mash" << stepSender->ownerId() << "but we are watching Mash" <<
+///            this->mashObs->key();
+///         return;
+///      }
+///
+///      int ii = this->findIndexOf(stepSender);
+///      if (ii >= 0) {
+///         if (prop.name() == PropertyNames::Step::stepNumber) {
+///            this->reorderMashStep(this->rows.at(ii), ii);
+///         }
+///
+///         emit dataChanged(QAbstractItemModel::createIndex(ii, 0),
+///                          QAbstractItemModel::createIndex(ii, this->columnCount() - 1));
+///      }
+///
+///   }
+///
+///    if (this->m_parentTableWidget) {
+///      this->m_parentTableWidget->resizeColumnsToContents();
+///      this->m_parentTableWidget->resizeRowsToContents();
+///   }
+///   return;
+///}
 
 ///int MashStepTableModel::rowCount(const QModelIndex& /*parent*/) const {
 ///   return this->rows.size();
 ///}
 
 QVariant MashStepTableModel::data(QModelIndex const & index, int role) const {
-   if (!this->mashObs) {
+   if (!this->m_stepOwnerObs) {
       return QVariant();
    }
 
@@ -350,7 +350,7 @@ Qt::ItemFlags MashStepTableModel::flags(const QModelIndex& index ) const {
 }
 
 bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & value, int role) {
-   if (!this->mashObs) {
+   if (!this->m_stepOwnerObs) {
       return false;
    }
 
@@ -486,23 +486,23 @@ bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & val
    return retVal;
 }
 
-void MashStepTableModel::moveStepUp(int i) {
-   if (this->mashObs == nullptr || i == 0 || i >= this->rows.size()) {
-      return;
-   }
-
-   this->mashObs->swapSteps(*this->rows[i], *this->rows[i-1]);
-   return;
-}
-
-void MashStepTableModel::moveStepDown(int i) {
-   if (this->mashObs == nullptr ||  i+1 >= this->rows.size()) {
-      return;
-   }
-
-   this->mashObs->swapSteps(*this->rows[i], *this->rows[i+1]);
-   return;
-}
+///void MashStepTableModel::moveStepUp(int i) {
+///   if (this->mashObs == nullptr || i == 0 || i >= this->rows.size()) {
+///      return;
+///   }
+///
+///   this->mashObs->swapSteps(*this->rows[i], *this->rows[i-1]);
+///   return;
+///}
+///
+///void MashStepTableModel::moveStepDown(int i) {
+///   if (this->mashObs == nullptr ||  i+1 >= this->rows.size()) {
+///      return;
+///   }
+///
+///   this->mashObs->swapSteps(*this->rows[i], *this->rows[i+1]);
+///   return;
+///}
 
 /////==========================CLASS MashStepItemDelegate===============================
 ///
@@ -575,6 +575,8 @@ void MashStepTableModel::moveStepDown(int i) {
 
 // Insert the boiler-plate stuff that we cannot do in TableModelBase
 TABLE_MODEL_COMMON_CODE(MashStep, mashStep, PropertyNames::Recipe::mashId)
+// Insert the boiler-plate stuff that we cannot do in StepTableModelBase
+STEP_TABLE_MODEL_COMMON_CODE(Mash)
 //=============================================== CLASS MashStepItemDelegate ================================================
 
 // Insert the boiler-plate stuff that we cannot do in ItemDelegate

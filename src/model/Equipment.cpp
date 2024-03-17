@@ -418,7 +418,7 @@ void Equipment::doCalculations() {
    this->setKettleBoilSize_l(this->fermenterBatchSize_l() -
                        this->topUpWater_l().value_or(Equipment::default_topUpWater_l) +
                        this->kettleTrubChillerLoss_l() +
-                       (this->boilTime_min().value_or(Equipment::default_boilTime_min)/(double)60)*this->kettleEvaporationPerHour_l().value_or(Equipment::default_kettleEvaporationPerHour_l));
+                       (this->boilTime_min().value_or(Equipment::default_boilTime_mins)/(double)60)*this->kettleEvaporationPerHour_l().value_or(Equipment::default_kettleEvaporationPerHour_l));
    return;
 }
 
@@ -429,7 +429,7 @@ double Equipment::getLauteringDeadspaceLoss_l() const {
 double Equipment::wortEndOfBoil_l( double kettleWort_l ) const {
    //return kettleWort_l * (1 - (boilTime_min/(double)60) * (evapRate_pctHr/(double)100) );
 
-   return kettleWort_l - (boilTime_min().value_or(Equipment::default_boilTime_min)/(double)60)*kettleEvaporationPerHour_l().value_or(Equipment::default_kettleEvaporationPerHour_l);
+   return kettleWort_l - (boilTime_min().value_or(Equipment::default_boilTime_mins)/(double)60)*kettleEvaporationPerHour_l().value_or(Equipment::default_kettleEvaporationPerHour_l);
 }
 
 ///// Although it's a similar one-liner implementation for many subclasses of NamedEntity, we can't push the

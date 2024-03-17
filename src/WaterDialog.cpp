@@ -216,17 +216,17 @@ void WaterDialog::setRecipe(Recipe *rec) {
       return;
    }
 
-   m_rec = rec;
-   Mash* mash = m_rec->mash();
-   m_saltAdjustmentTableModel->observeRecipe(m_rec);
+   this->m_rec = rec;
+   auto mash = this->m_rec->mash();
+   m_saltAdjustmentTableModel->observeRecipe(this->m_rec);
 
-   if ( mash == nullptr || mash->mashSteps().size() == 0 ) {
+   if (!mash || mash->mashSteps().size() == 0 ) {
       qWarning() << QString("Cannot set water chemistry without a mash");
       return;
    }
 
-   baseProfileButton->setRecipe(m_rec);
-   targetProfileButton->setRecipe(m_rec);
+   baseProfileButton->setRecipe(this->m_rec);
+   targetProfileButton->setRecipe(this->m_rec);
 
    for (auto waterUse : this->m_rec->waterUses()) {
       auto water = ObjectStoreWrapper::getSharedFromRaw(waterUse->water());
@@ -293,12 +293,12 @@ void WaterDialog::setRecipe(Recipe *rec) {
       m_spargeRO = this->m_base->spargeRo_pct();
       spinBox_spargeRO->setValue( QVariant(m_spargeRO * 100).toInt());
 
-      baseProfileButton->setWater(this->m_base.get());
+      baseProfileButton->setWater(this->m_base);
       m_base_editor->setWater(this->m_base);
       // all of the magic to set the sliders happens in newTotals(). So don't do it twice
    }
    if (this->m_target && this->m_target != this->m_base) {
-      targetProfileButton->setWater(this->m_target.get());
+      targetProfileButton->setWater(this->m_target);
       m_target_editor->setWater(this->m_target);
 
       this->setDigits();
@@ -326,7 +326,7 @@ void WaterDialog::update_baseProfile(int selected) {
       this->m_base->setType(Water::Type::Base);
       qDebug() << Q_FUNC_INFO << "Made base child" << *this->m_base << "from parent" << parent;
 
-      baseProfileButton->setWater(this->m_base.get());
+      baseProfileButton->setWater(this->m_base);
       m_base_editor->setWater(this->m_base);
       newTotals();
    }
@@ -350,7 +350,7 @@ void WaterDialog::update_targetProfile(int selected) {
       this->m_target->setType(Water::Type::Target);
       qDebug() << Q_FUNC_INFO << "Made target child" << *this->m_target << "from parent" << parent;
 
-      targetProfileButton->setWater(this->m_target.get());
+      targetProfileButton->setWater(this->m_target);
       m_target_editor->setWater(this->m_target);
 
       this->setDigits();
@@ -359,10 +359,11 @@ void WaterDialog::update_targetProfile(int selected) {
 }
 
 void WaterDialog::newTotals() {
-   if ( ! m_rec || ! m_rec->mash() )
+   if (!this->m_rec || !this->m_rec->mash()) {
       return;
+   }
 
-   Mash* mash = m_rec->mash();
+   auto mash = m_rec->mash();
    double allTheWaters = mash->totalMashWater_l();
 
    if ( qFuzzyCompare(allTheWaters,0.0) ) {
@@ -440,7 +441,7 @@ double WaterDialog::calculateSaltpH() {
       return 0.0;
    }
 
-   Mash* mash = m_rec->mash();
+   auto mash = m_rec->mash();
    double allTheWaters = mash->totalMashWater_l();
 
    double modifier = 1 - ( (m_mashRO * mash->totalInfusionAmount_l()) + (m_spargeRO * mash->totalSpargeAmount_l())) / allTheWaters;

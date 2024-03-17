@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * undoRedo/RelationalUndoableUpdate.h is part of Brewken, and is copyright the following authors 2020-2023:
+ * undoRedo/RelationalUndoableUpdate.h is part of Brewken, and is copyright the following authors 2020-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -49,9 +49,9 @@ public:
     * \param parent This is for grouping updates together.
     */
    RelationalUndoableUpdate(UU & updatee,
-                            void (UU::*setter)(VV *),
-                            VV * oldValue,
-                            VV * newValue,
+                            void (UU::*setter)(std::shared_ptr<VV>),
+                            std::shared_ptr<VV> oldValue,
+                            std::shared_ptr<VV> newValue,
                             void (MainWindow::*callback)(void),
                             QString const & description,
                             QUndoCommand * parent = nullptr) :
@@ -101,9 +101,9 @@ private:
    }
 
    UU & updatee;
-   void (UU::*setter)(VV *);
-   VV * oldValue;
-   VV * newValue;
+   void (UU::*setter)(std::shared_ptr<VV>);
+   std::shared_ptr<VV> oldValue;
+   std::shared_ptr<VV> newValue;
    void (MainWindow::*callback)(void);
 };
 
@@ -116,9 +116,9 @@ private:
  *        but I think I must be missing something.)
  */
 template<class UU, class VV> RelationalUndoableUpdate<UU, VV> * newRelationalUndoableUpdate(UU & updatee,
-                                                                                            void (UU::*setter)(VV *),
-                                                                                            VV * oldValue,
-                                                                                            VV * newValue,
+                                                                                            void (UU::*setter)(std::shared_ptr<VV>),
+                                                                                            std::shared_ptr<VV> oldValue,
+                                                                                            std::shared_ptr<VV> newValue,
                                                                                             void (MainWindow::*callback)(void),
                                                                                             QString const & description,
                                                                                             QUndoCommand * parent = nullptr) {

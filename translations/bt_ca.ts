@@ -117,6 +117,49 @@
     </message>
 </context>
 <context>
+    <name>BoilStepTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nom</translation>
+    </message>
+    <message>
+        <source>Step Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Temp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ramp Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End Temp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chilling Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BrewDayFormatter</name>
     <message>
         <source>Brewday</source>
@@ -1544,7 +1587,7 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Yield %</source>
-        <translation>Rendiment %</translation>
+        <translation type="vanished">Rendiment %</translation>
     </message>
     <message>
         <source>Inventory</source>
@@ -1590,6 +1633,10 @@ If you didn&apos;t yet do this, click Abort.</source>
         <source>Late</source>
         <translation type="obsolete">Més tard</translation>
     </message>
+    <message>
+        <source>Yield (DBFG) %</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Fermentation</name>
@@ -1602,6 +1649,53 @@ If you didn&apos;t yet do this, click Abort.</source>
     <name>FermentationStep</name>
     <message>
         <source>Fermentation Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FermentationStepTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nom</translation>
+    </message>
+    <message>
+        <source>Step Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Temp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ramp Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End Temp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Free Rise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vessel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2147,7 +2241,7 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>For some reason, the operation failed.</source>
-        <translation>Per algun motiu, l&apos;operació no s&apos;ha pogut dur a terme.</translation>
+        <translation type="vanished">Per algun motiu, l&apos;operació no s&apos;ha pogut dur a terme.</translation>
     </message>
     <message>
         <source>Import %1?</source>
@@ -2155,11 +2249,11 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>No mash</source>
-        <translation>Sense maceració</translation>
+        <translation type="vanished">Sense maceració</translation>
     </message>
     <message>
         <source>Trying to add a mash step without a mash. Please create a mash first.</source>
-        <translation>Està intentant afegir una fase a la maceració sense tenir-la creada. Cal crear una maceració primer.</translation>
+        <translation type="vanished">Està intentant afegir una fase a la maceració sense tenir-la creada. Cal crear una maceració primer.</translation>
     </message>
     <message>
         <source>Copy Recipe</source>
@@ -2278,10 +2372,6 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add mash step to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Undo %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2291,10 +2381,6 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Error creating recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove mash step</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2347,6 +2433,18 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Drop yeast(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 step to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operation failed.  See log file for more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4605,30 +4703,6 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Primary Age</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Primary Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Secondary Age</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Secondary Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Tertiary Age</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Tertiary Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Age</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4965,6 +5039,10 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Add During</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5885,6 +5963,148 @@ El volum final al primari és de %1.</translation>
     </message>
 </context>
 <context>
+    <name>boilEditor</name>
+    <message>
+        <source>Boil Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nom</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pre-Boil Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil Time</source>
+        <translation type="unfinished">Temps d&apos;ebullició</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="unfinished">Notes</translation>
+    </message>
+</context>
+<context>
+    <name>boilStepEditor</name>
+    <message>
+        <source>Boil Step Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nom</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="obsolete">Tipus</translation>
+    </message>
+    <message>
+        <source>Target temp.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target temp. of this step</source>
+        <translation type="unfinished">Desitjada en aquest pas</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished">Temps</translation>
+    </message>
+    <message>
+        <source>Time to conduct the step</source>
+        <translation type="unfinished">Temps per fer el pas</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="obsolete">Quantitat</translation>
+    </message>
+    <message>
+        <source>Amount of water to infuse</source>
+        <translation type="obsolete">Quantitat d&apos;aigua per fer la infusió</translation>
+    </message>
+    <message>
+        <source>Temp. lag time</source>
+        <translation type="unfinished">Lapse entre temparatures</translation>
+    </message>
+    <message>
+        <source>Lag time</source>
+        <translation type="unfinished">Lapse de temps</translation>
+    </message>
+    <message>
+        <source>Infuse temp.</source>
+        <translation type="obsolete">Temp. de la infusió</translation>
+    </message>
+    <message>
+        <source>Temperature of infusion water</source>
+        <translation type="obsolete">Temperatura de l&apos;aigua de la infusió</translation>
+    </message>
+    <message>
+        <source>End temp.</source>
+        <translation type="unfinished">Temperatura final</translation>
+    </message>
+    <message>
+        <source>Final temp. of this step</source>
+        <translation type="unfinished">Temp. fial final del pas</translation>
+    </message>
+    <message>
+        <source>Start Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optional description of this boil step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
+    </message>
+    <message>
+        <source>Chilling Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>brewDayScrollWidget</name>
     <message>
         <source>Form</source>
@@ -6515,7 +6735,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Yield as compared to glucose</source>
-        <translation>Rendiment relatiu a la glucosa</translation>
+        <translation type="vanished">Rendiment relatiu a la glucosa</translation>
     </message>
     <message>
         <source>Lovibond rating</source>
@@ -6631,7 +6851,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Yield %</source>
-        <translation type="unfinished">Rendiment %</translation>
+        <translation type="obsolete">Rendiment %</translation>
     </message>
     <message>
         <source>Extras</source>
@@ -6767,6 +6987,129 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>fermentationStepEditor</name>
+    <message>
+        <source>Fermentation Step Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nom</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="obsolete">Tipus</translation>
+    </message>
+    <message>
+        <source>Target temp.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target temp. of this step</source>
+        <translation type="unfinished">Desitjada en aquest pas</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished">Temps</translation>
+    </message>
+    <message>
+        <source>Time to conduct the step</source>
+        <translation type="unfinished">Temps per fer el pas</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="obsolete">Quantitat</translation>
+    </message>
+    <message>
+        <source>Amount of water to infuse</source>
+        <translation type="obsolete">Quantitat d&apos;aigua per fer la infusió</translation>
+    </message>
+    <message>
+        <source>Temp. lag time</source>
+        <translation type="unfinished">Lapse entre temparatures</translation>
+    </message>
+    <message>
+        <source>Lag time</source>
+        <translation type="unfinished">Lapse de temps</translation>
+    </message>
+    <message>
+        <source>Infuse temp.</source>
+        <translation type="obsolete">Temp. de la infusió</translation>
+    </message>
+    <message>
+        <source>Temperature of infusion water</source>
+        <translation type="obsolete">Temperatura de l&apos;aigua de la infusió</translation>
+    </message>
+    <message>
+        <source>End temp.</source>
+        <translation type="unfinished">Temperatura final</translation>
+    </message>
+    <message>
+        <source>Final temp. of this step</source>
+        <translation type="unfinished">Temp. fial final del pas</translation>
+    </message>
+    <message>
+        <source>Start Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End Acidity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optional description of this fermentation step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
+    </message>
+    <message>
+        <source>Chilling Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Free rise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Free rise is used to indicate a fermentation step where the exothermic fermentation is allowed to raise the temperature without restriction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vessel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7712,6 +8055,94 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>About &amp;Brewken</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add boil step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected boil step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit selected boil step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit boil properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boils</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil step up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil step down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save this boil profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add fermentation step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected fermentation step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit selected fermentation step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit fermentation properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentation step up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentation step down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save this fermentation profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save Fermentation</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8907,27 +9338,27 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Primary Age (days)</source>
-        <translation>Fermentació primària (dies)</translation>
+        <translation type="vanished">Fermentació primària (dies)</translation>
     </message>
     <message>
         <source>Primary Temp</source>
-        <translation>Temperatura primària</translation>
+        <translation type="vanished">Temperatura primària</translation>
     </message>
     <message>
         <source>Secondary Age (days)</source>
-        <translation>Fermentació secundària (dies)</translation>
+        <translation type="vanished">Fermentació secundària (dies)</translation>
     </message>
     <message>
         <source>Secondary Temp</source>
-        <translation>Temperatura secundària</translation>
+        <translation type="vanished">Temperatura secundària</translation>
     </message>
     <message>
         <source>Tertiary Age (days)</source>
-        <translation>Fermentació terciària (dies)</translation>
+        <translation type="vanished">Fermentació terciària (dies)</translation>
     </message>
     <message>
         <source>Tertiary Temp</source>
-        <translation>Temperatura terciària</translation>
+        <translation type="vanished">Temperatura terciària</translation>
     </message>
     <message>
         <source>Bottle/Keg Age (days)</source>

@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * MashButton.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * buttons/MashButton.h is part of Brewken, and is copyright the following authors 2009-2024:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -14,45 +15,22 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef MASHBUTTON_H
-#define MASHBUTTON_H
+#ifndef BUTTONS_MASHBUTTON_H
+#define BUTTONS_MASHBUTTON_H
 #pragma once
 
-#include <QPushButton>
-#include <QMetaProperty>
-#include <QVariant>
-
-// Forward declarations.
-class Mash;
-class Recipe;
-class QWidget;
+#include "buttons/RecipeAttributeButton.h"
+#include "model/Mash.h"
 
 /*!
  * \class MashButton
  *
  * \brief This is a view class that displays a named mash
  */
-class MashButton : public QPushButton
-{
+class MashButton : public RecipeAttributeButton,
+                   public RecipeAttributeButtonBase<MashButton, Mash> {
    Q_OBJECT
-public:
-   MashButton(QWidget* parent = 0);
-   virtual ~MashButton(){}
-
-   //! \brief Observe \c recipe
-   void setRecipe(Recipe* recipe);
-   //! \brief Observe \c mash.
-   void setMash(Mash* mash);
-   //! \brief \return the observed mash
-   Mash* mash();
-
-private slots:
-   void recChanged(QMetaProperty,QVariant);
-   void mashChanged(QMetaProperty,QVariant);
-
-private:
-   Recipe* m_rec;
-   Mash* _mash;
+   RECIPE_ATTRIBUTE_BUTTON_BASE_DECL(Mash)
 };
 
 #endif

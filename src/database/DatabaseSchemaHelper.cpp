@@ -602,6 +602,8 @@ namespace {
             "temp_recipe_id"  " " << db.getDbNativeTypeName<int>()         <<
          ");";
 
+      // NB: Although FermentationStep inherits (via StepExtended) from Step, the rampTime_mins field is not used and
+      //     should not be stored in the DB or serialised.  See comment in model/Step.h.
       QString createFermentationStepSql;
       QTextStream createFermentationStepSqlStream(&createFermentationStepSql);
       createFermentationStepSqlStream <<
@@ -612,7 +614,6 @@ namespace {
             "display"          " " << db.getDbNativeTypeName<bool>()        << ", "
             "step_time_mins"   " " << db.getDbNativeTypeName<double>()      << ", "
             "end_temp_c"       " " << db.getDbNativeTypeName<double>()      << ", "
-            "ramp_time_mins"   " " << db.getDbNativeTypeName<double>()      << ", "
             "step_number"      " " << db.getDbNativeTypeName<int>()         << ", "
             "fermentation_id"  " " << db.getDbNativeTypeName<int>()         << ", "
             "description"      " " << db.getDbNativeTypeName<QString>()     << ", "
@@ -874,8 +875,7 @@ namespace {
          // We have to create and populate the boil and boil_step tables before we do hop_in_recipe as we need pre-boil
          // steps to attach first wort hops to.
          //
-         // We do not however need fermentation and fermentation_step to be populated as it is optional for a Recipe to
-         // have a Fermentation.
+         // We also need to create and populate fermentation and fermentation_step tables.
          //
          // As noted above, we use a temporary column on the new tables to simplify populating them with data linked to
          // recipe.
@@ -906,14 +906,39 @@ namespace {
                      "id AS recipe_id "
                   "FROM recipe"
          ), {QVariant{false}, QVariant{true}}},
+
+         {QString("INSERT INTO fermentation ("
+                      "name           , "
+                      "deleted        , "
+                      "display        , "
+                      "folder         , "
+                      "description    , "
+                      "notes          , "
+                      "temp_recipe_id   "
+                  ") SELECT "
+                     "'Fermentation for ' || name, "
+                     "?, "
+                     "?, "
+                     "'', "
+                     "'', "
+                     "'', "
+                     "id AS recipe_id "
+                  "FROM recipe"
+         ), {QVariant{false}, QVariant{true}}},
          {QString("UPDATE recipe "
                   "SET boil_id = b.id "
                   "FROM ("
                      "SELECT id "
                      "FROM boil"
                   ") AS b "
-                  "WHERE recipe.id = b.id")},
-
+                  "WHERE recipe.id = b.temp_recipe_id")},
+         {QString("UPDATE recipe "
+                  "SET fermentation_id = f.id "
+                  "FROM ("
+                     "SELECT id "
+                     "FROM fermentation"
+                  ") AS f "
+                  "WHERE recipe.id = f.temp_recipe_id")},
          // Get rid of the temporary columns now that they have served their purpose.
          {QString("ALTER TABLE boil         DROP COLUMN temp_recipe_id")},
          {QString("ALTER TABLE fermentation DROP COLUMN temp_recipe_id")},
@@ -942,21 +967,21 @@ namespace {
          // SQL!).
          //
          {QString("INSERT INTO boil_step ("
-                     "name            ,"
-                     "deleted         ,"
-                     "display         ,"
-                     "step_time_mins  ,"
-                     "end_temp_c      ,"
-                     "ramp_time_mins  ,"
-                     "step_number     ,"
-                     "boil_id         ,"
-                     "description     ,"
-                     "start_acidity_ph,"
-                     "end_acidity_ph  ,"
-                     "start_temp_c    ,"
-                     "start_gravity_sg,"
-                     "end_gravity_sg  ,"
-                     "chilling_type   "
+                     "name            , "
+                     "deleted         , "
+                     "display         , "
+                     "step_time_mins  , "
+                     "end_temp_c      , "
+                     "ramp_time_mins  , "
+                     "step_number     , "
+                     "boil_id         , "
+                     "description     , "
+                     "start_acidity_ph, "
+                     "end_acidity_ph  , "
+                     "start_temp_c    , "
+                     "start_gravity_sg, "
+                     "end_gravity_sg  , "
+                     "chilling_type     "
                   ") SELECT "
                      "'Pre-boil for ' || recipe.name, "                              // name
                      "?, "                                                           // deleted
@@ -991,21 +1016,21 @@ namespace {
          ), {QVariant{false}, QVariant{true}}},
          // Adding the second step for the actual boil itself is easier
          {QString("INSERT INTO boil_step ("
-                     "name            ,"
-                     "deleted         ,"
-                     "display         ,"
-                     "step_time_mins  ,"
-                     "end_temp_c      ,"
-                     "ramp_time_mins  ,"
-                     "step_number     ,"
-                     "boil_id         ,"
-                     "description     ,"
-                     "start_acidity_ph,"
-                     "end_acidity_ph  ,"
-                     "start_temp_c    ,"
-                     "start_gravity_sg,"
-                     "end_gravity_sg  ,"
-                     "chilling_type   "
+                     "name            , "
+                     "deleted         , "
+                     "display         , "
+                     "step_time_mins  , "
+                     "end_temp_c      , "
+                     "ramp_time_mins  , "
+                     "step_number     , "
+                     "boil_id         , "
+                     "description     , "
+                     "start_acidity_ph, "
+                     "end_acidity_ph  , "
+                     "start_temp_c    , "
+                     "start_gravity_sg, "
+                     "end_gravity_sg  , "
+                     "chilling_type     "
                   ") SELECT "
                      "'Boil proper for ' || recipe.name, "                              // name
                      "?, "                                                              // deleted
@@ -1027,21 +1052,21 @@ namespace {
          // For the post-boil step, we'll assume we are cooling to primary fermentation temperature, if known (ie it's
          // non-zero), or to 30°C otherwise.
          {QString("INSERT INTO boil_step ("
-                     "name            ,"
-                     "deleted         ,"
-                     "display         ,"
-                     "step_time_mins   ,"
-                     "end_temp_c      ,"
-                     "ramp_time_mins  ,"
-                     "step_number     ,"
-                     "boil_id         ,"
-                     "description     ,"
-                     "start_acidity_ph,"
-                     "end_acidity_ph  ,"
-                     "start_temp_c    ,"
-                     "start_gravity_sg,"
-                     "end_gravity_sg  ,"
-                     "chilling_type   "
+                     "name            , "
+                     "deleted         , "
+                     "display         , "
+                     "step_time_mins  , "
+                     "end_temp_c      , "
+                     "ramp_time_mins  , "
+                     "step_number     , "
+                     "boil_id         , "
+                     "description     , "
+                     "start_acidity_ph, "
+                     "end_acidity_ph  , "
+                     "start_temp_c    , "
+                     "start_gravity_sg, "
+                     "end_gravity_sg  , "
+                     "chilling_type     "
                   ") SELECT "
                      "'Boil proper for ' || recipe.name, "                            // name
                      "?, "                                                            // deleted
@@ -1060,6 +1085,145 @@ namespace {
                      "NULL "                                                          // chilling_type
                   "FROM recipe"
          ), {QVariant{false}, QVariant{true}}},
+         //
+         // Populate fermentation_steps.
+         //
+         // Note that primary_age, secondary_age, tertiary_age (which we can safely assume are not NULL as we are only
+         // introducing optional fields with the BeerJSON work) are in days, but our canonical unit of time is minutes.
+         //
+         // We assume everything has a primary fermentation.
+         //
+         {QString("INSERT INTO fermentation_step ("
+                     "name            , "
+                     "deleted         , "
+                     "display         , "
+                     "step_time_mins  , "
+                     "end_temp_c      , "
+                     "ramp_time_mins  , "
+                     "step_number     , "
+                     "fermentation_id , "
+                     "description     , "
+                     "start_acidity_ph, "
+                     "end_acidity_ph  , "
+                     "start_temp_c    , "
+                     "start_gravity_sg, "
+                     "end_gravity_sg  , "
+                     "free_rise       , "
+                     "vessel            "
+                  ") SELECT "
+                     "'Primary fermentation for ' || recipe.name, "                              // name
+                     "?,    "                                                                    // deleted
+                     "?,    "                                                                    // display
+                     "recipe.primary_age * 60 * 24, "                                            // step_time_mins
+                     "recipe.primary_temp   , "                                                  // end_temp_c
+                     "NULL, "                                                                    // ramp_time_mins
+                     "1,    "                                                                    // step_number
+                     "recipe.fermentation_id, "                                                  // fermentation_id
+                     "'Automatically-generated primary fermentation step for ' || recipe.name, " // description
+                     "NULL, "                                                                    // start_acidity_ph
+                     "NULL, "                                                                    // end_acidity_ph
+                     "recipe.primary_temp   , "                                                  // start_temp_c
+                     "NULL, "                                                                    // start_gravity_sg
+                     "NULL, "                                                                    // end_gravity_sg
+                     "NULL, "                                                                    // free_rise
+                     "''    "                                                                    // vessel
+                  "FROM recipe "
+         ), {QVariant{false}, QVariant{true}}},
+         // Secondary fermentation is only valid if its age is more than 0 days.
+         {QString("INSERT INTO fermentation_step ("
+                     "name            , "
+                     "deleted         , "
+                     "display         , "
+                     "step_time_mins  , "
+                     "end_temp_c      , "
+                     "ramp_time_mins  , "
+                     "step_number     , "
+                     "fermentation_id , "
+                     "description     , "
+                     "start_acidity_ph, "
+                     "end_acidity_ph  , "
+                     "start_temp_c    , "
+                     "start_gravity_sg, "
+                     "end_gravity_sg  , "
+                     "free_rise       , "
+                     "vessel            "
+                  ") SELECT "
+                     "'Secondary fermentation for ' || recipe.name, "                              // name
+                     "?,    "                                                                      // deleted
+                     "?,    "                                                                      // display
+                     "recipe.secondary_age * 60 * 24,"                                             // step_time_mins
+                     "recipe.secondary_temp , "                                                    // end_temp_c
+                     "NULL, "                                                                      // ramp_time_mins
+                     "2,    "                                                                      // step_number
+                     "recipe.fermentation_id, "                                                    // fermentation_id
+                     "'Automatically-generated secondary fermentation step for ' || recipe.name, " // description
+                     "NULL, "                                                                      // start_acidity_ph
+                     "NULL, "                                                                      // end_acidity_ph
+                     "recipe.secondary_temp , "                                                    // start_temp_c
+                     "NULL, "                                                                      // start_gravity_sg
+                     "NULL, "                                                                      // end_gravity_sg
+                     "NULL, "                                                                      // free_rise
+                     "''    "                                                                      // vessel
+                  "FROM recipe "
+                  "WHERE recipe.secondary_age > 0 "
+         ), {QVariant{false}, QVariant{true}}},
+         // Tertiary fermentation is only valid if its age is more than 0 days AND if there was a secondary
+         // fermentation.
+         {QString("INSERT INTO fermentation_step ("
+                     "name            , "
+                     "deleted         , "
+                     "display         , "
+                     "step_time_mins  , "
+                     "end_temp_c      , "
+                     "ramp_time_mins  , "
+                     "step_number     , "
+                     "fermentation_id , "
+                     "description     , "
+                     "start_acidity_ph, "
+                     "end_acidity_ph  , "
+                     "start_temp_c    , "
+                     "start_gravity_sg, "
+                     "end_gravity_sg  , "
+                     "free_rise       , "
+                     "vessel            "
+                  ") SELECT "
+                     "'Tertiary fermentation for ' || recipe.name, "                               // name
+                     "?,    "                                                                     // deleted
+                     "?,    "                                                                     // display
+                     "recipe.tertiary_age * 60 * 24,"                                             // step_time_mins
+                     "recipe.tertiary_temp , "                                                    // end_temp_c
+                     "NULL, "                                                                     // ramp_time_mins
+                     "3,    "                                                                     // step_number
+                     "recipe.fermentation_id, "                                                   // fermentation_id
+                     "'Automatically-generated tertiary fermentation step for ' || recipe.name, " // description
+                     "NULL, "                                                                     // start_acidity_ph
+                     "NULL, "                                                                     // end_acidity_ph
+                     "recipe.tertiary_temp , "                                                    // start_temp_c
+                     "NULL, "                                                                     // start_gravity_sg
+                     "NULL, "                                                                     // end_gravity_sg
+                     "NULL, "                                                                     // free_rise
+                     "''    "                                                                     // vessel
+                  "FROM recipe "
+                  "WHERE recipe.tertiary_age  > 0 "
+                  "AND   recipe.secondary_age > 0 "
+         ), {QVariant{false}, QVariant{true}}},
+         //
+         // Now we copied the data across, we don't need the primary/secondary/tertiary columns on recipe
+         //
+         {QString("ALTER TABLE recipe DROP COLUMN primary_age   ")},
+         {QString("ALTER TABLE recipe DROP COLUMN primary_temp  ")},
+         {QString("ALTER TABLE recipe DROP COLUMN secondary_age ")},
+         {QString("ALTER TABLE recipe DROP COLUMN secondary_temp")},
+         {QString("ALTER TABLE recipe DROP COLUMN tertiary_age  ")},
+         {QString("ALTER TABLE recipe DROP COLUMN tertiary_temp ")},
+         //
+         // This field/column exists in our schema because it is part of BeerXML, but we don't expose it in the UI or
+         // make any use of it internally.  So, for any recipes created in our software, its value will be meaningless.
+         //
+         // Going forward, Fermentation object knows the number of FermentationSteps it has, so a separate field is not
+         // needed.
+         //
+         {QString("ALTER TABLE recipe DROP COLUMN fermentation_stages")},
          //
          // Now comes the tricky stuff where we change the hop_in_recipe, fermentable_in_recipe, misc_in_recipe,
          // yeast_in_recipe, salt_in_recipe and water_in_recipe junction tables to full-blown object tables, and remove

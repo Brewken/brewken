@@ -356,8 +356,8 @@ namespace {
          {ObjectStore::FieldType::Enum  , "mstype"                   , PropertyNames::MashStep::type                  , &MashStep::typeStringMapping},
          {ObjectStore::FieldType::Double, "ramp_time_mins"           , PropertyNames::    Step::rampTime_mins         },
          {ObjectStore::FieldType::Int   , "step_number"              , PropertyNames::    Step::stepNumber            },
-         {ObjectStore::FieldType::Double, "step_temp_c"              , PropertyNames::MashStep::stepTemp_c            },
-         {ObjectStore::FieldType::Double, "step_time_mins"           , PropertyNames::    Step::stepTime_mins          },
+         {ObjectStore::FieldType::Double, "step_temp_c"              , PropertyNames::    Step::startTemp_c           },
+         {ObjectStore::FieldType::Double, "step_time_mins"           , PropertyNames::    Step::stepTime_mins         },
          // Now we support BeerJSON, amount_l unifies and replaces infuseAmount_l and decoctionAmount_l
          // See comment in model/MashStep.h for more info
          {ObjectStore::FieldType::Double, "amount_l"                 , PropertyNames::MashStep::amount_l              },
@@ -403,7 +403,8 @@ namespace {
          {ObjectStore::FieldType::Bool  , "deleted"         , PropertyNames::NamedEntity::deleted         },
          {ObjectStore::FieldType::Bool  , "display"         , PropertyNames::NamedEntity::display         },
          // NB: BoilSteps don't have folders, as each one is owned by a Boil
-         {ObjectStore::FieldType::Double, "step_time_mins"  , PropertyNames::Step::stepTime_mins           },
+         {ObjectStore::FieldType::Double, "step_time_mins"  , PropertyNames::Step::stepTime_mins          },
+         {ObjectStore::FieldType::Double, "start_temp_c"    , PropertyNames::Step::startTemp_c            },
          {ObjectStore::FieldType::Double, "end_temp_c"      , PropertyNames::Step::endTemp_c              },
          {ObjectStore::FieldType::Double, "ramp_time_mins"  , PropertyNames::Step::rampTime_mins          },
          {ObjectStore::FieldType::Int   , "step_number"     , PropertyNames::Step::stepNumber             },
@@ -411,7 +412,6 @@ namespace {
          {ObjectStore::FieldType::String, "description"     , PropertyNames::Step::description            },
          {ObjectStore::FieldType::Double, "start_acidity_ph", PropertyNames::Step::startAcidity_pH        },
          {ObjectStore::FieldType::Double, "end_acidity_ph"  , PropertyNames::Step::endAcidity_pH          },
-         {ObjectStore::FieldType::Double, "start_temp_c"    , PropertyNames::StepExtended::startTemp_c    },
          {ObjectStore::FieldType::Double, "start_gravity_sg", PropertyNames::StepExtended::startGravity_sg},
          {ObjectStore::FieldType::Double, "end_gravity_sg"  , PropertyNames::StepExtended::  endGravity_sg},
          {ObjectStore::FieldType::Enum  , "chilling_type"   , PropertyNames::BoilStep::chillingType       , &BoilStep::chillingTypeStringMapping},
@@ -440,7 +440,11 @@ namespace {
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for FermentationStep
+   //
    // NB: FermentationSteps don't get folders, because they don't separate from their Fermentation
+   //
+   // NB: Although FermentationStep inherits (via StepExtended) from Step, the rampTime_mins field is not used and
+   //     should not be stored in the DB or serialised.  See comment in model/Step.h.
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    template<> ObjectStore::TableDefinition const PRIMARY_TABLE<FermentationStep> {
       "fermentation_step",
@@ -450,15 +454,14 @@ namespace {
          {ObjectStore::FieldType::Bool  , "deleted"         , PropertyNames::NamedEntity::deleted         },
          {ObjectStore::FieldType::Bool  , "display"         , PropertyNames::NamedEntity::display         },
          // NB: FermentationSteps don't have folders, as each one is owned by a Fermentation
-         {ObjectStore::FieldType::Double, "step_time_mins"  , PropertyNames::Step::stepTime_mins           },
+         {ObjectStore::FieldType::Double, "step_time_mins"  , PropertyNames::Step::stepTime_mins          },
+         {ObjectStore::FieldType::Double, "start_temp_c"    , PropertyNames::Step::startTemp_c            },
          {ObjectStore::FieldType::Double, "end_temp_c"      , PropertyNames::Step::endTemp_c              },
-         {ObjectStore::FieldType::Double, "ramp_time_mins"  , PropertyNames::Step::rampTime_mins          },
          {ObjectStore::FieldType::Int   , "step_number"     , PropertyNames::Step::stepNumber             },
          {ObjectStore::FieldType::Int   , "fermentation_id" , PropertyNames::Step::ownerId                , &PRIMARY_TABLE<Fermentation>},
          {ObjectStore::FieldType::String, "description"     , PropertyNames::Step::description            },
          {ObjectStore::FieldType::Double, "start_acidity_ph", PropertyNames::Step::startAcidity_pH        },
-         {ObjectStore::FieldType::Double, "end_acidity_ph"  , PropertyNames::Step::endAcidity_pH          },
-         {ObjectStore::FieldType::Double, "start_temp_c"    , PropertyNames::StepExtended::startTemp_c    },
+         {ObjectStore::FieldType::Double, "end_acidity_ph"  , PropertyNames::Step::  endAcidity_pH        },
          {ObjectStore::FieldType::Double, "start_gravity_sg", PropertyNames::StepExtended::startGravity_sg},
          {ObjectStore::FieldType::Double, "end_gravity_sg"  , PropertyNames::StepExtended::  endGravity_sg},
          {ObjectStore::FieldType::Bool  , "free_rise"       , PropertyNames::FermentationStep::freeRise   },
@@ -741,24 +744,24 @@ namespace {
          {ObjectStore::FieldType::Date  , "date"               , PropertyNames::Recipe::date              },
          {ObjectStore::FieldType::Double, "efficiency"         , PropertyNames::Recipe::efficiency_pct    },
          {ObjectStore::FieldType::Int   , "equipment_id"       , PropertyNames::Recipe::equipmentId       , &PRIMARY_TABLE<Equipment>},
-         {ObjectStore::FieldType::Int   , "fermentation_stages", PropertyNames::Recipe::fermentationStages}, // TBD: This could become UInt with corresponding changes in model/Recipe.h
+///         {ObjectStore::FieldType::Int   , "fermentation_stages", PropertyNames::Recipe::fermentationStages}, // TBD: This could become UInt with corresponding changes in model/Recipe.h
          {ObjectStore::FieldType::Double, "fg"                 , PropertyNames::Recipe::fg                },
          {ObjectStore::FieldType::Bool  , "forced_carb"        , PropertyNames::Recipe::forcedCarbonation },
          {ObjectStore::FieldType::Double, "keg_priming_factor" , PropertyNames::Recipe::kegPrimingFactor  },
          {ObjectStore::FieldType::Int   , "mash_id"            , PropertyNames::Recipe::mashId            , &PRIMARY_TABLE<Mash>},
          {ObjectStore::FieldType::String, "notes"              , PropertyNames::Recipe::notes             },
          {ObjectStore::FieldType::Double, "og"                 , PropertyNames::Recipe::og                },
-         {ObjectStore::FieldType::Double, "primary_age"        , PropertyNames::Recipe::primaryAge_days   },
-         {ObjectStore::FieldType::Double, "primary_temp"       , PropertyNames::Recipe::primaryTemp_c     },
+///         {ObjectStore::FieldType::Double, "primary_age"        , PropertyNames::Recipe::primaryAge_days   },
+///         {ObjectStore::FieldType::Double, "primary_temp"       , PropertyNames::Recipe::primaryTemp_c     },
          {ObjectStore::FieldType::Double, "priming_sugar_equiv", PropertyNames::Recipe::primingSugarEquiv },
          {ObjectStore::FieldType::String, "priming_sugar_name" , PropertyNames::Recipe::primingSugarName  },
-         {ObjectStore::FieldType::Double, "secondary_age"      , PropertyNames::Recipe::secondaryAge_days },
-         {ObjectStore::FieldType::Double, "secondary_temp"     , PropertyNames::Recipe::secondaryTemp_c   },
+///         {ObjectStore::FieldType::Double, "secondary_age"      , PropertyNames::Recipe::secondaryAge_days },
+///         {ObjectStore::FieldType::Double, "secondary_temp"     , PropertyNames::Recipe::secondaryTemp_c   },
          {ObjectStore::FieldType::Int   , "style_id"           , PropertyNames::Recipe::styleId           , &PRIMARY_TABLE<Style>},
          {ObjectStore::FieldType::String, "taste_notes"        , PropertyNames::Recipe::tasteNotes        },
          {ObjectStore::FieldType::Double, "taste_rating"       , PropertyNames::Recipe::tasteRating       },
-         {ObjectStore::FieldType::Double, "tertiary_age"       , PropertyNames::Recipe::tertiaryAge_days  },
-         {ObjectStore::FieldType::Double, "tertiary_temp"      , PropertyNames::Recipe::tertiaryTemp_c    },
+///         {ObjectStore::FieldType::Double, "tertiary_age"       , PropertyNames::Recipe::tertiaryAge_days  },
+///         {ObjectStore::FieldType::Double, "tertiary_temp"      , PropertyNames::Recipe::tertiaryTemp_c    },
          {ObjectStore::FieldType::Enum  , "type"               , PropertyNames::Recipe::type              , &Recipe::typeStringMapping},
          {ObjectStore::FieldType::Int   , "ancestor_id"        , PropertyNames::Recipe::ancestorId        , &PRIMARY_TABLE<Recipe>},
          {ObjectStore::FieldType::Bool  , "locked"             , PropertyNames::Recipe::locked            },
