@@ -1203,7 +1203,7 @@ void MainWindow::restoreSavedState() {
          []([[maybe_unused]] std::shared_ptr<Recipe> obj) {return true;}
       );
       if (firstRecipeWeFind) {
-         key = firstRecipeWeFind.value()->key();
+         key = firstRecipeWeFind->key();
       }
    }
    if ( key > -1 ) {

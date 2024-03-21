@@ -52,7 +52,7 @@ void registerMetaTypes() {
    // adding them got rid of "QMetaProperty::read: Unable to handle unregistered datatype" errors.  One day we should
    // get to the bottom of what's going on here, but, for now, it feels pretty low priority.
    //
-   // If you get a compile error here, it may be because you didn't include the necessary model/ header file
+   // If you get a compile error here, it may be because you didn't include the necessary "model/" header file
    //
    qRegisterMetaType<QList<std::shared_ptr<BoilStep                 >>>();
    qRegisterMetaType<QList<std::shared_ptr<FermentationStep         >>>();
@@ -64,8 +64,7 @@ void registerMetaTypes() {
    qRegisterMetaType<QList<std::shared_ptr<RecipeAdjustmentSalt     >>>();
    qRegisterMetaType<QList<std::shared_ptr<RecipeUseOfWater         >>>();
 
-   qRegisterMetaType<std::optional<std::shared_ptr<Boil>>>();
-   qRegisterMetaType<Fermentation *>();
+   qRegisterMetaType<std::shared_ptr<Boil        >>();
    qRegisterMetaType<std::shared_ptr<Fermentation>>();
 
    return;

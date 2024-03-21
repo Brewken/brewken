@@ -343,18 +343,18 @@ public:
    }
 
    /**
-    * \brief Returns the step at the specified position, if it exists
+    * \brief Returns the step at the specified position, if it exists, or \c nullptr if not
     *
     * \param stepNumber counted from 1
     */
-   std::optional<std::shared_ptr<DerivedStep>> stepAt(int const stepNumber) const {
+   std::shared_ptr<DerivedStep> stepAt(int const stepNumber) const {
       Q_ASSERT(stepNumber > 0);
       auto mySteps = this->steps();
 
       if (mySteps.size() >= stepNumber) {
          return mySteps[stepNumber - 1];
       }
-      return std::nullopt;
+      return nullptr;
    }
 
    /**
@@ -366,8 +366,11 @@ public:
     *            step(s) exist by creating default ones if necessary.
     *          - Calling this with null value (ie std::nullopt) delete any subsequent steps.  (Doesn't make sense for
     *            third step to become second in the context of this function.)
+    *
+    * \param step The step to set, or \c nullptr to unset it
+    * \param stepNumber
     */
-   void setStepAt(std::optional<std::shared_ptr<DerivedStep>> step, int const stepNumber) {
+   void setStepAt(std::shared_ptr<DerivedStep> step, int const stepNumber) {
       Q_ASSERT(stepNumber > 0);
       auto mySteps = this->steps();
       if (mySteps.size() >= stepNumber) {
@@ -376,11 +379,11 @@ public:
          if (step) {
             // This is an easy case: we're replacing an existing step
             this->removeStep(mySteps[stepNumber - 1]);
-            this->insertStep(*step, stepNumber);
+            this->insertStep(step, stepNumber);
             return;
          }
 
-         // Caller supplied std::nullopt, so we're deleting this step and all the ones after it
+         // Caller supplied nullptr, so we're deleting this step and all the ones after it
          for (int stepNumberToDelete = mySteps.size(); stepNumberToDelete >= stepNumber; --stepNumberToDelete) {
             this->removeStep(mySteps[stepNumberToDelete]);
          }
@@ -397,7 +400,7 @@ public:
       for (int stepNumbertoCreate = mySteps.size(); stepNumbertoCreate < stepNumber; ++stepNumbertoCreate) {
          this->insertStep(std::make_shared<DerivedStep>(), stepNumbertoCreate);
       }
-      this->insertStep(*step, stepNumber);
+      this->insertStep(step, stepNumber);
 
       return;
    }
@@ -407,12 +410,12 @@ public:
    // setTertiary with something other than std::nullopt needs to ensure the right number of prior step(s) exist, if
    // necessary by creating default ones.
    //
-   std::optional<std::shared_ptr<DerivedStep>> doPrimary  () const { return this->stepAt(1); }
-   std::optional<std::shared_ptr<DerivedStep>> doSecondary() const { return this->stepAt(2); }
-   std::optional<std::shared_ptr<DerivedStep>> doTertiary () const { return this->stepAt(3); }
-   void doSetPrimary  (std::optional<std::shared_ptr<DerivedStep>> val) { this->setStepAt(val, 1); return; }
-   void doSetSecondary(std::optional<std::shared_ptr<DerivedStep>> val) { this->setStepAt(val, 2); return; }
-   void doSetTertiary (std::optional<std::shared_ptr<DerivedStep>> val) { this->setStepAt(val, 3); return; }
+   std::shared_ptr<DerivedStep> doPrimary  () const { return this->stepAt(1); }
+   std::shared_ptr<DerivedStep> doSecondary() const { return this->stepAt(2); }
+   std::shared_ptr<DerivedStep> doTertiary () const { return this->stepAt(3); }
+   void doSetPrimary  (std::shared_ptr<DerivedStep> val) { this->setStepAt(val, 1); return; }
+   void doSetSecondary(std::shared_ptr<DerivedStep> val) { this->setStepAt(val, 2); return; }
+   void doSetTertiary (std::shared_ptr<DerivedStep> val) { this->setStepAt(val, 3); return; }
 
 private:
    // The ordering of DerivedSteps within a Derived is stored in the DerivedSteps.  If we remove a DerivedStep from the
@@ -466,34 +469,34 @@ protected:
                                                                                          \
       /* We don't put the step name in these getters/setters as it would become */       \
       /* unwieldy - eg setSecondaryFermentationStep()                           */       \
-      std::optional<std::shared_ptr<NeName##Step>> primary  () const;                    \
-      std::optional<std::shared_ptr<NeName##Step>> secondary() const;                    \
-      std::optional<std::shared_ptr<NeName##Step>> tertiary () const;                    \
-      void setPrimary  (std::optional<std::shared_ptr<NeName##Step>> val);               \
-      void setSecondary(std::optional<std::shared_ptr<NeName##Step>> val);               \
-      void setTertiary (std::optional<std::shared_ptr<NeName##Step>> val);               \
+      std::shared_ptr<NeName##Step> primary  () const;                                   \
+      std::shared_ptr<NeName##Step> secondary() const;                                   \
+      std::shared_ptr<NeName##Step> tertiary () const;                                   \
+      void setPrimary  (std::shared_ptr<NeName##Step> val);                              \
+      void setSecondary(std::shared_ptr<NeName##Step> val);                              \
+      void setTertiary (std::shared_ptr<NeName##Step> val);                              \
 
 /**
  * \brief Derived classes should include this in their implementation file
  */
 #define STEP_OWNER_COMMON_CODE(NeName, LcNeName) \
-   QList<std::shared_ptr<NeName##Step>> NeName::LcNeName##Steps        () const { return this->steps(); }             \
-   void NeName::set##NeName##Steps(QList<std::shared_ptr<NeName##Step>> const & val) {                                \
-      this->setSteps(val); return;                                                                                    \
-   }                                                                                                                  \
-                                                                                                                      \
-   void NeName::connectSignals() { StepOwnerBase<NeName, NeName##Step>::doConnectSignals(); return; }                 \
-                                                                                                                      \
-   void NeName::setKey(int key) { this->doSetKey(key); return; }                                                      \
-                                                                                                                      \
-   Recipe * NeName::getOwningRecipe() const { return this->doGetOwningRecipe(); }                                     \
-   void NeName::hardDeleteOwnedEntities() { this->doHardDeleteOwnedEntities(); return; }                              \
-                                                                                                                      \
-   std::optional<std::shared_ptr<NeName##Step>> NeName::primary  () const { return this->doPrimary  (); }             \
-   std::optional<std::shared_ptr<NeName##Step>> NeName::secondary() const { return this->doSecondary(); }             \
-   std::optional<std::shared_ptr<NeName##Step>> NeName::tertiary () const { return this->doTertiary (); }             \
-   void NeName::setPrimary  (std::optional<std::shared_ptr<NeName##Step>> val) { this->doSetPrimary  (val); return; } \
-   void NeName::setSecondary(std::optional<std::shared_ptr<NeName##Step>> val) { this->doSetSecondary(val); return; } \
-   void NeName::setTertiary (std::optional<std::shared_ptr<NeName##Step>> val) { this->doSetTertiary (val); return; } \
+   QList<std::shared_ptr<NeName##Step>> NeName::LcNeName##Steps        () const { return this->steps(); } \
+   void NeName::set##NeName##Steps(QList<std::shared_ptr<NeName##Step>> const & val) {                    \
+      this->setSteps(val); return;                                                                        \
+   }                                                                                                      \
+                                                                                                          \
+   void NeName::connectSignals() { StepOwnerBase<NeName, NeName##Step>::doConnectSignals(); return; }     \
+                                                                                                          \
+   void NeName::setKey(int key) { this->doSetKey(key); return; }                                          \
+                                                                                                          \
+   Recipe * NeName::getOwningRecipe() const { return this->doGetOwningRecipe(); }                         \
+   void NeName::hardDeleteOwnedEntities() { this->doHardDeleteOwnedEntities(); return; }                  \
+                                                                                                          \
+   std::shared_ptr<NeName##Step> NeName::primary  () const { return this->doPrimary  (); }                \
+   std::shared_ptr<NeName##Step> NeName::secondary() const { return this->doSecondary(); }                \
+   std::shared_ptr<NeName##Step> NeName::tertiary () const { return this->doTertiary (); }                \
+   void NeName::setPrimary  (std::shared_ptr<NeName##Step> val) { this->doSetPrimary  (val); return; }    \
+   void NeName::setSecondary(std::shared_ptr<NeName##Step> val) { this->doSetSecondary(val); return; }    \
+   void NeName::setTertiary (std::shared_ptr<NeName##Step> val) { this->doSetTertiary (val); return; }    \
 
 #endif

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/ObjectStore.h is part of Brewken, and is copyright the following authors 2021-2023:
+ * database/ObjectStore.h is part of Brewken, and is copyright the following authors 2021-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -378,10 +378,10 @@ public:
     *
     * \param matchFunction Takes a shared pointer to object and returns \c true if it's a match or \c false otherwise.
     *
-    * \return Shared pointer to the first object that gives a \c true result to \c matchFunction, or \c std::nullopt if
-    *         none does
+    * \return Shared pointer to the first object that gives a \c true result to \c matchFunction, or \c nullptr if none
+    *         does.
     */
-   std::optional< std::shared_ptr<QObject> > findFirstMatching(
+   std::shared_ptr<QObject> findFirstMatching(
       std::function<bool(std::shared_ptr<QObject>)> const & matchFunction
    ) const;
    /**

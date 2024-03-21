@@ -471,9 +471,9 @@ void NamedEntity::propagatePropertyChange(BtStringConst const & propertyName, bo
    return;
 }
 
-std::optional<std::shared_ptr<Recipe>> NamedEntity::owningRecipe() const {
+std::shared_ptr<Recipe> NamedEntity::owningRecipe() const {
    // Default is for NamedEntity not to be owned.
-   return std::nullopt;
+   return nullptr;
 }
 
 NamedEntity * NamedEntity::getParent() const {

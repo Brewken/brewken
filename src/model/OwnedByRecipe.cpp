@@ -66,11 +66,11 @@ std::shared_ptr<Recipe> OwnedByRecipe::recipe() const {
    return ObjectStoreWrapper::getById<Recipe>(this->m_recipeId);
 }
 
-std::optional<std::shared_ptr<Recipe>> OwnedByRecipe::owningRecipe() const {
+std::shared_ptr<Recipe> OwnedByRecipe::owningRecipe() const {
    if (ObjectStoreWrapper::contains<Recipe>(this->m_recipeId)) {
       return ObjectStoreWrapper::getById<Recipe>(this->m_recipeId);
    }
-   return std::nullopt;
+   return nullptr;
 }
 
 void OwnedByRecipe::setRecipeId(int const val) { SET_AND_NOTIFY(PropertyNames::OwnedByRecipe::recipeId, this->m_recipeId, val); return; }

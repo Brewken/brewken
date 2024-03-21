@@ -527,7 +527,7 @@ public:
    double  fg                () ;
    int     fermentationStages() const;
    double  primaryAge_days   () const;
-   double  primaryTemp_c     () const;
+///   double  primaryTemp_c     () const;
    double  secondaryAge_days () const;
    double  secondaryTemp_c   () const;
    double  tertiaryAge_days  () const;

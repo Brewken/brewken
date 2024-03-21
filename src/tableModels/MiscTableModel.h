@@ -27,6 +27,7 @@
 #include <QVariant>
 #include <QWidget>
 
+#include "model/InventoryMisc.h"
 #include "model/Misc.h"
 #include "tableModels/ItemDelegate.h"
 #include "tableModels/TableModelBase.h"

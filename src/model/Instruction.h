@@ -100,7 +100,7 @@ public:
 
    int instructionNumber() const;
 
-   virtual std::optional<std::shared_ptr<Recipe>> owningRecipe() const;
+   virtual std::shared_ptr<Recipe> owningRecipe() const;
 
 signals:
 

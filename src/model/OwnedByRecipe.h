@@ -59,7 +59,7 @@ public:
    void setRecipeId(int const val);
    void setRecipe(Recipe * recipe);
 
-   virtual std::optional<std::shared_ptr<Recipe>> owningRecipe() const;
+   virtual std::shared_ptr<Recipe> owningRecipe() const;
    int recipeId() const;
    std::shared_ptr<Recipe> recipe() const;
 

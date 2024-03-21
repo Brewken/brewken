@@ -84,11 +84,11 @@ public:
    Q_PROPERTY(unsigned int numSteps   READ numSteps   STORED false)
 
    //! \brief Convenience property for accessing the first fermentation step  (See \c StepOwnerBase for getter/setter implementation.)
-   Q_PROPERTY(std::optional<std::shared_ptr<FermentationStep>>   primary     READ primary     WRITE setPrimary     STORED false)
+   Q_PROPERTY(std::shared_ptr<FermentationStep>   primary     READ primary     WRITE setPrimary     STORED false)
    //! \brief Convenience property for accessing the second fermentation step  (See \c StepOwnerBase for getter/setter implementation.)
-   Q_PROPERTY(std::optional<std::shared_ptr<FermentationStep>>   secondary   READ secondary   WRITE setSecondary   STORED false)
+   Q_PROPERTY(std::shared_ptr<FermentationStep>   secondary   READ secondary   WRITE setSecondary   STORED false)
    //! \brief Convenience property for accessing the third fermentation step  (See \c StepOwnerBase for getter/setter implementation.)
-   Q_PROPERTY(std::optional<std::shared_ptr<FermentationStep>>   tertiary    READ tertiary    WRITE setTertiary    STORED false)
+   Q_PROPERTY(std::shared_ptr<FermentationStep>   tertiary    READ tertiary    WRITE setTertiary    STORED false)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    QString               description  () const;

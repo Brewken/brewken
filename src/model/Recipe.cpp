@@ -220,6 +220,10 @@ template<> BtStringConst const & Recipe::propertyNameFor<RecipeAdjustmentSalt   
 template<> BtStringConst const & Recipe::propertyNameFor<RecipeUseOfWater         >() { return PropertyNames::Recipe::waterUseIds           ; }
 template<> BtStringConst const & Recipe::propertyNameFor<Style                    >() { return PropertyNames::Recipe::styleId               ; }
 
+// TBD: This is needed for WaterButton, but we should have a proper look at that some day
+template<> BtStringConst const & Recipe::propertyNameFor<Water                    >() { return PropertyNames::Recipe::waterUses             ; }
+
+
 // This private implementation class holds all private non-virtual members of Recipe
 class Recipe::impl {
 public:
@@ -3331,8 +3335,7 @@ void RecipeHelper::prepareForPropertyChange(NamedEntity & ne, BtStringConst cons
    if (!owningRecipe) {
       return;
    }
-   auto owner = *owningRecipe;
-   if (owner->isBeingModified()) {
+   if (owningRecipe->isBeingModified()) {
       // Change is not related to a recipe or the recipe is already being modified
       return;
    }
@@ -3341,21 +3344,21 @@ void RecipeHelper::prepareForPropertyChange(NamedEntity & ne, BtStringConst cons
    // Automatic versioning means that, once a recipe is brewed, it is "soft locked" and the first change should spawn a
    // new version.  Any subsequent change should not spawn a new version until it is brewed again.
    //
-   if (owner->brewNotes().empty()) {
+   if (owningRecipe->brewNotes().empty()) {
       // Recipe hasn't been brewed
       return;
    }
 
    // If the object we're about to change already has descendants, then we don't want to create new ones.
-   if (owner->hasDescendants()) {
-      qDebug() << Q_FUNC_INFO << "Recipe #" << owner->key() << "already has descendants, so not creating any more";
+   if (owningRecipe->hasDescendants()) {
+      qDebug() << Q_FUNC_INFO << "Recipe #" << owningRecipe->key() << "already has descendants, so not creating any more";
       return;
    }
 
    //
    // Once we've started doing versioning, we don't want to trigger it again on the same Recipe until we've finished
    //
-   NamedEntityModifyingMarker ownerModifyingMarker(*owner);
+   NamedEntityModifyingMarker ownerModifyingMarker(*owningRecipe);
 
    //
    // Versioning when modifying something in a recipe is *hard*.  If we copy the recipe, there is no easy way to say
@@ -3366,14 +3369,14 @@ void RecipeHelper::prepareForPropertyChange(NamedEntity & ne, BtStringConst cons
 
    // Create a deep copy of the Recipe, and put it in the DB, so it has an ID.
    // (This will also emit signalObjectInserted for the new Recipe from ObjectStoreTyped<Recipe>.)
-   qDebug() << Q_FUNC_INFO << "Copying Recipe" << owner->key();
+   qDebug() << Q_FUNC_INFO << "Copying Recipe" << owningRecipe->key();
 
    // We also don't want to trigger versioning on the newly spawned Recipe until we're completely done here!
-   std::shared_ptr<Recipe> spawn = std::make_shared<Recipe>(*owner);
+   std::shared_ptr<Recipe> spawn = std::make_shared<Recipe>(*owningRecipe);
    NamedEntityModifyingMarker spawnModifyingMarker(*spawn);
    ObjectStoreWrapper::insert(spawn);
 
-   qDebug() << Q_FUNC_INFO << "Copied Recipe #" << owner->key() << "to new Recipe #" << spawn->key();
+   qDebug() << Q_FUNC_INFO << "Copied Recipe #" << owningRecipe->key() << "to new Recipe #" << spawn->key();
 
    // We assert that the newly created version of the recipe has not yet been brewed (and therefore will not get
    // automatically versioned on subsequent changes before it is brewed).
@@ -3384,7 +3387,7 @@ void RecipeHelper::prepareForPropertyChange(NamedEntity & ne, BtStringConst cons
    // previous version).  This will also emit a signalPropertyChanged from ObjectStoreTyped<Recipe>, which the UI can
    // pick up to update tree display of Recipes etc.
    //
-   owner->setAncestor(*spawn);
+   owningRecipe->setAncestor(*spawn);
 
    return;
 }

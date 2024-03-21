@@ -86,21 +86,14 @@ template <typename T> concept CONCEPT_FIX_UP IsOptionalEnum  = is_optional_enum<
 template <typename T> concept CONCEPT_FIX_UP IsOptionalOther = !is_optional_enum<T>::value && is_optional<T>::value;
 
 //
-// In a similar vein it's useful at compile time to be able to know if something is a raw pointer, a shared pointer, or
-// an optional shared pointer.  (I can't think of a situation where we would want use an optional raw pointer, so we
-// don't cover that case.)
+// In a similar vein it's useful at compile time to be able to know if something is a raw pointer or a shared pointer.
 //
-// Already std::is_pointer tells us whether something is a raw pointer, so we just need the other two cases.
+// Already std::is_pointer tells us whether something is a raw pointer, so we just need the other case.
 //
 template<typename T> struct is_shared_ptr : public std::false_type{};
 template<typename T> struct is_shared_ptr<std::shared_ptr<T>> : public std::true_type{};
 
-template<typename T> struct is_optional_shared_ptr : public std::false_type{};
-template<typename T> struct is_optional_shared_ptr<std::optional<T>> : public is_shared_ptr<T>{};
-
-template <typename T> concept CONCEPT_FIX_UP IsRawPointer            = std::is_pointer       <T>::value;
-template <typename T> concept CONCEPT_FIX_UP IsRequiredSharedPointer = is_shared_ptr         <T>::value;
-template <typename T> concept CONCEPT_FIX_UP IsOptionalSharedPointer = is_optional_shared_ptr<T>::value;
-
+template <typename T> concept CONCEPT_FIX_UP IsRawPointer    = std::is_pointer<T>::value;
+template <typename T> concept CONCEPT_FIX_UP IsSharedPointer = is_shared_ptr  <T>::value;
 
 #endif

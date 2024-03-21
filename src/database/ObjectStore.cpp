@@ -1988,12 +1988,12 @@ std::shared_ptr<QObject> ObjectStore::defaultHardDelete(int id) {
    return object;
 }
 
-std::optional< std::shared_ptr<QObject> > ObjectStore::findFirstMatching(
+std::shared_ptr<QObject> ObjectStore::findFirstMatching(
    std::function<bool(std::shared_ptr<QObject>)> const & matchFunction
 ) const {
    auto result = std::find_if(this->pimpl->allObjects.cbegin(), this->pimpl->allObjects.cend(), matchFunction);
    if (result == this->pimpl->allObjects.cend()) {
-      return std::nullopt;
+      return nullptr;
    }
    return *result;
 }

@@ -85,15 +85,13 @@ struct TypeInfo {
     * \brief For fields that are pointers, we need to be able to distinguish the type of pointer.
     */
    enum class PointerType {
-      NotPointer           ,
-      RawPointer           ,
-      RequiredSharedPointer,
-      OptionalSharedPointer,
+      NotPointer   ,
+      RawPointer   ,
+      SharedPointer,
    };
-   template<typename                T> static PointerType makePointerType() {return PointerType::NotPointer           ;}
-   template<IsRawPointer            T> static PointerType makePointerType() {return PointerType::RawPointer           ;}
-   template<IsRequiredSharedPointer T> static PointerType makePointerType() {return PointerType::RequiredSharedPointer;}
-   template<IsOptionalSharedPointer T> static PointerType makePointerType() {return PointerType::OptionalSharedPointer;}
+   template<typename        T> static PointerType makePointerType() {return PointerType::NotPointer   ;}
+   template<IsRawPointer    T> static PointerType makePointerType() {return PointerType::RawPointer   ;}
+   template<IsSharedPointer T> static PointerType makePointerType() {return PointerType::SharedPointer;}
    PointerType pointerType;
 
    /**

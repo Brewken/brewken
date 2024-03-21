@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * serialization/xml/XmlNamedEntityRecord.h is part of Brewken, and is copyright the following authors 2020-2023:
+ * serialization/xml/XmlNamedEntityRecord.h is part of Brewken, and is copyright the following authors 2020-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -112,12 +112,12 @@ protected:
       );
       if (matchResult) {
          qDebug() <<
-            Q_FUNC_INFO << "Found a match (#" << matchResult.value()->key() << "," << matchResult.value()->name() <<
+            Q_FUNC_INFO << "Found a match (#" << matchResult->key() << "," << matchResult->name() <<
             ") for #" << this->m_namedEntity->key() << ", " << this->m_namedEntity->name();
          // Set our Hop/Yeast/Fermentable/etc to the one we found already stored in the database, so that any
          // containing Recipe etc can refer to it.  The new object we created will get deleted by the magic of shared
          // pointers.
-         this->m_namedEntity = matchResult.value();
+         this->m_namedEntity = matchResult;
          return true;
       }
       qDebug() << Q_FUNC_INFO << "No match found for "<< this->m_namedEntity->name();

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/IngredientBase.h is part of Brewken, and is copyright the following authors 2023:
+ * model/IngredientBase.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -35,14 +35,15 @@ protected:
     * \brief
     */
    Measurement::Amount getTotalInventory() const {
-      return getInventory<typename Derived::InventoryClass>(this->derived())->amount();
+      return InventoryTools::getInventory<Derived>(this->derived())->amount();
    }
 
    /**
     * \brief
     */
    void doSetTotalInventory(Measurement::Amount const val) {
-      getInventory<typename Derived::InventoryClass>(this->derived())->setAmount(val);
+      auto inventory = InventoryTools::getInventory<Derived>(this->derived());
+      inventory->setAmount(val);
       return;
    }
 

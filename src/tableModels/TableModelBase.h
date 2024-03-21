@@ -816,25 +816,33 @@ protected:
       return true;
    }
 
-///   template<class Caller>
-///   void updateInventory(int invKey, BtStringConst const & propertyName) requires IsTableModel<Caller> && HasInventory<Caller> {
-///      // Substantive version
-///      if (propertyName == PropertyNames::IngredientAmount::amount) {
-///         for (int ii = 0; ii < this->rows.size(); ++ii) {
-///            if (invKey == this->rows.at(ii)->inventoryId()) {
-///               emit this->derived().dataChanged(this->derived().createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)),
-///                                                this->derived().createIndex(ii, static_cast<int>(Derived::ColumnIndex::Inventory)));
-///            }
-///         }
-///      }
-///      return;
-///   }
-///   template<class Caller>
-///   void updateInventory([[maybe_unused]] int invKey,
-///                        [[maybe_unused]] BtStringConst const & propertyName) requires IsTableModel<Caller> && HasNoInventory<Caller> {
-///      // No-op version
-///      return;
-///   }
+   template<class TM>
+   void updateInventory(int invKey, BtStringConst const & propertyName) requires IsTableModel<TM> &&
+                                                                                 CanHaveInventory<NE> {
+      // Substantive version
+      if (propertyName == PropertyNames::IngredientAmount::amount) {
+         for (int ii = 0; ii < this->rows.size(); ++ii) {
+            std::shared_ptr<NE> ingredient = this->rows.at(ii);
+            if (InventoryTools::hasInventory<NE>(*ingredient)) {
+               std::shared_ptr<typename NE::InventoryClass> inventory = InventoryTools::getInventory(*ingredient);
+               if (inventory->key() == invKey) {
+                  emit this->derived().dataChanged(
+                     this->derived().createIndex(ii, static_cast<int>(Derived::ColumnIndex::TotalInventory)),
+                     this->derived().createIndex(ii, static_cast<int>(Derived::ColumnIndex::TotalInventory))
+                  );
+               }
+            }
+         }
+      }
+      return;
+   }
+   template<class TM>
+   void updateInventory([[maybe_unused]] int invKey,
+                        [[maybe_unused]] BtStringConst const & propertyName) requires IsTableModel<TM> &&
+                                                                                      CannotHaveInventory<NE> {
+      // No-op version
+      return;
+   }
 
    template<class Caller>
    void checkRecipeItems(Recipe * recipe) requires IsTableModel<Caller> && ObservesRecipe<Caller>{
@@ -983,10 +991,10 @@ protected:
       this->propertyChanged<NeName##TableModel>(prop, val, RecipePropertyName);                         \
       return;                                                                                           \
    }                                                                                                    \
-
-///   void NeName##TableModel::changedInventory(int invKey, BtStringConst const & propertyName) {
-///      this->updateInventory<NeName##TableModel>(invKey, propertyName);
-///      return;
-///   }
+                                                                                                        \
+   void NeName##TableModel::changedInventory(int invKey, BtStringConst const & propertyName) {          \
+      this->updateInventory<NeName##TableModel>(invKey, propertyName);                                  \
+      return;                                                                                           \
+   }
 
 #endif

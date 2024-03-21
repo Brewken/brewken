@@ -20,12 +20,8 @@
 #pragma once
 
 #include <QList>
-#include <QModelIndex>
 #include <QObject>
-#include <QSharedPointer>
 #include <QVariant>
-#include <QVector>
-#include <QWidget>
 
 #include "model/NamedEntity.h"
 

@@ -51,14 +51,14 @@ public:
          [this](std::shared_ptr<Recipe> rec) {return rec->uses(instruction);}
       );
 
-      if (!result.has_value()) {
+      if (!result) {
          qCritical() << Q_FUNC_INFO << "Unable to find Recipe for Instruction #" << this->instruction.key();
          return nullptr;
       }
 
-      this->recipe = result.value();
+      this->recipe = result;
 
-      return result.value();
+      return result;
    }
 
 private:
@@ -184,6 +184,6 @@ int Instruction::instructionNumber() const {
    return this->pimpl->getRecipe()->instructionNumber(*this);
 }
 
-std::optional<std::shared_ptr<Recipe>> Instruction::owningRecipe() const {
+std::shared_ptr<Recipe> Instruction::owningRecipe() const {
    return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](std::shared_ptr<Recipe> rec) {return rec->uses(*this);} );
 }

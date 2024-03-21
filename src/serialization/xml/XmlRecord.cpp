@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * serialization/xml/XmlRecord.cpp is part of Brewken, and is copyright the following authors 2020-2023:
+ * serialization/xml/XmlRecord.cpp is part of Brewken, and is copyright the following authors 2020-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -716,19 +716,21 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
                   // For a raw pointer, we don't have to upcast as the pointer will get upcast in the setter during the
                   // extraction from QVariant
                   valueToSet = QVariant::fromValue(processedChildren.first().get());
-               } else if (typeInfo.pointerType == TypeInfo::PointerType::RequiredSharedPointer) {
+               } else {
+                  // Should be the only possibility left.
+                  Q_ASSERT(typeInfo.pointerType == TypeInfo::PointerType::SharedPointer);
                   Q_ASSERT(childRecordDefinition.m_upAndDownCasters.m_pointerUpcaster);
                   valueToSet = QVariant::fromValue(
                      childRecordDefinition.m_upAndDownCasters.m_pointerUpcaster(processedChildren.first())
                   );
-               } else {
-                  // Should be the only possibility left.
-                  Q_ASSERT(typeInfo.pointerType == TypeInfo::PointerType::OptionalSharedPointer);
-                  Q_ASSERT(childRecordDefinition.m_upAndDownCasters.m_optionalPointerUpcaster);
-                  std::optional<std::shared_ptr<NamedEntity>> processedChild {processedChildren.first()};
-                  valueToSet = QVariant::fromValue(
-                     childRecordDefinition.m_upAndDownCasters.m_optionalPointerUpcaster(processedChild)
-                  );
+///               } else {
+///                  // Should be the only possibility left.
+///                  Q_ASSERT(typeInfo.pointerType == TypeInfo::PointerType::OptionalSharedPointer);
+///                  Q_ASSERT(childRecordDefinition.m_upAndDownCasters.m_optionalPointerUpcaster);
+///                  std::optional<std::shared_ptr<NamedEntity>> processedChild {processedChildren.first()};
+///                  valueToSet = QVariant::fromValue(
+///                     childRecordDefinition.m_upAndDownCasters.m_optionalPointerUpcaster(processedChild)
+///                  );
                }
 
             } else {
@@ -940,21 +942,23 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
             if (typeInfo.pointerType == TypeInfo::PointerType::RawPointer) {
                // For a raw pointer, the cast is simple as it can happen during the extraction from QVariant
                childNamedEntity = childNamedEntityVariant.value<NamedEntity *>();
-            } else if (typeInfo.pointerType == TypeInfo::PointerType::RequiredSharedPointer) {
+            } else {
+               // Should be the only possibility left
+               Q_ASSERT(typeInfo.pointerType == TypeInfo::PointerType::SharedPointer);
                // For a shared pointer it's a bit more tricky as we can't directly extract the uncast pointer from the
                // QVariant, so we need a little help to apply std::static_pointer_cast.
                childNamedEntitySp =
                   childRecordDefinition.m_upAndDownCasters.m_pointerDowncaster(childNamedEntityVariant);
                childNamedEntity = childNamedEntitySp.get();
-            } else {
-               // Should be the only possibility left
-               Q_ASSERT(typeInfo.pointerType == TypeInfo::PointerType::OptionalSharedPointer);
-               std::optional<std::shared_ptr<NamedEntity>> temp =
-                  childRecordDefinition.m_upAndDownCasters.m_optionalPointerDowncaster(childNamedEntityVariant);
-               if (temp) {
-                  childNamedEntitySp = *temp;
-                  childNamedEntity = childNamedEntitySp.get();
-               }
+///            } else {
+///               // Should be the only possibility left
+///               Q_ASSERT(typeInfo.pointerType == TypeInfo::PointerType::OptionalSharedPointer);
+///               std::optional<std::shared_ptr<NamedEntity>> temp =
+///                  childRecordDefinition.m_upAndDownCasters.m_optionalPointerDowncaster(childNamedEntityVariant);
+///               if (temp) {
+///                  childNamedEntitySp = *temp;
+///                  childNamedEntity = childNamedEntitySp.get();
+///               }
             }
 
             if (childNamedEntity) {

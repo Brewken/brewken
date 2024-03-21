@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/ObjectStoreTyped.h is part of Brewken, and is copyright the following authors 2021-2023:
+ * database/ObjectStoreTyped.h is part of Brewken, and is copyright the following authors 2021-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -193,10 +193,10 @@ public:
     *
     * \param matchFunction Takes a pointer to an object and returns \c true if the object is a match or \c false otherwise.
     *
-    * \return Shared pointer to the first object that gives a \c true result to \c matchFunction, or \c std::nullopt if
-    *         none does
+    * \return Shared pointer to the first object that gives a \c true result to \c matchFunction, or \c nullptr if none
+    *         does.
     */
-   std::optional< std::shared_ptr<NE> > findFirstMatching(std::function<bool(std::shared_ptr<NE>)> const & matchFunction) const {
+   std::shared_ptr<NE> findFirstMatching(std::function<bool(std::shared_ptr<NE>)> const & matchFunction) const {
       //
       // Caller has provided us with a lambda function that takes a shared pointer to NE (ie Water, Hop, Yeast, Recipe,
       // etc) and returns true or false depending on whether it's a match for whatever condition the caller requires.
@@ -209,10 +209,10 @@ public:
       auto result = this->ObjectStore::findFirstMatching(
          [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(std::static_pointer_cast<NE>(obj));}
       );
-      if (!result.has_value()) {
-         return std::nullopt;
-      }
-      return std::optional< std::shared_ptr<NE> >{std::static_pointer_cast<NE>(result.value())};
+///      if (!result) {
+///         return nullptr;
+///      }
+      return std::shared_ptr<NE>{std::static_pointer_cast<NE>(result)};
    }
 
    /**
@@ -235,10 +235,10 @@ public:
       auto result = this->ObjectStore::findFirstMatching(
          [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(static_cast<NE *>(obj.get()));}
       );
-      if (!result.has_value()) {
+      if (!result) {
          return nullptr;
       }
-      return static_cast<NE *>(result.value().get());
+      return static_cast<NE *>(result.get());
    }
 
    /**

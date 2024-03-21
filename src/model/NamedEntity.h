@@ -302,7 +302,7 @@ public:
     *             │    ├── RecipeAdditionFermentable     ├── Ingredient
     *             │    ├── RecipeAdditionHop             │    ├── Fermentable
     *             │    ├── RecipeAdditionMisc            │    ├── Hop
-    *             │    ├── RecipeAdjustmentSalt            │    ├── Misc
+    *             │    ├── RecipeAdjustmentSalt          │    ├── Misc
     *             │    └── RecipeAdditionYeast           │    ├── Salt
     *             └── RecipeUseOfWater                   │    └── Yeast
     *                                                    ├── Inventory
@@ -324,10 +324,10 @@ public:
     *        object has an owning \c Recipe to make it easy to determine whether a change to a base class property
     *        constitutes a change to a \c Recipe (and if so which one).  Hence this function.
     *
-    * \return \c std::nullopt if this object does not belong to a \c Recipe (ie it is an Independent Item or a
+    * \return \c nullptr if this object does not belong to a \c Recipe (ie it is an Independent Item or a
     *         Semi-Independent Item that is either used in more than one \c Recipe or not used in any \c Recipe)
     */
-   virtual std::optional<std::shared_ptr<Recipe>> owningRecipe() const;
+   virtual std::shared_ptr<Recipe> owningRecipe() const;
 
    /*!
     * \brief Some entities (eg Fermentable, Hop) get copied when added to a recipe, but others (eg Instruction) don't.
@@ -610,33 +610,33 @@ public:
       return QVariant::fromValue(std::static_pointer_cast<T>(input));
    }
 
-   /**
-    * \brief Converts a QVariant containing `std::optional<std::shared_ptr<Hop>>` or
-    *        `std::optional<std::shared_ptr<Fermentable>>` etc to
-    *        `std::optional<std::shared_ptr<NamedEntity>>`.
-    */
-   template<typename T>
-   static std::optional<std::shared_ptr<NamedEntity>> downcastOptionalPointer(QVariant const & input) {
-      auto contents{input.value<std::optional<std::shared_ptr<T>>>()};
-      if (contents) {
-         return std::static_pointer_cast<NamedEntity>(*contents);
-      }
-      return std::nullopt;
-   }
-
-   /**
-    * \brief Opposite of \c downcastOptionalPointer. Converts `std::optional<std::shared_ptr<NamedEntity>>` to a
-    *        QVariant containing `std::optional<std::shared_ptr<Hop>>` or `std::optional<std::shared_ptr<Fermentable>>`
-    *        etc.
-    */
-   template<typename T>
-   static QVariant upcastOptionalPointer(std::optional<std::shared_ptr<NamedEntity>> input) {
-      std::optional<std::shared_ptr<T>> output;
-      if (input) {
-         output = std::static_pointer_cast<T>(*input);
-      }
-      return QVariant::fromValue(output);
-   }
+///   /**
+///    * \brief Converts a QVariant containing `std::optional<std::shared_ptr<Hop>>` or
+///    *        `std::optional<std::shared_ptr<Fermentable>>` etc to
+///    *        `std::optional<std::shared_ptr<NamedEntity>>`.
+///    */
+///   template<typename T>
+///   static std::optional<std::shared_ptr<NamedEntity>> downcastOptionalPointer(QVariant const & input) {
+///      auto contents{input.value<std::optional<std::shared_ptr<T>>>()};
+///      if (contents) {
+///         return std::static_pointer_cast<NamedEntity>(*contents);
+///      }
+///      return std::nullopt;
+///   }
+///
+///   /**
+///    * \brief Opposite of \c downcastOptionalPointer. Converts `std::optional<std::shared_ptr<NamedEntity>>` to a
+///    *        QVariant containing `std::optional<std::shared_ptr<Hop>>` or `std::optional<std::shared_ptr<Fermentable>>`
+///    *        etc.
+///    */
+///   template<typename T>
+///   static QVariant upcastOptionalPointer(std::optional<std::shared_ptr<NamedEntity>> input) {
+///      std::optional<std::shared_ptr<T>> output;
+///      if (input) {
+///         output = std::static_pointer_cast<T>(*input);
+///      }
+///      return QVariant::fromValue(output);
+///   }
 
    /**
     * \brief Converts `QList<shared_ptr<Hop>>` or `QList<shared_ptr<Fermentable>>` etc to
@@ -695,8 +695,8 @@ public:
    struct UpAndDownCasters{
       std::shared_ptr<NamedEntity>                (*m_pointerDowncaster        )(QVariant const &                           );
       QVariant                                    (*m_pointerUpcaster          )(std::shared_ptr<NamedEntity>               );
-      std::optional<std::shared_ptr<NamedEntity>> (*m_optionalPointerDowncaster)(QVariant const &                           );
-      QVariant                                    (*m_optionalPointerUpcaster  )(std::optional<std::shared_ptr<NamedEntity>>);
+///      std::optional<std::shared_ptr<NamedEntity>> (*m_optionalPointerDowncaster)(QVariant const &                           );
+///      QVariant                                    (*m_optionalPointerUpcaster  )(std::optional<std::shared_ptr<NamedEntity>>);
       QVariant                                    (*m_listUpcaster             )(QList<std::shared_ptr<NamedEntity>> const &);
       QList<std::shared_ptr<NamedEntity>>         (*m_listDowncaster           )(QVariant const &                           );
    };
@@ -710,8 +710,8 @@ public:
       return {
          NamedEntity::downcastPointer        <T>,
          NamedEntity::upcastPointer          <T>,
-         NamedEntity::downcastOptionalPointer<T>,
-         NamedEntity::upcastOptionalPointer  <T>,
+///         NamedEntity::downcastOptionalPointer<T>,
+///         NamedEntity::upcastOptionalPointer  <T>,
          NamedEntity::upcastListToVariant    <T>,
          NamedEntity::downcastListFromVariant<T>
       };
@@ -730,11 +730,9 @@ private:
  *        own macro that generates all the Q_DECLARE_METATYPE macros we think we'll need for a class.
  */
 #define BT_DECLARE_METATYPES(ClassName) \
-Q_DECLARE_METATYPE(              std::shared_ptr<ClassName> ) \
-Q_DECLARE_METATYPE(std::optional<std::shared_ptr<ClassName>>) \
+Q_DECLARE_METATYPE(std::shared_ptr<ClassName> ) \
 Q_DECLARE_METATYPE(QList<                ClassName *>) \
 Q_DECLARE_METATYPE(QList<std::shared_ptr<ClassName> >)
-
 
 /**
  * \brief Convenience typedef for pointer to \c isOptional();

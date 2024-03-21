@@ -180,8 +180,8 @@ bool MashStep::isDecoction() const {
 ///   return Step::doGetOwningRecipe<Mash>(this);
 ///}
 
-[[nodiscard]] bool Step:: stepTimeIsRequired() const { return true; }
-[[nodiscard]] bool Step::startTempIsRequired() const { return true; }
+[[nodiscard]] bool MashStep:: stepTimeIsRequired() const { return true; }
+[[nodiscard]] bool MashStep::startTempIsRequired() const { return true; }
 
 
 // Insert boiler-plate wrapper functions that call down to StepBase

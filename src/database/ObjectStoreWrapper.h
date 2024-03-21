@@ -187,10 +187,10 @@ namespace ObjectStoreWrapper {
     *
     * \param matchFunction Takes a pointer to an object and returns \c true if the object is a match or \c false otherwise.
     *
-    * \return Shared pointer to the first object that gives a \c true result to \c matchFunction, or \c std::nullopt if
-    *         none does
+    * \return Shared pointer to the first object that gives a \c true result to \c matchFunction, or \c nullptr if none
+    *         does.
     */
-   template<class NE> std::optional< std::shared_ptr<NE> > findFirstMatching(
+   template<class NE> std::shared_ptr<NE> findFirstMatching(
       std::function<bool(std::shared_ptr<NE>)> const & matchFunction
    ) {
       return ObjectStoreTyped<NE>::getInstance().findFirstMatching(matchFunction);

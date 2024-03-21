@@ -33,6 +33,7 @@
 
 #include "measurement/Unit.h"
 #include "model/Fermentable.h"
+#include "model/InventoryFermentable.h"
 #include "tableModels/ItemDelegate.h"
 #include "tableModels/TableModelBase.h"
 

@@ -41,19 +41,24 @@ AddPropertyName(ingredientId)
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
 
+//
+// Only classes that derive from Ingredient have inventory.
+//
+// See comment in utils/TypeTraits.h for definition of CONCEPT_FIX_UP (and why, for now, we need it)
+template <typename NE> concept CONCEPT_FIX_UP    CanHaveInventory = std::is_base_of_v<Ingredient, NE>;
+template <typename NE> concept CONCEPT_FIX_UP CannotHaveInventory = std::negation_v<std::is_base_of<Ingredient, NE>>;
 
 /**
  * \brief Class representing an inventory entry for Hop/Fermentable/Yeast/Misc
  *
- *        Initial version of this class holds rather minimal data, but we envisage expanding it in future
+ *        Initial version of this class holds rather minimal data, but we envisage expanding it in future.  In
+ *        particular, we would like to be able to hold multiple Inventory objects for a given Ingredient object,
+ *        representing multiple purchases of that ingredient (potentially with different prices, expiry dates, etc).
  *
- *        NB: When we add, eg, a Hop to a Recipe, we make a copy for various reasons (including that the amount of Hop
- *            used in the Recipe is stored in the Hop, not the Recipe).  Each such copy _shares_ its Inventory with the
- *            Hop from which it was copied (aka its parent).  Thus all the Hops with the same parent will have the
- *            same Inventory object as that parent (because they are not really different Hops, merely different usages
- *            of that parent hop).
+ *        Subclasses need to supply a `using IngredientClass` alias analogous to the `using InventoryClass` one in the
+ *        Ingredient classes.  This is handled automatically by the INVENTORY_DECL macro below.
  *
- *            We want each type of inventory to be a different class so that it works with \c ObjectStoreTyped
+ *        NB: We want each type of inventory to be a different class so that it works with \c ObjectStoreTyped
  *
  *            It would be tempting to make Inventory a templated class (for \c Inventory<Hop>,
  *            \c Inventory<Fermentable>, etc), however we need Inventory to inherit from QObject so we can use Qt
@@ -130,13 +135,6 @@ public:
     */
    void setDisplay(bool var);
 
-   /**
-    * \brief Returns the name of the ingredient class (eg Hop, Fermentable, Misc, Yeast) to which this Inventory class
-    *        relates.  Subclasses need to provide the (trivial) implementation of this.  Primarily useful for logging
-    *        and debugging.
-    */
-   virtual char const * getIngredientClass() const = 0;
-
 ///   /**
 ///    * TBD: This is needed because NamedEntity has it, but I'd like to refactor it out at some point.
 ///    */
@@ -161,36 +159,58 @@ protected:
  */
 template <typename T> concept CONCEPT_FIX_UP IsInventory = std::is_base_of_v<Inventory, T>;
 
-/**
- * \return A suitable \c Inventory subclass object for the supplied \c Ingredient subclass object.  If the former does
- *         not exist, it will be created.
- */
-template<IsInventory Inv, IsIngredient Ing>
-Inv * getInventory(Ing const & ing) {
-   auto ingredientId = ing.key();
-
-   //
-   // At the moment, we assume there is at most on Inventory object per ingredient object.  In time we would like to
-   // extend this to manage, eg, different purchases/batches as separate Inventory items, but that's for another day.
-   //
-   auto result = ObjectStoreWrapper::findFirstMatching<Inv>(
-      [ingredientId](std::shared_ptr<Inv> inventory) {
-         return inventory->ingredientId() == ingredientId;
-      }
-   );
-   if (result) {
-      return result->get();
+namespace InventoryTools {
+   /**
+   * \return First found \c Inventory subclass object exists for the supplied \c Ingredient subclass object.  Or
+   *         \c nullptr if none is found.
+   */
+   template<IsInventory Inv, IsIngredient Ing>
+   std::shared_ptr<Inv> firstInventory(Ing const & ing) {
+      auto ingredientId = ing.key();
+      auto result = ObjectStoreWrapper::findFirstMatching<Inv>(
+         [ingredientId](std::shared_ptr<Inv> inventory) {
+            return inventory->ingredientId() == ingredientId;
+         }
+      );
+      return result;
    }
 
-   std::shared_ptr<Inv> newInventory = std::make_shared<Inv>();
-   newInventory->setIngredientId(ingredientId);
-   // Even though the Inventory base class does not have a setQuantity member function, we know that all its
-   // subclasses will, so this line will be fine when this template function is instantiated.
-   newInventory->setQuantity(0.0);
-   // After this next call, the object store will have a copy of the shared pointer, so it is OK that it subsequently
-   // goes out of scope here.
-   ObjectStoreWrapper::insert<Inv>(newInventory);
-   return newInventory.get();
+   /**
+   * \return \c true if at least one \c Inventory subclass object exists for the supplied \c Ingredient subclass object;
+   *         \c false otherwise.
+   */
+   template<IsIngredient Ing>
+   bool hasInventory(Ing const & ing) {
+      auto result = InventoryTools::firstInventory<typename Ing::InventoryClass, Ing>(ing);
+      // Although smart pointers can be treated as booleans inside if statements (eg `if (result)` etc) they are not
+      // implicitly convertible to bool in other circumstances.  The double negation here is a trick to get around this
+      // which avoids a cast or something painful such as `result ? true : false`.
+      return !!result;
+   }
+
+   /**
+   * \return A suitable \c Inventory subclass object for the supplied \c Ingredient subclass object.  If the former does
+   *         not exist, it will be created.
+   */
+   template<IsIngredient Ing>
+   std::shared_ptr<typename Ing::InventoryClass> getInventory(Ing const & ing) {
+      //
+      // At the moment, we assume there is at most on Inventory object per ingredient object.  In time we would like to
+      // extend this to manage, eg, different purchases/batches as separate Inventory items, but that's for another day.
+      //
+      auto result = firstInventory<typename Ing::InventoryClass, Ing>(ing);
+      if (result) {
+         return result;
+      }
+
+      auto newInventory = std::make_shared<typename Ing::InventoryClass>();
+      newInventory->setIngredientId(ing.key());
+      // Even though the Inventory base class does not have a setQuantity member function, we know that all its
+      // subclasses will, so this line will be fine when this template function is instantiated.
+      newInventory->setQuantity(0.0);
+      ObjectStoreWrapper::insert<typename Ing::InventoryClass>(newInventory);
+      return newInventory;
+   }
 }
 
 /**
@@ -206,6 +226,8 @@ public:                                                                         
    /** \brief See \c NamedEntity::typeLookup. */                                   \
    static TypeLookup const typeLookup;                                             \
                                                                                    \
+   using IngredientClass = IngredientName;                                         \
+                                                                                   \
    Inventory##IngredientName();                                                    \
    Inventory##IngredientName(NamedParameterBundle const & namedParameterBundle);   \
    Inventory##IngredientName(Inventory##IngredientName const & other);             \
@@ -213,7 +235,6 @@ public:                                                                         
    virtual ~Inventory##IngredientName();                                           \
                                                                                    \
 public:                                                                            \
-   virtual char const * getIngredientClass() const;                                \
    IngredientName * LcIngredientName() const ;                                     \
                                                                                    \
 protected:                                                                         \
@@ -232,8 +253,7 @@ protected:                                                                      
  *        Note we have to be careful about comment formats in macro definitions
  */
 #define INVENTORY_COMMON_CODE(IngredientName, LcIngredientName) \
-QString const Inventory##IngredientName::LocalisedName = tr(#IngredientName " Inventory");                             \
-char const * Inventory##IngredientName::getIngredientClass() const { return #IngredientName; }                      \
+QString const Inventory##IngredientName::LocalisedName = tr(#IngredientName " Inventory");                           \
 ObjectStore & Inventory##IngredientName::getObjectStoreTypedInstance() const {                                       \
    return ObjectStoreTyped<Inventory##IngredientName>::getInstance();                                                \
 }                                                                                                                    \
@@ -243,7 +263,7 @@ bool Inventory##IngredientName::isEqualTo(NamedEntity const & other) const {    
 }                                                                                                                    \
 /* All properties are defined in base classes */                                                                     \
 TypeLookup const Inventory##IngredientName::typeLookup {                                                             \
-   "Inventory"#IngredientName, { },                                                                                 \
+   "Inventory"#IngredientName, { },                                                                                  \
    {&Inventory::typeLookup, std::addressof(IngredientAmount<Inventory##IngredientName, IngredientName>::typeLookup)} \
 };                                                                                                                   \
 static_assert(std::is_base_of<Inventory, Inventory##IngredientName>::value);                                         \

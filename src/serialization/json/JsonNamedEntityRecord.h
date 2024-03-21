@@ -110,12 +110,12 @@ protected:
       );
       if (matchResult) {
          qDebug() <<
-            Q_FUNC_INFO << "Found a match (#" << matchResult.value()->key() << "," << matchResult.value()->name() <<
+            Q_FUNC_INFO << "Found a match (#" << matchResult->key() << "," << matchResult->name() <<
             ") for #" << this->m_namedEntity->key() << ", " << this->m_namedEntity->name();
          // Set our Hop/Yeast/Fermentable/etc to the one we found already stored in the database, so that any
          // containing Recipe etc can refer to it.  The new object we created will get deleted by the magic of shared
          // pointers.
-         this->m_namedEntity = matchResult.value();
+         this->m_namedEntity = matchResult;
          return true;
       }
       qDebug() << Q_FUNC_INFO << "No match found for "<< this->m_namedEntity->name();

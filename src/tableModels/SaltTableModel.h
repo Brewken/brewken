@@ -29,6 +29,7 @@
 #include <QWidget>
 
 #include "measurement/Unit.h"
+#include "model/InventorySalt.h"
 #include "model/Salt.h"
 #include "model/Water.h"
 #include "tableModels/BtTableModel.h"

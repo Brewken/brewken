@@ -29,6 +29,7 @@
 #include <QVariant>
 #include <QWidget>
 
+#include "model/InventoryYeast.h"
 #include "model/Yeast.h"
 #include "tableModels/ItemDelegate.h"
 #include "tableModels/TableModelBase.h"

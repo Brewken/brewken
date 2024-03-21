@@ -122,7 +122,7 @@ WaterEditor::~WaterEditor() {
    return;
 }
 
-void WaterEditor::setWater(std::optional<std::shared_ptr<Water>> water) {
+void WaterEditor::setWater(std::shared_ptr<Water> water) {
 
    if (this->pimpl->observedWater) {
       qDebug() <<
@@ -134,7 +134,7 @@ void WaterEditor::setWater(std::optional<std::shared_ptr<Water>> water) {
    }
 
    if (water) {
-      this->pimpl->observedWater = water.value();
+      this->pimpl->observedWater = water;
       qDebug() <<
          Q_FUNC_INFO << this->pimpl->editorName << ": Now observing" << this->pimpl->observedWater->name() <<
          "#" << this->pimpl->observedWater->key() << " @" << static_cast<void *>(this->pimpl->observedWater.get()) <<

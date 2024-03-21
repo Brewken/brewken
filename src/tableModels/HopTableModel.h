@@ -29,6 +29,7 @@
 #include <QWidget>
 
 #include "model/Hop.h"
+#include "model/InventoryHop.h"
 #include "tableModels/ItemDelegate.h"
 #include "tableModels/TableModelBase.h"
 

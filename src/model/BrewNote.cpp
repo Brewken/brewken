@@ -31,6 +31,7 @@
 #include "Localization.h"
 #include "model/Boil.h"
 #include "model/Equipment.h"
+#include "model/Fermentation.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/NamedParameterBundle.h"
@@ -290,7 +291,12 @@ void BrewNote::populateNote(Recipe * parent) {
    this->setOg( parent->og());
    this->setProjOg(parent->og());
 
-   this->setPitchTemp_c(parent->primaryTemp_c());
+   auto fermentation = parent->fermentation();
+   if (fermentation &&
+       fermentation->primary() &&
+       fermentation->primary()->startTemp_c()) {
+      this->setPitchTemp_c(*fermentation->primary()->startTemp_c()); // Replaces parent->primaryTemp_c()
+   }
 
    this->setFg( parent->fg());
    this->setProjFg( parent->fg() );
