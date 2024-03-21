@@ -928,14 +928,16 @@ namespace {
          {QString("UPDATE recipe "
                   "SET boil_id = b.id "
                   "FROM ("
-                     "SELECT id "
+                     "SELECT id, "
+                            "temp_recipe_id "
                      "FROM boil"
                   ") AS b "
                   "WHERE recipe.id = b.temp_recipe_id")},
          {QString("UPDATE recipe "
                   "SET fermentation_id = f.id "
                   "FROM ("
-                     "SELECT id "
+                     "SELECT id, "
+                            "temp_recipe_id "
                      "FROM fermentation"
                   ") AS f "
                   "WHERE recipe.id = f.temp_recipe_id")},
@@ -1086,7 +1088,8 @@ namespace {
                   "FROM recipe"
          ), {QVariant{false}, QVariant{true}}},
          //
-         // Populate fermentation_steps.
+         // Populate fermentation_steps.  NB that fermentation steps do not have a ramp time.  (See comment in
+         // model/Step.h.)
          //
          // Note that primary_age, secondary_age, tertiary_age (which we can safely assume are not NULL as we are only
          // introducing optional fields with the BeerJSON work) are in days, but our canonical unit of time is minutes.
@@ -1099,7 +1102,6 @@ namespace {
                      "display         , "
                      "step_time_mins  , "
                      "end_temp_c      , "
-                     "ramp_time_mins  , "
                      "step_number     , "
                      "fermentation_id , "
                      "description     , "
@@ -1116,7 +1118,6 @@ namespace {
                      "?,    "                                                                    // display
                      "recipe.primary_age * 60 * 24, "                                            // step_time_mins
                      "recipe.primary_temp   , "                                                  // end_temp_c
-                     "NULL, "                                                                    // ramp_time_mins
                      "1,    "                                                                    // step_number
                      "recipe.fermentation_id, "                                                  // fermentation_id
                      "'Automatically-generated primary fermentation step for ' || recipe.name, " // description
@@ -1136,7 +1137,6 @@ namespace {
                      "display         , "
                      "step_time_mins  , "
                      "end_temp_c      , "
-                     "ramp_time_mins  , "
                      "step_number     , "
                      "fermentation_id , "
                      "description     , "
@@ -1153,7 +1153,6 @@ namespace {
                      "?,    "                                                                      // display
                      "recipe.secondary_age * 60 * 24,"                                             // step_time_mins
                      "recipe.secondary_temp , "                                                    // end_temp_c
-                     "NULL, "                                                                      // ramp_time_mins
                      "2,    "                                                                      // step_number
                      "recipe.fermentation_id, "                                                    // fermentation_id
                      "'Automatically-generated secondary fermentation step for ' || recipe.name, " // description
@@ -1175,7 +1174,6 @@ namespace {
                      "display         , "
                      "step_time_mins  , "
                      "end_temp_c      , "
-                     "ramp_time_mins  , "
                      "step_number     , "
                      "fermentation_id , "
                      "description     , "
@@ -1192,7 +1190,6 @@ namespace {
                      "?,    "                                                                     // display
                      "recipe.tertiary_age * 60 * 24,"                                             // step_time_mins
                      "recipe.tertiary_temp , "                                                    // end_temp_c
-                     "NULL, "                                                                     // ramp_time_mins
                      "3,    "                                                                     // step_number
                      "recipe.fermentation_id, "                                                   // fermentation_id
                      "'Automatically-generated tertiary fermentation step for ' || recipe.name, " // description
