@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * unitTests/Testing.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * unitTests/Testing.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -49,6 +49,7 @@
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
+#include "model/Boil.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
@@ -56,6 +57,8 @@
 #include "model/MashStep.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
+#include "model/RecipeAdditionFermentable.h"
+#include "model/RecipeAdditionHop.h"
 #include "PersistentSettings.h"
 
 namespace {
@@ -262,14 +265,53 @@ namespace {
       return randSTR;
    }
 
+   /**
+    * \return Cascade pellets at 4% alpha acid
+    */
+   std::shared_ptr<Hop> makeHop_Cascade() {
+      // Cascade pellets at 4% AA
+      auto hop = std::make_shared<Hop>();
+      ObjectStoreWrapper::insert(hop);
+      hop->setName("Cascade 4pct");
+      hop->setAlpha_pct(4.0);
+//      hop->setUse(Hop::Use::Boil);
+//      hop->setTime_min(60);
+      hop->setType(Hop::Type::AromaAndBittering);
+      hop->setForm(Hop::Form::Pellet);
+      return hop;
+   }
+
 }
+
+class Testing::impl {
+public:
+   impl(Testing & self) :
+      m_self{self},
+      m_tempDir{QDir::tempPath()},
+      m_equipFiveGalNoLoss{},
+      m_cascade_4pct{},
+      m_twoRow{} {
+      return;
+   }
+
+   //================================================ MEMBER VARIABLES =================================================
+   Testing & m_self;
+
+   //! \brief Where we write database and log files etc
+   QDir m_tempDir;
+
+   std::shared_ptr<Equipment> m_equipFiveGalNoLoss;
+   std::shared_ptr<Hop>       m_cascade_4pct;
+   //! \brief 70% yield, no moisture, 2 SRM
+   std::shared_ptr<Fermentable> m_twoRow;
+};
 
 Testing::Testing() :
    QObject(),
-   tempDir{QDir::tempPath()},
-   equipFiveGalNoLoss{},
-   cascade_4pct{},
-   twoRow{} {
+   pimpl{std::make_unique<impl>(*this)} {
+
+   registerMetaTypes();
+
    //
    // Create a unique temporary directory using the current thread ID as part of a subdirectory name inside whatever
    // system-standard temp directory Qt proposes to us.  (We also put the application name in the subdirectory name so
@@ -282,37 +324,37 @@ Testing::Testing() :
    //
    QString subDirName;
    QTextStream{&subDirName} << CONFIG_APPLICATION_NAME_UC << "-UnitTestRun-" << QThread::currentThreadId();
-   if (!this->tempDir.mkdir(subDirName)) {
+   if (!this->pimpl->m_tempDir.mkdir(subDirName)) {
       qCritical() <<
-         Q_FUNC_INFO << "Unable to create" << subDirName << "sub-directory of" << this->tempDir.absolutePath();
+         Q_FUNC_INFO << "Unable to create" << subDirName << "sub-directory of" << this->pimpl->m_tempDir.absolutePath();
       throw std::runtime_error{"Unable to create unique temp directory"};
    }
-   if (!this->tempDir.cd(subDirName)) {
+   if (!this->pimpl->m_tempDir.cd(subDirName)) {
       qCritical() <<
-         Q_FUNC_INFO << "Unable to access" << this->tempDir.absolutePath() << "after creating it";
+         Q_FUNC_INFO << "Unable to access" << this->pimpl->m_tempDir.absolutePath() << "after creating it";
       throw std::runtime_error{"Unable to access unique temp directory"};
    }
 
-   qDebug() << Q_FUNC_INFO << "Using" << this->tempDir.absolutePath() << "as temporary directory";
+   qDebug() << Q_FUNC_INFO << "Using" << this->pimpl->m_tempDir.absolutePath() << "as temporary directory";
    return;
 }
 
 Testing::~Testing() {
    //
    // We have to be a bit careful in our cleaning up.  We only want to try to remove the unique temporary directory we
-   // created, not the system-wide one.  (It shouldn't be possible for this->tempDir to be the root directory, but it
+   // created, not the system-wide one.  (It shouldn't be possible for this->pimpl->m_tempDir to be the root directory, but it
    // doesn't hurt to check!)
    //
-   if (this->tempDir.exists() &&
-       this->tempDir.absolutePath() != QDir::tempPath() &&
-       !this->tempDir.isRoot()) {
-      qInfo() << Q_FUNC_INFO << "Removing temporary directory" << this->tempDir.absolutePath() << "and its contents";
-      if (!this->tempDir.removeRecursively()) {
+   if (this->pimpl->m_tempDir.exists() &&
+       this->pimpl->m_tempDir.absolutePath() != QDir::tempPath() &&
+       !this->pimpl->m_tempDir.isRoot()) {
+      qInfo() << Q_FUNC_INFO << "Removing temporary directory" << this->pimpl->m_tempDir.absolutePath() << "and its contents";
+      if (!this->pimpl->m_tempDir.removeRecursively()) {
          //
          // It's not the end of the world if we couldn't remove a temporary directory so, if it happens, just log an
          // error rather than throwing an exception (which might prevent other clean-up from happening).
          //
-         qInfo() << Q_FUNC_INFO << "Unable to remove temporary directory" << this->tempDir.absolutePath();
+         qInfo() << Q_FUNC_INFO << "Unable to remove temporary directory" << this->pimpl->m_tempDir.absolutePath();
       }
    }
    return;
@@ -351,7 +393,7 @@ void Testing::initTestCase() {
       QCoreApplication::setApplicationName("brewken-test");
 
       // Set options so that any data modification does not affect any other data
-      PersistentSettings::initialise(this->tempDir.absolutePath());
+      PersistentSettings::initialise(this->pimpl->m_tempDir.absolutePath());
 
       // Log test setup
       // Verify that the Logging initializes normally
@@ -361,7 +403,7 @@ void Testing::initTestCase() {
       // We always want debug logging for tests as it's useful when a test fails
       Logging::setLogLevel(Logging::LogLevel_DEBUG);
       // Test logs go to a /tmp (or equivalent) so as not to clutter the application path with dummy data.
-      Logging::setDirectory(this->tempDir.absolutePath(), Logging::NewDirectoryIsTemporary);
+      Logging::setDirectory(this->pimpl->m_tempDir.absolutePath(), Logging::NewDirectoryIsTemporary);
       qDebug() << "logging initialized";
 
       // Inside initializeLogging(), there's a check to see whether we're the test application.  If so, it turns off
@@ -379,45 +421,38 @@ void Testing::initTestCase() {
 
       //
       // Application::initialize() will initialise a bunch of things, including creating a default database in
-      // this->tempDir courtesy of the call to PersistentSettings::initialise() above.  If there is a problem creating the DB,
+      // this->pimpl->m_tempDir courtesy of the call to PersistentSettings::initialise() above.  If there is a problem creating the DB,
       // it will return false.
       //
       QVERIFY(Application::initialize());
 
       // 5 gallon equipment
-      this->equipFiveGalNoLoss = std::make_shared<Equipment>();
-      this->equipFiveGalNoLoss->setName("5 gal No Loss");
-      this->equipFiveGalNoLoss->setBoilSize_l(24.0);
-      this->equipFiveGalNoLoss->setBatchSize_l(20.0);
-      this->equipFiveGalNoLoss->setTunVolume_l(40.0);
-      this->equipFiveGalNoLoss->setTopUpWater_l(0);
-      this->equipFiveGalNoLoss->setTrubChillerLoss_l(0);
-      this->equipFiveGalNoLoss->setEvapRate_lHr(4.0);
-      this->equipFiveGalNoLoss->setBoilTime_min(60);
-      this->equipFiveGalNoLoss->setLauterDeadspace_l(0);
-      this->equipFiveGalNoLoss->setTopUpKettle_l(0);
-      this->equipFiveGalNoLoss->setHopUtilization_pct(100);
-      this->equipFiveGalNoLoss->setGrainAbsorption_LKg(1.0);
-      this->equipFiveGalNoLoss->setBoilingPoint_c(100);
+      this->pimpl->m_equipFiveGalNoLoss = std::make_shared<Equipment>();
+      this->pimpl->m_equipFiveGalNoLoss->setName("5 gal No Loss");
+      this->pimpl->m_equipFiveGalNoLoss->setKettleBoilSize_l(24.0);
+      this->pimpl->m_equipFiveGalNoLoss->setFermenterBatchSize_l(20.0);
+      this->pimpl->m_equipFiveGalNoLoss->setMashTunVolume_l(40.0);
+      this->pimpl->m_equipFiveGalNoLoss->setTopUpWater_l(0);
+      this->pimpl->m_equipFiveGalNoLoss->setKettleTrubChillerLoss_l(0);
+      this->pimpl->m_equipFiveGalNoLoss->setKettleEvaporationPerHour_l(4.0);
+      this->pimpl->m_equipFiveGalNoLoss->setBoilTime_min(60);
+      this->pimpl->m_equipFiveGalNoLoss->setMashTunLoss_l(0); // This is lautering deadspace loss as no separate lautering tun
+      this->pimpl->m_equipFiveGalNoLoss->setTopUpKettle_l(0);
+      this->pimpl->m_equipFiveGalNoLoss->setHopUtilization_pct(100);
+      this->pimpl->m_equipFiveGalNoLoss->setMashTunGrainAbsorption_LKg(1.0);
+      this->pimpl->m_equipFiveGalNoLoss->setBoilingPoint_c(100);
 
       // Cascade pellets at 4% AA
-      this->cascade_4pct = std::make_shared<Hop>();
-      ObjectStoreWrapper::insert(this->cascade_4pct);
-      this->cascade_4pct->setName("Cascade 4pct");
-      this->cascade_4pct->setAlpha_pct(4.0);
-      this->cascade_4pct->setUse(Hop::Use::Boil);
-      this->cascade_4pct->setTime_min(60);
-      this->cascade_4pct->setType(Hop::Type::AromaAndBittering);
-      this->cascade_4pct->setForm(Hop::Form::Leaf);
+      this->pimpl->m_cascade_4pct = makeHop_Cascade();
 
       // 70% yield, no moisture, 2 SRM
-      this->twoRow = std::make_shared<Fermentable>();
-      this->twoRow->setName("Two Row");
-      this->twoRow->setType(Fermentable::Type::Grain);
-      this->twoRow->setYield_pct(70.0);
-      this->twoRow->setColor_srm(2.0);
-      this->twoRow->setMoisture_pct(0);
-      this->twoRow->setIsMashed(true);
+      this->pimpl->m_twoRow = std::make_shared<Fermentable>();
+      this->pimpl->m_twoRow->setName("Two Row");
+      this->pimpl->m_twoRow->setType(Fermentable::Type::Grain);
+      this->pimpl->m_twoRow->setFineGrindYield_pct(70.0);
+      this->pimpl->m_twoRow->setColor_srm(2.0);
+      this->pimpl->m_twoRow->setMoisture_pct(0);
+///      this->pimpl->m_twoRow->setIsMashed(true);
    } catch (std::exception const & e) {
       // When an exception gets to Qt, it will barf something along the lines of "Caught unhandled exception" without
       // leaving you much the wiser.  If we can intercept the exception along the way, we can ensure more details are
@@ -437,8 +472,8 @@ void Testing::recipeCalcTest_allGrain() {
    auto rec = std::make_shared<Recipe>("TestRecipe");
 
    // Basic recipe parameters
-   rec->setBatchSize_l(equipFiveGalNoLoss->batchSize_l());
-   rec->setBoilSize_l(equipFiveGalNoLoss->boilSize_l());
+   rec->setBatchSize_l(this->pimpl->m_equipFiveGalNoLoss->fermenterBatchSize_l());
+   rec->nonOptBoil()->setPreBoilSize_l(this->pimpl->m_equipFiveGalNoLoss->kettleBoilSize_l());
    rec->setEfficiency_pct(70.0);
 
    // Single conversion, single sparge
@@ -449,36 +484,44 @@ void Testing::recipeCalcTest_allGrain() {
    auto singleConversion_convert = std::make_shared<MashStep>();
    singleConversion_convert->setName("Conversion");
    singleConversion_convert->setType(MashStep::Type::Infusion);
-   singleConversion_convert->setInfuseAmount_l(conversion_l);
-   singleConversion->addMashStep(singleConversion_convert);
+   singleConversion_convert->setAmount_l(conversion_l);
+   singleConversion->addStep(singleConversion_convert);
    auto singleConversion_sparge = std::make_shared<MashStep>();
    singleConversion_sparge->setName("Sparge");
    singleConversion_sparge->setType(MashStep::Type::Infusion);
-   singleConversion_sparge->setInfuseAmount_l(
-      rec->boilSize_l()
-      + equipFiveGalNoLoss->grainAbsorption_LKg() * grain_kg // Grain absorption
+   singleConversion_sparge->setAmount_l(
+      rec->boil()->preBoilSize_l().value_or(0.0)
+      + this->pimpl->m_equipFiveGalNoLoss->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg) * grain_kg // Grain absorption
       - conversion_l // Water we already added
    );
-   singleConversion->addMashStep(singleConversion_sparge);
+   singleConversion->addStep(singleConversion_sparge);
 
    // Add equipment
-   rec->setEquipment(equipFiveGalNoLoss.get());
+   rec->setEquipment(this->pimpl->m_equipFiveGalNoLoss);
 
    // Add hops (85g)
-   cascade_4pct->setAmount_kg(0.085);
-   rec->add(this->cascade_4pct);
+   auto cascadeHopAddition = std::make_shared<RecipeAdditionHop>("Cascade 4% Hop Addition");
+   cascadeHopAddition->setHop(this->pimpl->m_cascade_4pct.get());
+   cascadeHopAddition->setStage(RecipeAddition::Stage::Boil);
+   cascadeHopAddition->setAddAtTime_mins(60);
+   cascadeHopAddition->setQuantity(0.085);
+   cascadeHopAddition->setMeasure(Measurement::PhysicalQuantity::Mass);
+   rec->addAddition(cascadeHopAddition);
 
    // Add grain
-   twoRow->setAmount(grain_kg);
-   twoRow->setAmountIsWeight(true);
-   rec->add<Fermentable>(this->twoRow);
+   auto twoRowFermentableAddition = std::make_shared<RecipeAdditionFermentable>("Two Row Grain Addition");
+   twoRowFermentableAddition->setFermentable(this->pimpl->m_twoRow.get());
+   twoRowFermentableAddition->setStage(RecipeAddition::Stage::Mash);
+   twoRowFermentableAddition->setQuantity(grain_kg);
+   twoRowFermentableAddition->setMeasure(Measurement::PhysicalQuantity::Mass);
+   rec->addAddition(twoRowFermentableAddition);
 
    // Add mash
-   rec->setMash(singleConversion.get());
+   rec->setMash(singleConversion);
 
    // Malt color units
    double mcus =
-      twoRow->color_srm()
+      this->pimpl->m_twoRow->color_srm()
       * (grain_kg * 2.205) // Grain in lb
       / (rec->batchSize_l() * 0.2642); // Batch size in gal
 
@@ -491,7 +534,7 @@ void Testing::recipeCalcTest_allGrain() {
    // Ground-truth plato (~12)
    double plato =
       grain_kg
-      * twoRow->yield_pct()/100.0
+      * *this->pimpl->m_twoRow->fineGrindYield_pct()/100.0
       * rec->efficiency_pct()/100.0
       / (rec->batchSize_l() * og) // Total wort mass in kg (not L)
       * 100; // Convert to percent
@@ -502,13 +545,13 @@ void Testing::recipeCalcTest_allGrain() {
    // Ground-truth IBUs (mg/L of isomerized alpha acid)
    //   ~40 IBUs
    double ibus =
-      cascade_4pct->amount_kg()*1e6     // Hops in mg
-      * cascade_4pct->alpha_pct()/100.0 // AA ratio
+      cascadeHopAddition->quantity()*1e6     // Hops in mg
+      * this->pimpl->m_cascade_4pct->alpha_pct()/100.0 // AA ratio
       * 0.235 // Tinseth utilization (60 min @ 12 Plato)
       / rec->batchSize_l();
 
    // Verify calculated recipe parameters within some tolerance.
-   QVERIFY2( fuzzyComp(rec->boilVolume_l(),  rec->boilSize_l(),  0.1),     "Wrong boil volume calculation" );
+   QVERIFY2( fuzzyComp(rec->boilVolume_l(),  rec->boil()->preBoilSize_l().value_or(0.0),  0.1),     "Wrong boil volume calculation" );
    QVERIFY2( fuzzyComp(rec->finalVolume_l(), rec->batchSize_l(), 0.1),     "Wrong final volume calculation" );
    QVERIFY2( fuzzyComp(rec->og(),            og,                 0.002),   "Wrong OG calculation" );
    QVERIFY2( fuzzyComp(rec->IBU(),           ibus,               5.0),     "Wrong IBU calculation" );
@@ -521,39 +564,47 @@ void Testing::postBoilLossOgTest() {
    double const grain_kg = 5.0;
    Recipe* recNoLoss = new Recipe(QString("TestRecipe_noLoss"));
    Recipe* recLoss = new Recipe(QString("TestRecipe_loss"));
-   Equipment* eLoss = new Equipment(*equipFiveGalNoLoss.get());
+   auto eLoss = std::make_shared<Equipment>(*this->pimpl->m_equipFiveGalNoLoss.get());
 
    // Only difference between the recipes:
    // - 2 L of post-boil loss
    // - 2 L extra of boil size (to hit the same batch size)
-   eLoss->setTrubChillerLoss_l(2.0);
-   eLoss->setBoilSize_l(equipFiveGalNoLoss->boilSize_l() + eLoss->trubChillerLoss_l());
+   eLoss->setKettleTrubChillerLoss_l(2.0);
+   eLoss->setKettleBoilSize_l(this->pimpl->m_equipFiveGalNoLoss->kettleBoilSize_l() + eLoss->kettleTrubChillerLoss_l());
 
    // Basic recipe parameters
-   recNoLoss->setBatchSize_l(equipFiveGalNoLoss->batchSize_l());
-   recNoLoss->setBoilSize_l(equipFiveGalNoLoss->boilSize_l());
+   recNoLoss->setBatchSize_l(this->pimpl->m_equipFiveGalNoLoss->fermenterBatchSize_l());
+   recNoLoss->nonOptBoil()->setPreBoilSize_l(this->pimpl->m_equipFiveGalNoLoss->kettleBoilSize_l());
    recNoLoss->setEfficiency_pct(70.0);
 
-   recLoss->setBatchSize_l(eLoss->batchSize_l() - eLoss->trubChillerLoss_l()); // Adjust for trub losses
-   recLoss->setBoilSize_l(eLoss->boilSize_l() - eLoss->trubChillerLoss_l());
+   recLoss->setBatchSize_l(eLoss->fermenterBatchSize_l() - eLoss->kettleTrubChillerLoss_l()); // Adjust for trub losses
+   recLoss->nonOptBoil()->setPreBoilSize_l(eLoss->kettleBoilSize_l() - eLoss->kettleTrubChillerLoss_l());
    recLoss->setEfficiency_pct(70.0);
 
-   double mashWaterNoLoss_l = recNoLoss->boilSize_l()
-      + equipFiveGalNoLoss->grainAbsorption_LKg() * grain_kg
+   double mashWaterNoLoss_l = *recNoLoss->nonOptBoil()->preBoilSize_l()
+      + this->pimpl->m_equipFiveGalNoLoss->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg) * grain_kg
    ;
-   double mashWaterLoss_l = recLoss->boilSize_l()
-      + eLoss->grainAbsorption_LKg() * grain_kg
+   double mashWaterLoss_l = *recLoss->nonOptBoil()->preBoilSize_l()
+      + eLoss->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg) * grain_kg
    ;
 
    // Add equipment
-   recNoLoss->setEquipment(equipFiveGalNoLoss.get());
+   recNoLoss->setEquipment(this->pimpl->m_equipFiveGalNoLoss);
    recLoss->setEquipment(eLoss);
 
    // Add grain
-   twoRow->setAmount(grain_kg);
-   twoRow->setAmountIsWeight(true);
-   recNoLoss->add<Fermentable>(twoRow);
-   recLoss->add<Fermentable>(twoRow);
+   auto twoRowFermentableAddition1 = std::make_shared<RecipeAdditionFermentable>("Two Row Grain Addition 1");
+   auto twoRowFermentableAddition2 = std::make_shared<RecipeAdditionFermentable>("Two Row Grain Addition 2");
+   twoRowFermentableAddition1->setFermentable(this->pimpl->m_twoRow.get());
+   twoRowFermentableAddition2->setFermentable(this->pimpl->m_twoRow.get());
+   twoRowFermentableAddition1->setStage(RecipeAddition::Stage::Mash);
+   twoRowFermentableAddition2->setStage(RecipeAddition::Stage::Mash);
+   twoRowFermentableAddition1->setQuantity(grain_kg);
+   twoRowFermentableAddition2->setQuantity(grain_kg);
+   twoRowFermentableAddition1->setMeasure(Measurement::PhysicalQuantity::Mass);
+   twoRowFermentableAddition2->setMeasure(Measurement::PhysicalQuantity::Mass);
+   recNoLoss->addAddition(twoRowFermentableAddition1);
+   recLoss  ->addAddition(twoRowFermentableAddition2);
 
    // Single conversion, no sparge
    auto singleConversion = std::make_shared<Mash>();
@@ -564,21 +615,21 @@ void Testing::postBoilLossOgTest() {
    auto singleConversion_convert = std::make_shared<MashStep>();
    singleConversion_convert->setName("Conversion");
    singleConversion_convert->setType(MashStep::Type::Infusion);
-   singleConversion->addMashStep(singleConversion_convert);
+   singleConversion->addStep(singleConversion_convert);
 
    // Infusion for recNoLoss
-   singleConversion_convert->setInfuseAmount_l(mashWaterNoLoss_l);
-   recNoLoss->setMash(singleConversion.get());
+   singleConversion_convert->setAmount_l(mashWaterNoLoss_l);
+   recNoLoss->setMash(singleConversion);
 
    // Infusion for recLoss
-   singleConversion_convert->setInfuseAmount_l(mashWaterLoss_l);
-   recLoss->setMash(singleConversion.get());
+   singleConversion_convert->setAmount_l(mashWaterLoss_l);
+   recLoss->setMash(singleConversion);
 
    // Verify we hit the right boil/final volumes (that the test is sane)
-   QVERIFY2( fuzzyComp(recNoLoss->boilVolume_l(),  recNoLoss->boilSize_l(),  0.1),     "Wrong boil volume calculation (recNoLoss)" );
-   QVERIFY2( fuzzyComp(recLoss->boilVolume_l(),    recLoss->boilSize_l(),    0.1),     "Wrong boil volume calculation (recLoss)" );
-   QVERIFY2( fuzzyComp(recNoLoss->finalVolume_l(), recNoLoss->batchSize_l(), 0.1),     "Wrong final volume calculation (recNoLoss)" );
-   QVERIFY2( fuzzyComp(recLoss->finalVolume_l(),   recLoss->batchSize_l(),   0.1),     "Wrong final volume calculation (recLoss)" );
+   QVERIFY2(fuzzyComp(recNoLoss->boilVolume_l(),  *recNoLoss->nonOptBoil()->preBoilSize_l(), 0.1), "Wrong boil volume calculation (recNoLoss)");
+   QVERIFY2(fuzzyComp(  recLoss->boilVolume_l(),    *recLoss->nonOptBoil()->preBoilSize_l(), 0.1), "Wrong boil volume calculation (recLoss)"  );
+   QVERIFY2(fuzzyComp(recNoLoss->finalVolume_l(), recNoLoss->batchSize_l(), 0.1), "Wrong final volume calculation (recNoLoss)");
+   QVERIFY2(fuzzyComp(  recLoss->finalVolume_l(),   recLoss->batchSize_l(), 0.1), "Wrong final volume calculation (recLoss)"  );
 
    // The OG calc itself is verified in recipeCalcTest_*(), so just verify that
    // the two OGs are the same
@@ -604,7 +655,7 @@ void Testing::testUnitConversions() {
    testInput.clear();
    testInputAsStream << "5" << decimalSeparator << "500 gal";
    QVERIFY2(fuzzyComp(Measurement::UnitSystems::volume_UsCustomary.qstringToSI(testInput, // "5.500 gal"
-                                                                               Measurement::Units::liters).quantity(),
+                                                                               Measurement::Units::liters).quantity,
                       20.820,
                       0.001),
             "Unit conversion error (US gallons to Litres v1)");
@@ -612,7 +663,7 @@ void Testing::testUnitConversions() {
    testInput.clear();
    testInputAsStream << "5" << decimalSeparator << "500";
    QVERIFY2(fuzzyComp(Measurement::UnitSystems::volume_UsCustomary.qstringToSI(testInput, // "5.500"
-                                                                               Measurement::Units::us_gallons).quantity(),
+                                                                               Measurement::Units::us_gallons).quantity,
                       20.820,
                       0.001),
             "Unit conversion error (US gallons to Litres v2)");
@@ -626,14 +677,14 @@ void Testing::testUnitConversions() {
    auto converted = Measurement::qStringToSI(testInput, // "5.500 gal"
                                              Measurement::PhysicalQuantity::Volume);
    qDebug() << Q_FUNC_INFO << testInput << "converted to" << converted;
-   QVERIFY2(fuzzyComp(converted.quantity(), 20.820, 0.001) ||
-            fuzzyComp(converted.quantity(), 25.004, 0.001),
+   QVERIFY2(fuzzyComp(converted.quantity, 20.820, 0.001) ||
+            fuzzyComp(converted.quantity, 25.004, 0.001),
             "Unit conversion error (US or Imperial gallons to Litres v3)");
    // "9.994 P"
    testInput.clear();
    testInputAsStream << "9" << decimalSeparator << "994 P";
    QVERIFY2(fuzzyComp(Measurement::UnitSystems::density_Plato.qstringToSI(testInput, // "9.994 P"
-                                                                          Measurement::Units::specificGravity).quantity(),
+                                                                          Measurement::Units::specificGravity).quantity,
                       1.040,
                       0.001),
             "Unit conversion error (Plato to SG)");
@@ -642,7 +693,7 @@ void Testing::testUnitConversions() {
    testInputAsStream << "1" << thousandsSeparator << "083 ebc";
    QVERIFY2(
       fuzzyComp(Measurement::UnitSystems::color_StandardReferenceMethod.qstringToSI(testInput, // "1,083 ebc"
-                                                                                    Measurement::Units::srm).quantity(),
+                                                                                    Measurement::Units::srm).quantity,
                 550,
                 1),
       "Unit conversion error (EBC to SRM)"
@@ -842,11 +893,18 @@ void Testing::pstdintTest() {
 }
 
 
-void Testing::runTest() {
-   // .:TBD:. We should probably retire this function... :o)
-   QVERIFY( 1==1 );
-   /*
-   MainWindow& mw = Application::mainWindow();
-   QVERIFY( mw );
-   */
+void Testing::testInventory() {
+   qDebug() << Q_FUNC_INFO << "Starting";
+   Measurement::Amount amountOfHop{123.45, Measurement::Units::kilograms};
+   bool setOk = this->pimpl->m_cascade_4pct->setProperty(*PropertyNames::Ingredient::totalInventory,
+                                                         QVariant::fromValue<Measurement::Amount>(amountOfHop));
+   QVERIFY2(setOk, "Error setting hop inventory property");
+   QVariant inventoryRaw = this->pimpl->m_cascade_4pct->property(*PropertyNames::Ingredient::totalInventory);
+   QVERIFY2(inventoryRaw.canConvert<Measurement::Amount>(), "Error retrieving hop inventory property");
+   Measurement::Amount inventory = inventoryRaw.value<Measurement::Amount>();
+
+   QVERIFY2(fuzzyComp(inventory.quantity, 123.45,  0.00000001), "Wrong hop inventory amount");
+   QVERIFY2(inventory.unit == &Measurement::Units::kilograms, "Wrong hop inventory units");
+
+   return;
 }

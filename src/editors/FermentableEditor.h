@@ -40,23 +40,10 @@ class Fermentable;
  *        See comment on EditorBase::connectSignalsAndSlots for why we need to have \c public, not \c private
  *        inheritance from the Ui base.
  */
-class FermentableEditor : public QDialog, public Ui::fermentableEditor, public EditorBase<Fermentable, FermentableEditor> {
+class FermentableEditor : public QDialog, public Ui::fermentableEditor, public EditorBase<FermentableEditor, Fermentable> {
    Q_OBJECT
 
-public:
-   FermentableEditor(QWidget *parent=nullptr);
-   virtual ~FermentableEditor();
-
-   void writeFieldsToEditItem();
-   void writeLateFieldsToEditItem();
-   void readFieldsFromEditItem(std::optional<QString> propName);
-
-public slots:
-   // Standard editor slots
-   void save();
-   void clearAndClose();
-   void changed(QMetaProperty, QVariant);
-   void clickedNew();
+   EDITOR_COMMON_DECL(Fermentable)
 };
 
 #endif

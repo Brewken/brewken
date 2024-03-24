@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * RadarChart.h is part of Brewken, and is copyright the following authors 2021:
+ * RadarChart.h is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -52,9 +52,9 @@ public:
     * @param unitsName name of the units being measured - eg "PPM" for salt concentrations in water
     * @param axisMarkInterval spacing between ticks on axes - eg 50 means put ticks at 50, 100, 150, 200, etc
     * @param propertyToDisplayNames an ordered list of all the Qt property names to plot with, for each one, the
-    *                               (localised) axis name to display ¥¥¥¥of the radii (aka spokes, axes) in the order
-    *                               you want them displayed.  (First item in the list will be the axis at 12 o'clock
-    *                               and the others will follow anti-clockwise.)
+    *                               (localised) axis name to display, in the order you want them displayed.  (First item
+    *                               in the list will be the axis at 12 o'clock and the others will follow
+    *                               anti-clockwise.)
     */
    void init(QString const unitsName,
              double axisMarkInterval,

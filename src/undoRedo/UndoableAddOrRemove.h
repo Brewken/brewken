@@ -19,6 +19,7 @@
 #pragma once
 
 #include <memory>
+#include <type_traits>
 
 #include <QDebug>
 #include <QMetaType>
@@ -33,8 +34,17 @@ class MainWindow;
  * \class UndoableAddOrRemove
  *
  * \brief Each instance of this class is a non-trivial undoable addition to, or removal from, a recipe etc.
+ *
+ *        Note that in the majority of cases, \c BB and \c UU are the same class.  The distinction exists to allow for
+ *        the fact that a member function on \c UU is actually inherited from \c BB.  Eg, when the caller supplies
+ *        \c &Mash::addStep as a "doer" parameter we actually receive &StepOwnerBase<Mash, MashStep>::addStep
+ *        (because Mash inherits from StepOwnerBase<Mash, MashStep>).  Fortunately, callers don't have to worry about
+ *        this as the compiler works everything out for us.
+ *
+ *        TBD: As of C++20 I think we can replace the slightly cumbersome \c std::enable_if_t syntax with concepts, but
+ *             I haven't yet got my head around the exact syntax to do so!
  */
-template<class UU, class VV>
+template<class BB, class UU, class VV, std::enable_if_t<std::is_base_of_v<BB, UU>, bool> = true>
 class UndoableAddOrRemove : public QUndoCommand {
 public:
    // NB: Constructors are all explicit as we don't want to construct with implicit conversions
@@ -59,9 +69,9 @@ public:
     * \param parent This is for grouping updates together.
     */
    explicit UndoableAddOrRemove(UU & updatee,
-                                std::shared_ptr<VV> (UU::*doer)(std::shared_ptr<VV>),
+                                std::shared_ptr<VV> (BB::*doer)(std::shared_ptr<VV>),
                                 std::shared_ptr<VV> whatToAddOrRemove,
-                                std::shared_ptr<VV> (UU::*undoer)(std::shared_ptr<VV>),
+                                std::shared_ptr<VV> (BB::*undoer)(std::shared_ptr<VV>),
                                 void (MainWindow::*doCallback)(std::shared_ptr<VV>),
                                 void (MainWindow::*undoCallback)(std::shared_ptr<VV>),
                                 QString const & description,
@@ -74,10 +84,14 @@ public:
       doCallback(doCallback),
       undoCallback(undoCallback),
       everDone(false) {
+      // Uncomment this block if you need to diagnose problems that result in hitting the asserts below
+//      if (!whatToAddOrRemove || whatToAddOrRemove->key() <= 0) {
+//         qCritical().noquote() << Q_FUNC_INFO << Logging::getStackTrace();
+//      }
       // It's a coding error to add or remove either a null pointer...
       Q_ASSERT(whatToAddOrRemove);
-      // ...or something that is not yet stored in its corresponding ObjectStore (ie does not yet have a DB ID)
-      Q_ASSERT(whatToAddOrRemove->key() > 0);
+///      // ...or something that is not yet stored in its corresponding ObjectStore (ie does not yet have a DB ID)
+///      Q_ASSERT(whatToAddOrRemove->key() > 0);
 
       // Parent class handles storing description and making it accessible to the undo stack etc - we just have to give
       // it the text.
@@ -132,12 +146,14 @@ private:
       if (!isUndo) {
          qDebug() <<
             Q_FUNC_INFO << (this->everDone ? "Redo" : "Do" ) << this->text() << "for " <<
-            this->whatToAddOrRemove->metaObject()->className() << "#" << this->whatToAddOrRemove->key();
+            this->whatToAddOrRemove->metaObject()->className() << "#" << this->whatToAddOrRemove->key() << "(" <<
+            this->whatToAddOrRemove->name() << ")";
 
          this->whatToAddOrRemove = (this->updatee.*(this->doer))(this->whatToAddOrRemove);
          qDebug() <<
             Q_FUNC_INFO << (this->everDone ? "Redo" : "Do" ) << "Returned " <<
-            this->whatToAddOrRemove->metaObject()->className() << "#" << this->whatToAddOrRemove->key();
+            this->whatToAddOrRemove->metaObject()->className() << "#" << this->whatToAddOrRemove->key() << "(" <<
+            this->whatToAddOrRemove->name() << ")";
 
          if (this->doCallback != nullptr) {
             (MainWindow::instance().*(this->doCallback))(this->whatToAddOrRemove);
@@ -149,12 +165,12 @@ private:
       } else {
          qDebug() <<
             Q_FUNC_INFO << "Undo" << this->text() << "for " << this->whatToAddOrRemove->metaObject()->className() <<
-            "#" << this->whatToAddOrRemove->key();
+            "#" << this->whatToAddOrRemove->key() << "(" << this->whatToAddOrRemove->name() << ")";
 
          this->whatToAddOrRemove = (this->updatee.*(this->undoer))(this->whatToAddOrRemove);
          qDebug() <<
             Q_FUNC_INFO << "Undo Returned " << this->whatToAddOrRemove->metaObject()->className() << "#" <<
-            this->whatToAddOrRemove->key();
+            this->whatToAddOrRemove->key() << "(" << this->whatToAddOrRemove->name() << ")";
 
          if (this->undoCallback != nullptr) {
             (MainWindow::instance().*(this->undoCallback))(this->whatToAddOrRemove);
@@ -170,9 +186,9 @@ private:
    UndoableAddOrRemove & operator=(UndoableAddOrRemove &&) = delete;
 
    UU & updatee;
-   std::shared_ptr<VV> (UU::*doer)(std::shared_ptr<VV>);
+   std::shared_ptr<VV> (BB::*doer)(std::shared_ptr<VV>);
    std::shared_ptr<VV> whatToAddOrRemove;
-   std::shared_ptr<VV> (UU::*undoer)(std::shared_ptr<VV>);
+   std::shared_ptr<VV> (BB::*undoer)(std::shared_ptr<VV>);
    void (MainWindow::*doCallback)(std::shared_ptr<VV>);
    void (MainWindow::*undoCallback)(std::shared_ptr<VV>);
    bool everDone;
@@ -184,45 +200,45 @@ private:
  *        (I thought this might not be necessary with the introduction of Class Template Argument Deduction in C++17,
  *        but I think I must be missing something.)
  */
-template<class UU, class VV>
-UndoableAddOrRemove<UU, VV> * newUndoableAddOrRemove(UU & updatee,
-                                                     std::shared_ptr<VV> (UU::*doer)(std::shared_ptr<VV>),
-                                                     std::shared_ptr<VV> whatToAddOrRemove,
-                                                     std::shared_ptr<VV> (UU::*undoer)(std::shared_ptr<VV>),
-                                                     void (MainWindow::*doCallback)(std::shared_ptr<VV>),
-                                                     void (MainWindow::*undoCallback)(std::shared_ptr<VV>),
-                                                     QString const & description,
-                                                     QUndoCommand * parent = nullptr) {
-   return new UndoableAddOrRemove<UU, VV>(updatee,
-                                          doer,
-                                          whatToAddOrRemove,
-                                          undoer,
-                                          doCallback,
-                                          undoCallback,
-                                          description,
-                                          parent);
+template<class BB, class UU, class VV, std::enable_if_t<std::is_base_of_v<BB, UU>, bool> = true>
+UndoableAddOrRemove<BB, UU, VV> * newUndoableAddOrRemove(UU & updatee,
+                                                         std::shared_ptr<VV> (BB::*doer)(std::shared_ptr<VV>),
+                                                         std::shared_ptr<VV> whatToAddOrRemove,
+                                                         std::shared_ptr<VV> (BB::*undoer)(std::shared_ptr<VV>),
+                                                         void (MainWindow::*doCallback)(std::shared_ptr<VV>),
+                                                         void (MainWindow::*undoCallback)(std::shared_ptr<VV>),
+                                                         QString const & description,
+                                                         QUndoCommand * parent = nullptr) {
+   return new UndoableAddOrRemove<BB, UU, VV>(updatee,
+                                              doer,
+                                              whatToAddOrRemove,
+                                              undoer,
+                                              doCallback,
+                                              undoCallback,
+                                              description,
+                                              parent);
 }
 
 /*!
  * \brief Raw pointer version of \c newUndoableAddOrRemove above
  */
-template<class UU, class VV>
-UndoableAddOrRemove<UU, VV> * newUndoableAddOrRemove(UU & updatee,
-                                                     std::shared_ptr<VV> (UU::*doer)(std::shared_ptr<VV>),
-                                                     VV * const whatToAddOrRemove,
-                                                     std::shared_ptr<VV> (UU::*undoer)(std::shared_ptr<VV>),
-                                                     void (MainWindow::*doCallback)(std::shared_ptr<VV>),
-                                                     void (MainWindow::*undoCallback)(std::shared_ptr<VV>),
-                                                     QString const & description,
-                                                     QUndoCommand * parent = nullptr) {
-   return new UndoableAddOrRemove<UU, VV>(updatee,
-                                          doer,
-                                          ObjectStoreWrapper::getSharedFromRaw(whatToAddOrRemove),
-                                          undoer,
-                                          doCallback,
-                                          undoCallback,
-                                          description,
-                                          parent);
+template<class BB, class UU, class VV, std::enable_if_t<std::is_base_of_v<BB, UU>, bool> = true>
+UndoableAddOrRemove<BB, UU, VV> * newUndoableAddOrRemove(UU & updatee,
+                                                         std::shared_ptr<VV> (BB::*doer)(std::shared_ptr<VV>),
+                                                         VV * const whatToAddOrRemove,
+                                                         std::shared_ptr<VV> (BB::*undoer)(std::shared_ptr<VV>),
+                                                         void (MainWindow::*doCallback)(std::shared_ptr<VV>),
+                                                         void (MainWindow::*undoCallback)(std::shared_ptr<VV>),
+                                                         QString const & description,
+                                                         QUndoCommand * parent = nullptr) {
+   return new UndoableAddOrRemove<BB, UU, VV>(updatee,
+                                              doer,
+                                              ObjectStoreWrapper::getSharedFromRaw(whatToAddOrRemove),
+                                              undoer,
+                                              doCallback,
+                                              undoCallback,
+                                              description,
+                                              parent);
 }
 
 /*!
@@ -230,41 +246,41 @@ UndoableAddOrRemove<UU, VV> * newUndoableAddOrRemove(UU & updatee,
  *
  *        This is useful when there are no callbacks, otherwise caller has to do a static cast on null pointer
  */
-template<class UU, class VV>
-UndoableAddOrRemove<UU, VV> * newUndoableAddOrRemove(UU & updatee,
-                                                     std::shared_ptr<VV> (UU::*doer)(std::shared_ptr<VV>),
-                                                     std::shared_ptr<VV> whatToAddOrRemove,
-                                                     std::shared_ptr<VV> (UU::*undoer)(std::shared_ptr<VV>),
-                                                     QString const & description,
-                                                     QUndoCommand * parent = nullptr) {
-   return new UndoableAddOrRemove<UU, VV>(updatee,
-                                          doer,
-                                          whatToAddOrRemove,
-                                          undoer,
-                                          static_cast<void (MainWindow::*)(std::shared_ptr<VV>)>(nullptr),
-                                          static_cast<void (MainWindow::*)(std::shared_ptr<VV>)>(nullptr),
-                                          description,
-                                          parent);
+template<class BB, class UU, class VV, std::enable_if_t<std::is_base_of_v<BB, UU>, bool> = true>
+UndoableAddOrRemove<BB, UU, VV> * newUndoableAddOrRemove(UU & updatee,
+                                                         std::shared_ptr<VV> (BB::*doer)(std::shared_ptr<VV>),
+                                                         std::shared_ptr<VV> whatToAddOrRemove,
+                                                         std::shared_ptr<VV> (BB::*undoer)(std::shared_ptr<VV>),
+                                                         QString const & description,
+                                                         QUndoCommand * parent = nullptr) {
+   return new UndoableAddOrRemove<BB, UU, VV>(updatee,
+                                              doer,
+                                              whatToAddOrRemove,
+                                              undoer,
+                                              static_cast<void (MainWindow::*)(std::shared_ptr<VV>)>(nullptr),
+                                              static_cast<void (MainWindow::*)(std::shared_ptr<VV>)>(nullptr),
+                                              description,
+                                              parent);
 }
 
 /*!
  * \brief Raw pointer version of \c newUndoableAddOrRemove above
  */
-template<class UU, class VV>
-UndoableAddOrRemove<UU, VV> * newUndoableAddOrRemove(UU & updatee,
-                                                     std::shared_ptr<VV> (UU::*doer)(std::shared_ptr<VV>),
-                                                     VV * const whatToAddOrRemove,
-                                                     std::shared_ptr<VV> (UU::*undoer)(std::shared_ptr<VV>),
-                                                     QString const & description,
-                                                     QUndoCommand * parent = nullptr) {
-   return new UndoableAddOrRemove<UU, VV>(updatee,
-                                          doer,
-                                          ObjectStoreWrapper::getSharedFromRaw(whatToAddOrRemove),
-                                          undoer,
-                                          static_cast<void (MainWindow::*)(std::shared_ptr<VV>)>(nullptr),
-                                          static_cast<void (MainWindow::*)(std::shared_ptr<VV>)>(nullptr),
-                                          description,
-                                          parent);
+template<class BB, class UU, class VV, std::enable_if_t<std::is_base_of_v<BB, UU>, bool> = true>
+UndoableAddOrRemove<BB, UU, VV> * newUndoableAddOrRemove(UU & updatee,
+                                                         std::shared_ptr<VV> (BB::*doer)(std::shared_ptr<VV>),
+                                                         VV * const whatToAddOrRemove,
+                                                         std::shared_ptr<VV> (BB::*undoer)(std::shared_ptr<VV>),
+                                                         QString const & description,
+                                                         QUndoCommand * parent = nullptr) {
+   return new UndoableAddOrRemove<BB, UU, VV>(updatee,
+                                              doer,
+                                              ObjectStoreWrapper::getSharedFromRaw(whatToAddOrRemove),
+                                              undoer,
+                                              static_cast<void (MainWindow::*)(std::shared_ptr<VV>)>(nullptr),
+                                              static_cast<void (MainWindow::*)(std::shared_ptr<VV>)>(nullptr),
+                                              description,
+                                              parent);
 }
 
 #endif

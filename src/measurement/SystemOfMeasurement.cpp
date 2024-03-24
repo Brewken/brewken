@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/SystemOfMeasurement.cpp is part of Brewken, and is copyright the following authors 2022-2023:
+ * measurement/SystemOfMeasurement.cpp is part of Brewken, and is copyright the following authors 2022-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -36,14 +36,17 @@ namespace {
       {Measurement::SystemOfMeasurement::WindischKolbach             , "WindischKolbach"             },
       {Measurement::SystemOfMeasurement::CarbonationVolumes          , "CarbonationVolumes"          },
       {Measurement::SystemOfMeasurement::CarbonationMassPerVolume    , "CarbonationMassPerVolume"    },
-      {Measurement::SystemOfMeasurement::MetricConcentration         , "MetricConcentration"         },
+      {Measurement::SystemOfMeasurement::BrewingConcentration        , "BrewingConcentration"        },
       {Measurement::SystemOfMeasurement::SpecificHeatCapacityCalories, "SpecificHeatCapacityCalories"},
       {Measurement::SystemOfMeasurement::SpecificHeatCapacityJoules  , "SpecificHeatCapacityJoules"  },
+      {Measurement::SystemOfMeasurement::SpecificHeatCapacityBtus    , "SpecificHeatCapacityBtus"    },
    };
 }
 
 QString Measurement::getDisplayName(Measurement::SystemOfMeasurement const systemOfMeasurement) {
    switch (systemOfMeasurement) {
+      // TBD: Maybe we need a better display name for BrewingConcentration.  "Mass Fraction or Mass Concentration for
+      //      Brewers" seems a bit unwieldy though!
       case Measurement::SystemOfMeasurement::Imperial                    : return QObject::tr("British Imperial"                   );
       case Measurement::SystemOfMeasurement::UsCustomary                 : return QObject::tr("US Customary"                       );
       case Measurement::SystemOfMeasurement::Metric                      : return QObject::tr("Metric"                             );
@@ -59,9 +62,10 @@ QString Measurement::getDisplayName(Measurement::SystemOfMeasurement const syste
       case Measurement::SystemOfMeasurement::WindischKolbach             : return QObject::tr("Windisch Kolbach"                   );
       case Measurement::SystemOfMeasurement::CarbonationVolumes          : return QObject::tr("Carbonation Volumes"                );
       case Measurement::SystemOfMeasurement::CarbonationMassPerVolume    : return QObject::tr("Carbonation Mass Per Volume"        );
-      case Measurement::SystemOfMeasurement::MetricConcentration         : return QObject::tr("Metric Concentration"               );
+      case Measurement::SystemOfMeasurement::BrewingConcentration        : return QObject::tr("Brewing Concentration"              );
       case Measurement::SystemOfMeasurement::SpecificHeatCapacityCalories: return QObject::tr("Specific Heat Capacity Calories per");
       case Measurement::SystemOfMeasurement::SpecificHeatCapacityJoules  : return QObject::tr("Specific Heat Capacity Joules per"  );
+      case Measurement::SystemOfMeasurement::SpecificHeatCapacityBtus    : return QObject::tr("Specific Heat Capacity Btus per"    );
       // In C++23, we'd add:
       // default: std::unreachable();
    }

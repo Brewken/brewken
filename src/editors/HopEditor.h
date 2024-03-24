@@ -36,23 +36,10 @@ class Hop;
  *        See comment on EditorBase::connectSignalsAndSlots for why we need to have \c public, not \c private
  *        inheritance from the Ui base.
  */
-class HopEditor : public QDialog, public Ui::hopEditor, public EditorBase<Hop, HopEditor>  {
+class HopEditor : public QDialog, public Ui::hopEditor, public EditorBase<HopEditor, Hop> {
    Q_OBJECT
 
-public:
-   HopEditor(QWidget * parent = nullptr);
-   virtual ~HopEditor();
-
-   void writeFieldsToEditItem();
-   void writeLateFieldsToEditItem();
-   void readFieldsFromEditItem(std::optional<QString> propName);
-
-public slots:
-   // Standard editor slots
-   void save();
-   void clearAndClose();
-   void changed(QMetaProperty, QVariant);
-   void clickedNew();
+   EDITOR_COMMON_DECL(Hop)
 };
 
 #endif

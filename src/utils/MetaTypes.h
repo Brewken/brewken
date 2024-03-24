@@ -22,13 +22,15 @@
 #include <QDate>
 #include <QString>
 
-#include "measurement/ConstrainedAmount.h" // For MassOrVolumeAmt and MassOrVolumeConcentrationAmt;
+#include "measurement/Amount.h"
+#include "measurement/PhysicalQuantity.h"
+#include "measurement/Unit.h"
 
 //
 // It is useful in various places to be able to store member variables in QVariant objects.
 //
 // Where we define a strongly-typed enum, we usually just need a corresponding Q_ENUM declaration in the same header.
-// This works with generic  serialisation code (eg to and from database or BeerJSON) because you can safely static_cast
+// This works with generic serialisation code (eg to and from database or BeerJSON) because you can safely static_cast
 // between the strongly typed enum and an integer, so the generic code can use integers (via EnumStringMapping) and the
 // class-specific code can use the strongly-typed enums and everything just work.
 //
@@ -54,23 +56,50 @@ Q_DECLARE_METATYPE(std::optional<QDate       >)
 Q_DECLARE_METATYPE(std::optional<QString     >)
 Q_DECLARE_METATYPE(std::optional<unsigned int>)
 
-// Need these to be able to use MassOrVolumeAmt and MassOrVolumeConcentrationAmt in Qt Properties system
-Q_DECLARE_METATYPE(MassOrVolumeAmt               )
-Q_DECLARE_METATYPE(std::optional<MassOrVolumeAmt>)
-Q_DECLARE_METATYPE(MassOrVolumeConcentrationAmt               )
-Q_DECLARE_METATYPE(std::optional<MassOrVolumeConcentrationAmt>)
-
-// These are needed for any legacy cases where we're not storing something in canonical units
+//
+// We need to be able to pass Measurement::Amount through the Qt Properties system.  Note that we do *not* pass
+// Measurement::ConstrainedAmount classes such as MassOrVolumeAmt, MassVolumeOrCountAmt or MassOrVolumeConcentrationAmt.
+// This is because the Qt Meta Object Compiler (MOC) that parses Q_DECLARE_METATYPE doesn't understand new types and so,
+// eg, would not know that:
+//    MassOrVolumeAmt
+// is the same as:
+//    Measurement::ConstrainedAmount<Measurement::ChoiceOfPhysicalQuantity const,
+//                                   Measurement::ChoiceOfPhysicalQuantity::Mass_Volume>
+// This is a problem with templated classes such as IngredientAmount, where we want to be able to refer to
+// Measurement::ConstrainedAmount classes using the template parameters of IngredientAmount.
+//
+// So, for any Measurement::ConstrainedAmount class, we always declare its Qt Property in terms of Measurement::Amount,
+// and we then rely on caller/getter/setter to do any necessary casting.  These casts are safe because
+// Measurement::ConstrainedAmount classes only constrain the behaviour of Measurement::Amount and do not add or change
+// any member variables.
+//
 Q_DECLARE_METATYPE(Measurement::Amount               )
 Q_DECLARE_METATYPE(std::optional<Measurement::Amount>)
+
+// Normally, we would just declare enums with Q_ENUM, but that doesn't work outside of a QObject class, so we have to
+// do it here and use Q_DECLARE_METATYPE instead.
+Q_DECLARE_METATYPE(Measurement::PhysicalQuantity)
+Q_DECLARE_METATYPE(Measurement::ChoiceOfPhysicalQuantity)
+
+// Measurement::Unit does not inherit from QObject, so we need this for Measurement::Units::unitStringMapping to work
+Q_DECLARE_METATYPE(Measurement::Unit const *)
 
 /**
  * \brief Just to keep us on our toes, there is an additional requirement that certain new types be registered at
  *        run-time, otherwise you'll get a "Unable to handle unregistered datatype" error and eg \c QObject::property
  *        will return a \c QVariant that is not valid (ie for which \c isValid() returns \c false).
  *
+ *        The Qt doco (https://doc.qt.io/qt-6/qmetatype.html#qRegisterMetaType-2) says:
+ *
+ *           To use the type T in QMetaType, QVariant, or with the QObject::property() API, registration is not
+ *           necessary.
+ *              To use the type T in queued signal and slot connections, qRegisterMetaType<T>() must be called before
+ *           the first connection is established. That is typically done in the constructor of the class that uses T,
+ *           or in the main() function.
+ *
  *        Again, we choose to do all this run-time registration in one place, viz this function, which should be called
- *        from \c main before invoking \c Application::run().
+ *        from \c main before invoking \c Application::run().  Of course, for the unit tests to work properly, it
+ *        \b also needs to be called from the constructor of \c Testing.
  */
 void registerMetaTypes();
 

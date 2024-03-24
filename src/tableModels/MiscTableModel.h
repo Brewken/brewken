@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/MiscTableModel.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * tableModels/MiscTableModel.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -27,12 +27,12 @@
 #include <QVariant>
 #include <QWidget>
 
-#include "tableModels/BtTableModelInventory.h"
+#include "model/InventoryMisc.h"
+#include "model/Misc.h"
 #include "tableModels/ItemDelegate.h"
 #include "tableModels/TableModelBase.h"
 
 class BtStringConst;
-class Misc;
 class Recipe;
 
 // You have to get the order of everything right with traits classes, but the end result is that we can refer to
@@ -40,13 +40,12 @@ class Recipe;
 class MiscTableModel;
 template <> struct TableModelTraits<MiscTableModel> {
    enum class ColumnIndex {
-      Name     ,
-      Type     ,
-      Use      ,
-      Time     ,
-      Amount   ,
-      Inventory,
-      IsWeight ,
+      Name              ,
+      Type              ,
+///      Use               ,
+///      Time              ,
+      TotalInventory    ,
+      TotalInventoryType,
    };
 };
 
@@ -55,7 +54,7 @@ template <> struct TableModelTraits<MiscTableModel> {
  *
  * \brief Table model for a list of miscs.
  */
-class MiscTableModel : public BtTableModelInventory, public TableModelBase<MiscTableModel, Misc> {
+class MiscTableModel : public BtTableModel, public TableModelBase<MiscTableModel, Misc> {
    Q_OBJECT
 
    TABLE_MODEL_COMMON_DECL(Misc)

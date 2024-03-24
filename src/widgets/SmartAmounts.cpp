@@ -29,7 +29,7 @@ template<> void SmartAmounts::Init<SmartLabel>(char const * const editorName,
                                                SmartLabel &       label,
                                                char const * const fieldName,
                                                char const * const fieldlFqName,
-                                               SmartField &    field,
+                                               SmartField &       field,
                                                TypeInfo                    const & typeInfo,
                                                std::optional<unsigned int> const   precision,
                                                QString                     const & maximalDisplayString) {
@@ -53,7 +53,7 @@ template<> void SmartAmounts::Init<QLabel    >(char const * const editorName,
 }
 
 // .:TBD:. I think it is unnecessary to have precision and maximalDisplayString when there is no SmartField, but leaving
-// them in for the moment, until I'm 100% sure.`
+// them in for the moment, until I'm 100% sure.
 void SmartAmounts::InitNoSf(char const * const   editorName,
                             char const * const   labelName,
                             char const * const   labelFqName,
@@ -148,7 +148,7 @@ Measurement::SystemOfMeasurement SmartAmounts::getSystemOfMeasurement(char const
    Measurement::PhysicalQuantity const physicalQuantity =
       std::holds_alternative<Measurement::PhysicalQuantity>(physicalQuantities) ?
          std::get<Measurement::PhysicalQuantity>(physicalQuantities) :
-         std::get<0>(std::get<Measurement::Mixed2PhysicalQuantities>(physicalQuantities));
+         Measurement::defaultPhysicalQuantity(std::get<Measurement::ChoiceOfPhysicalQuantity>(physicalQuantities));
 
    return Measurement::getDisplayUnitSystem(physicalQuantity).systemOfMeasurement;
 }

@@ -242,7 +242,7 @@ namespace SmartAmounts {
  * \param ...  Any remaining arguments are passed through to \c SmartField::init in fourth position and above
  */
 #define SMART_FIELD_INIT_FS(editorClass, labelName, fieldName, nativeType, btFieldType, ...) \
-   static auto const typeInfoFor_##fieldName = TypeInfo::construct<nativeType>(PropertyNames::None::none, btFieldType); \
+   static auto const typeInfoFor_##fieldName = TypeInfo::construct<nativeType>(PropertyNames::None::none, nullptr, btFieldType); \
    SmartAmounts::Init(#editorClass, \
                       #labelName, \
                       SFI_FQ_NAME(editorClass, labelName), \
@@ -260,7 +260,7 @@ namespace SmartAmounts {
  */
 #define SMART_FIELD_INIT_FIXED(editorClass, labelName, fieldName, nativeType, fixedUnit, ...) \
    static auto const typeInfoFor_##fieldName = \
-      TypeInfo::construct<nativeType>(PropertyNames::None::none, fixedUnit.getPhysicalQuantity()); \
+      TypeInfo::construct<nativeType>(PropertyNames::None::none, nullptr, fixedUnit.getPhysicalQuantity()); \
    SmartAmounts::InitFixed(#editorClass, \
                            *this->labelName, \
                            #fieldName, \

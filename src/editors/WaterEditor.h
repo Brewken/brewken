@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/WaterEditor.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * editors/WaterEditor.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -46,9 +46,9 @@ public:
    /*!
     * Sets the water we want to observe.
     *
-    * \param water If \c std::nullopt then stop observing
+    * \param water If \c nullptr then stop observing
     */
-   void setWater(std::optional<std::shared_ptr<Water>> water);
+   void setWater(std::shared_ptr<Water> water);
 
    void newWater(QString folder);
 

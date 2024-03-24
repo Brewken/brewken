@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * Application.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * Application.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Chris Pavetto <chrispavetto@gmail.com>
@@ -38,6 +38,7 @@
 
 #include <QDebug>
 #include <QDesktopServices>
+#include <QDirIterator>
 #include <QJsonObject>
 #include <QJsonParseError>
 #include <QMessageBox>
@@ -57,10 +58,13 @@
 #include "measurement/ColorMethods.h"
 #include "measurement/IbuMethods.h"
 #include "measurement/Measurement.h"
+#include "model/BrewNote.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
+#include "model/Hop.h"
 #include "model/Instruction.h"
 #include "model/Mash.h"
+#include "model/Misc.h"
 #include "model/Salt.h"
 #include "model/Style.h"
 #include "model/Water.h"
@@ -329,7 +333,7 @@ namespace {
             "constant for resource dir:" << CONFIG_DATA_DIR;
          path = QString(CONFIG_DATA_DIR);
       }
-#elif defined(Q_OS_MAC)
+#elif defined(Q_OS_MACOS)
       // === Mac ===
       // We should be inside an app bundle.
       path += "../Resources/";
@@ -362,20 +366,20 @@ QDir Application::getResourceDir() {
 }
 
 bool Application::initialize() {
-   // Need these for changed(QMetaProperty,QVariant) to be emitted across threads.
+   // Need these for changed(QMetaProperty, QVariant) to be emitted across threads.
    qRegisterMetaType<QMetaProperty>();
-   qRegisterMetaType<Equipment*>();
-   qRegisterMetaType<Mash*>();
-   qRegisterMetaType<Style*>();
-   qRegisterMetaType<Salt*>();
-   qRegisterMetaType< QList<BrewNote*> >();
-   qRegisterMetaType< QList<Hop*> >();
-   qRegisterMetaType< QList<Instruction*> >();
-   qRegisterMetaType< QList<Fermentable*> >();
-   qRegisterMetaType< QList<Misc*> >();
-   qRegisterMetaType< QList<Yeast*> >();
-   qRegisterMetaType< QList<Water*> >();
-   qRegisterMetaType< QList<Salt*> >();
+   qRegisterMetaType<Equipment *>();
+   qRegisterMetaType<Mash      *>();
+   qRegisterMetaType<Style     *>();
+   qRegisterMetaType<Salt      *>();
+   qRegisterMetaType<QList<BrewNote    *>>();
+   qRegisterMetaType<QList<Hop         *>>();
+   qRegisterMetaType<QList<Instruction *>>();
+   qRegisterMetaType<QList<Fermentable *>>();
+   qRegisterMetaType<QList<Misc        *>>();
+   qRegisterMetaType<QList<Yeast       *>>();
+   qRegisterMetaType<QList<Water       *>>();
+   qRegisterMetaType<QList<Salt        *>>();
 
    // Make sure all the necessary directories and files we need exist before starting.
    ensureDirectoriesExist();
@@ -389,9 +393,16 @@ bool Application::initialize() {
       "Locale:" << locale.name() << "(Decimal point:" << locale.decimalPoint() << "/ Thousands separator:" <<
       locale.groupSeparator() << ")";
 
-#if defined(Q_OS_MAC)
+#if defined(Q_OS_MACOS)
    qt_set_sequence_auto_mnemonic(true); // turns on Mac Keyboard shortcuts
 #endif
+
+   // Uncomment the following to list all the entries in our resource bundle.  This can be helpful at certain points in
+   // debugging, but is not normally needed.
+//   QDirIterator resource(":", QDirIterator::Subdirectories);
+//   while (resource.hasNext()) {
+//      qDebug() << "Resource:" << resource.next();
+//   }
 
    // Check if the database was successfully loaded before
    // loading the main window.

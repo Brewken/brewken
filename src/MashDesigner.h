@@ -93,15 +93,15 @@ private:
    bool isDecoction() const;
 
 
-   Recipe* recObs;
-   std::shared_ptr<Mash> mash;
-   Equipment* equip;
-   std::shared_ptr<MashStep> mashStep;
-   std::shared_ptr<MashStep> prevStep;
-   double addedWater_l;
-   double grain_kg;
-   double MC;
-   int curStep;
+   Recipe* m_recObs;
+   std::shared_ptr<Mash     > m_mash;
+   std::shared_ptr<Equipment> m_equipment;
+   std::shared_ptr<MashStep> m_mashStep;
+   std::shared_ptr<MashStep> m_prevStep;
+   double m_addedWater_l;
+   double m_grain_kg;
+   double m_MC;
+   int m_curStep;
 };
 
 #endif

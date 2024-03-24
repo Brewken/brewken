@@ -279,9 +279,6 @@
              <property name="acceptDrops">
               <bool>true</bool>
              </property>
-             <property name="configSection" stdset="0">
-              <string>tab_recipe</string>
-             </property>
              <attribute name="title">
               <string>Recipe</string>
              </attribute>
@@ -1121,13 +1118,13 @@
             <property name="mimeAccepted" stdset="0">
              <string notr="true">application/x-brewken-ingredient</string>
             </property>
-            <widget class="QWidget" name="fermentableTab">
+            <widget class="QWidget" name="recipeFermentableTab">
              <attribute name="title">
               <string>Fermentables</string>
              </attribute>
              <layout class="QHBoxLayout" name="horizontalLayout_19">
               <item>
-               <widget class="QTableView" name="fermentableTable">
+               <widget class="QTableView" name="fermentableAdditionTable">
                 <property name="contextMenuPolicy">
                  <enum>Qt::CustomContextMenu</enum>
                 </property>
@@ -1200,13 +1197,13 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="hopsTab">
+            <widget class="QWidget" name="recipeHopTab">
              <attribute name="title">
               <string>Hops</string>
              </attribute>
              <layout class="QHBoxLayout" name="horizontalLayout_20">
               <item>
-               <widget class="QTableView" name="hopTable"/>
+               <widget class="QTableView" name="hopAdditionTable"/>
               </item>
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_hops">
@@ -1272,13 +1269,13 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="miscTab">
+            <widget class="QWidget" name="recipeMiscTab">
              <attribute name="title">
               <string>Miscellaneous</string>
              </attribute>
              <layout class="QHBoxLayout" name="horizontalLayout_21">
               <item>
-               <widget class="QTableView" name="miscTable">
+               <widget class="QTableView" name="miscAdditionTable">
                 <property name="contextMenuPolicy">
                  <enum>Qt::CustomContextMenu</enum>
                 </property>
@@ -1348,13 +1345,13 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="yeastTab">
+            <widget class="QWidget" name="recipeYeastTab">
              <attribute name="title">
               <string>Yeast</string>
              </attribute>
              <layout class="QHBoxLayout" name="horizontalLayout_13">
               <item>
-               <widget class="QTableView" name="yeastTable">
+               <widget class="QTableView" name="yeastAdditionTable">
                 <property name="contextMenuPolicy">
                  <enum>Qt::CustomContextMenu</enum>
                 </property>
@@ -1623,6 +1620,384 @@
                   </property>
                   <property name="text">
                    <string>Save Mash</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="boilStepsTab">
+             <attribute name="title">
+              <string>Boil</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_7">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_boiles">
+                <item>
+                 <widget class="QTableView" name="boilStepTableWidget">
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::CustomContextMenu</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_boilbuttons">
+                  <property name="spacing">
+                   <number>1</number>
+                  </property>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_addBoilStep">
+                    <property name="toolTip">
+                     <string>Add boil step</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="../brewken.qrc">
+                      <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_removeBoilStep">
+                    <property name="toolTip">
+                     <string>Remove selected boil step</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="../brewken.qrc">
+                      <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_editBoilStep">
+                    <property name="toolTip">
+                     <string>Edit selected boil step</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="../brewken.qrc">
+                      <normaloff>:/images/edit.svg</normaloff>:/images/edit.svg</iconset>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_editBoil">
+                    <property name="toolTip">
+                     <string>Edit boil properties</string>
+                    </property>
+                    <property name="text">
+                     <string>Edit boil</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="verticalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_boil">
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="label_2">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Boils</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="BoilButton" name="boilButton">
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="CustomComboBox" name="boilComboBox">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>30</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_4">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_boilRemove">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_boilUp">
+                  <property name="toolTip">
+                   <string>Boil step up</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/smallUpArrow.svg</normaloff>:/images/smallUpArrow.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_boilDown">
+                  <property name="toolTip">
+                   <string>Boil step down</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/smallDownArrow.svg</normaloff>:/images/smallDownArrow.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_saveBoil">
+                  <property name="toolTip">
+                   <string>Save this boil profile</string>
+                  </property>
+                  <property name="text">
+                   <string>Save Boil</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="fermentationStepsTab">
+             <attribute name="title">
+              <string>Fermentation</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_7">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_fermentationes">
+                <item>
+                 <widget class="QTableView" name="fermentationStepTableWidget">
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::CustomContextMenu</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_fermentationbuttons">
+                  <property name="spacing">
+                   <number>1</number>
+                  </property>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_addFermentationStep">
+                    <property name="toolTip">
+                     <string>Add fermentation step</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="../brewken.qrc">
+                      <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_removeFermentationStep">
+                    <property name="toolTip">
+                     <string>Remove selected fermentation step</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="../brewken.qrc">
+                      <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_editFermentationStep">
+                    <property name="toolTip">
+                     <string>Edit selected fermentation step</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="../brewken.qrc">
+                      <normaloff>:/images/edit.svg</normaloff>:/images/edit.svg</iconset>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_editFermentation">
+                    <property name="toolTip">
+                     <string>Edit fermentation properties</string>
+                    </property>
+                    <property name="text">
+                     <string>Edit fermentation</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="verticalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_fermentation">
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="label_2">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Fermentations</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="FermentationButton" name="fermentationButton">
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="CustomComboBox" name="fermentationComboBox">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>30</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_4">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_fermentationRemove">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_fermentationUp">
+                  <property name="toolTip">
+                   <string>Fermentation step up</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/smallUpArrow.svg</normaloff>:/images/smallUpArrow.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_fermentationDown">
+                  <property name="toolTip">
+                   <string>Fermentation step down</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../brewken.qrc">
+                    <normaloff>:/images/smallDownArrow.svg</normaloff>:/images/smallDownArrow.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_saveFermentation">
+                  <property name="toolTip">
+                   <string>Save this fermentation profile</string>
+                  </property>
+                  <property name="text">
+                   <string>Save Fermentation</string>
                   </property>
                  </widget>
                 </item>
@@ -2211,7 +2586,7 @@
   <customwidget>
    <class>EquipmentButton</class>
    <extends>QPushButton</extends>
-   <header>EquipmentButton.h</header>
+   <header>buttons/EquipmentButton.h</header>
   </customwidget>
   <customwidget>
    <class>RecipeTreeView</class>
@@ -2241,12 +2616,22 @@
   <customwidget>
    <class>StyleButton</class>
    <extends>QPushButton</extends>
-   <header>StyleButton.h</header>
+   <header>buttons/StyleButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>BoilButton</class>
+   <extends>QPushButton</extends>
+   <header>buttons/BoilButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>FermentationButton</class>
+   <extends>QPushButton</extends>
+   <header>buttons/FermentationButton.h</header>
   </customwidget>
   <customwidget>
    <class>MashButton</class>
    <extends>QPushButton</extends>
-   <header>MashButton.h</header>
+   <header>buttons/MashButton.h</header>
   </customwidget>
   <customwidget>
    <class>StyleTreeView</class>
@@ -2287,19 +2672,19 @@
   <tabstop>lineEdit_boilTime</tabstop>
   <tabstop>scrollArea_tables</tabstop>
   <tabstop>tabWidget_ingredients</tabstop>
-  <tabstop>fermentableTable</tabstop>
+  <tabstop>fermentableAdditionTable</tabstop>
   <tabstop>pushButton_addFerm</tabstop>
   <tabstop>pushButton_removeFerm</tabstop>
   <tabstop>pushButton_editFerm</tabstop>
-  <tabstop>hopTable</tabstop>
+  <tabstop>hopAdditionTable</tabstop>
   <tabstop>pushButton_addHop</tabstop>
   <tabstop>pushButton_removeHop</tabstop>
   <tabstop>pushButton_editHop</tabstop>
-  <tabstop>miscTable</tabstop>
+  <tabstop>miscAdditionTable</tabstop>
   <tabstop>pushButton_addMisc</tabstop>
   <tabstop>pushButton_removeMisc</tabstop>
   <tabstop>pushButton_editMisc</tabstop>
-  <tabstop>yeastTable</tabstop>
+  <tabstop>yeastAdditionTable</tabstop>
   <tabstop>pushButton_addYeast</tabstop>
   <tabstop>pushButton_removeYeast</tabstop>
   <tabstop>pushButton_editYeast</tabstop>

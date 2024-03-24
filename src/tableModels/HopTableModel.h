@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/HopTableModel.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * tableModels/HopTableModel.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Markus Mårtensson <mackan.90@gmail.com>
@@ -28,12 +28,12 @@
 #include <QVariant>
 #include <QWidget>
 
-#include "tableModels/BtTableModelInventory.h"
+#include "model/Hop.h"
+#include "model/InventoryHop.h"
 #include "tableModels/ItemDelegate.h"
 #include "tableModels/TableModelBase.h"
 
 class BtStringConst;
-class Hop;
 class Recipe;
 
 // You have to get the order of everything right with traits classes, but the end result is that we can refer to
@@ -41,13 +41,12 @@ class Recipe;
 class HopTableModel;
 template <> struct TableModelTraits<HopTableModel> {
    enum class ColumnIndex {
-      Name     ,
-      Alpha    ,
-      Amount   ,
-      Inventory,
-      Form     ,
-      Use      ,
-      Time     ,
+      Name              ,
+      Form              ,
+      Year              ,
+      Alpha             ,
+      TotalInventory    ,
+      TotalInventoryType,
    };
 };
 
@@ -56,7 +55,7 @@ template <> struct TableModelTraits<HopTableModel> {
  *
  * \brief Model class for a list of hops.
  */
-class HopTableModel : public BtTableModelInventory, public TableModelBase<HopTableModel, Hop> {
+class HopTableModel : public BtTableModel, public TableModelBase<HopTableModel, Hop> {
    Q_OBJECT
 
    TABLE_MODEL_COMMON_DECL(Hop)
@@ -71,11 +70,11 @@ private:
 
 //=============================================== CLASS HopItemDelegate ================================================
 
-/*!
- *  \class HopItemDelegate
+/**
+ * \class HopItemDelegate
  *
- *  \brief An item delegate for hop tables.
- *  \sa HopTableModel
+ * \brief An item delegate for hop tables.
+ * \sa HopTableModel
  */
 class HopItemDelegate : public QItemDelegate,
                                public ItemDelegate<HopItemDelegate, HopTableModel> {

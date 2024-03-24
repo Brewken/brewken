@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/MiscTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * tableModels/MiscTableModel.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -38,26 +38,25 @@
 #include "widgets/BtComboBox.h"
 
 MiscTableModel::MiscTableModel(QTableView* parent, bool editable) :
-   BtTableModelInventory{
+   BtTableModel{
       parent,
       editable,
       {
          // NOTE: Need PropertyNames::Fermentable::amountWithUnits not PropertyNames::Fermentable::amount below so we
          //       can handle mass-or-volume generically in TableModelBase.  Same for inventoryWithUnits.
-         SMART_COLUMN_HEADER_DEFN(MiscTableModel, Name     , tr("Name"       ), Misc, PropertyNames::NamedEntity::name                           ),
-         SMART_COLUMN_HEADER_DEFN(MiscTableModel, Type     , tr("Type"       ), Misc, PropertyNames::Misc::type                                  , EnumInfo{Misc::typeStringMapping, Misc::typeDisplayNames}),
-         SMART_COLUMN_HEADER_DEFN(MiscTableModel, Use      , tr("Use"        ), Misc, PropertyNames::Misc::use                                   , EnumInfo{Misc:: useStringMapping, Misc:: useDisplayNames}),
-         SMART_COLUMN_HEADER_DEFN(MiscTableModel, Time     , tr("Time"       ), Misc, PropertyNames::Misc::time_min                              ),
-         SMART_COLUMN_HEADER_DEFN(MiscTableModel, Amount   , tr("Amount"     ), Misc, PropertyNames::Misc::amountWithUnits                       ),
-         SMART_COLUMN_HEADER_DEFN(MiscTableModel, Inventory, tr("Inventory"  ), Misc, PropertyNames::NamedEntityWithInventory::inventoryWithUnits),
-         SMART_COLUMN_HEADER_DEFN(MiscTableModel, IsWeight , tr("Amount Type"), Misc, PropertyNames::Misc::amountIsWeight                        , BoolInfo{tr("Volume"    ), tr("Weight")}),
+         TABLE_MODEL_HEADER(Misc, Name              , tr("Name"       ), PropertyNames::NamedEntity::name                           ),
+         TABLE_MODEL_HEADER(Misc, Type              , tr("Type"       ), PropertyNames::Misc::type                                  , EnumInfo{Misc::typeStringMapping, Misc::typeDisplayNames}),
+///         TABLE_MODEL_HEADER(Misc, Use               , tr("Use"        ), PropertyNames::Misc::use                                   , EnumInfo{Misc:: useStringMapping, Misc:: useDisplayNames}),
+///         TABLE_MODEL_HEADER(Misc, Time              , tr("Time"       ), PropertyNames::Misc::time_min                              ),
+         TABLE_MODEL_HEADER(Misc, TotalInventory    , tr("Inventory"  ), PropertyNames::Ingredient::totalInventory, PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(Misc, TotalInventoryType, tr("Amount Type"), PropertyNames::Ingredient::totalInventory, Misc::validMeasures),
       }
    },
    TableModelBase<MiscTableModel, Misc>{} {
    this->rows.clear();
    setObjectName("miscTableModel");
 
-   QHeaderView* headerView = parentTableWidget->horizontalHeader();
+   QHeaderView* headerView = m_parentTableWidget->horizontalHeader();
    connect(headerView, &QWidget::customContextMenuRequested, this, &MiscTableModel::contextMenu);
    connect(&ObjectStoreTyped<InventoryMisc>::getInstance(),
            &ObjectStoreTyped<InventoryMisc>::signalPropertyChanged,
@@ -84,11 +83,10 @@ QVariant MiscTableModel::data(QModelIndex const & index, int role) const {
    switch (columnIndex) {
       case MiscTableModel::ColumnIndex::Name:
       case MiscTableModel::ColumnIndex::Type:
-      case MiscTableModel::ColumnIndex::Use:
-      case MiscTableModel::ColumnIndex::Time:
-      case MiscTableModel::ColumnIndex::IsWeight:
-      case MiscTableModel::ColumnIndex::Amount:
-      case MiscTableModel::ColumnIndex::Inventory:
+///      case MiscTableModel::ColumnIndex::Use:
+///      case MiscTableModel::ColumnIndex::Time:
+      case MiscTableModel::ColumnIndex::TotalInventory    :
+      case MiscTableModel::ColumnIndex::TotalInventoryType:
          return this->readDataFromModel(index, role);
 
       // No default case as we want the compiler to warn us if we missed one
@@ -109,10 +107,10 @@ Qt::ItemFlags MiscTableModel::flags(QModelIndex const & index) const {
    if (columnIndex == MiscTableModel::ColumnIndex::Name) {
       return defaults;
    }
-   if (columnIndex == MiscTableModel::ColumnIndex::Inventory) {
-      return (defaults | (this->isInventoryEditable() ? Qt::ItemIsEditable : Qt::NoItemFlags));
+   if (columnIndex == MiscTableModel::ColumnIndex::TotalInventory) {
+      return Qt::ItemIsEnabled | Qt::ItemIsEditable;
    }
-   return defaults | (this->editable ? Qt::ItemIsEditable : Qt::NoItemFlags);
+   return defaults | (this->m_editable ? Qt::ItemIsEditable : Qt::NoItemFlags);
 }
 
 bool MiscTableModel::setData(QModelIndex const & index,
@@ -122,45 +120,28 @@ bool MiscTableModel::setData(QModelIndex const & index,
       return false;
    }
 
-   auto row = this->rows[index.row()];
-
-   Measurement::PhysicalQuantity physicalQuantity =
-      row->amountIsWeight() ? Measurement::PhysicalQuantity::Mass: Measurement::PhysicalQuantity::Volume;
+///   auto row = this->rows[index.row()];
 
    auto const columnIndex = static_cast<MiscTableModel::ColumnIndex>(index.column());
    switch (columnIndex) {
       case MiscTableModel::ColumnIndex::Name:
       case MiscTableModel::ColumnIndex::Type:
-      case MiscTableModel::ColumnIndex::Use:
-      case MiscTableModel::ColumnIndex::Time:
-      case MiscTableModel::ColumnIndex::IsWeight:
+///      case MiscTableModel::ColumnIndex::Use:
+///      case MiscTableModel::ColumnIndex::Time:
+      case MiscTableModel::ColumnIndex::TotalInventory    :
+      case MiscTableModel::ColumnIndex::TotalInventoryType:
          return this->writeDataToModel(index, value, role);
-
-      case MiscTableModel::ColumnIndex::Amount:
-      case MiscTableModel::ColumnIndex::Inventory:
-         return this->writeDataToModel(index, value, role, physicalQuantity);
 
       // No default case as we want the compiler to warn us if we missed one
    }
 
+   // Should be unreachable
    emit dataChanged(index, index);
    return true;
 }
 
-void MiscTableModel::changedInventory(int invKey, BtStringConst const & propertyName) {
-   if (propertyName == PropertyNames::Inventory::amount) {
-      for (int ii = 0; ii < this->rows.size(); ++ii) {
-         if (invKey == this->rows.at(ii)->inventoryId()) {
-            emit dataChanged(QAbstractItemModel::createIndex(ii, static_cast<int>(MiscTableModel::ColumnIndex::Inventory)),
-                             QAbstractItemModel::createIndex(ii, static_cast<int>(MiscTableModel::ColumnIndex::Inventory)));
-         }
-      }
-   }
-   return;
-}
-
 // Insert the boiler-plate stuff that we cannot do in TableModelBase
-TABLE_MODEL_COMMON_CODE(Misc, misc)
+TABLE_MODEL_COMMON_CODE(Misc, misc, PropertyNames::None::none)
 //=============================================== CLASS MiscItemDelegate ===============================================
 
 // Insert the boiler-plate stuff that we cannot do in ItemDelegate

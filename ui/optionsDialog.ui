@@ -329,9 +329,6 @@
          <property name="title">
           <string>Configuration</string>
          </property>
-         <property name="configSection" stdset="0">
-          <string notr="true">optionsDialog</string>
-         </property>
          <layout class="QGridLayout" name="gridLayout"/>
         </widget>
        </item>

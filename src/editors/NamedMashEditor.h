@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/NamedMashEditor.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * editors/NamedMashEditor.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -26,9 +26,9 @@
 #include <QWidget>
 
 #include "ui_namedMashEditor.h"
-#include "MashListModel.h"
 #include "editors/MashStepEditor.h"
-#include "EquipmentListModel.h"
+#include "listModels/MashListModel.h"
+#include "listModels/EquipmentListModel.h"
 #include "NamedEntitySortProxyModel.h"
 #include "tableModels/MashStepTableModel.h"
 
@@ -48,7 +48,9 @@ class Equipment;
 class NamedMashEditor : public QDialog, public Ui::namedMashEditor {
    Q_OBJECT
 public:
-   NamedMashEditor( QWidget *parent = 0, MashStepEditor* editor =0, bool singleMashEditor = false );
+   NamedMashEditor(QWidget * parent = nullptr,
+                   MashStepEditor* editor = nullptr,
+                   bool singleMashEditor = false);
 
 public slots:
    //! show the editor window
@@ -58,7 +60,7 @@ public slots:
    //! save the changes and close the editor
    void saveAndClose();
    //! Set the mash we wish to view/edit.
-   void setMash(Mash* mash);
+   void setMash(std::shared_ptr<Mash> mash);
 
    //! add a mash step to the mash
    void addMashStep();
@@ -70,9 +72,9 @@ public slots:
    void moveMashStepDown();
 
    //! Get the tun mass and sp. heat from the equipment combobox
-   void fromEquipment(const QString& name);
+   void fromEquipment(QString const & name);
    //! set the current mash being edited according to the combobox
-   void mashSelected( const QString& name);
+   void mashSelected(QString const & name);
    //! delete the mash
    void removeMash();
    //! Our standard changed slot
@@ -80,18 +82,18 @@ public slots:
 
 private:
    //! The mash we are watching
-   Mash* mashObs;
+   std::shared_ptr<Mash> m_mashObs;
    //! The mash list model for the combobox
-   MashListModel* mashListModel;
+   MashListModel * m_mashListModel;
    //! The table model
-   MashStepTableModel* mashStepTableModel;
+   MashStepTableModel * m_mashStepTableModel;
    //! and the mash step edit. Don't know if we need this one
-   MashStepEditor* mashStepEditor;
+   MashStepEditor * m_mashStepEditor;
    //! This is getting fun!
-   EquipmentListModel* equipListModel;
+   EquipmentListModel* m_equipListModel;
 
    //! Show any changes made. This will get ugly, I am sure
-   void showChanges(QMetaProperty* prop = 0);
+   void showChanges(QMetaProperty * prop = nullptr);
    //! Clear the mash and delete all of its steps
    void clear();
    //! Convenience method to make sure just one item was selected

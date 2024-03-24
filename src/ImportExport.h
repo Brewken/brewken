@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * ImportExport.h is part of Brewken, and is copyright the following authors 2013-2022:
+ * ImportExport.h is part of Brewken, and is copyright the following authors 2013-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -32,6 +32,10 @@ class Yeast;
 namespace ImportExport {
    /**
     * \brief Import recipes, hops, equipment, etc from BeerXML or BeerJSON files specified by the user
+    *
+    *        For export, we let the user choose between BeerXML and BeerJSON by the file extension they choose.  This is
+    *        similar to how other programs work (eg LibreOffice, Gimp), so I think it's OK, but we'll see what feedback
+    *        is on usability.
     */
    void importFromFiles();
 

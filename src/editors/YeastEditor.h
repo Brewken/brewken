@@ -39,23 +39,10 @@ class Yeast;
  *        See comment on EditorBase::connectSignalsAndSlots for why we need to have \c public, not \c private
  *        inheritance from the Ui base.
  */
-class YeastEditor : public QDialog, public Ui::yeastEditor, public EditorBase<Yeast, YeastEditor> {
+class YeastEditor : public QDialog, public Ui::yeastEditor, public EditorBase<YeastEditor, Yeast> {
    Q_OBJECT
 
-public:
-   YeastEditor(QWidget * parent = nullptr);
-   virtual ~YeastEditor();
-
-   void writeFieldsToEditItem();
-   void writeLateFieldsToEditItem();
-   void readFieldsFromEditItem(std::optional<QString> propName);
-
-public slots:
-   // Standard editor slots
-   void save();
-   void clearAndClose();
-   void changed(QMetaProperty, QVariant);
-   void clickedNew();
+   EDITOR_COMMON_DECL(Yeast)
 };
 
 #endif

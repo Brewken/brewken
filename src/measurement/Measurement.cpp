@@ -55,8 +55,8 @@ namespace {
       Measurement::UnitSystem const * unitSystem = Measurement::UnitSystem::getInstanceByUniqueName(unitSystemName);
       if (nullptr == unitSystem) {
          qWarning() <<
-            Q_FUNC_INFO << "Unrecognised unit system," << unitSystemName << "for" <<
-            Measurement::getDisplayName(physicalQuantity) << ", defaulting to" << defaultUnitSystem.uniqueName << "(" <<
+            Q_FUNC_INFO << "Unrecognised unit system," << unitSystemName << "for" << physicalQuantity <<
+            ", defaulting to" << defaultUnitSystem.uniqueName << "(" <<
             Measurement::getDisplayName(defaultUnitSystem.systemOfMeasurement) << ")";
          unitSystem = &defaultUnitSystem;
       }
@@ -64,46 +64,6 @@ namespace {
       return;
    }
 
-   /**
-    * \brief Given a string of number plus, optionally, some units or pseudo-units, extract the number (and ignore the
-    *        units or pseudo-units)
-    */
-   double extractRawDoubleFromString(QString const & input, bool * ok) {
-      if (ok) {
-         *ok = true;
-      }
-
-      // Make sure we get the right decimal point (. or ,) and the right grouping
-      // separator (, or .). Some locales write 1.000,10 and other write
-      // 1,000.10. We need to catch both
-      QString const decimal  = QRegExp::escape(Localization::getLocale().decimalPoint());
-      QString const grouping = QRegExp::escape(Localization::getLocale().groupSeparator());
-
-      QRegExp amtUnit;
-      amtUnit.setPattern("((?:\\d+" + grouping + ")?\\d+(?:" + decimal + "\\d+)?|" + decimal + "\\d+)\\s*(\\w+)?");
-      amtUnit.setCaseSensitivity(Qt::CaseInsensitive);
-
-      // If the regex dies, return 0.0
-      if (amtUnit.indexIn(input) == -1) {
-         if (ok) {
-            *ok = false;
-            qWarning() << Q_FUNC_INFO << "Error parsing" << input << "as number";
-         }
-         return 0.0;
-      }
-
-      QString numericPartOfInput = amtUnit.cap(1);
-      double returnValue = 0.0;
-      try {
-         returnValue = Localization::toDouble(numericPartOfInput, ok);
-      } catch (std::invalid_argument const & ex) {
-         qWarning() << Q_FUNC_INFO << "Could not parse" << numericPartOfInput << "as number:" << ex.what();
-      } catch(std::out_of_range const & ex) {
-         qWarning() << Q_FUNC_INFO << "Out of range parsing" << numericPartOfInput << "as number:" << ex.what();
-      }
-
-      return returnValue;
-   }
 }
 
 //
@@ -119,9 +79,9 @@ template<typename T> [[nodiscard]] T Measurement::extractRawFromString(QString c
    // This compile-time assert relies on the fact that no type has size 0
    static_assert(sizeof(T) == 0, "Only specializations of stringTo() can be used");
 }
-template<> [[nodiscard]] int          Measurement::extractRawFromString<int>         (QString const & input, bool * ok) { return static_cast<int         >(extractRawDoubleFromString(input, ok)); }
-template<> [[nodiscard]] unsigned int Measurement::extractRawFromString<unsigned int>(QString const & input, bool * ok) { return static_cast<unsigned int>(extractRawDoubleFromString(input, ok)); }
-template<> [[nodiscard]] double       Measurement::extractRawFromString<double>      (QString const & input, bool * ok) { return                           extractRawDoubleFromString(input, ok ); }
+template<> [[nodiscard]] int          Measurement::extractRawFromString<int>         (QString const & input, bool * ok) { return static_cast<int         >(Measurement::Unit::splitAmountString(input, ok).first); }
+template<> [[nodiscard]] unsigned int Measurement::extractRawFromString<unsigned int>(QString const & input, bool * ok) { return static_cast<unsigned int>(Measurement::Unit::splitAmountString(input, ok).first); }
+template<> [[nodiscard]] double       Measurement::extractRawFromString<double>      (QString const & input, bool * ok) { return                           Measurement::Unit::splitAmountString(input, ok).first ; }
 
 [[nodiscard]] QVariant Measurement::extractRawFromString(QString const & input, TypeInfo const & typeInfo, bool * ok) {
    // Optional values are allowed to be blank
@@ -130,7 +90,7 @@ template<> [[nodiscard]] double       Measurement::extractRawFromString<double> 
    }
 
    bool myOk = false;
-   double valueAsDouble = extractRawDoubleFromString(input, &myOk);
+   double valueAsDouble = Measurement::Unit::splitAmountString(input, &myOk).first;
    if (ok) {
       *ok = myOk;
    }
@@ -161,7 +121,8 @@ template<> [[nodiscard]] double       Measurement::extractRawFromString<double> 
 
 
 void Measurement::loadDisplayScales() {
-   for (Measurement::PhysicalQuantity const physicalQuantity : Measurement::allPhysicalQuantites) {
+   for (auto const & ii : Measurement::physicalQuantityStringMapping) {
+      auto const physicalQuantity = static_cast<Measurement::PhysicalQuantity>(ii.native);
       loadDisplayScale(physicalQuantity,
                        Measurement::getSettingsName(physicalQuantity),
                        Measurement::Unit::getCanonicalUnit(physicalQuantity).getUnitSystem());
@@ -170,7 +131,8 @@ void Measurement::loadDisplayScales() {
 }
 
 void Measurement::saveDisplayScales() {
-   for (Measurement::PhysicalQuantity const physicalQuantity : Measurement::allPhysicalQuantites) {
+   for (auto const & ii : Measurement::physicalQuantityStringMapping) {
+      auto const physicalQuantity = static_cast<Measurement::PhysicalQuantity>(ii.native);
       PersistentSettings::insert(Measurement::getSettingsName(physicalQuantity),
                                  Measurement::getDisplayUnitSystem(physicalQuantity).uniqueName);
    }
@@ -181,9 +143,7 @@ void Measurement::setDisplayUnitSystem(Measurement::PhysicalQuantity physicalQua
                                        Measurement::UnitSystem const & unitSystem) {
    // It's a coding error if we try to store a UnitSystem against a PhysicalQuantity to which it does not relate!
    Q_ASSERT(physicalQuantity == unitSystem.getPhysicalQuantity());
-   qDebug() <<
-      Q_FUNC_INFO << "Setting UnitSystem for" << Measurement::getDisplayName(physicalQuantity) << "to" <<
-      unitSystem.uniqueName;
+   qDebug() << Q_FUNC_INFO << "Setting UnitSystem for" << physicalQuantity << "to" << unitSystem.uniqueName;
    physicalQuantityToDisplayUnitSystem.insert(physicalQuantity, &unitSystem);
    return;
 }
@@ -196,16 +156,14 @@ void Measurement::setDisplayUnitSystem(UnitSystem const & unitSystem) {
 }
 
 Measurement::UnitSystem const & Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity physicalQuantity) {
-   // It is a coding error if physicalQuantityToDisplayUnitSystem has not had data loaded into it by the time this function is
-   // called.
+   // It is a coding error if physicalQuantityToDisplayUnitSystem has not had data loaded into it by the time this
+   // function is called.
    Q_ASSERT(!physicalQuantityToDisplayUnitSystem.isEmpty());
 
    Measurement::UnitSystem const * unitSystem = physicalQuantityToDisplayUnitSystem.value(physicalQuantity, nullptr);
    if (nullptr == unitSystem) {
       // This is a coding error
-      qCritical() <<
-         Q_FUNC_INFO << "Unable to find display unit system for physical quantity" <<
-         Measurement::getDisplayName(physicalQuantity);
+      qCritical() << Q_FUNC_INFO << "Unable to find display unit system for physical quantity" << physicalQuantity;
       Q_ASSERT(false);
    }
    return *unitSystem;
@@ -230,17 +188,16 @@ QString Measurement::displayAmount(Measurement::Amount const & amount,
                                    std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
                                    std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
    // Check for insane values.
-   if (Algorithms::isNan(amount.quantity()) || Algorithms::isInf(amount.quantity())) {
+   if (Algorithms::isNan(amount.quantity) || Algorithms::isInf(amount.quantity)) {
       return "-";
    }
 
    // If the caller told us (via forced system of measurement) what UnitSystem to use, use that, otherwise get whatever
    // one we're using generally for related physical property.
-   PhysicalQuantity const physicalQuantity = amount.unit()->getPhysicalQuantity();
+   PhysicalQuantity const physicalQuantity = amount.unit->getPhysicalQuantity();
    Measurement::UnitSystem const & displayUnitSystem =
       forcedSystemOfMeasurement ? UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity) :
                                   Measurement::getDisplayUnitSystem(physicalQuantity);
-
    return displayUnitSystem.displayAmount(amount, precision, forcedScale);
 }
 
@@ -249,13 +206,13 @@ double Measurement::amountDisplay(Measurement::Amount const & amount,
                                   std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
 
    // Check for insane values.
-   if (Algorithms::isNan(amount.quantity()) || Algorithms::isInf(amount.quantity())) {
+   if (Algorithms::isNan(amount.quantity) || Algorithms::isInf(amount.quantity)) {
       return -1.0;
    }
 
    // If the caller told us (via forced system of measurement) what UnitSystem to use, use that, otherwise get whatever
    // one we're using generally for related physical property.
-   PhysicalQuantity const physicalQuantity = amount.unit()->getPhysicalQuantity();
+   PhysicalQuantity const physicalQuantity = amount.unit->getPhysicalQuantity();
    Measurement::UnitSystem const & displayUnitSystem =
       forcedSystemOfMeasurement ? UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity) :
                                   Measurement::getDisplayUnitSystem(physicalQuantity);
@@ -292,9 +249,10 @@ Measurement::Amount Measurement::qStringToSI(QString qstr,
                                              Measurement::PhysicalQuantity const physicalQuantity,
                                              std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
                                              std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
-   qDebug() <<
-      Q_FUNC_INFO << "Input" << qstr << "of" << physicalQuantity << "; forcedSystemOfMeasurement=" <<
-      forcedSystemOfMeasurement << "; forcedScale=" << forcedScale;
+   // Commented out this log statement as it otherwise takes up a lot of log space
+//   qDebug() <<
+//      Q_FUNC_INFO << "Input" << qstr << "of" << physicalQuantity << "; forcedSystemOfMeasurement=" <<
+//      forcedSystemOfMeasurement << "; forcedScale=" << forcedScale;
 
    //
    // If the caller told us that the SystemOfMeasurement and/or RelativeScale on the input (qstr) are "forced" then that

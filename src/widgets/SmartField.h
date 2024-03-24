@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/SmartField.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * widgets/SmartField.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -36,8 +36,6 @@
 #include "utils/TypeLookup.h"
 #include "widgets/SmartAmounts.h"
 #include "widgets/SmartBase.h"
-
-class QWidget;
 
 class SmartAmountSettings;
 class SmartLabel;
@@ -207,10 +205,6 @@ public:
     */
    virtual void doPostInitWork() = 0;
 
-//   BtFieldType const getFieldType() const;
-
-//   TypeInfo const & getTypeInfo() const;
-
    /**
     * \brief Maybe for consistency this should be \c getSettings() but that jars somewhat!
     */
@@ -221,28 +215,39 @@ public:
    char const * getFqFieldName() const;
 
    /**
-    * \brief Version of \c setAmount, for an optional amount.
+    * \brief Version of \c setQuantity, for an optional quantity.
     *
     *        It looks a bit funky disabling this specialisation for a T that is optional, but the point is that we don't
     *        want the compiler to ever create a \c std::optional<std::optional<T>> type.  (Eg, we don't want to write
-    *        `\c setAmount<std::optional<T>>(\c std::nullopt)` when we mean
-    *        `\c setAmount<T>(\c std::optional<T>{std::nullopt})`.
+    *        `\c setQuantity<std::optional<T>>(\c std::nullopt)` when we mean
+    *        `\c setQuantity<T>(\c std::optional<T>{std::nullopt})`.
     *
-    * \param amount is the amount to display
+    *        Note that, if you are explicitly providing std::nullopt as the parameter, you need to provide type
+    *        information, eg myField->setQuantity<double>(std::nullopt);
+    *
+    * \param quantity is the quantity to display
     */
-   template<typename T, typename = std::enable_if_t<is_not_optional<T>::value> > void setAmount(std::optional<T> amount);
+   template<typename T, typename = std::enable_if_t<is_non_optional<T>::value> > void setQuantity(std::optional<T> quantity);
 
    /**
-    * \brief Set the amount for a non-optional numeric field
+    * \brief Set the quantity for a non-optional numeric field
     *
-    * \param amount is the amount to display
+    * \param quantity is the quantity to display
     */
-   template<typename T, typename = std::enable_if_t<is_not_optional<T>::value> > void setAmount(T amount);
+   template<typename T, typename = std::enable_if_t<is_non_optional<T>::value> > void setQuantity(T quantity);
+
+   /**
+    * \brief Usually a field is set via \c setQuantity because the units can be obtained from \c TypeInfo.  However, in
+    *        certain circumstances, we need the caller to be able to supply both quantity and units, ie an Amount.  In
+    *        particular, when the field type is \c Measurement::ChoiceOfPhysicalQuantity, it is not sufficient to call
+    *        \c setQuantity as we will not be able determine units from field type.
+    */
+   void setAmount(Measurement::Amount const & amount);
 
    /**
     * \brief Normally, you set precision once when \c init is called via \c SMART_FIELD_INIT or similar.  However, if
     *        you really want to modify it on the fly, eg to have different precision for different units, this is what
-    *        you call.  Note that you should call this before calling \c setAmount.
+    *        you call.  Note that you should call this before calling \c setQuantity.
     */
    void setPrecision(unsigned int const precision);
    [[nodiscard]] unsigned int getPrecision() const;
@@ -252,7 +257,23 @@ public:
     *        units for the relevant \c Measurement::PhysicalQuantity.  (It is a coding error to call this function if
     *        our field type \c is \c NonPhysicalQuantity.)
     */
-   Measurement::Amount toCanonical() const;
+   Measurement::Amount getNonOptCanonicalAmt() const;
+
+   /**
+    * \brief As \c getNonOptCanonicalAmt but for optional fields
+    */
+   std::optional<Measurement::Amount> getOptCanonicalAmt() const;
+
+   /**
+    * \brief Same as calling \c quantity() on the result of \c getNonOptCanonicalAmt().
+    */
+   double getNonOptCanonicalQty() const;
+
+   /**
+    * \brief As \c getNonOptCanonicalQty but (with the obvious changes) for optional fields
+    */
+   std::optional<double> getOptCanonicalQty() const;
+
 
    /**
     * \brief Use this when you want to get the text as a number (and ignore any units or other trailling letters or

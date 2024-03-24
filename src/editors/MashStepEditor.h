@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/MashStepEditor.h is part of Brewken, and is copyright the following authors 2009-2020:
+ * editors/MashStepEditor.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -20,52 +20,31 @@
 #define EDITORS_MASHSTEPEDITOR_H
 #pragma once
 
-#include <memory>
-
 #include <QDialog>
-#include <QWidget>
-#include <QMetaProperty>
-#include <QVariant>
 
 #include "ui_mashStepEditor.h"
 
+#include "editors/EditorBase.h"
+
 // Forward declarations.
 class MashStep;
-class Mash;
 
 /*!
  * \class MashStepEditor
  *
  * \brief View/controller dialog for editing mash steps.
  */
-class MashStepEditor : public QDialog, public Ui::mashStepEditor
-{
+class MashStepEditor : public QDialog, public Ui::mashStepEditor, public EditorBase<MashStepEditor, MashStep> {
    Q_OBJECT
-public:
-   MashStepEditor(QWidget* parent=nullptr);
-   virtual ~MashStepEditor() {}
 
-   void setMashStep(std::shared_ptr<MashStep> step);
+   EDITOR_COMMON_DECL(MashStep)
 
 public slots:
-   void saveAndClose();
-   //! View/edit the given mash step.
-   void close();
    /*!
     * Grays out irrelevant portions of the dialog.
-    * \param text - one of {"Infusion","Decoction","Temperature"} describing the mash step.
+    * \param text - one of {"Infusion", "Decoction", "Temperature"} describing the mash step.
     */
-   void grayOutStuff(const QString& text);
-   void changed(QMetaProperty, QVariant);
-
-private:
-   /*! Updates the UI elements effected by the \b metaProp of
-    *  the step we are watching. If \b metaProp is null,
-    *  then update all the UI elements at once.
-    */
-   void showChanges(QMetaProperty* metaProp = 0);
-   void clear();
-   std::shared_ptr<MashStep> obs;
+   void grayOutStuff(QString const & text);
 };
 
 #endif

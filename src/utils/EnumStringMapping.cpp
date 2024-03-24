@@ -29,19 +29,27 @@ EnumAndItsString::EnumAndItsString(int native, QString string) :
    return;
 }
 
-EnumStringMapping::EnumStringMapping(std::initializer_list<EnumAndItsString> args) {
+EnumStringMapping::EnumStringMapping(std::initializer_list<EnumAndItsString> args, bool const isRegularEnum) {
    this->reserve(args.size());
    for (auto arg : args) {
       // Uncomment this debug statement for debugging -- eg if you are hitting the assert at start-up!
 //      qDebug().noquote() <<
 //         Q_FUNC_INFO << "Inserting at" << arg.native << ". Size=" << this->size() <<
 //         Logging::getStackTrace();
-      // Essentially we are asserting here that args are passed in enum order and that our enum values always start from
-      // 0 and never skip any numbers.  If we ever pass things in in the wrong order, we'll get an assert at start-up,
-      // so it's pretty immediate feedback of the coding error.
-      Q_ASSERT(arg.native == this->size());
+      //
+      // Essentially, if isRegularEnum is true (which should be the case unless we are called from
+      // FlagEnumStringMapping) we are asserting here that args are passed in enum order and that our enum values always
+      // start from 0 and never skip any numbers.  If we ever pass things in in the wrong order, we'll get an assert at
+      // start-up, so it's pretty immediate feedback of the coding error.
+      //
+      Q_ASSERT((arg.native == this->size()) || !isRegularEnum);
       this->append(arg);
    }
+   return;
+}
+
+FlagEnumStringMapping::FlagEnumStringMapping(std::initializer_list<EnumAndItsString> args) :
+   EnumStringMapping{args, false} {
    return;
 }
 
@@ -78,4 +86,17 @@ std::optional<QString> EnumStringMapping::enumAsIntToString(int const enumValue)
    Q_ASSERT(match.native == enumValue);
 
    return std::optional<QString>{match.string};
+}
+
+std::optional<QString> FlagEnumStringMapping::enumAsIntToString(int const enumValue) const {
+   // For the FlagEnumStringMapping we can't take the same shortcut as above
+   auto match = std::find_if(this->begin(),
+                             this->end(),
+                             [enumValue](EnumAndItsString const & ii){return enumValue == ii.native;});
+
+   if (match == this->end()) {
+      return std::nullopt;
+   }
+
+   return std::optional<QString>(match->string);
 }

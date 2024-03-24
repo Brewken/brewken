@@ -39,23 +39,10 @@ class Misc;
  *        See comment on EditorBase::connectSignalsAndSlots for why we need to have \c public, not \c private
  *        inheritance from the Ui base.
  */
-class MiscEditor : public QDialog, public Ui::miscEditor, public EditorBase<Misc, MiscEditor> {
+class MiscEditor : public QDialog, public Ui::miscEditor, public EditorBase<MiscEditor, Misc> {
    Q_OBJECT
 
-public:
-   MiscEditor(QWidget * parent = nullptr);
-   virtual ~MiscEditor();
-
-   void writeFieldsToEditItem();
-   void writeLateFieldsToEditItem();
-   void readFieldsFromEditItem(std::optional<QString> propName);
-
-public slots:
-   // Standard editor slots
-   void save();
-   void clearAndClose();
-   void changed(QMetaProperty, QVariant);
-   void clickedNew();
+   EDITOR_COMMON_DECL(Misc)
 };
 
 #endif

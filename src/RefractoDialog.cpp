@@ -75,10 +75,10 @@ void RefractoDialog::calculate() {
 
    if (!haveOG && haveOP) {
       inputOG = Algorithms::PlatoToSG_20C20C(originalPlato);
-      this->lineEdit_inputOG->setAmount(inputOG);
+      this->lineEdit_inputOG->setQuantity(inputOG);
    } else if (!haveOP && haveOG) {
       originalPlato = Algorithms::SG_20C20C_toPlato(inputOG);
-      this->lineEdit_op->setAmount(inputOG);
+      this->lineEdit_op->setQuantity(inputOG);
    } else if (!haveOP && !haveOG) {
       qDebug() << Q_FUNC_INFO << "no plato or og";
       return; // Can't do much if we don't have OG or OP.
@@ -106,13 +106,13 @@ void RefractoDialog::calculate() {
       );
    }
 
-   this->lineEdit_og->setAmount(og);
-   this->lineEdit_sg->setAmount(sg);
+   this->lineEdit_og->setQuantity(og);
+   this->lineEdit_sg->setQuantity(sg);
    // Even if the real extract if display in Plato, it must be given in system unit.
    // Conversion is made by SmartLineEdit
-   this->lineEdit_re ->setAmount(Algorithms::PlatoToSG_20C20C(re));
-   this->lineEdit_abv->setAmount(abv);
-   this->lineEdit_abw->setAmount(abw);
+   this->lineEdit_re ->setQuantity(Algorithms::PlatoToSG_20C20C(re));
+   this->lineEdit_abv->setQuantity(abv);
+   this->lineEdit_abw->setQuantity(abw);
    return;
 }
 

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtTabWidget.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * BtTabWidget.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -86,33 +86,33 @@ void BtTabWidget::dropEvent(QDropEvent *event) {
       qDebug() << Q_FUNC_INFO << "Item type #" << itemTypeRaw;
       BtTreeItem::Type itemType{itemTypeRaw};
       switch (itemType) {
-         case BtTreeItem::Type::RECIPE:
+         case BtTreeItem::Type::Recipe:
             event->acceptProposedAction();
             emit setRecipe(ObjectStoreWrapper::getById<Recipe>(id).get());
             return;
-         case BtTreeItem::Type::EQUIPMENT:
+         case BtTreeItem::Type::Equipment:
             event->acceptProposedAction();
             emit setEquipment(ObjectStoreWrapper::getById<Equipment>(id).get());
             return;
-         case BtTreeItem::Type::STYLE:
+         case BtTreeItem::Type::Style:
             event->acceptProposedAction();
             emit setStyle(ObjectStoreWrapper::getById<Style>(id).get());
             return;
-         case BtTreeItem::Type::FERMENTABLE:
+         case BtTreeItem::Type::Fermentable:
             ferms.append(ObjectStoreWrapper::getById<Fermentable>(id).get());
             break;
-         case BtTreeItem::Type::HOP:
+         case BtTreeItem::Type::Hop:
             hops.append(ObjectStoreWrapper::getById<Hop>(id).get());
             break;
-         case BtTreeItem::Type::MISC:
+         case BtTreeItem::Type::Misc:
             miscs.append(ObjectStoreWrapper::getById<Misc>(id).get());
             break;
-         case BtTreeItem::Type::YEAST:
+         case BtTreeItem::Type::Yeast:
             yeasts.append(ObjectStoreWrapper::getById<Yeast>(id).get());
             break;
-         case BtTreeItem::Type::BREWNOTE:
-         case BtTreeItem::Type::FOLDER:
-         case BtTreeItem::Type::WATER:
+         case BtTreeItem::Type::BrewNote:
+         case BtTreeItem::Type::Folder:
+         case BtTreeItem::Type::Water:
             // These cases shouldn't arise (I think!) but the compiler will emit a warning if we don't explicitly have
             // code to handle them (which is good!).
             qWarning() << Q_FUNC_INFO << "Unexpected item type" << itemTypeRaw;

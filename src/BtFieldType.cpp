@@ -19,16 +19,16 @@
 
 #include "utils/EnumStringMapping.h"
 
-QString GetDisplayName(NonPhysicalQuantity nonPhysicalQuantity) {
+QString GetLoggableName(NonPhysicalQuantity nonPhysicalQuantity) {
    // See comment in measurement/PhysicalQuantity.cpp for why we use a switch and not an EnumStringMapping here
    switch (nonPhysicalQuantity) {
-      case NonPhysicalQuantity::Date         : return "Date"         ;
-      case NonPhysicalQuantity::String       : return "String"       ;
-      case NonPhysicalQuantity::Count        : return "Count"        ;
-      case NonPhysicalQuantity::Percentage   : return "Percentage"   ;
-      case NonPhysicalQuantity::Bool         : return "Bool"         ;
-      case NonPhysicalQuantity::Enum         : return "Enum"         ;
-      case NonPhysicalQuantity::Dimensionless: return "Dimensionless";
+      case NonPhysicalQuantity::Date           : return "Date"          ;
+      case NonPhysicalQuantity::String         : return "String"        ;
+      case NonPhysicalQuantity::Percentage     : return "Percentage"    ;
+      case NonPhysicalQuantity::Bool           : return "Bool"          ;
+      case NonPhysicalQuantity::Enum           : return "Enum"          ;
+      case NonPhysicalQuantity::OrdinalNumeral : return "OrdinalNumeral";
+      case NonPhysicalQuantity::Dimensionless  : return "Dimensionless" ;
       // In C++23, we'd add:
       // default: std::unreachable();
    }
@@ -46,7 +46,8 @@ Measurement::PhysicalQuantities ConvertToPhysicalQuantities(BtFieldType const & 
       return std::get<Measurement::PhysicalQuantity>(btFieldType);
    }
 
-   return std::get<Measurement::Mixed2PhysicalQuantities>(btFieldType);
+   Q_ASSERT(std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(btFieldType));
+   return std::get<Measurement::ChoiceOfPhysicalQuantity>(btFieldType);
 }
 
 BtFieldType ConvertToBtFieldType(Measurement::PhysicalQuantities const & physicalQuantities) {
@@ -54,5 +55,5 @@ BtFieldType ConvertToBtFieldType(Measurement::PhysicalQuantities const & physica
       return std::get<Measurement::PhysicalQuantity>(physicalQuantities);
    }
 
-   return std::get<Measurement::Mixed2PhysicalQuantities>(physicalQuantities);
+   return std::get<Measurement::ChoiceOfPhysicalQuantity>(physicalQuantities);
 }

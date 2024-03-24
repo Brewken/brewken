@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/BtTableModel.cpp is part of Brewken, and is copyright the following authors 2021-2023:
+ * tableModels/BtTableModel.cpp is part of Brewken, and is copyright the following authors 2021-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -64,15 +64,15 @@ BtTableModel::BtTableModel(QTableView * parent,
                            bool editable,
                            std::initializer_list<BtTableModel::ColumnInfo> columnInfos) :
    QAbstractTableModel{parent},
-   parentTableWidget{parent},
-   editable{editable},
+   m_parentTableWidget{parent},
+   m_editable{editable},
    m_columnInfos{columnInfos} {
 
-   QHeaderView * rowHeaderView = this->parentTableWidget->verticalHeader();
+   QHeaderView * rowHeaderView = this->m_parentTableWidget->verticalHeader();
    rowHeaderView->setSectionResizeMode(QHeaderView::ResizeToContents);
-   QHeaderView * columnHeaderView = this->parentTableWidget->horizontalHeader();
+   QHeaderView * columnHeaderView = this->m_parentTableWidget->horizontalHeader();
    columnHeaderView->setContextMenuPolicy(Qt::CustomContextMenu);
-   this->parentTableWidget->setWordWrap(false);
+   this->m_parentTableWidget->setWordWrap(false);
    // We use QHeaderView::Interactive here because it's the only option that allows the user to resize the columns
    // (In theory, QHeaderView::ResizeToContents automatically sets a fixed size that's right for all the data, but, in
    // practice it doesn't always do what you want, so it's better to give the user some control).
@@ -85,10 +85,24 @@ BtTableModel::BtTableModel(QTableView * parent,
 BtTableModel::~BtTableModel() = default;
 
 BtTableModel::ColumnInfo const & BtTableModel::getColumnInfo(size_t const columnIndex) const {
+   // Uncomment this block if the assert below is firing
+   if (columnIndex >= this->m_columnInfos.size()) {
+      qCritical().noquote() <<
+         Q_FUNC_INFO << "columnIndex:" << columnIndex << ", this->m_columnInfos.size():" <<
+         this->m_columnInfos.size() << Logging::getStackTrace();
+      // TODO : This is temporary until we fix the bug!
+      return this->m_columnInfos[0];
+   }
    // It's a coding error to call this for a non-existent column
    Q_ASSERT(columnIndex < this->m_columnInfos.size());
 
    BtTableModel::ColumnInfo const & columnInfo = this->m_columnInfos[columnIndex];
+
+   // Normally the following log statement should be left commented, as it generates a _lot_ of logging.  Uncomment it
+   // temporarily if the assert below is firing.
+//   qDebug().noquote() <<
+//      Q_FUNC_INFO << "columnInfo.index:" << columnInfo.index << ", columnIndex:" << columnIndex <<
+//      Logging::getStackTrace();
 
    // It's a coding error if the info for column N isn't at position N in the vector (in both cases counting from 0)
    Q_ASSERT(columnInfo.index == columnIndex);
@@ -123,7 +137,7 @@ void BtTableModel::contextMenu(QPoint const & point) {
    // Note that UnitAndScalePopUpMenu::create handles the case where there are two possible physical quantities
    //
    std::unique_ptr<QMenu> menu =
-      UnitAndScalePopUpMenu::create(this->parentTableWidget,
+      UnitAndScalePopUpMenu::create(this->m_parentTableWidget,
                                     ConvertToPhysicalQuantities(fieldType),
                                     columnInfo.getForcedSystemOfMeasurement(),
                                     columnInfo.getForcedRelativeScale());

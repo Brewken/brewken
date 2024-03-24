@@ -25,6 +25,7 @@
 #include <functional>
 #include <memory> // For PImpl
 #include <optional>
+#include <utility> // For std::pair
 
 #include <QMultiMap>
 #include <QObject>
@@ -32,6 +33,7 @@
 
 #include "measurement/Amount.h"
 #include "measurement/PhysicalQuantity.h"
+#include "utils/ObjectAddressStringMapping.h"
 
 // TODO: implement ppm, percent, ibuGalPerLb,
 
@@ -67,6 +69,11 @@ namespace Measurement {
        *                  \c convertFromCanonical are no-ops).  (Note that the canonical units may or may not be in the
        *                  same \c UnitSystem as this \c Unit.  Eg canonical units for mass are kilograms so there's a
        *                  conversion to do whether you're starting from pounds, grams, ounces or milligrams.)
+       *
+       * .:TODO:. Although we already do case-insensitive matching for unit names, I think we could do more on having
+       *          generous matching for the longer/more complex units (eg "c/g·C" and "mPa-s").  Even a knowledgeable
+       *          user isn't necessarily going to guess the exact abbreviation we've used, so it would be better to have
+       *          either a list of valid alternatives or, possibly, a list of regular expressions.
        */
       Unit(UnitSystem const & unitSystem,
            QString const unitName,
@@ -88,6 +95,14 @@ namespace Measurement {
        *        \c Unit.
        */
       static void initialiseLookups();
+
+      /**
+       * \brief Given a string of quantity plus optional units, this function breaks it down into the quantity (or 0.0
+       *        if none was found) and the units (or "" if none was found).  This is a bit fiddly to get right (partly
+       *        because of locale-specific thousands and decimal separators, and partly because unit names can contain
+       *        symbols such as '/').  So we only want to do it in one place!
+       */
+      static std::pair<double, QString> splitAmountString(QString const & inputString, bool * ok = nullptr);
 
       /**
        * \brief Test whether two \c Unit references are the same.  (This is by no means a full test for equality,
@@ -210,6 +225,10 @@ namespace Measurement {
       Unit & operator=(Unit &&) = delete;
    };
 
+
+   //! This alias makes things a bit more concise eg in \c ObjectStore
+   using UnitStringMapping = ObjectAddressStringMapping<Unit>;
+
    namespace Units {
       // === Mass ===
       extern Unit const kilograms;
@@ -219,6 +238,7 @@ namespace Measurement {
       extern Unit const ounces;
       extern Unit const imperial_pounds; // Same as pounds
       extern Unit const imperial_ounces; // Same as ounces
+
       // === Volume ===
       extern Unit const liters;
       extern Unit const milliliters;
@@ -238,15 +258,21 @@ namespace Measurement {
       extern Unit const imperial_fluidOunces;
       extern Unit const imperial_tablespoons;
       extern Unit const imperial_teaspoons;
+
+      // === Count ===
+      extern Unit const numberOf;
+
+      // === Temperature ===
+      extern Unit const celsius;
+      extern Unit const fahrenheit;
+
       // === Time ===
       extern Unit const minutes;
       extern Unit const weeks;
       extern Unit const days;
       extern Unit const hours;
       extern Unit const seconds;
-      // === Temperature ===
-      extern Unit const celsius;
-      extern Unit const fahrenheit;
+
       // === Color ===
       extern Unit const srm;
       extern Unit const ebc;
@@ -271,15 +297,13 @@ namespace Measurement {
       // == Carbonation ==
       extern Unit const carbonationVolumes;
       extern Unit const carbonationGramsPerLiter;
-      // === Concentration ===
-      // BeerJSON bundles "mass concentration" (milligrams-per-liter) and "volume concentration" (parts-per-million,
-      // parts-per-billion) together under ConcentrationUnitType.  However, as explained in
-      // measurement/PhysicalQuantity.h, we need to be more precise.
-      // == Mass Concentration ==
+      // == Mass Fraction & Mass Concentration ==
+      // See comment in measurement/PhysicalQuantity.h for why we combine "mass concentration" and "mass fraction" into
+      // one grouping, why we treat 1 mg/L as equal to 1 ppm, and why we use the vernacular "ppm" and "ppb" instead of
+      // the SI units "mg/kg" and "μg/kg".
+      extern Unit const partsPerMillionMass;
+      extern Unit const partsPerBillionMass;
       extern Unit const milligramsPerLiter;
-      // == Volume Concentration ==
-      extern Unit const partsPerMillion;
-      extern Unit const partsPerBillion;
       // == Viscosity ==
       // Per https://en.wikipedia.org/wiki/Viscosity#Measurement, the SI unit of dynamic viscosity is the newton-second
       // per square meter (N·s/m²), which is (by definition) equivalent to a pascal-second (Pa·s).
@@ -321,14 +345,61 @@ namespace Measurement {
       //
       // NOTE: This is one instance where our "canonical" unit is NOT the metric one.  Historically, the code has always
       //       used "calories per Celsius per gram" rather than "joules per Celsius per kilogram", including for storing
-      //       amounts in the DB.   Also the "calories" version is what is used by BeerJSON and BeerXML.
+      //       amounts in the DB.   Also the "calories" version is what is used by BeerXML.
+      //
+      // BeerJSON also offers us BTU / (lb × °F).  Note however, that, because a British Thermal Unit (BTU) is defined
+      // as "the amount of heat required to raise the temperature of one pound of water by one degree Fahrenheit", we
+      // have 1 BTU/lb·F = 1 c/g·C.
+      //
+      // NOTE that you often see a couple of other terms used in brewing-related circles:
+      //
+      //   - "Heat Capacity" (see https://en.wikipedia.org/wiki/Heat_capacity) is different from Specific Heat Capacity.
+      //     For a given object (eg a brewing vessel), its Heat Capacity is obtained by multiplying its Mass by its
+      //     Specific Heat Capacity.
+      //
+      //   - "Specific Heat" is just an abbreviation for "Specific Heat Capacity".  We use it for variable names etc in
+      //     the interests of brevity, but we try always to use full "Specific Heat Capacity" for display strings to
+      //     avoid any ambiguity or confusion.
       //
       extern Unit const caloriesPerCelsiusPerGram;
-      extern Unit const joulesPerKelvinPerKg;
+      extern Unit const joulesPerKelvinPerKg     ;
+      extern Unit const btuPerFahrenheitPerPound ;
+      // == Specific Volume ==
+      // Per https://en.wikipedia.org/wiki/Specific_volume, specific volume is the reciprocal of density; in other words
+      // it is "an intrinsic property of a substance, defined as the ratio of the substance's volume to its mass.  In
+      // brewing, it's typically used to measure mash thickness.  The standard unit of specific volume is cubic meters
+      // per kilogram (m³/kg), but there are various other metric combinations in widespread use.  We have historically
+      // used litres per kilogram as our canonical units, and I see no pressing reason to change that.
+      // We have a lot of units here because BeerJSON supports them all.  (I'm assuming the non-metric BeerJSON units
+      // are US Customary rather than Imperial because I think the imperial versions are getting a bit obscure.)
+      extern Unit const litresPerKilogram     ;
+      extern Unit const litresPerGram         ;
+      extern Unit const cubicMetersPerKilogram;
+      extern Unit const us_quartsPerPound     ;
+      extern Unit const us_gallonsPerPound    ;
+      extern Unit const us_gallonsPerOunce    ;
+      extern Unit const us_fluidOuncesPerOunce;
+      extern Unit const cubicFeetPerPound     ;
+
+      //================================================================================================================
+
+      /**
+       * \brief Serialisation of \c Unit IDs suitable for database storage -- eg maps between "kilograms" (untranslated)
+       *        and \c Measurement::Units::kilograms.
+       *
+       *        We use this a little, but not a lot.  Normally, when something has only one way of being measured, we
+       *        store in canonical units (eg °C for a temperature) and the unit names are a suffix of the DB column name
+       *        (eg \c carbonationtemp_c).  However, when something can be measured more than one way (eg by mass or by
+       *        volume) then we need to store more info.  We still always use canonical units (eg kilograms for mass and
+       *        liters for volume) but we store a human-readable string of what the units are (eg in \c unit column of
+       *        the \c fermentable_in_recipe table) so that units are obvious to someone looking at the DB without
+       *        having to delve into the C++ code.  Amongst other things, this can help with bug reports -- eg a user
+       *        might be able to tell us that data in the DB is wrong even though s/he is not familiar with the C++
+       *        code.)
+       */
+      extern UnitStringMapping const unitStringMapping;
    }
 }
-
-//.:TODO:.     "SpecificVolumeType": "Specific volume is the inverse of density, with units of volume over mass, ie qt/lb or L/kg. Commonly used for mash thickness.",
 
 /**
  * \brief Convenience function to allow output of \c Measurement::Unit to \c QDebug or \c QTextStream stream etc

@@ -95,9 +95,14 @@ public:
    /**
     * \brief Use this when you want to do something with the returned QString
     *
-    * \param amount Must be in canonical units eg kilograms for mass, liters for volume
+    * \param quantity Must be in canonical units eg kilograms for mass, liters for volume
     */
-   [[nodiscard]] QString displayAmount(double amount, unsigned int precision) const;
+   [[nodiscard]] QString displayAmount(double quantity, unsigned int precision) const;
+
+   /**
+    * \brief This version is not const as we'll set the field's \c PhysicalQuantity based on the \c Unit in \c amount.
+    */
+   [[nodiscard]] QString displayAmount(Measurement::Amount const & amount, unsigned int precision);
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
