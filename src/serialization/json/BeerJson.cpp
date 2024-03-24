@@ -828,7 +828,7 @@ namespace {
 
    template<> JsonRecordDefinition const BEER_JSON_RECORD_DEFN<BoilStep> {
       std::in_place_type_t<BoilStep>{},
-      "boil_steps", // JSON record name (not actually used as BoilStep always part of a Boil
+      "boil_steps", // JSON record name (not actually used as BoilStep always part of a Boil)
       {
          // Type                                                 XPath                Q_PROPERTY                                    Value Decoder
          {JsonRecordDefinition::FieldType::String              , "name"             , PropertyNames:: NamedEntity::name           },

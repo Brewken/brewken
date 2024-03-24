@@ -201,7 +201,7 @@ bool RecipeAdditionFermentableTableModel::setData(const QModelIndex & index, con
 }
 
 // Insert the boiler-plate stuff that we cannot do in TableModelBase
-TABLE_MODEL_COMMON_CODE(RecipeAdditionFermentable, recipeAdditionFermentable, PropertyNames::Recipe::hopAdditionIds)
+TABLE_MODEL_COMMON_CODE(RecipeAdditionFermentable, recipeAdditionFermentable, PropertyNames::Recipe::fermentableAdditionIds)
 //=============================================== CLASS RecipeAdditionFermentableItemDelegate ================================================
 
 // Insert the boiler-plate stuff that we cannot do in ItemDelegate

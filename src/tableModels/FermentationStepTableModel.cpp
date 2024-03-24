@@ -40,15 +40,14 @@ FermentationStepTableModel::FermentationStepTableModel(QTableView * parent, bool
       editable,
       {
          TABLE_MODEL_HEADER(FermentationStep, Name        , tr("Name"         ), PropertyNames::     NamedEntity::name           ),
-         TABLE_MODEL_HEADER(FermentationStep, StepTime    , tr("Step Time"    ), PropertyNames::            Step::stepTime_mins  ),
-         TABLE_MODEL_HEADER(FermentationStep, RampTime    , tr("Ramp Time"    ), PropertyNames::            Step::rampTime_mins  ),
+         TABLE_MODEL_HEADER(FermentationStep, StepTime    , tr("Step Time"    ), PropertyNames::            Step::stepTime_mins  , PrecisionInfo{0}),
          TABLE_MODEL_HEADER(FermentationStep, StartTemp   , tr("Start Temp"   ), PropertyNames::            Step::startTemp_c    ),
          TABLE_MODEL_HEADER(FermentationStep, EndTemp     , tr("End Temp"     ), PropertyNames::            Step::endTemp_c      ),
          TABLE_MODEL_HEADER(FermentationStep, StartAcidity, tr("Start Acidity"), PropertyNames::            Step::startAcidity_pH),
          TABLE_MODEL_HEADER(FermentationStep, EndAcidity  , tr("End Acidity"  ), PropertyNames::            Step::endAcidity_pH  ),
          TABLE_MODEL_HEADER(FermentationStep, StartGravity, tr("Start Gravity"), PropertyNames::    StepExtended::startGravity_sg),
          TABLE_MODEL_HEADER(FermentationStep, EndGravity  , tr("End Gravity"  ), PropertyNames::    StepExtended::  endGravity_sg),
-         TABLE_MODEL_HEADER(FermentationStep, FreeRise    , tr("Free Rise"    ), PropertyNames::FermentationStep::freeRise       ),
+         TABLE_MODEL_HEADER(FermentationStep, FreeRise    , tr("Free Rise"    ), PropertyNames::FermentationStep::freeRise       , BoolInfo{tr("No"), tr("Yes")}),
          TABLE_MODEL_HEADER(FermentationStep, Vessel      , tr("Vessel"       ), PropertyNames::FermentationStep::vessel         ),
       }
    },
@@ -58,6 +57,7 @@ FermentationStepTableModel::FermentationStepTableModel(QTableView * parent, bool
 
    QHeaderView* headerView = m_parentTableWidget->horizontalHeader();
    connect(headerView, &QWidget::customContextMenuRequested, this, &FermentationStepTableModel::contextMenu);
+
    //
    // Whilst, in principle, we could connect to ObjectStoreTyped<FermentationStep>::getInstance() to listen for signals
    // &ObjectStoreTyped<FermentationStep>::signalObjectInserted and &ObjectStoreTyped<FermentationStep>::signalObjectDeleted, this is
@@ -99,7 +99,6 @@ QVariant FermentationStepTableModel::data(QModelIndex const & index, int role) c
    switch (columnIndex) {
       case FermentationStepTableModel::ColumnIndex::Name        :
       case FermentationStepTableModel::ColumnIndex::StepTime    :
-      case FermentationStepTableModel::ColumnIndex::RampTime    :
       case FermentationStepTableModel::ColumnIndex::StartTemp   :
       case FermentationStepTableModel::ColumnIndex::EndTemp     :
       case FermentationStepTableModel::ColumnIndex::StartAcidity:
@@ -115,7 +114,7 @@ QVariant FermentationStepTableModel::data(QModelIndex const & index, int role) c
    return QVariant();
 }
 
-QVariant FermentationStepTableModel::headerData( int section, Qt::Orientation orientation, int role ) const {
+QVariant FermentationStepTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
       return this->getColumnLabel(section);
    }
@@ -150,7 +149,6 @@ bool FermentationStepTableModel::setData(QModelIndex const & index, QVariant con
    switch (columnIndex) {
       case FermentationStepTableModel::ColumnIndex::Name        :
       case FermentationStepTableModel::ColumnIndex::StepTime    :
-      case FermentationStepTableModel::ColumnIndex::RampTime    :
       case FermentationStepTableModel::ColumnIndex::StartTemp   :
       case FermentationStepTableModel::ColumnIndex::EndTemp     :
       case FermentationStepTableModel::ColumnIndex::StartAcidity:
@@ -170,7 +168,7 @@ bool FermentationStepTableModel::setData(QModelIndex const & index, QVariant con
 /////==========================CLASS FermentationStepItemDelegate===============================
 
 // Insert the boiler-plate stuff that we cannot do in TableModelBase
-TABLE_MODEL_COMMON_CODE(FermentationStep, boilStep, PropertyNames::Recipe::boilId)
+TABLE_MODEL_COMMON_CODE(FermentationStep, fermentationStep, PropertyNames::Recipe::fermentationId)
 // Insert the boiler-plate stuff that we cannot do in StepTableModelBase
 STEP_TABLE_MODEL_COMMON_CODE(Fermentation)
 //=============================================== CLASS FermentationStepItemDelegate ================================================

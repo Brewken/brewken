@@ -105,6 +105,10 @@ MashStep::MashStep(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_infuseTemp_c          , namedParameterBundle, PropertyNames::MashStep::infuseTemp_c          ),
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    SET_REGULAR_FROM_NPB (m_liquorToGristRatio_lKg, namedParameterBundle, PropertyNames::MashStep::liquorToGristRatio_lKg) {
+   // See comment in Step constructor.  We're saying that, if rampTime_mins is present in the bundle (which it won't
+   // always be because it's optional) then it is supported by this class.  In other words, either it's not there, or
+   // (if it is then) it's supported.
+   Q_ASSERT(!namedParameterBundle.contains(PropertyNames::Step::rampTime_mins) || this->rampTimeIsSupported());
    //
    // If we were constructed from BeerXML, it will have set decoctionAmount_l or infuseAmount_l instead of amount_l
    //

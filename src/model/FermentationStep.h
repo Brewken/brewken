@@ -86,6 +86,9 @@ public:
    [[deprecated]] virtual std::optional<double> rampTime_mins() const;
    [[deprecated]] virtual void setRampTime_mins(std::optional<double> const val);
 
+   //============================================= OTHER MEMBER FUNCTIONS ==============================================
+   [[nodiscard]] virtual bool rampTimeIsSupported() const;
+
 signals:
 
 protected:

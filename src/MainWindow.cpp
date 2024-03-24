@@ -239,18 +239,18 @@ public:
       m_self{self},
 ///      fileOpener{},
       m_undoStack{std::make_unique<QUndoStack>(&m_self)},
-      m_fermentableAdditionsTableModel{nullptr},
-      m_hopAdditionsTableModel        {nullptr},
-      m_mashStepTableModel            {nullptr},
       m_boilStepTableModel            {nullptr},
       m_fermentationStepTableModel    {nullptr},
+      m_mashStepTableModel            {nullptr},
+      m_fermentableAdditionsTableModel{nullptr},
+      m_hopAdditionsTableModel        {nullptr},
       m_miscAdditionsTableModel       {nullptr},
       m_yeastAdditionsTableModel      {nullptr},
       m_fermentableAdditionsTableProxy{nullptr},
       m_hopAdditionsTableProxy        {nullptr},
       m_miscAdditionsTableProxy       {nullptr},
-      m_styleProxyModel               {nullptr},
-      m_yeastAdditionsTableProxy      {nullptr} {
+      m_yeastAdditionsTableProxy      {nullptr},
+      m_styleProxyModel               {nullptr} {
       return;
    }
 
@@ -744,20 +744,20 @@ public:
    std::unique_ptr<QUndoStack> m_undoStack;
 
    // all things tables should go here.
-   std::unique_ptr<RecipeAdditionFermentableTableModel> m_fermentableAdditionsTableModel;
-   std::unique_ptr<RecipeAdditionHopTableModel        > m_hopAdditionsTableModel        ;
-   std::unique_ptr<MashStepTableModel                 > m_mashStepTableModel            ;
    std::unique_ptr<BoilStepTableModel                 > m_boilStepTableModel            ;
    std::unique_ptr<FermentationStepTableModel         > m_fermentationStepTableModel    ;
-   std::unique_ptr<RecipeAdditionMiscTableModel       > m_miscAdditionsTableModel;
-   std::unique_ptr<RecipeAdditionYeastTableModel      > m_yeastAdditionsTableModel;
+   std::unique_ptr<MashStepTableModel                 > m_mashStepTableModel            ;
+   std::unique_ptr<RecipeAdditionFermentableTableModel> m_fermentableAdditionsTableModel;
+   std::unique_ptr<RecipeAdditionHopTableModel        > m_hopAdditionsTableModel        ;
+   std::unique_ptr<RecipeAdditionMiscTableModel       > m_miscAdditionsTableModel       ;
+   std::unique_ptr<RecipeAdditionYeastTableModel      > m_yeastAdditionsTableModel      ;
 
    // all things sort/filter proxy go here
    std::unique_ptr<RecipeAdditionFermentableSortFilterProxyModel> m_fermentableAdditionsTableProxy;
-   std::unique_ptr<RecipeAdditionHopSortFilterProxyModel        > m_hopAdditionsTableProxy;
-   std::unique_ptr<RecipeAdditionMiscSortFilterProxyModel       > m_miscAdditionsTableProxy;
-   std::unique_ptr<StyleSortFilterProxyModel                    > m_styleProxyModel;
-   std::unique_ptr<RecipeAdditionYeastSortFilterProxyModel      > m_yeastAdditionsTableProxy;
+   std::unique_ptr<RecipeAdditionHopSortFilterProxyModel        > m_hopAdditionsTableProxy        ;
+   std::unique_ptr<RecipeAdditionMiscSortFilterProxyModel       > m_miscAdditionsTableProxy       ;
+   std::unique_ptr<RecipeAdditionYeastSortFilterProxyModel      > m_yeastAdditionsTableProxy      ;
+   std::unique_ptr<StyleSortFilterProxyModel                    > m_styleProxyModel               ;
 
    // All initialised in setupDialogs
    std::unique_ptr<AboutDialog           > m_aboutDialog           ;
@@ -1839,7 +1839,7 @@ void MainWindow::lockRecipe(int state) {
    return;
 }
 
-void MainWindow::changed(QMetaProperty prop, QVariant val) {
+void MainWindow::changed(QMetaProperty prop, [[maybe_unused]] QVariant val) {
    QString propName(prop.name());
 
    if (propName == PropertyNames::Recipe::equipment) {

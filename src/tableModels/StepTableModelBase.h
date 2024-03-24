@@ -62,18 +62,22 @@ protected:
          this->derived().disconnect(this->m_stepOwnerObs.get(), nullptr, &this->derived(), nullptr);
       }
 
-      // Connect new signals, unless there is no new Mash or we're not changing step owner (eg Mash)
+      // Connect new signals, unless there is no new Mash/Boil/etc or we're not changing step owner (eg Mash)
       if (stepOwner && this->m_stepOwnerObs != stepOwner) {
          this->derived().connect(stepOwner.get(), &StepOwnerClass::stepsChanged, &this->derived(), &Derived::stepOwnerChanged);
       }
 
       this->m_stepOwnerObs = stepOwner;
       if (this->m_stepOwnerObs) {
-         qDebug() << Q_FUNC_INFO << "Now watching Mash #" << this->m_stepOwnerObs->key();
+         qDebug() <<
+            Q_FUNC_INFO << "Now watching" << StepOwnerClass::staticMetaObject.className() << "#" <<
+            this->m_stepOwnerObs->key();
 
          auto tmpSteps = this->m_stepOwnerObs->steps();
          if (tmpSteps.size() > 0) {
-            qDebug() << Q_FUNC_INFO << "Inserting" << tmpSteps.size() << "MashStep rows";
+            qDebug() <<
+               Q_FUNC_INFO << "Inserting" << tmpSteps.size() << " " << StepClass::staticMetaObject.className() <<
+               "rows";
             this->derived().beginInsertRows(QModelIndex(), 0, tmpSteps.size() - 1);
             this->derived().rows = tmpSteps;
             for (auto step : this->derived().rows) {

@@ -1667,10 +1667,6 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Ramp Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>End Temp</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2467,7 +2463,7 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Your recipe must have fermentables to design a mash.</source>
-        <translation>Votre recette doit comporter au moins un ingrédient fermentescible pour concevoir un profil d&apos;empâtage.</translation>
+        <translation type="vanished">Votre recette doit comporter au moins un ingrédient fermentescible pour concevoir un profil d&apos;empâtage.</translation>
     </message>
     <message>
         <source>No Equipment</source>
@@ -2491,7 +2487,15 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>The first mash step cannot be a decoction.</source>
-        <translation>Le premier palier ne peut pas être une décoction.</translation>
+        <translation type="vanished">Le premier palier ne peut pas être une décoction.</translation>
+    </message>
+    <message>
+        <source>Your recipe must have fermentables to design a m_mash.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The first m_mash step cannot be a decoction.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6998,6 +7002,37 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>fermentationEditor</name>
+    <message>
+        <source>Fermentation Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nom</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pre-Fermentation Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentation Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="unfinished">Notes</translation>
     </message>
 </context>
 <context>

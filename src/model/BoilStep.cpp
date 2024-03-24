@@ -61,8 +61,12 @@ BoilStep::BoilStep(QString name) :
 }
 
 BoilStep::BoilStep(NamedParameterBundle const & namedParameterBundle) :
-   StepExtended  (namedParameterBundle                                                              ),
+   StepExtended{namedParameterBundle},
    SET_OPT_ENUM_FROM_NPB(m_chillingType, BoilStep::ChillingType, namedParameterBundle, PropertyNames::BoilStep::chillingType) {
+   // See comment in Step constructor.  We're saying that, if rampTime_mins is present in the bundle (which it won't
+   // always be because it's optional) then it is supported by this class.  In other words, either it's not there, or
+   // (if it is then) it's supported.
+   Q_ASSERT(!namedParameterBundle.contains(PropertyNames::Step::rampTime_mins) || this->rampTimeIsSupported());
    return;
 }
 

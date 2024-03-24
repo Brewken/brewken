@@ -38,9 +38,9 @@
 class FermentationStepTableModel;
 template <> struct TableModelTraits<FermentationStepTableModel> {
    enum class ColumnIndex {
+      // NB: FermentationStep does not support rampTime_mins -- see comment in model/Step.h
       Name        ,
       StepTime    ,
-      RampTime    ,
       StartTemp   ,
       EndTemp     ,
       StartAcidity,

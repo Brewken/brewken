@@ -186,7 +186,7 @@ bool RecipeAdditionYeastTableModel::setData(const QModelIndex & index, const QVa
 }
 
 // Insert the boiler-plate stuff that we cannot do in TableModelBase
-TABLE_MODEL_COMMON_CODE(RecipeAdditionYeast, recipeAdditionYeast, PropertyNames::Recipe::hopAdditionIds)
+TABLE_MODEL_COMMON_CODE(RecipeAdditionYeast, recipeAdditionYeast, PropertyNames::Recipe::yeastAdditionIds)
 //=============================================== CLASS RecipeAdditionYeastItemDelegate ================================================
 
 // Insert the boiler-plate stuff that we cannot do in ItemDelegate

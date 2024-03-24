@@ -85,6 +85,14 @@ BtTableModel::BtTableModel(QTableView * parent,
 BtTableModel::~BtTableModel() = default;
 
 BtTableModel::ColumnInfo const & BtTableModel::getColumnInfo(size_t const columnIndex) const {
+   // Uncomment this block if the assert below is firing
+   if (columnIndex >= this->m_columnInfos.size()) {
+      qCritical().noquote() <<
+         Q_FUNC_INFO << "columnIndex:" << columnIndex << ", this->m_columnInfos.size():" <<
+         this->m_columnInfos.size() << Logging::getStackTrace();
+      // TODO : This is temporary until we fix the bug!
+      return this->m_columnInfos[0];
+   }
    // It's a coding error to call this for a non-existent column
    Q_ASSERT(columnIndex < this->m_columnInfos.size());
 

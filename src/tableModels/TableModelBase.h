@@ -189,7 +189,7 @@ public:
    }
 
    /**
-    * \brief If true, we model the database's list of NE (hops, fermentables. etc_.
+    * \brief If true, we model the database's list of NE (hops, fermentables. etc).
     */
    void observeDatabase(bool val) {
       if (val) {

@@ -194,6 +194,8 @@ protected:
    [[nodiscard]] virtual bool stepTimeIsRequired() const;
    //! See comment above.  By default startTemp_c is optional
    [[nodiscard]] virtual bool startTempIsRequired() const;
+   //! See comment above.  By default rampTime_mins is supported
+   [[nodiscard]] virtual bool rampTimeIsSupported() const;
 
 protected:
    std::optional<double> m_stepTime_mins  ;

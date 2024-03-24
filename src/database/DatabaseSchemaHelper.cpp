@@ -1070,7 +1070,7 @@ namespace {
                      "end_gravity_sg  , "
                      "chilling_type     "
                   ") SELECT "
-                     "'Boil proper for ' || recipe.name, "                            // name
+                     "'Wort cooling for ' || recipe.name, "                            // name
                      "?, "                                                            // deleted
                      "?, "                                                            // display
                      "NULL, "                                                         // step_time_mins

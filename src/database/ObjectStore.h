@@ -120,7 +120,7 @@ public:
 
       //! Constructor
       TableField(FieldType             const   fieldType,
-                 char          const * const   columnName   = nullptr,
+                 char          const * const   columnName,
                  BtStringConst         const & propertyName = BtString::NULL_STR,
                  ValueDecoder          const   valueDecoder = ValueDecoder{});
    };

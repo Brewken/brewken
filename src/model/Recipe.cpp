@@ -512,7 +512,8 @@ public:
     */
    template<class NE>
    std::shared_ptr<NE> get(int const & ourId) const {
-      qDebug() << Q_FUNC_INFO << "Recipe #" << this->m_self.key() << NE::staticMetaObject.className() << "ID" << ourId;
+      // Normally leave the next line commented out otherwise it generates too much logging
+//      qDebug() << Q_FUNC_INFO << "Recipe #" << this->m_self.key() << NE::staticMetaObject.className() << "ID" << ourId;
       if (ourId < 0) {
          // Negative ID just means there isn't one -- because this is how we store "NULL" for a foreign key
          qDebug() << Q_FUNC_INFO << "No" << NE::staticMetaObject.className() << "on Recipe #" << this->m_self.key();

@@ -20,8 +20,10 @@
 
 #include "model/Boil.h"
 #include "model/BoilStep.h"
+#include "model/Equipment.h"
 #include "model/Fermentation.h"
 #include "model/FermentationStep.h"
+#include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/RecipeAdditionFermentable.h"
 #include "model/RecipeAdditionHop.h"
@@ -29,6 +31,7 @@
 #include "model/RecipeAdditionYeast.h"
 #include "model/RecipeAdjustmentSalt.h"
 #include "model/RecipeUseOfWater.h"
+#include "model/Style.h"
 
 void registerMetaTypes() {
    //
@@ -65,7 +68,10 @@ void registerMetaTypes() {
    qRegisterMetaType<QList<std::shared_ptr<RecipeUseOfWater         >>>();
 
    qRegisterMetaType<std::shared_ptr<Boil        >>();
+   qRegisterMetaType<std::shared_ptr<Equipment   >>();
    qRegisterMetaType<std::shared_ptr<Fermentation>>();
+   qRegisterMetaType<std::shared_ptr<Mash        >>();
+   qRegisterMetaType<std::shared_ptr<Style       >>();
 
    return;
 }
