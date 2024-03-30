@@ -1973,7 +1973,7 @@ void MainWindow::showChanges(QMetaProperty* prop) {
    // Not sure about this, but I am annoyed that modifying the hop usage
    // modifiers isn't automatically updating my display
    if (updateAll) {
-     m_recipeObs->recalcIBU();
+     m_recipeObs->recalcIfNeeded(Hop::staticMetaObject.className());
      this->pimpl->m_hopAdditionsTableProxy->invalidate();
    }
    return;

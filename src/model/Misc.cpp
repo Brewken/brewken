@@ -58,8 +58,25 @@ bool Misc::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    Misc const & rhs = static_cast<Misc const &>(other);
    // Base class will already have ensured names are equal
+    bool const outlinesAreEqual{
+      // "Outline" fields: In BeerJSON, all these fields are in the FermentableBase type
+      this->m_producer  == rhs.m_producer  &&
+      this->m_productId == rhs.m_productId &&
+      this->m_type      == rhs.m_type
+   };
+
+   // If either object is an outline (see comment in model/OutlineableNamedEntity.h) then there is no point comparing
+   // any more fields.  Note that an object will only be an outline whilst it is being read in from a BeerJSON file.
+   if (this->m_outline || rhs.m_outline) {
+      return outlinesAreEqual;
+   }
+
    return (
-      this->m_type == rhs.m_type
+      outlinesAreEqual &&
+
+      // Remaining BeerJSON fields -- excluding inventories
+      this->m_useFor == rhs.m_useFor &&
+      this->m_notes  == rhs.m_notes
    );
 }
 
@@ -70,18 +87,12 @@ ObjectStore & Misc::getObjectStoreTypedInstance() const {
 TypeLookup const Misc::typeLookup {
    "Misc",
    {
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::amount        , Misc::m_amount        , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume      ),
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::amountIsWeight, Misc::m_amountIsWeight,           NonPhysicalQuantity::Bool    ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::notes         , Misc::m_notes         ,           NonPhysicalQuantity::String  ),
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::time_min      , Misc::m_time_min      , Measurement::PhysicalQuantity::Time    ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::type          , Misc::m_type          ,           NonPhysicalQuantity::Enum    ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::useFor        , Misc::m_useFor        ,           NonPhysicalQuantity::String  ),
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::use           , Misc::m_use           ,           NonPhysicalQuantity::Enum    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::notes    , Misc::m_notes    , NonPhysicalQuantity::String),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::type     , Misc::m_type     , NonPhysicalQuantity::Enum  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::useFor   , Misc::m_useFor   , NonPhysicalQuantity::String),
       // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-///      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Misc::amountWithUnits, Misc::amountWithUnits, Measurement::ChoiceOfPhysicalQuantity::Mass_Volume),
-///      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Misc::amountWithUnits, Misc::amountWithUnits, Measurement::PqEitherMassOrVolume),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::producer      , Misc::m_producer      ,           NonPhysicalQuantity::String  ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::productId     , Misc::m_productId     ,           NonPhysicalQuantity::String  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::producer , Misc::m_producer , NonPhysicalQuantity::String),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::productId, Misc::m_productId, NonPhysicalQuantity::String),
    },
    // Parent classes lookup
    {&Ingredient::typeLookup,

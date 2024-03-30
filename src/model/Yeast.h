@@ -217,7 +217,7 @@ public:
 ///    * .:TBD:. For BeerJSON at least, we should enforce mass for Dry and volume for all other cases.
 ///    */
 ///   Q_PROPERTY(bool                   amountIsWeight            READ amountIsWeight            WRITE setAmountIsWeight           )
-   //! \brief The lab from which it came.
+   //! \brief The lab from which it came.  NB: In BeerJSON this is called "producer".
    Q_PROPERTY(QString                laboratory                READ laboratory                WRITE setLaboratory               )
    //! \brief The product ID.
    Q_PROPERTY(QString                productId                 READ productId                 WRITE setProductId                )

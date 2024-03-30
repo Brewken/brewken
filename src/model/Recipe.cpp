@@ -41,6 +41,7 @@
 #include "measurement/ColorMethods.h"
 #include "measurement/IbuMethods.h"
 #include "measurement/Measurement.h"
+#include "measurement/Unit.h"
 #include "model/Boil.h"
 #include "model/BoilStep.h"
 #include "model/Equipment.h"
@@ -232,8 +233,24 @@ public:
     * Constructor
     */
    impl(Recipe & self) :
-      m_self{self},
-      instructionIds{} {
+      m_self                 {self},
+      instructionIds         {}   ,
+      m_ABV_pct              {0.0},
+      m_color_srm            {0.0},
+      m_boilGrav             {0.0},
+      m_IBU                  {0.0},
+      m_ibus                 {}   ,
+      m_wortFromMash_l       {0.0},
+      m_boilVolume_l         {0.0},
+      m_postBoilVolume_l     {0.0},
+      m_finalVolume_l        {0.0},
+      m_finalVolumeNoLosses_l{0.0},
+      m_caloriesPerLiter     {0.0},
+      m_grainsInMash_kg      {0.0},
+      m_grains_kg            {0.0},
+      m_SRMColor             {},
+      m_og_fermentable       {0.0},
+      m_fg_fermentable       {0.0} {
       return;
    }
 
@@ -303,6 +320,14 @@ public:
          ObjectStoreWrapper::hardDelete<NE>(id);
       }
       return;
+   }
+
+   template<typename T>
+   T getCalculated(T & memberVariable) {
+      if (this->m_self.m_uninitializedCalcs) {
+         this->m_self.recalcAll();
+      }
+      return memberVariable;
    }
 
    /**
@@ -939,7 +964,7 @@ public:
 
    void saltWater(RecipeAdjustmentSalt::WhenToAdd when) {
 
-      if (this->m_self.mash() == nullptr || this->m_self.saltAdjustmentIds().size() == 0) {
+      if (!this->m_self.mash() || this->m_self.saltAdjustmentIds().size() == 0) {
          return;
       }
 
@@ -965,15 +990,582 @@ public:
       return;
    }
 
+   // Batch size without losses.
+   double batchSizeNoLosses_l() {
+      double ret = this->m_self.batchSize_l();
+      auto equipment = this->m_self.equipment();
+      if (equipment) {
+         ret += equipment->kettleTrubChillerLoss_l();
+      }
+
+      return ret;
+   }
+
+   //============================================== Calculation Functions ==============================================
+   /**
+    * Emits changed(grains_kg), changed(grainsInMash_kg). Depends on: --.
+    */
+   void recalcGrains() {
+      double calculatedGrains_kg = 0.0;
+      double calculatedGrainsInMash_kg = 0.0;
+
+      for (auto const & fermentableAddition : this->m_self.fermentableAdditions()) {
+         if (fermentableAddition->fermentable() &&
+             fermentableAddition->fermentable()->type() == Fermentable::Type::Grain) {
+            // I wouldn't have thought you would want to measure grain by volume, but best to check
+            if (fermentableAddition->amountIsWeight()) {
+               calculatedGrains_kg += fermentableAddition->amount().quantity;
+               if (fermentableAddition->stage() == RecipeAddition::Stage::Mash) {
+                  calculatedGrainsInMash_kg += fermentableAddition->amount().quantity;
+               }
+            } else {
+               qWarning() <<
+                  Q_FUNC_INFO << "Ignoring grain fermentable addition #" << fermentableAddition->key() << "(" <<
+                  fermentableAddition->name() << ") as measured by volume";
+            }
+         }
+      }
+
+      if (!qFuzzyCompare(calculatedGrains_kg, this->m_grains_kg)) {
+         qDebug() <<
+            Q_FUNC_INFO << "Recipe #" << this->m_self.key() << "(" << this->m_self.name() << ") "
+            "Calculated weight of grains: " << calculatedGrains_kg << ", stored weight: " << this->m_grains_kg;
+         this->m_grains_kg = calculatedGrains_kg;
+         if (!this->m_self.m_uninitializedCalcs) {
+            emit this->m_self.changed(this->m_self.metaProperty(*PropertyNames::Recipe::grains_kg),
+                                      this->m_grains_kg);
+         }
+      }
+
+      if (!qFuzzyCompare(calculatedGrainsInMash_kg, this->m_grainsInMash_kg)) {
+         qDebug() <<
+            Q_FUNC_INFO << "Recipe #" << this->m_self.key() << "(" << this->m_self.name() << ") "
+            "Calculated weight of grains in mash: " << calculatedGrainsInMash_kg << ", stored weight: " <<
+            this->m_grainsInMash_kg;
+         this->m_grainsInMash_kg = calculatedGrainsInMash_kg;
+         if (!this->m_self.m_uninitializedCalcs) {
+            emit this->m_self.changed(this->m_self.metaProperty(*PropertyNames::Recipe::grainsInMash_kg),
+                                      this->m_grainsInMash_kg);
+         }
+      }
+      return;
+   }
+
+
+   /**
+    * Emits changed(wortFromMash_l), changed(boilVolume_l), changed(finalVolume_l), changed(postBoilVolume_l).
+    * Depends on: m_grainsInMash_kg
+    */
+   void recalcVolumeEstimates() {
+      double tmp = 0.0;
+      double calculatedWortFromMash_l = 0.0;
+      double calculatedBoilVolume_l = 0.0;
+      double calculatedFinalVolume_l = 0.0;
+      double calculatedPostBoilVolume_l = 0.0;
+
+      auto equipment = this->m_self.equipment();
+
+      // wortFromMash_l ==========================
+      if (!this->m_self.mash()) {
+         this->m_wortFromMash_l = 0.0;
+      } else {
+         double waterAdded_l = this->m_self.mash()->totalMashWater_l();
+         double absorption_lKg;
+         if (equipment) {
+            absorption_lKg = equipment->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg);
+         } else {
+            absorption_lKg = PhysicalConstants::grainAbsorption_Lkg;
+         }
+
+         calculatedWortFromMash_l = (waterAdded_l - absorption_lKg * this->m_grainsInMash_kg);
+      }
+
+      // boilVolume_l ==============================
+
+      if (equipment) {
+         tmp = calculatedWortFromMash_l - equipment->getLauteringDeadspaceLoss_l() + equipment->topUpKettle_l().value_or(Equipment::default_topUpKettle_l);
+      } else {
+         tmp = calculatedWortFromMash_l;
+      }
+
+      // .:TODO:. Assumptions below about liquids are almost certainly wrong, also TBD what other cases we have to cover
+      // Need to account for extract/sugar volume also.
+      for (auto const & fermentableAddition : this->m_self.fermentableAdditions()) {
+         auto const & fermentable = fermentableAddition->fermentable();
+         switch (fermentable->type()) {
+            case Fermentable::Type::Extract:
+               if (fermentableAddition->amountIsWeight()) {
+                  tmp += fermentableAddition->amount().quantity / PhysicalConstants::liquidExtractDensity_kgL;
+               } else {
+                  tmp += fermentableAddition->amount().quantity;
+               }
+               break;
+            case Fermentable::Type::Sugar:
+               if (fermentableAddition->amountIsWeight()) {
+                  tmp += fermentableAddition->amount().quantity / PhysicalConstants::sucroseDensity_kgL;
+               } else {
+                  tmp += fermentableAddition->amount().quantity;
+               }
+               break;
+            case Fermentable::Type::Dry_Extract:
+               if (fermentableAddition->amountIsWeight()) {
+                  tmp += fermentableAddition->amount().quantity / PhysicalConstants::dryExtractDensity_kgL;
+               } else {
+                  tmp += fermentableAddition->amount().quantity;
+               }
+               break;
+         }
+      }
+
+      if (tmp <= 0.0) {
+         // Give up.
+         tmp = this->boilSizeInLitersOr(0.0);
+      }
+
+      calculatedBoilVolume_l = tmp;
+
+      // finalVolume_l ==============================
+
+      // NOTE: the following figure is not based on the other volume estimates
+      // since we want to show og,fg,ibus,etc. as if the collected wort is correct.
+      this->m_finalVolumeNoLosses_l = this->batchSizeNoLosses_l();
+      if (equipment) {
+         //_finalVolumeNoLosses_l = equipment->wortEndOfBoil_l(calculatedBoilVolume_l) + equipment->topUpWater_l();
+         calculatedFinalVolume_l =
+            equipment->wortEndOfBoil_l(calculatedBoilVolume_l) +
+            equipment->topUpWater_l().value_or(Equipment::default_topUpWater_l) -
+            equipment->kettleTrubChillerLoss_l();
+      } else {
+         this->m_finalVolume_l = calculatedBoilVolume_l - 4.0; // This is just shooting in the dark. Can't do much without an equipment.
+         //_finalVolumeNoLosses_l = _finalVolume_l;
+      }
+
+      // postBoilVolume_l ===========================
+
+      if (equipment) {
+         calculatedPostBoilVolume_l = equipment->wortEndOfBoil_l(calculatedBoilVolume_l);
+      } else {
+         calculatedPostBoilVolume_l = this->m_self.batchSize_l(); // Give up.
+      }
+
+      if (!qFuzzyCompare(calculatedWortFromMash_l, this->m_wortFromMash_l)) {
+//         qDebug() <<
+//            Q_FUNC_INFO << "Recipe #" << this->m_self.key() << "(" << this->m_self.name() << ") "
+//            "Calculated wort from mash: " << calculatedWortFromMash_l << ", stored: " << this->m_wortFromMash_l;
+         this->m_wortFromMash_l = calculatedWortFromMash_l;
+         if (!this->m_self.m_uninitializedCalcs) {
+            emit this->m_self.changed(this->m_self.metaProperty(*PropertyNames::Recipe::wortFromMash_l),
+                                      this->m_wortFromMash_l);
+         }
+      }
+
+      // TODO: Still need to get rid of m_boilVolume_l
+      if (!qFuzzyCompare(calculatedBoilVolume_l, this->m_boilVolume_l)) {
+//         qDebug() <<
+//            Q_FUNC_INFO << "Recipe #" << this->m_self.key() << "(" << this->m_self.name() << ") "
+//            "Calculated boil volume: " << calculatedBoilVolume_l << ", stored: " << this->m_boilVolume_l;
+         this->m_boilVolume_l = calculatedBoilVolume_l;
+         if (!this->m_self.m_uninitializedCalcs) {
+            emit this->m_self.changed(this->m_self.metaProperty(*PropertyNames::Recipe::boilVolume_l),
+                                      this->m_boilVolume_l);
+         }
+      }
+
+      if (! qFuzzyCompare(calculatedFinalVolume_l, this->m_finalVolume_l)) {
+//         qDebug() <<
+//            Q_FUNC_INFO << "Recipe #" << this->m_self.key() << "(" << this->m_self.name() << ") "
+//            "Calculated final volume: " << calculatedFinalVolume_l << ", stored: " << this->m_finalVolume_l;
+         this->m_finalVolume_l = calculatedFinalVolume_l;
+         if (!this->m_self.m_uninitializedCalcs) {
+            emit this->m_self.changed(this->m_self.metaProperty(*PropertyNames::Recipe::finalVolume_l),
+                                      this->m_finalVolume_l);
+         }
+      }
+
+      if (! qFuzzyCompare(calculatedPostBoilVolume_l, this->m_postBoilVolume_l)) {
+         qDebug() <<
+            Q_FUNC_INFO << "Recipe #" << this->m_self.key() << "(" << this->m_self.name() << ") "
+            "Calculated post boil volume: " << calculatedPostBoilVolume_l << ", stored: " << this->m_postBoilVolume_l;
+         this->m_postBoilVolume_l = calculatedPostBoilVolume_l;
+         if (!this->m_self.m_uninitializedCalcs) {
+            emit this->m_self.changed(this->m_self.metaProperty(*PropertyNames::Recipe::postBoilVolume_l),
+                                      this->m_postBoilVolume_l);
+         }
+      }
+      return;
+   }
+
+   /**
+    * Emits changed(color_srm). Depends on: m_finalVolume_l
+    */
+   void recalcColor_srm() {
+      double mcu = 0.0;
+
+      for (auto const & fermentableAddition : this->m_self.fermentableAdditions()) {
+         if (fermentableAddition->amountIsWeight()) {
+            // Conversion factor for lb/gal to kg/l = 8.34538.
+            mcu += fermentableAddition->fermentable()->color_srm() * 8.34538 * fermentableAddition->amount().quantity / m_finalVolumeNoLosses_l;
+         } else {
+            // .:TBD:. What do do about liquids
+            qWarning() <<
+               Q_FUNC_INFO << "Unimplemented branch for handling color of liquid fermentables - #" <<
+               fermentableAddition->fermentable()->key() << ":" << fermentableAddition->name();
+         }
+      }
+
+      double calculatedColor_srm = ColorMethods::mcuToSrm(mcu);
+      if (!qFuzzyCompare(this->m_color_srm, calculatedColor_srm)) {
+//         qDebug() <<
+//            Q_FUNC_INFO << "Recipe #" << this->m_self.key() << "(" << this->m_self.name() << ") "
+//            "Calculated color: " << calculatedColor_srm << ", stored: " << this->m_color_srm;
+         this->m_color_srm = calculatedColor_srm;
+         if (!this->m_self.m_uninitializedCalcs) {
+            emit this->m_self.changed(this->m_self.metaProperty(*PropertyNames::Recipe::color_srm), this->m_color_srm);
+         }
+      }
+
+      return;
+   }
+
+   /**
+    * Emits changed(SRMColor). Depends on: m_color_srm.
+    */
+   void recalcSRMColor() {
+      QColor calculatedSRMColor = Algorithms::srmToColor(this->m_color_srm);
+      if (calculatedSRMColor != this->m_SRMColor) {
+         this->m_SRMColor = calculatedSRMColor;
+         if (!this->m_self.m_uninitializedCalcs) {
+            emit this->m_self.changed(this->m_self.metaProperty(*PropertyNames::Recipe::SRMColor), this->m_SRMColor);
+         }
+      }
+      return;
+   }
+
+   /**
+    * Emits changed(og), changed(fg).
+    * Depends on: m_wortFromMash_l, m_finalVolume_l
+    */
+   void recalcOgFg() {
+
+      this->m_og_fermentable = this->m_fg_fermentable = 0.0;
+
+      // The first time through really has to get the m_og and m_fg from the
+      // database, not use the initialized values of 1. I (maf) tried putting
+      // this in the initialize, but it just hung. So I moved it here, but only
+      // if we aren't initialized yet.
+      //
+      // GSG: This doesn't work, this og and fg are already set to 1.0 so
+      // until we load these values from the database on startup, we have
+      // to calculate.
+      if (this->m_self.m_uninitializedCalcs) {
+         this->m_self.m_og = Localization::toDouble(this->m_self, PropertyNames::Recipe::og, Q_FUNC_INFO);
+         this->m_self.m_fg = Localization::toDouble(this->m_self, PropertyNames::Recipe::fg, Q_FUNC_INFO);
+      }
+
+      // Find out how much sugar we have.
+      auto const sugars = this->m_self.calcTotalPoints();
+      double sugar_kg                  = sugars.sugar_kg;  // Mass of sugar that *is* affected by mash efficiency
+      double sugar_kg_ignoreEfficiency = sugars.sugar_kg_ignoreEfficiency;  // Mass of sugar that *is not* affected by mash efficiency
+      double nonFermentableSugars_kg   = sugars.nonFermentableSugars_kg;  // Mass of sugar that is not fermentable (also counted in sugar_kg_ignoreEfficiency)
+
+      ///!
+      qDebug() <<
+         Q_FUNC_INFO << "Recipe #" << this->m_self.key() << "(" << this->m_self.name() << ") "
+         "sugar_kg: " << sugar_kg << ", sugar_kg_ignoreEfficiency: " << sugar_kg_ignoreEfficiency <<
+         ", nonFermentableSugars_kg:" << nonFermentableSugars_kg;
+
+      // We might lose some sugar in the form of Trub/Chiller loss and lauter deadspace.
+      auto equipment = this->m_self.equipment();
+      if (equipment) {
+         double const kettleWort_l = (this->m_wortFromMash_l - equipment->getLauteringDeadspaceLoss_l()) +
+                                     equipment->topUpKettle_l().value_or(Equipment::default_topUpKettle_l);
+         double const postBoilWort_l = equipment->wortEndOfBoil_l(kettleWort_l);
+         double ratio = (postBoilWort_l - equipment->kettleTrubChillerLoss_l()) / postBoilWort_l;
+         if (ratio > 1.0) { // Usually happens when we don't have a mash yet.
+            ratio = 1.0;
+         } else if (ratio < 0.0) {
+            ratio = 0.0;
+         } else if (Algorithms::isNan(ratio)) {
+            ratio = 1.0;
+         }
+         // Ignore this again since it should be included in efficiency.
+         //sugar_kg *= ratio;
+         sugar_kg_ignoreEfficiency *= ratio;
+         if (nonFermentableSugars_kg != 0.0) {
+            nonFermentableSugars_kg *= ratio;
+         }
+      }
+
+      // Total sugars after accounting for efficiency and mash losses. Implicitly includes non-fermentable sugars
+      sugar_kg = sugar_kg * this->m_self.efficiency_pct() / 100.0 + sugar_kg_ignoreEfficiency;
+      double plato = Algorithms::getPlato(sugar_kg, this->m_finalVolumeNoLosses_l);
+
+      double calculatedOg = Algorithms::PlatoToSG_20C20C(plato);    // og from all sugars
+      double tmp_pnts = (calculatedOg - 1) * 1000.0; // points from all sugars
+      double tmp_nonferm_pnts;
+      if (nonFermentableSugars_kg != 0.0) {
+         double ferm_kg = sugar_kg - nonFermentableSugars_kg;  // Mass of only fermentable sugars
+         plato = Algorithms::getPlato(ferm_kg, this->m_finalVolumeNoLosses_l);   // Plato from fermentable sugars
+         this->m_og_fermentable = Algorithms::PlatoToSG_20C20C(plato);    // og from only fermentable sugars
+         plato = Algorithms::getPlato(nonFermentableSugars_kg, this->m_finalVolumeNoLosses_l);   // Plate from non-fermentable sugars
+         tmp_nonferm_pnts = ((Algorithms::PlatoToSG_20C20C(plato)) - 1) * 1000.0; // og points from non-fermentable sugars
+      } else {
+         this->m_og_fermentable = calculatedOg;
+         tmp_nonferm_pnts = 0.0;
+      }
+
+      // Calculage FG
+      double attenuation_pct = 0.0;
+      for (auto yeastAddition : this->m_self.yeastAdditions()) {
+         // Get the yeast with the greatest attenuation.
+         if (yeastAddition->attenuation_pct() > attenuation_pct) {
+            attenuation_pct = yeastAddition->yeast()->getTypicalAttenuation_pct();
+         }
+      }
+      // This means we have yeast, but they neglected to provide attenuation percentages.
+      if (this->m_self.yeastAdditions().size() > 0 && attenuation_pct <= 0.0)  {
+         attenuation_pct = Yeast::DefaultAttenuation_pct; // Use an average attenuation.
+      }
+
+      double calculatedFg;
+      if (nonFermentableSugars_kg != 0.0) {
+         double tmp_ferm_pnts = (tmp_pnts - tmp_nonferm_pnts) * (1.0 - attenuation_pct / 100.0); // fg points from fermentable sugars
+         tmp_pnts = tmp_ferm_pnts + tmp_nonferm_pnts;  // FG points from both fermentable and non-fermentable sugars
+         //tmp_pnts *= (1.0 - attenuation_pct/100.0);  // WTF, this completely ignores all the calculations about non-fermentable sugars and just converts everything!
+         calculatedFg =  1 + tmp_pnts / 1000.0; // new FG value
+         this->m_fg_fermentable =  1 + tmp_ferm_pnts / 1000.0; // FG from fermentables only
+      } else {
+         tmp_pnts *= (1.0 - attenuation_pct / 100.0);
+         calculatedFg =  1 + tmp_pnts / 1000.0;
+         this->m_fg_fermentable = calculatedFg;
+      }
+
+      ///!
+      qDebug() <<
+         Q_FUNC_INFO << "Recipe #" << this->m_self.key() << "(" << this->m_self.name() << ") "
+         "m_og_fermentable: " << m_og_fermentable << ", m_fg_fermentable: " << m_fg_fermentable;
+
+      if (!qFuzzyCompare(this->m_self.m_og, calculatedOg)) {
+         qDebug() <<
+            Q_FUNC_INFO << "Recipe #" << this->m_self.key() << "(" << this->m_self.name() << ") "
+            "Calculated OG: " << calculatedOg << ", stored: " << this->m_self.m_og;
+         this->m_self.m_og = calculatedOg;
+         // NOTE: We don't want to do this on the first load of the recipe.
+         // NOTE: We are we recalculating all of these on load? Shouldn't we be
+         // reading these values from the database somehow?
+         //
+         // GSG: Yes we can, but until the code is added to intialize these calculated
+         // values from the database, we can calculate them on load. They should be
+         // the same as the database values since the database values were set with
+         // these functions in the first place.
+         if (!this->m_self.m_uninitializedCalcs) {
+            this->m_self.propagatePropertyChange(PropertyNames::Recipe::og, false);
+            emit this->m_self.changed(this->m_self.metaProperty(*PropertyNames::Recipe::og    ), this->m_self.m_og);
+            emit this->m_self.changed(this->m_self.metaProperty(*PropertyNames::Recipe::points), (this->m_self.m_og - 1.0) * 1e3);
+         }
+      }
+
+      if (!qFuzzyCompare(this->m_self.m_fg, calculatedFg)) {
+         qDebug() <<
+            Q_FUNC_INFO << "Recipe #" << this->m_self.key() << "(" << this->m_self.name() << ") "
+            "Calculated FG: " << calculatedFg << ", stored: " << this->m_self.m_fg;
+         this->m_self.m_fg = calculatedFg;
+         if (!this->m_self.m_uninitializedCalcs) {
+            this->m_self.propagatePropertyChange(PropertyNames::Recipe::fg, false);
+            emit this->m_self.changed(this->m_self.metaProperty(*PropertyNames::Recipe::fg), this->m_self.m_fg);
+         }
+      }
+      return;
+   }
+
+
+   /**
+    * Emits changed(ABV_pct). Depends on: m_og, m_fg
+    */
+   void recalcABV_pct() {
+      // The complex formula, and variations comes from Ritchie Products Ltd, (Zymurgy, Summer 1995, vol. 18, no. 2)
+      // Michael L. Hall’s article Brew by the Numbers: Add Up What’s in Your Beer, and Designing Great Beers by Daniels.
+      double calculatedABV_pct =
+         (76.08 * (this->m_og_fermentable - this->m_fg_fermentable) / (1.775 - this->m_og_fermentable)) *
+         (this->m_fg_fermentable / 0.794);
+
+      if (!qFuzzyCompare(calculatedABV_pct, m_ABV_pct)) {
+         qDebug() <<
+            Q_FUNC_INFO << "Recipe #" << this->m_self.key() << "(" << this->m_self.name() << ") "
+            "Calculated ABV: " << calculatedABV_pct << ", stored: " << this->m_ABV_pct;
+         this->m_ABV_pct = calculatedABV_pct;
+         if (!this->m_self.m_uninitializedCalcs) {
+            emit this->m_self.changed(this->m_self.metaProperty(*PropertyNames::Recipe::ABV_pct), this->m_ABV_pct);
+         }
+      }
+      return;
+   }
+
+   /**
+    * Emits changed(boilGrav). Depends on: _postBoilVolume_l, _boilVolume_l
+    */
+   void recalcBoilGrav() {
+      auto const sugars = this->m_self.calcTotalPoints();
+      double sugar_kg                  = sugars.sugar_kg;
+      double sugar_kg_ignoreEfficiency = sugars.sugar_kg_ignoreEfficiency;
+      double lateAddition_kg           = sugars.lateAddition_kg;
+      double lateAddition_kg_ignoreEff = sugars.lateAddition_kg_ignoreEff;
+
+      // Since the efficiency refers to how much sugar we get into the fermenter,
+      // we need to adjust for that here.
+      sugar_kg = (this->m_self.efficiency_pct() / 100.0 * (sugar_kg - lateAddition_kg) + sugar_kg_ignoreEfficiency -
+                  lateAddition_kg_ignoreEff);
+
+      double calculatedBoilGrav = Algorithms::PlatoToSG_20C20C(Algorithms::getPlato(sugar_kg,
+                                                                                    this->boilSizeInLitersOr(0.0)));
+      if (! qFuzzyCompare(calculatedBoilGrav, this->m_boilGrav)) {
+         qDebug() <<
+            Q_FUNC_INFO << "Recipe #" << this->m_self.key() << "(" << this->m_self.name() << ") "
+            "Calculated Boil Grav: " << calculatedBoilGrav << ", stored: " << this->m_boilGrav;
+         this->m_boilGrav = calculatedBoilGrav;
+         if (!this->m_self.m_uninitializedCalcs) {
+            emit this->m_self.changed(this->m_self.metaProperty(*PropertyNames::Recipe::boilGrav), this->m_boilGrav);
+         }
+      }
+      return;
+   }
+
+   /**
+    * Emits changed(IBU). Depends on: _batchSize_l, _boilGrav, _boilVolume_l, _finalVolume_l
+    */
+   void recalcIBU() {
+      double calculatedIbu = 0.0;
+
+      // Bitterness due to hops...
+      //
+      // Note that, normally, we don't want to take a reference to a smart pointer.  However, in this context, it's safe
+      // (because the hop additions aren't going to change while we look at them) and it gets rid of a compiler warning.
+      this->m_ibus.clear();
+      for (auto const & hopAddition : this->m_self.hopAdditions()) {
+         double tmp = this->m_self.ibuFromHopAddition(*hopAddition);
+         this->m_ibus.append(tmp);
+         calculatedIbu += tmp;
+      }
+
+      // Bitterness due to hopped extracts...
+      for (auto const & fermentableAddition : this->m_self.fermentableAdditions()) {
+         if (fermentableAddition->amountIsWeight()) {
+            // Conversion factor for lb/gal to kg/l = 8.34538.
+            calculatedIbu += fermentableAddition->fermentable()->ibuGalPerLb() * (fermentableAddition->amount().quantity / this->m_self.batchSize_l()) / 8.34538;
+         } else {
+            // .:TBD:. What do do about liquids
+            qWarning() <<
+               Q_FUNC_INFO << "Unimplemented branch for handling IBU of liquid fermentables - #" <<
+               fermentableAddition->fermentable()->key() << ":" << fermentableAddition->name();
+         }
+      }
+
+      if (! qFuzzyCompare(calculatedIbu, this->m_IBU)) {
+         qDebug() <<
+            Q_FUNC_INFO << "Recipe #" << this->m_self.key() << "(" << this->m_self.name() << ") "
+            "Calculated IBU: " << calculatedIbu << ", stored: " << this->m_IBU;
+         this->m_IBU = calculatedIbu;
+         if (!this->m_self.m_uninitializedCalcs) {
+            emit this->m_self.changed(this->m_self.metaProperty(*PropertyNames::Recipe::IBU), this->m_IBU);
+         }
+      }
+
+      return;
+   }
+
+   /**
+    * Emits changed(calories). Depends on: m_og, m_fg.
+    */
+   void recalcCalories() {
+      //
+      // The Journal of the Institute of Brewing (JIB) is published by the Institute of Brewing and Distilling.
+      // On pages 320-321 of Volume 88 of the JIB, dated "September - October 1982", there is an article on "Calculation of
+      // Calorific Value of Beer" submitted by P A Martin on behalf of the IOB (Institute of Brewing) Analysis Committee.
+      //
+      // The article discusses four methods for calculating the calories in beer, and, in summary, recommends calculating
+      // Calories/100ml as follows:
+      //    1.1 Estimate the alcohol content of the beer ... [and] convert ... to alcohol g/100ml
+      //    1.2 Estimate total carbohydrate of the beer (g/100ml as glucose) ...
+      //    1.3 Estimate protein content of the beer (g/100ml)
+      //    2.1 Calories/100ml = [alcohol (g/100ml) × 7] +
+      //                         [total carbohydrate (as glucose g/100ml) × 3.75] +
+      //                         [protein (g/100ml) × 4]
+      //    2.2 In a collaborative trial the precision of the method was ±2.02 Calories for highly attenuated beers and
+      //        ±3.06 Calories for normally fermented products.
+      //
+      // We should come back to this at some point...
+      //
+      // the formula in here are taken from http://hbd.org/ensmingr/
+      //
+
+      // Need to translate OG and FG into plato
+
+      double const better_startPlato  = Measurement::Units::plato.fromCanonical(this->m_self.m_og);
+      double const better_finishPlato = Measurement::Units::plato.fromCanonical(this->m_self.m_fg);
+      double const startPlato  = -463.37 + (668.72 * this->m_self.m_og) - (205.35 * this->m_self.m_og * this->m_self.m_og);
+      double const finishPlato = -463.37 + (668.72 * this->m_self.m_fg) - (205.35 * this->m_self.m_fg * this->m_self.m_fg);
+
+      qCritical() << Q_FUNC_INFO << "better_startPlato:" << better_startPlato << ", startPlato:" << startPlato;
+      qCritical() << Q_FUNC_INFO << "better_finishPlato:" << better_finishPlato << ", finishPlato:" << finishPlato;
+
+      double const realExtract = (0.1808 * startPlato) + (0.8192 * finishPlato);
+
+      // Alcohol by weight?
+      double const abw = (startPlato - realExtract) / (2.0665 - (0.010665 * startPlato));
+
+      // The final results of this formula are calories per 100 ml.
+      // The 10.0 puts it in terms of liters.
+      double calculatedCaloriesPerLiter = ((6.9 * abw) + 4.0 * (realExtract - 0.1)) * this->m_self.m_fg * 10.0;
+
+      //! If there are no fermentables in the recipe, if there is no mash, etc.,
+      //  then the calories/12 oz ends up negative. Since negative doesn't make
+      //  sense, set it to 0
+      if (calculatedCaloriesPerLiter < 0) {
+         calculatedCaloriesPerLiter = 0;
+      }
+
+      if (!qFuzzyCompare(calculatedCaloriesPerLiter, this->m_caloriesPerLiter)) {
+         qDebug() <<
+            Q_FUNC_INFO << "Recipe #" << this->m_self.key() << "(" << this->m_self.name() << ") "
+            "Calculated calories/liter: " << calculatedCaloriesPerLiter << ", stored: " << this->m_caloriesPerLiter;
+         this->m_caloriesPerLiter = calculatedCaloriesPerLiter;
+         if (!this->m_self.m_uninitializedCalcs) {
+            emit this->m_self.changed(this->m_self.metaProperty(*PropertyNames::Recipe::caloriesPerLiter),
+                                      this->m_caloriesPerLiter);
+         }
+      }
+      return;
+   }
+
+
    //================================================ Member variables =================================================
    Recipe & m_self;
+   QVector<int> instructionIds;
 ///   QVector<int> fermentableIds;
 ///   QVector<int> m_hopAdditionIds;
-   QVector<int> instructionIds;
 ///   QVector<int> miscIds;
 ///   QVector<int> saltIds;
 ///   QVector<int> waterIds;
 ///   QVector<int> yeastIds;
+
+   // Calculated properties.
+   double        m_ABV_pct              ;
+   double        m_color_srm            ;
+   double        m_boilGrav             ;
+   double        m_IBU                  ;
+   QList<double> m_ibus                 ;
+   double        m_wortFromMash_l       ;
+   double        m_boilVolume_l         ;
+   double        m_postBoilVolume_l     ;
+   double        m_finalVolume_l        ;
+   // Final volume before any losses out of the kettle, used in calculations for sg/ibu/etc.
+   double        m_finalVolumeNoLosses_l;
+   double        m_caloriesPerLiter     ;
+   double        m_grainsInMash_kg      ;
+   double        m_grains_kg            ;
+   QColor        m_SRMColor             ;
+   double        m_og_fermentable       ;
+   double        m_fg_fermentable       ;
 
 };
 
@@ -1096,24 +1688,24 @@ TypeLookup const Recipe::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::locked            , Recipe::m_locked            ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::ancestorId        , Recipe::m_ancestor_id       ),
 
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::ABV_pct           , Recipe::m_ABV_pct           ,           NonPhysicalQuantity::Percentage    ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::boilGrav          , Recipe::m_boilGrav          , Measurement::PhysicalQuantity::Density       ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::boilVolume_l      , Recipe::m_boilVolume_l      , Measurement::PhysicalQuantity::Volume        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::caloriesPerLiter  , Recipe::m_caloriesPerLiter  ,           NonPhysicalQuantity::Dimensionless ), // .:TBD:. One day this should perhaps become Measurement::PhysicalQuantity::Energy
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::caloriesPerUs12oz, Recipe::caloriesPerUs12oz,         NonPhysicalQuantity::Dimensionless ),
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::caloriesPerUsPint, Recipe::caloriesPerUsPint,         NonPhysicalQuantity::Dimensionless ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::color_srm         , Recipe::m_color_srm         , Measurement::PhysicalQuantity::Color         ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::finalVolume_l     , Recipe::m_finalVolume_l     , Measurement::PhysicalQuantity::Volume        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::grainsInMash_kg   , Recipe::m_grainsInMash_kg   , Measurement::PhysicalQuantity::Mass          ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::grains_kg         , Recipe::m_grains_kg         , Measurement::PhysicalQuantity::Mass          ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::IBU               , Recipe::m_IBU               , Measurement::PhysicalQuantity::Bitterness    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::ABV_pct          , Recipe::ABV_pct         ,           NonPhysicalQuantity::Percentage   ), // Calculated, not in DB
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::boilGrav         , Recipe::boilGrav        , Measurement::PhysicalQuantity::Density      ), // Calculated, not in DB
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::boilVolume_l     , Recipe::boilVolume_l    , Measurement::PhysicalQuantity::Volume       ), // Calculated, not in DB
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::caloriesPerLiter , Recipe::caloriesPerLiter,           NonPhysicalQuantity::Dimensionless), // Calculated, not in DB .:TBD:. One day this should perhaps become Measurement::PhysicalQuantity::Energy
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::caloriesPerUs12oz, Recipe::caloriesPerUs12oz,         NonPhysicalQuantity::Dimensionless),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::caloriesPerUsPint, Recipe::caloriesPerUsPint,         NonPhysicalQuantity::Dimensionless),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::color_srm        , Recipe::color_srm         , Measurement::PhysicalQuantity::Color     ), // Calculated, not in DB
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::finalVolume_l    , Recipe::finalVolume_l     , Measurement::PhysicalQuantity::Volume    ), // Calculated, not in DB
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::grainsInMash_kg  , Recipe::grainsInMash_kg   , Measurement::PhysicalQuantity::Mass      ), // Calculated, not in DB
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::grains_kg        , Recipe::grains_kg         , Measurement::PhysicalQuantity::Mass      ), // Calculated, not in DB
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::IBU              , Recipe::IBU               , Measurement::PhysicalQuantity::Bitterness), // Calculated, not in DB
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::IBUs              , Recipe::m_IBUs              ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::instructionIds    , Recipe::impl::instructionIds),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::instructions      , Recipe::m_instructions      ),
 //      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::points            , Recipe::m_points            ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::postBoilVolume_l  , Recipe::m_postBoilVolume_l  , Measurement::PhysicalQuantity::Volume        ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::SRMColor          , Recipe::m_SRMColor          ), // NB: This is an RGB display color
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Recipe::wortFromMash_l    , Recipe::m_wortFromMash_l    , Measurement::PhysicalQuantity::Volume        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::postBoilVolume_l, Recipe::postBoilVolume_l  , Measurement::PhysicalQuantity::Volume     ), // Calculated, not in DB
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::SRMColor        , Recipe::SRMColor          ),  // Calculated, not in DB.  NB: This is an RGB display color
+      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::wortFromMash_l  , Recipe::wortFromMash_l    , Measurement::PhysicalQuantity::Volume     ), // Calculated, not in DB
 
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::style               , Recipe::style               ),
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Recipe::mash                , Recipe::mash                ),
@@ -1180,24 +1772,8 @@ Recipe::Recipe(QString name) :
    m_fermentationId         {-1                  },
    m_beerAcidity_pH         {std::nullopt        },
    m_apparentAttenuation_pct{std::nullopt        },
-   m_ABV_pct                {0.0                 },
-   m_color_srm              {0.0                 },
-   m_boilGrav               {0.0                 },
-   m_IBU                    {0.0                 },
-   m_ibus                   {0.0                 },
-   m_wortFromMash_l         {0.0                 },
-   m_boilVolume_l           {0.0                 },
-   m_postBoilVolume_l       {0.0                 },
-   m_finalVolume_l          {0.0                 },
-   m_finalVolumeNoLosses_l  {0.0                 },
-   m_caloriesPerLiter       {0.0                 },
-   m_grainsInMash_kg        {0.0                 },
-   m_grains_kg              {0.0                 },
-   m_SRMColor               {},
    m_og                     {1.0                 },
    m_fg                     {1.0                 },
-   m_og_fermentable         {0.0                 },
-   m_fg_fermentable         {0.0                 },
    m_locked                 {false               },
    m_uninitializedCalcs     {true                },
    m_uninitializedCalcsMutex{},
@@ -1247,8 +1823,6 @@ Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
    // access them.
    SET_REGULAR_FROM_NPB (m_og                     , namedParameterBundle, PropertyNames::Recipe::og                     ),
    SET_REGULAR_FROM_NPB (m_fg                     , namedParameterBundle, PropertyNames::Recipe::fg                     ),
-                         m_og_fermentable         {0.0},
-                         m_fg_fermentable         {0.0},
    SET_REGULAR_FROM_NPB (m_locked                 , namedParameterBundle, PropertyNames::Recipe::locked                 ),
                          m_uninitializedCalcs     {true},
                          m_uninitializedCalcsMutex{},
@@ -1308,8 +1882,6 @@ Recipe::Recipe(Recipe const & other) :
    m_apparentAttenuation_pct{other.m_apparentAttenuation_pct},
    m_og                     {other.m_og                },
    m_fg                     {other.m_fg                },
-   m_og_fermentable         {0.0},
-   m_fg_fermentable         {0.0},
    m_locked                 {other.m_locked            },
    m_uninitializedCalcs     {true                      },
    m_uninitializedCalcsMutex{},
@@ -1729,7 +2301,7 @@ template<class NE> std::shared_ptr<NE> Recipe::remove(std::shared_ptr<NE> var) {
       Q_ASSERT(false);
    } else {
       this->propagatePropertyChange(Recipe::propertyNameFor<NE>());
-      this->recalcIBU(); // .:TODO:. Don't need to do this recalculation when it's Instruction
+      this->pimpl->recalcIBU(); // .:TODO:. Don't need to do this recalculation when it's Instruction
    }
 
    //
@@ -2207,114 +2779,27 @@ Recipe * Recipe::revertToPreviousVersion() {
 
 //==========================Calculated Getters============================
 
-double Recipe::og() {
-   if (m_uninitializedCalcs) {
-      recalcAll();
-   }
-   return m_og;
-}
-
-double Recipe::fg() {
-   if (m_uninitializedCalcs) {
-      recalcAll();
-   }
-   return m_fg;
-}
-
-double Recipe::color_srm() {
-   if (m_uninitializedCalcs) {
-      recalcAll();
-   }
-   return m_color_srm;
-}
-
-double Recipe::ABV_pct() {
-   if (m_uninitializedCalcs) {
-      recalcAll();
-   }
-   return m_ABV_pct;
-}
-
-double Recipe::IBU() {
-   if (m_uninitializedCalcs) {
-      recalcAll();
-   }
-   return m_IBU;
-}
-
-QList<double> Recipe::IBUs() {
-   if (m_uninitializedCalcs) {
-      recalcAll();
-   }
-   return m_ibus;
-}
-
-double Recipe::boilGrav() {
-   if (m_uninitializedCalcs) {
-      recalcAll();
-   }
-   return m_boilGrav;
-}
-
-double Recipe::caloriesPer33cl  () { if (m_uninitializedCalcs) { recalcAll(); } return m_caloriesPerLiter * 0.33          ; }
-double Recipe::caloriesPerLiter () { if (m_uninitializedCalcs) { recalcAll(); } return m_caloriesPerLiter                 ; }
-double Recipe::caloriesPerUs12oz() { if (m_uninitializedCalcs) { recalcAll(); } return m_caloriesPerLiter * us12ozInLiters; }
-double Recipe::caloriesPerUsPint() { if (m_uninitializedCalcs) { recalcAll(); } return m_caloriesPerLiter * usPintInLiters; }
-
-double Recipe::wortFromMash_l() {
-   if (m_uninitializedCalcs) {
-      recalcAll();
-   }
-   return m_wortFromMash_l;
-}
-
-double Recipe::boilVolume_l() {
-   if (m_uninitializedCalcs) {
-      recalcAll();
-   }
-   return m_boilVolume_l;
-}
-
-double Recipe::postBoilVolume_l() {
-   if (m_uninitializedCalcs) {
-      recalcAll();
-   }
-   return m_postBoilVolume_l;
-}
-
-double Recipe::finalVolume_l() {
-   if (m_uninitializedCalcs) {
-      recalcAll();
-   }
-   return m_finalVolume_l;
-}
-
-QColor Recipe::SRMColor() {
-   if (m_uninitializedCalcs) {
-      recalcAll();
-   }
-   return m_SRMColor;
-}
-
-double Recipe::grainsInMash_kg() {
-   if (m_uninitializedCalcs) {
-      recalcAll();
-   }
-   return m_grainsInMash_kg;
-}
-
-double Recipe::grains_kg() {
-   if (m_uninitializedCalcs) {
-      recalcAll();
-   }
-   return m_grains_kg;
-}
+double        Recipe::og              () { return this->pimpl->getCalculated(this->m_og); }
+double        Recipe::fg              () { return this->pimpl->getCalculated(this->m_fg); }
+double        Recipe::color_srm       () { return this->pimpl->getCalculated(this->pimpl->m_color_srm       ); }
+double        Recipe::ABV_pct         () { return this->pimpl->getCalculated(this->pimpl->m_ABV_pct         ); }
+double        Recipe::IBU             () { return this->pimpl->getCalculated(this->pimpl->m_IBU             ); }
+QList<double> Recipe::IBUs            () { return this->pimpl->getCalculated(this->pimpl->m_ibus            ); }
+double        Recipe::boilGrav        () { return this->pimpl->getCalculated(this->pimpl->m_boilGrav        ); }
+double        Recipe::caloriesPerLiter() { return this->pimpl->getCalculated(this->pimpl->m_caloriesPerLiter); }
+double        Recipe::caloriesPer33cl  () { return this->caloriesPerLiter() * 0.33          ; }
+double        Recipe::caloriesPerUs12oz() { return this->caloriesPerLiter() * us12ozInLiters; }
+double        Recipe::caloriesPerUsPint() { return this->caloriesPerLiter() * usPintInLiters; }
+double        Recipe::wortFromMash_l  () { return this->pimpl->getCalculated(this->pimpl->m_wortFromMash_l  );}
+double        Recipe::boilVolume_l    () { return this->pimpl->getCalculated(this->pimpl->m_boilVolume_l    );}
+double        Recipe::postBoilVolume_l() { return this->pimpl->getCalculated(this->pimpl->m_postBoilVolume_l);}
+double        Recipe::finalVolume_l   () { return this->pimpl->getCalculated(this->pimpl->m_finalVolume_l   );}
+QColor        Recipe::SRMColor        () { return this->pimpl->getCalculated(this->pimpl->m_SRMColor        );}
+double        Recipe::grainsInMash_kg () { return this->pimpl->getCalculated(this->pimpl->m_grainsInMash_kg );}
+double        Recipe::grains_kg       () { return this->pimpl->getCalculated(this->pimpl->m_grains_kg       );}
 
 double Recipe::points() {
-   if (m_uninitializedCalcs) {
-      recalcAll();
-   }
-   return (m_og - 1.0) * 1e3;
+   return (this->og() - 1.0) * 1e3;
 }
 
 //=========================Relational Getters=============================
@@ -2434,18 +2919,8 @@ bool    Recipe::locked()             const { return m_locked;             }
 std::optional<double> Recipe::beerAcidity_pH         () const { return m_beerAcidity_pH         ; }
 std::optional<double> Recipe::apparentAttenuation_pct() const { return m_apparentAttenuation_pct; }
 
-//=============================Adders and Removers========================================
 
 
-double Recipe::batchSizeNoLosses_l() {
-   double ret = this->batchSize_l();
-   auto equipment = this->equipment();
-   if (equipment) {
-      ret += equipment->kettleTrubChillerLoss_l();
-   }
-
-   return ret;
-}
 
 //==============================Recalculators==================================
 
@@ -2455,7 +2930,7 @@ void Recipe::recalcIfNeeded(QString classNameOfWhatWasAddedOrChanged) {
    // ::staticMetaObject.className() is a bit more clunky but it's safer.
 
    if (classNameOfWhatWasAddedOrChanged == Hop::staticMetaObject.className()) {
-      this->recalcIBU();
+      this->pimpl->recalcIBU();
       return;
    }
 
@@ -2467,8 +2942,8 @@ void Recipe::recalcIfNeeded(QString classNameOfWhatWasAddedOrChanged) {
    }
 
    if (classNameOfWhatWasAddedOrChanged == Yeast::staticMetaObject.className()) {
-      this->recalcOgFg();
-      this->recalcABV_pct();
+      this->pimpl->recalcOgFg();
+      this->pimpl->recalcABV_pct();
       return;
    }
 
@@ -2481,530 +2956,69 @@ void Recipe::recalcAll() {
    // causing other objects to call finalVolume_l() for example, which may
    // cause another call to recalcAll() and so on.
    //
-   // GSG: Now only emit when _uninitializedCalcs is true, which helps some.
+   // GSG: Now only emit when m_uninitializedCalcs is true, which helps some.
 
    // Someone has already called this function back in the call stack, so return to avoid recursion.
-   if (! m_recalcMutex.tryLock()) {
+   if (!this->m_recalcMutex.tryLock()) {
       return;
    }
 
    // Times are in seconds, and are cumulative.
-   recalcGrainsInMash_kg(); // 0.01
-   recalcGrains_kg(); // 0.03
-   recalcVolumeEstimates(); // 0.06
-   recalcColor_srm(); // 0.08
-   recalcSRMColor(); // 0.08
-   recalcOgFg(); // 0.11
-   recalcABV_pct(); // 0.12
-   recalcBoilGrav(); // 0.14
-   recalcIBU(); // 0.15
-   recalcCalories();
+   this->pimpl->recalcGrains(); // 0.03
+   this->pimpl->recalcVolumeEstimates(); // 0.06
+   this->pimpl->recalcColor_srm(); // 0.08
+   this->pimpl->recalcSRMColor(); // 0.08
+   this->pimpl->recalcOgFg(); // 0.11
+   this->pimpl->recalcABV_pct(); // 0.12
+   this->pimpl->recalcBoilGrav(); // 0.14
+   this->pimpl->recalcIBU(); // 0.15
+   this->pimpl->recalcCalories();
 
-   m_uninitializedCalcs = false;
+   this->m_uninitializedCalcs = false;
 
-   m_recalcMutex.unlock();
-   return;
-}
-
-void Recipe::recalcABV_pct() {
-   double ret;
-
-   // The complex formula, and variations comes from Ritchie Products Ltd, (Zymurgy, Summer 1995, vol. 18, no. 2)
-   // Michael L. Hall’s article Brew by the Numbers: Add Up What’s in Your Beer, and Designing Great Beers by Daniels.
-   ret = (76.08 * (m_og_fermentable - m_fg_fermentable) / (1.775 - m_og_fermentable)) * (m_fg_fermentable / 0.794);
-
-   if (! qFuzzyCompare(ret, m_ABV_pct)) {
-      m_ABV_pct = ret;
-      if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(*PropertyNames::Recipe::ABV_pct), m_ABV_pct);
-      }
-   }
-   return;
-}
-
-void Recipe::recalcColor_srm() {
-   double mcu = 0.0;
-
-   for (auto const & fermentableAddition : this->fermentableAdditions()) {
-      if (fermentableAddition->amountIsWeight()) {
-         // Conversion factor for lb/gal to kg/l = 8.34538.
-         mcu += fermentableAddition->fermentable()->color_srm() * 8.34538 * fermentableAddition->amount().quantity / m_finalVolumeNoLosses_l;
-      } else {
-         // .:TBD:. What do do about liquids
-         qWarning() <<
-            Q_FUNC_INFO << "Unimplemented branch for handling color of liquid fermentables - #" << fermentableAddition->fermentable()->key() << ":" <<
-            fermentableAddition->name();
-      }
-   }
-
-   double ret = ColorMethods::mcuToSrm(mcu);
-
-   if (! qFuzzyCompare(m_color_srm, ret)) {
-      m_color_srm = ret;
-      if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(*PropertyNames::Recipe::color_srm), m_color_srm);
-      }
-   }
-
-   return;
-}
-
-void Recipe::recalcIBU() {
-   double ibus = 0.0;
-
-   // Bitterness due to hops...
-   //
-   // Note that, normally, we don't want to take a reference to a smart pointer.  However, in this context, it's safe
-   // (because the hop additions aren't going to change while we look at them) and it gets rid of a compiler warning.
-   m_ibus.clear();
-   for (auto const & hopAddition : this->hopAdditions()) {
-      double tmp = this->ibuFromHopAddition(*hopAddition);
-      m_ibus.append(tmp);
-      ibus += tmp;
-   }
-
-   // Bitterness due to hopped extracts...
-   for (auto const & fermentableAddition : this->fermentableAdditions()) {
-      if (fermentableAddition->amountIsWeight()) {
-         // Conversion factor for lb/gal to kg/l = 8.34538.
-         ibus += fermentableAddition->fermentable()->ibuGalPerLb() * (fermentableAddition->amount().quantity / batchSize_l()) / 8.34538;
-      } else {
-         // .:TBD:. What do do about liquids
-         qWarning() <<
-            Q_FUNC_INFO << "Unimplemented branch for handling IBU of liquid fermentables - #" << fermentableAddition->fermentable()->key() << ":" <<
-            fermentableAddition->name();
-      }
-   }
-
-   if (! qFuzzyCompare(ibus, m_IBU)) {
-      m_IBU = ibus;
-      if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(*PropertyNames::Recipe::IBU), m_IBU);
-      }
-   }
-
-   return;
-}
-
-void Recipe::recalcVolumeEstimates() {
-   double waterAdded_l;
-   double absorption_lKg;
-   double tmp = 0.0;
-   double tmp_wfm = 0.0;
-   double tmp_bv = 0.0;
-   double tmp_fv = 0.0;
-   double tmp_pbv = 0.0;
-
-   // wortFromMash_l ==========================
-   if (mash() == nullptr) {
-      m_wortFromMash_l = 0.0;
-   } else {
-      waterAdded_l = mash()->totalMashWater_l();
-      if (equipment() != nullptr) {
-         absorption_lKg = equipment()->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg);
-      } else {
-         absorption_lKg = PhysicalConstants::grainAbsorption_Lkg;
-      }
-
-      tmp_wfm = (waterAdded_l - absorption_lKg * m_grainsInMash_kg);
-   }
-
-   // boilVolume_l ==============================
-
-   if (equipment() != nullptr) {
-      tmp = tmp_wfm - equipment()->getLauteringDeadspaceLoss_l() + equipment()->topUpKettle_l().value_or(Equipment::default_topUpKettle_l);
-   } else {
-      tmp = tmp_wfm;
-   }
-
-   // .:TODO:. Assumptions below about liquids are almost certainly wrong, also TBD what other cases we have to cover
-   // Need to account for extract/sugar volume also.
-   for (auto const & fermentableAddition : this->fermentableAdditions()) {
-      auto const & fermentable = fermentableAddition->fermentable();
-      switch (fermentable->type()) {
-         case Fermentable::Type::Extract:
-            if (fermentableAddition->amountIsWeight()) {
-               tmp += fermentableAddition->amount().quantity / PhysicalConstants::liquidExtractDensity_kgL;
-            } else {
-               tmp += fermentableAddition->amount().quantity;
-            }
-            break;
-         case Fermentable::Type::Sugar:
-            if (fermentableAddition->amountIsWeight()) {
-               tmp += fermentableAddition->amount().quantity / PhysicalConstants::sucroseDensity_kgL;
-            } else {
-               tmp += fermentableAddition->amount().quantity;
-            }
-            break;
-         case Fermentable::Type::Dry_Extract:
-            if (fermentableAddition->amountIsWeight()) {
-               tmp += fermentableAddition->amount().quantity / PhysicalConstants::dryExtractDensity_kgL;
-            } else {
-               tmp += fermentableAddition->amount().quantity;
-            }
-            break;
-      }
-   }
-
-   if (tmp <= 0.0) {
-      // Give up.
-      tmp = this->pimpl->boilSizeInLitersOr(0.0);
-   }
-
-   tmp_bv = tmp;
-
-   // finalVolume_l ==============================
-
-   // NOTE: the following figure is not based on the other volume estimates
-   // since we want to show og,fg,ibus,etc. as if the collected wort is correct.
-   m_finalVolumeNoLosses_l = batchSizeNoLosses_l();
-   if (equipment() != nullptr) {
-      //_finalVolumeNoLosses_l = equipment()->wortEndOfBoil_l(tmp_bv) + equipment()->topUpWater_l();
-      tmp_fv = equipment()->wortEndOfBoil_l(tmp_bv) + equipment()->topUpWater_l().value_or(Equipment::default_topUpWater_l) - equipment()->kettleTrubChillerLoss_l();
-   } else {
-      m_finalVolume_l = tmp_bv - 4.0; // This is just shooting in the dark. Can't do much without an equipment.
-      //_finalVolumeNoLosses_l = _finalVolume_l;
-   }
-
-   // postBoilVolume_l ===========================
-
-   if (equipment() != nullptr) {
-      tmp_pbv = equipment()->wortEndOfBoil_l(tmp_bv);
-   } else {
-      tmp_pbv = batchSize_l(); // Give up.
-   }
-
-   if (! qFuzzyCompare(tmp_wfm, m_wortFromMash_l)) {
-      m_wortFromMash_l = tmp_wfm;
-      if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(*PropertyNames::Recipe::wortFromMash_l), m_wortFromMash_l);
-      }
-   }
-
-   // TODO: Still need to get rid of m_boilVolume_l
-   if (! qFuzzyCompare(tmp_bv, m_boilVolume_l)) {
-      m_boilVolume_l = tmp_bv;
-      if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(*PropertyNames::Recipe::boilVolume_l), m_boilVolume_l);
-      }
-   }
-
-   if (! qFuzzyCompare(tmp_fv, m_finalVolume_l)) {
-      m_finalVolume_l = tmp_fv;
-      if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(*PropertyNames::Recipe::finalVolume_l), m_finalVolume_l);
-      }
-   }
-
-   if (! qFuzzyCompare(tmp_pbv, m_postBoilVolume_l)) {
-      m_postBoilVolume_l = tmp_pbv;
-      if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(*PropertyNames::Recipe::postBoilVolume_l), m_postBoilVolume_l);
-      }
-   }
-   return;
-}
-
-void Recipe::recalcGrainsInMash_kg() {
-   double ret = 0.0;
-
-   for (auto const & fermentableAddition : this->fermentableAdditions()) {
-      if (fermentableAddition->fermentable() &&
-          fermentableAddition->fermentable()->type() == Fermentable::Type::Grain &&
-          fermentableAddition->stage() == RecipeAddition::Stage::Mash) {
-         if (fermentableAddition->amountIsWeight()) {
-            ret += fermentableAddition->amount().quantity;
-         } else {
-            qWarning() <<
-               Q_FUNC_INFO << "Ignoring grain fermentable addition #" << fermentableAddition->key() << "(" <<
-               fermentableAddition->name() << ") as measured by volume";
-         }
-      }
-   }
-
-   if (! qFuzzyCompare(ret, m_grainsInMash_kg)) {
-      m_grainsInMash_kg = ret;
-      if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(*PropertyNames::Recipe::grainsInMash_kg), m_grainsInMash_kg);
-      }
-   }
-   return;
-}
-
-void Recipe::recalcGrains_kg() {
-   double ret = 0.0;
-
-   for (auto const & fermentableAddition : this->fermentableAdditions()) {
-      // .:TODO:. Need to think about what, if anything, we need to do for other Fermantable types here
-      if (fermentableAddition->fermentable()->type() == Fermentable::Type::Grain) {
-         // I wouldn't have thought you would want to measure grain by volume, but best to check
-         if (fermentableAddition->amountIsWeight()) {
-            ret += fermentableAddition->amount().quantity;
-         } else {
-            qWarning() <<
-               Q_FUNC_INFO << "Ignoring grain fermentable addition #" << fermentableAddition->key() << "(" <<
-               fermentableAddition->name() << ") as measured by volume";
-         }
-      }
-   }
-
-   if (! qFuzzyCompare(ret, m_grains_kg)) {
-      m_grains_kg = ret;
-      if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(*PropertyNames::Recipe::grains_kg), m_grains_kg);
-      }
-   }
-   return;
-}
-
-void Recipe::recalcSRMColor() {
-   QColor tmp = Algorithms::srmToColor(m_color_srm);
-
-   if (tmp != m_SRMColor) {
-      m_SRMColor = tmp;
-      if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(*PropertyNames::Recipe::SRMColor), m_SRMColor);
-      }
-   }
-   return;
-}
-
-//
-// The Journal of the Institute of Brewing (JIB) is published by the Institute of Brewing and Distilling.
-// On pages 320-321 of Volume 88 of the JIB, dated "September - October 1982", there is an article on "Calculation of
-// Calorific Value of Beer" submitted by P A Martin on behalf of the IOB (Institute of Brewing) Analysis Committee.
-//
-// The article discusses four methods for calculating the calories in beer, and, in summary, recommends calculating
-// Calories/100ml as follows:
-//    1.1 Estimate the alcohol content of the beer ... [and] convert ... to alcohol g/100ml
-//    1.2 Estimate total carbohydrate of the beer (g/100ml as glucose) ...
-//    1.3 Estimate protein content of the beer (g/100ml)
-//    2.1 Calories/100ml = [alcohol (g/100ml) × 7] +
-//                         [total carbohydrate (as glucose g/100ml) × 3.75] +
-//                         [protein (g/100ml) × 4]
-//    2.2 In a collaborative trial the precision of the method was ±2.02 Calories for highly attenuated beers and
-//        ±3.06 Calories for normally fermented products.
-//
-// We should come back to this at some point...
-//
-// the formula in here are taken from http://hbd.org/ensmingr/
-void Recipe::recalcCalories() {
-
-   // Need to translate OG and FG into plato
-   double const startPlato  = -463.37 + (668.72 * this->m_og) - (205.35 * this->m_og * this->m_og);
-   double const finishPlato = -463.37 + (668.72 * this->m_fg) - (205.35 * this->m_fg * this->m_fg);
-   double const realExtract = (0.1808 * startPlato) + (0.8192 * finishPlato);
-
-   // Alcohol by weight?
-   double const abw = (startPlato - realExtract) / (2.0665 - (0.010665 * startPlato));
-
-   // The final results of this formula are calories per 100 ml.
-   // The 10.0 puts it in terms of liters.
-   double tmp = ((6.9 * abw) + 4.0 * (realExtract - 0.1)) * this->m_fg * 10.0;
-
-   //! If there are no fermentables in the recipe, if there is no mash, etc.,
-   //  then the calories/12 oz ends up negative. Since negative doesn't make
-   //  sense, set it to 0
-   if (tmp < 0) {
-      tmp = 0;
-   }
-
-   if (!qFuzzyCompare(tmp, this->m_caloriesPerLiter)) {
-      this->m_caloriesPerLiter = tmp;
-      if (!this->m_uninitializedCalcs) {
-         emit changed(metaProperty(*PropertyNames::Recipe::caloriesPerLiter), this->m_caloriesPerLiter);
-      }
-   }
+   this->m_recalcMutex.unlock();
    return;
 }
 
 // Other efficiency calculations need access to the maximum theoretical sugars
 // available. The only way I can see of doing that which doesn't suck is to
 // split that calculation out of recalcOgFg();
-QHash<QString, double> Recipe::calcTotalPoints() {
-   double sugar_kg_ignoreEfficiency = 0.0;
-   double sugar_kg                  = 0.0;
-   double nonFermentableSugars_kg   = 0.0;
-   double lateAddition_kg           = 0.0;
-   double lateAddition_kg_ignoreEff = 0.0;
+Recipe::Sugars Recipe::calcTotalPoints() {
+   Recipe::Sugars ret;
 
    for (auto const & fermentableAddition : this->fermentableAdditions()) {
       auto const & fermentable = fermentableAddition->fermentable();
+      qDebug() <<
+         "calcTotalPoints Rec" << this->key() << "(" << this->name() << ") "
+         "Ferm Add" << fermentable->key() << "(" << fermentable->name() << ") equivSucrose_kg" <<
+         fermentableAddition->equivSucrose_kg() << ", isSugar?" << fermentable->isSugar() << ", isExtract?" <<
+         fermentable->isExtract() << ", addAfterBoil?" <<
+         fermentableAddition->addAfterBoil() << ", isFermentableSugar?" << isFermentableSugar(fermentable);
+
       // If we have some sort of non-grain, we have to ignore efficiency.
       if (fermentable->isSugar() || fermentable->isExtract()) {
-         sugar_kg_ignoreEfficiency += fermentableAddition->equivSucrose_kg();
+         ret.sugar_kg_ignoreEfficiency += fermentableAddition->equivSucrose_kg();
 
          if (fermentableAddition->addAfterBoil()) {
-            lateAddition_kg_ignoreEff += fermentableAddition->equivSucrose_kg();
+            ret.lateAddition_kg_ignoreEff += fermentableAddition->equivSucrose_kg();
          }
 
          if (!isFermentableSugar(fermentable)) {
-            nonFermentableSugars_kg += fermentableAddition->equivSucrose_kg();
+            ret.nonFermentableSugars_kg += fermentableAddition->equivSucrose_kg();
          }
       } else {
-         sugar_kg += fermentableAddition->equivSucrose_kg();
+         ret.sugar_kg += fermentableAddition->equivSucrose_kg();
 
          if (fermentableAddition->addAfterBoil()) {
-            lateAddition_kg += fermentableAddition->equivSucrose_kg();
+            ret.lateAddition_kg += fermentableAddition->equivSucrose_kg();
          }
       }
    }
-
-   QHash<QString, double> ret;
-   ret.insert("sugar_kg"                 , sugar_kg                 );
-   ret.insert("nonFermentableSugars_kg"  , nonFermentableSugars_kg  );
-   ret.insert("sugar_kg_ignoreEfficiency", sugar_kg_ignoreEfficiency);
-   ret.insert("lateAddition_kg"          , lateAddition_kg          );
-   ret.insert("lateAddition_kg_ignoreEff", lateAddition_kg_ignoreEff);
 
    return ret;
 }
 
-void Recipe::recalcBoilGrav() {
-   double sugar_kg = 0.0;
-   double sugar_kg_ignoreEfficiency = 0.0;
-   double lateAddition_kg           = 0.0;
-   double lateAddition_kg_ignoreEff = 0.0;
-   double ret;
-   QHash<QString, double> sugars;
 
-   sugars = calcTotalPoints();
-   sugar_kg = sugars.value("sugar_kg");
-   sugar_kg_ignoreEfficiency = sugars.value("sugar_kg_ignoreEfficiency");
-   lateAddition_kg = sugars.value("lateAddition_kg");
-   lateAddition_kg_ignoreEff = sugars.value("lateAddition_kg_ignoreEff");
-
-   // Since the efficiency refers to how much sugar we get into the fermenter,
-   // we need to adjust for that here.
-   sugar_kg = (efficiency_pct() / 100.0 * (sugar_kg - lateAddition_kg) + sugar_kg_ignoreEfficiency -
-               lateAddition_kg_ignoreEff);
-
-   ret = Algorithms::PlatoToSG_20C20C(Algorithms::getPlato(sugar_kg, this->pimpl->boilSizeInLitersOr(0.0)));
-
-   if (! qFuzzyCompare(ret, m_boilGrav)) {
-      m_boilGrav = ret;
-      if (!m_uninitializedCalcs) {
-         emit changed(metaProperty(*PropertyNames::Recipe::boilGrav), m_boilGrav);
-      }
-   }
-   return;
-}
-
-void Recipe::recalcOgFg() {
-   double tmp_fg, tmp_ferm_pnts, tmp_nonferm_pnts;
-
-   m_og_fermentable = m_fg_fermentable = 0.0;
-
-   // The first time through really has to get the _og and _fg from the
-   // database, not use the initialized values of 1. I (maf) tried putting
-   // this in the initialize, but it just hung. So I moved it here, but only
-   // if if we aren't initialized yet.
-   //
-   // GSG: This doesn't work, this og and fg are already set to 1.0 so
-   // until we load these values from the database on startup, we have
-   // to calculate.
-   if (m_uninitializedCalcs) {
-      m_og = Localization::toDouble(*this, PropertyNames::Recipe::og, Q_FUNC_INFO);
-      m_fg = Localization::toDouble(*this, PropertyNames::Recipe::fg, Q_FUNC_INFO);
-   }
-
-   // Find out how much sugar we have.
-   QHash<QString, double> sugars = calcTotalPoints();
-   double sugar_kg = sugars.value("sugar_kg");  // Mass of sugar that *is* affected by mash efficiency
-   double sugar_kg_ignoreEfficiency =
-      sugars.value("sugar_kg_ignoreEfficiency");  // Mass of sugar that *is not* affected by mash efficiency
-   double nonFermentableSugars_kg    =
-      sugars.value("nonFermentableSugars_kg");  // Mass of sugar that is not fermentable (also counted in sugar_kg_ignoreEfficiency)
-
-   // We might lose some sugar in the form of Trub/Chiller loss and lauter deadspace.
-   if (equipment() != nullptr) {
-
-      double kettleWort_l = (m_wortFromMash_l - equipment()->getLauteringDeadspaceLoss_l()) + equipment()->topUpKettle_l().value_or(Equipment::default_topUpKettle_l);
-      double postBoilWort_l = equipment()->wortEndOfBoil_l(kettleWort_l);
-      double ratio = (postBoilWort_l - equipment()->kettleTrubChillerLoss_l()) / postBoilWort_l;
-      if (ratio > 1.0) { // Usually happens when we don't have a mash yet.
-         ratio = 1.0;
-      } else if (ratio < 0.0) {
-         ratio = 0.0;
-      } else if (Algorithms::isNan(ratio)) {
-         ratio = 1.0;
-      }
-      // Ignore this again since it should be included in efficiency.
-      //sugar_kg *= ratio;
-      sugar_kg_ignoreEfficiency *= ratio;
-      if (nonFermentableSugars_kg != 0.0) {
-         nonFermentableSugars_kg *= ratio;
-      }
-   }
-
-   // Total sugars after accounting for efficiency and mash losses. Implicitly includes non-fermentable sugars
-   sugar_kg = sugar_kg * efficiency_pct() / 100.0 + sugar_kg_ignoreEfficiency;
-   double plato = Algorithms::getPlato(sugar_kg, m_finalVolumeNoLosses_l);
-
-   double tmp_og = Algorithms::PlatoToSG_20C20C(plato);    // og from all sugars
-   double tmp_pnts = (tmp_og - 1) * 1000.0; // points from all sugars
-   if (nonFermentableSugars_kg != 0.0) {
-      double ferm_kg = sugar_kg - nonFermentableSugars_kg;  // Mass of only fermentable sugars
-      plato = Algorithms::getPlato(ferm_kg, m_finalVolumeNoLosses_l);   // Plato from fermentable sugars
-      m_og_fermentable = Algorithms::PlatoToSG_20C20C(plato);    // og from only fermentable sugars
-      plato = Algorithms::getPlato(nonFermentableSugars_kg, m_finalVolumeNoLosses_l);   // Plate from non-fermentable sugars
-      tmp_nonferm_pnts = ((Algorithms::PlatoToSG_20C20C(plato)) - 1) * 1000.0; // og points from non-fermentable sugars
-   } else {
-      m_og_fermentable = tmp_og;
-      tmp_nonferm_pnts = 0;
-   }
-
-   // Calculage FG
-   double attenuation_pct = 0.0;
-   for (auto yeastAddition : this->yeastAdditions()) {
-      // Get the yeast with the greatest attenuation.
-      if (yeastAddition->attenuation_pct() > attenuation_pct) {
-         attenuation_pct = yeastAddition->yeast()->getTypicalAttenuation_pct();
-      }
-   }
-   // This means we have yeast, but they neglected to provide attenuation percentages.
-   if (this->yeastAdditions().size() > 0 && attenuation_pct <= 0.0)  {
-      attenuation_pct = Yeast::DefaultAttenuation_pct; // Use an average attenuation.
-   }
-
-   if (nonFermentableSugars_kg != 0.0) {
-      tmp_ferm_pnts = (tmp_pnts - tmp_nonferm_pnts) * (1.0 - attenuation_pct / 100.0); // fg points from fermentable sugars
-      tmp_pnts = tmp_ferm_pnts + tmp_nonferm_pnts;  // FG points from both fermentable and non-fermentable sugars
-      //tmp_pnts *= (1.0 - attenuation_pct/100.0);  // WTF, this completely ignores all the calculations about non-fermentable sugars and just converts everything!
-      tmp_fg =  1 + tmp_pnts / 1000.0; // new FG value
-      m_fg_fermentable =  1 + tmp_ferm_pnts / 1000.0; // FG from fermentables only
-   } else {
-      tmp_pnts *= (1.0 - attenuation_pct / 100.0);
-      tmp_fg =  1 + tmp_pnts / 1000.0;
-      m_fg_fermentable = tmp_fg;
-   }
-
-   if (! qFuzzyCompare(m_og, tmp_og)) {
-      m_og     = tmp_og;
-      // NOTE: We don't want to do this on the first load of the recipe.
-      // NOTE: We are we recalculating all of these on load? Shouldn't we be
-      // reading these values from the database somehow?
-      //
-      // GSG: Yes we can, but until the code is added to intialize these calculated
-      // values from the database, we can calculate them on load. They should be
-      // the same as the database values since the database values were set with
-      // these functions in the first place.
-      if (!m_uninitializedCalcs) {
-         this->propagatePropertyChange(PropertyNames::Recipe::og, false);
-         emit changed(metaProperty(*PropertyNames::Recipe::og), m_og);
-         emit changed(metaProperty(*PropertyNames::Recipe::points), (m_og - 1.0) * 1e3);
-      }
-   }
-
-   if (! qFuzzyCompare(tmp_fg, m_fg)) {
-      m_fg     = tmp_fg;
-      if (!m_uninitializedCalcs) {
-         this->propagatePropertyChange(PropertyNames::Recipe::fg, false);
-         emit changed(metaProperty(*PropertyNames::Recipe::fg), m_fg);
-      }
-   }
-   return;
-}
 
 //====================================Helpers===========================================
 
@@ -3057,11 +3071,11 @@ double Recipe::ibuFromHopAddition(RecipeAdditionHop const & hopAddition) {
    }
 
    if (hopAddition.isFirstWort()) {
-      ibus = fwhAdjust * IbuMethods::getIbus(AArating, grams, m_finalVolumeNoLosses_l, m_og, boilTime);
+      ibus = fwhAdjust * IbuMethods::getIbus(AArating, grams, this->pimpl->m_finalVolumeNoLosses_l, m_og, boilTime);
    } else if (hopAddition.stage() == RecipeAddition::Stage::Boil) {
-      ibus = IbuMethods::getIbus(AArating, grams, m_finalVolumeNoLosses_l, m_og, minutes);
+      ibus = IbuMethods::getIbus(AArating, grams, this->pimpl->m_finalVolumeNoLosses_l, m_og, minutes);
    } else if (hopAddition.stage() == RecipeAddition::Stage::Mash && mashHopAdjust > 0.0) {
-      ibus = mashHopAdjust * IbuMethods::getIbus(AArating, grams, m_finalVolumeNoLosses_l, m_og, boilTime);
+      ibus = mashHopAdjust * IbuMethods::getIbus(AArating, grams, this->pimpl->m_finalVolumeNoLosses_l, m_og, boilTime);
    }
 
    // Adjust for hopAddition form. Tinseth's table was created from whole cone data,
@@ -3251,7 +3265,7 @@ double Recipe::targetTotalMashVol_l() {
       absorption_lKg = PhysicalConstants::grainAbsorption_Lkg;
    }
 
-   return targetCollectedWortVol_l() + absorption_lKg * grainsInMash_kg();
+   return this->targetCollectedWortVol_l() + absorption_lKg * this->grainsInMash_kg();
 }
 
 ///Recipe * Recipe::getOwningRecipe() const {

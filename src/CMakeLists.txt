@@ -166,6 +166,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/model/Misc.cpp
     ${repoDir}/src/model/NamedEntity.cpp
     ${repoDir}/src/model/NamedParameterBundle.cpp
+    ${repoDir}/src/model/OutlineableNamedEntity.cpp
     ${repoDir}/src/model/OwnedByRecipe.cpp
     ${repoDir}/src/model/Recipe.cpp
     ${repoDir}/src/model/RecipeAddition.cpp

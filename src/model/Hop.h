@@ -45,31 +45,31 @@ class RecipeAdditionHop;
 ///AddPropertyName(amountIsWeight       ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 ///AddPropertyName(amountWithUnits      ) // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
 
-AddPropertyName(alpha_pct            )
-AddPropertyName(beta_pct             )
-AddPropertyName(b_pinene_pct         )
-AddPropertyName(caryophyllene_pct    )
-AddPropertyName(cohumulone_pct       )
-AddPropertyName(farnesene_pct        )
-AddPropertyName(form                 )
-AddPropertyName(geraniol_pct         )
-AddPropertyName(hsi_pct              )
-AddPropertyName(humulene_pct         )
-AddPropertyName(limonene_pct         )
-AddPropertyName(linalool_pct         )
-AddPropertyName(myrcene_pct          )
-AddPropertyName(nerol_pct            )
-AddPropertyName(notes                )
-AddPropertyName(origin               )
-AddPropertyName(pinene_pct           )
-AddPropertyName(polyphenols_pct      )
-AddPropertyName(producer             )
-AddPropertyName(product_id           )
-AddPropertyName(substitutes          )
-AddPropertyName(total_oil_ml_per_100g)
-AddPropertyName(type                 )
-AddPropertyName(xanthohumol_pct      )
-AddPropertyName(year                 )
+AddPropertyName(alpha_pct         )
+AddPropertyName(beta_pct          )
+AddPropertyName(bPinene_pct       )
+AddPropertyName(caryophyllene_pct )
+AddPropertyName(cohumulone_pct    )
+AddPropertyName(farnesene_pct     )
+AddPropertyName(form              )
+AddPropertyName(geraniol_pct      )
+AddPropertyName(hsi_pct           )
+AddPropertyName(humulene_pct      )
+AddPropertyName(limonene_pct      )
+AddPropertyName(linalool_pct      )
+AddPropertyName(myrcene_pct       )
+AddPropertyName(nerol_pct         )
+AddPropertyName(notes             )
+AddPropertyName(origin            )
+AddPropertyName(pinene_pct        )
+AddPropertyName(polyphenols_pct   )
+AddPropertyName(producer          )
+AddPropertyName(productId         )
+AddPropertyName(substitutes       )
+AddPropertyName(totalOil_mlPer100g)
+AddPropertyName(type              )
+AddPropertyName(xanthohumol_pct   )
+AddPropertyName(year              )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -224,10 +224,10 @@ public:
    Q_PROPERTY(std::optional<double> myrcene_pct           READ myrcene_pct           WRITE setMyrcene_pct          )
 
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   Q_PROPERTY(std::optional<double> total_oil_ml_per_100g READ total_oil_ml_per_100g WRITE setTotal_oil_ml_per_100g)
+   Q_PROPERTY(std::optional<double> totalOil_mlPer100g READ totalOil_mlPer100g WRITE setTotalOil_mlPer100g)
    Q_PROPERTY(std::optional<double> farnesene_pct         READ farnesene_pct         WRITE setFarnesene_pct        )
    Q_PROPERTY(std::optional<double> geraniol_pct          READ geraniol_pct          WRITE setGeraniol_pct         )
-   Q_PROPERTY(std::optional<double> b_pinene_pct          READ b_pinene_pct          WRITE setB_pinene_pct         )
+   Q_PROPERTY(std::optional<double> bPinene_pct          READ bPinene_pct          WRITE setBPinene_pct         )
    Q_PROPERTY(std::optional<double> linalool_pct          READ linalool_pct          WRITE setLinalool_pct         )
    Q_PROPERTY(std::optional<double> limonene_pct          READ limonene_pct          WRITE setLimonene_pct         )
    Q_PROPERTY(std::optional<double> nerol_pct             READ nerol_pct             WRITE setNerol_pct            )
@@ -235,7 +235,7 @@ public:
    Q_PROPERTY(std::optional<double> polyphenols_pct       READ polyphenols_pct       WRITE setPolyphenols_pct      )
    Q_PROPERTY(std::optional<double> xanthohumol_pct       READ xanthohumol_pct       WRITE setXanthohumol_pct      )
    Q_PROPERTY(QString               producer     READ producer     WRITE setProducer             )
-   Q_PROPERTY(QString               product_id   READ product_id   WRITE setProduct_id           )
+   Q_PROPERTY(QString               productId   READ productId   WRITE setProductId           )
    /**
     * \brief It might seem odd to store year as a string rather than, say, std::optional<unsigned int>, but this is
     *        deliberate and for two reasons.  Firstly BeerJSON treats it as a string.  Secondly, we don't want it
@@ -262,10 +262,10 @@ public:
    std::optional<double> cohumulone_pct       () const;
    std::optional<double> myrcene_pct          () const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   std::optional<double> total_oil_ml_per_100g() const;
+   std::optional<double> totalOil_mlPer100g() const;
    std::optional<double> farnesene_pct        () const;
    std::optional<double> geraniol_pct         () const;
-   std::optional<double> b_pinene_pct         () const;
+   std::optional<double> bPinene_pct         () const;
    std::optional<double> linalool_pct         () const;
    std::optional<double> limonene_pct         () const;
    std::optional<double> nerol_pct            () const;
@@ -273,7 +273,7 @@ public:
    std::optional<double> polyphenols_pct      () const;
    std::optional<double> xanthohumol_pct      () const;
    QString               producer  () const;
-   QString               product_id() const;
+   QString               productId() const;
    QString               year      () const;
 
    // Combined getters (all added for BeerJSON support)
@@ -297,10 +297,10 @@ public:
    void setCohumulone_pct       (std::optional<double> const   val);
    void setMyrcene_pct          (std::optional<double> const   val);
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   void setTotal_oil_ml_per_100g(std::optional<double> const   val);
+   void setTotalOil_mlPer100g(std::optional<double> const   val);
    void setFarnesene_pct        (std::optional<double> const   val);
    void setGeraniol_pct         (std::optional<double> const   val);
-   void setB_pinene_pct         (std::optional<double> const   val);
+   void setBPinene_pct         (std::optional<double> const   val);
    void setLinalool_pct         (std::optional<double> const   val);
    void setLimonene_pct         (std::optional<double> const   val);
    void setNerol_pct            (std::optional<double> const   val);
@@ -308,7 +308,7 @@ public:
    void setPolyphenols_pct      (std::optional<double> const   val);
    void setXanthohumol_pct      (std::optional<double> const   val);
    void setProducer  (QString               const & val);
-   void setProduct_id(QString               const & val);
+   void setProductId(QString               const & val);
    void setYear      (QString               const   val);
 
    // Combined setters (all added for BeerJSON support)
@@ -339,10 +339,10 @@ private:
    std::optional<double> m_cohumulone_pct       ;
    std::optional<double> m_myrcene_pct          ;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   std::optional<double> m_total_oil_ml_per_100g;
+   std::optional<double> m_totalOil_mlPer100g;
    std::optional<double> m_farnesene_pct        ;
    std::optional<double> m_geraniol_pct         ;
-   std::optional<double> m_b_pinene_pct         ;
+   std::optional<double> m_bPinene_pct         ;
    std::optional<double> m_linalool_pct         ;
    std::optional<double> m_limonene_pct         ;
    std::optional<double> m_nerol_pct            ;
@@ -350,7 +350,7 @@ private:
    std::optional<double> m_polyphenols_pct      ;
    std::optional<double> m_xanthohumol_pct      ;
    QString               m_producer  ;
-   QString               m_product_id;
+   QString               m_productId;
    QString               m_year      ;
 };
 

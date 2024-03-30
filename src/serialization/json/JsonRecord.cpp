@@ -28,6 +28,7 @@
 #include "model/Hop.h"  // Only needed for workaround/hack for Hop year property
 #include "model/NamedEntity.h"
 #include "model/NamedParameterBundle.h"
+#include "model/OutlineableNamedEntity.h"
 #include "utils/ErrorCodeToStream.h"
 #include "utils/ImportRecordCount.h"
 #include "utils/OptionalHelpers.h"
@@ -295,6 +296,15 @@ JsonRecord::~JsonRecord() = default;
    qDebug() <<
       Q_FUNC_INFO << "Loading" << this->m_recordDefinition.m_recordName << "record containing" <<
       this->m_recordData.as_object().size() << "elements";
+
+   //
+   // If we know this record contains only outline/base info (see comments in model/OutlineableNamedEntity.h) then we
+   // record that now so that the right things happen when we are doing duplicate matching later (in
+   // JsonRecord::normaliseAndStoreInDb).
+   //
+   if (this->m_recordDefinition.isOutlineRecord) {
+      this->m_namedParameterBundle.insert(PropertyNames::OutlineableNamedEntity::outline, QVariant{true});
+   }
 
    //
    // Loop through all the fields that we know/care about.  Anything else is intentionally ignored.  (We won't know
@@ -745,6 +755,17 @@ JsonRecord::~JsonRecord() = default;
             Q_FUNC_INFO << "Deleting stored" << this->m_recordDefinition.m_namedEntityClassName << "as" <<
             (JsonRecord::ProcessingResult::FoundDuplicate == processingResult ? "duplicate" : "failed to read all child records");
          this->deleteNamedEntityFromDb();
+      } else {
+         //
+         // If we read in and stored an outline Fermentable/Hop/etc object (because we could not find any existing
+         // object for which it is a match) then the newly-read in object is no longer an outline.
+         //
+         if (this->m_recordDefinition.isOutlineRecord) {
+            // It would be slightly more robust to set the property via Qt properties, but OTOH it's a coding error if
+            // we can't cast the newly created object to OutlineableNamedEntity.
+            auto createdFromOutline = static_pointer_cast<OutlineableNamedEntity>(this->m_namedEntity);
+            createdFromOutline->setOutline(false);
+         }
       }
    }
 

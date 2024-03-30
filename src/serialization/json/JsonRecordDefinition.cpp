@@ -59,11 +59,13 @@ JsonRecordDefinition::JsonRecordDefinition(
    QString                       const & localisedEntityName,
    NamedEntity::UpAndDownCasters const   upAndDownCasters,
    JsonRecordConstructorWrapper          jsonRecordConstructorWrapper,
-   std::initializer_list<JsonRecordDefinition::FieldDefinition> fieldDefinitions
+   std::initializer_list<JsonRecordDefinition::FieldDefinition> fieldDefinitions,
+   RecordType                    const   recordType
 ) :
    SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName, localisedEntityName, upAndDownCasters},
    jsonRecordConstructorWrapper{jsonRecordConstructorWrapper},
-   fieldDefinitions{fieldDefinitions} {
+   fieldDefinitions{fieldDefinitions},
+   isOutlineRecord{recordType == RecordType::Outline} {
    return;
 }
 
@@ -74,11 +76,13 @@ JsonRecordDefinition::JsonRecordDefinition(
    QString                       const & localisedEntityName,
    NamedEntity::UpAndDownCasters const   upAndDownCasters,
    JsonRecordConstructorWrapper          jsonRecordConstructorWrapper,
-   std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists
+   std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists,
+   RecordType                    const   recordType
 ) :
    SerializationRecordDefinition{recordName, typeLookup, namedEntityClassName, localisedEntityName, upAndDownCasters},
    jsonRecordConstructorWrapper{jsonRecordConstructorWrapper},
-   fieldDefinitions{} {
+   fieldDefinitions{},
+   isOutlineRecord{recordType == RecordType::Outline} {
    // This is a bit clunky, but it works and the inefficiency is a one-off cost at start-up
    for (auto const & list : fieldDefinitionLists) {
       // After you've initialised a const, you can't modify it, even in the constructor, unless you cast away the

@@ -89,7 +89,7 @@ protected:
     */
    virtual bool isDuplicate() {
       // It's a coding error if we are searching for a duplicate of a null object
-      Q_ASSERT(nullptr != this->m_namedEntity.get());
+      Q_ASSERT(this->m_namedEntity);
 
       // This copy of the pointer is just to make it clearer what we're passing to lambda in findFirstMatching() below
       std::shared_ptr<NE const> const currentEntity = std::static_pointer_cast<NE const>(this->m_namedEntity);

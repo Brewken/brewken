@@ -1607,6 +1607,14 @@ If you didn&apos;t yet do this, click Abort.</source>
         <source>Vessel</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished">Ne</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished">Ano</translation>
+    </message>
 </context>
 <context>
     <name>HelpDialog</name>
@@ -3020,6 +3028,13 @@ If you need help, please open an issue at %1</source>
     </message>
 </context>
 <context>
+    <name>OutlineableNamedEntity</name>
+    <message>
+        <source>Outlineable Named Entity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>OwnedByRecipe</name>
     <message>
         <source>Owned By Recipe</source>
@@ -3361,10 +3376,6 @@ Error message:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>day</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>C</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3564,10 +3575,6 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>floz</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>week</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3900,6 +3907,14 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Brewing Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>weeks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>days</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5879,10 +5894,6 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="obsolete">Druh</translation>
     </message>
     <message>
-        <source>Target temp.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Target temp. of this step</source>
         <translation type="unfinished">Cílová teplota tohoto kroku</translation>
     </message>
@@ -5972,6 +5983,10 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>End Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start temp.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

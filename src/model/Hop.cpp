@@ -75,32 +75,48 @@ bool Hop::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    Hop const & rhs = static_cast<Hop const &>(other);
    // Base class will already have ensured names are equal
+   bool const outlinesAreEqual{
+      // "Outline" fields: In BeerJSON, all these fields are in the FermentableBase type
+      this->m_producer  == rhs.m_producer  &&
+      this->m_productId == rhs.m_productId &&
+      this->m_origin    == rhs.m_origin    &&
+      this->m_year      == rhs.m_year      &&
+      this->m_form      == rhs.m_form      &&
+      this->m_alpha_pct == rhs.m_alpha_pct &&
+      this->m_beta_pct  == rhs.m_beta_pct
+   };
+
+   // If either object is an outline (see comment in model/OutlineableNamedEntity.h) then there is no point comparing
+   // any more fields.  Note that an object will only be an outline whilst it is being read in from a BeerJSON file.
+   if (this->m_outline || rhs.m_outline) {
+      return outlinesAreEqual;
+   }
+
    return (
-      this->m_alpha_pct             == rhs.m_alpha_pct             &&
-      this->m_form                  == rhs.m_form                  &&
-      this->m_beta_pct              == rhs.m_beta_pct              &&
-      this->m_origin                == rhs.m_origin                &&
-///      this->m_use                   == rhs.m_use                   &&
-      this->m_type                  == rhs.m_type                  &&
-      this->m_hsi_pct               == rhs.m_hsi_pct               &&
-      this->m_humulene_pct          == rhs.m_humulene_pct          &&
-      this->m_caryophyllene_pct     == rhs.m_caryophyllene_pct     &&
-      this->m_cohumulone_pct        == rhs.m_cohumulone_pct        &&
-      this->m_myrcene_pct           == rhs.m_myrcene_pct           &&
-      // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-      this->m_total_oil_ml_per_100g == rhs.m_total_oil_ml_per_100g &&
-      this->m_farnesene_pct         == rhs.m_farnesene_pct         &&
-      this->m_geraniol_pct          == rhs.m_geraniol_pct          &&
-      this->m_b_pinene_pct          == rhs.m_b_pinene_pct          &&
-      this->m_linalool_pct          == rhs.m_linalool_pct          &&
-      this->m_limonene_pct          == rhs.m_limonene_pct          &&
-      this->m_nerol_pct             == rhs.m_nerol_pct             &&
-      this->m_pinene_pct            == rhs.m_pinene_pct            &&
-      this->m_polyphenols_pct       == rhs.m_polyphenols_pct       &&
-      this->m_xanthohumol_pct       == rhs.m_xanthohumol_pct       &&
-      this->m_producer              == rhs.m_producer              &&
-      this->m_product_id            == rhs.m_product_id            &&
-      this->m_year                  == rhs.m_year
+      outlinesAreEqual &&
+
+      // Remaining BeerJSON fields -- excluding inventories
+
+      this->m_type               == rhs.m_type               &&
+      this->m_notes              == rhs.m_notes              &&
+      this->m_hsi_pct            == rhs.m_hsi_pct            &&
+      this->m_substitutes        == rhs.m_substitutes        &&
+
+      // Oil content
+      this->m_totalOil_mlPer100g == rhs.m_totalOil_mlPer100g &&
+      this->m_humulene_pct       == rhs.m_humulene_pct       &&
+      this->m_caryophyllene_pct  == rhs.m_caryophyllene_pct  &&
+      this->m_cohumulone_pct     == rhs.m_cohumulone_pct     &&
+      this->m_myrcene_pct        == rhs.m_myrcene_pct        &&
+      this->m_farnesene_pct      == rhs.m_farnesene_pct      &&
+      this->m_geraniol_pct       == rhs.m_geraniol_pct       &&
+      this->m_bPinene_pct        == rhs.m_bPinene_pct        &&
+      this->m_linalool_pct       == rhs.m_linalool_pct       &&
+      this->m_limonene_pct       == rhs.m_limonene_pct       &&
+      this->m_nerol_pct          == rhs.m_nerol_pct          &&
+      this->m_pinene_pct         == rhs.m_pinene_pct         &&
+      this->m_polyphenols_pct    == rhs.m_polyphenols_pct    &&
+      this->m_xanthohumol_pct    == rhs.m_xanthohumol_pct
    );
 }
 
@@ -128,10 +144,10 @@ TypeLookup const Hop::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::cohumulone_pct       , Hop::m_cohumulone_pct       ,           NonPhysicalQuantity::Percentage   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::myrcene_pct          , Hop::m_myrcene_pct          ,           NonPhysicalQuantity::Percentage   ),
       // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::total_oil_ml_per_100g, Hop::m_total_oil_ml_per_100g,           NonPhysicalQuantity::Dimensionless), // Not really dimensionless...
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::totalOil_mlPer100g, Hop::m_totalOil_mlPer100g,           NonPhysicalQuantity::Dimensionless), // Not really dimensionless...
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::farnesene_pct        , Hop::m_farnesene_pct        ,           NonPhysicalQuantity::Percentage   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::geraniol_pct         , Hop::m_geraniol_pct         ,           NonPhysicalQuantity::Percentage   ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::b_pinene_pct         , Hop::m_b_pinene_pct         ,           NonPhysicalQuantity::Percentage   ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::bPinene_pct         , Hop::m_bPinene_pct         ,           NonPhysicalQuantity::Percentage   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::linalool_pct         , Hop::m_linalool_pct         ,           NonPhysicalQuantity::Percentage   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::limonene_pct         , Hop::m_limonene_pct         ,           NonPhysicalQuantity::Percentage   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::nerol_pct            , Hop::m_nerol_pct            ,           NonPhysicalQuantity::Percentage   ),
@@ -139,7 +155,7 @@ TypeLookup const Hop::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::polyphenols_pct      , Hop::m_polyphenols_pct      ,           NonPhysicalQuantity::Percentage   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::xanthohumol_pct      , Hop::m_xanthohumol_pct      ,           NonPhysicalQuantity::Percentage   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::producer             , Hop::m_producer             ,           NonPhysicalQuantity::String       ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::product_id           , Hop::m_product_id           ,           NonPhysicalQuantity::String       ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::productId           , Hop::m_productId           ,           NonPhysicalQuantity::String       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::year                 , Hop::m_year                 ,           NonPhysicalQuantity::String       ),
    },
    // Parent classes lookup
@@ -165,10 +181,10 @@ Hop::Hop(QString name) :
    m_cohumulone_pct       {0.0         },
    m_myrcene_pct          {0.0         },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   m_total_oil_ml_per_100g{std::nullopt},
+   m_totalOil_mlPer100g{std::nullopt},
    m_farnesene_pct        {std::nullopt},
    m_geraniol_pct         {std::nullopt},
-   m_b_pinene_pct         {std::nullopt},
+   m_bPinene_pct         {std::nullopt},
    m_linalool_pct         {std::nullopt},
    m_limonene_pct         {std::nullopt},
    m_nerol_pct            {std::nullopt},
@@ -176,7 +192,7 @@ Hop::Hop(QString name) :
    m_polyphenols_pct      {std::nullopt},
    m_xanthohumol_pct      {std::nullopt},
    m_producer             {""          },
-   m_product_id           {""          },
+   m_productId           {""          },
    m_year                 {""          } {
    return;
 }
@@ -198,10 +214,10 @@ Hop::Hop(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_cohumulone_pct       , namedParameterBundle, PropertyNames::Hop::cohumulone_pct       ),
    SET_REGULAR_FROM_NPB (m_myrcene_pct          , namedParameterBundle, PropertyNames::Hop::myrcene_pct          ),
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   SET_REGULAR_FROM_NPB (m_total_oil_ml_per_100g, namedParameterBundle, PropertyNames::Hop::total_oil_ml_per_100g),
+   SET_REGULAR_FROM_NPB (m_totalOil_mlPer100g, namedParameterBundle, PropertyNames::Hop::totalOil_mlPer100g),
    SET_REGULAR_FROM_NPB (m_farnesene_pct        , namedParameterBundle, PropertyNames::Hop::farnesene_pct        ),
    SET_REGULAR_FROM_NPB (m_geraniol_pct         , namedParameterBundle, PropertyNames::Hop::geraniol_pct         ),
-   SET_REGULAR_FROM_NPB (m_b_pinene_pct         , namedParameterBundle, PropertyNames::Hop::b_pinene_pct         ),
+   SET_REGULAR_FROM_NPB (m_bPinene_pct         , namedParameterBundle, PropertyNames::Hop::bPinene_pct         ),
    SET_REGULAR_FROM_NPB (m_linalool_pct         , namedParameterBundle, PropertyNames::Hop::linalool_pct         ),
    SET_REGULAR_FROM_NPB (m_limonene_pct         , namedParameterBundle, PropertyNames::Hop::limonene_pct         ),
    SET_REGULAR_FROM_NPB (m_nerol_pct            , namedParameterBundle, PropertyNames::Hop::nerol_pct            ),
@@ -209,7 +225,7 @@ Hop::Hop(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_polyphenols_pct      , namedParameterBundle, PropertyNames::Hop::polyphenols_pct      ),
    SET_REGULAR_FROM_NPB (m_xanthohumol_pct      , namedParameterBundle, PropertyNames::Hop::xanthohumol_pct      ),
    SET_REGULAR_FROM_NPB (m_producer             , namedParameterBundle, PropertyNames::Hop::producer             ),
-   SET_REGULAR_FROM_NPB (m_product_id           , namedParameterBundle, PropertyNames::Hop::product_id           ),
+   SET_REGULAR_FROM_NPB (m_productId           , namedParameterBundle, PropertyNames::Hop::productId           ),
    SET_REGULAR_FROM_NPB (m_year                 , namedParameterBundle, PropertyNames::Hop::year                 ) {
    return;
 }
@@ -231,10 +247,10 @@ Hop::Hop(Hop const & other) :
    m_cohumulone_pct        {other.m_cohumulone_pct       },
    m_myrcene_pct           {other.m_myrcene_pct          },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   m_total_oil_ml_per_100g {other.m_total_oil_ml_per_100g},
+   m_totalOil_mlPer100g {other.m_totalOil_mlPer100g},
    m_farnesene_pct         {other.m_farnesene_pct        },
    m_geraniol_pct          {other.m_geraniol_pct         },
-   m_b_pinene_pct          {other.m_b_pinene_pct         },
+   m_bPinene_pct          {other.m_bPinene_pct         },
    m_linalool_pct          {other.m_linalool_pct         },
    m_limonene_pct          {other.m_limonene_pct         },
    m_nerol_pct             {other.m_nerol_pct            },
@@ -242,7 +258,7 @@ Hop::Hop(Hop const & other) :
    m_polyphenols_pct       {other.m_polyphenols_pct      },
    m_xanthohumol_pct       {other.m_xanthohumol_pct      },
    m_producer              {other.m_producer             },
-   m_product_id            {other.m_product_id           },
+   m_productId            {other.m_productId           },
    m_year                  {other.m_year                 } {
    return;
 }
@@ -268,10 +284,10 @@ std::optional<double>    Hop::caryophyllene_pct    () const { return this->m_car
 std::optional<double>    Hop::cohumulone_pct       () const { return this->m_cohumulone_pct       ; }
 std::optional<double>    Hop::myrcene_pct          () const { return this->m_myrcene_pct          ; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-std::optional<double>   Hop::total_oil_ml_per_100g() const { return this->m_total_oil_ml_per_100g; }
+std::optional<double>   Hop::totalOil_mlPer100g() const { return this->m_totalOil_mlPer100g; }
 std::optional<double>   Hop::farnesene_pct        () const { return this->m_farnesene_pct        ; }
 std::optional<double>   Hop::geraniol_pct         () const { return this->m_geraniol_pct         ; }
-std::optional<double>   Hop::b_pinene_pct         () const { return this->m_b_pinene_pct         ; }
+std::optional<double>   Hop::bPinene_pct         () const { return this->m_bPinene_pct         ; }
 std::optional<double>   Hop::linalool_pct         () const { return this->m_linalool_pct         ; }
 std::optional<double>   Hop::limonene_pct         () const { return this->m_limonene_pct         ; }
 std::optional<double>   Hop::nerol_pct            () const { return this->m_nerol_pct            ; }
@@ -279,7 +295,7 @@ std::optional<double>   Hop::pinene_pct           () const { return this->m_pine
 std::optional<double>   Hop::polyphenols_pct      () const { return this->m_polyphenols_pct      ; }
 std::optional<double>   Hop::xanthohumol_pct      () const { return this->m_xanthohumol_pct      ; }
 QString                 Hop::producer             () const { return this->m_producer             ; }
-QString                 Hop::product_id           () const { return this->m_product_id           ; }
+QString                 Hop::productId           () const { return this->m_productId           ; }
 QString                 Hop::year                 () const { return this->m_year                 ; }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
@@ -302,10 +318,10 @@ void Hop::setCaryophyllene_pct    (std::optional<double>    const   val) { SET_A
 void Hop::setCohumulone_pct       (std::optional<double>    const   val) { SET_AND_NOTIFY(PropertyNames::Hop::cohumulone_pct       , this->m_cohumulone_pct       , this->enforceMinAndMax(val, "cohumulone",            0.0, 100.0)); return; }
 void Hop::setMyrcene_pct          (std::optional<double>    const   val) { SET_AND_NOTIFY(PropertyNames::Hop::myrcene_pct          , this->m_myrcene_pct          , this->enforceMinAndMax(val, "myrcene",               0.0, 100.0)); return; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-void Hop::setTotal_oil_ml_per_100g(std::optional<double>    const   val) { SET_AND_NOTIFY(PropertyNames::Hop::total_oil_ml_per_100g, this->m_total_oil_ml_per_100g, this->enforceMinAndMax(val, "total_oil_ml_per_100g", 0.0, 100.0)); return; }
+void Hop::setTotalOil_mlPer100g(std::optional<double>    const   val) { SET_AND_NOTIFY(PropertyNames::Hop::totalOil_mlPer100g, this->m_totalOil_mlPer100g, this->enforceMinAndMax(val, "totalOil_mlPer100g", 0.0, 100.0)); return; }
 void Hop::setFarnesene_pct        (std::optional<double>    const   val) { SET_AND_NOTIFY(PropertyNames::Hop::farnesene_pct        , this->m_farnesene_pct        , this->enforceMinAndMax(val, "farnesene_pct",         0.0, 100.0)); return; }
 void Hop::setGeraniol_pct         (std::optional<double>    const   val) { SET_AND_NOTIFY(PropertyNames::Hop::geraniol_pct         , this->m_geraniol_pct         , this->enforceMinAndMax(val, "geraniol_pct",          0.0, 100.0)); return; }
-void Hop::setB_pinene_pct         (std::optional<double>    const   val) { SET_AND_NOTIFY(PropertyNames::Hop::b_pinene_pct         , this->m_b_pinene_pct         , this->enforceMinAndMax(val, "b_pinene_pct",          0.0, 100.0)); return; }
+void Hop::setBPinene_pct         (std::optional<double>    const   val) { SET_AND_NOTIFY(PropertyNames::Hop::bPinene_pct         , this->m_bPinene_pct         , this->enforceMinAndMax(val, "bPinene_pct",          0.0, 100.0)); return; }
 void Hop::setLinalool_pct         (std::optional<double>    const   val) { SET_AND_NOTIFY(PropertyNames::Hop::linalool_pct         , this->m_linalool_pct         , this->enforceMinAndMax(val, "linalool_pct",          0.0, 100.0)); return; }
 void Hop::setLimonene_pct         (std::optional<double>    const   val) { SET_AND_NOTIFY(PropertyNames::Hop::limonene_pct         , this->m_limonene_pct         , this->enforceMinAndMax(val, "limonene_pct",          0.0, 100.0)); return; }
 void Hop::setNerol_pct            (std::optional<double>    const   val) { SET_AND_NOTIFY(PropertyNames::Hop::nerol_pct            , this->m_nerol_pct            , this->enforceMinAndMax(val, "nerol_pct",             0.0, 100.0)); return; }
@@ -313,7 +329,7 @@ void Hop::setPinene_pct           (std::optional<double>    const   val) { SET_A
 void Hop::setPolyphenols_pct      (std::optional<double>    const   val) { SET_AND_NOTIFY(PropertyNames::Hop::polyphenols_pct      , this->m_polyphenols_pct      , this->enforceMinAndMax(val, "polyphenols_pct",       0.0, 100.0)); return; }
 void Hop::setXanthohumol_pct      (std::optional<double>    const   val) { SET_AND_NOTIFY(PropertyNames::Hop::xanthohumol_pct      , this->m_xanthohumol_pct      , this->enforceMinAndMax(val, "xanthohumol_pct",       0.0, 100.0)); return; }
 void Hop::setProducer             (QString                  const & val) { SET_AND_NOTIFY(PropertyNames::Hop::producer             , this->m_producer             , val                                                             ); return; }
-void Hop::setProduct_id           (QString                  const & val) { SET_AND_NOTIFY(PropertyNames::Hop::product_id           , this->m_product_id           , val                                                             ); return; }
+void Hop::setProductId           (QString                  const & val) { SET_AND_NOTIFY(PropertyNames::Hop::productId           , this->m_productId           , val                                                             ); return; }
 void Hop::setYear                 (QString                  const   val) { SET_AND_NOTIFY(PropertyNames::Hop::year                 , this->m_year                 , val                                                             ); return; }
 
 ///Recipe * Hop::getOwningRecipe() const {

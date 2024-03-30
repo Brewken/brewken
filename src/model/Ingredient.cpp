@@ -26,25 +26,26 @@ TypeLookup const Ingredient::typeLookup {
       // BtFieldType value for it depends on the Ingredient subclass.  Hence, it is instead done in IngredientBase.
    },
    // Parent classes lookup
-   {&NamedEntity::typeLookup,
+   {&OutlineableNamedEntity::typeLookup,
     std::addressof(FolderBase<Ingredient>::typeLookup)}
 };
+static_assert(std::is_base_of<OutlineableNamedEntity, Ingredient>::value);
 static_assert(std::is_base_of<FolderBase<Ingredient>, Ingredient>::value);
 
 Ingredient::Ingredient(QString name) :
-   NamedEntity{name, true},
+   OutlineableNamedEntity{name},
    FolderBase<Ingredient>{} {
    return;
 }
 
 Ingredient::Ingredient(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity{namedParameterBundle},
+   OutlineableNamedEntity{namedParameterBundle},
    FolderBase<Ingredient>{namedParameterBundle} {
    return;
 }
 
 Ingredient::Ingredient(Ingredient const & other) :
-   NamedEntity{other},
+   OutlineableNamedEntity{other},
    FolderBase<Ingredient>{other} {
    return;
 }

@@ -85,27 +85,47 @@ bool Fermentable::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    Fermentable const & rhs = static_cast<Fermentable const &>(other);
    // Base class will already have ensured names are equal
+   bool const outlinesAreEqual{
+      // "Outline" fields: In BeerJSON, all these fields are in the FermentableBase type
+
+      this->m_type                 == rhs.m_type                 &&
+      this->m_origin               == rhs.m_origin               &&
+      this->m_color_srm            == rhs.m_color_srm            &&
+      this->m_producer             == rhs.m_producer             &&
+      this->m_productId            == rhs.m_productId            &&
+      this->m_grainGroup           == rhs.m_grainGroup           &&
+
+      // Yield
+      this->m_fineGrindYield_pct   == rhs.m_fineGrindYield_pct   &&
+      this->m_coarseGrindYield_pct == rhs.m_coarseGrindYield_pct &&
+      this->m_coarseFineDiff_pct   == rhs.m_coarseFineDiff_pct   &&
+      this->m_potentialYield_sg    == rhs.m_potentialYield_sg    &&
+
+      this->m_color_srm            == rhs.m_color_srm
+   };
+
+   // If either object is an outline (see comment in model/OutlineableNamedEntity.h) then there is no point comparing
+   // any more fields.  Note that an object will only be an outline whilst it is being read in from a BeerJSON file.
+   if (this->m_outline || rhs.m_outline) {
+      return outlinesAreEqual;
+   }
+
    return (
-      this->m_type                   == rhs.m_type                   &&
-///      this->m_yield_pct              == rhs.m_yield_pct              &&
-      this->m_color_srm              == rhs.m_color_srm              &&
-      this->m_origin                 == rhs.m_origin                 &&
-      this->m_supplier               == rhs.m_supplier               &&
-      this->m_coarseFineDiff_pct     == rhs.m_coarseFineDiff_pct     &&
+      outlinesAreEqual &&
+
+      // Remaining BeerJSON fields -- excluding inventories
+      this->m_notes                  == rhs.m_notes                  &&
       this->m_moisture_pct           == rhs.m_moisture_pct           &&
+      this->m_alphaAmylase_dextUnits == rhs.m_alphaAmylase_dextUnits &&
       this->m_diastaticPower_lintner == rhs.m_diastaticPower_lintner &&
       this->m_protein_pct            == rhs.m_protein_pct            &&
-      this->m_maxInBatch_pct         == rhs.m_maxInBatch_pct         &&
-      this->m_grainGroup             == rhs.m_grainGroup             &&
-      this->m_fineGrindYield_pct     == rhs.m_fineGrindYield_pct     &&
-      this->m_coarseGrindYield_pct   == rhs.m_coarseGrindYield_pct   &&
-      this->m_potentialYield_sg      == rhs.m_potentialYield_sg      &&
-      this->m_alphaAmylase_dextUnits == rhs.m_alphaAmylase_dextUnits &&
       this->m_kolbachIndex_pct       == rhs.m_kolbachIndex_pct       &&
+      this->m_maxInBatch_pct         == rhs.m_maxInBatch_pct         &&
+      this->m_recommendMash          == rhs.m_recommendMash          &&
       this->m_hardnessPrpGlassy_pct  == rhs.m_hardnessPrpGlassy_pct  &&
+      this->m_kernelSizePrpPlump_pct == rhs.m_kernelSizePrpPlump_pct &&
       this->m_hardnessPrpHalf_pct    == rhs.m_hardnessPrpHalf_pct    &&
       this->m_hardnessPrpMealy_pct   == rhs.m_hardnessPrpMealy_pct   &&
-      this->m_kernelSizePrpPlump_pct == rhs.m_kernelSizePrpPlump_pct &&
       this->m_kernelSizePrpThin_pct  == rhs.m_kernelSizePrpThin_pct  &&
       this->m_friability_pct         == rhs.m_friability_pct         &&
       this->m_di_ph                  == rhs.m_di_ph                  &&
@@ -113,7 +133,10 @@ bool Fermentable::isEqualTo(NamedEntity const & other) const {
       this->m_dmsP_ppm               == rhs.m_dmsP_ppm               &&
       this->m_fan_ppm                == rhs.m_fan_ppm                &&
       this->m_fermentability_pct     == rhs.m_fermentability_pct     &&
-      this->m_betaGlucan_ppm         == rhs.m_betaGlucan_ppm
+      this->m_betaGlucan_ppm         == rhs.m_betaGlucan_ppm         &&
+
+      // Non-BeerJSON fields
+      this->m_supplier               == rhs.m_supplier
    );
 }
 

@@ -38,10 +38,6 @@
 #include "model/Recipe.h"
 #include "model/RecipeAdditionYeast.h"
 
-// These belong here, because they really just are constant strings for reaching into a hash
-static const QString kSugarKg("sugar_kg");
-static const QString kSugarKg_IgnoreEff("sugar_kg_ignoreEfficiency");
-
 QString const BrewNote::LocalisedName = tr("Brew Note");
 
 // BrewNote doesn't use its name field, so we sort by brew date
@@ -252,10 +248,10 @@ void BrewNote::populateNote(Recipe * parent) {
       );
    }
 
-   QHash<QString,double> sugars = parent->calcTotalPoints();
-   this->setProjPoints(sugars.value(kSugarKg) + sugars.value(kSugarKg_IgnoreEff));
+   auto sugars = parent->calcTotalPoints();
+   this->setProjPoints(sugars.sugar_kg + sugars.sugar_kg_ignoreEfficiency);
 
-   this->setProjFermPoints(sugars.value(kSugarKg) + sugars.value(kSugarKg_IgnoreEff));
+   this->setProjFermPoints(sugars.sugar_kg + sugars.sugar_kg_ignoreEfficiency);
 
    // Out of the gate, we expect projected to be the measured.
    this->setSg( parent->boilGrav() );
@@ -324,11 +320,11 @@ void BrewNote::populateNote(Recipe * parent) {
 void BrewNote::recalculateEff(Recipe* parent) {
    this->m_recipeId = parent->key();
 
-   QHash<QString, double> const sugars = parent->calcTotalPoints();
-   this->setProjPoints(sugars.value(kSugarKg) + sugars.value(kSugarKg_IgnoreEff));
+   auto const sugars = parent->calcTotalPoints();
+   this->setProjPoints(sugars.sugar_kg + sugars.sugar_kg_ignoreEfficiency);
 
 //   sugars = parent->calcTotalPoints();
-   this->setProjFermPoints(sugars.value(kSugarKg) + sugars.value(kSugarKg_IgnoreEff));
+   this->setProjFermPoints(sugars.sugar_kg + sugars.sugar_kg_ignoreEfficiency);
 
    this->calculateEffIntoBK_pct();
    this->calculateBrewHouseEff_pct();

@@ -18,7 +18,7 @@
 #pragma once
 
 #include "model/FolderBase.h"
-#include "model/NamedEntity.h"
+#include "model/OutlineableNamedEntity.h"
 #include "utils/EnumStringMapping.h"
 #include "utils/TypeTraits.h"
 
@@ -39,7 +39,7 @@ AddPropertyName(totalInventory)
  *
  *        Ingredients are the objects for which we keep inventory.
  */
-class Ingredient : public NamedEntity,
+class Ingredient : public OutlineableNamedEntity,
                    public FolderBase<Ingredient> {
    Q_OBJECT
    FOLDER_BASE_DECL(Ingredient)

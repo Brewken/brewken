@@ -157,7 +157,10 @@ class Recipe : public NamedEntity,
    FOLDER_BASE_DECL(Recipe)
 
    /**
-    * \brief \c MainWindow is a friend so it can access \c Recipe::recalcAll() and \c Recipe::recalcIBU()
+    * \brief \c MainWindow is a friend so it can access \c Recipe::recalcAll() and \c Recipe::recalcIfNeeded()
+    *
+    *        In the long run, we should fix this, so that \c MainWindow doesn't need to call private member functions on
+    *        \c Recipe.
     */
    friend class MainWindow;
 
@@ -668,7 +671,16 @@ public:
    QList<QString> getReagents(QList<std::shared_ptr<RecipeAdditionHop>> hopAdditions, bool firstWort);
    //! \brief Formats the mashsteps for instructions
    QList<QString> getReagents(QList< std::shared_ptr<MashStep> >);
-   QHash<QString, double> calcTotalPoints();
+
+   struct Sugars {
+      double sugar_kg_ignoreEfficiency = 0.0;
+      double sugar_kg                  = 0.0;
+      double nonFermentableSugars_kg   = 0.0;
+      double lateAddition_kg           = 0.0;
+      double lateAddition_kg_ignoreEff = 0.0;
+   };
+
+   Sugars calcTotalPoints();
 
    // Setters that are not slots
    void setType              (Type    const   val);
@@ -769,29 +781,9 @@ private:
    std::optional<double> m_beerAcidity_pH         ;
    std::optional<double> m_apparentAttenuation_pct;
 
-   // Calculated properties.
-   double        m_ABV_pct              ;
-   double        m_color_srm            ;
-   double        m_boilGrav             ;
-   double        m_IBU                  ;
-   QList<double> m_ibus                 ;
-   double        m_wortFromMash_l       ;
-   double        m_boilVolume_l         ;
-   double        m_postBoilVolume_l     ;
-   double        m_finalVolume_l        ;
-   // Final volume before any losses out of the kettle, used in calculations for sg/ibu/etc.
-   double        m_finalVolumeNoLosses_l;
-   double        m_caloriesPerLiter     ;
-   double        m_grainsInMash_kg      ;
-   double        m_grains_kg            ;
-   QColor        m_SRMColor             ;
-
    // Calculated, but stored...BeerXML is weird sometimes.
    double        m_og            ;
    double        m_fg            ;
-
-   double        m_og_fermentable;
-   double        m_fg_fermentable;
 
    bool          m_locked;
 
@@ -805,10 +797,6 @@ private:
    mutable QList<Recipe *> m_ancestors;
    mutable bool            m_hasDescendants;
 
-
-   // Batch size without losses.
-   double batchSizeNoLosses_l();
-
    // Some recalculators for calculated properties.
 
    void recalcIfNeeded(QString classNameOfWhatWasAddedOrChanged);
@@ -818,30 +806,6 @@ private:
     * WARNING: this call took 0.15s in rev 916!
     */
    void recalcAll();
-
-   // TODO: I think we don't need Q_INVOKABLE here and that all the functions marked with it can move to impl
-
-   // Emits changed(ABV_pct). Depends on: _og, _fg
-   Q_INVOKABLE void recalcABV_pct();
-   // Emits changed(color_srm). Depends on: _finalVolume_l
-   Q_INVOKABLE void recalcColor_srm();
-   // Emits changed(boilGrav). Depends on: _postBoilVolume_l, _boilVolume_l
-   Q_INVOKABLE void recalcBoilGrav();
-   // Emits changed(IBU). Depends on: _batchSize_l, _boilGrav, _boilVolume_l, _finalVolume_l
-   Q_INVOKABLE void recalcIBU();
-   // Emits changed(wortFromMash_l), changed(boilVolume_l), changed(finalVolume_l), changed(postBoilVolume_l). Depends on: _grainsInMash_kg
-   Q_INVOKABLE void recalcVolumeEstimates();
-   // Emits changed(grainsInMash_kg). Depends on: --.
-   Q_INVOKABLE void recalcGrainsInMash_kg();
-   // Emits changed(grains_kg). Depends on: --.
-   Q_INVOKABLE void recalcGrains_kg();
-   // Emits changed(SRMColor). Depends on: _color_srm.
-   Q_INVOKABLE void recalcSRMColor();
-   // Emits changed(calories). Depends on: _og, _fg.
-   Q_INVOKABLE void recalcCalories();
-   // Emits changed(og), changed(fg). Depends on: _wortFromMash_l, _finalVolume_l
-   Q_INVOKABLE void recalcOgFg();
-
 };
 
 // Need specialisations for abstract types

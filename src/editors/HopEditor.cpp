@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/HopEditor.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * editors/HopEditor.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -39,30 +39,30 @@ HopEditor::HopEditor(QWidget * parent) :
 
    this->tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);
 
-   SMART_FIELD_INIT(HopEditor, label_name                 , lineEdit_name                 , Hop, PropertyNames::NamedEntity::name            );
-   SMART_FIELD_INIT(HopEditor, label_alpha                , lineEdit_alpha                , Hop, PropertyNames::Hop::alpha_pct            , 1);
-   SMART_FIELD_INIT(HopEditor, label_inventory            , lineEdit_inventory            , Hop, PropertyNames::Ingredient::totalInventory, 1);
-   SMART_FIELD_INIT(HopEditor, label_beta                 , lineEdit_beta                 , Hop, PropertyNames::Hop::beta_pct             , 1);
-   SMART_FIELD_INIT(HopEditor, label_HSI                  , lineEdit_HSI                  , Hop, PropertyNames::Hop::hsi_pct              , 0);
-   SMART_FIELD_INIT(HopEditor, label_origin               , lineEdit_origin               , Hop, PropertyNames::Hop::origin                  );
-   SMART_FIELD_INIT(HopEditor, label_humulene             , lineEdit_humulene             , Hop, PropertyNames::Hop::humulene_pct         , 2);
-   SMART_FIELD_INIT(HopEditor, label_caryophyllene        , lineEdit_caryophyllene        , Hop, PropertyNames::Hop::caryophyllene_pct    , 2);
-   SMART_FIELD_INIT(HopEditor, label_cohumulone           , lineEdit_cohumulone           , Hop, PropertyNames::Hop::cohumulone_pct       , 2);
-   SMART_FIELD_INIT(HopEditor, label_myrcene              , lineEdit_myrcene              , Hop, PropertyNames::Hop::myrcene_pct          , 2);
+   SMART_FIELD_INIT(HopEditor, label_name              , lineEdit_name              , Hop, PropertyNames::NamedEntity::name            );
+   SMART_FIELD_INIT(HopEditor, label_alpha             , lineEdit_alpha             , Hop, PropertyNames::Hop::alpha_pct            , 1);
+   SMART_FIELD_INIT(HopEditor, label_inventory         , lineEdit_inventory         , Hop, PropertyNames::Ingredient::totalInventory, 1);
+   SMART_FIELD_INIT(HopEditor, label_beta              , lineEdit_beta              , Hop, PropertyNames::Hop::beta_pct             , 1);
+   SMART_FIELD_INIT(HopEditor, label_HSI               , lineEdit_HSI               , Hop, PropertyNames::Hop::hsi_pct              , 0);
+   SMART_FIELD_INIT(HopEditor, label_origin            , lineEdit_origin            , Hop, PropertyNames::Hop::origin                  );
+   SMART_FIELD_INIT(HopEditor, label_humulene          , lineEdit_humulene          , Hop, PropertyNames::Hop::humulene_pct         , 2);
+   SMART_FIELD_INIT(HopEditor, label_caryophyllene     , lineEdit_caryophyllene     , Hop, PropertyNames::Hop::caryophyllene_pct    , 2);
+   SMART_FIELD_INIT(HopEditor, label_cohumulone        , lineEdit_cohumulone        , Hop, PropertyNames::Hop::cohumulone_pct       , 2);
+   SMART_FIELD_INIT(HopEditor, label_myrcene           , lineEdit_myrcene           , Hop, PropertyNames::Hop::myrcene_pct          , 2);
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   SMART_FIELD_INIT(HopEditor, label_producer             , lineEdit_producer             , Hop, PropertyNames::Hop::producer                );
-   SMART_FIELD_INIT(HopEditor, label_product_id           , lineEdit_product_id           , Hop, PropertyNames::Hop::product_id              );
-   SMART_FIELD_INIT(HopEditor, label_year                 , lineEdit_year                 , Hop, PropertyNames::Hop::year                    );
-   SMART_FIELD_INIT(HopEditor, label_total_oil_ml_per_100g, lineEdit_total_oil_ml_per_100g, Hop, PropertyNames::Hop::total_oil_ml_per_100g   );
-   SMART_FIELD_INIT(HopEditor, label_farnesene            , lineEdit_farnesene            , Hop, PropertyNames::Hop::farnesene_pct        , 2);
-   SMART_FIELD_INIT(HopEditor, label_geraniol             , lineEdit_geraniol             , Hop, PropertyNames::Hop::geraniol_pct         , 2);
-   SMART_FIELD_INIT(HopEditor, label_b_pinene             , lineEdit_b_pinene             , Hop, PropertyNames::Hop::b_pinene_pct         , 2);
-   SMART_FIELD_INIT(HopEditor, label_linalool             , lineEdit_linalool             , Hop, PropertyNames::Hop::linalool_pct         , 2);
-   SMART_FIELD_INIT(HopEditor, label_limonene             , lineEdit_limonene             , Hop, PropertyNames::Hop::limonene_pct         , 2);
-   SMART_FIELD_INIT(HopEditor, label_nerol                , lineEdit_nerol                , Hop, PropertyNames::Hop::nerol_pct            , 2);
-   SMART_FIELD_INIT(HopEditor, label_pinene               , lineEdit_pinene               , Hop, PropertyNames::Hop::pinene_pct           , 2);
-   SMART_FIELD_INIT(HopEditor, label_polyphenols          , lineEdit_polyphenols          , Hop, PropertyNames::Hop::polyphenols_pct      , 2);
-   SMART_FIELD_INIT(HopEditor, label_xanthohumol          , lineEdit_xanthohumol          , Hop, PropertyNames::Hop::xanthohumol_pct      , 2);
+   SMART_FIELD_INIT(HopEditor, label_producer          , lineEdit_producer          , Hop, PropertyNames::Hop::producer                );
+   SMART_FIELD_INIT(HopEditor, label_productId         , lineEdit_productId         , Hop, PropertyNames::Hop::productId               );
+   SMART_FIELD_INIT(HopEditor, label_year              , lineEdit_year              , Hop, PropertyNames::Hop::year                    );
+   SMART_FIELD_INIT(HopEditor, label_totalOil_mlPer100g, lineEdit_totalOil_mlPer100g, Hop, PropertyNames::Hop::totalOil_mlPer100g      );
+   SMART_FIELD_INIT(HopEditor, label_farnesene         , lineEdit_farnesene         , Hop, PropertyNames::Hop::farnesene_pct        , 2);
+   SMART_FIELD_INIT(HopEditor, label_geraniol          , lineEdit_geraniol          , Hop, PropertyNames::Hop::geraniol_pct         , 2);
+   SMART_FIELD_INIT(HopEditor, label_bPinene           , lineEdit_bPinene           , Hop, PropertyNames::Hop::bPinene_pct         , 2);
+   SMART_FIELD_INIT(HopEditor, label_linalool          , lineEdit_linalool          , Hop, PropertyNames::Hop::linalool_pct         , 2);
+   SMART_FIELD_INIT(HopEditor, label_limonene          , lineEdit_limonene          , Hop, PropertyNames::Hop::limonene_pct         , 2);
+   SMART_FIELD_INIT(HopEditor, label_nerol             , lineEdit_nerol             , Hop, PropertyNames::Hop::nerol_pct            , 2);
+   SMART_FIELD_INIT(HopEditor, label_pinene            , lineEdit_pinene            , Hop, PropertyNames::Hop::pinene_pct           , 2);
+   SMART_FIELD_INIT(HopEditor, label_polyphenols       , lineEdit_polyphenols       , Hop, PropertyNames::Hop::polyphenols_pct      , 2);
+   SMART_FIELD_INIT(HopEditor, label_xanthohumol       , lineEdit_xanthohumol       , Hop, PropertyNames::Hop::xanthohumol_pct      , 2);
 
 ///   SMART_CHECK_BOX_INIT(HopEditor, checkBox_amountIsWeight           , label_amountIsWeight           , lineEdit_inventory , Hop, amountIsWeight           );
 
@@ -95,19 +95,19 @@ void HopEditor::writeFieldsToEditItem() {
 
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 ///   this->m_editItem->setAmountIsWeight       (this->checkBox_amountIsWeight       ->isChecked          ());
-   this->m_editItem->setProducer             (this->lineEdit_producer             ->text               ());
-   this->m_editItem->setProduct_id           (this->lineEdit_product_id           ->text               ());
-   this->m_editItem->setYear                 (this->lineEdit_year                 ->text               ());
-   this->m_editItem->setTotal_oil_ml_per_100g(this->lineEdit_total_oil_ml_per_100g->getOptValue<double>());
-   this->m_editItem->setFarnesene_pct        (this->lineEdit_farnesene            ->getOptValue<double>());
-   this->m_editItem->setGeraniol_pct         (this->lineEdit_geraniol             ->getOptValue<double>());
-   this->m_editItem->setB_pinene_pct         (this->lineEdit_b_pinene             ->getOptValue<double>());
-   this->m_editItem->setLinalool_pct         (this->lineEdit_linalool             ->getOptValue<double>());
-   this->m_editItem->setLimonene_pct         (this->lineEdit_limonene             ->getOptValue<double>());
-   this->m_editItem->setNerol_pct            (this->lineEdit_nerol                ->getOptValue<double>());
-   this->m_editItem->setPinene_pct           (this->lineEdit_pinene               ->getOptValue<double>());
-   this->m_editItem->setPolyphenols_pct      (this->lineEdit_polyphenols          ->getOptValue<double>());
-   this->m_editItem->setXanthohumol_pct      (this->lineEdit_xanthohumol          ->getOptValue<double>());
+   this->m_editItem->setProducer          (this->lineEdit_producer          ->text               ());
+   this->m_editItem->setProductId         (this->lineEdit_productId         ->text               ());
+   this->m_editItem->setYear              (this->lineEdit_year              ->text               ());
+   this->m_editItem->setTotalOil_mlPer100g(this->lineEdit_totalOil_mlPer100g->getOptValue<double>());
+   this->m_editItem->setFarnesene_pct     (this->lineEdit_farnesene         ->getOptValue<double>());
+   this->m_editItem->setGeraniol_pct      (this->lineEdit_geraniol          ->getOptValue<double>());
+   this->m_editItem->setBPinene_pct       (this->lineEdit_bPinene           ->getOptValue<double>());
+   this->m_editItem->setLinalool_pct      (this->lineEdit_linalool          ->getOptValue<double>());
+   this->m_editItem->setLimonene_pct      (this->lineEdit_limonene          ->getOptValue<double>());
+   this->m_editItem->setNerol_pct         (this->lineEdit_nerol             ->getOptValue<double>());
+   this->m_editItem->setPinene_pct        (this->lineEdit_pinene            ->getOptValue<double>());
+   this->m_editItem->setPolyphenols_pct   (this->lineEdit_polyphenols       ->getOptValue<double>());
+   this->m_editItem->setXanthohumol_pct   (this->lineEdit_xanthohumol       ->getOptValue<double>());
    return;
 }
 
@@ -136,12 +136,12 @@ void HopEditor::readFieldsFromEditItem(std::optional<QString> propName) {
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 ///   if (!propName || *propName == PropertyNames::Hop::amountIsWeight              ) { this->checkBox_amountIsWeight       ->setChecked   (m_editItem->amountIsWeight       ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::producer             ) { this->lineEdit_producer             ->setText        (m_editItem->producer             ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Hop::product_id           ) { this->lineEdit_product_id           ->setText        (m_editItem->product_id           ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Hop::productId           ) { this->lineEdit_productId           ->setText        (m_editItem->productId           ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::year                 ) { this->lineEdit_year                 ->setText        (m_editItem->year                 ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Hop::total_oil_ml_per_100g) { this->lineEdit_total_oil_ml_per_100g->setQuantity    (m_editItem->total_oil_ml_per_100g()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Hop::totalOil_mlPer100g) { this->lineEdit_totalOil_mlPer100g->setQuantity    (m_editItem->totalOil_mlPer100g()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::farnesene_pct        ) { this->lineEdit_farnesene            ->setQuantity    (m_editItem->farnesene_pct        ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::geraniol_pct         ) { this->lineEdit_geraniol             ->setQuantity    (m_editItem->geraniol_pct         ()); if (propName) { return; } }
-   if (!propName || *propName == PropertyNames::Hop::b_pinene_pct         ) { this->lineEdit_b_pinene             ->setQuantity    (m_editItem->b_pinene_pct         ()); if (propName) { return; } }
+   if (!propName || *propName == PropertyNames::Hop::bPinene_pct         ) { this->lineEdit_bPinene             ->setQuantity    (m_editItem->bPinene_pct         ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::linalool_pct         ) { this->lineEdit_linalool             ->setQuantity    (m_editItem->linalool_pct         ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::limonene_pct         ) { this->lineEdit_limonene             ->setQuantity    (m_editItem->limonene_pct         ()); if (propName) { return; } }
    if (!propName || *propName == PropertyNames::Hop::nerol_pct            ) { this->lineEdit_nerol                ->setQuantity    (m_editItem->nerol_pct            ()); if (propName) { return; } }

@@ -318,6 +318,14 @@ public:
                                                                        JsonRecordDefinition const & recordDefinition);
 
    /**
+    * \brief This enum is used for initialising \c isOutlineRecord
+    */
+   enum class RecordType {
+      Normal,
+      Outline
+   };
+
+   /**
     * \brief Constructor
     * \param recordName The name of the JSON object for this type of record, eg "fermentables" for a list of
     *                   fermentables in BeerJSON.   TODO: I think we can get rid of this.
@@ -336,7 +344,8 @@ public:
                         QString                        const & localisedEntityName,
                         NamedEntity::UpAndDownCasters  const   upAndDownCasters,
                         JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
-                        std::initializer_list<FieldDefinition> fieldDefinitions);
+                        std::initializer_list<FieldDefinition> fieldDefinitions,
+                        RecordType                     const   recordType);
 
    /**
     * \brief Of course we want to be able to deduce some of the parameters to the constructor rather than laboriously
@@ -346,14 +355,16 @@ public:
    template<typename T>
    JsonRecordDefinition(std::in_place_type_t<T>,
                         char                     const * const recordName,
-                        std::initializer_list<FieldDefinition> fieldDefinitions) :
+                        std::initializer_list<FieldDefinition> fieldDefinitions,
+                        RecordType                       const recordType = RecordType::Normal) :
       JsonRecordDefinition(recordName,
                            &T::typeLookup,
                            T::staticMetaObject.className(),
                            T::LocalisedName,
                            NamedEntity::makeUpAndDownCasters<T>(),
                            JsonRecordDefinition::create<JsonNamedEntityRecord<T>>,
-                           fieldDefinitions) {
+                           fieldDefinitions,
+                           recordType) {
       return;
    }
 
@@ -369,18 +380,21 @@ public:
                         QString                        const & localisedEntityName,
                         NamedEntity::UpAndDownCasters  const   upAndDownCasters,
                         JsonRecordConstructorWrapper           jsonRecordConstructorWrapper,
-                        std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists);
+                        std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists,
+                        RecordType                     const   recordType);
    template<typename T>
    JsonRecordDefinition(std::in_place_type_t<T>,
                         char                     const * const recordName,
-                        std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists) :
+                        std::initializer_list< std::initializer_list<FieldDefinition> > fieldDefinitionLists,
+                        RecordType                       const recordType = RecordType::Normal) :
       JsonRecordDefinition(recordName,
                            &T::typeLookup,
                            T::staticMetaObject.className(),
                            T::LocalisedName,
                            NamedEntity::makeUpAndDownCasters<T>(),
                            JsonRecordDefinition::create<JsonNamedEntityRecord<T>>,
-                           fieldDefinitionLists) {
+                           fieldDefinitionLists,
+                           recordType) {
       return;
    }
 
@@ -393,6 +407,9 @@ public:
 public:
 
    JsonRecordConstructorWrapper jsonRecordConstructorWrapper;
+
+   //! See comments in model/OutlineableNamedEntity.h
+   bool isOutlineRecord;
 
    std::vector<FieldDefinition> const fieldDefinitions;
 };
