@@ -59,21 +59,33 @@ bool Water::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    Water const & rhs = static_cast<Water const &>(other);
    // Base class will already have ensured names are equal
-   return (
+   bool const outlinesAreEqual{
+      // "Outline" fields: In BeerJSON, all these fields are in the FermentableBase type
       this->m_calcium_ppm      == rhs.m_calcium_ppm      &&
       this->m_bicarbonate_ppm  == rhs.m_bicarbonate_ppm  &&
-      this->m_sulfate_ppm      == rhs.m_sulfate_ppm      &&
-      this->m_chloride_ppm     == rhs.m_chloride_ppm     &&
-      this->m_sodium_ppm       == rhs.m_sodium_ppm       &&
-      this->m_magnesium_ppm    == rhs.m_magnesium_ppm    &&
-      this->m_ph               == rhs.m_ph               &&
-      // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
       this->m_carbonate_ppm    == rhs.m_carbonate_ppm    &&
       this->m_potassium_ppm    == rhs.m_potassium_ppm    &&
       this->m_iron_ppm         == rhs.m_iron_ppm         &&
       this->m_nitrate_ppm      == rhs.m_nitrate_ppm      &&
       this->m_nitrite_ppm      == rhs.m_nitrite_ppm      &&
-      this->m_flouride_ppm     == rhs.m_flouride_ppm
+      this->m_flouride_ppm     == rhs.m_flouride_ppm     &&
+      this->m_sulfate_ppm      == rhs.m_sulfate_ppm      &&
+      this->m_chloride_ppm     == rhs.m_chloride_ppm     &&
+      this->m_sodium_ppm       == rhs.m_sodium_ppm       &&
+      this->m_magnesium_ppm    == rhs.m_magnesium_ppm
+   };
+
+   // If either object is an outline (see comment in model/OutlineableNamedEntity.h) then there is no point comparing
+   // any more fields.  Note that an object will only be an outline whilst it is being read in from a BeerJSON file.
+   if (this->m_outline || rhs.m_outline) {
+      return outlinesAreEqual;
+   }
+
+   return (
+      outlinesAreEqual &&
+      // Remaining BeerJSON fields
+      this->m_ph    == rhs.m_ph    &&
+      this->m_notes == rhs.m_notes
    );
 }
 
@@ -107,13 +119,13 @@ TypeLookup const Water::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Water::flouride_ppm    , Water::m_flouride_ppm      , Measurement::PhysicalQuantity::MassFractionOrConc),
    },
    // Parent classes lookup
-   {&NamedEntity::typeLookup,
+   {&OutlineableNamedEntity::typeLookup,
     std::addressof(FolderBase<Water>::typeLookup)}
 };
 static_assert(std::is_base_of<FolderBase<Water>, Water>::value);
 
 Water::Water(QString name) :
-   NamedEntity{name, true},
+   OutlineableNamedEntity{name},
    FolderBase<Water>{},
 ///   m_amount             {0.0         },
    m_calcium_ppm        {0.0         },
@@ -140,7 +152,7 @@ Water::Water(QString name) :
 }
 
 Water::Water(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntity{namedParameterBundle},
+   OutlineableNamedEntity{namedParameterBundle},
    FolderBase<Water>{namedParameterBundle},
 ///   SET_REGULAR_FROM_NPB (m_amount            , namedParameterBundle, PropertyNames::Water::amount          ),
    SET_REGULAR_FROM_NPB (m_calcium_ppm       , namedParameterBundle, PropertyNames::Water::calcium_ppm     ),
@@ -167,7 +179,7 @@ Water::Water(NamedParameterBundle const & namedParameterBundle) :
 }
 
 Water::Water(Water const& other) :
-   NamedEntity{other                     },
+   OutlineableNamedEntity{other},
    FolderBase<Water>{other},
 ///   m_amount             {other.m_amount            },
    m_calcium_ppm        {other.m_calcium_ppm       },

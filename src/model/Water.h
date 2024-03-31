@@ -26,7 +26,7 @@
 #include <QSqlRecord>
 
 #include "model/FolderBase.h"
-#include "model/NamedEntity.h"
+#include "model/OutlineableNamedEntity.h"
 #include "utils/EnumStringMapping.h"
 
 //======================================================================================================================
@@ -62,8 +62,10 @@ AddPropertyName(type            )
  * \class Water
  *
  * \brief Model for water records in the database.
+ *
+ *        Note that we do not support the BeerJSON "producer" field on water as it is not clear what it means!
  */
-class Water : public NamedEntity,
+class Water : public OutlineableNamedEntity,
               public FolderBase<Water> {
    Q_OBJECT
    FOLDER_BASE_DECL(Water)

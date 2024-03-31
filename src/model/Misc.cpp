@@ -58,7 +58,7 @@ bool Misc::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    Misc const & rhs = static_cast<Misc const &>(other);
    // Base class will already have ensured names are equal
-    bool const outlinesAreEqual{
+   bool const outlinesAreEqual{
       // "Outline" fields: In BeerJSON, all these fields are in the FermentableBase type
       this->m_producer  == rhs.m_producer  &&
       this->m_productId == rhs.m_productId &&

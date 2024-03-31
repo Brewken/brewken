@@ -45,8 +45,8 @@ bool RecipeAddition::isEqualTo(NamedEntity const & other) const {
    RecipeAddition const & rhs = static_cast<RecipeAddition const &>(other);
    // Base class will already have ensured names are equal
    return (
-///      this->m_recipeId        == rhs.m_recipeId        &&
-///      this->m_ingredientId    == rhs.m_ingredientId    &&
+      this->m_recipeId        == rhs.m_recipeId        &&
+      this->m_ingredientId    == rhs.m_ingredientId    &&
       this->m_stage           == rhs.m_stage           &&
       this->m_step            == rhs.m_step            &&
       this->m_addAtTime_mins  == rhs.m_addAtTime_mins  &&

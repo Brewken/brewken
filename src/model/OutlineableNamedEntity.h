@@ -43,7 +43,7 @@ AddPropertyName(outline)
  *                        │ Fermentable       │ Hop             │ Misc         │ Yeast (Culture)       │ Water         │
  *           ┌────────────┼───────────────────┼─────────────────┼──────────────┼───────────────────────┼───────────────┤
  *           │ Outline    │ • name            │ • name          │ • name       │ • name                │ • name        │
- *           │ Fields     │ • type            │ • producer      │ • producer   │ • type                │ • producer    │
+ *           │ Fields     │ • type            │ • producer      │ • producer   │ • type                │ • producer ‡  │
  *           │            │ • origin          │ • product_id    │ • product_id │ • form                │ • calcium     │
  *           │            │ • producer        │ • origin        │ • type       │ • producer            │ • bicarbonate │
  *           │            │ • product_id      │ • year          │              │ • product_id          │ • carbonate   │
@@ -79,7 +79,7 @@ AddPropertyName(outline)
  *           │            │ • fermentability  │                 │              │                       │               │
  *           │            │ • beta_glucan     │                 │              │                       │               │
  *           └────────────┴───────────────────┴─────────────────┴──────────────┴───────────────────────┴───────────────┘
- *            † = compound field
+ *            † = compound field; ‡ = field we don't support
  *
  *        What this means is that, when we read in a Hop/Fermentable/Misc/Yeast/Water inside a RecipeAddition/
  *        RecipeUseOf record (an XxxxAdditionType record in BeerJSON) then we need different logic when we "check for
