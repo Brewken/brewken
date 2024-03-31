@@ -40,7 +40,7 @@ HydrometerTool::HydrometerTool(QWidget* parent) : QDialog(parent) {
    SMART_FIELD_INIT_FS(HydrometerTool, label_calibratedTemp, lineEdit_calibratedTemp, double, Measurement::PhysicalQuantity::Temperature, 1);
    SMART_FIELD_INIT_FS(HydrometerTool, label_inputTemp     , lineEdit_inputTemp     , double, Measurement::PhysicalQuantity::Temperature);
 
-   this->lineEdit_calibratedTemp->setAmount(15.55555556);
+   this->lineEdit_calibratedTemp->setQuantity(15.55555556);
 ///      lineEdit_outputSg->setForcedSystemOfMeasurement(Measurement::SystemOfMeasurement::SpecificGravity);
 
    connect(this->pushButton_convert,   &QAbstractButton::clicked,                      this,                          &HydrometerTool::convert   );
@@ -149,12 +149,12 @@ void HydrometerTool::retranslateUi() {
 
 void HydrometerTool::convert() {
    double correctedGravity = Algorithms::correctSgForTemperature(
-      lineEdit_inputSg       ->toCanonical().quantity(),       // measured gravity
-      lineEdit_inputTemp     ->toCanonical().quantity(),     // temperature at time of reading in Celsius
-      lineEdit_calibratedTemp->toCanonical().quantity() // calibration temperature of hydrometer in Celsius
+      lineEdit_inputSg       ->getNonOptCanonicalQty(),       // measured gravity
+      lineEdit_inputTemp     ->getNonOptCanonicalQty(),     // temperature at time of reading in Celsius
+      lineEdit_calibratedTemp->getNonOptCanonicalQty() // calibration temperature of hydrometer in Celsius
    );
 
-   lineEdit_outputSg->setAmount(correctedGravity);
+   lineEdit_outputSg->setQuantity(correctedGravity);
    return;
 }
 

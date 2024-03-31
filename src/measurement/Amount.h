@@ -27,9 +27,22 @@ namespace Measurement {
     *        5.5 US gallons is \b quantity 5.5 and \b unit \c Measurement::Units::us_gallons.  Even where we think we
     *        know what units we're getting back from a function (eg \c qstringToSI), it helps reduce bugs to have
     *        quantity and units together in a single struct.
+    *
+    *        NOTE: Although, in everyday conversation, "quantity" and "amount" are often used interchangeably, in this
+    *              code base it is useful to us to make the distinction between:
+    *
+    *                 \b quantity = a numerical value without units; the units not being present because either:
+    *                                  - there are no units, or
+    *                                  - the units are stored in another field, or
+    *                                  - the units are "fixed" for a certain field (eg it's always a percentage or it's
+    *                                    always kilograms)
+    *
+    *                 \b amount = a quantity plus units -- ie an instance of \c Amount
     */
-   class Amount {
-   public:
+   struct Amount {
+      double       quantity;
+      Unit const * unit;
+
       //! Regular constructor
       Amount(double const quantity, Unit const & unit);
 
@@ -42,25 +55,17 @@ namespace Measurement {
       //! Copy constructor
       Amount(Amount const & other);
 
-      //! Assignment operator
+      //! Copy assignment operator
       Amount & operator=(Amount const & other);
 
-      //! Move constructor.
-      Amount(Amount && other);
+      //! Move constructor
+      Amount(Amount && other) noexcept;
 
-      //! Move assignment.
-      Amount & operator=(Amount && other);
+      //! Move assignment operator
+      Amount & operator=(Amount && other) noexcept;
 
-      double       quantity() const;
-      Unit const * unit    () const;
-
-   private:
-      void setQuantity(double const   val);
-      void setUnit    (Unit   const & val);
-
-   protected:
-      double       m_quantity;
-      Unit const * m_unit;
+      //! Checks for an uninitialised (or badly initialised) amount
+      bool isValid() const;
    };
 
 }

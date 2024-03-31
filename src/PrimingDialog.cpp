@@ -51,9 +51,9 @@ PrimingDialog::~PrimingDialog() = default;
 
 void PrimingDialog::calculate() {
 
-   double const beer_l      = lineEdit_beerVol->toCanonical().quantity();
-   double const temp_c      = lineEdit_temp   ->toCanonical().quantity();
-   double const desiredVols = lineEdit_vols   ->toCanonical().quantity();
+   double const beer_l      = lineEdit_beerVol->getNonOptCanonicalQty();
+   double const temp_c      = lineEdit_temp   ->getNonOptCanonicalQty();
+   double const desiredVols = lineEdit_vols   ->getNonOptCanonicalQty();
    qDebug() <<
       Q_FUNC_INFO << "Beer volume (liters):" << beer_l << ", Temp (°C):" << temp_c << ", Desired Volumes:" <<
       desiredVols;
@@ -90,7 +90,7 @@ void PrimingDialog::calculate() {
 
    // The amount have to be set in default unit to SmartLineEdit.
    // We should find a better solution, but until it is not, we must do it this way.
-   lineEdit_output->setAmount(sugar_g/1000);
+   lineEdit_output->setQuantity(sugar_g/1000);
 
    return;
 }

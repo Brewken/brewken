@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * PersistentSettings.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * PersistentSettings.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -68,6 +68,8 @@ AddSettingName(LogDirectory)
 AddSettingName(LoggingLevel)
 AddSettingName(mashHopAdjustment)
 AddSettingName(mashStepTableWidget_headerState)  // MainWindow section
+AddSettingName(boilStepTableWidget_headerState)  // MainWindow section
+AddSettingName(fermentationStepTableWidget_headerState)  // MainWindow section
 AddSettingName(maximum)                          // backups section
 AddSettingName(productionDate)
 AddSettingName(recipeKey)
@@ -89,21 +91,17 @@ AddSettingName(windowState)
 //======================================================================================================================
 //======================================================================================================================
 //======================================== Start of setting SECTION constants ==========================================
+// .:TODO:. I think most of these are no longer used and can be deleted
 #define AddSettingSection(section) namespace PersistentSettings::Sections { BtStringConst const section{#section}; }
 AddSettingSection(alcoholTool)
 AddSettingSection(backups)
-AddSettingSection(fermentableTable)
-AddSettingSection(hopTable)
+///AddSettingSection(fermentableTable)
+///AddSettingSection(hopTable)
 AddSettingSection(MainWindow)
 AddSettingSection(mashStepTableModel)
 AddSettingSection(miscTable)
 AddSettingSection(miscTableModel)
-AddSettingSection(page_postboil)
-AddSettingSection(page_postferment)
-AddSettingSection(page_preboil)
-AddSettingSection(pitchRateCalc)
 AddSettingSection(saltTable)
-AddSettingSection(tab_recipe)
 AddSettingSection(yeastTable)
 AddSettingSection(yeastTableModel)
 #undef AddSettingName

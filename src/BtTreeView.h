@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtTreeView.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * BtTreeView.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -25,7 +25,7 @@
 #include <QMouseEvent>
 
 #include "BtTreeItem.h"
-#include "BtTreeFilterProxyModel.h"
+#include "sortFilterProxyModels/BtTreeFilterProxyModel.h"
 
 // Forward declarations.
 class BtTreeModel;
@@ -40,7 +40,7 @@ class Style;
 class Water;
 
 /*!
- * \class BtTreeItem
+ * \class BtTreeView
  *
  * \brief View class for BtTreeModel.
  */
@@ -48,7 +48,7 @@ class BtTreeView : public QTreeView {
    Q_OBJECT
 public:
    //! \brief The standard constructor
-   BtTreeView(QWidget * parent = nullptr, BtTreeModel::TypeMasks mask = BtTreeModel::RECIPEMASK);
+   BtTreeView(QWidget * parent = nullptr, BtTreeModel::TypeMasks mask = BtTreeModel::TypeMask::Recipe);
    //! \brief returns the model associated with this tree
    BtTreeModel * model();
    //! \b returns the filter associated with this model

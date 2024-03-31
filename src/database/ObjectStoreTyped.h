@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/ObjectStoreTyped.h is part of Brewken, and is copyright the following authors 2021-2023:
+ * database/ObjectStoreTyped.h is part of Brewken, and is copyright the following authors 2021-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -39,7 +39,7 @@ public:
    ObjectStoreTyped(TypeLookup               const & typeLookup,
                     TableDefinition          const & primaryTable,
                     JunctionTableDefinitions const & junctionTables = JunctionTableDefinitions{}) :
-      ObjectStore(typeLookup, primaryTable, junctionTables) {
+      ObjectStore(NE::staticMetaObject.className(), typeLookup, primaryTable, junctionTables) {
       return;
    }
 
@@ -143,6 +143,7 @@ public:
     */
    std::shared_ptr<NE> getById(int id) const {
       if (!this->contains(id)) {
+         qDebug() << Q_FUNC_INFO << "ID" << id << "not found amongst" << this->size() << "objects";
          return nullptr;
       }
       return std::static_pointer_cast<NE>(this->ObjectStore::getById(id));
@@ -192,10 +193,10 @@ public:
     *
     * \param matchFunction Takes a pointer to an object and returns \c true if the object is a match or \c false otherwise.
     *
-    * \return Shared pointer to the first object that gives a \c true result to \c matchFunction, or \c std::nullopt if
-    *         none does
+    * \return Shared pointer to the first object that gives a \c true result to \c matchFunction, or \c nullptr if none
+    *         does.
     */
-   std::optional< std::shared_ptr<NE> > findFirstMatching(std::function<bool(std::shared_ptr<NE>)> const & matchFunction) const {
+   std::shared_ptr<NE> findFirstMatching(std::function<bool(std::shared_ptr<NE>)> const & matchFunction) const {
       //
       // Caller has provided us with a lambda function that takes a shared pointer to NE (ie Water, Hop, Yeast, Recipe,
       // etc) and returns true or false depending on whether it's a match for whatever condition the caller requires.
@@ -208,10 +209,10 @@ public:
       auto result = this->ObjectStore::findFirstMatching(
          [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(std::static_pointer_cast<NE>(obj));}
       );
-      if (!result.has_value()) {
-         return std::nullopt;
-      }
-      return std::optional< std::shared_ptr<NE> >{std::static_pointer_cast<NE>(result.value())};
+///      if (!result) {
+///         return nullptr;
+///      }
+      return std::shared_ptr<NE>{std::static_pointer_cast<NE>(result)};
    }
 
    /**
@@ -234,10 +235,10 @@ public:
       auto result = this->ObjectStore::findFirstMatching(
          [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(static_cast<NE *>(obj.get()));}
       );
-      if (!result.has_value()) {
+      if (!result) {
          return nullptr;
       }
-      return static_cast<NE *>(result.value().get());
+      return static_cast<NE *>(result.get());
    }
 
    /**
@@ -272,6 +273,15 @@ public:
          this->ObjectStore::findAllMatching(
             [matchFunction](std::shared_ptr<QObject> obj) {return matchFunction(static_cast<NE *>(obj.get()));}
          )
+      );
+   }
+
+   /**
+    * \brief Similary to \c findAllMatching but returns a list of IDs
+    */
+   QVector<int> idsOfAllMatching(std::function<bool(NE const *)> const & matchFunction) const {
+      return this->ObjectStore::idsOfAllMatching(
+         [matchFunction](QObject const * obj) { return matchFunction(static_cast<NE const *>(obj)); }
       );
    }
 
@@ -388,6 +398,28 @@ private:
    //! No move assignment operator
    ObjectStoreTyped& operator=(ObjectStoreTyped&& other) = delete;
 };
+
+/**
+ * \brief Ensure all the object stores (ie all instances of \c ObjectStoreTyped) are initialised and have read in their
+ *        data from the DB.
+ *
+ *        Although things will usually work fine if we use "lazy loading" (ie let each \c ObjectStoreTyped instance read
+ *        in all its records the first time \c getInstance is called), it is safer to explicitly ask all the instances
+ *        to load their data soon after the \c Database object is initialised.  This is because, if there is a problem
+ *        reading in data from one or more of the tables, we want to tell the user and, most likely, terminate the
+ *        program.  (Continuing on in the face of errors is likely to result in null pointer errors are the program
+ *        tries to reference data it was unable to read out of the DB.)
+ *
+ *        NOTE: It doesn't matter if some or all of the \c ObjectStoreTyped instances were initialised before this
+ *              function was called.  They will not be initialised twice.  If any failed initialisation then that WILL
+ *              be picked up by this function and reported as an error.
+ *
+ * \param errorMessage OUT - In the event of an error, will hold info suitable for showing to the user about which
+ *                           stores could not be initialised.
+ *
+ * \return \c true if everything succeeded, \c false otherwise
+ */
+bool InitialiseAllObjectStores(QString & errorMessage);
 
 /**
  * \brief Does what it says on the tin.  Note that it is the caller's responsibility to handle transactions.

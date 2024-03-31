@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedEntity.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/NamedEntity.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -33,10 +33,12 @@
 #include <QObject>
 #include <QVariant>
 
+#include "model/FolderBase.h"
 #include "utils/BtStringConst.h"
 #include "utils/MetaTypes.h"
 #include "utils/TypeLookup.h"
 
+class NamedEntity;
 class NamedParameterBundle;
 class ObjectStore;
 class Recipe;
@@ -49,7 +51,7 @@ class Recipe;
 // Note that, because we are both declaring and defining these in the header file, I don't think we can guarantee on
 // every platform there is always exactly one instance of each property name.  So, whilst it's always valid to compare
 // the values of two property names, we cannot _guarantee_ that two identical property names always have the same
-// address in memory.  In other words, _don't_ do `if (&somePropName == &PropertyNames::NamedEntity::Folder) ...`.
+// address in memory.  In other words, _don't_ do `if (&somePropName == &PropertyNames::NamedEntity::name) ...`.
 //
 // I did also think about creating a macro that would combine this with Q_PROPERTY, but I didn't see an elegant way to
 // do it given that these need to be outside the class and Q_PROPERTY needs to be inside it.
@@ -60,7 +62,6 @@ class Recipe;
 #define AddPropertyName(property) namespace PropertyNames::NamedEntity { BtStringConst const property{#property}; }
 AddPropertyName(deleted)
 AddPropertyName(display)
-AddPropertyName(folder)
 AddPropertyName(key)
 AddPropertyName(name)
 AddPropertyName(parentKey)
@@ -73,59 +74,16 @@ AddPropertyName(parentKey)
  *
  * \brief The base class for our substantive storable items.  There are really two sorts of storable items: ones that
  *        are freestanding and ones that are owned by other storable items.  Eg, a Hop exists in its own right and may
- *        or may not be used in one or more Recipes, but a MashStep only exists as part of a single Mash.
- *           \b BrewNote is owned by its \b Recipe
- *           \b Equipment
- *           \b Fermentable
- *           \b Hop
- *           \b Instruction is owned by its \b Recipe
- *           \b Mash
- *           \b MashStep is owned by its \b Mash
- *           \b Misc
- *           \b Recipe
- *           \b Salt
- *           \b Style
- *           \b Water
- *           \b Yeast
+ *        or may not be used in one or more Recipes, but a MashStep only exists as part of a single Mash.  See comment
+ *        on \c owningRecipe below for more on this.
  *
  *        I know \b NamedEntity isn't the snappiest name, but it's the best we've come up with so far.  If you look at
  *        older versions of the code, you'll see that this class has previously been called \b Ingredient and
  *        \b BeerXMLElement.  The current name tries to best reflect what the class represents.  Although some of this
- *        class's subclasses (eg \b Hop, \b Fermentable, \b Yeast) are ingredients in the normal sense of the word,
- *        others (eg \b Instruction, \b Equipment, \b Style, \b Mash) are not really.  Equally, the fact that derived
- *        classes can be instantiated from BeerXML is not their defining characteristic.
- *
- *        NOTE: One of the things that can be confusing about our class and DB structure is that we are often
- *        doubling-up two different concepts: a global "variety" record/object and a recipe-specific "use of"
- *        record/object.  Eg, there might be one global "variety" record/object for Fuggle hops, with information about
- *        origin, average alpha acid etc.  Then, each time this type of hop is used in a recipe, there will be a
- *        related record with information about quantity used, actual alpha acid, etc PLUS a COPY of all the information
- *        in the variety record.  The "use of" and "variety" records are stored in the same DB table and the
- *        relationship between them is tracked via parent_id/child_id - where "variety" is the parent and "use of" is
- *        the child.
- *           This structure exists for historical reasons because the code was originally modelled on the BeerXML data
- *        structure (which doesn't really distinguish between "variety" and "use of") and, in the beginning, did not use
- *        a relational database (operating directly on BeerXML files instead).
- *           If we were starting today from a blank sheet of paper, you might, quite reasonably, argue that we should
- *        have separate DB tables and classes for "variety" and "use of" -- eg HopVariety and HopUse (or HopAddition).
- *        However, given where we actually are at the moment, it would be a very considerable amount of work to get to
- *        such a structure -- and it feels like we have a lot more important issues to which we should devote our
- *        efforts.
- *           Moreover, such a would actually remove some potentially valuable flexibility from the code.  It is open to
- *        debate exactly which fields belong in the "variety" record, which ones belong in the "use of" record, and
- *        which ones should be should be in both, and we might want to leave it open (within reason) for different users
- *        to do different things.  Eg, for hops, BeerJSON requires name and alpha acid in both types of records, allows
- *        (but does not require) producer, product ID, origin, year, form (ie leaf/pellet/etc) and beta acid in either
- *        type, but only allows oil content and inventory information in the "variety" record.  This isn't wrong per se,
- *        but it means that, if you want separate BeerJSON inventory records for Fuggle 2021 harvest and Fuggle 2022
- *        harvest, then you need two separate Fuggle variety records, which might not be what you want.  (This also then
- *        makes you think there should be three types of Hop record, but I'm not going to go there!)
- *           So, for the moment at least, we (mostly) retain the idea that a single class/table for both "variety" and
- *        "use of" objects/records.  You just have to be mindful of this when looking at the code and the DB -- eg
- *        the amount field of a Hop can be either inventory or how much to add to a recipe, depending on whether it's a
- *        "variety" or "use of" record.
- *        .:TODO:. It would be good to make explicit which member variables (and their getters/setters) are valid ONLY
- *        for "use of".
+ *        class's subclasses (eg \b Hop, \b Fermentable, \b Yeast) are ingredients in the normal sense of the word (and
+ *        this is now reflected in the \c Ingredient abstract class), others (eg \b Instruction, \b Equipment, \b Style,
+ *        \b Mash) are not really.  Equally, the fact that derived classes can be instantiated from BeerXML is not their
+ *        defining characteristic.
  *
  *        NOTE: Although we can template individual member functions, we cannot make this a template class (eg to use
  *        https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) because the Qt Meta-Object Compiler (moc)
@@ -150,14 +108,20 @@ AddPropertyName(parentKey)
  *          - Mostly the order of enum values should not matter, eg for serialisation where we generally to convert to
  *            strings.  \b However, the .ui files and the .conf file still contain a lot of instances where the order
  *            and/or the int value of an enum do matter, so it's best to avoid changing this, for now at least.
- *
- * .:TODO:. It would be nice to have a canonical serialisation of enums
  */
 class NamedEntity : public QObject {
    Q_OBJECT
    Q_CLASSINFO("version","1")
 
 public:
+
+   /**
+    * \brief Subclasses should provide their localised (ie translated) name via this static member, so that templated
+    *        functions can use it.
+    *
+    *        We shouldn't ever need to use the name for \c NamedEntity itself, but it's here for completeness.
+    */
+   static QString const LocalisedName;
 
    /**
     * \brief Type lookup info for this class.  Note this is intentionally static, public and const.  Subclasses need to
@@ -174,7 +138,7 @@ public:
     */
    static TypeLookup const typeLookup;
 
-   NamedEntity(QString t_name, bool t_display = false, QString folder = QString());
+   NamedEntity(QString t_name, bool t_display = false);
    NamedEntity(NamedEntity const & other);
 
    /**
@@ -183,18 +147,19 @@ public:
     */
    NamedEntity(NamedParameterBundle const & namedParameterBundle);
 
-protected:
-   /**
-    * \brief Swap the contents of two NamedEntity objects - which provides an exception-safe way of implementing
-    *        operator=
-    */
-   void swap(NamedEntity & other) noexcept;
-
-public:
    // Our destructor needs to be virtual because we sometimes point to an instance of a derived class through a pointer
    // to this class -- ie NamedEntity * namedEntity = new Hop() and suchlike.  We do already get a virtual destructor by
    // virtue of inheriting from QObject, but this declaration does no harm.
    virtual ~NamedEntity();
+
+protected:
+   /**
+    * \brief Swap the contents of two NamedEntity objects - which provides an exception-safe way of implementing
+    *        operator=.  This is used in \c Water but not many other places AFAICT.
+    */
+   virtual void swap(NamedEntity & other) noexcept;
+
+public:
 
    /**
     * \brief Although we might need to implement assignment operator for some of its derived classes (eg Water),
@@ -220,9 +185,11 @@ public:
     *
     *        NB: This function must be called \b before the object is added to its \c ObjectStore
     *
+    *        TODO: We are trying to retire this!
+    *
     * \param copiedFrom The object from which this one was copied
     */
-   virtual void makeChild(NamedEntity const & copiedFrom);
+   [[deprecated]] virtual void makeChild(NamedEntity const & copiedFrom);
 
    /**
     * \brief This generic version of operator== should work for subclasses provided they correctly _override_ (NB not
@@ -236,33 +203,25 @@ public:
     */
    bool operator!=(NamedEntity const & other) const;
 
-   //
-   // TODO We should replace the following with the spaceship operator once compiler support for C++20 is more widespread
-   //
    /**
     * \brief As you might expect, this ensures we order \b NamedEntity objects by name
     */
-   bool operator<(NamedEntity const & other) const;
-   bool operator>(NamedEntity const & other) const;
+   auto operator<=>(NamedEntity const & other) const;
 
-   // Everything that inherits from BeerXML has a name, delete, display and a folder
-   Q_PROPERTY(QString name   READ name WRITE setName )
-   Q_PROPERTY(bool deleted   READ deleted WRITE setDeleted )
-   Q_PROPERTY(bool display   READ display WRITE setDisplay )
-   Q_PROPERTY(QString folder READ folder WRITE setFolder )
+   // Everything that inherits from NamedEntity has these properties
+   Q_PROPERTY(QString name      READ name         WRITE setName     )
+   Q_PROPERTY(bool    deleted   READ deleted      WRITE setDeleted  )
+   Q_PROPERTY(bool    display   READ display      WRITE setDisplay  )
+   //! Key (ID) in the table we are stored in
+   Q_PROPERTY(int     key       READ key          WRITE setKey      )
+   //! TODO Once \c makeChild is retired, this can be retired too
+   Q_PROPERTY(int     parentKey READ getParentKey WRITE setParentKey)
 
-   Q_PROPERTY(int key READ key WRITE setKey )
-   Q_PROPERTY(int parentKey READ getParentKey WRITE setParentKey )
-
-   //! \returns our key in the table we are stored in.
-   int key() const;
-   //! Access to the name attribute.
    QString name() const;
-   //! Convenience method to determine if we are deleted or displayed
    bool deleted() const;
    bool display() const;
-   //! Access to the folder attribute.
-   QString folder() const;
+   int key() const;
+   [[deprecated]] int getParentKey() const;
 
    /**
     * \brief Returns a regexp that will match the " (n)" (for n some positive integer) added on the end of a name to
@@ -270,14 +229,16 @@ public:
     */
    static QRegExp const & getDuplicateNameNumberMatcher();
 
-   //! And ways to set those flags
+   void setName(QString const & var);
    void setDeleted(bool const var);
    void setDisplay(bool const var);
-   //! and a way to set the folder
-   virtual void setFolder(QString const & var);
-
-   //!
-   void setName(QString const & var);
+   /**
+    * \brief Set the ID (aka key) by which this object is uniquely identified in its DB table
+    *
+    *        This is virtual because, in some cases, subclasses are going to want to do additional work here
+    */
+   virtual void setKey(int key);
+   [[deprecated]] void setParentKey(int parentKey);
 
    /**
     * \brief This sets or unsets the "being modified" flag on the object.  Callers should preferably access this via
@@ -292,41 +253,93 @@ public:
    bool isBeingModified() const;
 
    /**
-    * \brief Set the ID (aka key) by which this object is uniquely identified in its DB table
-    *
-    *        This is virtual because, in some cases, subclasses are going to want to do additional work here
-    */
-   virtual void setKey(int key);
-
-   int getParentKey() const;
-   void setParentKey(int parentKey);
-
-   /**
     * \brief Get the IDs of this object's parent, children and siblings (plus the ID of the object itself).
     *        A child object is just a copy of the parent that's being used in a Recipe.  Not all NamedEntity subclasses
     *        have children, just Equipment, Fermentable, Hop, Misc and Yeast.
     */
-   QVector<int> getParentAndChildrenIds() const;
+   [[deprecated]] QVector<int> getParentAndChildrenIds() const;
 
    //! Convenience method to get a meta property by name.
    QMetaProperty metaProperty(char const * const name) const;
 
    /**
-    * \brief Subclasses need to override this to return the Recipe, if any, to which this object belongs.
+    * \brief Subclasses need to override this to return the \c Recipe, if any, to which this object belongs.  (Note that
+    *        a \c Recipe belongs to itself for the purposes of this function.)
     *
-    * \return \c nullptr if this object is not, and does not belong to, any Recipe
+    *        Broadly speaking, there are three categories of \c NamedEntity:
+    *
+    *         - Dependent items such as \c BrewNote, \c Instruction and \c RecipeAdditionHop which \b always belong to
+    *           exactly one \c Recipe and which get deleted if that \c Recipe is deleted.  A change to one of these
+    *           items is treated as a change to the \c Recipe.
+    *
+    *         - Independent items such as \c Equipment, \c Hop, \c InventoryHop which exist independently of any
+    *           \c Recipe.  Even if all recipes were deleted, these things would continue to exist.  (However the
+    *           reverse is not necessarily true, in that we should not delete, eg, a \c Hop if it is being used, via
+    *           \c RecipeAdditionHop, in one or more \c Recipes.)  A change to one of these items \b may affect one or
+    *           more \c Recipes, requiring recalculations therein, but is not treated as a \c change in a \c Recipe.
+    *
+    *         - Semi-Independent items such as \c Mash, \c MashStep, \c Boil, \c BoilStep, \c Fermentation,
+    *           \c FermentationStep which, strictly, exist independently of any \c Recipe but which are often used only
+    *           by one \c Recipe.  Although deletion of a \c Recipe never causes deletion of a semi-independent item, we
+    *           may treat a change to a semi-independent item used in only one \c Recipe as a change to that \c Recipe
+    *           (because this is what most users would expect, I think).
+    *
+    *        NOTE that, although semi-independent of \c Recipe, \c MashStep is entirely dependent on its \c Mash and has
+    *        no independent existence from it.  Same for \c BoilStep and \c Boil, \c FermentationStep and
+    *        \c Fermentation, etc.
+    *
+    *        NOTE too that Independent (and Semi-Independent) items have folders unless they are owned by another item
+    *        (eg \c Mash has a folder but \c MashStep does not).  Dependent items do not have folders (because they are
+    *        owned by \c Recipe).  See model/FolderBase.h for more.
+    *
+    *        The following pseudo-inheritance diagram shows which \c NamedEntity classes are Dependent, Independent and
+    *        Semi-Independent.  (The class \c OwnedByRecipe exists, but \c IndependentOfRecipe does not.)
+    *
+    *           OwnedByRecipe                          IndependentOfRecipe († = semi-independent)
+    *             ├── BrewNote                           ├── Boil †
+    *             ├── Instruction                        ├── Equipment
+    *             ├── RecipeAddition                     ├── Fermentation †
+    *             │    ├── RecipeAdditionFermentable     ├── Ingredient
+    *             │    ├── RecipeAdditionHop             │    ├── Fermentable
+    *             │    ├── RecipeAdditionMisc            │    ├── Hop
+    *             │    ├── RecipeAdjustmentSalt          │    ├── Misc
+    *             │    └── RecipeAdditionYeast           │    ├── Salt
+    *             └── RecipeUseOfWater                   │    └── Yeast
+    *                                                    ├── Inventory
+    *                                                    │    ├── InventoryFermentable (owned by its Fermentable)
+    *                                                    │    ├── InventoryHop         (owned by its Hop        )
+    *                                                    │    ├── InventoryMisc        (owned by its Misc       )
+    *                                                    │    └── InventoryYeast       (owned by its Yeast      )
+    *                                                    ├── Mash †
+    *                                                    ├── Recipe (but owns itself for the purpose of changes)
+    *                                                    ├── Step
+    *                                                    │    ├── MashStep † (owned by its Mash)
+    *                                                    │    └── StepExtended
+    *                                                    │         ├── BoilStep † (owned by its Boil)
+    *                                                    │         └── FermentationStep † (owned by its Fermentation)
+    *                                                    ├── Style
+    *                                                    └── Water
+    *
+    *        HOWEVER, even aside from the case of semi-independent items, we want run-time determination of whether an
+    *        object has an owning \c Recipe to make it easy to determine whether a change to a base class property
+    *        constitutes a change to a \c Recipe (and if so which one).  Hence this function.
+    *
+    * \return \c nullptr if this object does not belong to a \c Recipe (ie it is an Independent Item or a
+    *         Semi-Independent Item that is either used in more than one \c Recipe or not used in any \c Recipe)
     */
-   virtual Recipe * getOwningRecipe() = 0;
+   virtual std::shared_ptr<Recipe> owningRecipe() const;
 
    /*!
     * \brief Some entities (eg Fermentable, Hop) get copied when added to a recipe, but others (eg Instruction) don't.
     *        For those that do, we think of the copy as being a child of the original NamedEntity.  This function allows
     *        us to access that parent.
-    * \return Pointer to the parent NamedEntity from which this one was originally copied, or null if no such parent exists.
+    *
+    * \return Pointer to the parent NamedEntity from which this one was originally copied, or null if no such parent
+    *         exists.
     */
-   NamedEntity * getParent() const;
+   [[deprecated]] NamedEntity * getParent() const;
 
-   void setParent(NamedEntity const & parentNamedEntity);
+   [[deprecated]] void setParent(NamedEntity const & parentNamedEntity);
 
    /**
     * \brief If we are _really_ deleting (rather than just marking deleted) an entity that owns other entities (eg a
@@ -344,6 +357,17 @@ public:
     *        By default this function does nothing.  Subclasses override it if needed.
     */
    virtual void hardDeleteOrphanedEntities();
+
+   /**
+    * \brief Where a \c NamedEntity contains and owns another \c NamedEntity (eg as \c Recipe can contain a \c Boil),
+    *        this allows generic code to ensure that such a contained object exists -- typically because we want to set
+    *        one of its properties.
+    *
+    *        Child classes need to override this for any properties where it is relevant.
+    *
+    * \return Pointer to the object whose existence we want to ensure (which will have been newly created if necessary).
+    */
+   virtual NamedEntity * ensureExists(BtStringConst const & property);
 
 signals:
    /*!
@@ -368,8 +392,8 @@ protected:
     *        being compared are of the same class (eg we are not comparing a Hop with a Yeast) and that the names match,
     *        so subclasses do not need to repeat these tests.
     *
-    *        We do not currently anticipate sub-sub-classes of \b NamedEntity but if one ever were created, it should
-    *        call its parent's implementation of this function before doing its own class-specific tests.
+    *        A sub-sub-class of \c NamedEntity (eg \c RecipeAdditionHop) should call its parent's implementation of this
+    *        function before doing its own class-specific tests.
     * \return \b true if this object is, in all the ways that matter, equal to \b other
     */
    virtual bool isEqualTo(NamedEntity const & other) const = 0;
@@ -400,27 +424,26 @@ protected:
     *        reading from BeerJSON, we'll get a combined quantity-and-units parameter,
     *        eg \c PropertyNames::Fermentable::amountWithUnits.
     *
-    *        This templated function does the generic work for initialising such either-or parameters from a
+    *        This function does the generic work for initialising such either-or parameters from a
     *        \c NamedParameterBundle.
-    *
-    *        Valid instantiations of this template are with \c MassOrVolumeAmt and \c MassOrVolumeConcentrationAmt.
     */
-   template<typename T>
    void setEitherOrReqParams(NamedParameterBundle const & namedParameterBundle,
                              BtStringConst const & quantityParameterName,
                              BtStringConst const & isFirstUnitParameterName,
                              BtStringConst const & combinedWithUnitsParameterName,
+                             Measurement::PhysicalQuantity const firstUnitPhysicalQuantity,
                              double & quantityReturn,
-                             bool & isFirstUnitReturn);
+                             bool & isFirstUnitReturn,
+                             std::optional<bool> const defaultIsFirstUnit = std::nullopt);
 
    /**
     * \brief As \c setEitherOrReqParams but for when the attribute is optional
     */
-   template<typename T>
    void setEitherOrOptParams(NamedParameterBundle const & namedParameterBundle,
                              BtStringConst const & quantityParameterName,
                              BtStringConst const & isFirstUnitParameterName,
                              BtStringConst const & combinedWithUnitsParameterName,
+                             Measurement::PhysicalQuantity const firstUnitPhysicalQuantity,
                              std::optional<double> & quantityReturn,
                              bool & isFirstUnitReturn);
 
@@ -471,6 +494,7 @@ protected:
                                            T const minValue,
                                            T const maxValue,
                                            T const defaultValue = 0) {
+      // We could use std::clamp here, but, since we want to print the warning message, it wouldn't buy us anything
       if (value < minValue || value > maxValue) {
          qWarning() <<
             Q_FUNC_INFO << this->metaObject()->className() << ":" << name << "value" << value <<
@@ -534,27 +558,181 @@ protected:
 
    /**
     * \brief Convenience function that wraps preparing for a property change, making it and propagating it.
+    *
+    * \return \c true if the property actually changed, \c false if it did not (ie the "set" was in fact setting the
+    *         value to what it already was.  This is useful for the caller if, eg, there might be recalculations
+    *         required when a value changes
     */
    template<typename T>
-   void setAndNotify(BtStringConst const & propertyName,
+   bool setAndNotify(BtStringConst const & propertyName,
                      T & memberVariable,
                      T const newValue) {
       if (this->newValueMatchesExisting(propertyName, memberVariable, newValue)) {
-         return;
+         return false;
       }
       this->prepareForPropertyChange(propertyName);
       memberVariable = newValue;
       this->propagatePropertyChange(propertyName);
-      return;
+      return true;
+   }
+
+public:
+///   /**
+///    * \brief In certain circumstances, we need to be able to convert a `QList<Hop *>` or `QList<Fermentable *>` etc to
+///    *        QList<NamedEntity *>.  This function does that work.
+///    */
+///   template<typename T>
+///   static QList<NamedEntity *> downcastRawList(QList<T *> const & inputList) {
+///      QList<NamedEntity *> outputList;
+///      outputList.reserve(inputList.size());
+///      for (T * ii : inputList) {
+///         outputList.append(static_cast<NamedEntity *>(ii));
+///      }
+///      return outputList;
+///   }
+
+
+   /**
+    * \brief Converts a QVariant containing `std::shared_ptr<Hop>` or `std::shared_ptr<Fermentable>` etc to
+    *        `std::shared_ptr<NamedEntity>`.
+    */
+   template<typename T>
+   static std::shared_ptr<NamedEntity> downcastPointer(QVariant const & input) {
+      return std::static_pointer_cast<NamedEntity>(input.value<std::shared_ptr<T>>());
+   }
+
+   /**
+    * \brief Opposite of \c downcastVariant.  Converts `std::shared_ptr<NamedEntity>` to a QVariant containing
+    *        `std::shared_ptr<Hop>` or `std::shared_ptr<Fermentable>` etc.
+    */
+   template<typename T>
+   static QVariant upcastPointer(std::shared_ptr<NamedEntity> input) {
+      return QVariant::fromValue(std::static_pointer_cast<T>(input));
+   }
+
+///   /**
+///    * \brief Converts a QVariant containing `std::optional<std::shared_ptr<Hop>>` or
+///    *        `std::optional<std::shared_ptr<Fermentable>>` etc to
+///    *        `std::optional<std::shared_ptr<NamedEntity>>`.
+///    */
+///   template<typename T>
+///   static std::optional<std::shared_ptr<NamedEntity>> downcastOptionalPointer(QVariant const & input) {
+///      auto contents{input.value<std::optional<std::shared_ptr<T>>>()};
+///      if (contents) {
+///         return std::static_pointer_cast<NamedEntity>(*contents);
+///      }
+///      return std::nullopt;
+///   }
+///
+///   /**
+///    * \brief Opposite of \c downcastOptionalPointer. Converts `std::optional<std::shared_ptr<NamedEntity>>` to a
+///    *        QVariant containing `std::optional<std::shared_ptr<Hop>>` or `std::optional<std::shared_ptr<Fermentable>>`
+///    *        etc.
+///    */
+///   template<typename T>
+///   static QVariant upcastOptionalPointer(std::optional<std::shared_ptr<NamedEntity>> input) {
+///      std::optional<std::shared_ptr<T>> output;
+///      if (input) {
+///         output = std::static_pointer_cast<T>(*input);
+///      }
+///      return QVariant::fromValue(output);
+///   }
+
+   /**
+    * \brief Converts `QList<shared_ptr<Hop>>` or `QList<shared_ptr<Fermentable>>` etc to
+    *        `QList<shared_ptr<NamedEntity>>`.
+    */
+   template<typename T>
+   static QList< std::shared_ptr<NamedEntity> > downcastList(QList<std::shared_ptr<T>> const & inputList) {
+      QList< std::shared_ptr<NamedEntity> > outputList;
+      outputList.reserve(inputList.size());
+      for (std::shared_ptr<T> ii : inputList) {
+         outputList.append(std::static_pointer_cast<NamedEntity>(ii));
+      }
+      return outputList;
+   }
+
+   /**
+    * \brief Converts `QList<shared_ptr<NamedEntity>>` to `QList<shared_ptr<Hop>>` or `QList<shared_ptr<Fermentable>>`
+    *        etc.
+    */
+   template<typename T>
+   static QList< std::shared_ptr<T> > upcastList(QList<std::shared_ptr<NamedEntity>> const & inputList) {
+      QList< std::shared_ptr<T> > outputList;
+      outputList.reserve(inputList.size());
+      for (std::shared_ptr<NamedEntity> ii : inputList) {
+         outputList.append(std::static_pointer_cast<T>(ii));
+      }
+      return outputList;
+   }
+
+   /**
+    * \brief In various parts of the generic serialisation code (for XML and JSON), it is useful, for a given subclass
+    *        \c T of \c NamedEntity, to have a pointer to a function that can cast a list of base pointers to derived
+    *        ones.  This is typically because we want to pass such a list in to the property system so that it can call
+    *        a setter function.  This is fortunate because it means we can avoid having the function pointer signature
+    *        depend on T (even though it points to a templated function).
+    */
+   template<typename T>
+   static QVariant upcastListToVariant(QList<std::shared_ptr<NamedEntity>> const & inputList) {
+      return QVariant::fromValue(NamedEntity::upcastList<T>(inputList));
+   }
+
+   /**
+    * \brief In counterpart to \c upcastListToVariant, we need to be able to cast in the opposite direction.  Again, we
+    *        don't want the function \b signature to depend on T, and again the use of \c QVariant allows this.
+    *
+    * \param inputList A \c QVariant holding QList< std::shared_ptr<T>>
+    */
+   template<typename T>
+   static QList<std::shared_ptr<NamedEntity>> downcastListFromVariant(QVariant const & inputList) {
+      return NamedEntity::downcastList<T>(inputList.value<QList<std::shared_ptr<T>>>());
+   }
+
+   /**
+    * \brief It's useful in places to have pointers to all the upcasters and downcasters for a given type
+    */
+   struct UpAndDownCasters{
+      std::shared_ptr<NamedEntity>                (*m_pointerDowncaster        )(QVariant const &                           );
+      QVariant                                    (*m_pointerUpcaster          )(std::shared_ptr<NamedEntity>               );
+///      std::optional<std::shared_ptr<NamedEntity>> (*m_optionalPointerDowncaster)(QVariant const &                           );
+///      QVariant                                    (*m_optionalPointerUpcaster  )(std::optional<std::shared_ptr<NamedEntity>>);
+      QVariant                                    (*m_listUpcaster             )(QList<std::shared_ptr<NamedEntity>> const &);
+      QList<std::shared_ptr<NamedEntity>>         (*m_listDowncaster           )(QVariant const &                           );
+   };
+
+   /**
+    * \brief And because we can't template the constructor of a non-templated class/struct, we need a templated factory
+    *        function.
+    */
+   template<typename T>
+   static UpAndDownCasters makeUpAndDownCasters() {
+      return {
+         NamedEntity::downcastPointer        <T>,
+         NamedEntity::upcastPointer          <T>,
+///         NamedEntity::downcastOptionalPointer<T>,
+///         NamedEntity::upcastOptionalPointer  <T>,
+         NamedEntity::upcastListToVariant    <T>,
+         NamedEntity::downcastListFromVariant<T>
+      };
    }
 
 private:
-  QString m_folder;
   QString m_name;
   bool m_display;
   bool m_deleted;
   bool m_beingModified;
 };
+
+/**
+ * \brief The downside of the \c UpAndDownCasters is that we now need to declare all sorts of permutations of
+ *        Q_DECLARE_METATYPE, including a lot that we'll never actually use in practice.  So it's simpler to have our
+ *        own macro that generates all the Q_DECLARE_METATYPE macros we think we'll need for a class.
+ */
+#define BT_DECLARE_METATYPES(ClassName) \
+Q_DECLARE_METATYPE(std::shared_ptr<ClassName> ) \
+Q_DECLARE_METATYPE(QList<                ClassName *>) \
+Q_DECLARE_METATYPE(QList<std::shared_ptr<ClassName> >)
 
 /**
  * \brief Convenience typedef for pointer to \c isOptional();
@@ -600,6 +778,12 @@ S & operator<<(S & stream, NamedEntity const * namedEntity) {
    return stream;
 }
 
+template<class S>
+S & operator<<(S & stream, std::shared_ptr<NamedEntity> namedEntity) {
+   stream << namedEntity.get();
+   return stream;
+}
+
 /**
  * \brief Convenience function for logging, including coping with null pointers
  *
@@ -620,5 +804,24 @@ S & operator<<(S & stream, NE const * namedEntity) {
    }
    return stream;
 }
+
+// Note that we cannot write `Q_DECLARE_METATYPE(NamedEntity)` here, because NamedEntity is an abstract class
+Q_DECLARE_METATYPE(NamedEntity *)
+Q_DECLARE_METATYPE(NamedEntity const *)
+Q_DECLARE_METATYPE(std::shared_ptr<NamedEntity>)
+
+/**
+ * \brief Convenience macro
+ */
+#define SET_AND_NOTIFY(...) this->setAndNotify(__VA_ARGS__)
+
+/**
+ * \brief For some templated functions, it's useful at compile time to have one version for NE classes with folders and
+ *        one for those without.  We need to put the concepts here in the base class for them to be accessible.
+ *
+ *        See comment in utils/TypeTraits.h for definition of CONCEPT_FIX_UP (and why, for now, we need it).
+ */
+template <typename T> concept CONCEPT_FIX_UP HasFolder   = std::is_base_of_v<FolderBase<T>, T>;
+template <typename T> concept CONCEPT_FIX_UP HasNoFolder = std::negation_v<std::is_base_of<FolderBase<T>, T>>;
 
 #endif

@@ -1,5 +1,5 @@
 /**
- * config.in is part of Brewken, and is copyright the following authors 2009-2022:
+ * config.in is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
@@ -46,5 +46,8 @@ constexpr char const * CONFIG_BUILD_SYSTEM    = "${CMAKE_HOST_SYSTEM}";
 constexpr char const * CONFIG_RUN_SYSTEM      = "${CMAKE_SYSTEM}";
 constexpr char const * CONFIG_CXX_COMPILER_ID = "${CMAKE_CXX_COMPILER_ID}";
 constexpr char const * CONFIG_BUILD_TIMESTAMP = "${BUILD_TIMESTAMP}";
+
+// Support info
+constexpr char const * CONFIG_HOMEPAGE_URL    = "${CONFIG_HOMEPAGE_URL}";
 
 #endif

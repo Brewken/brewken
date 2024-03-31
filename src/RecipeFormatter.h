@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * RecipeFormatter.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * RecipeFormatter.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -23,16 +23,18 @@
 
 #include <memory> // For PImpl
 
-#include <QDialog>
-#include <QFile>
 #include <QList>
 #include <QObject>
-#include <QPrintDialog>
-#include <QStringList>
-#include <QTextBrowser>
 
 #include "model/Recipe.h"
-#include "PrintAndPreviewDialog.h"
+
+class Style      ;
+class Equipment  ;
+class Fermentable;
+class Hop        ;
+class Misc       ;
+class Yeast      ;
+class Water      ;
 
 /*!
  * \class RecipeFormatter
@@ -41,8 +43,6 @@
  */
 class RecipeFormatter : public QObject {
    Q_OBJECT
-
-   friend class PrintAndPreviewDialog;
 
 public:
    RecipeFormatter(QWidget * parent = nullptr);
@@ -62,14 +62,14 @@ public:
    QString getBBCodeFormat();
 
    //! Generate a tooltip for a recipe
-   QString getToolTip(Recipe* rec);
-   QString getToolTip(Style* style);
-   QString getToolTip(Equipment* kit);
-   QString getToolTip(Fermentable* ferm);
-   QString getToolTip(Hop* hop);
-   QString getToolTip(Misc* misc);
-   QString getToolTip(Yeast* yeast);
-   QString getToolTip(Water* water);
+   QString getToolTip(Recipe      * rec);
+   QString getToolTip(Style       * style);
+   QString getToolTip(Equipment   * kit);
+   QString getToolTip(Fermentable * ferm);
+   QString getToolTip(Hop         * hop);
+   QString getToolTip(Misc        * misc);
+   QString getToolTip(Yeast       * yeast);
+   QString getToolTip(Water       * water);
 
 public slots:
    //! Put the plaintext view onto the clipboard.

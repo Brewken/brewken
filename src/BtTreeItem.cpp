@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtTreeItem.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * BtTreeItem.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -48,29 +48,29 @@
 
 namespace {
    EnumStringMapping const itemTypeToName {
-      {BtTreeItem::Type::RECIPE     , "RECIPE"     },
-      {BtTreeItem::Type::EQUIPMENT  , "EQUIPMENT"  },
-      {BtTreeItem::Type::FERMENTABLE, "FERMENTABLE"},
-      {BtTreeItem::Type::HOP        , "HOP"        },
-      {BtTreeItem::Type::MISC       , "MISC"       },
-      {BtTreeItem::Type::YEAST      , "YEAST"      },
-      {BtTreeItem::Type::BREWNOTE   , "BREWNOTE"   },
-      {BtTreeItem::Type::STYLE      , "STYLE"      },
-      {BtTreeItem::Type::FOLDER     , "FOLDER"     },
-      {BtTreeItem::Type::WATER      , "WATER"      },
+      {BtTreeItem::Type::Recipe     , "Recipe"     },
+      {BtTreeItem::Type::Equipment  , "Equipment"  },
+      {BtTreeItem::Type::Fermentable, "Fermentable"},
+      {BtTreeItem::Type::Hop        , "Hop"        },
+      {BtTreeItem::Type::Misc       , "Misc"       },
+      {BtTreeItem::Type::Yeast      , "Yeast"      },
+      {BtTreeItem::Type::BrewNote   , "BrewNote"   },
+      {BtTreeItem::Type::Style      , "Style"      },
+      {BtTreeItem::Type::Folder     , "Folder"     },
+      {BtTreeItem::Type::Water      , "Water"      },
    };
 }
 
-template<> BtTreeItem::Type BtTreeItem::typeOf<Recipe>()      { return BtTreeItem::Type::RECIPE;      }
-template<> BtTreeItem::Type BtTreeItem::typeOf<Equipment>()   { return BtTreeItem::Type::EQUIPMENT;   }
-template<> BtTreeItem::Type BtTreeItem::typeOf<Fermentable>() { return BtTreeItem::Type::FERMENTABLE; }
-template<> BtTreeItem::Type BtTreeItem::typeOf<Hop>()         { return BtTreeItem::Type::HOP;         }
-template<> BtTreeItem::Type BtTreeItem::typeOf<Misc>()        { return BtTreeItem::Type::MISC;        }
-template<> BtTreeItem::Type BtTreeItem::typeOf<Yeast>()       { return BtTreeItem::Type::YEAST;       }
-template<> BtTreeItem::Type BtTreeItem::typeOf<BrewNote>()    { return BtTreeItem::Type::BREWNOTE;    }
-template<> BtTreeItem::Type BtTreeItem::typeOf<Style>()       { return BtTreeItem::Type::STYLE;       }
-template<> BtTreeItem::Type BtTreeItem::typeOf<BtFolder>()    { return BtTreeItem::Type::FOLDER;      }
-template<> BtTreeItem::Type BtTreeItem::typeOf<Water>()       { return BtTreeItem::Type::WATER;       }
+template<> BtTreeItem::Type BtTreeItem::typeOf<Recipe>()      { return BtTreeItem::Type::Recipe;      }
+template<> BtTreeItem::Type BtTreeItem::typeOf<Equipment>()   { return BtTreeItem::Type::Equipment;   }
+template<> BtTreeItem::Type BtTreeItem::typeOf<Fermentable>() { return BtTreeItem::Type::Fermentable; }
+template<> BtTreeItem::Type BtTreeItem::typeOf<Hop>()         { return BtTreeItem::Type::Hop;         }
+template<> BtTreeItem::Type BtTreeItem::typeOf<Misc>()        { return BtTreeItem::Type::Misc;        }
+template<> BtTreeItem::Type BtTreeItem::typeOf<Yeast>()       { return BtTreeItem::Type::Yeast;       }
+template<> BtTreeItem::Type BtTreeItem::typeOf<BrewNote>()    { return BtTreeItem::Type::BrewNote;    }
+template<> BtTreeItem::Type BtTreeItem::typeOf<Style>()       { return BtTreeItem::Type::Style;       }
+template<> BtTreeItem::Type BtTreeItem::typeOf<BtFolder>()    { return BtTreeItem::Type::Folder;      }
+template<> BtTreeItem::Type BtTreeItem::typeOf<Water>()       { return BtTreeItem::Type::Water;       }
 
 
 bool operator==(BtTreeItem & lhs, BtTreeItem & rhs) {
@@ -85,7 +85,7 @@ bool operator==(BtTreeItem & lhs, BtTreeItem & rhs) {
 BtTreeItem::BtTreeItem(BtTreeItem::Type itemType, BtTreeItem * parent) :
    parentItem{parent},
    itemType{itemType},
-   _thing{nullptr},
+   m_thing{nullptr},
    m_showMe{false} {
    return;
 }
@@ -116,56 +116,35 @@ int BtTreeItem::childCount() const {
 
 int BtTreeItem::columnCount(BtTreeItem::Type itemType) const {
    switch (itemType) {
-      case BtTreeItem::Type::RECIPE:
-         return RECIPENUMCOLS;
-      case BtTreeItem::Type::EQUIPMENT:
-         return EQUIPMENTNUMCOLS;
-      case BtTreeItem::Type::FERMENTABLE:
-         return FERMENTABLENUMCOLS;
-      case BtTreeItem::Type::HOP:
-         return HOPNUMCOLS;
-      case BtTreeItem::Type::MISC:
-         return MISCNUMCOLS;
-      case BtTreeItem::Type::YEAST:
-         return YEASTNUMCOLS;
-      case BtTreeItem::Type::STYLE:
-         return STYLENUMCOLS;
-      case BtTreeItem::Type::BREWNOTE:
-         return BREWNUMCOLS;
-      case BtTreeItem::Type::FOLDER:
-         return FOLDERNUMCOLS;
-      case BtTreeItem::Type::WATER:
-         return WATERNUMCOLS;
+      case BtTreeItem::Type::Recipe:      return static_cast<int>(BtTreeItem::     RecipeColumn::NumberOfColumns);
+      case BtTreeItem::Type::Equipment:   return static_cast<int>(BtTreeItem::  EquipmentColumn::NumberOfColumns);
+      case BtTreeItem::Type::Fermentable: return static_cast<int>(BtTreeItem::FermentableColumn::NumberOfColumns);
+      case BtTreeItem::Type::Hop:         return static_cast<int>(BtTreeItem::        HopColumn::NumberOfColumns);
+      case BtTreeItem::Type::Misc:        return static_cast<int>(BtTreeItem::       MiscColumn::NumberOfColumns);
+      case BtTreeItem::Type::Yeast:       return static_cast<int>(BtTreeItem::      YeastColumn::NumberOfColumns);
+      case BtTreeItem::Type::Style:       return static_cast<int>(BtTreeItem::      StyleColumn::NumberOfColumns);
+      case BtTreeItem::Type::BrewNote:    return static_cast<int>(BtTreeItem::   BrewNoteColumn::NumberOfColumns);
+      case BtTreeItem::Type::Folder:      return static_cast<int>(BtTreeItem::     FolderColumn::NumberOfColumns);
+      case BtTreeItem::Type::Water:       return static_cast<int>(BtTreeItem::      WaterColumn::NumberOfColumns);
       default:
          qWarning() << Q_FUNC_INFO << "Bad column:" << static_cast<int>(itemType);
          return 0;
    }
-
 }
 
 QVariant BtTreeItem::data(/*BtTreeItem::Type itemType, */int column) {
 
    switch (this->itemType) {
-      case BtTreeItem::Type::RECIPE:
-         return dataRecipe(column);
-      case BtTreeItem::Type::EQUIPMENT:
-         return dataEquipment(column);
-      case BtTreeItem::Type::FERMENTABLE:
-         return dataFermentable(column);
-      case BtTreeItem::Type::HOP:
-         return dataHop(column);
-      case BtTreeItem::Type::MISC:
-         return dataMisc(column);
-      case BtTreeItem::Type::YEAST:
-         return dataYeast(column);
-      case BtTreeItem::Type::STYLE:
-         return dataStyle(column);
-      case BtTreeItem::Type::BREWNOTE:
-         return dataBrewNote(column);
-      case BtTreeItem::Type::FOLDER:
-         return dataFolder(column);
-      case BtTreeItem::Type::WATER:
-         return dataWater(column);
+      case BtTreeItem::Type::Recipe:      return dataRecipe     (column);
+      case BtTreeItem::Type::Equipment:   return dataEquipment  (column);
+      case BtTreeItem::Type::Fermentable: return dataFermentable(column);
+      case BtTreeItem::Type::Hop:         return dataHop        (column);
+      case BtTreeItem::Type::Misc:        return dataMisc       (column);
+      case BtTreeItem::Type::Yeast:       return dataYeast      (column);
+      case BtTreeItem::Type::Style:       return dataStyle      (column);
+      case BtTreeItem::Type::BrewNote:    return dataBrewNote   (column);
+      case BtTreeItem::Type::Folder:      return dataFolder     (column);
+      case BtTreeItem::Type::Water:       return dataWater      (column);
       default:
          qWarning() << Q_FUNC_INFO << "Bad column:" << static_cast<int>(itemType);
          return QVariant();
@@ -180,7 +159,7 @@ int BtTreeItem::childNumber() const {
 }
 
 void BtTreeItem::setData(BtTreeItem::Type t, QObject * d) {
-   this->_thing = d;
+   this->m_thing = d;
    this->itemType = t;
 }
 
@@ -217,25 +196,25 @@ bool BtTreeItem::removeChildren(int position, int count) {
 }
 
 QVariant BtTreeItem::dataRecipe(int column) {
-   Recipe * recipe = qobject_cast<Recipe *>(_thing);
-   switch (column) {
-      case RECIPENAMECOL:
-         if (! _thing) {
+   Recipe * recipe = qobject_cast<Recipe *>(this->m_thing);
+   switch (static_cast<BtTreeItem::RecipeColumn>(column)) {
+      case BtTreeItem::RecipeColumn::Name:
+         if (!this->m_thing) {
             return QVariant(QObject::tr("Recipes"));
          } else {
             return QVariant(recipe->name());
          }
-      case RECIPEANCCOUNT:
+      case BtTreeItem::RecipeColumn::NumberOfAncestors:
          if (recipe) {
             return QVariant(recipe->ancestors().size());
          }
          break;
-      case RECIPEBREWDATECOL:
+      case BtTreeItem::RecipeColumn::BrewDate:
          if (recipe) {
             return Localization::displayDateUserFormated(recipe->date());
          }
          break;
-      case RECIPESTYLECOL:
+      case BtTreeItem::RecipeColumn::Style:
          if (recipe && recipe->style()) {
             return QVariant(recipe->style()->name());
          }
@@ -247,17 +226,17 @@ QVariant BtTreeItem::dataRecipe(int column) {
 }
 
 QVariant BtTreeItem::dataEquipment(int column) {
-   Equipment * kit = qobject_cast<Equipment *>(_thing);
-   switch (column) {
-      case EQUIPMENTNAMECOL:
+   Equipment * kit = qobject_cast<Equipment *>(this->m_thing);
+   switch (static_cast<BtTreeItem::EquipmentColumn>(column)) {
+      case BtTreeItem::EquipmentColumn::Name:
          if (! kit) {
             return QVariant(QObject::tr("Equipment"));
          } else {
             return QVariant(kit->name());
          }
-      case EQUIPMENTBOILTIMECOL:
+      case BtTreeItem::EquipmentColumn::BoilTime:
          if (kit) {
-            return QVariant(kit->boilTime_min());
+            return QVariant::fromValue(kit->boilTime_min());
          }
          break;
       default :
@@ -267,21 +246,21 @@ QVariant BtTreeItem::dataEquipment(int column) {
 }
 
 QVariant BtTreeItem::dataFermentable(int column) {
-   Fermentable * ferm = qobject_cast<Fermentable *>(this->_thing);
+   Fermentable * ferm = qobject_cast<Fermentable *>(this->m_thing);
 
-   switch (column) {
-      case FERMENTABLENAMECOL:
+   switch (static_cast<BtTreeItem::FermentableColumn>(column)) {
+      case BtTreeItem::FermentableColumn::Name:
          if (ferm) {
             return QVariant(ferm->name());
          } else {
             return QVariant(QObject::tr("Fermentables"));
          }
-      case FERMENTABLETYPECOL:
+      case BtTreeItem::FermentableColumn::Type:
          if (ferm) {
             return QVariant(Fermentable::typeDisplayNames[ferm->type()]);
          }
          break;
-      case FERMENTABLECOLORCOL:
+      case BtTreeItem::FermentableColumn::Color:
          if (ferm) {
             return QVariant(Measurement::displayAmount(Measurement::Amount{ferm->color_srm(),
                                                                            Measurement::Units::srm}, 0));
@@ -295,22 +274,27 @@ QVariant BtTreeItem::dataFermentable(int column) {
 }
 
 QVariant BtTreeItem::dataHop(int column) {
-   Hop * hop = qobject_cast<Hop *>(_thing);
-   switch (column) {
-      case HOPNAMECOL:
+   Hop * hop = qobject_cast<Hop *>(this->m_thing);
+   switch (static_cast<BtTreeItem::HopColumn>(column)) {
+      case BtTreeItem::HopColumn::Name:
          if (! hop) {
             return QVariant(QObject::tr("Hops"));
          } else {
             return QVariant(hop->name());
          }
-      case HOPFORMCOL:
+      case BtTreeItem::HopColumn::Form:
          if (hop) {
             return QVariant(Hop::formDisplayNames[hop->form()]);
          }
          break;
-      case HOPUSECOL:
+      case BtTreeItem::HopColumn::AlphaPct:
          if (hop) {
-            return QVariant(Hop::useDisplayNames[hop->use()]);
+            return QVariant(hop->alpha_pct());
+         }
+         break;
+      case BtTreeItem::HopColumn::Origin:
+         if (hop) {
+            return QVariant(hop->origin());
          }
          break;
       default :
@@ -320,25 +304,25 @@ QVariant BtTreeItem::dataHop(int column) {
 }
 
 QVariant BtTreeItem::dataMisc(int column) {
-   Misc * misc = qobject_cast<Misc *>(_thing);
-   switch (column) {
-      case MISCNAMECOL:
+   Misc * misc = qobject_cast<Misc *>(this->m_thing);
+   switch (static_cast<BtTreeItem::MiscColumn>(column)) {
+      case BtTreeItem::MiscColumn::Name:
          if (! misc) {
             return QVariant(QObject::tr("Miscellaneous"));
          } else {
             return QVariant(misc->name());
          }
-      case MISCTYPECOL:
+      case BtTreeItem::MiscColumn::Type:
          if (misc) {
             return QVariant(Misc::typeDisplayNames[misc->type()]);
          }
          break;
-      case MISCUSECOL:
-         if (misc) {
-            auto const use = misc->use();
-            return use ? QVariant(Misc::useDisplayNames[*use]) : "";
-         }
-         break;
+///      case MISCUSECOL:
+///         if (misc) {
+///            // Note that EnumStringMapping::operator[] already handles returning blank string for unset optional enums
+///            return QVariant(Misc::useDisplayNames[misc->use()]);
+///         }
+///         break;
       default :
          qWarning() << QString("BtTreeItem::dataMisc Bad column: %1").arg(column);
    }
@@ -346,22 +330,22 @@ QVariant BtTreeItem::dataMisc(int column) {
 }
 
 QVariant BtTreeItem::dataYeast(int column) {
-   Yeast * yeast = qobject_cast<Yeast *>(_thing);
-   switch (column) {
-      case YEASTNAMECOL:
+   Yeast * yeast = qobject_cast<Yeast *>(this->m_thing);
+   switch (static_cast<BtTreeItem::YeastColumn>(column)) {
+      case BtTreeItem::YeastColumn::Name:
          if (! yeast) {
             return QVariant(QObject::tr("Yeast"));
          } else {
             return QVariant(yeast->name());
          }
-      case YEASTTYPECOL:
+      case BtTreeItem::YeastColumn::Type:
          if (yeast) {
-            return QVariant(yeast->typeStringTr());
+            return QVariant(Yeast::typeDisplayNames[yeast->type()]);
          }
          break;
-      case YEASTFORMCOL:
+      case BtTreeItem::YeastColumn::Form:
          if (yeast) {
-            return QVariant(yeast->formStringTr());
+            return QVariant(Yeast::formDisplayNames[yeast->form()]);
          }
          break;
       default :
@@ -371,31 +355,32 @@ QVariant BtTreeItem::dataYeast(int column) {
 }
 
 QVariant BtTreeItem::dataBrewNote([[maybe_unused]] int column) {
-   if (!this->_thing) {
+   if (!this->m_thing) {
       return QVariant();
    }
 
-   BrewNote * bNote = qobject_cast<BrewNote *>(this->_thing);
+   BrewNote * bNote = qobject_cast<BrewNote *>(this->m_thing);
 
    return bNote->brewDate_short();
 }
 
 QVariant BtTreeItem::dataStyle(int column) {
-   Style * style = qobject_cast<Style *>(_thing);
+   Style * style = qobject_cast<Style *>(this->m_thing);
 
-   if (! style && column == STYLENAMECOL) {
+   if (! style && static_cast<BtTreeItem::StyleColumn>(column) == BtTreeItem::StyleColumn::Name) {
       return QVariant(QObject::tr("Style"));
-   } else if (style) {
-      switch (column) {
-         case STYLENAMECOL:
+   }
+   if (style) {
+      switch (static_cast<BtTreeItem::StyleColumn>(column)) {
+         case BtTreeItem::StyleColumn::Name:
             return QVariant(style->name());
-         case STYLECATEGORYCOL:
+         case BtTreeItem::StyleColumn::Category:
             return QVariant(style->category());
-         case STYLENUMBERCOL:
+         case BtTreeItem::StyleColumn::CategoryNumber:
             return QVariant(style->categoryNumber());
-         case STYLELETTERCOL:
+         case BtTreeItem::StyleColumn::CategoryLetter:
             return QVariant(style->styleLetter());
-         case STYLEGUIDECOL:
+         case BtTreeItem::StyleColumn::StyleGuide:
             return QVariant(style->styleGuide());
          default :
             qWarning() << QString("BtTreeItem::dataStyle Bad column: %1").arg(column);
@@ -405,16 +390,17 @@ QVariant BtTreeItem::dataStyle(int column) {
 }
 
 QVariant BtTreeItem::dataFolder(int column) {
-   BtFolder * folder = qobject_cast<BtFolder *>(_thing);
+   BtFolder * folder = qobject_cast<BtFolder *>(this->m_thing);
 
 
-   if (! folder && column == FOLDERNAMECOL) {
+   if (! folder && static_cast<BtTreeItem::FolderColumn>(column) == BtTreeItem::FolderColumn::Name) {
       return QVariant(QObject::tr("Folder"));
    }
 
    if (! folder) {
       return QVariant(QObject::tr("Folder"));
-   } else if (column == FOLDERNAMECOL) {
+   }
+   if (static_cast<BtTreeItem::FolderColumn>(column) == BtTreeItem::FolderColumn::Name) {
       return QVariant(folder->name());
    }
 
@@ -422,27 +408,28 @@ QVariant BtTreeItem::dataFolder(int column) {
 }
 
 QVariant BtTreeItem::dataWater(int column) {
-   Water * water = qobject_cast<Water *>(_thing);
+   Water * water = qobject_cast<Water *>(this->m_thing);
 
-   if (water == nullptr && column == WATERNAMECOL) {
+   if (water == nullptr && static_cast<BtTreeItem::WaterColumn>(column) == BtTreeItem::WaterColumn::Name) {
       return QVariant(QObject::tr("Water"));
-   } else if (water) {
-      switch (column) {
-         case WATERNAMECOL:
+   }
+   if (water) {
+      switch (static_cast<BtTreeItem::WaterColumn>(column)) {
+         case BtTreeItem::WaterColumn::Name:
             return QVariant(water->name());
-         case WATERCACOL:
+         case BtTreeItem::WaterColumn::Calcium:
             return QVariant(water->calcium_ppm());
-         case WATERHCO3COL:
+         case BtTreeItem::WaterColumn::Bicarbonate:
             return QVariant(water->bicarbonate_ppm());
-         case WATERSO4COL:
+         case BtTreeItem::WaterColumn::Sulfate:
             return QVariant(water->sulfate_ppm());
-         case WATERCLCOL:
+         case BtTreeItem::WaterColumn::Chloride:
             return QVariant(water->chloride_ppm());
-         case WATERNACOL:
+         case BtTreeItem::WaterColumn::Sodium:
             return QVariant(water->sodium_ppm());
-         case WATERMGCOL:
+         case BtTreeItem::WaterColumn::Magnesium:
             return QVariant(water->magnesium_ppm());
-         case WATERpHCOL:
+         case BtTreeItem::WaterColumn::pH:
             return QVariant(water->ph());
          default :
             qWarning() << QString("BtTreeItem::dataWater Bad column: %1").arg(column);
@@ -455,8 +442,8 @@ QVariant BtTreeItem::dataWater(int column) {
 
 template<class T>
 T * BtTreeItem::getData() {
-   if (this->itemType == BtTreeItem::typeOf<T>() && this->_thing) {
-      return qobject_cast<T *>(this->_thing);
+   if (this->itemType == BtTreeItem::typeOf<T>() && this->m_thing) {
+      return qobject_cast<T *>(this->m_thing);
    }
 
    return nullptr;
@@ -476,8 +463,8 @@ template BtFolder    * BtTreeItem::getData<BtFolder   >();
 template Water       * BtTreeItem::getData<Water      >();
 
 NamedEntity * BtTreeItem::thing() {
-   if (_thing) {
-      return qobject_cast<NamedEntity *>(_thing);
+   if (m_thing) {
+      return qobject_cast<NamedEntity *>(this->m_thing);
    }
 
    return nullptr;
@@ -485,10 +472,10 @@ NamedEntity * BtTreeItem::thing() {
 
 QString BtTreeItem::name() {
    NamedEntity * tmp;
-   if (! _thing) {
+   if (! m_thing) {
       return QString();
    }
-   tmp = qobject_cast<NamedEntity *>(_thing);
+   tmp = qobject_cast<NamedEntity *>(this->m_thing);
    return tmp->name();
 }
 

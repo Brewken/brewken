@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedParameterBundle.cpp is part of Brewken, and is copyright the following authors 2021-2022:
+ * model/NamedParameterBundle.cpp is part of Brewken, and is copyright the following authors 2021-2023:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -26,39 +26,87 @@
 #include <QTextStream>
 
 NamedParameterBundle::NamedParameterBundle(NamedParameterBundle::OperationMode mode) :
-   QHash<QString, QVariant>(),
-   mode{mode} {
+   m_parameters{},
+   m_mode{mode},
+   m_containedBundles{} {
    return;
 }
 
 NamedParameterBundle::~NamedParameterBundle() = default;
 
-NamedParameterBundle::iterator NamedParameterBundle::insert(BtStringConst const & parameterName,
-                                                            QVariant const & value) {
-   return this->QHash<QString, QVariant>::insert(QString{*parameterName}, value);
+void NamedParameterBundle::insert(BtStringConst const & propertyName, QVariant const & value) {
+   // std::map and std::unordered_map both need an extra set of braces on the call to insert, as we're actually passing
+   // in one parameter (std::pair) rather than two.
+   this->m_parameters.insert({QString{*propertyName}, value});
+   return;
 }
 
-bool NamedParameterBundle::contains(BtStringConst const & parameterName) const {
-   return this->QHash<QString, QVariant>::contains(*parameterName);
+void NamedParameterBundle::insert(PropertyPath const & propertyPath, QVariant const & value) {
+   NamedParameterBundle * bundle = this;
+   auto const & properties = propertyPath.properties();
+   for (auto const property : properties) {
+      if (property == properties.last()) {
+         bundle->insert(*property, value);
+      }
+      // Here, operator[]() silently inserts an item into bundle->m_containedBundles if no item exists with the same
+      // key, which is exactly the behaviour we want, and hence why we don't explicitly need to call insert elsewhere on
+      // this member variable.
+      //
+      // Note that property is pointer to BtStringConst, so we need one '*' to dereference it and another to extract the
+      // wrapped string.
+      bundle = &bundle->m_containedBundles[**property];
+   }
+   return;
 }
 
+bool NamedParameterBundle::contains(BtStringConst const & propertyName) const {
+   return this->m_parameters.contains(*propertyName);
+}
 
-QVariant NamedParameterBundle::get(BtStringConst const & parameterName) const {
-   if (!this->contains(*parameterName)) {
-      QString errorMessage = QString("No value supplied for required parameter, %1.").arg(*parameterName);
+bool NamedParameterBundle::contains(PropertyPath const & propertyPath) const {
+   NamedParameterBundle const * bundle = this;
+   auto const & properties = propertyPath.properties();
+   for (auto const property : properties) {
+      if (property == properties.last()) {
+         return bundle->contains(*property);
+      }
+      if (!bundle->m_containedBundles.contains(**property)) {
+         return false;
+      }
+      bundle = &bundle->m_containedBundles.at(**property);
+   }
+   // This should actually be unreachable
+   return false;
+}
+
+std::size_t NamedParameterBundle::size() const noexcept {
+   //
+   // This function is only used for logging, so, for simplicitly, we'll count each contained bundle as 1, rather than
+   // by the number of parameters it contains.
+   //
+   return this->m_parameters.size() + this->m_containedBundles.size();
+}
+
+bool NamedParameterBundle::isEmpty() const {
+   return this->m_parameters.empty() && this->m_containedBundles.empty();
+}
+
+QVariant NamedParameterBundle::get(BtStringConst const & propertyName) const {
+   if (!this->m_parameters.contains(*propertyName)) {
+      QString errorMessage = QString("No value supplied for required parameter, %1.").arg(*propertyName);
       QTextStream errorMessageAsStream(&errorMessage);
       errorMessageAsStream << "  (Parameters in this bundle are ";
       bool wroteFirst = false;
-      for (auto ii = this->constBegin(); ii != this->constEnd(); ++ii) {
+      for (auto const & [key, value] : this->m_parameters) {
          if (!wroteFirst) {
             wroteFirst = true;
          } else {
             errorMessageAsStream << ", ";
          }
-         errorMessageAsStream << ii.key();
+         errorMessageAsStream << key;
       }
       errorMessageAsStream << ")";
-      if (this->mode == NamedParameterBundle::Strict) {
+      if (this->m_mode == NamedParameterBundle::Strict) {
          //
          // We want to throw an exception here because it's a lot less code than checking a return value on every call
          // and, usually, missing required parameter is a coding error.
@@ -81,15 +129,24 @@ QVariant NamedParameterBundle::get(BtStringConst const & parameterName) const {
       qInfo() << Q_FUNC_INFO << errorMessage << ", so using generic default";
       return QVariant{};
    }
-   QVariant returnValue = this->value(*parameterName);
+   QVariant returnValue = this->m_parameters.at(*propertyName);
    if (!returnValue.isValid()) {
       QString errorMessage =
-         QString{"Invalid value (%1) supplied for required parameter, %2"}.arg(returnValue.toString(), *parameterName);
+         QString{"Invalid value (%1) supplied for required parameter, %2"}.arg(returnValue.toString(), *propertyName);
       qCritical() << Q_FUNC_INFO << errorMessage;
       throw std::invalid_argument(errorMessage.toStdString());
    }
    return returnValue;
 }
+
+bool NamedParameterBundle::containsBundle(BtStringConst const & propertyName) const {
+   return this->m_containedBundles.contains(*propertyName);
+}
+
+NamedParameterBundle const & NamedParameterBundle::getBundle(BtStringConst const & propertyName) const {
+   return this->m_containedBundles.at(*propertyName);
+}
+
 
 template<class S>
 S & operator<<(S & stream, NamedParameterBundle const & namedParameterBundle);
@@ -101,18 +158,11 @@ template<class S>
 S & operator<<(S & stream, NamedParameterBundle const & namedParameterBundle) {
    stream << namedParameterBundle.size() << "element NamedParameterBundle @" <<
    static_cast<void const *>(&namedParameterBundle) << " {";
-   // QHash::constKeyValueBegin() and similar functions were not introduced until Qt 5.10, and
-   // QKeyValueIterator::operator->() was not introduced until Qt 5.15.  For the moment, we are still supporting
-   // Qt 5.9.5, so we need to do things differently for that.
-#if QT_VERSION < QT_VERSION_CHECK(5,15,0)
-   for (auto ii = namedParameterBundle.cbegin(); ii != namedParameterBundle.cend(); ++ii) {
-      stream << ii.key() << "->" << ii.value().toString() << " ";
+
+   for (auto const & [key, value] : namedParameterBundle.m_parameters) {
+      stream << key << "->" << value.typeName() << ":" << value.toString() << " ";
    }
-#else
-   for (auto ii = namedParameterBundle.constKeyValueBegin(); ii != namedParameterBundle.constKeyValueEnd(); ++ii) {
-      stream << ii->first << "->" << ii->second.toString() << " ";
-   }
-#endif
+
    stream << "}";
    return stream;
 }

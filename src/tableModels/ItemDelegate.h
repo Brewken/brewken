@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tableModels/ItemDelegate.h is part of Brewken, and is copyright the following authors 2023:
+ * tableModels/ItemDelegate.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -23,6 +23,41 @@
 #include "utils/NoCopy.h"
 #include "widgets/BtBoolComboBox.h"
 #include "widgets/BtComboBox.h"
+#include "tableModels/BtTableModel.h"
+
+namespace {
+   /**
+    * Sets a combo box value from model data
+    */
+   template<class CB, typename T>
+   void setComboBoxValue(CB * comboBox, TypeInfo const & typeInfo, QVariant & modelData) {
+      if (typeInfo.isOptional()) {
+         bool hasValue = false;
+         Optional::removeOptionalWrapper<T>(modelData, &hasValue);
+         if (!hasValue) {
+            comboBox->setNull();
+            return;
+         }
+      }
+      comboBox->setValue(modelData.value<T>());
+      return;
+   }
+
+   QVariant getComboBoxValue(BtComboBox * comboBox, TypeInfo const & typeInfo) {
+      if (typeInfo.isOptional()) {
+         return QVariant::fromValue(comboBox->getOptIntValue());
+      }
+      return QVariant::fromValue(comboBox->getNonOptIntValue());
+   }
+
+   QVariant getComboBoxValue(BtBoolComboBox * comboBox, TypeInfo const & typeInfo) {
+      if (typeInfo.isOptional()) {
+         return QVariant::fromValue(comboBox->getOptBoolValue());
+      }
+      return QVariant::fromValue(comboBox->getNonOptBoolValue());
+   }
+
+}
 
 /**
  * \class ItemDelegate
@@ -69,12 +104,14 @@ private:
       // https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0634r3.html is implemented.
       auto const columnIndex = static_cast<typename NeTableModel::ColumnIndex>(index.column());
       //
-      // In theory we can get `QAbstractItemModel const *` from `index.model()` and downcast it via QAbstractTableModel
-      // to NeTableModel (ie HopTableModel, FermentableTableModel, etc).  In practice, this is a bit painful, eg
-      // qobject_cast will return nullptr because it cannot handle the multiple inheritance of the HopTableModel etc
-      // classes, and there are problems with using other casts that I didn't get to the bottom of.  Since the table
-      // model is known at object construction time, and is not going to change, it's simpler and safer to just grab it
-      // in the constructor.
+      // Although we can get `QAbstractItemModel const *` from `index.model()`, this is an NeSortFilterProxyModel
+      // (HopSortFilterProxyModel, FermentableSortFilterProxyModel, etc) rather than NeTableModel (ie HopTableModel,
+      // FermentableTableModel, etc).  (The NeTableModel keeps rows in an arbitrary
+      // order, and NeSortFilterProxyModel / QSortFilterProxyModel sits on top of it to do the mapping between "base"
+      // order and "sorted" order depending on which column is being used for sorting and whether its an ascending or
+      // descending sort.)
+      //
+      // So, for the purposes of getting column info, we need to grab a pointer to the NeTableModel in the constructor.
       //
       BtTableModel::ColumnInfo const & columnInfo = m_tableModel.get_ColumnInfo(columnIndex);
       Q_ASSERT(index.column() >= 0);
@@ -117,6 +154,7 @@ public:
          }
 
          if (fieldType == NonPhysicalQuantity::Bool) {
+            // It's a coding error if there isn't a BoolInfo structure for a bool field
             Q_ASSERT(columnInfo.extras);
             Q_ASSERT(std::holds_alternative<BtTableModel::BoolInfo>(*columnInfo.extras));
             BtTableModel::BoolInfo const & boolInfo = std::get<BtTableModel::BoolInfo>(*columnInfo.extras);
@@ -134,7 +172,31 @@ public:
 
             return boolComboBox;
          }
+      } else if (std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*typeInfo.fieldType) &&
+                 columnInfo.extras &&
+                 std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*columnInfo.extras)) {
+         //
+         // Where we have an editable amount that can be more than one physical quantity -- eg mass or volume -- we want
+         // a combo box to allow the user to select the physical quantity.  This is a bit tricky as such a selector does
+         // not have its own property.  Rather than over-generalise the BtTableModel::ColumnInfo structure to
+         // accommodate a new type of column, we adopt a convention that the selector column shares the same property as
+         // the amount column, but has the Measurement::ChoiceOfPhysicalQuantity value (instead of, typically, a
+         // PrecisionInfo) in the extras field.
+         //
+         auto const validMeasures = std::get<Measurement::ChoiceOfPhysicalQuantity>(*columnInfo.extras);
+         BtComboBox * comboBox = new BtComboBox(parent);
+         comboBox->init(columnInfo.tableModelName,
+                        columnInfo.columnName,
+                        columnInfo.columnFqName,
+                        Measurement::physicalQuantityStringMapping,
+                        Measurement::physicalQuantityDisplayNames,
+                        typeInfo,
+                        &Measurement::allPossibilitiesAsInt(validMeasures));
+         comboBox->setMinimumWidth(comboBox->minimumSizeHint().width());
+         comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+         comboBox->setFocusPolicy(Qt::StrongFocus);
 
+         return comboBox;
       }
 
       return new QLineEdit(parent);
@@ -150,41 +212,35 @@ public:
       BtTableModel::ColumnInfo const & columnInfo = this->getColumnInfo(index);
       TypeInfo const & typeInfo = columnInfo.typeInfo;
 
+      // Note that we need index.model(), not m_tableModel, as the former (eg a an HopSortFilterProxyModel) adds sorting
+      // to the latter (eg HopTableModel).
+      QAbstractItemModel const * model = index.model();
       // Because index is a run-time value, we need to pull the model data out in a QVariant.  We can use the Qt
       // Property system as we do elsewhere.
-      QVariant modelData = m_tableModel.data(index, Qt::EditRole);
+      QVariant modelData = model->data(index, Qt::EditRole);
 
       if (std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType)) {
          auto const fieldType = std::get<NonPhysicalQuantity>(*typeInfo.fieldType);
 
          if (fieldType == NonPhysicalQuantity::Enum) {
             BtComboBox * comboBox = qobject_cast<BtComboBox *>(editor);
-            if (typeInfo.isOptional()) {
-               bool hasValue = false;
-               Optional::removeOptionalWrapper<int>(modelData, &hasValue);
-               if (!hasValue) {
-                  comboBox->setNull();
-                  return;
-               }
-            }
-            comboBox->setValue(modelData.toInt());
-
+            setComboBoxValue<BtComboBox, int>(comboBox, typeInfo, modelData);
             return;
          }
 
          if (fieldType == NonPhysicalQuantity::Bool) {
             BtBoolComboBox * boolComboBox = qobject_cast<BtBoolComboBox *>(editor);
-            if (typeInfo.isOptional()) {
-               bool hasValue = false;
-               Optional::removeOptionalWrapper<bool>(modelData, &hasValue);
-               if (!hasValue) {
-                  boolComboBox->setNull();
-                  return;
-               }
-            }
-            boolComboBox->setValue(modelData.toBool());
+            setComboBoxValue<BtBoolComboBox, bool>(boolComboBox, typeInfo, modelData);
             return;
          }
+      } else if (std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*typeInfo.fieldType) &&
+                 columnInfo.extras &&
+                 std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*columnInfo.extras)) {
+         // Selector for editable amount that can be more than one physical quantity.  (See comment above in
+         // getEditWidget() for more details.)
+         BtComboBox * comboBox = qobject_cast<BtComboBox *>(editor);
+         setComboBoxValue<BtComboBox, int>(comboBox, typeInfo, modelData);
+         return;
       }
 
       // For everything else, TableModelBase::readDataFromModel (called from HopTableModel::data,
@@ -199,6 +255,13 @@ public:
    /**
     * \brief Subclass should call this from its override of \c QItemDelegate::setModelData.
     *        Gets data from the editor widget and stores it in the specified model at the item index.
+    *
+    * \param editor
+    * \param model This is needed on this function (and \c QItemDelegate::setModelData etc) because the function needs
+    *              to be able to modify the model, so the \b \c const pointer to \c QAbstractItemModel returned from
+    *              \c index.model() (which is what is used in \c readDataFromModel / \c QItemDelegate::setEditorData) is
+    *              not sufficient.
+    * \param index
     */
    void writeDataToModel(QWidget * editor,
                          QAbstractItemModel * model,
@@ -214,21 +277,13 @@ public:
 
          if (fieldType == NonPhysicalQuantity::Enum) {
             BtComboBox * comboBox = qobject_cast<BtComboBox *>(editor);
-            if (typeInfo.isOptional()) {
-               model->setData(index, QVariant::fromValue(comboBox->getOptIntValue()), Qt::EditRole);
-            } else {
-               model->setData(index, QVariant::fromValue(comboBox->getNonOptIntValue()), Qt::EditRole);
-            }
+            model->setData(index, getComboBoxValue(comboBox, typeInfo), Qt::EditRole);
             return;
          }
 
          if (fieldType == NonPhysicalQuantity::Bool) {
             BtBoolComboBox * boolComboBox = qobject_cast<BtBoolComboBox *>(editor);
-            if (typeInfo.isOptional()) {
-               model->setData(index, QVariant::fromValue(boolComboBox->getOptBoolValue()), Qt::EditRole);
-            } else {
-               model->setData(index, QVariant::fromValue(boolComboBox->getNonOptBoolValue()), Qt::EditRole);
-            }
+            model->setData(index, getComboBoxValue(boolComboBox, typeInfo), Qt::EditRole);
             return;
          }
 
@@ -247,6 +302,14 @@ public:
          } else {
             model->setData(index, rawValue, Qt::EditRole);
          }
+         return;
+      } else if (std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*typeInfo.fieldType) &&
+                 columnInfo.extras &&
+                 std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*columnInfo.extras)) {
+         // Selector for editable amount that can be more than one physical quantity.  (See comment above in
+         // getEditWidget() for more details.)
+         BtComboBox * comboBox = qobject_cast<BtComboBox *>(editor);
+         model->setData(index, getComboBoxValue(comboBox, typeInfo), Qt::EditRole);
          return;
       }
 

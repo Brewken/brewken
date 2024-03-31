@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * RecipeExtrasWidget.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * RecipeExtrasWidget.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -40,7 +40,7 @@ class RecipeExtrasWidget : public QWidget, public Ui::recipeExtrasWidget {
 
 public:
    RecipeExtrasWidget(QWidget* parent = nullptr);
-   virtual ~RecipeExtrasWidget() = default;
+   virtual ~RecipeExtrasWidget();
    //! \brief Set the recipe to view/edit.
    void setRecipe(Recipe* rec);
 
@@ -48,12 +48,12 @@ private slots:
    void updateBrewer();
    void updateBrewerAsst();
    void updateTasteRating();
-   void updatePrimaryAge();
-   void updatePrimaryTemp();
-   void updateSecondaryAge();
-   void updateSecondaryTemp();
-   void updateTertiaryAge();
-   void updateTertiaryTemp();
+///   void updatePrimaryAge();
+///   void updatePrimaryTemp();
+///   void updateSecondaryAge();
+///   void updateSecondaryTemp();
+///   void updateTertiaryAge();
+///   void updateTertiaryTemp();
    void updateAge();
    void updateAgeTemp();
    void updateDate(const QDate &date = QDate());

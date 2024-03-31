@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * ScaleRecipeTool.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * ScaleRecipeTool.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -21,7 +21,9 @@
 #include <QMessageBox>
 #include <QButtonGroup>
 
-#include "EquipmentListModel.h"
+#include "database/ObjectStoreWrapper.h"
+#include "listModels/EquipmentListModel.h"
+#include "model/Boil.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
@@ -29,6 +31,11 @@
 #include "model/MashStep.h"
 #include "model/Misc.h"
 #include "model/Recipe.h"
+#include "model/RecipeAdditionFermentable.h"
+#include "model/RecipeAdditionHop.h"
+#include "model/RecipeAdditionMisc.h"
+#include "model/RecipeAdditionYeast.h"
+#include "model/RecipeUseOfWater.h"
 #include "model/Water.h"
 #include "model/Yeast.h"
 #include "NamedEntitySortProxyModel.h"
@@ -36,8 +43,7 @@
 ScaleRecipeTool::ScaleRecipeTool(QWidget* parent) :
    QWizard(parent),
    equipListModel(new EquipmentListModel(this)),
-   equipSortProxyModel(new NamedEntitySortProxyModel(equipListModel))
-{
+   equipSortProxyModel(new NamedEntitySortProxyModel(equipListModel)) {
    addPage(new ScaleRecipeIntroPage);
    addPage(new ScaleRecipeEquipmentPage(equipSortProxyModel));
    return;
@@ -57,62 +63,68 @@ void ScaleRecipeTool::accept() {
 }
 
 void ScaleRecipeTool::setRecipe(Recipe* rec) {
-   recObs = rec;
+   this->recObs = rec;
    return;
 }
 
 void ScaleRecipeTool::scale(Equipment* equip, double newEff) {
-   if (!this->recObs || !equip ) {
+   if (!this->recObs || !equip) {
       return;
    }
 
+   auto equipment = ObjectStoreWrapper::getSharedFromRaw(equip);
+
    // Calculate volume ratio
    double currentBatchSize_l = recObs->batchSize_l();
-   double newBatchSize_l = equip->batchSize_l();
+   double newBatchSize_l = equipment->fermenterBatchSize_l();
    double volRatio = newBatchSize_l / currentBatchSize_l;
 
    // Calculate efficiency ratio
    double oldEfficiency = recObs->efficiency_pct();
    double effRatio = oldEfficiency / newEff;
 
-   this->recObs->setEquipment(equip);
+   this->recObs->setEquipment(equipment);
    this->recObs->setBatchSize_l(newBatchSize_l);
-   this->recObs->setBoilSize_l(equip->boilSize_l());
+   this->recObs->nonOptBoil()->setPreBoilSize_l(equipment->kettleBoilSize_l());
    this->recObs->setEfficiency_pct(newEff);
-   this->recObs->setBoilTime_min(equip->boilTime_min());
+   if (this->recObs->boil()) {
+      this->recObs->boil()->setBoilTime_mins(equipment->boilTime_min().value_or(Equipment::default_boilTime_mins));
+   }
 
-   for (auto ferm : this->recObs->fermentables()) {
+   for (auto fermAddition : this->recObs->fermentableAdditions()) {
       // We assume volumes and masses get scaled the same way
-      if (!ferm->isSugar() && !ferm->isExtract()) {
-         ferm->setAmount(ferm->amount() * effRatio * volRatio);
+      if (!fermAddition->fermentable()->isSugar() && !fermAddition->fermentable()->isExtract()) {
+         fermAddition->setQuantity(fermAddition->quantity() * effRatio * volRatio);
       } else {
-         ferm->setAmount(ferm->amount() * volRatio);
+         fermAddition->setQuantity(fermAddition->quantity() * volRatio);
       }
    }
 
-   for (auto hop : this->recObs->hops()) {
-      hop->setAmount_kg(hop->amount_kg() * volRatio);
+   for (auto hopAddition : this->recObs->hopAdditions()) {
+      // We assume volumes and masses get scaled the same way
+      hopAddition->setQuantity(hopAddition->quantity() * volRatio);
    }
 
-   for (auto misc : this->recObs->miscs()) {
-      misc->setAmount( misc->amount() * volRatio);
+   for (auto miscAddition : this->recObs->miscAdditions()) {
+      // We assume volumes and masses get scaled the same way
+      miscAddition->setQuantity(miscAddition->quantity() * volRatio);
    }
 
-   for (auto water : this->recObs->waters()) {
-      water->setAmount(water->amount() * volRatio);
+   for (auto waterUse : this->recObs->waterUses()) {
+      waterUse->setVolume_l(waterUse->volume_l() * volRatio);
    }
 
-   Mash* mash = this->recObs->mash();
+   auto mash = this->recObs->mash();
    if (mash) {
+      // Reset all these to zero so that the user
+      // will know to re-run the mash wizard.
       for (auto step : mash->mashSteps()) {
-         // Reset all these to zero so that the user
-         // will know to re-run the mash wizard.
-         step->setDecoctionAmount_l(0);
-         step->setInfuseAmount_l(0);
+         step->setAmount_l(0);
       }
    }
 
-   // I don't think I should scale the yeasts.
+   // TBD: For now we don't scale the yeasts, but it might be good to give the option on this if user is doing a big
+   //      scale-up or down.
 
    // Let the user know what happened.
    QMessageBox::information(this,
@@ -151,6 +163,14 @@ void ScaleRecipeIntroPage::retranslateUi() {
    return;
 }
 
+void ScaleRecipeIntroPage::changeEvent(QEvent* event) {
+   if(event->type() == QEvent::LanguageChange) {
+      retranslateUi();
+   }
+   QWidget::changeEvent(event);
+   return;
+}
+
 // ScaleRecipeEquipmentPage ===================================================
 
 ScaleRecipeEquipmentPage::ScaleRecipeEquipmentPage(QAbstractItemModel* listModel, QWidget* parent) :
@@ -186,5 +206,13 @@ void ScaleRecipeEquipmentPage::retranslateUi() {
 
    equipLabel->setText(tr("New Equipment"));
    effLabel->setText(tr("New Efficiency (%)"));
+   return;
+}
+
+void ScaleRecipeEquipmentPage::changeEvent(QEvent* event) {
+   if(event->type() == QEvent::LanguageChange) {
+      retranslateUi();
+   }
+   QWidget::changeEvent(event);
    return;
 }

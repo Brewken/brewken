@@ -90,8 +90,7 @@ namespace {
       for (auto unitSystem : unitSystems) {
          if (selection == unitSystem->uniqueName) {
             qDebug() <<
-               Q_FUNC_INFO << "Setting UnitSystem for" << Measurement::getDisplayName(physicalQuantity) << "to" <<
-               unitSystem->uniqueName;
+               Q_FUNC_INFO << "Setting UnitSystem for" << physicalQuantity << "to" << unitSystem->uniqueName;
             Measurement::setDisplayUnitSystem(physicalQuantity, *unitSystem);
             return true;
          }
@@ -99,7 +98,7 @@ namespace {
 
       qWarning() <<
          Q_FUNC_INFO << "Unable to interpret value " << selection << "of" << comboBoxName << "as UnitSystem name for" <<
-         Measurement::getDisplayName(physicalQuantity);
+         physicalQuantity;
       return false;
    }
 

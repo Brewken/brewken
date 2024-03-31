@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/WaterEditor.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * editors/WaterEditor.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
@@ -57,13 +57,21 @@ WaterEditor::WaterEditor(QWidget *parent,
                                                      pimpl{std::make_unique<impl>(editorName)} {
    setupUi(this);
 
-   SMART_FIELD_INIT(WaterEditor, label_ca , lineEdit_ca , Water, PropertyNames::Water::calcium_ppm  , 2);
-   SMART_FIELD_INIT(WaterEditor, label_cl , lineEdit_cl , Water, PropertyNames::Water::chloride_ppm , 2);
-   SMART_FIELD_INIT(WaterEditor, label_mg , lineEdit_mg , Water, PropertyNames::Water::magnesium_ppm, 2);
-   SMART_FIELD_INIT(WaterEditor, label_so4, lineEdit_so4, Water, PropertyNames::Water::sulfate_ppm  , 2);
-   SMART_FIELD_INIT(WaterEditor, label_na , lineEdit_na , Water, PropertyNames::Water::sodium_ppm   , 2);
-   SMART_FIELD_INIT(WaterEditor, label_alk, lineEdit_alk, Water, PropertyNames::Water::alkalinity   , 2);
-   SMART_FIELD_INIT(WaterEditor, label_pH , lineEdit_ph , Water, PropertyNames::Water::ph           , 2);
+   SMART_FIELD_INIT(WaterEditor, label_ca       , lineEdit_ca       , Water, PropertyNames::Water::calcium_ppm   , 2);
+   SMART_FIELD_INIT(WaterEditor, label_cl       , lineEdit_cl       , Water, PropertyNames::Water::chloride_ppm  , 2);
+   SMART_FIELD_INIT(WaterEditor, label_mg       , lineEdit_mg       , Water, PropertyNames::Water::magnesium_ppm , 2);
+   SMART_FIELD_INIT(WaterEditor, label_so4      , lineEdit_so4      , Water, PropertyNames::Water::sulfate_ppm   , 2);
+   SMART_FIELD_INIT(WaterEditor, label_na       , lineEdit_na       , Water, PropertyNames::Water::sodium_ppm    , 2);
+   SMART_FIELD_INIT(WaterEditor, label_alk      , lineEdit_alk      , Water, PropertyNames::Water::alkalinity_ppm, 2);
+   SMART_FIELD_INIT(WaterEditor, label_pH       , lineEdit_ph       , Water, PropertyNames::Water::ph            , 2);
+   // TODO: Finish adding extra fields below!
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+//   SMART_FIELD_INIT(WaterEditor, label_carbonate, lineEdit_carbonate, Water, PropertyNames::Water::carbonate_ppm , 2);
+//   SMART_FIELD_INIT(WaterEditor, label_potassium, lineEdit_potassium, Water, PropertyNames::Water::potassium_ppm , 2);
+//   SMART_FIELD_INIT(WaterEditor, label_iron     , lineEdit_iron     , Water, PropertyNames::Water::iron_ppm      , 2);
+//   SMART_FIELD_INIT(WaterEditor, label_nitrate  , lineEdit_nitrate  , Water, PropertyNames::Water::nitrate_ppm   , 2);
+//   SMART_FIELD_INIT(WaterEditor, label_nitrite  , lineEdit_nitrite  , Water, PropertyNames::Water::nitrite_ppm   , 2);
+//   SMART_FIELD_INIT(WaterEditor, label_flouride , lineEdit_flouride , Water, PropertyNames::Water::flouride_ppm  , 2);
 
    // .:TBD:. The QLineEdit::textEdited and QPlainTextEdit::textChanged signals below are sent somewhat more frequently
    // than we really need - ie every time you type a character in the name or notes field.  We should perhaps look at
@@ -85,12 +93,12 @@ WaterEditor::WaterEditor(QWidget *parent,
       tr("PPM"),
       50,
       {
-         {PropertyNames::Water::calcium_ppm,     tr("Calcium")},
+         {PropertyNames::Water::calcium_ppm,     tr("Calcium"    )},
          {PropertyNames::Water::bicarbonate_ppm, tr("Bicarbonate")},
-         {PropertyNames::Water::sulfate_ppm,     tr("Sulfate")},
-         {PropertyNames::Water::chloride_ppm,    tr("Chloride")},
-         {PropertyNames::Water::sodium_ppm,      tr("Sodium")},
-         {PropertyNames::Water::magnesium_ppm,   tr("Magnesium")}
+         {PropertyNames::Water::sulfate_ppm,     tr("Sulfate"    )},
+         {PropertyNames::Water::chloride_ppm,    tr("Chloride"   )},
+         {PropertyNames::Water::sodium_ppm,      tr("Sodium"     )},
+         {PropertyNames::Water::magnesium_ppm,   tr("Magnesium"  )}
       }
    );
 
@@ -114,7 +122,7 @@ WaterEditor::~WaterEditor() {
    return;
 }
 
-void WaterEditor::setWater(std::optional<std::shared_ptr<Water>> water) {
+void WaterEditor::setWater(std::shared_ptr<Water> water) {
 
    if (this->pimpl->observedWater) {
       qDebug() <<
@@ -126,7 +134,7 @@ void WaterEditor::setWater(std::optional<std::shared_ptr<Water>> water) {
    }
 
    if (water) {
-      this->pimpl->observedWater = water.value();
+      this->pimpl->observedWater = water;
       qDebug() <<
          Q_FUNC_INFO << this->pimpl->editorName << ": Now observing" << this->pimpl->observedWater->name() <<
          "#" << this->pimpl->observedWater->key() << " @" << static_cast<void *>(this->pimpl->observedWater.get()) <<
@@ -136,7 +144,7 @@ void WaterEditor::setWater(std::optional<std::shared_ptr<Water>> water) {
 
       // Make a copy of the Water object we are observing
       this->pimpl->editedWater = std::make_unique<Water>(*this->pimpl->observedWater);
-      this->pimpl->editedWater->setAmount(0.0);
+///      this->pimpl->editedWater->setAmount(0.0);
       this->waterEditRadarChart->addSeries(tr("Modified"), Qt::green, *this->pimpl->editedWater);
 
       this->showChanges();
@@ -184,20 +192,27 @@ void WaterEditor::showChanges(QMetaProperty const * prop) {
       qDebug() << Q_FUNC_INFO << this->pimpl->editorName << ": Changed" << propName;
    }
 
-   if (updateAll || propName == PropertyNames::NamedEntity::name      ) { this->lineEdit_name->setText  (this->pimpl->observedWater->name()           ); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Water::calcium_ppm     ) { this->lineEdit_ca  ->setAmount(this->pimpl->observedWater->calcium_ppm()    ); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Water::magnesium_ppm   ) { this->lineEdit_mg  ->setAmount(this->pimpl->observedWater->magnesium_ppm()  ); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Water::sulfate_ppm     ) { this->lineEdit_so4 ->setAmount(this->pimpl->observedWater->sulfate_ppm()    ); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Water::sodium_ppm      ) { this->lineEdit_na  ->setAmount(this->pimpl->observedWater->sodium_ppm()     ); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Water::chloride_ppm    ) { this->lineEdit_cl  ->setAmount(this->pimpl->observedWater->chloride_ppm()   ); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Water::bicarbonate_ppm ) { this->lineEdit_alk ->setAmount(this->pimpl->observedWater->bicarbonate_ppm()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Water::ph              ) { this->lineEdit_ph  ->setAmount(this->pimpl->observedWater->ph()             ); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::NamedEntity::name      ) { this->lineEdit_name->setText    (this->pimpl->observedWater->name           ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::calcium_ppm     ) { this->lineEdit_ca  ->setQuantity(this->pimpl->observedWater->calcium_ppm    ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::magnesium_ppm   ) { this->lineEdit_mg  ->setQuantity(this->pimpl->observedWater->magnesium_ppm  ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::sulfate_ppm     ) { this->lineEdit_so4 ->setQuantity(this->pimpl->observedWater->sulfate_ppm    ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::sodium_ppm      ) { this->lineEdit_na  ->setQuantity(this->pimpl->observedWater->sodium_ppm     ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::chloride_ppm    ) { this->lineEdit_cl  ->setQuantity(this->pimpl->observedWater->chloride_ppm   ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::bicarbonate_ppm ) { this->lineEdit_alk ->setQuantity(this->pimpl->observedWater->bicarbonate_ppm()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::ph              ) { this->lineEdit_ph  ->setQuantity(this->pimpl->observedWater->ph             ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Water::alkalinityAsHCO3) {
       bool typeless = this->pimpl->observedWater->alkalinityAsHCO3();
       this->comboBox_alk->setCurrentIndex(comboBox_alk->findText(typeless ? "HCO3" : "CaCO3"));
       if (!updateAll) { return; }
    }
    if (updateAll || propName == PropertyNames::Water::notes           ) { this->plainTextEdit_notes->setPlainText(this->pimpl->observedWater->notes() );    if (!updateAll) { return; } }
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   if (updateAll || propName == PropertyNames::Water::carbonate_ppm ) { this->lineEdit_alk ->setQuantity(this->pimpl->observedWater->carbonate_ppm()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::potassium_ppm ) { this->lineEdit_alk ->setQuantity(this->pimpl->observedWater->potassium_ppm()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::iron_ppm      ) { this->lineEdit_alk ->setQuantity(this->pimpl->observedWater->iron_ppm     ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::nitrate_ppm   ) { this->lineEdit_alk ->setQuantity(this->pimpl->observedWater->nitrate_ppm  ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::nitrite_ppm   ) { this->lineEdit_alk ->setQuantity(this->pimpl->observedWater->nitrite_ppm  ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Water::flouride_ppm  ) { this->lineEdit_alk ->setQuantity(this->pimpl->observedWater->flouride_ppm ()); if (!updateAll) { return; } }
 
    return;
 }
@@ -221,15 +236,15 @@ void WaterEditor::inputFieldModified() {
       //         feels wrong that we just set both from the same input, but probably needs some more profound thought
       //         about what exactly correct behaviour should be.
       if      (signalSender == this->comboBox_alk)         {this->pimpl->editedWater->setAlkalinityAsHCO3(this->comboBox_alk ->currentText() == QString("HCO3"));}
-      else if (signalSender == this->lineEdit_alk)         {this->pimpl->editedWater->setBicarbonate_ppm (this->lineEdit_alk ->toCanonical().quantity());  // NB continues on next line!
-                                                            this->pimpl->editedWater->setAlkalinity      (this->lineEdit_alk ->toCanonical().quantity());        }
-      else if (signalSender == this->lineEdit_ca)          {this->pimpl->editedWater->setCalcium_ppm     (this->lineEdit_ca  ->toCanonical().quantity());        }
-      else if (signalSender == this->lineEdit_cl)          {this->pimpl->editedWater->setChloride_ppm    (this->lineEdit_cl  ->toCanonical().quantity());        }
-      else if (signalSender == this->lineEdit_mg)          {this->pimpl->editedWater->setMagnesium_ppm   (this->lineEdit_mg  ->toCanonical().quantity());        }
-      else if (signalSender == this->lineEdit_na)          {this->pimpl->editedWater->setSodium_ppm      (this->lineEdit_na  ->toCanonical().quantity());        }
+      else if (signalSender == this->lineEdit_alk)         {this->pimpl->editedWater->setBicarbonate_ppm (this->lineEdit_alk ->getNonOptCanonicalQty());  // NB continues on next line!
+                                                            this->pimpl->editedWater->setAlkalinity_ppm  (this->lineEdit_alk ->getNonOptCanonicalQty());        }
+      else if (signalSender == this->lineEdit_ca)          {this->pimpl->editedWater->setCalcium_ppm     (this->lineEdit_ca  ->getNonOptCanonicalQty());        }
+      else if (signalSender == this->lineEdit_cl)          {this->pimpl->editedWater->setChloride_ppm    (this->lineEdit_cl  ->getNonOptCanonicalQty());        }
+      else if (signalSender == this->lineEdit_mg)          {this->pimpl->editedWater->setMagnesium_ppm   (this->lineEdit_mg  ->getNonOptCanonicalQty());        }
+      else if (signalSender == this->lineEdit_na)          {this->pimpl->editedWater->setSodium_ppm      (this->lineEdit_na  ->getNonOptCanonicalQty());        }
       else if (signalSender == this->lineEdit_name)        {this->pimpl->editedWater->setName            (this->lineEdit_name->text());                          }
-      else if (signalSender == this->lineEdit_ph)          {this->pimpl->editedWater->setPh              (this->lineEdit_ph  ->toCanonical().quantity());        }
-      else if (signalSender == this->lineEdit_so4)         {this->pimpl->editedWater->setSulfate_ppm     (this->lineEdit_so4 ->toCanonical().quantity());        }
+      else if (signalSender == this->lineEdit_ph)          {this->pimpl->editedWater->setPh              (this->lineEdit_ph  ->getNonOptCanonicalQty());        }
+      else if (signalSender == this->lineEdit_so4)         {this->pimpl->editedWater->setSulfate_ppm     (this->lineEdit_so4 ->getNonOptCanonicalQty());        }
       else if (signalSender == this->plainTextEdit_notes)  {this->pimpl->editedWater->setNotes           (this->plainTextEdit_notes->toPlainText());             }
       else {
          // If we get here, it's probably a coding error

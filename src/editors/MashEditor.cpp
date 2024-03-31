@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/MashEditor.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * editors/MashEditor.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -28,7 +28,10 @@
 #include "model/Mash.h"
 #include "model/Recipe.h"
 
-MashEditor::MashEditor(QWidget* parent) : QDialog(parent), mashObs(nullptr) {
+MashEditor::MashEditor(QWidget* parent) :
+   QDialog(parent),
+   m_recipe{nullptr},
+   m_mashObs{nullptr} {
    setupUi(this);
 
    SMART_FIELD_INIT(MashEditor, label_name      , lineEdit_name      , Mash, PropertyNames::NamedEntity::name             );
@@ -36,8 +39,8 @@ MashEditor::MashEditor(QWidget* parent) : QDialog(parent), mashObs(nullptr) {
    SMART_FIELD_INIT(MashEditor, label_spargeTemp, lineEdit_spargeTemp, Mash, PropertyNames::Mash::spargeTemp_c         , 1);
    SMART_FIELD_INIT(MashEditor, label_spargePh  , lineEdit_spargePh  , Mash, PropertyNames::Mash::ph                   , 0);
    SMART_FIELD_INIT(MashEditor, label_tunTemp   , lineEdit_tunTemp   , Mash, PropertyNames::Mash::tunTemp_c            , 1);
-   SMART_FIELD_INIT(MashEditor, label_tunMass   , lineEdit_tunMass   , Mash, PropertyNames::Mash::tunWeight_kg            );
-   SMART_FIELD_INIT(MashEditor, label_tunSpHeat , lineEdit_tunSpHeat , Mash, PropertyNames::Mash::tunSpecificHeat_calGC, 1);
+   SMART_FIELD_INIT(MashEditor, label_tunMass   , lineEdit_tunMass   , Mash, PropertyNames::Mash::mashTunWeight_kg            );
+   SMART_FIELD_INIT(MashEditor, label_tunSpHeat , lineEdit_tunSpHeat , Mash, PropertyNames::Mash::mashTunSpecificHeat_calGC, 1);
 
    connect(pushButton_fromEquipment, &QAbstractButton::clicked, this, &MashEditor::fromEquipment);
    connect(this,                     &QDialog::accepted,        this, &MashEditor::saveAndClose );
@@ -59,53 +62,57 @@ void MashEditor::closeEditor() {
 void MashEditor::saveAndClose() {
    bool isNew = false;
 
-   if (this->mashObs == nullptr) {
-      this->mashObs = new Mash(lineEdit_name->text());
+   if (!this->m_mashObs) {
+      this->m_mashObs = std::make_shared<Mash>(lineEdit_name->text());
       isNew = true;
    }
-   qDebug() << Q_FUNC_INFO << "Saving" << (isNew ? "new" : "existing") << "mash (#" << this->mashObs->key() << ")";
+   qDebug() << Q_FUNC_INFO << "Saving" << (isNew ? "new" : "existing") << "mash (#" << this->m_mashObs->key() << ")";
 
-   this->mashObs->setEquipAdjust(true); // BeerXML won't like me, but it's just stupid not to adjust for the equipment when you're able.
-   this->mashObs->setName                 (this->lineEdit_name      ->text()                  );
-   this->mashObs->setGrainTemp_c          (this->lineEdit_grainTemp ->toCanonical().quantity());
-   this->mashObs->setSpargeTemp_c         (this->lineEdit_spargeTemp->toCanonical().quantity());
-   this->mashObs->setPh                   (this->lineEdit_spargePh  ->toCanonical().quantity());
-   this->mashObs->setTunTemp_c            (this->lineEdit_tunTemp   ->toCanonical().quantity());
-   this->mashObs->setTunWeight_kg         (this->lineEdit_tunMass   ->toCanonical().quantity());
-   this->mashObs->setTunSpecificHeat_calGC(this->lineEdit_tunSpHeat ->toCanonical().quantity());
-   this->mashObs->setNotes                (this->textEdit_notes     ->toPlainText()           );
+   this->m_mashObs->setEquipAdjust(true); // BeerXML won't like me, but it's just stupid not to adjust for the equipment when you're able.
+   this->m_mashObs->setName                 (this->lineEdit_name      ->text()                  );
+   this->m_mashObs->setGrainTemp_c          (this->lineEdit_grainTemp ->getNonOptCanonicalQty());
+   this->m_mashObs->setSpargeTemp_c         (this->lineEdit_spargeTemp->getNonOptCanonicalQty());
+   this->m_mashObs->setPh                   (this->lineEdit_spargePh  ->getNonOptCanonicalQty());
+   this->m_mashObs->setTunTemp_c            (this->lineEdit_tunTemp   ->getNonOptCanonicalQty());
+   this->m_mashObs->setTunWeight_kg         (this->lineEdit_tunMass   ->getNonOptCanonicalQty());
+   this->m_mashObs->setMashTunSpecificHeat_calGC(this->lineEdit_tunSpHeat ->getNonOptCanonicalQty());
+   this->m_mashObs->setNotes                (this->textEdit_notes     ->toPlainText()           );
 
    if (isNew) {
-      ObjectStoreWrapper::insert(*mashObs);
-      this->m_rec->setMash(this->mashObs);
+      ObjectStoreWrapper::insert(*this->m_mashObs);
+      this->m_recipe->setMash(this->m_mashObs);
    }
 
    return;
 }
 
 void MashEditor::fromEquipment() {
-   if (this->mashObs == nullptr) {
+   if (!this->m_mashObs) {
       return;
    }
 
-   if (this->m_equip == nullptr) {
+   if (!this->m_recipe) {
       return;
    }
 
-   lineEdit_tunMass  ->setAmount(this->m_equip->tunWeight_kg         ());
-   lineEdit_tunSpHeat->setAmount(this->m_equip->tunSpecificHeat_calGC());
+   auto equipment = this->m_recipe->equipment();
+   if (!equipment) {
+      return;
+   }
+
+   lineEdit_tunMass  ->setQuantity(equipment->mashTunWeight_kg         ());
+   lineEdit_tunSpHeat->setQuantity(equipment->mashTunSpecificHeat_calGC());
    return;
 }
 
-void MashEditor::setMash(Mash* mash) {
-   if (mashObs) {
-      disconnect( mashObs, nullptr, this, nullptr );
+void MashEditor::setMash(std::shared_ptr<Mash> mash) {
+   if (this->m_mashObs) {
+      disconnect(this->m_mashObs.get(), nullptr, this, nullptr );
    }
 
-   mashObs = mash;
-   if( mashObs )
-   {
-      connect( mashObs, SIGNAL(changed(QMetaProperty,QVariant)), this, SLOT(changed(QMetaProperty,QVariant)) );
+   this->m_mashObs = mash;
+   if (this->m_mashObs) {
+      connect(this->m_mashObs.get(), SIGNAL(changed(QMetaProperty,QVariant)), this, SLOT(changed(QMetaProperty,QVariant)) );
       showChanges();
    }
    return;
@@ -116,47 +123,46 @@ void MashEditor::setRecipe(Recipe * recipe) {
       return;
    }
 
-   this->m_rec = recipe;
-   this->m_equip = this->m_rec->equipment();
+   this->m_recipe = recipe;
+   auto equipment = this->m_recipe->equipment();
 
-   if (this->mashObs && this->m_equip) {
+   if (this->m_mashObs && equipment) {
       // Only do this if we have to. Otherwise, it causes some unnecessary updates to the database.
-      if (this->mashObs->tunWeight_kg() != this->m_equip->tunWeight_kg()) {
+      if (this->m_mashObs->mashTunWeight_kg() != equipment->mashTunWeight_kg()) {
          qDebug() <<
-            Q_FUNC_INFO << "Overwriting mash tunWeight_kg (" << this->mashObs->tunWeight_kg() << ") with equipment "
-            "tunWeight_kg (" << this->m_equip->tunWeight_kg() << ")";
-         this->mashObs->setTunWeight_kg(this->m_equip->tunWeight_kg());
+            Q_FUNC_INFO << "Overwriting mash mashTunWeight_kg (" << this->m_mashObs->mashTunWeight_kg() << ") with equipment "
+            "mashTunWeight_kg (" << equipment->mashTunWeight_kg() << ")";
+         this->m_mashObs->setTunWeight_kg(equipment->mashTunWeight_kg().value_or(0.0)); // TBD: Maybe Mash::setTunWeight_kg should take an optional value
       }
-      if (this->mashObs->tunSpecificHeat_calGC() != this->m_equip->tunSpecificHeat_calGC() ) {
+      if (this->m_mashObs->mashTunSpecificHeat_calGC() != equipment->mashTunSpecificHeat_calGC() ) {
          qDebug() <<
-            Q_FUNC_INFO << "Overwriting mash tunSpecificHeat_calGC (" << this->mashObs->tunSpecificHeat_calGC() << ") "
-            "with equipment tunSpecificHeat_calGC (" << this->m_equip->tunSpecificHeat_calGC() << ")";
-         this->mashObs->setTunSpecificHeat_calGC(this->m_equip->tunSpecificHeat_calGC());
+            Q_FUNC_INFO << "Overwriting mash mashTunSpecificHeat_calGC (" << this->m_mashObs->mashTunSpecificHeat_calGC() << ") "
+            "with equipment mashTunSpecificHeat_calGC (" << equipment->mashTunSpecificHeat_calGC() << ")";
+         this->m_mashObs->setMashTunSpecificHeat_calGC(equipment->mashTunSpecificHeat_calGC().value_or(Equipment::default_mashTunSpecificHeat_calGC));
       }
    }
    return;
 }
 
 void MashEditor::changed(QMetaProperty prop, QVariant /*val*/) {
-   if (sender() == this->mashObs ) {
+   if (sender() == this->m_mashObs.get()) {
       this->showChanges(&prop);
    }
 
-   if (sender() == this->m_rec) {
-      this->m_equip = this->m_rec->equipment();
+   if (sender() == this->m_recipe) {
       this->showChanges();
    }
    return;
 }
 
 void MashEditor::showChanges(QMetaProperty* prop) {
-   bool updateAll = false;
-   QString propName;
-
-   if (mashObs == nullptr) {
-      clear();
+   if (!this->m_mashObs) {
+      this->clear();
       return;
    }
+
+   bool updateAll = false;
+   QString propName;
 
    if (prop == nullptr) {
       updateAll = true;
@@ -165,14 +171,14 @@ void MashEditor::showChanges(QMetaProperty* prop) {
    }
    qDebug() << Q_FUNC_INFO << "Updating" << (updateAll ? "all" : "property") << propName;
 
-   if (updateAll || propName == PropertyNames::NamedEntity::name           ) {this->lineEdit_name      ->setText     (mashObs->name                 ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::grainTemp_c           ) {this->lineEdit_grainTemp ->setAmount   (mashObs->grainTemp_c          ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::spargeTemp_c          ) {this->lineEdit_spargeTemp->setAmount   (mashObs->spargeTemp_c         ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::ph                    ) {this->lineEdit_spargePh  ->setAmount   (mashObs->ph                   ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::tunTemp_c             ) {this->lineEdit_tunTemp   ->setAmount   (mashObs->tunTemp_c            ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::tunWeight_kg          ) {this->lineEdit_tunMass   ->setAmount   (mashObs->tunWeight_kg         ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::tunSpecificHeat_calGC ) {this->lineEdit_tunSpHeat ->setAmount   (mashObs->tunSpecificHeat_calGC()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Mash::notes                 ) {this->textEdit_notes     ->setPlainText(mashObs->notes                ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::NamedEntity::name     ) {this->lineEdit_name      ->setText    (m_mashObs->name            ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::grainTemp_c     ) {this->lineEdit_grainTemp ->setQuantity(m_mashObs->grainTemp_c     ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::spargeTemp_c    ) {this->lineEdit_spargeTemp->setQuantity(m_mashObs->spargeTemp_c    ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::ph              ) {this->lineEdit_spargePh  ->setQuantity(m_mashObs->ph              ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::tunTemp_c       ) {this->lineEdit_tunTemp   ->setQuantity(m_mashObs->tunTemp_c       ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::mashTunWeight_kg) {this->lineEdit_tunMass   ->setQuantity(m_mashObs->mashTunWeight_kg()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::mashTunSpecificHeat_calGC) {this->lineEdit_tunSpHeat->setQuantity(m_mashObs->mashTunSpecificHeat_calGC()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Mash::notes           ) {this->textEdit_notes     ->setPlainText(m_mashObs->notes          ()); if (!updateAll) { return; } }
    return;
 }
 

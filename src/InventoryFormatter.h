@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * InventoryFormatter.h is part of Brewken, and is copyright the following authors 2016-2021:
+ * InventoryFormatter.h is part of Brewken, and is copyright the following authors 2016-2023:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -19,17 +19,26 @@
 #define INVENTORY_FORMATTER_H
 #pragma once
 
+#include <cstdint>
+
+#include <QFlags> // For Q_DECLARE_FLAGS
+
 class QString;
 
 namespace InventoryFormatter {
 
-   enum HtmlGenerationFlags {
+   //
+   // TBD: In theory we can use
+   //
+   enum class HtmlGenerationFlag {
       NO_OPERATION          = 0,
       FERMENTABLES          = (1 << 0),
       HOPS                  = (1 << 1),
       YEAST                 = (1 << 2),
       MISCELLANEOUS         = (1 << 3)
    };
+   Q_DECLARE_FLAGS(HtmlGenerationFlags, HtmlGenerationFlag)
+
 
    /**
     * @brief ORs the HtmlGenerationFlags implementation.
@@ -38,7 +47,7 @@ namespace InventoryFormatter {
     * @param b
     * @return HtmlGenerationFlags
     */
-   HtmlGenerationFlags operator|(HtmlGenerationFlags a, HtmlGenerationFlags b);
+//   HtmlGenerationFlags operator|(HtmlGenerationFlags a, HtmlGenerationFlags b);
 
    /**
     * @brief ANDs the HtmlGenerationFlags
@@ -48,7 +57,7 @@ namespace InventoryFormatter {
     * @return true
     * @return false
     */
-   bool operator&(HtmlGenerationFlags a, HtmlGenerationFlags b);
+//   bool operator&(HtmlGenerationFlags a, HtmlGenerationFlags b);
 
    /**
     * @brief Create a Inventory HTML for export
@@ -56,5 +65,9 @@ namespace InventoryFormatter {
     * @return QString containing the HTML code for the inventory tables.
     */
    QString createInventoryHtml(HtmlGenerationFlags flags);
+
 }
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(InventoryFormatter::HtmlGenerationFlags)
+
 #endif

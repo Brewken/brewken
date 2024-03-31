@@ -87,14 +87,18 @@ public:
       return;
    }
 
-   void selectPhysicalQuantity(bool const isFirst) {
+   [[deprecated]] void selectPhysicalQuantity(bool const isFirst) {
       auto const previousScaleInfo = this->m_derived->getScaleInfo();
       this->m_derived->settings().selectPhysicalQuantity(isFirst);
       this->m_derived->correctEnteredText(previousScaleInfo);
       return;
    }
 
-   [[nodiscard]] QString displayAmount(double amount, unsigned int precision) const {
+   [[nodiscard]] QString displayAmount(double quantity, unsigned int precision) const {
+      return this->m_derived->settings().displayAmount(quantity, precision);
+   }
+
+   [[nodiscard]] QString displayAmount(Measurement::Amount const & amount, unsigned int precision) {
       return this->m_derived->settings().displayAmount(amount, precision);
    }
 

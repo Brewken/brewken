@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BrewDayFormatter.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * BrewDayFormatter.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -73,7 +73,7 @@ QString BrewDayFormatter::buildTitleHtml(bool includeImage) {
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td><td class=\"right\">%3</td><td class=\"value\">%4</td></tr>")
            .arg(tr("Boil Time"))
            .arg(
-              recObs->equipment() ? Measurement::displayAmount(Measurement::Amount{recObs->equipment()->boilTime_min(),
+              recObs->equipment() ? Measurement::displayAmount(Measurement::Amount{recObs->equipment()->boilTime_min().value_or(Equipment::default_boilTime_mins),
                                                                                    Measurement::Units::minutes}) : "unknown"
            )
            .arg(tr("Efficiency"))
@@ -107,9 +107,8 @@ QString BrewDayFormatter::buildTitleHtml(bool includeImage) {
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2%</td><td class=\"right\">%3</td><td class=\"value\">%4</tr>")
            .arg(tr("ABV"))
            .arg(Measurement::displayQuantity(recObs->ABV_pct(), 1))
-           .arg(metricVolume ? tr("Estimated calories (per 33 cl)") :
-                tr("Estimated calories (per 12 oz)"))
-           .arg(Measurement::displayQuantity(metricVolume ? recObs->calories33cl() : recObs->calories12oz(), 0));
+           .arg(metricVolume ? tr("Estimated calories (per 33 cl)") : tr("Estimated calories (per 12 oz)"))
+           .arg(Measurement::displayQuantity(metricVolume ? recObs->caloriesPer33cl() : recObs->caloriesPerUs12oz(), 0));
 
    body += "</table>";
 
@@ -135,7 +134,7 @@ QList<QStringList> BrewDayFormatter::buildTitleList() {
    // second row:  boil time and efficiency.
    row.append(tr("Boil Time"));
    row.append(
-      recObs->equipment() ? Measurement::displayAmount(Measurement::Amount{recObs->equipment()->boilTime_min(),
+      recObs->equipment() ? Measurement::displayAmount(Measurement::Amount{recObs->equipment()->boilTime_min().value_or(Equipment::default_boilTime_mins),
                                                                            Measurement::Units::minutes}) : "unknown"
    );
    row.append(tr("Efficiency"));
@@ -177,7 +176,7 @@ QList<QStringList> BrewDayFormatter::buildTitleList() {
       Measurement::UnitSystems::volume_Metric;
 
    row.append(metricVolume ? tr("Estimated calories (per 33 cl)") : tr("Estimated calories (per 12 oz)"));
-   row.append(Measurement::displayQuantity(metricVolume ? recObs->calories33cl() : recObs->calories12oz(), 0));
+   row.append(Measurement::displayQuantity(metricVolume ? recObs->caloriesPer33cl() : recObs->caloriesPerUs12oz(), 0));
    ret.append(row);
    row.clear();
 
@@ -198,7 +197,6 @@ QString BrewDayFormatter::buildInstructionHtml() {
              .arg(tr("Step"));
 
    QList<Instruction *> instructions = recObs->instructions();
-   auto mashSteps = recObs->mash()->mashSteps();
    int size = instructions.size();
    for (int i = 0; i < size; ++i) {
       QString stepTime, tmp;
@@ -217,9 +215,11 @@ QString BrewDayFormatter::buildInstructionHtml() {
       // TODO: comparing ins->name() with these untranslated strings means this
       // doesn't work in other languages. Find a better way.
       if (ins->name() == tr("Add grains")) {
-         reagents = recObs->getReagents(recObs->fermentables());
+         reagents = recObs->getReagents(recObs->fermentableAdditions());
       } else if (ins->name() == tr("Heat water")) {
-         reagents = recObs->getReagents(recObs->mash()->mashSteps());
+         if (recObs->mash()) {
+            reagents = recObs->getReagents(recObs->mash()->mashSteps());
+         }
       } else {
          reagents = ins->reagents();
       }
@@ -263,7 +263,6 @@ QList<QStringList> BrewDayFormatter::buildInstructionList() {
    row.clear();
 
    QList<Instruction *> instructions = recObs->instructions();
-   auto mashSteps = recObs->mash()->mashSteps();
    size = instructions.size();
    for (i = 0; i < size; ++i) {
       QString stepTime, tmp;
@@ -280,9 +279,11 @@ QList<QStringList> BrewDayFormatter::buildInstructionList() {
       // TODO: comparing ins->name() with these untranslated strings means this
       // doesn't work in other languages. Find a better way.
       if (ins->name() == tr("Add grains")) {
-         reagents = recObs->getReagents(recObs->fermentables());
+         reagents = recObs->getReagents(recObs->fermentableAdditions());
       } else if (ins->name() == tr("Heat water")) {
-         reagents = recObs->getReagents(recObs->mash()->mashSteps());
+         if (recObs->mash()) {
+            reagents = recObs->getReagents(recObs->mash()->mashSteps());
+         }
       } else {
          reagents = ins->reagents();
       }

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/SystemOfMeasurement.h is part of Brewken, and is copyright the following authors 2022-2023:
+ * measurement/SystemOfMeasurement.h is part of Brewken, and is copyright the following authors 2022-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -116,19 +116,17 @@ namespace Measurement {
       CarbonationVolumes,
       CarbonationMassPerVolume,
 
-      // As explained in measurement/PhysicalQuantity.h, concentration can be "mass concentration" or "volume
-      // concentration" (or even other things which we ignore, for now at least).  So, somewhat by analogy with where we
-      // allow a choice of measuring certain ingredients by Mass or by Volume, we allow concentration to be measured by
-      // MassConcentration or VolumeConcentration.  For the same reasons as with Mass & Volume, we want the
-      // SystemOfMeasurement options to be the same for MassConcentration & VolumeConcentration (though, unlike with
-      // Mass & Volume, we don't support imperial or US customary systems of measurement for concentration).
-      MetricConcentration,
+      // As explained in measurement/PhysicalQuantity.h, we combine "mass concentration" and "mass fraction" into one
+      // grouping.  These are not generally the same thing, but, in the context of what we need as brewers, we can treat
+      // them as measures between which we can convert formulaically.
+      BrewingConcentration,
 
       // See comment in measurement/Unit.h about the different viscosity units
 
       // Specific Heat Capacity
       SpecificHeatCapacityCalories,
       SpecificHeatCapacityJoules,
+      SpecificHeatCapacityBtus,
    };
 
 

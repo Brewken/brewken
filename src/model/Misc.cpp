@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Misc.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * model/Misc.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -28,9 +28,11 @@
 #include <QVector>
 
 #include "database/ObjectStoreWrapper.h"
-#include "model/Inventory.h"
+#include "model/InventoryMisc.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
+
+QString const Misc::LocalisedName = tr("Miscellaneous");
 
 EnumStringMapping const Misc::typeStringMapping {
    {Misc::Type::Spice      , "spice"      },
@@ -52,29 +54,29 @@ EnumStringMapping const Misc::typeDisplayNames {
    {Misc::Type::Wood       , tr("Wood"       )},
 };
 
-// This is not stored in BeerJSON, so we leave the original capitalisation
-EnumStringMapping const Misc::useStringMapping {
-   {Misc::Use::Boil     , "Boil"     },
-   {Misc::Use::Mash     , "Mash"     },
-   {Misc::Use::Primary  , "Primary"  },
-   {Misc::Use::Secondary, "Secondary"},
-   {Misc::Use::Bottling , "Bottling" }
-};
-
-EnumStringMapping const Misc::useDisplayNames {
-   {Misc::Use::Boil     , tr("Boil"     )},
-   {Misc::Use::Mash     , tr("Mash"     )},
-   {Misc::Use::Primary  , tr("Primary"  )},
-   {Misc::Use::Secondary, tr("Secondary")},
-   {Misc::Use::Bottling , tr("Bottling" )}
-};
-
 bool Misc::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    Misc const & rhs = static_cast<Misc const &>(other);
    // Base class will already have ensured names are equal
+   bool const outlinesAreEqual{
+      // "Outline" fields: In BeerJSON, all these fields are in the FermentableBase type
+      this->m_producer  == rhs.m_producer  &&
+      this->m_productId == rhs.m_productId &&
+      this->m_type      == rhs.m_type
+   };
+
+   // If either object is an outline (see comment in model/OutlineableNamedEntity.h) then there is no point comparing
+   // any more fields.  Note that an object will only be an outline whilst it is being read in from a BeerJSON file.
+   if (this->m_outline || rhs.m_outline) {
+      return outlinesAreEqual;
+   }
+
    return (
-      this->m_type == rhs.m_type
+      outlinesAreEqual &&
+
+      // Remaining BeerJSON fields -- excluding inventories
+      this->m_useFor == rhs.m_useFor &&
+      this->m_notes  == rhs.m_notes
    );
 }
 
@@ -85,33 +87,28 @@ ObjectStore & Misc::getObjectStoreTypedInstance() const {
 TypeLookup const Misc::typeLookup {
    "Misc",
    {
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::amount        , Misc::m_amount        , Measurement::PqEitherMassOrVolume      ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::amountIsWeight, Misc::m_amountIsWeight,           NonPhysicalQuantity::Bool    ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::notes         , Misc::m_notes         ,           NonPhysicalQuantity::String  ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::time_min      , Misc::m_time_min      , Measurement::PhysicalQuantity::Time    ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::type          , Misc::m_type          ,           NonPhysicalQuantity::Enum    ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::useFor        , Misc::m_useFor        ,           NonPhysicalQuantity::String  ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::use           , Misc::m_use           ,           NonPhysicalQuantity::Enum    ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::notes    , Misc::m_notes    , NonPhysicalQuantity::String),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::type     , Misc::m_type     , NonPhysicalQuantity::Enum  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::useFor   , Misc::m_useFor   , NonPhysicalQuantity::String),
       // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Misc::amountWithUnits, Misc, amountWithUnits, Measurement::PqEitherMassOrVolume),
-///      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Misc::amountWithUnits, Misc::amountWithUnits, Measurement::PqEitherMassOrVolume),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::producer      , Misc::m_producer      ,           NonPhysicalQuantity::String  ),
-      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::productId     , Misc::m_productId     ,           NonPhysicalQuantity::String  ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::producer , Misc::m_producer , NonPhysicalQuantity::String),
+      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Misc::productId, Misc::m_productId, NonPhysicalQuantity::String),
    },
-   // Parent class lookup.  NB: NamedEntityWithInventory not NamedEntity!
-   &NamedEntityWithInventory::typeLookup
+   // Parent classes lookup
+   {&Ingredient::typeLookup,
+    &IngredientBase<Misc>::typeLookup}
 };
-static_assert(std::is_base_of<NamedEntityWithInventory, Misc>::value);
+static_assert(std::is_base_of<Ingredient, Misc>::value);
 
 //============================CONSTRUCTORS======================================
 
 Misc::Misc(QString name) :
-   NamedEntityWithInventory{name, true},
+   Ingredient{name},
    m_type          {Misc::Type::Spice},
-   m_use           {std::nullopt     },
-   m_time_min      {0.0              },
-   m_amount        {0.0              },
-   m_amountIsWeight{false            },
+///   m_use           {std::nullopt     },
+///   m_time_min      {0.0              },
+///   m_amount        {0.0              },
+///   m_amountIsWeight{false            },
    m_useFor        {""               },
    m_notes         {""               },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -121,28 +118,33 @@ Misc::Misc(QString name) :
 }
 
 Misc::Misc(NamedParameterBundle const & namedParameterBundle) :
-   NamedEntityWithInventory{namedParameterBundle},
-   m_type                  {namedParameterBundle.val<Misc::Type      >(PropertyNames::Misc::type     )},
-   m_use                   {namedParameterBundle.optEnumVal<Misc::Use>(PropertyNames::Misc::use      )},
-   m_time_min              {namedParameterBundle.val<double          >(PropertyNames::Misc::time_min )},
-   m_useFor                {namedParameterBundle.val<QString         >(PropertyNames::Misc::useFor   )},
-   m_notes                 {namedParameterBundle.val<QString         >(PropertyNames::Misc::notes    )},
+   Ingredient{namedParameterBundle},
+   SET_REGULAR_FROM_NPB (m_type                , namedParameterBundle, PropertyNames::Misc::type     ),
+///   SET_OPT_ENUM_FROM_NPB(m_use      , Misc::Use, namedParameterBundle, PropertyNames::Misc::use      ),
+///   SET_REGULAR_FROM_NPB (m_time_min            , namedParameterBundle, PropertyNames::Misc::time_min ),
+   SET_REGULAR_FROM_NPB (m_useFor              , namedParameterBundle, PropertyNames::Misc::useFor   ),
+   SET_REGULAR_FROM_NPB (m_notes               , namedParameterBundle, PropertyNames::Misc::notes    ),
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   m_producer              {namedParameterBundle.val<QString         >(PropertyNames::Misc::producer )},
-   m_productId             {namedParameterBundle.val<QString         >(PropertyNames::Misc::productId)} {
+   SET_REGULAR_FROM_NPB (m_producer            , namedParameterBundle, PropertyNames::Misc::producer ),
+   SET_REGULAR_FROM_NPB (m_productId           , namedParameterBundle, PropertyNames::Misc::productId) {
 
-   this->setEitherOrReqParams<MassOrVolumeAmt>(namedParameterBundle, PropertyNames::Misc::amount, PropertyNames::Misc::amountIsWeight, PropertyNames::Misc::amountWithUnits, this->m_amount, this->m_amountIsWeight);
-
+///   this->setEitherOrReqParams(namedParameterBundle,
+///                              PropertyNames::Misc::amount,
+///                              PropertyNames::Misc::amountIsWeight,
+///                              PropertyNames::Misc::amountWithUnits,
+///                              Measurement::PhysicalQuantity::Mass,
+///                              this->m_amount,
+///                              this->m_amountIsWeight);
    return;
 }
 
 Misc::Misc(Misc const & other) :
-   NamedEntityWithInventory{other                 },
+   Ingredient{other                        },
    m_type                  {other.m_type          },
-   m_use                   {other.m_use           },
-   m_time_min              {other.m_time_min      },
-   m_amount                {other.m_amount        },
-   m_amountIsWeight        {other.m_amountIsWeight},
+///   m_use                   {other.m_use           },
+///   m_time_min              {other.m_time_min      },
+///   m_amount                {other.m_amount        },
+///   m_amountIsWeight        {other.m_amountIsWeight},
    m_useFor                {other.m_useFor        },
    m_notes                 {other.m_notes         },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -155,44 +157,45 @@ Misc::~Misc() = default;
 
 //============================"GET" METHODS=====================================
 Misc::Type               Misc::type          () const { return                    m_type          ; }
-std::optional<Misc::Use> Misc::use           () const { return                    m_use           ; }
-std::optional<int>       Misc::useAsInt      () const { return Optional::toOptInt(m_use)          ; }
-double                   Misc::amount        () const { return                    m_amount        ; }
-double                   Misc::time_min      () const { return                    m_time_min      ; }
-bool                     Misc::amountIsWeight() const { return                    m_amountIsWeight; }
+///std::optional<Misc::Use> Misc::use           () const { return                    m_use           ; }
+///std::optional<int>       Misc::useAsInt      () const { return Optional::toOptInt(m_use)          ; }
+///double                   Misc::amount        () const { return                    m_amount        ; }
+///double                   Misc::time_min      () const { return                    m_time_min      ; }
+///bool                     Misc::amountIsWeight() const { return                    m_amountIsWeight; }
 QString                  Misc::useFor        () const { return                    m_useFor        ; }
 QString                  Misc::notes         () const { return                    m_notes         ; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 QString                  Misc::producer      () const { return                    m_producer      ; }
 QString                  Misc::productId     () const { return                    m_productId     ; }
 
-MassOrVolumeAmt Misc::amountWithUnits() const { return MassOrVolumeAmt{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
+///Measurement::Amount Misc::amountWithUnits() const { return Measurement::Amount{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
 
 //============================"SET" METHODS=====================================
-void Misc::setType          (Type                     const   val) { this->setAndNotify( PropertyNames::Misc::type          , this->m_type          , val); }
-void Misc::setUse           (std::optional<Misc::Use> const   val) { this->setAndNotify( PropertyNames::Misc::use           , this->m_use           , val); }
-void Misc::setUseAsInt      (std::optional<int>       const   val) { this->setAndNotify( PropertyNames::Misc::use           , this->m_use           , Optional::fromOptInt<Use>(val)); }
-void Misc::setUseFor        (QString                  const & val) { this->setAndNotify( PropertyNames::Misc::useFor        , this->m_useFor        , val); }
-void Misc::setNotes         (QString                  const & val) { this->setAndNotify( PropertyNames::Misc::notes         , this->m_notes         , val); }
-void Misc::setAmountIsWeight(bool                     const   val) { this->setAndNotify( PropertyNames::Misc::amountIsWeight, this->m_amountIsWeight, val); }
-void Misc::setAmount        (double                   const   val) { this->setAndNotify( PropertyNames::Misc::amount        , this->m_amount        , this->enforceMin(val, "amount")); }
-void Misc::setTime_min      (double                   const   val) { this->setAndNotify( PropertyNames::Misc::time_min      , this->m_time_min      , this->enforceMin(val, "time_min"  )); }
+void Misc::setType          (Type                     const   val) { SET_AND_NOTIFY( PropertyNames::Misc::type          , this->m_type          , val); }
+///void Misc::setUse           (std::optional<Misc::Use> const   val) { SET_AND_NOTIFY( PropertyNames::Misc::use           , this->m_use           , val); }
+///void Misc::setUseAsInt      (std::optional<int>       const   val) { SET_AND_NOTIFY( PropertyNames::Misc::use           , this->m_use           , Optional::fromOptInt<Use>(val)); }
+void Misc::setUseFor        (QString                  const & val) { SET_AND_NOTIFY( PropertyNames::Misc::useFor        , this->m_useFor        , val); }
+void Misc::setNotes         (QString                  const & val) { SET_AND_NOTIFY( PropertyNames::Misc::notes         , this->m_notes         , val); }
+///void Misc::setAmountIsWeight(bool                     const   val) { SET_AND_NOTIFY( PropertyNames::Misc::amountIsWeight, this->m_amountIsWeight, val); }
+///void Misc::setAmount        (double                   const   val) { SET_AND_NOTIFY( PropertyNames::Misc::amount        , this->m_amount        , this->enforceMin(val, "amount")); }
+///void Misc::setTime_min      (double                   const   val) { SET_AND_NOTIFY( PropertyNames::Misc::time_min      , this->m_time_min      , this->enforceMin(val, "time_min"  )); }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-void Misc::setProducer      (QString                  const & val) { this->setAndNotify(PropertyNames::Misc::producer       , this->m_producer      , val); }
-void Misc::setProductId     (QString                  const & val) { this->setAndNotify(PropertyNames::Misc::productId      , this->m_productId     , val); }
+void Misc::setProducer      (QString                  const & val) { SET_AND_NOTIFY(PropertyNames::Misc::producer       , this->m_producer      , val); }
+void Misc::setProductId     (QString                  const & val) { SET_AND_NOTIFY(PropertyNames::Misc::productId      , this->m_productId     , val); }
 
 
-void Misc::setAmountWithUnits(MassOrVolumeAmt const   val) {
-   this->setAndNotify(PropertyNames::Misc::amount        , this->m_amount        , val.quantity());
-   this->setAndNotify(PropertyNames::Misc::amountIsWeight, this->m_amountIsWeight, val.isMass()  );
-   return;
-}
+///void Misc::setAmountWithUnits(Measurement::Amount const   val) {
+///   SET_AND_NOTIFY(PropertyNames::Misc::amount        , this->m_amount        , val.quantity);
+///   SET_AND_NOTIFY(PropertyNames::Misc::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
+///   return;
+///}
 
 //========================OTHER METHODS=========================================
 
-Recipe * Misc::getOwningRecipe() {
-   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
-}
+///Recipe * Misc::getOwningRecipe() const {
+//////   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
+///   return nullptr;
+///}
 
 // Insert the boiler-plate stuff for inventory
-INVENTORY_COMMON_CODE(Misc)
+INGREDIENT_BASE_COMMON_CODE(Misc)

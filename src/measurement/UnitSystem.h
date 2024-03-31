@@ -72,6 +72,12 @@ namespace Measurement {
        *           milliliters < liters                                        (in Metric/SI system)
        *        We only worry about units we actually use/permit, thus we don't, for example, care about where minims,
        *        fluid drams, gills etc fit in on the imperial / US customary volume scales, as we don't support them.
+       *
+       *        NOTE: The names of these enums don't have any significance beyond a relative ordering.  We usually start
+       *              with \c ExtraSmall and then use as many of the subsequent entries as necessary.
+       *
+       *        TODO: I feel this could be replaced with a \c uint8_t that holds the ordering in the \c UnitSystem
+       *              constructor.  Then we wouldn't need the pointless names like "ExtraSmall" and "Huge".
        */
       enum class RelativeScale {
          ExtraSmall = 0,
@@ -88,7 +94,7 @@ namespace Measurement {
        * \param type
        * \param defaultUnit
        * \param uniqueName
-       * \param systemOfMeasurementName
+       * \param systemOfMeasurement
        * \param scaleToUnitEntries Will be empty if there is only one unit in this unit system
        * \param thickness Used only for volume and mass unit systems, otherwise will be null
        */
@@ -247,6 +253,8 @@ namespace Measurement {
       extern UnitSystem const volume_UsCustomary;
       extern UnitSystem const volume_Metric;
 
+      extern UnitSystem const count_NumberOf;
+
       extern UnitSystem const temperature_MetricIsCelsius;
       extern UnitSystem const temperature_UsCustomaryIsFahrenheit;
 
@@ -276,8 +284,9 @@ namespace Measurement {
       extern UnitSystem const carbonation_Volumes;
       extern UnitSystem const carbonation_MassPerVolume;
 
-      extern UnitSystem const concentration_PartsPer;
-      extern UnitSystem const concentration_MassPerVolume;
+      // See comment in measurement/PhysicalQuantity.h for why we combine "mass concentration" and "mass fraction" into
+      // one grouping.
+      extern UnitSystem const massFractionOrConc_Brewing;
 
       // This is one of the few places we need to pay attention that there is more than one metric system -- see
       // comments in measurement/SystemOfMeasurement.h
@@ -287,8 +296,11 @@ namespace Measurement {
       // As explained in measurement/Unit.h, our canonical unit system for specific heat capacity is calories per ...
       // rather than joules per ...
       extern UnitSystem const specificHeatCapacity_Calories;
-      extern UnitSystem const specificHeatCapacity_Joules;
+      extern UnitSystem const specificHeatCapacity_Joules  ;
+      extern UnitSystem const specificHeatCapacity_Btus    ;
 
+      extern UnitSystem const specificVolume_Metric     ;
+      extern UnitSystem const specificVolume_UsCustomary;
    }
 }
 
