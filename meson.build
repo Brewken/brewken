@@ -325,7 +325,8 @@ sharedLibraryPaths = []
 # Note that if you change the minimum Qt version, you need to make corresponding changes to the .github/workflows/*.yml
 # files so that GitHub uses the appropriate version of Qt for the automated builds.
 #
-# For the moment, max version we can have here is 5.12.8, because that's what Ubuntu 20.04 topped out at
+# For the moment, max version we can have here is 5.12.8, because that's what Ubuntu 20.04 topped out at.  But note
+# that Meson will be happy with newer versions (eg 5.15.3 on Ubuntu 22.04 or 5.15.13 on Windows & Mac).
 
 # Tell meson which Qt modules we need
 qtCommonDependencies = dependency('qt5',
