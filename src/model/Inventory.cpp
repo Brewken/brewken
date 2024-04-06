@@ -35,7 +35,7 @@
 #include "moc_InventorySalt.cpp"
 #include "moc_InventoryYeast.cpp"
 
-QString const Inventory::LocalisedName = tr("Inventory");
+QString Inventory::localisedName() { return tr("Inventory"); }
 
 bool Inventory::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid

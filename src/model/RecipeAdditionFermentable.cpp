@@ -21,7 +21,7 @@
 #include "model/Boil.h"
 #include "model/BoilStep.h"
 
-QString const RecipeAdditionFermentable::LocalisedName = tr("Fermentable Addition");
+QString RecipeAdditionFermentable::localisedName() { return tr("Fermentable Addition"); }
 
 ObjectStore & RecipeAdditionFermentable::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<RecipeAdditionFermentable>::getInstance();

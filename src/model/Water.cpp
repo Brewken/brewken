@@ -22,7 +22,7 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
-QString const Water::LocalisedName = tr("Water");
+QString Water::localisedName() { return tr("Water"); }
 
 EnumStringMapping const Water::typeStringMapping {
    {Water::Type::Base  , "base"  },

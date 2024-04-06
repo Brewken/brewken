@@ -21,7 +21,7 @@
 #include "model/Boil.h"
 #include "model/BoilStep.h"
 
-QString const RecipeAdjustmentSalt::LocalisedName = tr("Salt Addition");
+QString RecipeAdjustmentSalt::localisedName() { return tr("Salt Addition"); }
 
 EnumStringMapping const RecipeAdjustmentSalt::whenToAddStringMapping {
 ///   {RecipeAdjustmentSalt::WhenToAdd::Never , "never" },

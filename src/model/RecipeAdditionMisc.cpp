@@ -21,7 +21,7 @@
 #include "model/Boil.h"
 #include "model/BoilStep.h"
 
-QString const RecipeAdditionMisc::LocalisedName = tr("Misc Addition");
+QString RecipeAdditionMisc::localisedName() { return tr("Misc Addition"); }
 
 EnumStringMapping const RecipeAdditionMisc::useStringMapping {
    {RecipeAdditionMisc::Use::Mash     , "Mash"     },

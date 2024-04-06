@@ -85,7 +85,7 @@ public:
    /**
     * \brief See comment in model/NamedEntity.h
     */
-   static QString const LocalisedName;
+   static QString localisedName();
 
    /**
     * \brief Attenuation figure we use in several places where we wouldn't otherwise have a figure

@@ -52,7 +52,7 @@ public:
    /**
     * \brief See comment in model/NamedEntity.h
     */
-   static QString const LocalisedName;
+   static QString localisedName();
 
    /*!
     * \brief This is the old (BeerXML) way of specifying the stage at which the misc addition happens.  It is retained

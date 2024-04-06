@@ -192,7 +192,7 @@ public:
    }
 
    void retranslateUi() {
-      this->derived().setWindowTitle(QString(QObject::tr("%1 Catalog / Database")).arg(NE::LocalisedName));
+      this->derived().setWindowTitle(QString(QObject::tr("%1 Catalog / Database")).arg(NE::localisedName()));
       if (m_pushButton_addToRecipe) {
          m_pushButton_addToRecipe->setText(QString(QObject::tr("Add to Recipe")));
       }
@@ -201,11 +201,11 @@ public:
       m_pushButton_remove     ->setText(QString());
 #ifndef QT_NO_TOOLTIP
       if (m_pushButton_addToRecipe) {
-         m_pushButton_addToRecipe->setToolTip(QString(QObject::tr("Add selected %1 to recipe")).arg(NE::LocalisedName));
+         m_pushButton_addToRecipe->setToolTip(QString(QObject::tr("Add selected %1 to recipe")).arg(NE::localisedName()));
       }
-      m_pushButton_new        ->setToolTip(QString(QObject::tr("Create new %1")).arg(NE::LocalisedName));
-      m_pushButton_edit       ->setToolTip(QString(QObject::tr("Edit selected %1")).arg(NE::LocalisedName));
-      m_pushButton_remove     ->setToolTip(QString(QObject::tr("Remove selected %1")).arg(NE::LocalisedName));
+      m_pushButton_new        ->setToolTip(QString(QObject::tr("Create new %1")).arg(NE::localisedName()));
+      m_pushButton_edit       ->setToolTip(QString(QObject::tr("Edit selected %1")).arg(NE::localisedName()));
+      m_pushButton_remove     ->setToolTip(QString(QObject::tr("Remove selected %1")).arg(NE::localisedName()));
 #endif
       return;
    }

@@ -17,7 +17,7 @@
 
 #include "model/NamedParameterBundle.h"
 
-QString const RecipeUseOfWater::LocalisedName = tr("Recipe Use Of Water");
+QString RecipeUseOfWater::localisedName() { return tr("Recipe Use Of Water"); }
 
 ObjectStore & RecipeUseOfWater::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<RecipeUseOfWater>::getInstance();

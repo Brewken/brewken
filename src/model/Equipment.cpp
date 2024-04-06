@@ -24,7 +24,7 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
-QString const Equipment::LocalisedName = tr("Equipment");
+QString Equipment::localisedName() { return tr("Equipment"); }
 
 bool Equipment::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid

@@ -17,7 +17,7 @@
 
 #include "model/Recipe.h"
 
-QString const OwnedByRecipe::LocalisedName = tr("Owned By Recipe");
+QString OwnedByRecipe::localisedName() { return tr("Owned By Recipe"); }
 
 bool OwnedByRecipe::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid

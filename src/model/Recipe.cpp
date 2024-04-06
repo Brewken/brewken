@@ -1577,7 +1577,7 @@ template<> QVector<int> & Recipe::impl::accessIds<Instruction>() { return this->
 ///template<> QVector<int> & Recipe::impl::accessIds<Water>()       { return this->waterIds; }
 ///template<> QVector<int> & Recipe::impl::accessIds<Yeast>()       { return this->yeastIds; }
 
-QString const Recipe::LocalisedName = tr("Recipe");
+QString Recipe::localisedName() { return tr("Recipe"); }
 
 // Note that Recipe::typeStringMapping and Recipe::FormMapping are as defined by BeerJSON, but we also use them for the DB and
 // for the UI.  We can't use them for BeerXML as it only supports subsets of these types.

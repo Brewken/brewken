@@ -34,7 +34,7 @@
 #include "model/Recipe.h"
 #include "utils/OptionalHelpers.h"
 
-QString const Fermentable::LocalisedName = tr("Fermentable");
+QString Fermentable::localisedName() { return tr("Fermentable"); }
 
 // Note that Fermentable::typeStringMapping and Fermentable::grainGroupStringMapping are as defined by BeerJSON, but we
 // also use them for the DB and for the UI.  We can't use them for BeerXML as it only supports subsets of these types.

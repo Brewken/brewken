@@ -60,7 +60,7 @@ public:
    /**
     * \brief See comment in model/NamedEntity.h
     */
-   static QString const LocalisedName;
+   static QString localisedName();
 
    enum class WhenToAdd {
       Mash  ,

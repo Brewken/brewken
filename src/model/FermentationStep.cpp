@@ -18,7 +18,7 @@
 #include "database/ObjectStoreWrapper.h"
 #include "model/NamedParameterBundle.h"
 
-QString const FermentationStep::LocalisedName = tr("Fermentation Step");
+QString FermentationStep::localisedName() { return tr("Fermentation Step"); }
 
 bool FermentationStep::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid

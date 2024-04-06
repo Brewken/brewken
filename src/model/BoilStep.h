@@ -48,7 +48,7 @@ public:
    /**
     * \brief See comment in model/NamedEntity.h
     */
-   static QString const LocalisedName;
+   static QString localisedName();
 
    /*!
     * \brief Chilling type separates batch chilling, eg immersion chillers, where the entire volume of wort is brought

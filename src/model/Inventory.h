@@ -76,7 +76,7 @@ public:
    /**
     * \brief See comment in model/NamedEntity.h
     */
-   static QString const LocalisedName;
+   static QString localisedName();
 
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
@@ -221,7 +221,7 @@ namespace InventoryTools {
 #define INVENTORY_DECL(IngredientName, LcIngredientName) \
 public:                                                                            \
    /** \brief See comment in model/NamedEntity.h */                                \
-   static QString const LocalisedName;                                             \
+   static QString localisedName();                                             \
                                                                                    \
    /** \brief See \c NamedEntity::typeLookup. */                                   \
    static TypeLookup const typeLookup;                                             \
@@ -253,7 +253,7 @@ protected:                                                                      
  *        Note we have to be careful about comment formats in macro definitions
  */
 #define INVENTORY_COMMON_CODE(IngredientName, LcIngredientName) \
-QString const Inventory##IngredientName::LocalisedName = tr(#IngredientName " Inventory");                           \
+QString Inventory##IngredientName::localisedName() { return tr(#IngredientName " Inventory"); }                           \
 ObjectStore & Inventory##IngredientName::getObjectStoreTypedInstance() const {                                       \
    return ObjectStoreTyped<Inventory##IngredientName>::getInstance();                                                \
 }                                                                                                                    \
@@ -296,7 +296,7 @@ IngredientName * Inventory##IngredientName::LcIngredientName() const {          
 ///   /**
 ///    * \brief See comment in model/NamedEntity.h
 ///    */
-///   static QString const LocalisedName;
+///   static QString localisedName();
 ///
 ///   /**
 ///    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
