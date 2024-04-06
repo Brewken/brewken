@@ -58,7 +58,7 @@
 #include "model/Yeast.h"
 
 
-QString const NamedEntity::LocalisedName = tr("Named Entity");
+QString NamedEntity::localisedName() { return tr("Named Entity"); }
 
 
 NamedEntity::NamedEntity(QString t_name, bool t_display) :

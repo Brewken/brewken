@@ -3947,6 +3947,26 @@ Program will now exit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>BeerJSON format (*.json);;BeerXML format (*.xml)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mass Fraction or Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brewing Concentration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>weeks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>%1 Catalog / Database</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3976,26 +3996,6 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>BeerJSON format (*.json);;BeerXML format (*.xml)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mass Fraction or Concentration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Brewing Concentration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>weeks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>days</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

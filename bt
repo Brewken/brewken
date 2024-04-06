@@ -889,7 +889,7 @@ def installDependencies():
          # too (as the former depends on the latter).  However, I think it's clearer to explicitly list all the direct
          # dependencies (eg we do make calls directly into Xerces).
          #
-         # For the moment, we install Qt 5 (= 5.15.7), as there are code changes required to use Qt 6
+         # For the moment, we install Qt 5 (= 5.15.13), as there are code changes required to use Qt 6
          #
          # .:TBD:. Installing Boost here doesn't seem to give us libboost_stacktrace_backtrace
          #         Also, trying to use the "--cc=clang" option to install boost gives an error ("Error: boost: no bottle
@@ -922,8 +922,11 @@ def installDependencies():
          # By default, even once Qt5 is installed, Meson will not find it
          #
          # See https://stackoverflow.com/questions/29431882/get-qt5-up-and-running-on-a-new-mac for suggestion to do
-         # the following to "symlink the various Qt5 binaries and libraries into your /usr/local/bin and /usr/local/lib
-         # directories".
+         # the following to run `brew link qt5 --force` to "symlink the various Qt5 binaries and libraries into your
+         # /usr/local/bin and /usr/local/lib directories".
+         #
+         abortOnRunFail(subprocess.run(['brew', 'link', '--force', 'qt5']))
+
          #
          # Additionally, per lengthy discussion at https://github.com/Homebrew/legacy-homebrew/issues/29938, it seems
          # we might also need either:
@@ -933,7 +936,18 @@ def installDependencies():
          #    export PATH=/usr/local/opt/qt5/bin:$PATH
          # The former gives permission errors, so we do the latter in mac.yml
          #
-         abortOnRunFail(subprocess.run(['brew', 'link', '--force', 'qt5']))
+         # But the brew command to install Qt also tells us to do the following:
+         #
+         #    echo 'export PATH="/usr/local/opt/qt@5/bin:$PATH"' >> /Users/runner/.bash_profile
+         #    export LDFLAGS="-L/usr/local/opt/qt@5/lib"
+         #    export CPPFLAGS="-I/usr/local/opt/qt@5/include"
+         #    export PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"
+         #
+         with open("/Users/runner/.bash_profile". "a") as bashProfile:
+            bashProfile.write('export PATH="/usr/local/opt/qt@5/bin:$PATH"')
+         abortOnRunFail(subprocess.run(['export', 'LDFLAGS="-L/usr/local/opt/qt@5/lib"']))
+         abortOnRunFail(subprocess.run(['export', 'CPPFLAGS="-I/usr/local/opt/qt@5/include"']))
+         abortOnRunFail(subprocess.run(['export', 'PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"']))
 
          #
          # In theory, we can now install MacPorts.  However, I didn't manage to get the following working.  The

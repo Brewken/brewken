@@ -116,12 +116,15 @@ class NamedEntity : public QObject {
 public:
 
    /**
-    * \brief Subclasses should provide their localised (ie translated) name via this static member, so that templated
-    *        functions can use it.
+    * \brief Subclasses should provide their localised (ie translated) name via this static member function, so that
+    *        templated functions can use it.  Note that translations are obtained at run-time (not least because it is
+    *        possible to change language at run-time), which is one reason this needs to be a function rather than a
+    *        member variable.  (The other reason is static initialization order being undefined - per
+    *        https://en.cppreference.com/w/cpp/language/siof.)
     *
     *        We shouldn't ever need to use the name for \c NamedEntity itself, but it's here for completeness.
     */
-   static QString const LocalisedName;
+   static QString localisedName();
 
    /**
     * \brief Type lookup info for this class.  Note this is intentionally static, public and const.  Subclasses need to
