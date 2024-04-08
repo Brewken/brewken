@@ -943,7 +943,7 @@ def installDependencies():
          #    export CPPFLAGS="-I/usr/local/opt/qt@5/include"
          #    export PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"
          #
-         with open("/Users/runner/.bash_profile". "a") as bashProfile:
+         with open("/Users/runner/.bash_profile", "a") as bashProfile:
             bashProfile.write('export PATH="/usr/local/opt/qt@5/bin:$PATH"')
          abortOnRunFail(subprocess.run(['export', 'LDFLAGS="-L/usr/local/opt/qt@5/lib"']))
          abortOnRunFail(subprocess.run(['export', 'CPPFLAGS="-I/usr/local/opt/qt@5/include"']))
