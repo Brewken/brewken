@@ -68,8 +68,6 @@
 #include "PhysicalConstants.h"
 
 namespace {
-   double const us12ozInLiters = Measurement::Units::us_fluidOunces.toCanonical(12.0).quantity;
-   double const usPintInLiters = Measurement::Units::us_fluidOunces.toCanonical(16.0).quantity;
 
    /**
     * \brief This is used to assist the creation of instructions.
@@ -2788,8 +2786,14 @@ QList<double> Recipe::IBUs            () { return this->pimpl->getCalculated(thi
 double        Recipe::boilGrav        () { return this->pimpl->getCalculated(this->pimpl->m_boilGrav        ); }
 double        Recipe::caloriesPerLiter() { return this->pimpl->getCalculated(this->pimpl->m_caloriesPerLiter); }
 double        Recipe::caloriesPer33cl  () { return this->caloriesPerLiter() * 0.33          ; }
-double        Recipe::caloriesPerUs12oz() { return this->caloriesPerLiter() * us12ozInLiters; }
-double        Recipe::caloriesPerUsPint() { return this->caloriesPerLiter() * usPintInLiters; }
+double        Recipe::caloriesPerUs12oz() {
+   static double const us12ozInLiters = Measurement::Units::us_fluidOunces.toCanonical(12.0).quantity;
+   return this->caloriesPerLiter() * us12ozInLiters;
+}
+double        Recipe::caloriesPerUsPint() {
+   static double const usPintInLiters = Measurement::Units::us_fluidOunces.toCanonical(16.0).quantity;
+   return this->caloriesPerLiter() * usPintInLiters;
+}
 double        Recipe::wortFromMash_l  () { return this->pimpl->getCalculated(this->pimpl->m_wortFromMash_l  );}
 double        Recipe::boilVolume_l    () { return this->pimpl->getCalculated(this->pimpl->m_boilVolume_l    );}
 double        Recipe::postBoilVolume_l() { return this->pimpl->getCalculated(this->pimpl->m_postBoilVolume_l);}
