@@ -938,13 +938,19 @@ def installDependencies():
          #
          # But the brew command to install Qt also tells us to do the following:
          #
-         #    echo 'export PATH="/usr/local/opt/qt@5/bin:$PATH"' >> /Users/runner/.bash_profile
+         #    echo 'export PATH="/usr/local/opt/qt@5/bin:$PATH"' >> ~/.bash_profile
          #    export LDFLAGS="-L/usr/local/opt/qt@5/lib"
          #    export CPPFLAGS="-I/usr/local/opt/qt@5/include"
          #    export PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"
          #
-         with open("/Users/runner/.bash_profile", "a") as bashProfile:
-            bashProfile.write('export PATH="/usr/local/opt/qt@5/bin:$PATH"')
+         # Note however that, in a GitHub runner, the first of these will give "[Errno 13] Permission denied".
+         #
+         try:
+            with open("~/.bash_profile", "a") as bashProfile:
+               bashProfile.write('export PATH="/usr/local/opt/qt@5/bin:$PATH"')
+         except IOError as ioe:
+            # This is not fatal, so we just note the error and continue
+            print("Unable to write to .bash_profile:" + ioe)
          abortOnRunFail(subprocess.run(['export', 'LDFLAGS="-L/usr/local/opt/qt@5/lib"']))
          abortOnRunFail(subprocess.run(['export', 'CPPFLAGS="-I/usr/local/opt/qt@5/include"']))
          abortOnRunFail(subprocess.run(['export', 'PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"']))
