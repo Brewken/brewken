@@ -953,10 +953,10 @@ def installDependencies():
                bashProfile.write('export PATH="/usr/local/opt/qt@5/bin:$PATH"')
          except IOError as ioe:
             # This is not fatal, so we just note the error and continue
-            log.warning("Unable to write to .bash_profile:" + ioe.strerror)
-         abortOnRunFail(subprocess.run(['export', 'LDFLAGS="-L/usr/local/opt/qt@5/lib"']))
-         abortOnRunFail(subprocess.run(['export', 'CPPFLAGS="-I/usr/local/opt/qt@5/include"']))
-         abortOnRunFail(subprocess.run(['export', 'PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"']))
+            log.warning("Unable to write to .bash_profile: " + ioe.strerror)
+         os.environ['LDFLAGS'] = '-L/usr/local/opt/qt@5/lib'
+         os.environ['CPPFLAGS'] = '-I/usr/local/opt/qt@5/include'
+         os.environ['PKG_CONFIG_PATH'] = '/usr/local/opt/qt@5/lib/pkgconfig'
 
          #
          # In theory, we can now install MacPorts.  However, I didn't manage to get the following working.  The
