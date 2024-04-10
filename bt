@@ -946,11 +946,14 @@ def installDependencies():
          # Note however that, in a GitHub runner, the first of these will give "[Errno 13] Permission denied".
          #
          try:
-            with open("~/.bash_profile", "a") as bashProfile:
+            # See
+            # https://stackoverflow.com/questions/1466000/difference-between-modes-a-a-w-w-and-r-in-built-in-open-function
+            # for a good summary (clearer than the Python official docs) of the mode flag on open.
+            with open("~/.bash_profile", "a+") as bashProfile:
                bashProfile.write('export PATH="/usr/local/opt/qt@5/bin:$PATH"')
          except IOError as ioe:
             # This is not fatal, so we just note the error and continue
-            print("Unable to write to .bash_profile:" + ioe)
+            log.warning("Unable to write to .bash_profile:" + ioe.strerror)
          abortOnRunFail(subprocess.run(['export', 'LDFLAGS="-L/usr/local/opt/qt@5/lib"']))
          abortOnRunFail(subprocess.run(['export', 'CPPFLAGS="-I/usr/local/opt/qt@5/include"']))
          abortOnRunFail(subprocess.run(['export', 'PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"']))
