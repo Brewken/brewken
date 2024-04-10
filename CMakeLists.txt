@@ -415,6 +415,7 @@ if(APPLE)
    # experience this!
    #
    execute_process(COMMAND brew --prefix qt5 OUTPUT_VARIABLE CMAKE_PREFIX_PATH)
+   message(STATUS "CMAKE_PREFIX_PATH = ${CMAKE_PREFIX_PATH}")
 endif()
 
 # Set the AUTOMOC property on all targets.  This tells CMake to automatically handle the Qt Meta-Object Compiler (moc)

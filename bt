@@ -959,6 +959,13 @@ def installDependencies():
          os.environ['PKG_CONFIG_PATH'] = '/usr/local/opt/qt@5/lib/pkgconfig'
 
          #
+         # See comment about CMAKE_PREFIX_PATH in CMakeLists.txt.  I think this is rather too soon to try to do this,
+         # but, it can't hurt.
+         #
+         cmakePrefixPath = abortOnRunFail(subprocess.run(['brew', '--prefix', 'qt5']))
+         os.environ['CMAKE_PREFIX_PATH'] = cmakePrefixPath;
+
+         #
          # In theory, we can now install MacPorts.  However, I didn't manage to get the following working.  The
          # configure script complains about the lack of /usr/local/.//mkspecs/macx-clang.  So, for now, we comment this
          # bit out and install MacPorts for GitHub actions via the mac.yml script.
