@@ -405,6 +405,18 @@ else()
    set(QT5_MIN_VERSION 5.15.13)
 endif()
 
+if(APPLE)
+   #
+   # The Qt5 documentation to using CMake at https://doc.qt.io/qt-5/cmake-get-started.html says we need to set
+   # CMAKE_PREFIX_PATH environment variable to the Qt 5 installation prefix.  In theory, setting the corresponding CMake
+   # variable should do the same job (per https://cmake.org/cmake/help/latest/variable/CMAKE_PREFIX_PATH.html).
+   #
+   # It seems this is only needed on MacOS.  According to ./third-party/valijson/README.md we are not the only ones to
+   # experience this!
+   #
+   execute_process(COMMAND brew --prefix qt5 OUTPUT_VARIABLE CMAKE_PREFIX_PATH)
+endif()
+
 # Set the AUTOMOC property on all targets.  This tells CMake to automatically handle the Qt Meta-Object Compiler (moc)
 # preprocessor (ie the thing that handles Qt's C++ extensions), without having to use commands such as QT4_WRAP_CPP(),
 # QT5_WRAP_CPP(), etc.  In particular, it also means we no longer have to manually identify which headers have Q_OBJECT
