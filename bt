@@ -962,8 +962,11 @@ def installDependencies():
          # See comment about CMAKE_PREFIX_PATH in CMakeLists.txt.  I think this is rather too soon to try to do this,
          # but, it can't hurt.
          #
-         cmakePrefixPath = abortOnRunFail(subprocess.run(['brew', '--prefix', 'qt5']))
-         os.environ['CMAKE_PREFIX_PATH'] = cmakePrefixPath;
+         qtPrefixPath = abortOnRunFail(
+            subprocess.run(['brew', '--prefix', 'qt5'], capture_output=True)
+         ).stdout.decode('UTF-8').rstrip()
+         log.debug('Qt Prefix Path: ' + qtPrefixPath)
+         os.environ['CMAKE_PREFIX_PATH'] = qtPrefixPath;
 
          #
          # In theory, we can now install MacPorts.  However, I didn't manage to get the following working.  The
