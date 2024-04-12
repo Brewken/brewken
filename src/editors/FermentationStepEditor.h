@@ -22,9 +22,7 @@
 #include "ui_fermentationStepEditor.h"
 
 #include "editors/EditorBase.h"
-
-// Forward declarations.
-class FermentationStep;
+#include "model/FermentationStep.h"
 
 /*!
  * \class FermentationStepEditor
