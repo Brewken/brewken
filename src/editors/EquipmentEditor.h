@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/EquipmentEditor.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * editors/EquipmentEditor.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • David Grundberg <individ@acc.umu.se>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
@@ -28,9 +28,7 @@
 #include <QVariant>
 
 #include "editors/EditorBase.h"
-
-// Forward declarations
-class Equipment;
+#include "model/Equipment.h"
 
 /*!
  * \class EquipmentEditor
