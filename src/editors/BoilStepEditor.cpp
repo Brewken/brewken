@@ -17,7 +17,6 @@
 
 #include "MainWindow.h"
 #include "measurement/Unit.h"
-#include "model/BoilStep.h"
 
 BoilStepEditor::BoilStepEditor(QWidget* parent) :
    QDialog{parent},
