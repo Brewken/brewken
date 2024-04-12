@@ -7043,10 +7043,6 @@ El volumen final en el primario es %1.</translation>
         <translation type="unfinished">Cancelar</translation>
     </message>
     <message>
-        <source>Chilling Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Free rise</source>
         <translation type="unfinished"></translation>
     </message>

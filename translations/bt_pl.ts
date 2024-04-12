@@ -6922,10 +6922,6 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
         <translation type="unfinished">Anuluj</translation>
     </message>
     <message>
-        <source>Chilling Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Free rise</source>
         <translation type="unfinished"></translation>
     </message>

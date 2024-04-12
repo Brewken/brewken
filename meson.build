@@ -827,7 +827,7 @@ unitTestMainSourceFile = files([
 # headers in the project.  Also, note that there is a separate (trivial) list of MOC headers for the unit test runner.
 #
 # You can recreate the body of this list by running the following from the bash prompt in the mbuild directory:
-#    grep -rl Q_OBJECT ../src | grep -v Testing.h | LC_ALL=C sort | sed "s+^../src/+   \'src/+; s/$/\',/"
+#    grep -rl '^ *Q_OBJECT' ../src | grep -v Testing.h | LC_ALL=C sort | sed "s+^../src/+   \'src/+; s/$/\',/"
 #
 # (See https://stackoverflow.com/questions/68319427/bash-sort-command-do-not-treat-dots for why LC_ALL=C is needed!)
 #
@@ -872,14 +872,13 @@ mocHeaders = files([
    'src/TimerWidget.h',
    'src/WaterDialog.h',
    'src/boiltime.h',
-   'src/buttons/EquipmentButton.h',
    'src/buttons/BoilButton.h',
+   'src/buttons/EquipmentButton.h',
    'src/buttons/FermentationButton.h',
    'src/buttons/MashButton.h',
    'src/buttons/RecipeAttributeButton.h',
    'src/buttons/StyleButton.h',
    'src/buttons/WaterButton.h',
-   'src/catalogs/CatalogBase.h',
    'src/catalogs/EquipmentCatalog.h',
    'src/catalogs/FermentableCatalog.h',
    'src/catalogs/HopCatalog.h',
@@ -889,7 +888,6 @@ mocHeaders = files([
    'src/database/ObjectStore.h',
    'src/editors/BoilEditor.h',
    'src/editors/BoilStepEditor.h',
-   'src/editors/EditorBase.h',
    'src/editors/EquipmentEditor.h',
    'src/editors/FermentableEditor.h',
    'src/editors/FermentationEditor.h',
@@ -905,7 +903,6 @@ mocHeaders = files([
    'src/listModels/EquipmentListModel.h',
    'src/listModels/FermentableListModel.h',
    'src/listModels/HopListModel.h',
-   'src/listModels/ListModelBase.h',
    'src/listModels/MashListModel.h',
    'src/listModels/MashStepListModel.h',
    'src/listModels/MiscListModel.h',
@@ -928,8 +925,6 @@ mocHeaders = files([
    'src/model/Hop.h',
    'src/model/Ingredient.h',
    'src/model/IngredientInRecipe.h',
-   'src/model/IngredientAmount.h',
-   'src/model/IngredientBase.h',
    'src/model/Instruction.h',
    'src/model/Inventory.h',
    'src/model/InventoryFermentable.h',  # NB: Function definitions in model/Inventory.cpp
@@ -942,10 +937,9 @@ mocHeaders = files([
    'src/model/Misc.h',
    'src/model/NamedEntity.h',
    'src/model/OutlineableNamedEntity.h',
-   'src/model/Recipe.h',
    'src/model/OwnedByRecipe.h',
+   'src/model/Recipe.h',
    'src/model/RecipeAddition.h',
-   'src/model/RecipeAdditionBase.h',
    'src/model/RecipeAdditionFermentable.h',
    'src/model/RecipeAdditionHop.h',
    'src/model/RecipeAdditionMisc.h',
@@ -954,7 +948,6 @@ mocHeaders = files([
    'src/model/RecipeUseOfWater.h',
    'src/model/Salt.h',
    'src/model/Step.h',
-   'src/model/StepBase.h',
    'src/model/StepExtended.h',
    'src/model/Style.h',
    'src/model/Water.h',
@@ -968,7 +961,6 @@ mocHeaders = files([
    'src/sortFilterProxyModels/RecipeAdditionHopSortFilterProxyModel.h',
    'src/sortFilterProxyModels/RecipeAdditionMiscSortFilterProxyModel.h',
    'src/sortFilterProxyModels/RecipeAdditionYeastSortFilterProxyModel.h',
-   'src/sortFilterProxyModels/SortFilterProxyModelBase.h',
    'src/sortFilterProxyModels/StyleSortFilterProxyModel.h',
    'src/sortFilterProxyModels/WaterSortFilterProxyModel.h',
    'src/sortFilterProxyModels/YeastSortFilterProxyModel.h',
@@ -978,7 +970,6 @@ mocHeaders = files([
    'src/tableModels/FermentableTableModel.h',
    'src/tableModels/FermentationStepTableModel.h',
    'src/tableModels/HopTableModel.h',
-   'src/tableModels/ItemDelegate.h',
    'src/tableModels/MashStepTableModel.h',
    'src/tableModels/MiscTableModel.h',
    'src/tableModels/RecipeAdditionFermentableTableModel.h',
@@ -988,7 +979,6 @@ mocHeaders = files([
    'src/tableModels/RecipeAdjustmentSaltTableModel.h',
    'src/tableModels/SaltTableModel.h',
    'src/tableModels/StyleTableModel.h',
-   'src/tableModels/TableModelBase.h',
    'src/tableModels/WaterTableModel.h',
    'src/tableModels/YeastTableModel.h',
    'src/widgets/Animator.h',
@@ -997,13 +987,13 @@ mocHeaders = files([
    'src/widgets/CustomComboBox.h',
    'src/widgets/InfoButton.h',
    'src/widgets/InfoText.h',
-   'src/widgets/MashComboBox.h',
    'src/widgets/SelectionControl.h',
    'src/widgets/SmartCheckBox.h',
    'src/widgets/SmartDigitWidget.h',
    'src/widgets/SmartLabel.h',
    'src/widgets/SmartLineEdit.h',
    'src/widgets/ToggleSwitch.h',
+
 ])
 
 unitTestMocHeaders = files([

@@ -7012,10 +7012,6 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
-        <source>Chilling Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Free rise</source>
         <translation type="unfinished"></translation>
     </message>

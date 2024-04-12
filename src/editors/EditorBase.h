@@ -127,7 +127,7 @@ public:
       return;
    }
 
-   void setFolder(std::shared_ptr<NE> ne, QString const & folder) requires HasNoFolder<NE> {
+   void setFolder([[maybe_unused]] std::shared_ptr<NE> ne, [[maybe_unused]] QString const & folder) requires HasNoFolder<NE> {
       return;
    }
 

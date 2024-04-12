@@ -7139,10 +7139,6 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished">Cancel·lar</translation>
     </message>
     <message>
-        <source>Chilling Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Free rise</source>
         <translation type="unfinished"></translation>
     </message>

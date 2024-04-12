@@ -7063,10 +7063,6 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="unfinished">Mégsem</translation>
     </message>
     <message>
-        <source>Chilling Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Free rise</source>
         <translation type="unfinished"></translation>
     </message>

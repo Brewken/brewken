@@ -75,7 +75,8 @@ public:
       this->m_recipe = recipe;
       if (this->m_recipe) {
          this->derived().connect(this->m_recipe, &NamedEntity::changed, &this->derived(), &Derived::recipeChanged );
-         this->setWhatButtonShows(this->m_recipe->get<WhatButtonShows>());
+         // According to Clang, we need to "use 'template' keyword to treat 'get' as a dependent template name" here
+         this->setWhatButtonShows(this->m_recipe->template get<WhatButtonShows>());
       } else {
          this->setWhatButtonShows(nullptr);
       }
@@ -108,7 +109,7 @@ protected:
    //! \brief \c Derived should call this from its \c recipeChanged slot
    void doRecipeChanged(QMetaProperty prop, [[maybe_unused]] QVariant val) {
       if (prop.name() == Recipe::propertyNameFor<WhatButtonShows>()) {
-         this->setWhatButtonShows(this->m_recipe->get<WhatButtonShows>());
+         this->setWhatButtonShows(this->m_recipe->template get<WhatButtonShows>());
       }
       return;
    }

@@ -7149,10 +7149,6 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
         <translation type="unfinished">Annuler</translation>
     </message>
     <message>
-        <source>Chilling Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Free rise</source>
         <translation type="unfinished"></translation>
     </message>

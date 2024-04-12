@@ -6887,10 +6887,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished">取消</translation>
     </message>
     <message>
-        <source>Chilling Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Free rise</source>
         <translation type="unfinished"></translation>
     </message>

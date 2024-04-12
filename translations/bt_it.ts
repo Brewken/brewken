@@ -7092,10 +7092,6 @@ Il Volume finale del primo è %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Chilling Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Free rise</source>
         <translation type="unfinished"></translation>
     </message>
