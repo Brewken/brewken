@@ -1449,7 +1449,7 @@ public:
       for (auto const & fermentableAddition : this->m_self.fermentableAdditions()) {
          if (fermentableAddition->amountIsWeight()) {
             // Conversion factor for lb/gal to kg/l = 8.34538.
-            calculatedIbu += fermentableAddition->fermentable()->ibuGalPerLb() * (fermentableAddition->amount().quantity / this->m_self.batchSize_l()) / 8.34538;
+            calculatedIbu += fermentableAddition->fermentable()->ibuGalPerLb().value_or(0.0) * (fermentableAddition->amount().quantity / this->m_self.batchSize_l()) / 8.34538;
          } else {
             // .:TBD:. What do do about liquids
             qWarning() <<

@@ -221,22 +221,31 @@ public:
     *        .:TODO:. We should attempt to enforce this when two or more of the values are set.
     */
    Q_PROPERTY(std::optional<double>   coarseFineDiff_pct     READ coarseFineDiff_pct     WRITE setCoarseFineDiff_pct                 )
-   //! \brief The moisture in pct.
-   Q_PROPERTY(double         moisture_pct           READ moisture_pct           WRITE setMoisture_pct                       )
-   //! \brief The diastatic power in Lintner.
+   //! \brief The moisture in pct.  Only appropriate for a "Grain" or "Other_Adjunct" type.   NB Optional in both BeerXML and BeerJSON.
+   Q_PROPERTY(std::optional<double>   moisture_pct           READ moisture_pct           WRITE setMoisture_pct                       )
+   //! \brief The diastatic power in Lintner.  Only appropriate for a "Grain" or "Other_Adjunct" type.  NB Optional in both BeerXML and BeerJSON.
    Q_PROPERTY(std::optional<double> diastaticPower_lintner READ diastaticPower_lintner WRITE setDiastaticPower_lintner             )
-   //! \brief The percent protein.
-   Q_PROPERTY(double         protein_pct            READ protein_pct            WRITE setProtein_pct                        )
-   //! \brief The maximum recommended amount in a batch, as a percentage of the total grains.
-   Q_PROPERTY(double         maxInBatch_pct         READ maxInBatch_pct         WRITE setMaxInBatch_pct                     )
+   //! \brief The percent protein.  Only appropriate for a "Grain" or "Other_Adjunct" type.  NB Optional in both BeerXML and BeerJSON.
+   Q_PROPERTY(std::optional<double> protein_pct            READ protein_pct            WRITE setProtein_pct                        )
+   //! \brief The maximum recommended amount in a batch, as a percentage of the total grains.  NB Optional in both BeerXML and BeerJSON.
+   Q_PROPERTY(std::optional<double> maxInBatch_pct         READ maxInBatch_pct         WRITE setMaxInBatch_pct                     )
    /**
     * \brief Whether a mash is recommended. \c true means \c Fermentable must be mashed, \c false means if it can be
     *        steeped.  Note that this does NOT indicate whether the \c Fermentable is mashed or not – it is only a
-    *        recommendation used in recipe formulation.
+    *        recommendation used in recipe formulation.  NB Optional in both BeerXML and BeerJSON.
     */
-   Q_PROPERTY(bool           recommendMash          READ recommendMash          WRITE setRecommendMash                      )
-   //! \brief The IBUs per gal/lb if this is a liquid extract.  .:TODO:.  Should this be a metric measure?
-   Q_PROPERTY(double         ibuGalPerLb            READ ibuGalPerLb            WRITE setIbuGalPerLb                        )
+   Q_PROPERTY(std::optional<bool>   recommendMash          READ recommendMash          WRITE setRecommendMash                      )
+   /**
+    * \brief For hopped extracts only - an estimate of the number of IBUs per pound of extract in a gallon of water.
+    *        To convert to IBUs we multiply this number by the amount in pounds and divide by the number of gallons in
+    *        the batch.  Based on a sixty minute boil.  Only suitable for use with an "Extract" type, otherwise this
+    *        value is ignored.
+    *
+    *        This is an optional field in BeerXML and unsupported in BeerJSON.
+    *
+    *        .:TBD:. If we care about this, then it would be more consistent to store in internally as a metric measure.
+    */
+   Q_PROPERTY(std::optional<double> ibuGalPerLb            READ ibuGalPerLb            WRITE setIbuGalPerLb                        )
 ///   //! \brief Whether the grains actually is mashed.
 ///   Q_PROPERTY(bool           isMashed               READ isMashed               WRITE setIsMashed                           )
    //! \brief Whether this fermentable is an extract.
@@ -263,6 +272,11 @@ public:
     *        We treat this as synonymous with the BeerXML field YIELD, defined as "Percent dry yield (fine grain) for
     *        the grain, or the raw yield by weight if this is an extract adjunct or sugar."  HOWEVER, note that the
     *        BeerXML field is required whereas internally, and in BeerJSON, this is an optional field.
+    *
+    *        NOTE: Actually in BeerJSON, there is a required field of yield which is a record containing optional fields
+    *              fine_grind, coarse_grind, fine_coarse_difference and potential.  Technically if none of these fields
+    *              is set, then we should still write out an empty yield record, but we would not.  Hopefully this won't
+    *              be a problem in practice.
     */
    Q_PROPERTY(std::optional<double> fineGrindYield_pct      READ fineGrindYield_pct      WRITE setFineGrindYield_pct    )
    //! \brief Extract Yield Dry Basis Coarse Grind (DBCG) - aka percentage yield, compared to sucrose, of a coarse grind
@@ -456,13 +470,13 @@ public:
    QString origin                                     () const;
    QString supplier                                   () const;
    QString notes                                      () const;
-   std::optional<double>  coarseFineDiff_pct          () const;
-   double  moisture_pct                               () const;
+   std::optional<double>     coarseFineDiff_pct       () const;
+   std::optional<double>     moisture_pct             () const;
    std::optional<double>     diastaticPower_lintner   () const;
-   double  protein_pct                                () const;
-   double  maxInBatch_pct                             () const;
-   bool    recommendMash                              () const;
-   double  ibuGalPerLb                                () const;
+   std::optional<double>     protein_pct              () const;
+   std::optional<double>     maxInBatch_pct           () const;
+   std::optional<bool>       recommendMash            () const;
+   std::optional<double>     ibuGalPerLb              () const;
 ///   bool    isMashed                                   () const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<GrainGroup> grainGroup               () const;
@@ -499,12 +513,12 @@ public:
    void setSupplier                 (QString                   const & val);
    void setNotes                    (QString                   const & val);
    void setCoarseFineDiff_pct       (std::optional<double>     const   val);
-   void setMoisture_pct             (double                    const   val);
+   void setMoisture_pct             (std::optional<double>     const   val);
    void setDiastaticPower_lintner   (std::optional<double>     const   val);
-   void setProtein_pct              (double                    const   val);
-   void setMaxInBatch_pct           (double                    const   val);
-   void setRecommendMash            (bool                      const   val);
-   void setIbuGalPerLb              (double                    const   val);
+   void setProtein_pct              (std::optional<double>     const   val);
+   void setMaxInBatch_pct           (std::optional<double>     const   val);
+   void setRecommendMash            (std::optional<bool>       const   val);
+   void setIbuGalPerLb              (std::optional<double>     const   val);
 ///   void setIsMashed                 (bool                      const   val);
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    void setGrainGroup               (std::optional<GrainGroup> const   val);
@@ -547,12 +561,12 @@ private:
    QString                   m_supplier                 ;
    QString                   m_notes                    ;
    std::optional<double>     m_coarseFineDiff_pct       ;
-   double                    m_moisture_pct             ;
+   std::optional<double>     m_moisture_pct             ;
    std::optional<double>     m_diastaticPower_lintner   ;
-   double                    m_protein_pct              ;
-   double                    m_maxInBatch_pct           ;
-   bool                      m_recommendMash            ;
-   double                    m_ibuGalPerLb              ;
+   std::optional<double>     m_protein_pct              ;
+   std::optional<double>     m_maxInBatch_pct           ;
+   std::optional<bool>       m_recommendMash            ;
+   std::optional<double>     m_ibuGalPerLb              ;
 ///   bool                      m_isMashed                 ; // Primarily valid in "Use Of" instance
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<GrainGroup> m_grainGroup               ;
