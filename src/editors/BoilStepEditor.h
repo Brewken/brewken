@@ -22,9 +22,7 @@
 #include "ui_boilStepEditor.h"
 
 #include "editors/EditorBase.h"
-
-// Forward declarations.
-class BoilStep;
+#include "model/BoilStep.h"
 
 /*!
  * \class BoilStepEditor

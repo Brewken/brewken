@@ -20,7 +20,6 @@
 
 #include "MainWindow.h"
 #include "measurement/Unit.h"
-#include "model/MashStep.h"
 
 MashStepEditor::MashStepEditor(QWidget* parent) :
    QDialog{parent},

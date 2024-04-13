@@ -17,7 +17,7 @@
 
 #include "model/NamedParameterBundle.h"
 
-QString const Fermentation::LocalisedName = tr("Fermentation");
+QString Fermentation::localisedName() { return tr("Fermentation"); }
 
 bool Fermentation::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid

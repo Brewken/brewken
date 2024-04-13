@@ -38,7 +38,7 @@
 #include "model/Recipe.h"
 #include "model/RecipeAdditionYeast.h"
 
-QString const BrewNote::LocalisedName = tr("Brew Note");
+QString BrewNote::localisedName() { return tr("Brew Note"); }
 
 // BrewNote doesn't use its name field, so we sort by brew date
 // TBD: Could consider copying date into name field and leaving the default ordering

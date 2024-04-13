@@ -27,7 +27,6 @@
 #include "BtHorizontalTabs.h"
 #include "database/ObjectStoreWrapper.h"
 #include "measurement/Unit.h"
-#include "model/Fermentable.h"
 
 // TODO: Need a separate editor for inventory
 

@@ -34,7 +34,7 @@
 #include "model/Recipe.h"
 #include "utils/OptionalHelpers.h"
 
-QString const Fermentable::LocalisedName = tr("Fermentable");
+QString Fermentable::localisedName() { return tr("Fermentable"); }
 
 // Note that Fermentable::typeStringMapping and Fermentable::grainGroupStringMapping are as defined by BeerJSON, but we
 // also use them for the DB and for the UI.  We can't use them for BeerXML as it only supports subsets of these types.
@@ -199,7 +199,7 @@ Fermentable::Fermentable(QString name) :
    m_origin                   {""                      },
    m_supplier                 {""                      },
    m_notes                    {""                      },
-   m_coarseFineDiff_pct       {0.0                     },
+   m_coarseFineDiff_pct       {std::nullopt            },
    m_moisture_pct             {0.0                     },
    m_diastaticPower_lintner   {std::nullopt            },
    m_protein_pct              {0.0                     },
@@ -321,7 +321,7 @@ double                                 Fermentable::color_srm                () 
 QString                                Fermentable::origin                   () const { return                    this->m_origin                   ; }
 QString                                Fermentable::supplier                 () const { return                    this->m_supplier                 ; }
 QString                                Fermentable::notes                    () const { return                    this->m_notes                    ; }
-double                                 Fermentable::coarseFineDiff_pct       () const { return                    this->m_coarseFineDiff_pct       ; }
+std::optional<double>                  Fermentable::coarseFineDiff_pct       () const { return                    this->m_coarseFineDiff_pct       ; }
 double                                 Fermentable::moisture_pct             () const { return                    this->m_moisture_pct             ; }
 std::optional<double>                  Fermentable::diastaticPower_lintner   () const { return                    this->m_diastaticPower_lintner   ; }
 double                                 Fermentable::protein_pct              () const { return                    this->m_protein_pct              ; }
@@ -370,7 +370,7 @@ void Fermentable::setRecommendMash            (bool                      const  
 void Fermentable::setIbuGalPerLb              (double                    const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::ibuGalPerLb              , this->m_ibuGalPerLb              , val); return; }
 ///void Fermentable::setYield_pct                (double                    const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::yield_pct                , this->m_yield_pct                , this->enforceMinAndMax(val, "amount",         0.0, 100.0)); return; }
 void Fermentable::setColor_srm                (double                    const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::color_srm                , this->m_color_srm                , this->enforceMin      (val, "color"));                      return; }
-void Fermentable::setCoarseFineDiff_pct       (double                    const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::coarseFineDiff_pct       , this->m_coarseFineDiff_pct       , this->enforceMinAndMax(val, "coarseFineDiff", 0.0, 100.0)); return; }
+void Fermentable::setCoarseFineDiff_pct       (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::coarseFineDiff_pct       , this->m_coarseFineDiff_pct       , this->enforceMinAndMax(val, "coarseFineDiff", 0.0, 100.0)); return; }
 void Fermentable::setMoisture_pct             (double                    const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::moisture_pct             , this->m_moisture_pct             , this->enforceMinAndMax(val, "moisture",       0.0, 100.0)); return; }
 void Fermentable::setDiastaticPower_lintner   (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::diastaticPower_lintner   , this->m_diastaticPower_lintner   , this->enforceMin      (val, "diastatic power"));            return; }
 void Fermentable::setProtein_pct              (double                    const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::protein_pct              , this->m_protein_pct              , this->enforceMinAndMax(val, "protein",        0.0, 100.0)); return; }

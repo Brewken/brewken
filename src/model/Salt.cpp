@@ -41,7 +41,7 @@ namespace {
    double constexpr molarMass_H3PO4  =  97.994     ; // https://en.wikipedia.org/wiki/Phosphoric_acid
 }
 
-QString const Salt::LocalisedName = tr("Salt");
+QString Salt::localisedName() { return tr("Salt"); }
 
 EnumStringMapping const Salt::typeStringMapping {
    {Salt::Type::CaCl2         , "CaCl2"         },

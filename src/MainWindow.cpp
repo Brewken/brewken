@@ -480,7 +480,7 @@ public:
                                 &Recipe::addAddition<NE>,
                                 ne,
                                 &Recipe::removeAddition<NE>,
-                                QString(tr("Add %1 to recipe")).arg(NE::LocalisedName))
+                                QString(tr("Add %1 to recipe")).arg(NE::localisedName()))
       );
 
       // Since we just added an ingredient, switch the focus to the tab that lists that type of ingredient.  We rely here
@@ -524,7 +524,7 @@ public:
                                     &Recipe::removeAddition<NE>,
                                     item,
                                     &Recipe::addAddition<NE>,
-                                    tr("Remove %1 from recipe").arg(NE::LocalisedName))
+                                    tr("Remove %1 from recipe").arg(NE::localisedName()))
          );
          tableModel->remove(item);
       }
@@ -546,7 +546,7 @@ public:
                                 &StepOwnerClass::addStep,
                                 step,
                                 &StepOwnerClass::removeStep,
-                                tr("Add %1 step to recipe").arg(StepOwnerClass::LocalisedName))
+                                tr("Add %1 step to recipe").arg(StepOwnerClass::localisedName()))
       );
       // We don't need to call this->pimpl->m_mashStepTableModel->addMashStep(mashStep) etc here because the change to
       // the mash/boil/ferementation will already have triggered the necessary updates to
@@ -673,7 +673,7 @@ public:
                                 &StepClass::StepOwnerClass::addStep,
                                 &MainWindow::remove<StepClass>,
                                 static_cast<void (MainWindow::*)(std::shared_ptr<StepClass>)>(nullptr),
-                                tr("Remove %1").arg(StepClass::LocalisedName))
+                                tr("Remove %1").arg(StepClass::localisedName()))
       );
 
       return;
@@ -2291,7 +2291,7 @@ void MainWindow::updateRecipeEfficiency() {
 ///                             &Recipe::add<NE>,
 ///                             ne,
 ///                             &Recipe::remove<NE>,
-///                             QString(tr("Add %1 to recipe")).arg(NE::LocalisedName))
+///                             QString(tr("Add %1 to recipe")).arg(NE::localisedName()))
 ///   );
 ///
 ///   // Since we just added an ingredient, switch the focus to the tab that lists that type of ingredient.  We rely here

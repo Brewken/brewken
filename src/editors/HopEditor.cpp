@@ -28,7 +28,6 @@
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"
 #include "measurement/Unit.h"
-#include "model/Hop.h"
 
 // TODO: Need a separate editor for inventory
 

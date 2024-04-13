@@ -100,7 +100,7 @@ public:
    /**
     * \brief See comment in model/NamedEntity.h
     */
-   static QString const LocalisedName;
+   static QString localisedName();
 
    /**
     * \brief The type of Fermentable.
@@ -215,10 +215,12 @@ public:
     *        and finely milled grain.  A FG/CG difference of 0.5–1.0 percentage points is well suited to a single step
     *        infusion, while a value greater than 1.5 percentage points indicates that a protein rest may be advisable.
     *
+    *        Optional in both BeerJSON and BeerXML.
+    *
     *        Note that \c coarseFineDiff_pct = \c fineGrindYield_pct - \c coarseGrindYield_pct
     *        .:TODO:. We should attempt to enforce this when two or more of the values are set.
     */
-   Q_PROPERTY(double         coarseFineDiff_pct     READ coarseFineDiff_pct     WRITE setCoarseFineDiff_pct                 )
+   Q_PROPERTY(std::optional<double>   coarseFineDiff_pct     READ coarseFineDiff_pct     WRITE setCoarseFineDiff_pct                 )
    //! \brief The moisture in pct.
    Q_PROPERTY(double         moisture_pct           READ moisture_pct           WRITE setMoisture_pct                       )
    //! \brief The diastatic power in Lintner.
@@ -454,7 +456,7 @@ public:
    QString origin                                     () const;
    QString supplier                                   () const;
    QString notes                                      () const;
-   double  coarseFineDiff_pct                         () const;
+   std::optional<double>  coarseFineDiff_pct          () const;
    double  moisture_pct                               () const;
    std::optional<double>     diastaticPower_lintner   () const;
    double  protein_pct                                () const;
@@ -496,7 +498,7 @@ public:
    void setOrigin                   (QString                   const & val);
    void setSupplier                 (QString                   const & val);
    void setNotes                    (QString                   const & val);
-   void setCoarseFineDiff_pct       (double                    const   val);
+   void setCoarseFineDiff_pct       (std::optional<double>     const   val);
    void setMoisture_pct             (double                    const   val);
    void setDiastaticPower_lintner   (std::optional<double>     const   val);
    void setProtein_pct              (double                    const   val);
@@ -544,7 +546,7 @@ private:
    QString                   m_origin                   ;
    QString                   m_supplier                 ;
    QString                   m_notes                    ;
-   double                    m_coarseFineDiff_pct       ;
+   std::optional<double>     m_coarseFineDiff_pct       ;
    double                    m_moisture_pct             ;
    std::optional<double>     m_diastaticPower_lintner   ;
    double                    m_protein_pct              ;

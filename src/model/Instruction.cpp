@@ -66,7 +66,7 @@ private:
    std::shared_ptr<Recipe> recipe;
 };
 
-QString const Instruction::LocalisedName = tr("Instruction");
+QString Instruction::localisedName() { return tr("Instruction"); }
 
 bool Instruction::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid

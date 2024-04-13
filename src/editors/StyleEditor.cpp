@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/StyleEditor.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * editors/StyleEditor.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -23,7 +23,6 @@
 #include "BtHorizontalTabs.h"
 #include "database/ObjectStoreWrapper.h"
 #include "measurement/Unit.h"
-#include "model/Style.h"
 #include "sortFilterProxyModels/StyleSortFilterProxyModel.h"
 
 StyleEditor::StyleEditor(QWidget* parent) :

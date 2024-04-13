@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/FermentableEditor.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * editors/FermentableEditor.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
@@ -28,9 +28,7 @@
 #include <QString>
 
 #include "editors/EditorBase.h"
-
-// Forward declarations.
-class Fermentable;
+#include "model/Fermentable.h"
 
 /*!
  * \class FermentableEditor

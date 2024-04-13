@@ -23,7 +23,7 @@
 #include "model/MashStep.h"
 #include "model/NamedParameterBundle.h"
 
-QString const Boil::LocalisedName = tr("Boil");
+QString Boil::localisedName() { return tr("Boil"); }
 
 bool Boil::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid

@@ -32,7 +32,7 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
-QString const Misc::LocalisedName = tr("Miscellaneous");
+QString Misc::localisedName() { return tr("Miscellaneous"); }
 
 EnumStringMapping const Misc::typeStringMapping {
    {Misc::Type::Spice      , "spice"      },

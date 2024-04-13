@@ -17,7 +17,7 @@
 
 #include "model/Recipe.h"
 
-QString const IngredientInRecipe::LocalisedName = tr("Ingredient In Recipe");
+QString IngredientInRecipe::localisedName() { return tr("Ingredient In Recipe"); }
 
 bool IngredientInRecipe::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid

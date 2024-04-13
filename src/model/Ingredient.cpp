@@ -17,7 +17,7 @@
 
 #include "model/NamedParameterBundle.h"
 
-QString const Ingredient::LocalisedName = tr("Ingredient");
+QString Ingredient::localisedName() { return tr("Ingredient"); }
 
 TypeLookup const Ingredient::typeLookup {
    "Ingredient",

@@ -18,7 +18,7 @@
 #include "BtFieldType.h"
 #include "model/NamedParameterBundle.h"
 
-QString const OutlineableNamedEntity::LocalisedName = tr("Outlineable Named Entity");
+QString OutlineableNamedEntity::localisedName() { return tr("Outlineable Named Entity"); }
 
 TypeLookup const OutlineableNamedEntity::typeLookup {
    "OutlineableNamedEntity",

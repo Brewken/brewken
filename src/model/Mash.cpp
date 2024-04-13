@@ -29,7 +29,7 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
-QString const Mash::LocalisedName = tr("Mash");
+QString Mash::localisedName() { return tr("Mash"); }
 
 bool Mash::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid

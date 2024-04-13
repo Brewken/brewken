@@ -35,7 +35,7 @@ namespace {
    }
 }
 
-QString const Step::LocalisedName = tr("Step");
+QString Step::localisedName() { return tr("Step"); }
 
 bool Step::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid

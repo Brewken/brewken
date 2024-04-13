@@ -744,20 +744,36 @@ def installDependencies():
          # We just need the bit before the first underscore, eg
          #    MINGW64
          terminalVersion = unameResult.split(sep='_', maxsplit=1)[0]
-##         if (terminalVersion != 'MINGW32'):
-##            # One day we'll try to get the 64-bit build working on Windows.  I think it's just the packaging step that's
-##            # the problem.  For now, it's easier to insist on 32-bit at set-up.  (Obviously 32-bit apps run just fine on
-##            # 64-bit Windows.  I don't think there would be any noticeable difference to the end user in having a 64-bit
-##            # version of the app.)
-##            log.critical('Running in ' + terminalVersion + ' but need to run in MINGW32 (ie 32-bit build environment)')
-##            exit(1)
+
+
          if (terminalVersion != 'MINGW64'):
-            # Support for 32-bit packages in MSYS2 is getting patchy, so we finally had to bite the bullet and get the
-            # 64-bit build working.  This means we are stopping support of the 32-bit build.
+            # In the past, we built only 32-bit packages (i686 architecture) on Windows because of problems getting
+            # 64-bit versions of NSIS plugins to work.  However, we now invoke NSIS without plugins, so the 64-bit build
+            # seems to be working.
+            #
+            # As of January 2024, some of the 32-bit MSYS2 packages/groups we were previously relying on previously are
+            # no longer available.  So now, we only build 64-bit packages (x86_64 architecture) on Windows.
             log.critical('Running in ' + terminalVersion + ' but need to run in MINGW64 (ie 64-bit build environment)')
             exit(1)
 
-         log.info('Ensuring required libraries and frameworks are installed')
+         # Ensure pip is up-to-date.  This is what the error message tells you to run if it's not!
+         log.info('Ensuring Python pip is up-to-date')
+         abortOnRunFail(subprocess.run(['python3.exe', '-m', 'pip', 'install', '--upgrade', 'pip']))
+
+         #
+         # When we update packages below, we get "error: failed to commit transaction (conflicting files)" errors for a
+         # bunch of Python packaging files unless we force Pacman to overwrite them.  This is somewhat less of a hack
+         # than specifying --overwrite globally.
+         #
+         # We have to do both 32-bit and 64-bit versions of Python here to be certain.
+         #
+         # Note that the rules for glob expansion are different when invoking a command from Python then when typing it
+         # on the command line, hence why the overwrite parameter is '*python*' not '"*python*"'.
+         #
+         log.info('Ensuring Python packaging is up-to-date')
+         abortOnRunFail(subprocess.run(['pacman', '-S', '--noconfirm', '--overwrite', '*python*', 'mingw-w64-i686-python-packaging']))
+         abortOnRunFail(subprocess.run(['pacman', '-S', '--noconfirm', '--overwrite', '*python*', 'mingw-w64-x86_64-python-packaging']))
+
          #
          # Before we install packages, we want to make sure the MSYS2 installation itself is up-to-date, otherwise you
          # can hit problems
@@ -765,12 +781,10 @@ def installDependencies():
          #   pacman -S -y should download a fresh copy of the master package database
          #   pacman -S -u should upgrades all currently-installed packages that are out-of-date
          #
+         log.info('Ensuring required libraries and frameworks are installed')
          abortOnRunFail(subprocess.run(['pacman', '-S', '-y', '--noconfirm']))
          abortOnRunFail(subprocess.run(['pacman', '-S', '-u', '--noconfirm']))
 
-         #
-         # We'd normally want to go with the 64-bit versions of things (x86_64) but AIUI it's a bit hard to handle this
-         # in the NSIS installer, so we the 32-bit versions (i686).
          #
          # We _could_ just invoke pacman once with the list of everything we want to install.  However, this can make
          # debugging a bit harder when there is a pacman problem, because it doesn't always give the most explanatory
@@ -779,7 +793,8 @@ def installDependencies():
          # Note that the --disable-download-timeout option on Pacman proved often necessary because of slow mirror
          # sites, so we now specify it routinely.
          #
-##         arch = 'i686'
+         # As noted above, we no longer support 32-bit ('i686') builds and now only support 64-bit ('x86_64') ones.
+         #
          arch = 'x86_64'
          installList = ['base-devel',
                         'cmake',
@@ -792,6 +807,8 @@ def installDependencies():
                         'mingw-w64-' + arch + '-libbacktrace',
                         'mingw-w64-' + arch + '-meson',
                         'mingw-w64-' + arch + '-nsis',
+                        'mingw-w64-' + arch + '-freetype', #
+                        'mingw-w64-' + arch + '-harfbuzz', #
                         'mingw-w64-' + arch + '-qt5-base',
                         'mingw-w64-' + arch + '-qt5-static',
                         'mingw-w64-' + arch + '-qt5',
@@ -872,7 +889,7 @@ def installDependencies():
          # too (as the former depends on the latter).  However, I think it's clearer to explicitly list all the direct
          # dependencies (eg we do make calls directly into Xerces).
          #
-         # For the moment, we install Qt 5 (= 5.15.7), as there are code changes required to use Qt 6
+         # For the moment, we install Qt 5 (= 5.15.13), as there are code changes required to use Qt 6
          #
          # .:TBD:. Installing Boost here doesn't seem to give us libboost_stacktrace_backtrace
          #         Also, trying to use the "--cc=clang" option to install boost gives an error ("Error: boost: no bottle
@@ -905,8 +922,11 @@ def installDependencies():
          # By default, even once Qt5 is installed, Meson will not find it
          #
          # See https://stackoverflow.com/questions/29431882/get-qt5-up-and-running-on-a-new-mac for suggestion to do
-         # the following to "symlink the various Qt5 binaries and libraries into your /usr/local/bin and /usr/local/lib
-         # directories".
+         # the following to run `brew link qt5 --force` to "symlink the various Qt5 binaries and libraries into your
+         # /usr/local/bin and /usr/local/lib directories".
+         #
+         abortOnRunFail(subprocess.run(['brew', 'link', '--force', 'qt5']))
+
          #
          # Additionally, per lengthy discussion at https://github.com/Homebrew/legacy-homebrew/issues/29938, it seems
          # we might also need either:
@@ -916,7 +936,40 @@ def installDependencies():
          #    export PATH=/usr/local/opt/qt5/bin:$PATH
          # The former gives permission errors, so we do the latter in mac.yml
          #
-         abortOnRunFail(subprocess.run(['brew', 'link', '--force', 'qt5']))
+         # But the brew command to install Qt also tells us to do the following:
+         #
+         #    echo 'export PATH="/usr/local/opt/qt@5/bin:$PATH"' >> ~/.bash_profile
+         #    export LDFLAGS="-L/usr/local/opt/qt@5/lib"
+         #    export CPPFLAGS="-I/usr/local/opt/qt@5/include"
+         #    export PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"
+         #
+         # Note however that, in a GitHub runner, the first of these will give "[Errno 13] Permission denied".
+         #
+         try:
+            # See
+            # https://stackoverflow.com/questions/1466000/difference-between-modes-a-a-w-w-and-r-in-built-in-open-function
+            # for a good summary (clearer than the Python official docs) of the mode flag on open.
+            with open("~/.bash_profile", "a+") as bashProfile:
+               bashProfile.write('export PATH="/usr/local/opt/qt@5/bin:$PATH"')
+         except IOError as ioe:
+            # This is not fatal, so we just note the error and continue
+            log.warning("Unable to write to .bash_profile: " + ioe.strerror)
+         os.environ['LDFLAGS'] = '-L/usr/local/opt/qt@5/lib'
+         os.environ['CPPFLAGS'] = '-I/usr/local/opt/qt@5/include'
+         os.environ['PKG_CONFIG_PATH'] = '/usr/local/opt/qt@5/lib/pkgconfig'
+
+         #
+         # See comment about CMAKE_PREFIX_PATH in CMakeLists.txt.  I think this is rather too soon to try to do this,
+         # but, it can't hurt.
+         #
+         # Typically, this is going to set CMAKE_PREFIX_PATH to /usr/local/opt/qt@5
+         #
+         qtPrefixPath = abortOnRunFail(
+            subprocess.run(['brew', '--prefix', 'qt5'], capture_output=True)
+         ).stdout.decode('UTF-8').rstrip()
+         log.debug('Qt Prefix Path: ' + qtPrefixPath)
+         os.environ['CMAKE_PREFIX_PATH'] = qtPrefixPath;
+         abortOnRunFail(subprocess.run(['tree', '-sh', qtPrefixPath], capture_output=False))
 
          #
          # In theory, we can now install MacPorts.  However, I didn't manage to get the following working.  The
@@ -1264,8 +1317,6 @@ def doPackage():
    #
    # If meson install worked, we can now do the actual packaging.
    #
-
-
    match platform.system():
 
       #-----------------------------------------------------------------------------------------------------------------

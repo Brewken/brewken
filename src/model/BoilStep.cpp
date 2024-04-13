@@ -19,7 +19,7 @@
 #include "model/NamedParameterBundle.h"
 #include "utils/OptionalHelpers.h"
 
-QString const BoilStep::LocalisedName = tr("Boil Step");
+QString BoilStep::localisedName() { return tr("Boil Step"); }
 
 EnumStringMapping const BoilStep::chillingTypeStringMapping {
    {BoilStep::ChillingType::Batch , "batch"  },

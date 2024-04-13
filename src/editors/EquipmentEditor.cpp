@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/EquipmentEditor.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * editors/EquipmentEditor.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • David Grundberg <individ@acc.umu.se>
@@ -36,7 +36,6 @@
 #include "Localization.h"
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
-#include "model/Equipment.h"
 #include "NamedEntitySortProxyModel.h"
 #include "PersistentSettings.h"
 #include "PhysicalConstants.h"

@@ -153,7 +153,7 @@ public:
       XmlRecordDefinition(recordName,
                           &T::typeLookup,
                           T::staticMetaObject.className(),
-                          T::LocalisedName,
+                          T::localisedName(),
                           NamedEntity::makeUpAndDownCasters<T>(),
                           xmlRecordConstructorWrapper,
                           fieldDefinitions) {
@@ -181,7 +181,7 @@ public:
       XmlRecordDefinition(recordName,
                           &T::typeLookup,
                           T::staticMetaObject.className(),
-                          T::LocalisedName,
+                          T::localisedName(),
                           NamedEntity::makeUpAndDownCasters<T>(),
                           xmlRecordConstructorWrapper,
                           fieldDefinitionLists) {

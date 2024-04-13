@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/MiscEditor.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * editors/MiscEditor.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -27,9 +27,7 @@
 #include <QVariant>
 
 #include "editors/EditorBase.h"
-
-// Forward declarations.
-class Misc;
+#include "model/Misc.h"
 
 /*!
  * \class MiscEditor

@@ -17,7 +17,6 @@
 
 #include "MainWindow.h"
 #include "measurement/Unit.h"
-#include "model/FermentationStep.h"
 
 FermentationStepEditor::FermentationStepEditor(QWidget* parent) :
    QDialog{parent},

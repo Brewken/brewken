@@ -25,9 +25,7 @@
 #include "ui_mashStepEditor.h"
 
 #include "editors/EditorBase.h"
-
-// Forward declarations.
-class MashStep;
+#include "model/MashStep.h"
 
 /*!
  * \class MashStepEditor

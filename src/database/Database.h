@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/Database.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * database/Database.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
@@ -120,7 +120,7 @@ public:
    static char const * getDefaultBackupFileName();
 
    //! backs up database to chosen file
-   bool backupToFile(QString newDbFileName);
+   bool backupToFile(QString const & newDbFileName);
 
    //! backs up database to 'dir' in chosen directory
    bool backupToDir(QString dir, QString filename="");

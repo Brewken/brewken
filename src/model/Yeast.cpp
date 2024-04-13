@@ -28,7 +28,7 @@
 #include "model/Recipe.h"
 #include "PhysicalConstants.h"
 
-QString const Yeast::LocalisedName = tr("Yeast");
+QString Yeast::localisedName() { return tr("Yeast"); }
 
 EnumStringMapping const Yeast::typeStringMapping {
    {Yeast::Type::Ale         , "ale"          },

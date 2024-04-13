@@ -18,7 +18,7 @@
 #include "model/NamedParameterBundle.h"
 #include "PhysicalConstants.h"
 
-QString const StepExtended::LocalisedName = tr("Extended Step");
+QString StepExtended::localisedName() { return tr("Extended Step"); }
 
 bool StepExtended::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid

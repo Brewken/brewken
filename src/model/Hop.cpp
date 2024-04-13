@@ -29,7 +29,7 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 
-QString const Hop::LocalisedName = tr("Hop");
+QString Hop::localisedName() { return tr("Hop"); }
 
 // Note that Hop::typeStringMapping and Hop::formStringMapping are as defined by BeerJSON, but we also use them for the
 // DB and for the UI.  We can't use them for BeerXML as it only supports subsets of these types.

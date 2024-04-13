@@ -19,7 +19,7 @@
 #include "database/ObjectStoreWrapper.h"
 #include "model/NamedParameterBundle.h"
 
-QString const RecipeAdditionYeast::LocalisedName = tr("Yeast Addition");
+QString RecipeAdditionYeast::localisedName() { return tr("Yeast Addition"); }
 
 ObjectStore & RecipeAdditionYeast::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<RecipeAdditionYeast>::getInstance();
