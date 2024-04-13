@@ -430,7 +430,7 @@ QVariant BtTreeItem::dataWater(int column) {
          case BtTreeItem::WaterColumn::Magnesium:
             return QVariant(water->magnesium_ppm());
          case BtTreeItem::WaterColumn::pH:
-            return QVariant(water->ph());
+            return water->ph() ? QVariant(*water->ph()) : QVariant();
          default :
             qWarning() << QString("BtTreeItem::dataWater Bad column: %1").arg(column);
       }

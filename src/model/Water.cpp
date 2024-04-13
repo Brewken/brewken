@@ -134,12 +134,12 @@ Water::Water(QString name) :
    m_chloride_ppm       {0.0         },
    m_sodium_ppm         {0.0         },
    m_magnesium_ppm      {0.0         },
-   m_ph                 {0.0         },
-   m_alkalinity_ppm     {0.0         },
+   m_ph                 {std::nullopt},
+   m_alkalinity_ppm     {std::nullopt},
    m_notes              {""          },
    m_type               {std::nullopt},
-   m_mashRo_pct         {0.0         },
-   m_spargeRo_pct       {0.0         },
+   m_mashRo_pct         {std::nullopt},
+   m_spargeRo_pct       {std::nullopt},
    m_alkalinity_as_hco3 {true        },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    m_carbonate_ppm      {std::nullopt},
@@ -292,13 +292,13 @@ double                     Water::sulfate_ppm     () const { return             
 double                     Water::chloride_ppm    () const { return                    m_chloride_ppm      ; }
 double                     Water::sodium_ppm      () const { return                    m_sodium_ppm        ; }
 double                     Water::magnesium_ppm   () const { return                    m_magnesium_ppm     ; }
-double                     Water::ph              () const { return                    m_ph                ; }
-double                     Water::alkalinity_ppm  () const { return                    m_alkalinity_ppm    ; }
+std::optional<double>      Water::ph              () const { return                    m_ph                ; }
+std::optional<double>      Water::alkalinity_ppm  () const { return                    m_alkalinity_ppm    ; }
 QString                    Water::notes           () const { return                    m_notes             ; }
 std::optional<Water::Type> Water::type            () const { return                    m_type              ; }
 std::optional<int>         Water::typeAsInt       () const { return Optional::toOptInt(m_type)             ; }
-double                     Water::mashRo_pct      () const { return                    m_mashRo_pct        ; }
-double                     Water::spargeRo_pct    () const { return                    m_spargeRo_pct      ; }
+std::optional<double>      Water::mashRo_pct      () const { return                    m_mashRo_pct        ; }
+std::optional<double>      Water::spargeRo_pct    () const { return                    m_spargeRo_pct      ; }
 bool                       Water::alkalinityAsHCO3() const { return                    m_alkalinity_as_hco3; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 std::optional<double>      Water::carbonate_ppm   () const { return                    m_carbonate_ppm; }
@@ -310,20 +310,20 @@ std::optional<double>      Water::flouride_ppm    () const { return             
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
 ///void Water::setAmount          (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::amount          , m_amount            ,                            val ); return; }
-void Water::setCalcium_ppm     (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::calcium_ppm     , m_calcium_ppm       , val); return; }
-void Water::setBicarbonate_ppm (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::bicarbonate_ppm , m_bicarbonate_ppm   , val); return; }
-void Water::setSulfate_ppm     (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::sulfate_ppm     , m_sulfate_ppm       , val); return; }
-void Water::setChloride_ppm    (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::chloride_ppm    , m_chloride_ppm      , val); return; }
-void Water::setSodium_ppm      (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::sodium_ppm      , m_sodium_ppm        , val); return; }
-void Water::setMagnesium_ppm   (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::magnesium_ppm   , m_magnesium_ppm     , val); return; }
-void Water::setPh              (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::ph              , m_ph                , val); return; }
-void Water::setAlkalinity_ppm  (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::alkalinity_ppm  , m_alkalinity_ppm    , val); return; }
-void Water::setNotes           (QString             const & val) { SET_AND_NOTIFY(PropertyNames::Water::notes           , m_notes             , val); return; }
-void Water::setType            (std::optional<Type> const   val) { SET_AND_NOTIFY(PropertyNames::Water::type            , m_type              , val); return; }
-void Water::setTypeAsInt       (std::optional<int>  const   val) { SET_AND_NOTIFY(PropertyNames::Water::type            , m_type              , Optional::fromOptInt<Type>(val)); return; }
-void Water::setMashRo_pct      (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::mashRo_pct      , m_mashRo_pct        , val); return; }
-void Water::setSpargeRo_pct    (double              const   val) { SET_AND_NOTIFY(PropertyNames::Water::spargeRo_pct    , m_spargeRo_pct      , val); return; }
-void Water::setAlkalinityAsHCO3(bool                const   val) { SET_AND_NOTIFY(PropertyNames::Water::alkalinityAsHCO3, m_alkalinity_as_hco3, val); return; }
+void Water::setCalcium_ppm     (double                const   val) { SET_AND_NOTIFY(PropertyNames::Water::calcium_ppm     , m_calcium_ppm       , val); return; }
+void Water::setBicarbonate_ppm (double                const   val) { SET_AND_NOTIFY(PropertyNames::Water::bicarbonate_ppm , m_bicarbonate_ppm   , val); return; }
+void Water::setSulfate_ppm     (double                const   val) { SET_AND_NOTIFY(PropertyNames::Water::sulfate_ppm     , m_sulfate_ppm       , val); return; }
+void Water::setChloride_ppm    (double                const   val) { SET_AND_NOTIFY(PropertyNames::Water::chloride_ppm    , m_chloride_ppm      , val); return; }
+void Water::setSodium_ppm      (double                const   val) { SET_AND_NOTIFY(PropertyNames::Water::sodium_ppm      , m_sodium_ppm        , val); return; }
+void Water::setMagnesium_ppm   (double                const   val) { SET_AND_NOTIFY(PropertyNames::Water::magnesium_ppm   , m_magnesium_ppm     , val); return; }
+void Water::setPh              (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Water::ph              , m_ph                , val); return; }
+void Water::setAlkalinity_ppm  (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Water::alkalinity_ppm  , m_alkalinity_ppm    , val); return; }
+void Water::setNotes           (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Water::notes           , m_notes             , val); return; }
+void Water::setType            (std::optional<Type>   const   val) { SET_AND_NOTIFY(PropertyNames::Water::type            , m_type              , val); return; }
+void Water::setTypeAsInt       (std::optional<int>    const   val) { SET_AND_NOTIFY(PropertyNames::Water::type            , m_type              , Optional::fromOptInt<Type>(val)); return; }
+void Water::setMashRo_pct      (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Water::mashRo_pct      , m_mashRo_pct        , val); return; }
+void Water::setSpargeRo_pct    (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Water::spargeRo_pct    , m_spargeRo_pct      , val); return; }
+void Water::setAlkalinityAsHCO3(bool                  const   val) { SET_AND_NOTIFY(PropertyNames::Water::alkalinityAsHCO3, m_alkalinity_as_hco3, val); return; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 void Water::setCarbonate_ppm   (std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::Water::carbonate_ppm   , m_carbonate_ppm     , val); return; }
 void Water::setPotassium_ppm   (std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::Water::potassium_ppm   , m_potassium_ppm     , val); return; }

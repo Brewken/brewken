@@ -158,10 +158,10 @@ public:
    Q_PROPERTY(double sodium_ppm      READ sodium_ppm      WRITE setSodium_ppm)
    //! \brief The ppm of magnesium.  Required in BeerXML and BeerJSON.
    Q_PROPERTY(double magnesium_ppm   READ magnesium_ppm   WRITE setMagnesium_ppm)
-   //! \brief The pH.  ⮜⮜⮜ TODO: Optional in both BeerXML and BeerJSON. ⮞⮞⮞
-   Q_PROPERTY(double ph              READ ph              WRITE setPh)
+   //! \brief The pH.  NB: Optional in both BeerXML and BeerJSON.
+   Q_PROPERTY(std::optional<double> ph              READ ph              WRITE setPh)
    //! \brief The residual alkalinity.  Units are ppm.  NB: Not part of BeerXML or BeerJSON.
-   Q_PROPERTY(double alkalinity_ppm  READ alkalinity_ppm  WRITE setAlkalinity_ppm)
+   Q_PROPERTY(std::optional<double> alkalinity_ppm  READ alkalinity_ppm  WRITE setAlkalinity_ppm)
    //! \brief The notes.
    Q_PROPERTY(QString notes          READ notes           WRITE setNotes)
    /**
@@ -171,11 +171,11 @@ public:
     *        \c std::optional<int>, not \c std::optional<Type>
     */
    Q_PROPERTY(std::optional<int> type READ typeAsInt        WRITE setTypeAsInt)
-   //! \brief percent of the mash water that is RO (reverse osmosis)
-   Q_PROPERTY(double mashRo_pct       READ mashRo_pct       WRITE setMashRo_pct)
-   //! \brief percent of the sparge water that is RO (reverse osmosis)
-   Q_PROPERTY(double spargeRo_pct     READ spargeRo_pct     WRITE setSpargeRo_pct)
-   //! \brief is the alkalinity measured as HCO3 (bicarbonate) or CO3 (carbonate)?
+   //! \brief percent of the mash water that is RO (reverse osmosis)   NB: Not part of BeerXML or BeerJSON
+   Q_PROPERTY(std::optional<double> mashRo_pct       READ mashRo_pct       WRITE setMashRo_pct)
+   //! \brief percent of the sparge water that is RO (reverse osmosis)   NB: Not part of BeerXML or BeerJSON
+   Q_PROPERTY(std::optional<double> spargeRo_pct     READ spargeRo_pct     WRITE setSpargeRo_pct)
+   //! \brief is the alkalinity measured as HCO3 (bicarbonate) or CO3 (carbonate)?  NB: Not part of BeerXML or BeerJSON
    Q_PROPERTY(bool   alkalinityAsHCO3 READ alkalinityAsHCO3 WRITE setAlkalinityAsHCO3)
 
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -188,20 +188,20 @@ public:
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
 ///   double              amount          () const;
-   double              calcium_ppm     () const;
-   double              bicarbonate_ppm () const;
-   double              sulfate_ppm     () const;
-   double              chloride_ppm    () const;
-   double              sodium_ppm      () const;
-   double              magnesium_ppm   () const;
-   double              ph              () const;
-   double              alkalinity_ppm  () const;
-   QString             notes           () const;
-   std::optional<Type> type            () const;
-   std::optional<int>  typeAsInt       () const;
-   double              mashRo_pct      () const;
-   double              spargeRo_pct    () const;
-   bool                alkalinityAsHCO3() const;
+   double                calcium_ppm     () const;
+   double                bicarbonate_ppm () const;
+   double                sulfate_ppm     () const;
+   double                chloride_ppm    () const;
+   double                sodium_ppm      () const;
+   double                magnesium_ppm   () const;
+   std::optional<double> ph              () const;
+   std::optional<double> alkalinity_ppm  () const;
+   QString               notes           () const;
+   std::optional<Type>   type            () const;
+   std::optional<int>    typeAsInt       () const;
+   std::optional<double> mashRo_pct      () const;
+   std::optional<double> spargeRo_pct    () const;
+   bool                  alkalinityAsHCO3() const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<double> carbonate_ppm () const;
    std::optional<double> potassium_ppm () const;
@@ -220,13 +220,13 @@ public:
    void setChloride_ppm    (double                const   val);
    void setSodium_ppm      (double                const   val);
    void setMagnesium_ppm   (double                const   val);
-   void setPh              (double                const   val);
-   void setAlkalinity_ppm  (double                const   val);
+   void setPh              (std::optional<double> const   val);
+   void setAlkalinity_ppm  (std::optional<double> const   val);
    void setNotes           (QString               const & val);
    void setType            (std::optional<Type>   const   val);
    void setTypeAsInt       (std::optional<int>    const   val);
-   void setMashRo_pct      (double                const   val);
-   void setSpargeRo_pct    (double                const   val);
+   void setMashRo_pct      (std::optional<double> const   val);
+   void setSpargeRo_pct    (std::optional<double> const   val);
    void setAlkalinityAsHCO3(bool                  const   val);
 
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -247,19 +247,19 @@ protected:
 
 private:
 ///   double              m_amount            ;
-   double              m_calcium_ppm       ;
-   double              m_bicarbonate_ppm   ;
-   double              m_sulfate_ppm       ;
-   double              m_chloride_ppm      ;
-   double              m_sodium_ppm        ;
-   double              m_magnesium_ppm     ;
-   double              m_ph                ;
-   double              m_alkalinity_ppm    ;
-   QString             m_notes             ;
-   std::optional<Type> m_type              ;
-   double              m_mashRo_pct        ;
-   double              m_spargeRo_pct      ;
-   bool                m_alkalinity_as_hco3;
+   double                m_calcium_ppm       ;
+   double                m_bicarbonate_ppm   ;
+   double                m_sulfate_ppm       ;
+   double                m_chloride_ppm      ;
+   double                m_sodium_ppm        ;
+   double                m_magnesium_ppm     ;
+   std::optional<double> m_ph                ;
+   std::optional<double> m_alkalinity_ppm    ;
+   QString               m_notes             ;
+   std::optional<Type>   m_type              ;
+   std::optional<double> m_mashRo_pct        ;
+   std::optional<double> m_spargeRo_pct      ;
+   bool                  m_alkalinity_as_hco3;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<double> m_carbonate_ppm   ;
    std::optional<double> m_potassium_ppm   ;
