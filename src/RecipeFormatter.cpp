@@ -267,10 +267,10 @@ public:
       body += QString("<div id=\"headerdiv\">");
       // NOTE: QTextBrowser does not support the caption tag
       body += QString("<h1>%1 - %2 (%3%4)</h1>")
-            .arg( rec->name())
-            .arg( style ? style->name() : tr("unknown style"))
-            .arg( style ? style->categoryNumber() : tr("N/A") )
-            .arg( style ? style->styleLetter() : "" );
+            .arg(this->rec->name())
+            .arg(style ? style->name() : tr("unknown style"))
+            .arg(style ? style->categoryNumber() : tr("N/A") )
+            .arg(style ? style->styleLetter() : "" );
 
       body += QString("<table id=\"header\">");
       body += QString("<tr>"
@@ -278,13 +278,18 @@ public:
                      "<td class=\"value\">%2</td>"
                      "</tr>")
             .arg(tr("Brewer"))
-            .arg(rec->brewer());
+            .arg(this->rec->brewer());
+      QString dateToDisplay = "";
+      auto recipeDate = this->rec->date();
+      if (recipeDate) {
+         dateToDisplay = Localization::displayDate(*recipeDate);
+      }
       body += QString("<tr>"
                      "<td class=\"label\">%1</td>"
                      "<td class=\"value \">%2</td>"
                      "</tr>")
             .arg(tr("Date"))
-            .arg(Localization::displayDate(rec->date()));
+            .arg(dateToDisplay);
       body += "</table>";
 
       // Build the top table

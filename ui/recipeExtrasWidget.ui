@@ -205,23 +205,7 @@
           </widget>
          </item>
          <item row="11" column="1">
-          <widget class="QDateEdit" name="dateEdit_date">
-           <property name="maximumSize">
-            <size>
-             <width>256</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="dateTime">
-            <datetime>
-             <hour>0</hour>
-             <minute>0</minute>
-             <second>0</second>
-             <year>2011</year>
-             <month>1</month>
-             <day>1</day>
-            </datetime>
-           </property>
+          <widget class="BtOptionalDateEdit" name="dateEdit_date">
            <property name="displayFormat">
             <string>dd MMM yyyy</string>
            </property>
@@ -340,18 +324,17 @@
    <extends>QPlainTextEdit</extends>
    <header location="global">BtTextEdit.h</header>
   </customwidget>
+  <customwidget>
+   <class>BtOptionalDateEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header location="global">widgets/BtOptionalDateEdit.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>scrollArea</tabstop>
   <tabstop>lineEdit_brewer</tabstop>
   <tabstop>lineEdit_asstBrewer</tabstop>
   <tabstop>spinBox_tasteRating</tabstop>
-  <tabstop>lineEdit_primaryAge</tabstop>
-  <tabstop>lineEdit_primaryTemp</tabstop>
-  <tabstop>lineEdit_secAge</tabstop>
-  <tabstop>lineEdit_secTemp</tabstop>
-  <tabstop>lineEdit_tertAge</tabstop>
-  <tabstop>lineEdit_tertTemp</tabstop>
   <tabstop>lineEdit_age</tabstop>
   <tabstop>lineEdit_ageTemp</tabstop>
   <tabstop>dateEdit_date</tabstop>

@@ -1753,8 +1753,8 @@ Recipe::Recipe(QString name) :
 ///   m_tertiaryTemp_c         {0.0                 },
    m_age                    {0.0                 },
    m_ageTemp_c              {0.0                 },
-   m_date                   {QDate::currentDate()},
-   m_carbonation_vols       {0.0                 },
+   m_date                   {QDate::currentDate()}, // Date is allowed to be blank, but we default it to today
+   m_carbonation_vols       {std::nullopt        },
    m_forcedCarbonation      {false               },
    m_primingSugarName       {""                  },
    m_carbonationTemp_c      {0.0                 },
@@ -2614,12 +2614,12 @@ void Recipe::setAgeTemp_c(double val) {
    return;
 }
 
-void Recipe::setDate(const QDate & val) {
+void Recipe::setDate(std::optional<QDate> const val) {
    SET_AND_NOTIFY(PropertyNames::Recipe::date, this->m_date, val);
    return;
 }
 
-void Recipe::setCarbonation_vols(double val) {
+void Recipe::setCarbonation_vols(std::optional<double> const val) {
    SET_AND_NOTIFY(PropertyNames::Recipe::carbonation_vols, this->m_carbonation_vols, this->enforceMin(val, "carb"));
    return;
 }
@@ -2912,12 +2912,12 @@ double  Recipe::tasteRating()        const { return m_tasteRating;        }
 ///double  Recipe::tertiaryTemp_c()     const { return m_tertiaryTemp_c;     }
 double  Recipe::age_days()           const { return m_age;                }
 double  Recipe::ageTemp_c()          const { return m_ageTemp_c;          }
-double  Recipe::carbonation_vols()   const { return m_carbonation_vols;   }
 double  Recipe::carbonationTemp_c()  const { return m_carbonationTemp_c;  }
 double  Recipe::primingSugarEquiv()  const { return m_primingSugarEquiv;  }
 double  Recipe::kegPrimingFactor()   const { return m_kegPrimingFactor;   }
 ///int     Recipe::fermentationStages() const { return m_fermentationStages; }
-QDate   Recipe::date()               const { return m_date;               }
+std::optional<QDate>   Recipe::date()               const { return m_date;               }
+std::optional<double>  Recipe::carbonation_vols()   const { return m_carbonation_vols;   }
 bool    Recipe::locked()             const { return m_locked;             }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 std::optional<double> Recipe::beerAcidity_pH         () const { return m_beerAcidity_pH         ; }

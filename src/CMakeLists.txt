@@ -246,6 +246,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/widgets/Animator.cpp
     ${repoDir}/src/widgets/BtBoolComboBox.cpp
     ${repoDir}/src/widgets/BtComboBox.cpp
+    ${repoDir}/src/widgets/BtOptionalDateEdit.cpp
     ${repoDir}/src/widgets/CustomComboBox.cpp
     ${repoDir}/src/widgets/InfoButton.cpp
     ${repoDir}/src/widgets/InfoText.cpp

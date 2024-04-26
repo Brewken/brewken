@@ -210,8 +210,8 @@ QVariant BtTreeItem::dataRecipe(int column) {
          }
          break;
       case BtTreeItem::RecipeColumn::BrewDate:
-         if (recipe) {
-            return Localization::displayDateUserFormated(recipe->date());
+         if (recipe && recipe->date()) {
+            return Localization::displayDateUserFormated(*recipe->date());
          }
          break;
       case BtTreeItem::RecipeColumn::Style:

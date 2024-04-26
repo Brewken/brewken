@@ -56,7 +56,7 @@ private slots:
 ///   void updateTertiaryTemp();
    void updateAge();
    void updateAgeTemp();
-   void updateDate(const QDate &date = QDate());
+   void updateDate(std::optional<QDate> const date);
    void updateCarbonation();
    void updateTasteNotes();
    void updateNotes();

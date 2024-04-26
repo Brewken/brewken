@@ -26,6 +26,7 @@
 #include "MainWindow.h"
 #include "measurement/Unit.h"
 #include "model/Recipe.h"
+#include "utils/OptionalHelpers.h"
 
 RecipeExtrasWidget::RecipeExtrasWidget(QWidget* parent) :
    QWidget(parent),
@@ -68,7 +69,7 @@ RecipeExtrasWidget::RecipeExtrasWidget(QWidget* parent) :
 ///   connect(this->lineEdit_tertTemp    , &SmartLineEdit::textModified               , this, &RecipeExtrasWidget::updateTertiaryTemp );
    connect(this->spinBox_tasteRating  , QOverload<int>::of(&QSpinBox::valueChanged), this, &RecipeExtrasWidget::changeRatings      );
    connect(this->spinBox_tasteRating  , &QAbstractSpinBox::editingFinished         , this, &RecipeExtrasWidget::updateTasteRating  );
-   connect(this->dateEdit_date        , &QDateTimeEdit::dateChanged                , this, &RecipeExtrasWidget::updateDate         );
+   connect(this->dateEdit_date        , &BtOptionalDateEdit::optionalDateChanged   , this, &RecipeExtrasWidget::updateDate         );
    connect(this->btTextEdit_notes     , &BtTextEdit::textModified                  , this, &RecipeExtrasWidget::updateNotes        );
    connect(this->btTextEdit_tasteNotes, &BtTextEdit::textModified                  , this, &RecipeExtrasWidget::updateTasteNotes   );
    return;
@@ -157,18 +158,24 @@ void RecipeExtrasWidget::updateAgeTemp() {
    MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, ageTemp_c), lineEdit_ageTemp->getNonOptCanonicalQty(), tr("Change Age Temp"));
 }
 
-void RecipeExtrasWidget::updateDate(QDate const & date) {
+void RecipeExtrasWidget::updateDate(std::optional<QDate> const date) {
    if (!this->recipe) { return; }
 
-   if (date.isNull()) {
-      MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, date), dateEdit_date->date(), tr("Change Date"));
-   } else {
-      // We have to be careful to avoid going round in circles here.  When we call
-      // this->dateEdit_date->setDate(this->recipe->date()) to show the Recipe date in the UI, that will generate a
-      // signal that ends up calling this function to say the date on the Recipe has changed, which it hasn't.
-      if (date != this->recipe->date()) {
-         MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, date), date, tr("Change Date"));
-      }
+   qDebug() << Q_FUNC_INFO;
+   if (date) {
+      qDebug() << Q_FUNC_INFO << "date" << *date;
+   }
+   auto dateFromWidget = this->dateEdit_date->optionalDate();
+   if (dateFromWidget) {
+      qDebug() << Q_FUNC_INFO << "dateFromWidget" << *dateFromWidget;
+   }
+
+   // We have to be careful to avoid going round in circles here.  When we call
+   // this->dateEdit_date->setOptionalDate(this->recipe->date()) to show the Recipe date in the UI, that will generate a
+   // signal that ends up calling this function to say the date on the Recipe has changed, which it hasn't.
+   if (date != this->recipe->date()) {
+      qDebug() << Q_FUNC_INFO;
+      MainWindow::instance().doOrRedoUpdate(*recipe, TYPE_INFO(Recipe, date), date, tr("Change Date"));
    }
    return;
 }
@@ -223,7 +230,7 @@ void RecipeExtrasWidget::saveAll() {
 ///   this->updateTertiaryTemp();
    this->updateAge();
    this->updateAgeTemp();
-   this->updateDate();
+   this->updateDate(dateEdit_date->optionalDate());
    this->updateCarbonation();
    this->updateTasteNotes();
    this->updateNotes();
@@ -251,19 +258,19 @@ void RecipeExtrasWidget::showChanges(QMetaProperty* prop) {
    // "change is made" ... rinse, lather, repeat
    // Unlike other editors, this one needs to read from recipe when it gets an
    // updateAll
-   if (updateAll || propName == PropertyNames::Recipe::age_days         ) { this->lineEdit_age         ->setQuantity   (recipe->age_days         ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Recipe::ageTemp_c        ) { this->lineEdit_ageTemp     ->setQuantity   (recipe->ageTemp_c        ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Recipe::age_days         ) { this->lineEdit_age         ->setQuantity (recipe->age_days         ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Recipe::ageTemp_c        ) { this->lineEdit_ageTemp     ->setQuantity (recipe->ageTemp_c        ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Recipe::asstBrewer       ) { this->lineEdit_asstBrewer  ->setText     (recipe->asstBrewer       ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Recipe::brewer           ) { this->lineEdit_brewer      ->setText     (recipe->brewer           ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Recipe::carbonation_vols ) { this->lineEdit_carbVols    ->setQuantity   (recipe->carbonation_vols ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Recipe::carbonation_vols ) { this->lineEdit_carbVols    ->setQuantity (recipe->carbonation_vols ()); if (!updateAll) { return; } }
 ///   if (updateAll || propName == PropertyNames::Recipe::primaryAge_days  ) { this->lineEdit_primaryAge  ->setQuantity   (recipe->primaryAge_days  ()); if (!updateAll) { return; } }
 ///   if (updateAll || propName == PropertyNames::Recipe::primaryTemp_c    ) { this->lineEdit_primaryTemp ->setQuantity   (recipe->primaryTemp_c    ()); if (!updateAll) { return; } }
 ///   if (updateAll || propName == PropertyNames::Recipe::secondaryAge_days) { this->lineEdit_secAge      ->setQuantity   (recipe->secondaryAge_days()); if (!updateAll) { return; } }
 ///   if (updateAll || propName == PropertyNames::Recipe::secondaryTemp_c  ) { this->lineEdit_secTemp     ->setQuantity   (recipe->secondaryTemp_c  ()); if (!updateAll) { return; } }
 ///   if (updateAll || propName == PropertyNames::Recipe::tertiaryAge_days ) { this->lineEdit_tertAge     ->setQuantity   (recipe->tertiaryAge_days ()); if (!updateAll) { return; } }
 ///   if (updateAll || propName == PropertyNames::Recipe::tertiaryTemp_c   ) { this->lineEdit_tertTemp    ->setQuantity   (recipe->tertiaryTemp_c   ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Recipe::tasteRating      ) { this->spinBox_tasteRating  ->setValue    (recipe->tasteRating      ()); if (!updateAll) { return; } }
-   if (updateAll || propName == PropertyNames::Recipe::date             ) { this->dateEdit_date        ->setDate     (recipe->date             ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Recipe::tasteRating      ) { this->spinBox_tasteRating  ->setValue       (recipe->tasteRating      ()); if (!updateAll) { return; } }
+   if (updateAll || propName == PropertyNames::Recipe::date             ) { this->dateEdit_date        ->setOptionalDate(recipe->date             ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Recipe::notes            ) { this->btTextEdit_notes     ->setPlainText(recipe->notes            ()); if (!updateAll) { return; } }
    if (updateAll || propName == PropertyNames::Recipe::tasteNotes       ) { this->btTextEdit_tasteNotes->setPlainText(recipe->tasteNotes       ()); if (!updateAll) { return; } }
 

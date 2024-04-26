@@ -1,6 +1,6 @@
 <!DOCTYPE RCC>
 <!--
- * brewken.qrc is part of Brewken, and is copyright the following authors 2009-2022:
+ * brewken.qrc is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • Idar Lund <idarlund@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
@@ -42,6 +42,7 @@
       <file alias="images/bubbles.svg"               >images/bubbles.svg</file>
       <file alias="images/circle.png"                >images/circle.png</file>
       <file alias="images/clipboard.svg"             >images/clipboard.svg</file>
+      <file alias="images/clear.svg"                 >images/clear.svg</file>
       <file alias="images/clock.svg"                 >images/clock.svg</file>
       <file alias="images/convert.svg"               >images/convert.svg</file>
       <file alias="images/document-export.png"       >images/document-export.png</file>
