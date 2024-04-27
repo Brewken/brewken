@@ -185,12 +185,15 @@ if (exe_pip is None or exe_pip == ''):
 #
 # On MacOS at least, we also need to install setuptools to be able to access packaging.version.
 #
+log.info('pip install packaging')
 subprocess.run([exe_pip, 'install', 'packaging'])
+log.info('pip install setuptools')
 subprocess.run([exe_pip, 'install', 'setuptools'])
 import packaging.version
 
 # The requests library (see https://pypi.org/project/requests/) is used for downloading files in a more Pythonic way
 # than invoking wget through the shell.
+log.info('pip install requests')
 subprocess.run([exe_pip, 'install', 'requests'])
 import requests
 
