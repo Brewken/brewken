@@ -39,7 +39,7 @@ class RecipeExtrasWidget : public QWidget, public Ui::recipeExtrasWidget {
    Q_OBJECT
 
 public:
-   RecipeExtrasWidget(QWidget* parent = nullptr);
+   RecipeExtrasWidget(QWidget * parent = nullptr);
    virtual ~RecipeExtrasWidget();
    //! \brief Set the recipe to view/edit.
    void setRecipe(Recipe* rec);
@@ -48,18 +48,14 @@ private slots:
    void updateBrewer();
    void updateBrewerAsst();
    void updateTasteRating();
-///   void updatePrimaryAge();
-///   void updatePrimaryTemp();
-///   void updateSecondaryAge();
-///   void updateSecondaryTemp();
-///   void updateTertiaryAge();
-///   void updateTertiaryTemp();
    void updateAge();
    void updateAgeTemp();
    void updateDate(std::optional<QDate> const date);
    void updateCarbonation();
    void updateTasteNotes();
    void updateNotes();
+   void updateAcidity();
+   void updateAttenuation();
 
    void changeRatings(int rating);
    void saveAll();

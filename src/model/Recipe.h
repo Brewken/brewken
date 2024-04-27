@@ -312,16 +312,21 @@ public:
    //! \brief Whether the recipe is locked against changes
    Q_PROPERTY(bool    locked             READ locked             WRITE setLocked           )
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   //! \brief The final beer pH at the end of fermentation.  TODO: This is not yet exposed in the UI
+   //! \brief The final beer pH at the end of fermentation.
    Q_PROPERTY(std::optional<double> beerAcidity_pH               READ beerAcidity_pH                WRITE setBeerAcidity_pH)
-   //! \brief The total apparent attenuation of the finished beer after fermentation.  TODO: This is not yet exposed in the UI
+   //! \brief The total apparent attenuation of the finished beer after fermentation.
    Q_PROPERTY(std::optional<double> apparentAttenuation_pct      READ apparentAttenuation_pct       WRITE setApparentAttenuation_pct)
 
 
    //=========================================== CALCULATED STORED PROPERTIES ==========================================
-   //! \brief The calculated OG.
+   // These are optional in both BeerXML and BeerJSON, but they don't need to be optional here.  When reading in from
+   // BeerXML or BeerJSON, we ignore the values if they are present, as we'll recalculate them ourselves.
+   //
+   // Same goes for ABV_pct, IBU, color_srm below (which are optional BeerJSON fields but not part of BeerXML)
+   //
+   //! \brief The calculated OG
    Q_PROPERTY(double  og                 READ og                 WRITE setOg               )
-   //! \brief The calculated FG.
+   //! \brief The calculated FG
    Q_PROPERTY(double  fg                 READ fg                 WRITE setFg               )
 
    //========================================= CALCULATED UNSTORED PROPERTIES ==========================================
@@ -449,8 +454,6 @@ public:
 ///    *    std::shared_ptr<Hop> copyOfFooHop = myRecipe->add<Hop>(fooHop);                     // DO
 ///    *    std::shared_ptr<Hop> sameCopyOfFooHop = myRecipe->remove<Hop>(*copyOfFooHop);       // UNDO
 ///    *    std::shared_ptr<Hop> stillSameCopyOfFooHop = myRecipe->add<Hop>(*sameCopyOfFooHop); // REDO
-///    *
-///    * TBD: (MY 2020-11-23) It would be good one day to separate out "instance of use of" into a separate class.
 ///    *
 ///    */
    template<class NE> std::shared_ptr<NE> add(std::shared_ptr<NE> var);
