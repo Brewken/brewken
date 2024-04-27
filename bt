@@ -141,24 +141,31 @@ log.propagate = False
 #-----------------------------------------------------------------------------------------------------------------------
 # Per https://docs.python.org/3/library/ensurepip.html, the official way to ensure Pip is installed and at the latest
 # version is via 'python -m ensurepip --upgrade' (which should of course be 'python3 -m ensurepip --upgrade' on systems
-# that have both Python 2 and Python 3).  However, on Debian/Ubuntu, this will give an error "No module named ensurepip"
-# because ensurepip is deliberately disabled to push you towards using 'sudo apt update' +
-# 'sudo apt install python3-pip'.
-if (platform.system() != 'Linux'):
-   # https://docs.python.org/3/library/sys.html#sys.executable says sys.executable is '"the absolute path of the
-   # executable binary for the Python interpreter, on systems where this makes sense".
-   log.info(
-      'Attempting to ensure latest version of Pip is installed via  ' + sys.executable + ' -m ensurepip --upgrade'
-   )
-   subprocess.run([sys.executable, '-m', 'ensurepip', '--upgrade'])
-else:
-   # We don't want to run a sudo command every time the script is invoked, so check whether it's necessary
-   exe_pip = shutil.which('pip3')
-   if (exe_pip is None or exe_pip == ''):
-      log.info('Attempting to install Pip')
-      subprocess.run(['sudo', 'apt', 'update'])
-      subprocess.run(['sudo', 'apt', 'install', 'python3-pip'])
-
+# that have both Python 2 and Python 3).  However:
+#   - on Debian/Ubuntu, this will give an error "No module named ensurepip" because ensurepip is deliberately disabled
+#     to push you towards using 'sudo apt update' + 'sudo apt install python3-pip';
+#   - on MacOS, we would get "error: externally-managed-environment" because it is Homebrew that manages pip
+match platform.system():
+   case 'Linux':
+      # We don't want to run a sudo command every time the script is invoked, so check whether it's necessary
+      exe_pip = shutil.which('pip3')
+      if (exe_pip is None or exe_pip == ''):
+         log.info('Attempting to install Pip')
+         subprocess.run(['sudo', 'apt', 'update'])
+         subprocess.run(['sudo', 'apt', 'install', 'python3-pip'])
+   case 'Windows':
+      # https://docs.python.org/3/library/sys.html#sys.executable says sys.executable is '"the absolute path of the
+      # executable binary for the Python interpreter, on systems where this makes sense".
+      log.info(
+         'Attempting to ensure latest version of Pip is installed via  ' + sys.executable + ' -m ensurepip --upgrade'
+      )
+      subprocess.run([sys.executable, '-m', 'ensurepip', '--upgrade'])
+   case 'Darwin':
+      log.info('Ensuring Pip is installed (via Homebrew)')
+      subprocess.run(['brew', 'install', 'pip'])
+   case _:
+      log.critical('Unrecognised platform: ' + platform.system())
+      exit(1)
 
 # If Pip still isn't installed we need to bail here.
 exe_pip = shutil.which('pip3')
