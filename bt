@@ -161,8 +161,9 @@ match platform.system():
       )
       subprocess.run([sys.executable, '-m', 'ensurepip', '--upgrade'])
    case 'Darwin':
-      log.info('Ensuring Pip is installed (via Homebrew)')
-      subprocess.run(['brew', 'install', 'pip'])
+      # Assuming it was Homebrew that installed Python, then it will also have installed Pip, so there is nothing for us
+      # to do here.
+      log.info('Assuming Pip is already installed (via Homebrew)')
    case _:
       log.critical('Unrecognised platform: ' + platform.system())
       exit(1)
