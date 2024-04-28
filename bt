@@ -144,7 +144,8 @@ log.propagate = False
 # that have both Python 2 and Python 3).  However:
 #   - on Debian/Ubuntu, this will give an error "No module named ensurepip" because ensurepip is deliberately disabled
 #     to push you towards using 'sudo apt update' + 'sudo apt install python3-pip';
-#   - on MacOS, we would get "error: externally-managed-environment" because it is Homebrew that manages pip
+#   - on MacOS, we would get "error: externally-managed-environment" because, since Python 3.12, it is Homebrew that
+#     manages pip
 match platform.system():
    case 'Linux':
       # We don't want to run a sudo command every time the script is invoked, so check whether it's necessary
@@ -162,10 +163,9 @@ match platform.system():
       subprocess.run([sys.executable, '-m', 'ensurepip', '--upgrade'])
    case 'Darwin':
       # Assuming it was Homebrew that installed Python, then, according to https://docs.brew.sh/Homebrew-and-Python,
-      # both pip and Setuptools should already be installed, and this is the way to upgrade them.
-      log.info('Ensuring Pip and Setuptools are up-to-date')
-      subprocess.run(['python3', '-m', 'pip', 'install', '--upgrade', 'pip'])
-      subprocess.run(['python3', '-m', 'pip', 'install', '--upgrade', 'setuptools'])
+      # it bundles various packages, including pip.  Since Python version 3.12, Homebrew marks itself as package manager
+      # for the Python packages it bundles, so it's an error to try to install or update them via Python.
+      log.info('Assuming Pip is already up-to-date')
 
    case _:
       log.critical('Unrecognised platform: ' + platform.system())
@@ -192,9 +192,8 @@ if (exe_pip is None or exe_pip == ''):
 #
 log.info('pip install packaging')
 subprocess.run([exe_pip, 'install', 'packaging'])
-if (platform.system() != 'Darwin'):
-   log.info('pip install setuptools')
-   subprocess.run([exe_pip, 'install', 'setuptools'])
+log.info('pip install setuptools')
+subprocess.run([exe_pip, 'install', 'setuptools'])
 import packaging.version
 
 # The requests library (see https://pypi.org/project/requests/) is used for downloading files in a more Pythonic way
