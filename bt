@@ -161,9 +161,12 @@ match platform.system():
       )
       subprocess.run([sys.executable, '-m', 'ensurepip', '--upgrade'])
    case 'Darwin':
-      # Assuming it was Homebrew that installed Python, then it will also have installed Pip, so there is nothing for us
-      # to do here.
-      log.info('Assuming Pip is already installed (via Homebrew)')
+      # Assuming it was Homebrew that installed Python, then, according to https://docs.brew.sh/Homebrew-and-Python,
+      # both pip and Setuptools should already be installed, and this is the way to upgrade them.
+      log.info('Ensuring Pip and Setuptools are up-to-date')
+      subprocess.run(['python3', '-m', 'pip', 'install', '--upgrade', 'pip'])
+      subprocess.run(['python3', '-m', 'pip', 'install', '--upgrade', 'setuptools'])
+
    case _:
       log.critical('Unrecognised platform: ' + platform.system())
       exit(1)
@@ -183,12 +186,15 @@ if (exe_pip is None or exe_pip == ''):
 # We use the packaging module (see https://pypi.org/project/packaging/) for handling version numbers (as described at
 # https://packaging.pypa.io/en/stable/version.html).
 #
-# On MacOS at least, we also need to install setuptools to be able to access packaging.version.
+# On some platforms, we also need to install setuptools to be able to access packaging.version.  (NB: On MacOS,
+# setuptools is now installed by default by Homebrew when it installs Python, so we'd get an error if we try to install
+# it via pip here.)
 #
 log.info('pip install packaging')
 subprocess.run([exe_pip, 'install', 'packaging'])
-log.info('pip install setuptools')
-subprocess.run([exe_pip, 'install', 'setuptools'])
+if (platform.system() != 'Darwin'):
+   log.info('pip install setuptools')
+   subprocess.run([exe_pip, 'install', 'setuptools'])
 import packaging.version
 
 # The requests library (see https://pypi.org/project/requests/) is used for downloading files in a more Pythonic way
