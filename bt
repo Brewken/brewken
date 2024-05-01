@@ -255,15 +255,15 @@ match platform.system():
          'Attempting to ensure latest version of pip is installed via  ' + sys.executable + ' -m ensurepip --upgrade'
       )
       abortOnRunFail(subprocess.run([sys.executable, '-m', 'ensurepip', '--upgrade']))
-      log.info('pip install python-setuptools')
+      log.info('pip install setuptools')
       exe_pip = shutil.which('pip3')
-      abortOnRunFail(subprocess.run([exe_pip, 'install', 'python-setuptools']))
+      abortOnRunFail(subprocess.run([exe_pip, 'install', 'setuptools']))
    case 'Darwin':
       # Assuming it was Homebrew that installed Python, then, according to https://docs.brew.sh/Homebrew-and-Python,
       # it bundles various packages, including pip.  Since Python version 3.12, Homebrew marks itself as package manager
       # for the Python packages it bundles, so it's an error to try to install or update them via Python.
-      log.info('Assuming pip is already up-to-date; installing setuptools')
-      abortOnRunFail(subprocess.run(['brew', 'install', 'setuptools']))
+      log.info('Assuming pip is already up-to-date; installing python-setuptools')
+      abortOnRunFail(subprocess.run(['brew', 'install', 'python-setuptools']))
 
    case _:
       log.critical('Unrecognised platform: ' + platform.system())
