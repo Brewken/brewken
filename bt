@@ -102,6 +102,28 @@ import tempfile
 from decimal import Decimal
 
 #-----------------------------------------------------------------------------------------------------------------------
+# Helper function for checking result of running external commands
+#
+# Given a CompletedProcess object returned from subprocess.run(), this checks the return code and, if it is non-zero
+# stops this script with an error message and the same return code.  Otherwise the CompletedProcess object is returned
+# to the caller (to make it easier to chain things together).
+#-----------------------------------------------------------------------------------------------------------------------
+def abortOnRunFail(runResult: subprocess.CompletedProcess):
+   if (runResult.returncode != 0):
+      # According to https://docs.python.org/3/library/subprocess.html#subprocess.CompletedProcess,
+      # CompletedProcess.args (the arguments used to launch the process) "may be a list or a string", but its not clear
+      # when it would be one or the other.
+      if (isinstance(runResult.args, str)):
+         log.critical('Error running ' + runResult.args)
+      else:
+         commandName = os.path.basename(runResult.args[0])
+         log.critical('Error running ' + commandName + ' (' + ' '.join(str(ii) for ii in runResult.args) + ')')
+
+      exit(runResult.returncode)
+
+   return runResult
+
+#-----------------------------------------------------------------------------------------------------------------------
 # Global constants
 #-----------------------------------------------------------------------------------------------------------------------
 # There is some inevitable duplication with constants in meson.build, but we try to keep it to a minimum
@@ -137,35 +159,109 @@ log.addHandler(handler)
 log.propagate = False
 
 #-----------------------------------------------------------------------------------------------------------------------
+# Base directories
+#-----------------------------------------------------------------------------------------------------------------------
+dir_base = pathlib.Path(__file__).parent.resolve()
+dir_venv = dir_base.joinpath('.venv')
+
+#-----------------------------------------------------------------------------------------------------------------------
 # Python 3rd-party modules we use
 #-----------------------------------------------------------------------------------------------------------------------
-# Per https://docs.python.org/3/library/ensurepip.html, the official way to ensure Pip is installed and at the latest
-# version is via 'python -m ensurepip --upgrade' (which should of course be 'python3 -m ensurepip --upgrade' on systems
-# that have both Python 2 and Python 3).  However:
-#   - on Debian/Ubuntu, this will give an error "No module named ensurepip" because ensurepip is deliberately disabled
-#     to push you towards using 'sudo apt update' + 'sudo apt install python3-pip';
-#   - on MacOS, we would get "error: externally-managed-environment" because, since Python 3.12, it is Homebrew that
-#     manages pip
+#
+# You might think that it's a simple thing to install a few extra Python modules.  After all, Python has the pip tool
+# which, according to https://pypi.org/project/pip/, is "the [Python Packaging Authority] recommended tool for
+# installing Python packages".  And, per https://docs.python.org/3/library/ensurepip.html, there is even an "official"
+# generic way to ensure the latest version of pip is installed, via 'python -m ensurepip --upgrade' (which should of
+# course be 'python3 -m ensurepip --upgrade' on systems that have both Python 2 and Python 3).
+#
+# Unfortunately, however, things are a bit more complicated.  Eg on Debian/Ubuntu, trying to run the above will give an
+# error "No module named ensurepip" because ensurepip is deliberately disabled to push you towards using
+# 'sudo apt update' + 'sudo apt install python3-pip'.  But even doing this would not solve all problems.
+#
+# On systems where some Python packages are managed outside of Python, there can be problems if you try to install those
+# packages from inside Python.  Moreover, because not all Python packages play nicely with each other, the default
+# behaviour of pip is now to prevent you from installing _any_ additional Python packages if some Python packages (eg
+# including pip itself) are externally managed (eg via apt on Debian-derived Linuxes, or via Homebrew or MacPorts on
+# MacOS).  You will get "error: externally-managed-environment ... This environment is externally managed".
+#
+# On systems with an external package manager (EPM), there are broadly three options:
+#
+#   - If you are lucky, you can use the EPM to install all the Python packages you need.  This relies on you only
+#     needing the subset of Python packages that the EPM supports.
+#
+#   - Alternatively, you can force pip to ignore the EPM and install a library either system-wide or just for the
+#     current user.  However, this might break things on your system if there is a clash between the library you install
+#     and some already-installed library that, eg, the EPM itself relies on.
+#
+#   - The recommended approach is to create a Python virtual environment and install the packages you need there.  This
+#     is a little complicated because we need to switch environments on-the-fly, but it is doable.
+#
+# The other complexity is that some requirements / ways to do things changed in (as of 2024) recent versions of Python.
+# Eg, as of Python 3.12, setuptools is no longer a core venv dependency, but we are still on Python 3.10 on
+# Debian/Ubuntu.
+#
+
+#
+# First step is to ensure we have the minimum-required Python packages, including pip, are installed at system level.
+#
+# Prior to Python 3.12, setuptools is required to create and use virtual environments.
+#
 match platform.system():
    case 'Linux':
       # We don't want to run a sudo command every time the script is invoked, so check whether it's necessary
       exe_pip = shutil.which('pip3')
+      ranUpdate = False
       if (exe_pip is None or exe_pip == ''):
-         log.info('Attempting to install Pip')
+         log.info('Need to install pip')
          subprocess.run(['sudo', 'apt', 'update'])
+         ranUpdate = True
          subprocess.run(['sudo', 'apt', 'install', 'python3-pip'])
+      # This is a bit clunky, but it's the simplest way to see if setuptools is already installed.  (Alternatively we
+      # could run `pip3 list` and search for setuptools in the outpout.)
+      foundSetupTools = False
+      try:
+         import setuptools
+      except ImportError:
+         log.info('Need to install setuptools')
+      else:
+         foundSetupTools = True
+      if (not foundSetupTools):
+         if (not ranUpdate):
+            subprocess.run(['sudo', 'apt', 'update'])
+            ranUpdate = True
+         subprocess.run(['sudo', 'apt', 'install', 'python3-setuptools'])
+      # It's a similar process for ensurepip, which is needed by venv below
+      foundEnsurepip = False
+      try:
+         import ensurepip
+      except ImportError:
+         log.info('Need to install ensurepip')
+      else:
+         log.info('Found ensurepip')
+         foundEnsurepip = True
+      if (not foundEnsurepip):
+         if (not ranUpdate):
+            subprocess.run(['sudo', 'apt', 'update'])
+            ranUpdate = True
+         # Yes, I know it's confusing that we have to install a package called venv to ensure that the venv command
+         # below doesn't complain about ensurepip not being present.  We're just doing what the error messages tell us
+         # to.
+         subprocess.run(['sudo', 'apt', 'install', 'python3-venv'])
    case 'Windows':
       # https://docs.python.org/3/library/sys.html#sys.executable says sys.executable is '"the absolute path of the
       # executable binary for the Python interpreter, on systems where this makes sense".
       log.info(
-         'Attempting to ensure latest version of Pip is installed via  ' + sys.executable + ' -m ensurepip --upgrade'
+         'Attempting to ensure latest version of pip is installed via  ' + sys.executable + ' -m ensurepip --upgrade'
       )
       subprocess.run([sys.executable, '-m', 'ensurepip', '--upgrade'])
+      log.info('pip install setuptools')
+      subprocess.run([exe_pip, 'install', 'setuptools'])
    case 'Darwin':
       # Assuming it was Homebrew that installed Python, then, according to https://docs.brew.sh/Homebrew-and-Python,
       # it bundles various packages, including pip.  Since Python version 3.12, Homebrew marks itself as package manager
       # for the Python packages it bundles, so it's an error to try to install or update them via Python.
-      log.info('Assuming Pip is already up-to-date')
+      log.info('Assuming pip is already up-to-date; installing setuptools')
+      subprocess.run(['brew', 'install', 'setuptools'])
 
    case _:
       log.critical('Unrecognised platform: ' + platform.system())
@@ -182,6 +278,47 @@ if (exe_pip is None or exe_pip == ''):
       'install'
    )
    exit(1)
+
+#
+# Now we can set up a virtual environment
+#
+log.info('Create Python virtual environment in ' + dir_venv.as_posix())
+subprocess.run([sys.executable, '-m', 'venv', dir_venv.as_posix()])
+
+#
+# The tricky bit is now switching to that virtual environment (venv) on-the-fly from within a running Python script.
+#
+# Ideally we want to run the 'activate' bash script in the bin directory of the venv, but to do it in the current
+# process (not a subprocess) because what it does is unset and set a bunch of environment variables.  AFAICT this was
+# possible in Python 2 with 'execfile' but is not directly doable in Python 3.  Instead, the standard "trick" is to run
+# the bash script in a subprocess, grab all the environment variables from that subprocess and set them one-by-one here
+# in the parent process.
+#
+# Note that, unlike most places where we run a subcommand, we use 'shell=True' to allow us to pass in the complete
+# command line as a string (because we are running two things in sequence, not just one thing with a bunch of
+# arguments).
+#
+activateVenvShellScript = dir_venv.joinpath('bin').joinpath('activate')
+log.info('Switching to Python virtual environment by executing ' + activateVenvShellScript.as_posix())
+envOutput = abortOnRunFail(subprocess.run('. ' + activateVenvShellScript.as_posix() + '; env', shell=True, capture_output=True)).stdout.decode('UTF-8')
+#
+# envOutput now holds the output from running the shell script followed by the 'env' command
+#
+# There are slightly more concise ways to convert the output to a dictionary, but I think the following is more
+# readable.
+#
+envVars = {}
+for line in envOutput.splitlines():
+   # We only want to split on the first '=' character in the line to get the key-value pair because the value may
+   # contain '=' symbols.  (The key shouldn't ever contain '=', so we don't have to worry about that.)
+   log.info(line)
+   (key, val) = line.split('=', 1)
+   envVars[key] = val
+
+# Now we overwrite our environment variables with whatever they were in the subprocess after running the `activate`
+# script.
+os.environ.update(envVars)
+
 #
 # We use the packaging module (see https://pypi.org/project/packaging/) for handling version numbers (as described at
 # https://packaging.pypa.io/en/stable/version.html).
@@ -287,9 +424,8 @@ log.debug('Parsed command line arguments as ' + str(args))
 log.debug('Working directory when invoked: ' + pathlib.Path.cwd().as_posix())
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Directories
+# Other Directories
 #-----------------------------------------------------------------------------------------------------------------------
-dir_base          = pathlib.Path(__file__).parent.resolve()
 dir_gitInfo       = dir_base.joinpath('.git')
 dir_build         = dir_base.joinpath('mbuild')
 # Where submodules live and how many there are.  Currently there are 2: libbacktrace and valijson
@@ -299,28 +435,6 @@ num_gitSubmodules = 2
 dir_packages          = dir_build.joinpath('packages')
 dir_packages_platform = dir_packages.joinpath(platform.system().lower())   # Platform-specific packaging directory
 dir_packages_source   = dir_packages.joinpath('source')
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Helper function for checking result of running external commands
-#
-# Given a CompletedProcess object returned from subprocess.run(), this checks the return code and, if it is non-zero
-# stops this script with an error message and the same return code.  Otherwise the CompletedProcess object is returned
-# to the caller (to make it easier to chain things together).
-#-----------------------------------------------------------------------------------------------------------------------
-def abortOnRunFail(runResult: subprocess.CompletedProcess):
-   if (runResult.returncode != 0):
-      # According to https://docs.python.org/3/library/subprocess.html#subprocess.CompletedProcess,
-      # CompletedProcess.args (the arguments used to launch the process) "may be a list or a string", but its not clear
-      # when it would be one or the other.
-      if (isinstance(runResult.args, str)):
-         log.critical('Error running ' + runResult.args)
-      else:
-         commandName = os.path.basename(runResult.args[0])
-         log.critical('Error running ' + commandName + ' (' + ' '.join(str(ii) for ii in runResult.args) + ')')
-
-      exit(runResult.returncode)
-
-   return runResult
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Helper function for copying one or more files to a directory that might not yet exist
