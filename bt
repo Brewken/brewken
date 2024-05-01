@@ -118,7 +118,8 @@ def abortOnRunFail(runResult: subprocess.CompletedProcess):
       else:
          commandName = os.path.basename(runResult.args[0])
          log.critical('Error running ' + commandName + ' (' + ' '.join(str(ii) for ii in runResult.args) + ')')
-      log.critical('stderr: ' + runResult.stderr.decode('UTF-8'))
+      if runResult.stderr:
+         log.critical('stderr: ' + runResult.stderr.decode('UTF-8'))
       exit(runResult.returncode)
 
    return runResult
@@ -254,7 +255,7 @@ match platform.system():
          'Attempting to ensure latest version of pip is installed via  ' + sys.executable + ' -m ensurepip --upgrade'
       )
       abortOnRunFail(subprocess.run([sys.executable, '-m', 'ensurepip', '--upgrade']))
-      log.info('pip install setuptools')
+      log.info('pip install python-setuptools')
       exe_pip = shutil.which('pip3')
       abortOnRunFail(subprocess.run([exe_pip, 'install', 'setuptools']))
    case 'Darwin':
@@ -327,9 +328,13 @@ os.environ.update(envVars)
 #currEnv = dict(os.environ)
 #log.info('os.environ: ' + json.dumps(currEnv))
 
-# Now, before we go any further, we must make sure we look for pip again.  This time, the one we fine should be in the
-# venv.  This means that it will install to the venv and not mind about external package managers.
+# Having switched to the venv, before we go any further, we must make sure we look for pip again.  This time, the one we
+# find should be in the venv.  This means that it will install to the venv and not mind about external package managers.
 exe_pip = shutil.which('pip3')
+
+# Of course, when you run the pip in the venv, it might complain that it is not up-to-date.  So we should ensure that
+# first.
+abortOnRunFail(subprocess.run([exe_pip, 'install', '--upgrade', 'pip']))
 
 #
 # We use the packaging module (see https://pypi.org/project/packaging/) for handling version numbers (as described at
