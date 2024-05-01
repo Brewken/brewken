@@ -118,7 +118,7 @@ def abortOnRunFail(runResult: subprocess.CompletedProcess):
       else:
          commandName = os.path.basename(runResult.args[0])
          log.critical('Error running ' + commandName + ' (' + ' '.join(str(ii) for ii in runResult.args) + ')')
-
+      log.critical('stderr: ' + runResult.stderr.decode('UTF-8'))
       exit(runResult.returncode)
 
    return runResult
@@ -296,12 +296,13 @@ abortOnRunFail(subprocess.run([sys.executable, '-m', 'venv', dir_venv.as_posix()
 # in the parent process.
 #
 # Note that, unlike most places where we run a subcommand, we use 'shell=True' to allow us to pass in the complete
-# command line as a string (because we are running two things in sequence, not just one thing with a bunch of
-# arguments).
+# command line as a string (partly because we are running two things in sequence, not just one thing with a bunch of
+# arguments).  We explicitly invoke bash in the subcommand, otherwise Windows won't know what to do with the bash
+# built-in 'source' (aka '.') command.
 #
 activateVenvShellScript = dir_venv.joinpath('bin').joinpath('activate')
 log.info('Switching to Python virtual environment by executing ' + activateVenvShellScript.as_posix())
-envOutput = abortOnRunFail(subprocess.run('. ' + activateVenvShellScript.as_posix() + '; env', shell=True, capture_output=True)).stdout.decode('UTF-8')
+envOutput = abortOnRunFail(subprocess.run('bash -c ". ' + activateVenvShellScript.as_posix() + '; env"', shell=True, capture_output=True)).stdout.decode('UTF-8')
 #
 # envOutput now holds the output from running the shell script followed by the 'env' command
 #
