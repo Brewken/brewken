@@ -213,9 +213,9 @@ match platform.system():
       ranUpdate = False
       if (exe_pip is None or exe_pip == ''):
          log.info('Need to install pip')
-         subprocess.run(['sudo', 'apt', 'update'])
+         abortOnRunFail(subprocess.run(['sudo', 'apt', 'update']))
          ranUpdate = True
-         subprocess.run(['sudo', 'apt', 'install', 'python3-pip'])
+         abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', 'python3-pip']))
       # This is a bit clunky, but it's the simplest way to see if setuptools is already installed.  (Alternatively we
       # could run `pip3 list` and search for setuptools in the outpout.)
       foundSetupTools = False
@@ -227,9 +227,9 @@ match platform.system():
          foundSetupTools = True
       if (not foundSetupTools):
          if (not ranUpdate):
-            subprocess.run(['sudo', 'apt', 'update'])
+            abortOnRunFail(subprocess.run(['sudo', 'apt', 'update']))
             ranUpdate = True
-         subprocess.run(['sudo', 'apt', 'install', 'python3-setuptools'])
+         abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', 'python3-setuptools']))
       # It's a similar process for ensurepip, which is needed by venv below
       foundEnsurepip = False
       try:
@@ -241,27 +241,28 @@ match platform.system():
          foundEnsurepip = True
       if (not foundEnsurepip):
          if (not ranUpdate):
-            subprocess.run(['sudo', 'apt', 'update'])
+            abortOnRunFail(subprocess.run(['sudo', 'apt', 'update']))
             ranUpdate = True
          # Yes, I know it's confusing that we have to install a package called venv to ensure that the venv command
          # below doesn't complain about ensurepip not being present.  We're just doing what the error messages tell us
          # to.
-         subprocess.run(['sudo', 'apt', 'install', 'python3-venv'])
+         abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', 'python3-venv']))
    case 'Windows':
       # https://docs.python.org/3/library/sys.html#sys.executable says sys.executable is '"the absolute path of the
       # executable binary for the Python interpreter, on systems where this makes sense".
       log.info(
          'Attempting to ensure latest version of pip is installed via  ' + sys.executable + ' -m ensurepip --upgrade'
       )
-      subprocess.run([sys.executable, '-m', 'ensurepip', '--upgrade'])
+      abortOnRunFail(subprocess.run([sys.executable, '-m', 'ensurepip', '--upgrade']))
       log.info('pip install setuptools')
-      subprocess.run([exe_pip, 'install', 'setuptools'])
+      exe_pip = shutil.which('pip3')
+      abortOnRunFail(subprocess.run([exe_pip, 'install', 'setuptools']))
    case 'Darwin':
       # Assuming it was Homebrew that installed Python, then, according to https://docs.brew.sh/Homebrew-and-Python,
       # it bundles various packages, including pip.  Since Python version 3.12, Homebrew marks itself as package manager
       # for the Python packages it bundles, so it's an error to try to install or update them via Python.
       log.info('Assuming pip is already up-to-date; installing setuptools')
-      subprocess.run(['brew', 'install', 'setuptools'])
+      abortOnRunFail(subprocess.run(['brew', 'install', 'setuptools']))
 
    case _:
       log.critical('Unrecognised platform: ' + platform.system())
@@ -283,7 +284,7 @@ if (exe_pip is None or exe_pip == ''):
 # Now we can set up a virtual environment
 #
 log.info('Create Python virtual environment in ' + dir_venv.as_posix())
-subprocess.run([sys.executable, '-m', 'venv', dir_venv.as_posix()])
+abortOnRunFail(subprocess.run([sys.executable, '-m', 'venv', dir_venv.as_posix()]))
 
 #
 # The tricky bit is now switching to that virtual environment (venv) on-the-fly from within a running Python script.
@@ -311,13 +312,17 @@ envVars = {}
 for line in envOutput.splitlines():
    # We only want to split on the first '=' character in the line to get the key-value pair because the value may
    # contain '=' symbols.  (The key shouldn't ever contain '=', so we don't have to worry about that.)
-   log.info(line)
+   log.info('Env: ' + line)
    (key, val) = line.split('=', 1)
    envVars[key] = val
 
 # Now we overwrite our environment variables with whatever they were in the subprocess after running the `activate`
 # script.
 os.environ.update(envVars)
+
+import json
+currEnv = dict(os.environ)
+log.info('os.environ: ' + json.dumps(currEnv))
 
 #
 # We use the packaging module (see https://pypi.org/project/packaging/) for handling version numbers (as described at
@@ -328,15 +333,15 @@ os.environ.update(envVars)
 # it via pip here.)
 #
 log.info('pip install packaging')
-subprocess.run([exe_pip, 'install', 'packaging'])
+abortOnRunFail(subprocess.run([exe_pip, 'install', 'packaging']))
 log.info('pip install setuptools')
-subprocess.run([exe_pip, 'install', 'setuptools'])
+abortOnRunFail(subprocess.run([exe_pip, 'install', 'setuptools']))
 import packaging.version
 
 # The requests library (see https://pypi.org/project/requests/) is used for downloading files in a more Pythonic way
 # than invoking wget through the shell.
 log.info('pip install requests')
-subprocess.run([exe_pip, 'install', 'requests'])
+abortOnRunFail(subprocess.run([exe_pip, 'install', 'requests']))
 import requests
 
 #
@@ -344,7 +349,7 @@ import requests
 # library (see https://docs.python.org/3/library/tomllib.html) for parsing TOML.  Until then, it's easier to import the
 # tomlkit library (see https://pypi.org/project/tomlkit/) which actually has rather more functionality than we need
 #
-subprocess.run([exe_pip, 'install', 'tomlkit'])
+abortOnRunFail(subprocess.run([exe_pip, 'install', 'tomlkit']))
 import tomlkit
 
 #-----------------------------------------------------------------------------------------------------------------------
