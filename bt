@@ -321,9 +321,15 @@ for line in envOutput.splitlines():
 # script.
 os.environ.update(envVars)
 
-import json
-currEnv = dict(os.environ)
-log.info('os.environ: ' + json.dumps(currEnv))
+# Uncomment the following to debug issues with environment variables read in from the activate script.  Using the json
+# module is just a quick way of converting a dict to a string.
+#import json
+#currEnv = dict(os.environ)
+#log.info('os.environ: ' + json.dumps(currEnv))
+
+# Now, before we go any further, we must make sure we look for pip again.  This time, the one we fine should be in the
+# venv.  This means that it will install to the venv and not mind about external package managers.
+exe_pip = shutil.which('pip3')
 
 #
 # We use the packaging module (see https://pypi.org/project/packaging/) for handling version numbers (as described at
