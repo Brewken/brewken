@@ -257,7 +257,7 @@ match platform.system():
       abortOnRunFail(subprocess.run([sys.executable, '-m', 'ensurepip', '--upgrade']))
       log.info('pip install python-setuptools')
       exe_pip = shutil.which('pip3')
-      abortOnRunFail(subprocess.run([exe_pip, 'install', 'setuptools']))
+      abortOnRunFail(subprocess.run([exe_pip, 'install', 'python-setuptools']))
    case 'Darwin':
       # Assuming it was Homebrew that installed Python, then, according to https://docs.brew.sh/Homebrew-and-Python,
       # it bundles various packages, including pip.  Since Python version 3.12, Homebrew marks itself as package manager
@@ -269,17 +269,6 @@ match platform.system():
       log.critical('Unrecognised platform: ' + platform.system())
       exit(1)
 
-# If Pip still isn't installed we need to bail here.
-exe_pip = shutil.which('pip3')
-if (exe_pip is None or exe_pip == ''):
-   pathEnvVar = ''
-   if ('PATH' in os.environ):
-      pathEnvVar = os.environ['PATH']
-   log.critical(
-      'Cannot find pip (PATH=' + pathEnvVar + ') - please see https://pip.pypa.io/en/stable/installation/ for how to ' +
-      'install'
-   )
-   exit(1)
 
 #
 # Now we can set up a virtual environment
@@ -331,6 +320,16 @@ os.environ.update(envVars)
 # Having switched to the venv, before we go any further, we must make sure we look for pip again.  This time, the one we
 # find should be in the venv.  This means that it will install to the venv and not mind about external package managers.
 exe_pip = shutil.which('pip3')
+# If Pip still isn't installed we need to bail here.
+if (exe_pip is None or exe_pip == ''):
+   pathEnvVar = ''
+   if ('PATH' in os.environ):
+      pathEnvVar = os.environ['PATH']
+   log.critical(
+      'Cannot find pip (PATH=' + pathEnvVar + ') - please see https://pip.pypa.io/en/stable/installation/ for how to ' +
+      'install'
+   )
+   exit(1)
 
 # Of course, when you run the pip in the venv, it might complain that it is not up-to-date.  So we should ensure that
 # first.
