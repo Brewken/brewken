@@ -133,12 +133,28 @@ capitalisedProjectName = projectName.capitalize()
 projectUrl = 'https://github.com/' + capitalisedProjectName + '/' + projectName + '/'
 
 #-----------------------------------------------------------------------------------------------------------------------
+# Base directories
+#-----------------------------------------------------------------------------------------------------------------------
+dir_base = pathlib.Path(__file__).parent.resolve()
+dir_venv = dir_base.joinpath('.venv')
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Before we go much further, we need to know whether we are running in a Python virtual environment (see comments below)
+#-----------------------------------------------------------------------------------------------------------------------
+inVenv = False
+exe_python = shutil.which('python3')
+if exe_python.startswith(dir_venv.as_posix()):
+   inVenv = True
+
+#-----------------------------------------------------------------------------------------------------------------------
 # Welcome banner and environment info
 #-----------------------------------------------------------------------------------------------------------------------
 # The '%c' argument to strftime means "Locale’s appropriate date and time representation"
 print(
-   '⭐ ' + capitalisedProjectName + ' Build Tool (bt) running on ' + platform.system() + ' (' + platform.release() +
-   '), using Python ' + platform.python_version() + ', at ' + datetime.datetime.now().strftime('%c') + ' ⭐'
+   '⭐ ' + capitalisedProjectName + ' Build Tool (bt), invoked as "' + ' '.join(sys.argv) + '" starting ' +
+   ('substantive' if inVenv else 'preliminary') + ' run on ' + platform.system() + ' (' + platform.release() +
+   '), using Python ' + platform.python_version() + ' from ' + exe_python + ', with command line arguments, at ' +
+   datetime.datetime.now().strftime('%c') + ' ⭐'
 )
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -158,12 +174,6 @@ handler.setFormatter(
 log.addHandler(handler)
 # If we don't do this, everything gets printed twice
 log.propagate = False
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Base directories
-#-----------------------------------------------------------------------------------------------------------------------
-dir_base = pathlib.Path(__file__).parent.resolve()
-dir_venv = dir_base.joinpath('.venv')
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Python 3rd-party modules we use
@@ -195,7 +205,10 @@ dir_venv = dir_base.joinpath('.venv')
 #     and some already-installed library that, eg, the EPM itself relies on.
 #
 #   - The recommended approach is to create a Python virtual environment and install the packages you need there.  This
-#     is a little complicated because we need to switch environments on-the-fly, but it is doable.
+#     is a little complicated because Python is not designed to allow you to switch environments on-the-fly.  You are
+#     supposed to switch environments in the shell before you launch Python.  (The switch in the shell changes a bunch
+#     of environment variables, including PATH, and means, amongst other things that you pick up a different Python
+#     executable from the venv rather than the system-wide one.)
 #
 # The other complexity is that some requirements / ways to do things changed in (as of 2024) recent versions of Python.
 # Eg, as of Python 3.12, setuptools is no longer a core venv dependency, but we are still on Python 3.10 on
@@ -271,51 +284,86 @@ match platform.system():
 
 
 #
-# Now we can set up a virtual environment
+# We need to figure out whether we're already running the venv Python or not
 #
-log.info('Create Python virtual environment in ' + dir_venv.as_posix())
-abortOnRunFail(subprocess.run([sys.executable, '-m', 'venv', dir_venv.as_posix()]))
+if not inVenv:
+   #
+   # We are running the system-wide Python interpreter.  At this point we should have enough installed to set up a
+   # virtual environment.  (This is safe to do twice: it doesn't matter if the virtual environment already exists.  We
+   # are only using it to run this script.)
+   #
+   log.info('Create Python virtual environment in ' + dir_venv.as_posix())
+   abortOnRunFail(subprocess.run([sys.executable, '-m', 'venv', dir_venv.as_posix()]))
+
+   #
+   # The tricky bit is now switching to that virtual environment (venv) on-the-fly from within a running Python script.
+   #
+   # There are two parts to this.  The first is setting a bunch of environment variables to point to the venv.
+   #
+   # Ideally, to do set all the environment variables correctly, we want to run the 'activate' bash script in the bin
+   # directory of the venv, but to do so in the current process (not a subprocess).  AFAICT this was possible in Python
+   # 2 with 'execfile' but is not directly doable in Python 3.  Instead, the standard "trick" is to  run the bash script
+   # in a subprocess, grab all the environment variables from that subprocess and set them one-by-one here in the parent
+   # process.
+   #
+   # Note that, unlike most places where we run a subcommand, we use 'shell=True' to allow us to pass in the complete
+   # command line as a string (partly because we are running two things in sequence, not just one thing with a bunch of
+   # arguments).  We explicitly invoke bash in the subcommand, otherwise Windows won't know what to do with the bash
+   # built-in 'source' (aka '.') command.
+   #
+   activateVenvShellScript = dir_venv.joinpath('bin').joinpath('activate')
+   log.info('Switching to Python virtual environment by executing ' + activateVenvShellScript.as_posix())
+   envOutput = abortOnRunFail(subprocess.run('bash -c ". ' + activateVenvShellScript.as_posix() + '; env"', shell=True, capture_output=True)).stdout.decode('UTF-8')
+   #
+   # envOutput now holds the output from running the shell script followed by the 'env' command
+   #
+   # There are slightly more concise ways to convert the output to a dictionary, but I think the following is more
+   # readable.
+   #
+   envVars = {}
+   for line in envOutput.splitlines():
+      # We only want to split on the first '=' character in the line to get the key-value pair because the value may
+      # contain '=' symbols.  (The key shouldn't ever contain '=', so we don't have to worry about that.)
+      log.info('Env: ' + line)
+      (key, val) = line.split('=', 1)
+      envVars[key] = val
+
+   # Now we overwrite our environment variables with whatever they were in the subprocess after running the `activate`
+   # script.
+   os.environ.update(envVars)
+
+   # Uncomment the following to debug issues with environment variables read in from the activate script.  Using the json
+   # module is just a quick way of converting a dict to a string.
+   #import json
+   #currEnv = dict(os.environ)
+   #log.info('os.environ: ' + json.dumps(currEnv))
+
+   #
+   # At this point, with the environment variables correctly set, we are still not quite there.  If we want to run the
+   # version of pip in the current path (which will be the one in the venv) then it will install packages to the venv,
+   # as we intend.  However, we are still running the system-wide Python interpreter so when we try to import the
+   # packages installed to the venv, it will not find them.
+   #
+   # So, we need to rerun this script (with all the same command line arguments) but using the venv Python interpreter.
+   # (Fortunately sys.argv already is the path to this script plus the command line arguments it was invoked with.)
+   # That run will skip past the if statement we are inside here (because we detect we are running with the venv
+   # interpreter) and will carry on to do the substantive work of the script below.  When it returns here, we can just
+   # exit.  At that point, we'll return to the parent process that invoked us, and all the messing around we've done
+   # with environment variables will disappear.  The next time the user runs this script, it should pick up the
+   # system-wide Python interpreter again.
+   #
+   # TBD: One day we could probably make things a bit simpler by by splitting this script up into several smaller ones
+   #      (so one script is calling another rather than the script invoking itself).
+   #
+   abortOnRunFail(subprocess.run([exe_python] + sys.argv))
+   exit(0)
 
 #
-# The tricky bit is now switching to that virtual environment (venv) on-the-fly from within a running Python script.
+# See comments above.  If we reached here then the script is being run by the venv Python interpreter.  We assume that
+# this is because we have been invoked by the same script run by the system-wide Python interpreter.
 #
-# Ideally we want to run the 'activate' bash script in the bin directory of the venv, but to do it in the current
-# process (not a subprocess) because what it does is unset and set a bunch of environment variables.  AFAICT this was
-# possible in Python 2 with 'execfile' but is not directly doable in Python 3.  Instead, the standard "trick" is to run
-# the bash script in a subprocess, grab all the environment variables from that subprocess and set them one-by-one here
-# in the parent process.
-#
-# Note that, unlike most places where we run a subcommand, we use 'shell=True' to allow us to pass in the complete
-# command line as a string (partly because we are running two things in sequence, not just one thing with a bunch of
-# arguments).  We explicitly invoke bash in the subcommand, otherwise Windows won't know what to do with the bash
-# built-in 'source' (aka '.') command.
-#
-activateVenvShellScript = dir_venv.joinpath('bin').joinpath('activate')
-log.info('Switching to Python virtual environment by executing ' + activateVenvShellScript.as_posix())
-envOutput = abortOnRunFail(subprocess.run('bash -c ". ' + activateVenvShellScript.as_posix() + '; env"', shell=True, capture_output=True)).stdout.decode('UTF-8')
-#
-# envOutput now holds the output from running the shell script followed by the 'env' command
-#
-# There are slightly more concise ways to convert the output to a dictionary, but I think the following is more
-# readable.
-#
-envVars = {}
-for line in envOutput.splitlines():
-   # We only want to split on the first '=' character in the line to get the key-value pair because the value may
-   # contain '=' symbols.  (The key shouldn't ever contain '=', so we don't have to worry about that.)
-   log.info('Env: ' + line)
-   (key, val) = line.split('=', 1)
-   envVars[key] = val
+log.info('Running in venv')
 
-# Now we overwrite our environment variables with whatever they were in the subprocess after running the `activate`
-# script.
-os.environ.update(envVars)
-
-# Uncomment the following to debug issues with environment variables read in from the activate script.  Using the json
-# module is just a quick way of converting a dict to a string.
-#import json
-#currEnv = dict(os.environ)
-#log.info('os.environ: ' + json.dumps(currEnv))
 
 # Having switched to the venv, before we go any further, we must make sure we look for pip again.  This time, the one we
 # find should be in the venv.  This means that it will install to the venv and not mind about external package managers.
