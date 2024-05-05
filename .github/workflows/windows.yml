@@ -229,7 +229,7 @@ jobs:
 
       - name: Upload Windows binaries (installers)
         if: ${{ success()}}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: brewken-dev-${{ matrix.msystem }}
           path: |
@@ -239,7 +239,7 @@ jobs:
 
       - name: Upload CMake error info from failed build
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.msystem }}-build
           path: C:/_/build/
@@ -247,7 +247,7 @@ jobs:
 
       - name: Upload Meson error info from failed build
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.msystem }}-mbuild
           path: C:/_/mbuild/

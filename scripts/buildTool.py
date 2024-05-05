@@ -411,9 +411,8 @@ def installDependencies():
          #  - The pandoc package helps us create man pages from markdown input
          #  - The build-essential and debhelper packages are for creating Debian packages
          #  - The rpm and rpmlint packages are for creating RPM packages
-         #  - We need python-dev to build parts of Boost.  (In theory we only need to install some of the Boost
-         #    libraries, and most of them are header-only, so do not need to be compiled.  However, for the moment at
-         #    least, it's simpler to build and install everything.)
+         #  - We need python-dev to build parts of Boost -- though it may be we could do without this as we only use a
+         #    few parts of Boost and most Boost libraries are header-only, so do not require compilation.
          #
          log.info('Ensuring libraries and frameworks are installed')
          btUtils.abortOnRunFail(subprocess.run(['sudo', 'apt-get', 'update']))
@@ -571,6 +570,15 @@ def installDependencies():
             #
             # We can handle the temporary directory stuff more elegantly (ie RAII style) in Python however
             #
+            # NOTE: On older versions of Linux, there are problems building some of the Boost libraries that I haven't
+            #       got to the bottom of.  Since, for now, we only use the following Boost libraries, we use additional
+            #       options on the b2 command to limit what it builds:
+            #          algorithm
+            #          json
+            #          stacktrace
+            #       The list above can be recreated by running the following in the mbuild directory:
+            #          grep -r '#include <boost' ../src | grep -i boost | sed 's+^.*#include <boost/++; s+/.*$++; s+.hpp.*$++' | sort -u
+            #
             with tempfile.TemporaryDirectory(ignore_cleanup_errors = True) as tmpDirName:
                previousWorkingDirectory = pathlib.Path.cwd().as_posix()
                os.chdir(tmpDirName)
@@ -587,7 +595,9 @@ def installDependencies():
                log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
                btUtils.abortOnRunFail(subprocess.run(['./bootstrap.sh', '--with-python=python3']))
                log.debug('Boost bootstrap finished')
-               btUtils.abortOnRunFail(subprocess.run(['sudo', './b2', 'install']))
+               btUtils.abortOnRunFail(subprocess.run(
+                  ['sudo', './b2', '--with-libraries=algorithm,json,stacktrace', 'install'])
+               )
                log.debug('Boost install finished')
                os.chdir(previousWorkingDirectory)
                log.debug('Working directory now ' + pathlib.Path.cwd().as_posix() + '.  Removing ' + tmpDirName)

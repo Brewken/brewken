@@ -153,7 +153,7 @@ jobs:
 
       - name: Upload Mac Packages (Installers)
         if: ${{ success() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: brewken-dev-mac
           path: |
@@ -181,7 +181,7 @@ jobs:
 
       - name: Recover Debris Artifacts (aka build output) - CMake
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-results
           path: ${{github.workspace}}/build
@@ -189,7 +189,7 @@ jobs:
 
       - name: Recover Debris Artifacts (aka build output) - Meson
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: mbuild-results
           path: ${{github.workspace}}/mbuild
@@ -197,7 +197,7 @@ jobs:
 
       - name: Recover DiagnosticReports (if any)
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: DiagnosticReports
           path: /Library/Logs/DiagnosticReports
@@ -205,7 +205,7 @@ jobs:
 
       - name: Recover Cores (if any)
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cores
           path: /cores

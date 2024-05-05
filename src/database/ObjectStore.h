@@ -108,9 +108,9 @@ public:
 
    struct TableDefinition;
    struct TableField {
-      FieldType                 const fieldType;
-      BtStringConst             const columnName;   // Shouldn't ever be empty in practice
-      BtStringConst             const propertyName; // Can be empty in a junction table (see below)
+      FieldType     const fieldType;
+      BtStringConst const columnName;   // Shouldn't ever be empty in practice
+      BtStringConst const propertyName; // Can be empty in a junction table (see below)
       using ValueDecoder =
          std::variant<std::monostate,
                       EnumStringMapping              const *,  // FieldType::Enum
@@ -119,10 +119,10 @@ public:
       ValueDecoder valueDecoder;
 
       //! Constructor
-      TableField(FieldType             const   fieldType,
-                 char          const * const   columnName,
-                 BtStringConst         const & propertyName = BtString::NULL_STR,
-                 ValueDecoder          const   valueDecoder = ValueDecoder{});
+      TableField(FieldType     const   fieldType,
+                 char const *  const   columnName,
+                 BtStringConst const & propertyName = BtString::NULL_STR,
+                 ValueDecoder  const   valueDecoder = ValueDecoder{});
    };
 
    /**
@@ -133,8 +133,8 @@ public:
       BtStringConst tableName;
       QVector<TableField> const tableFields;
       //! Constructor
-      TableDefinition(char const * const tableName = nullptr,
-                      std::initializer_list<TableField> const tableFields = {});
+      TableDefinition(char const * const tableName,
+                      std::initializer_list<TableField> const tableFields);
    };
 
    /**
@@ -185,8 +185,8 @@ public:
     */
    struct JunctionTableDefinition : public TableDefinition {
       AssumedNumEntries assumedNumEntries = MULTIPLE_ENTRIES_OK;
-      JunctionTableDefinition(char const * const tableName = nullptr,
-                              std::initializer_list<TableField> tableFields = {},
+      JunctionTableDefinition(char const * const tableName,
+                              std::initializer_list<TableField> tableFields,
                               AssumedNumEntries assumedNumEntries = MULTIPLE_ENTRIES_OK) :
          TableDefinition{tableName, tableFields},
          assumedNumEntries{assumedNumEntries} {
