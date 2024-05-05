@@ -64,6 +64,12 @@ jobs:
            echo "Running ./bt -v setup all"
            ./bt -v setup all
 
+      - name: Build (with Meson)
+        run: |
+           cd mbuild
+           pwd
+           meson compile
+
       - name: Build (with CMake)
         env:
            QT_QPA_PLATFORM: offscreen
@@ -75,12 +81,6 @@ jobs:
            cd build
            cmake ..
            make
-
-      - name: Build (with Meson)
-        run: |
-           cd mbuild
-           pwd
-           meson compile
 
       - name: Prep for tests
         # If a test fails and we get a core, we'd like to analyse it.  This will be easier if we have access to the

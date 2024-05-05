@@ -127,6 +127,7 @@ fi
 #
 # Now we can switch to the venv
 #
+pwd
 source ./.venv/bin/activate
 
 #

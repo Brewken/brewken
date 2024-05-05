@@ -80,17 +80,8 @@ for key, value in envVars.items():
    log.info('Env: ' + key + '=' + value)
 log.info('Environment variables ^^^')
 
-#-----------------------------------------------------------------------------------------------------------------------
-# Before we go much further, we need to know whether we are running in a Python virtual environment (which should have
-# been ensured by the invoking 'bt' script).
-#-----------------------------------------------------------------------------------------------------------------------
-dir_venv = btUtils.getBaseDir().joinpath('.venv')
-if not exe_python.startswith(dir_venv.as_posix()):
-   log.critical('Python executable (' + exe_python + ') not in virtual environment.')
-   exit(1)
-
-# Since we're running in a venv, the pip we find should be the one in the venv.  This means that it will install to the
-# venv and not mind about external package managers.
+# Since (courtesy of the 'bt' script that invokes us) we're running in a venv, the pip we find should be the one in the
+# venv.  This means that it will install to the venv and not mind about external package managers.
 exe_pip = shutil.which('pip3')
 # If Pip still isn't installed we need to bail here.
 if (exe_pip is None or exe_pip == ''):
@@ -102,6 +93,8 @@ if (exe_pip is None or exe_pip == ''):
       'install'
    )
    exit(1)
+
+log.info('Found pip at: ' + exe_pip)
 
 # Of course, when you run the pip in the venv, it might complain that it is not up-to-date.  So we should ensure that
 # first.
