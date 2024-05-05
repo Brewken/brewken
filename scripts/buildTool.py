@@ -489,10 +489,10 @@ def installDependencies():
          #    ${BOOST_ROOT}/boost/version.hpp       <-- If the BOOST_ROOT environment variable is set it gives an
          #                                              alternative place to look
          #
-         # Although things should compile with 1.79.0, if we're going to all the bother of installing Boost, we'll
-         # install a more recent one
+         # Although things should compile with 1.79.0, if we're going to all the bother of installing Boost manually,
+         # we'll install a more recent one.
          minBoostVersion = packaging.version.parse('1.79.0')
-         boostVersionToInstall = packaging.version.parse('1.80.0') # NB: This _must_ have the patch version
+         boostVersionToInstall = packaging.version.parse('1.84.0') # NB: This _must_ have the patch version
          maxBoostVersionFound = packaging.version.parse('0')
          possibleBoostVersionHeaders = [pathlib.Path('/usr/include/boost/version.hpp'),
                                         pathlib.Path('/usr/local/include/boost/version.hpp')]

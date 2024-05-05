@@ -41,6 +41,8 @@ def getBaseDir():
 #-----------------------------------------------------------------------------------------------------------------------
 def getLogger(logLevel = logging.INFO):
    logging.basicConfig(format='%(message)s')
+   # Per https://docs.python.org/3/library/logging.html __name__ is the module’s name in the Python package namespace.
+   # This is fine for us.  I don't think we care too much what the logger's name is.
    log = logging.getLogger(__name__)
    log.setLevel(logLevel)
    # Include the log level in the message
@@ -64,6 +66,10 @@ def getLogger(logLevel = logging.INFO):
 #-----------------------------------------------------------------------------------------------------------------------
 def abortOnRunFail(runResult: subprocess.CompletedProcess):
    if (runResult.returncode != 0):
+      # Per https://docs.python.org/3/library/logging.html, "Multiple calls to logging.getLogger() with the same name
+      # [parameter] will always return a reference to the same Logger object."  So we are safe to set log in this way.
+      log = logging.getLogger(__name__)
+
       # According to https://docs.python.org/3/library/subprocess.html#subprocess.CompletedProcess,
       # CompletedProcess.args (the arguments used to launch the process) "may be a list or a string", but its not clear
       # when it would be one or the other.

@@ -70,17 +70,28 @@ jobs:
            pwd
            meson compile
 
-      - name: Build (with CMake)
-        env:
-           QT_QPA_PLATFORM: offscreen
-        # Change `make` to `make VERBOSE=1` to get hugely detailed output
-        run: |
-           export PATH=/usr/local/opt/qt5/bin:$PATH
-           export CMAKE_PREFIX_PATH=/usr/local/opt/qt@5
-           mkdir build
-           cd build
-           cmake ..
-           make
+      #
+      # On Mac, we currently (2024-05-05) get a build error with CMake:
+      #    CMake Error at /opt/homebrew/lib/cmake/Qt5Core/Qt5CoreConfig.cmake:14 (message):
+      #    The imported target "Qt5::Core" references the file
+      #       "/opt/homebrew/.//mkspecs/macx-clang"
+      #    but this file does not exist.
+      #
+      # I couldn't easily find a fix.  So, since the Meson build works fine, just commenting out the Mac CMake build
+      # for now.
+      #
+      #- name: Build (with CMake)
+      #  env:
+      #     QT_QPA_PLATFORM: offscreen
+      #  # Change `make` to `make VERBOSE=1` to get hugely detailed output
+      #  run: |
+      #     export PATH=/usr/local/opt/qt5/bin:$PATH
+      #     export CMAKE_PREFIX_PATH=/usr/local/opt/qt@5
+      #     mkdir build
+      #     cd build
+      #     cmake ..
+      #     make
+      #
 
       - name: Prep for tests
         # If a test fails and we get a core, we'd like to analyse it.  This will be easier if we have access to the
