@@ -106,19 +106,6 @@ jobs:
            echo "Clearing contents of /cores directory: $(ls -ltr /cores) $(rm -rf /cores/*)"
            echo "Clearing contents of /Library/Logs/DiagnosticReports directory: $(ls -ltr /Library/Logs/DiagnosticReports) $(rm -rf /Library/Logs/DiagnosticReports/*)"
 
-      - name: Automated tests (via CMake)
-        # If something does crash we'd like to capture the core, so we need to enable core dumps - hence the call to
-        # ulimit.
-        #
-        # Running "make test" boils down to running ctest (because the invocation of make in the Build step above will
-        # have done all the necessary prep.  Running ctest directly allows us to pass in extra parameters to try to get as
-        # much diagnostics as possible out of a remote build such as this.
-        run: |
-           ulimit -c unlimited
-           echo "Core size limit is $(ulimit -c)"
-           cd build
-           ctest --extra-verbose --output-on-failure 2>&1
-
       - name: Automated tests (via Meson)
         # If something does crash we'd like to capture the core, so we need to enable core dumps - hence the call to
         # ulimit.
@@ -133,6 +120,23 @@ jobs:
            export QT_DEBUG_PLUGINS=1
            export QT_QPA_PLATFORM=offscreen
            meson test
+
+      #
+      # Since we commented out the Mac CMake build, we also need to comment out the CMake tests.  The same tests are run
+      # via Meson, so we're not losing any coverage here other than of the CMake script itself.
+      #
+      #- name: Automated tests (via CMake)
+      #  # If something does crash we'd like to capture the core, so we need to enable core dumps - hence the call to
+      #  # ulimit.
+      #  #
+      #  # Running "make test" boils down to running ctest (because the invocation of make in the Build step above will
+      #  # have done all the necessary prep.  Running ctest directly allows us to pass in extra parameters to try to get as
+      #  # much diagnostics as possible out of a remote build such as this.
+      #  run: |
+      #     ulimit -c unlimited
+      #     echo "Core size limit is $(ulimit -c)"
+      #     cd build
+      #     ctest --extra-verbose --output-on-failure 2>&1
 
       # Note that, although we continue to support CMake for local builds and installs, we no longer support packaging
       # with CPack/CMake -- not least because it was very hard to get things working on Mac.  The bt build script

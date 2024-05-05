@@ -411,6 +411,9 @@ def installDependencies():
          #  - The pandoc package helps us create man pages from markdown input
          #  - The build-essential and debhelper packages are for creating Debian packages
          #  - The rpm and rpmlint packages are for creating RPM packages
+         #  - We need python-dev to build parts of Boost.  (In theory we only need to install some of the Boost
+         #    libraries, and most of them are header-only, so do not need to be compiled.  However, for the moment at
+         #    least, it's simpler to build and install everything.)
          #
          log.info('Ensuring libraries and frameworks are installed')
          btUtils.abortOnRunFail(subprocess.run(['sudo', 'apt-get', 'update']))
@@ -432,6 +435,7 @@ def installDependencies():
                                                 'ninja-build',
                                                 'pandoc',
                                                 'python3',
+                                                'python3-dev',
                                                 'qtbase5-dev',
                                                 'qtmultimedia5-dev',
                                                 'qttools5-dev',
@@ -581,7 +585,7 @@ def installDependencies():
                log.debug('Boost archive extracted')
                os.chdir(boostUnderscoreName)
                log.debug('Working directory now ' + pathlib.Path.cwd().as_posix())
-               btUtils.abortOnRunFail(subprocess.run(['./bootstrap.sh']))
+               btUtils.abortOnRunFail(subprocess.run(['./bootstrap.sh', '--with-python=python3']))
                log.debug('Boost bootstrap finished')
                btUtils.abortOnRunFail(subprocess.run(['sudo', './b2', 'install']))
                log.debug('Boost install finished')
