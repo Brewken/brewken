@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/BtBoolComboBox.cpp is part of Brewken, and is copyright the following authors 2023:
+ * widgets/BtBoolComboBox.cpp is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -16,6 +16,9 @@
 #include "widgets/BtBoolComboBox.h"
 
 #include <QString>
+#include <QVariant>
+
+#include "utils/MetaTypes.h"
 
 namespace {
    // We store string values inside the combo box as it's less confusing when the value is optional
@@ -141,4 +144,11 @@ void BtBoolComboBox::setNull() {
    }
    Q_ASSERT(rawValue == falseValue || rawValue == trueValue);
    return rawValue == trueValue;
+}
+
+[[nodiscard]] QVariant BtBoolComboBox::getValue(TypeInfo const & typeInfo) const {
+   if (typeInfo.isOptional()) {
+      return QVariant::fromValue(this->getOptBoolValue());
+   }
+   return QVariant::fromValue(this->getNonOptBoolValue());
 }

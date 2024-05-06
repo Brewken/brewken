@@ -139,7 +139,7 @@ protected:
    /**
     * \brief Swap the contents of two Water objects - which provides an exception-safe way of implementing operator=
     */
-   void swap(Water & other) noexcept;
+   virtual void swap(Water & other) noexcept;
 
 public:
    // .:TODO:. On a base or target profile, bicarbonate and alkalinity cannot both be used. I'm gonna have fun figuring that out

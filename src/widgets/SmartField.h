@@ -39,7 +39,7 @@
 
 class SmartAmountSettings;
 class SmartLabel;
-class TypeInfo;
+struct TypeInfo;
 
 /**
  * \class SmartField

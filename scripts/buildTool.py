@@ -596,7 +596,10 @@ def installDependencies():
                btUtils.abortOnRunFail(subprocess.run(['./bootstrap.sh', '--with-python=python3']))
                log.debug('Boost bootstrap finished')
                btUtils.abortOnRunFail(subprocess.run(
-                  ['sudo', './b2', '--with-libraries=algorithm,json,stacktrace', 'install'])
+                  ['sudo', './b2', '--with-algorithm',
+                                   '--with-json',
+                                   '--with-stacktrace',
+                                   'install'])
                )
                log.debug('Boost install finished')
                os.chdir(previousWorkingDirectory)
