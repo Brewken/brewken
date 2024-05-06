@@ -61,8 +61,15 @@ namespace {
    //
    // We only use specialisations of these templates (PRIMARY_TABLE and JUNCTION_TABLES)
    //
-   template<class NE> ObjectStore::TableDefinition          const PRIMARY_TABLE;
-   template<class NE> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES;
+   // It would be nice to be able to write here:
+   //    template<class NE> ObjectStore::TableDefinition          const PRIMARY_TABLE   = delete;
+   //    template<class NE> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES = delete;
+   // However, this is not currently valid C++.  There was a proposal that would have made it so (see
+   // https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2041r1.html) however, AFAICT this never made it into the
+   // standard.
+   //
+   template<class NE> ObjectStore::TableDefinition          const PRIMARY_TABLE  {"", {}};
+   template<class NE> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES{};
 
    //
    // NOTE: Unlike C++, SQL is generally case-insensitive, so we have slightly different naming conventions.
