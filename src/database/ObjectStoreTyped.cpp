@@ -61,8 +61,8 @@ namespace {
    //
    // We only use specialisations of these templates (PRIMARY_TABLE and JUNCTION_TABLES)
    //
-   template<class NE> ObjectStore::TableDefinition const PRIMARY_TABLE {};
-   template<class NE> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES {};
+   template<class NE> ObjectStore::TableDefinition          const PRIMARY_TABLE;
+   template<class NE> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES;
 
    //
    // NOTE: Unlike C++, SQL is generally case-insensitive, so we have slightly different naming conventions.

@@ -112,6 +112,9 @@ NamedEntity::NamedEntity(NamedEntity const & other) :
 }
 
 void NamedEntity::swap(NamedEntity & other) noexcept {
+   // We assert that we only swap two objects of the same class.  We never want to swap a Hop with a Recipe etc.
+   Q_ASSERT(typeid(*this) == typeid(other));
+
    // Assume nothing important to swap in QObject (see comment in model/NamedEntity.h
    //
    // Since we're only using this for assignment operator, which in turn uses copy constructor, we're assuming we are

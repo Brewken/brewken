@@ -205,29 +205,32 @@ Water::Water(Water const& other) :
    return;
 }
 
-void Water::swap(Water & other) noexcept {
+void Water::swap(NamedEntity & other) noexcept {
    this->NamedEntity::swap(other);
-///   std::swap(this->m_amount            , other.m_amount            );
-   std::swap(this->m_calcium_ppm       , other.m_calcium_ppm       );
-   std::swap(this->m_bicarbonate_ppm   , other.m_bicarbonate_ppm   );
-   std::swap(this->m_sulfate_ppm       , other.m_sulfate_ppm       );
-   std::swap(this->m_chloride_ppm      , other.m_chloride_ppm      );
-   std::swap(this->m_sodium_ppm        , other.m_sodium_ppm        );
-   std::swap(this->m_magnesium_ppm     , other.m_magnesium_ppm     );
-   std::swap(this->m_ph                , other.m_ph                );
-   std::swap(this->m_alkalinity_ppm    , other.m_alkalinity_ppm    );
-   std::swap(this->m_notes             , other.m_notes             );
-   std::swap(this->m_type              , other.m_type              );
-   std::swap(this->m_mashRo_pct        , other.m_mashRo_pct        );
-   std::swap(this->m_spargeRo_pct      , other.m_spargeRo_pct      );
-   std::swap(this->m_alkalinity_as_hco3, other.m_alkalinity_as_hco3);
+   // Base class (NamedEntity) will have asserted this cast is valid
+   Water & otherWater = static_cast<Water &>(other);
+
+///   std::swap(this->m_amount            , otherWater.m_amount            );
+   std::swap(this->m_calcium_ppm       , otherWater.m_calcium_ppm       );
+   std::swap(this->m_bicarbonate_ppm   , otherWater.m_bicarbonate_ppm   );
+   std::swap(this->m_sulfate_ppm       , otherWater.m_sulfate_ppm       );
+   std::swap(this->m_chloride_ppm      , otherWater.m_chloride_ppm      );
+   std::swap(this->m_sodium_ppm        , otherWater.m_sodium_ppm        );
+   std::swap(this->m_magnesium_ppm     , otherWater.m_magnesium_ppm     );
+   std::swap(this->m_ph                , otherWater.m_ph                );
+   std::swap(this->m_alkalinity_ppm    , otherWater.m_alkalinity_ppm    );
+   std::swap(this->m_notes             , otherWater.m_notes             );
+   std::swap(this->m_type              , otherWater.m_type              );
+   std::swap(this->m_mashRo_pct        , otherWater.m_mashRo_pct        );
+   std::swap(this->m_spargeRo_pct      , otherWater.m_spargeRo_pct      );
+   std::swap(this->m_alkalinity_as_hco3, otherWater.m_alkalinity_as_hco3);
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   std::swap(this->m_carbonate_ppm     , other.m_carbonate_ppm     );
-   std::swap(this->m_potassium_ppm     , other.m_potassium_ppm     );
-   std::swap(this->m_iron_ppm          , other.m_iron_ppm          );
-   std::swap(this->m_nitrate_ppm       , other.m_nitrate_ppm       );
-   std::swap(this->m_nitrite_ppm       , other.m_nitrite_ppm       );
-   std::swap(this->m_flouride_ppm      , other.m_flouride_ppm      );
+   std::swap(this->m_carbonate_ppm     , otherWater.m_carbonate_ppm     );
+   std::swap(this->m_potassium_ppm     , otherWater.m_potassium_ppm     );
+   std::swap(this->m_iron_ppm          , otherWater.m_iron_ppm          );
+   std::swap(this->m_nitrate_ppm       , otherWater.m_nitrate_ppm       );
+   std::swap(this->m_nitrite_ppm       , otherWater.m_nitrite_ppm       );
+   std::swap(this->m_flouride_ppm      , otherWater.m_flouride_ppm      );
    return;
 }
 

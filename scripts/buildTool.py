@@ -576,8 +576,52 @@ def installDependencies():
             #          algorithm
             #          json
             #          stacktrace
+            #
             #       The list above can be recreated by running the following in the mbuild directory:
             #          grep -r '#include <boost' ../src | grep -i boost | sed 's+^.*#include <boost/++; s+/.*$++; s+.hpp.*$++' | sort -u
+            #
+            #       We then need to intersect this list with the output of `./b2 --show-libraries` to see which of the
+            #       libraries we use require building.  On Boost 1.84, the output is (with the ones we use marked *):
+            #
+            #          The following libraries require building:
+            #              - atomic
+            #              - chrono
+            #              - cobalt
+            #              - container
+            #              - context
+            #              - contract
+            #              - coroutine
+            #              - date_time
+            #              - exception
+            #              - fiber
+            #              - filesystem
+            #              - graph
+            #              - graph_parallel
+            #              - headers
+            #              - iostreams
+            #              - json                *
+            #              - locale
+            #              - log
+            #              - math
+            #              - mpi
+            #              - nowide
+            #              - program_options
+            #              - python
+            #              - random
+            #              - regex
+            #              - serialization
+            #              - stacktrace          *
+            #              - system
+            #              - test
+            #              - thread
+            #              - timer
+            #              - type_erasure
+            #              - url
+            #              - wave
+            #
+            #       If we wanted to, we could do all the above programatically here.  But, for now, I think it's not
+            #       worth the effort, because it's relatively infrequently that we need to change the hard-coded
+            #       parameters below.
             #
             with tempfile.TemporaryDirectory(ignore_cleanup_errors = True) as tmpDirName:
                previousWorkingDirectory = pathlib.Path.cwd().as_posix()
@@ -596,8 +640,7 @@ def installDependencies():
                btUtils.abortOnRunFail(subprocess.run(['./bootstrap.sh', '--with-python=python3']))
                log.debug('Boost bootstrap finished')
                btUtils.abortOnRunFail(subprocess.run(
-                  ['sudo', './b2', '--with-algorithm',
-                                   '--with-json',
+                  ['sudo', './b2', '--with-json',
                                    '--with-stacktrace',
                                    'install'])
                )
