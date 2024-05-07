@@ -4649,6 +4649,14 @@ El volumen final en el primario es %1.</translation>
         <source>Edit Notes</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Change pH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Apparent Attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeFormatter</name>
@@ -9321,6 +9329,14 @@ El volumen final en el primario es %1.</translation>
     <message>
         <source>Notes</source>
         <translation>Notas</translation>
+    </message>
+    <message>
+        <source>Final beer pH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

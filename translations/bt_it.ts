@@ -4697,6 +4697,14 @@ Il Volume finale del primo è %1.</translation>
         <source>Edit Notes</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Change pH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Apparent Attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeFormatter</name>
@@ -9396,6 +9404,14 @@ Il Volume finale del primo è %1.</translation>
     <message>
         <source>Notes</source>
         <translation>Note</translation>
+    </message>
+    <message>
+        <source>Final beer pH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

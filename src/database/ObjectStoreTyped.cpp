@@ -1020,25 +1020,25 @@ namespace {
    // BrewNotes don't have children
    template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<BrewNote> {};
 
-
-   //
-   // This should give us all the singleton instances
-   //
-   template<class NE> ObjectStoreTyped<NE> ostSingleton{NE::typeLookup, PRIMARY_TABLE<NE>, JUNCTION_TABLES<NE>};
-
 }
 
 
 template<class NE>
 ObjectStoreTyped<NE> & ObjectStoreTyped<NE>::getInstance() {
+   //
+   // As of C++11, simple "Meyers singleton" is now thread-safe -- see
+   // https://www.modernescpp.com/index.php/thread-safe-initialization-of-a-singleton#h3-guarantees-of-the-c-runtime
+   //
+   static ObjectStoreTyped<NE> ostSingleton{NE::typeLookup, PRIMARY_TABLE<NE>, JUNCTION_TABLES<NE>};
+
    // C++11 provides a thread-safe way to ensure singleton.loadAll() is called exactly once
    //
    // NB: It's easier to just pass in nullptr to ObjectStoreTyped<NE>::loadAll than to do all the magic casting to
    //     allow std::call_once to invoke it with the default parameter (which is nullptr).
    static std::once_flag initFlag;
-   std::call_once(initFlag, &ObjectStoreTyped<NE>::loadAll, &ostSingleton<NE>, nullptr);
+   std::call_once(initFlag, &ObjectStoreTyped<NE>::loadAll, &ostSingleton, nullptr);
 
-   return ostSingleton<NE>;
+   return ostSingleton;
 }
 
 //
@@ -1120,47 +1120,50 @@ bool InitialiseAllObjectStores(QString & errorMessage) {
 }
 
 namespace {
-   QVector<ObjectStore const *> AllObjectStores {
+   QVector<ObjectStore const *> getAllObjectStores() {
       // NOTE: This is the 3rd of 3 places we need to add any new ObjectStoreTyped
-      &ostSingleton<Boil                     >,
-      &ostSingleton<BoilStep                 >,
-      &ostSingleton<BrewNote                 >,
-      &ostSingleton<Equipment                >,
-      &ostSingleton<Fermentable              >,
-      &ostSingleton<Fermentation             >,
-      &ostSingleton<FermentationStep         >,
-      &ostSingleton<Hop                      >,
-      &ostSingleton<Instruction              >,
-      &ostSingleton<InventoryFermentable     >,
-      &ostSingleton<InventoryHop             >,
-      &ostSingleton<InventoryMisc            >,
-      &ostSingleton<InventorySalt            >,
-      &ostSingleton<InventoryYeast           >,
-      &ostSingleton<Mash                     >,
-      &ostSingleton<MashStep                 >,
-      &ostSingleton<Misc                     >,
-      &ostSingleton<Recipe                   >,
-      &ostSingleton<RecipeAdditionFermentable>,
-      &ostSingleton<RecipeAdditionHop        >,
-      &ostSingleton<RecipeAdditionMisc       >,
-      &ostSingleton<RecipeAdditionYeast      >,
-      &ostSingleton<RecipeAdjustmentSalt     >,
-      &ostSingleton<RecipeUseOfWater         >,
-      &ostSingleton<Salt                     >,
-      &ostSingleton<Style                    >,
-      &ostSingleton<Water                    >,
-      &ostSingleton<Yeast                    >,
-   };
+      static QVector<ObjectStore const *> allObjectStores {
+         &ObjectStoreTyped<Boil                     >::getInstance(),
+         &ObjectStoreTyped<BoilStep                 >::getInstance(),
+         &ObjectStoreTyped<BrewNote                 >::getInstance(),
+         &ObjectStoreTyped<Equipment                >::getInstance(),
+         &ObjectStoreTyped<Fermentable              >::getInstance(),
+         &ObjectStoreTyped<Fermentation             >::getInstance(),
+         &ObjectStoreTyped<FermentationStep         >::getInstance(),
+         &ObjectStoreTyped<Hop                      >::getInstance(),
+         &ObjectStoreTyped<Instruction              >::getInstance(),
+         &ObjectStoreTyped<InventoryFermentable     >::getInstance(),
+         &ObjectStoreTyped<InventoryHop             >::getInstance(),
+         &ObjectStoreTyped<InventoryMisc            >::getInstance(),
+         &ObjectStoreTyped<InventorySalt            >::getInstance(),
+         &ObjectStoreTyped<InventoryYeast           >::getInstance(),
+         &ObjectStoreTyped<Mash                     >::getInstance(),
+         &ObjectStoreTyped<MashStep                 >::getInstance(),
+         &ObjectStoreTyped<Misc                     >::getInstance(),
+         &ObjectStoreTyped<Recipe                   >::getInstance(),
+         &ObjectStoreTyped<RecipeAdditionFermentable>::getInstance(),
+         &ObjectStoreTyped<RecipeAdditionHop        >::getInstance(),
+         &ObjectStoreTyped<RecipeAdditionMisc       >::getInstance(),
+         &ObjectStoreTyped<RecipeAdditionYeast      >::getInstance(),
+         &ObjectStoreTyped<RecipeAdjustmentSalt     >::getInstance(),
+         &ObjectStoreTyped<RecipeUseOfWater         >::getInstance(),
+         &ObjectStoreTyped<Salt                     >::getInstance(),
+         &ObjectStoreTyped<Style                    >::getInstance(),
+         &ObjectStoreTyped<Water                    >::getInstance(),
+         &ObjectStoreTyped<Yeast                    >::getInstance(),
+      };
+      return allObjectStores;
+   }
 }
 
 bool CreateAllDatabaseTables(Database & database, QSqlDatabase & connection) {
    qDebug() << Q_FUNC_INFO;
-   for (auto ii : AllObjectStores) {
+   for (auto ii : getAllObjectStores()) {
       if (!ii->createTables(database, connection)) {
          return false;
       }
    }
-   for (auto jj : AllObjectStores) {
+   for (auto jj : getAllObjectStores()) {
       if (!jj->addTableConstraints(database, connection)) {
          return false;
       }
@@ -1177,7 +1180,7 @@ bool WriteAllObjectStoresToNewDb(Database & newDatabase, QSqlDatabase & connecti
    //
    DbTransaction dbTransaction{newDatabase, connectionNew, DbTransaction::DISABLE_FOREIGN_KEYS};
 
-   for (ObjectStore const * objectStore : AllObjectStores) {
+   for (ObjectStore const * objectStore : getAllObjectStores()) {
       if (!objectStore->writeAllToNewDb(newDatabase, connectionNew)) {
          return false;
       }
