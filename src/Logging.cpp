@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * Logging.cpp is part of Brewken, and is copyright the following authors 2009-2021:
+ * Logging.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
@@ -401,6 +401,9 @@ bool Logging::setDirectory(std::optional<QDir> newDirectory, Logging::PersistNew
       logDirectory = PersistentSettings::getConfigDir();
       qDebug() << Q_FUNC_INFO << "Logging to configuration directory: " << logDirectory.canonicalPath();
    }
+
+   // We assert that, one way or another, we have above set the log directory to something.
+   Q_ASSERT(!logDirectory.canonicalPath().isEmpty());
 
    // Check if the new directory exists, if not create it.
    QString errorReason;
