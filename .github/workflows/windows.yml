@@ -184,12 +184,6 @@ jobs:
           pwd
           meson compile
 
-      - name: Test (via CMake)
-        shell: msys2 {0}
-        run: |
-          cd /C/_/build
-          cmake --build . --target test
-
       # The 'export QT_DEBUG_PLUGINS=1' give us diagnostics in the event that there are problems initialising QT
       # The 'export QT_QPA_PLATFORM=offscreen' stops Qt's xcb sub-module trying to connect to a non-existent display
       # (which would cause the test runner to abort before running any tests).
@@ -200,6 +194,12 @@ jobs:
           export QT_DEBUG_PLUGINS=1
           export QT_QPA_PLATFORM=offscreen
           meson test
+
+      - name: Test (via CMake)
+        shell: msys2 {0}
+        run: |
+          cd /C/_/build
+          cmake --build . --target test
 
       #
       # See above for explanation of the extra things we need to do on Windows before running the bt script.  Most of
