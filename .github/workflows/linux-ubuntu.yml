@@ -87,27 +87,12 @@ jobs:
             -DNO_MESSING_WITH_FLAGS=ON \
             $GITHUB_WORKSPACE
 
-      - name: Build (with CMake)
-        working-directory: ${{github.workspace}}/build
-        shell: bash
-        run: |
-          make
-
       - name: Build (with Meson)
         working-directory: ${{github.workspace}}/mbuild
         shell: bash
         run: |
           pwd
           meson compile
-
-      - name: Test (via CMake)
-        working-directory: ${{github.workspace}}/build
-        shell: bash
-        env:
-          CTEST_OUTPUT_ON_FAILURE: TRUE
-          QT_QPA_PLATFORM: minimal
-        run: |
-          make test
 
       # The 'export QT_DEBUG_PLUGINS=1' give us diagnostics in the event that there are problems initialising QT
       # The 'export QT_QPA_PLATFORM=offscreen' stops Qt's xcb sub-module trying to connect to a non-existent display
@@ -119,6 +104,21 @@ jobs:
           export QT_DEBUG_PLUGINS=1
           export QT_QPA_PLATFORM=offscreen
           meson test
+
+      - name: Build (with CMake)
+        working-directory: ${{github.workspace}}/build
+        shell: bash
+        run: |
+          make
+
+      - name: Test (via CMake)
+        working-directory: ${{github.workspace}}/build
+        shell: bash
+        env:
+          CTEST_OUTPUT_ON_FAILURE: TRUE
+          QT_QPA_PLATFORM: minimal
+        run: |
+          make test
 
       # Note that, although we continue to support CMake for local builds and installs, we no longer support packaging
       # with CPack/CMake.  The bt build script packaging gives us better control over the packaging process.

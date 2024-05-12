@@ -312,6 +312,12 @@ Testing::Testing() :
 
    registerMetaTypes();
 
+   if (!this->pimpl->m_tempDir.exists()) {
+      qWarning() <<
+         Q_FUNC_INFO << "Temp dir" << this->pimpl->m_tempDir.absolutePath() << "does not exist.  Attempting to create.";
+      this->pimpl->m_tempDir.mkpath(this->pimpl->m_tempDir.absolutePath());
+   }
+
    //
    // Create a unique temporary directory using the current thread ID as part of a subdirectory name inside whatever
    // system-standard temp directory Qt proposes to us.  (We also put the application name in the subdirectory name so
