@@ -2835,6 +2835,13 @@ If you need help, please open an issue at %1</source>
     </message>
 </context>
 <context>
+    <name>NE</name>
+    <message>
+        <source>Change %1 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>NamedEntity</name>
     <message>
         <source>Named Entity</source>
@@ -3109,6 +3116,35 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Could not open the file %1 for writing! please try again with a new filename or diretory</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QApplication</name>
+    <message>
+        <source>Brewken is already running!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Another instance of Brewken is already running.
+
+Running two copies of the program at once may lead to data loss.
+
+Press OK to quit.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Application terminates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The application encountered a fatal error.
+Error message:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The application encountered a fatal error.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3782,11 +3818,11 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation type="obsolete">Hozzáadás a recepthez</translation>
+        <translation type="unfinished">Hozzáadás a recepthez</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="obsolete">Új</translation>
+        <translation type="unfinished">Új</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
@@ -3910,6 +3946,34 @@ Program will now exit.</source>
     </message>
     <message>
         <source>days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Catalog / Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add selected %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit selected %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 name:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6288,11 +6352,11 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <name>editorClass</name>
     <message>
         <source>No</source>
-        <translation type="obsolete">Nem</translation>
+        <translation type="unfinished">Nem</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="obsolete">Igen</translation>
+        <translation type="unfinished">Igen</translation>
     </message>
 </context>
 <context>

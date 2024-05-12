@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * unitTests/Testing.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * unitTests/Testing.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
@@ -20,19 +20,11 @@
 #define TESTING_H
 #pragma once
 
-#include <cstdint>
 #include <memory>
 
-#include <QDir>
 #include <QObject>
-#include <QtTest/QtTest>
 
-class Equipment;
-class Hop;
-class Fermentable;
 
-#include "Application.h"
-#include "Logging.h"
 
 class Testing : public QObject {
    Q_OBJECT

@@ -22,11 +22,11 @@
 #include "unitTests/Testing.h"
 
 #include <cmath>
+#include <cstdint>
 #include <exception>
+#include <filesystem>
 #include <iostream> // For std::cout
 #include <math.h>
-#include <memory>
-
 #include <boost/json/src.hpp> // Needs to be included exactly once in the code to use header-only version of Boost.JSON
 
 #include <xercesc/util/PlatformUtils.hpp>
@@ -41,6 +41,8 @@
 #endif
 #include <QVector>
 
+#include "Application.h"
+#include "Logging.h"
 #include "Algorithms.h"
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"
@@ -60,6 +62,7 @@
 #include "model/RecipeAdditionFermentable.h"
 #include "model/RecipeAdditionHop.h"
 #include "PersistentSettings.h"
+#include "utils/ErrorCodeToStream.h"
 
 namespace {
 
@@ -287,7 +290,7 @@ class Testing::impl {
 public:
    impl(Testing & self) :
       m_self{self},
-      m_tempDir{QDir::tempPath()},
+      m_tempDir{std::filesystem::temp_directory_path()},
       m_equipFiveGalNoLoss{},
       m_cascade_4pct{},
       m_twoRow{} {
@@ -297,8 +300,13 @@ public:
    //================================================ MEMBER VARIABLES =================================================
    Testing & m_self;
 
-   //! \brief Where we write database and log files etc
-   QDir m_tempDir;
+   /**
+    * \brief Where we write database and log files etc
+    *
+    *        NOTE that we use std::filesystem in preference to QDir etc because it's easier to get diagnostics from the
+    *             former when things go wrong.
+    */
+   std::filesystem::directory_entry m_tempDir;
 
    std::shared_ptr<Equipment> m_equipFiveGalNoLoss;
    std::shared_ptr<Hop>       m_cascade_4pct;
@@ -312,10 +320,12 @@ Testing::Testing() :
 
    registerMetaTypes();
 
-   if (!this->pimpl->m_tempDir.exists()) {
-      qWarning() <<
-         Q_FUNC_INFO << "Temp dir" << this->pimpl->m_tempDir.absolutePath() << "does not exist.  Attempting to create.";
-      this->pimpl->m_tempDir.mkpath(this->pimpl->m_tempDir.absolutePath());
+   std::error_code errorCode{};
+   std::filesystem::current_path(this->pimpl->m_tempDir, errorCode);
+   if (errorCode) {
+      qCritical() <<
+         Q_FUNC_INFO << "Unable to change directory to" << this->pimpl->m_tempDir.path().c_str() << errorCode;
+      throw std::runtime_error{"Unable to change to temp directory"};
    }
 
    //
@@ -330,37 +340,50 @@ Testing::Testing() :
    //
    QString subDirName;
    QTextStream{&subDirName} << CONFIG_APPLICATION_NAME_UC << "-UnitTestRun-" << QThread::currentThreadId();
-   if (!this->pimpl->m_tempDir.mkdir(subDirName)) {
+   if (!std::filesystem::create_directory(subDirName.toStdString(), errorCode)) {
       qCritical() <<
-         Q_FUNC_INFO << "Unable to create" << subDirName << "sub-directory of" << this->pimpl->m_tempDir.absolutePath();
+         Q_FUNC_INFO << "Unable to create" << subDirName << "sub-directory of" <<
+         this->pimpl->m_tempDir.path().c_str() << errorCode;
       throw std::runtime_error{"Unable to create unique temp directory"};
    }
-   if (!this->pimpl->m_tempDir.cd(subDirName)) {
+   std::filesystem::current_path(subDirName.toStdString(), errorCode);
+   if (errorCode) {
       qCritical() <<
-         Q_FUNC_INFO << "Unable to access" << this->pimpl->m_tempDir.absolutePath() << "after creating it";
+         Q_FUNC_INFO << "Unable to access" << subDirName << "sub-directory of" <<
+         this->pimpl->m_tempDir.path().c_str() << "after creating it:" << errorCode;
       throw std::runtime_error{"Unable to access unique temp directory"};
    }
 
-   qDebug() << Q_FUNC_INFO << "Using" << this->pimpl->m_tempDir.absolutePath() << "as temporary directory";
+   this->pimpl->m_tempDir = std::filesystem::directory_entry{std::filesystem::current_path()};
+
+   qDebug() << Q_FUNC_INFO << "Using" << this->pimpl->m_tempDir.path().c_str() << "as temporary directory";
    return;
 }
 
 Testing::~Testing() {
    //
    // We have to be a bit careful in our cleaning up.  We only want to try to remove the unique temporary directory we
-   // created, not the system-wide one.  (It shouldn't be possible for this->pimpl->m_tempDir to be the root directory, but it
-   // doesn't hurt to check!)
+   // created, not the system-wide one.  (It shouldn't be possible for this->pimpl->m_tempDir to be the root directory,
+   // but it doesn't hurt to check!)
    //
+   std::filesystem::directory_entry systemTempDir{std::filesystem::temp_directory_path()};
    if (this->pimpl->m_tempDir.exists() &&
-       this->pimpl->m_tempDir.absolutePath() != QDir::tempPath() &&
-       !this->pimpl->m_tempDir.isRoot()) {
-      qInfo() << Q_FUNC_INFO << "Removing temporary directory" << this->pimpl->m_tempDir.absolutePath() << "and its contents";
-      if (!this->pimpl->m_tempDir.removeRecursively()) {
+       this->pimpl->m_tempDir != systemTempDir &&
+       this->pimpl->m_tempDir.path().string().starts_with(systemTempDir.path().string()) &&
+       this->pimpl->m_tempDir.path() != this->pimpl->m_tempDir.path().root_path()) {
+      qInfo() <<
+         Q_FUNC_INFO << "Removing temporary directory" << this->pimpl->m_tempDir.path().c_str() << "and its contents";
+      std::error_code errorCode{};
+      auto numDeleted = std::filesystem::remove_all(this->pimpl->m_tempDir.path(), errorCode);
+      if (!errorCode) {
+         qInfo() << Q_FUNC_INFO << "Deleted" << numDeleted << "temporary files and directories";
+      } else {
          //
          // It's not the end of the world if we couldn't remove a temporary directory so, if it happens, just log an
          // error rather than throwing an exception (which might prevent other clean-up from happening).
          //
-         qInfo() << Q_FUNC_INFO << "Unable to remove temporary directory" << this->pimpl->m_tempDir.absolutePath();
+         qWarning() <<
+            Q_FUNC_INFO << "Unable to remove temporary directory" << this->pimpl->m_tempDir.path().c_str() << errorCode;
       }
    }
    return;
@@ -399,7 +422,7 @@ void Testing::initTestCase() {
       QCoreApplication::setApplicationName("brewken-test");
 
       // Set options so that any data modification does not affect any other data
-      PersistentSettings::initialise(this->pimpl->m_tempDir.absolutePath());
+      PersistentSettings::initialise(std::filesystem::absolute(this->pimpl->m_tempDir.path()).c_str());
 
       // Log test setup
       // Verify that the Logging initializes normally
@@ -409,7 +432,10 @@ void Testing::initTestCase() {
       // We always want debug logging for tests as it's useful when a test fails
       Logging::setLogLevel(Logging::LogLevel_DEBUG);
       // Test logs go to a /tmp (or equivalent) so as not to clutter the application path with dummy data.
-      Logging::setDirectory(this->pimpl->m_tempDir.absolutePath(), Logging::NewDirectoryIsTemporary);
+      QDir logDirectory{
+         QString{std::filesystem::absolute(this->pimpl->m_tempDir.path()).c_str()}
+      };
+      Logging::setDirectory(logDirectory, Logging::NewDirectoryIsTemporary);
       qDebug() << "logging initialized";
 
       // Inside initializeLogging(), there's a check to see whether we're the test application.  If so, it turns off
