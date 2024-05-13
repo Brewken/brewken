@@ -183,7 +183,7 @@ jobs:
         if: ${{ failure() }}
         uses: actions/upload-artifact@v4
         with:
-          name: build-results
+          name: build-results-mac
           path: ${{github.workspace}}/build
           retention-days: 1
 
@@ -191,7 +191,7 @@ jobs:
         if: ${{ failure() }}
         uses: actions/upload-artifact@v4
         with:
-          name: mbuild-results
+          name: mbuild-results-mac
           path: ${{github.workspace}}/mbuild
           retention-days: 1
 
@@ -199,7 +199,7 @@ jobs:
         if: ${{ failure() }}
         uses: actions/upload-artifact@v4
         with:
-          name: DiagnosticReports
+          name: DiagnosticReports-mac
           path: /Library/Logs/DiagnosticReports
           retention-days: 1
 
@@ -207,7 +207,7 @@ jobs:
         if: ${{ failure() }}
         uses: actions/upload-artifact@v4
         with:
-          name: cores
+          name: cores-mac
           path: /cores
           retention-days: 1
 

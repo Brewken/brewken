@@ -63,6 +63,7 @@
 #include "model/RecipeAdditionHop.h"
 #include "PersistentSettings.h"
 #include "utils/ErrorCodeToStream.h"
+#include "utils/FilePermissionsToStream.h"
 
 namespace {
 
@@ -328,6 +329,11 @@ Testing::Testing() :
       throw std::runtime_error{"Unable to change to temp directory"};
    }
 
+   std::filesystem::file_status status = std::filesystem::status(std::filesystem::current_path());
+   qInfo() <<
+      Q_FUNC_INFO << "Current directory:" << std::filesystem::current_path().c_str() << ", permissions:" <<
+      status.permissions();
+
    //
    // Create a unique temporary directory using the current thread ID as part of a subdirectory name inside whatever
    // system-standard temp directory Qt proposes to us.  (We also put the application name in the subdirectory name so
@@ -340,10 +346,14 @@ Testing::Testing() :
    //
    QString subDirName;
    QTextStream{&subDirName} << CONFIG_APPLICATION_NAME_UC << "-UnitTestRun-" << QThread::currentThreadId();
-   if (!std::filesystem::create_directory(subDirName.toStdString(), errorCode)) {
+   if (!std::filesystem::create_directory(subDirName.toStdString(),
+                                          this->pimpl->m_tempDir.path(),
+                                          errorCode)) {
+
+
       qCritical() <<
          Q_FUNC_INFO << "Unable to create" << subDirName << "sub-directory of" <<
-         this->pimpl->m_tempDir.path().c_str() << errorCode;
+         this->pimpl->m_tempDir.path().c_str() << " Error:" << errorCode;
       throw std::runtime_error{"Unable to create unique temp directory"};
    }
    std::filesystem::current_path(subDirName.toStdString(), errorCode);
@@ -356,7 +366,7 @@ Testing::Testing() :
 
    this->pimpl->m_tempDir = std::filesystem::directory_entry{std::filesystem::current_path()};
 
-   qDebug() << Q_FUNC_INFO << "Using" << this->pimpl->m_tempDir.path().c_str() << "as temporary directory";
+   qInfo() << Q_FUNC_INFO << "Using" << this->pimpl->m_tempDir.path().c_str() << "as temporary directory";
    return;
 }
 
@@ -421,12 +431,15 @@ void Testing::initTestCase() {
       QCoreApplication::setOrganizationDomain("brewken.com/test");
       QCoreApplication::setApplicationName("brewken-test");
 
+      qDebug() << "Initialising PersistentSettings";
+
       // Set options so that any data modification does not affect any other data
-      PersistentSettings::initialise(std::filesystem::absolute(this->pimpl->m_tempDir.path()).c_str());
+
+      PersistentSettings::initialise(QString{std::filesystem::absolute(this->pimpl->m_tempDir.path()).c_str()});
 
       // Log test setup
-      // Verify that the Logging initializes normally
-      qDebug() << "Initiallizing Logging module";
+      // Verify that the Logging initialises normally
+      qDebug() << "Initialising Logging module";
       Logging::initializeLogging();
       // Now change/override a few settings
       // We always want debug logging for tests as it's useful when a test fails
@@ -436,7 +449,7 @@ void Testing::initTestCase() {
          QString{std::filesystem::absolute(this->pimpl->m_tempDir.path()).c_str()}
       };
       Logging::setDirectory(logDirectory, Logging::NewDirectoryIsTemporary);
-      qDebug() << "logging initialized";
+      qDebug() << "logging initialised";
 
       // Inside initializeLogging(), there's a check to see whether we're the test application.  If so, it turns off
       // logging output to stderr.
