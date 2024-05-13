@@ -321,6 +321,10 @@ Testing::Testing() :
 
    registerMetaTypes();
 
+   qInfo() <<
+      Q_FUNC_INFO << "Temp directory:" << this->pimpl->m_tempDir.path().c_str() << ", permissions:" <<
+      std::filesystem::status(this->pimpl->m_tempDir.path());
+
    std::error_code errorCode{};
    std::filesystem::current_path(this->pimpl->m_tempDir, errorCode);
    if (errorCode) {
@@ -329,10 +333,9 @@ Testing::Testing() :
       throw std::runtime_error{"Unable to change to temp directory"};
    }
 
-   std::filesystem::file_status status = std::filesystem::status(std::filesystem::current_path());
    qInfo() <<
       Q_FUNC_INFO << "Current directory:" << std::filesystem::current_path().c_str() << ", permissions:" <<
-      status.permissions();
+      std::filesystem::status(std::filesystem::current_path());
 
    //
    // Create a unique temporary directory using the current thread ID as part of a subdirectory name inside whatever

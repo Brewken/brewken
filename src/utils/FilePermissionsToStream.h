@@ -71,4 +71,33 @@ S & operator<<(S & stream, std::filesystem::perms const & permissions) {
    return stream;
 }
 
+/**
+ * \brief Convenience function to allow output of \c std::filesystem::file_type to \c QDebug or \c QTextStream stream
+ */
+template<class S>
+S & operator<<(S & stream, std::filesystem::file_type const & fileType) {
+   switch (fileType) {
+      case std::filesystem::file_type::none     : stream << "none"     ; break;
+      case std::filesystem::file_type::not_found: stream << "not_found"; break;
+      case std::filesystem::file_type::regular  : stream << "regular"  ; break;
+      case std::filesystem::file_type::directory: stream << "directory"; break;
+      case std::filesystem::file_type::symlink  : stream << "symlink"  ; break;
+      case std::filesystem::file_type::block    : stream << "block"    ; break;
+      case std::filesystem::file_type::character: stream << "character"; break;
+      case std::filesystem::file_type::fifo     : stream << "fifo"     ; break;
+      case std::filesystem::file_type::socket   : stream << "socket"   ; break;
+      case std::filesystem::file_type::unknown  : stream << "unknown"  ; break;
+   }
+   return stream;
+}
+
+/**
+ * \brief Convenience function to allow output of \c std::filesystem::file_status to \c QDebug or \c QTextStream stream
+ */
+template<class S>
+S & operator<<(S & stream, std::filesystem::file_status const & status) {
+   stream << "File type:" << status.type() << ", permissions:" << status.permissions();
+   return stream;
+}
+
 #endif
