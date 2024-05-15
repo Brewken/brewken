@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * utils/FilePermissionsToStream.h is part of Brewken, and is copyright the following authors 2024:
+ * utils/FileSystemHelpers.h is part of Brewken, and is copyright the following authors 2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,8 +13,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef UTILS_FILEPERMISSIONSTOSTREAM_H
-#define UTILS_FILEPERMISSIONSTOSTREAM_H
+#ifndef UTILS_FILESYSTEMHELPERS_H
+#define UTILS_FILESYSTEMHELPERS_H
 #pragma once
 
 #include <array>
@@ -98,6 +98,13 @@ template<class S>
 S & operator<<(S & stream, std::filesystem::file_status const & status) {
    stream << "File type:" << status.type() << ", permissions:" << status.permissions();
    return stream;
+}
+
+namespace FileSystemHelpers {
+   /**
+   * \brief Helper function for converting \c std::filesystem::path to \c QString
+   */
+   QString toQString(std::filesystem::path const & path);
 }
 
 #endif

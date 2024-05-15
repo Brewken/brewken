@@ -787,6 +787,7 @@ commonSourceFiles = files([
    'src/utils/BtStringConst.cpp',
    'src/utils/BtStringStream.cpp',
    'src/utils/EnumStringMapping.cpp',
+   'src/utils/FileSystemHelpers.cpp',
    'src/utils/Fonts.cpp',
    'src/utils/ImportRecordCount.cpp',
    'src/utils/MetaTypes.cpp',

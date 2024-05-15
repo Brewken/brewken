@@ -235,6 +235,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/utils/BtStringConst.cpp
     ${repoDir}/src/utils/BtStringStream.cpp
     ${repoDir}/src/utils/EnumStringMapping.cpp
+    ${repoDir}/src/utils/FileSystemHelpers.cpp
     ${repoDir}/src/utils/Fonts.cpp
     ${repoDir}/src/utils/ImportRecordCount.cpp
     ${repoDir}/src/utils/MetaTypes.cpp

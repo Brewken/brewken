@@ -63,7 +63,7 @@
 #include "model/RecipeAdditionHop.h"
 #include "PersistentSettings.h"
 #include "utils/ErrorCodeToStream.h"
-#include "utils/FilePermissionsToStream.h"
+#include "utils/FileSystemHelpers.h"
 
 namespace {
 
@@ -437,8 +437,10 @@ void Testing::initTestCase() {
       qDebug() << "Initialising PersistentSettings";
 
       // Set options so that any data modification does not affect any other data
-
-      PersistentSettings::initialise(QString{std::filesystem::absolute(this->pimpl->m_tempDir.path()).c_str()});
+      QString tempDirAbsPath{
+         FileSystemHelpers::toQString(std::filesystem::absolute(this->pimpl->m_tempDir.path()))
+      };
+      PersistentSettings::initialise(tempDirAbsPath);
 
       // Log test setup
       // Verify that the Logging initialises normally
@@ -448,9 +450,10 @@ void Testing::initTestCase() {
       // We always want debug logging for tests as it's useful when a test fails
       Logging::setLogLevel(Logging::LogLevel_DEBUG);
       // Test logs go to a /tmp (or equivalent) so as not to clutter the application path with dummy data.
-      QDir logDirectory{
-         QString{std::filesystem::absolute(this->pimpl->m_tempDir.path()).c_str()}
+      QString logDirAbsPath{
+         FileSystemHelpers::toQString(std::filesystem::absolute(this->pimpl->m_tempDir.path()))
       };
+      QDir logDirectory{logDirAbsPath};
       Logging::setDirectory(logDirectory, Logging::NewDirectoryIsTemporary);
       qDebug() << "logging initialised";
 
