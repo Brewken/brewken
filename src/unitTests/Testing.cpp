@@ -25,8 +25,12 @@
 #include <cstdint>
 #include <exception>
 #include <filesystem>
+#include <iostream>
 #include <iostream> // For std::cout
 #include <math.h>
+#include <sstream>
+#include <thread>
+
 #include <boost/json/src.hpp> // Needs to be included exactly once in the code to use header-only version of Boost.JSON
 
 #include <xercesc/util/PlatformUtils.hpp>
@@ -344,11 +348,18 @@ Testing::Testing() :
    // Mostly our temp subdirectories will be deleted in our destructor, but core dumps happen etc.)
    //
    // This is important when using the Meson build system because Meson runs several unit tests in parallel (whereas
-   // CMake executes them sequentially).  We are guaranteed a separate instance of this class for each run because
-   // both CMake and Meson invoke unit tests by running a program.
+   // CMake executes them sequentially).  Both CMake and Meson invoke unit tests by running a program.  On Linux, this
+   // means we are guaranteed a separate instance of this class for each run, and a unique value from
+   // QThread::currentThreadId().  On Mac, two parallel test runs can have the same value back from
+   // QThread::currentThreadId().
    //
+   std::ostringstream buffer;
+   buffer << std::this_thread::get_id();
+   QString threadId = QString::fromStdString(buffer.str());
+   qDebug() << Q_FUNC_INFO << "QThread ID:" << QThread::currentThreadId() << "; StdLib Thread ID:" << threadId;
+
    QString subDirName;
-   QTextStream{&subDirName} << CONFIG_APPLICATION_NAME_UC << "-UnitTestRun-" << QThread::currentThreadId();
+   QTextStream{&subDirName} << CONFIG_APPLICATION_NAME_UC << "-UnitTestRun-" << threadId;
    if (!std::filesystem::create_directory(subDirName.toStdString(),
                                           this->pimpl->m_tempDir.path(),
                                           errorCode)) {

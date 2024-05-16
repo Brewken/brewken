@@ -34,7 +34,7 @@ QString FileSystemHelpers::toQString(std::filesystem::path const & path) {
 #if QT_VERSION < QT_VERSION_CHECK(6,1,0)
 #if defined(Q_OS_WIN)
    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
-   return QString::fromStdString(converter.to_bytes(path.generic_string()));
+   return QString::fromStdString(converter.to_bytes(path.generic_string().c_str()));
 #else
    return QString::fromStdString(path.generic_string().c_str());
 #endif
