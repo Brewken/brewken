@@ -937,7 +937,7 @@ def installDependencies():
          # Typically, this is going to set CMAKE_PREFIX_PATH to /usr/local/opt/qt@5
          #
          qtPrefixPath = btUtils.abortOnRunFail(
-            subprocess.run(['brew', '--prefix', 'qt5'], capture_output=True)
+            subprocess.run(['brew', '--prefix', 'qt@5'], capture_output=True)
          ).stdout.decode('UTF-8').rstrip()
          log.debug('Qt Prefix Path: ' + qtPrefixPath)
          os.environ['CMAKE_PREFIX_PATH'] = qtPrefixPath;
