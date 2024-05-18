@@ -174,13 +174,15 @@ void PersistentSettings::initialise(QString customUserDataDir) {
 
 QDir PersistentSettings::getConfigDir() {
    Q_ASSERT(initialised);
-   Q_ASSERT(!configDir.canonicalPath().isEmpty());
+   // Note that it can be valid for canonicalPath() to return empty string -- if config dir is current dir
+   Q_ASSERT(!configDir.absolutePath().isEmpty());
    return configDir;
 }
 
 QDir PersistentSettings::getUserDataDir() {
    Q_ASSERT(initialised);
-   Q_ASSERT(!userDataDir.canonicalPath().isEmpty());
+   // Note that it can be valid for canonicalPath() to return empty string -- if user data dir is current dir
+   Q_ASSERT(!userDataDir.absolutePath().isEmpty());
    return userDataDir;
 }
 
