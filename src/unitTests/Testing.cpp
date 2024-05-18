@@ -38,11 +38,7 @@
 #include <QDebug>
 #include <QString>
 #include <QtTest/QtTest>
-#if QT_VERSION < QT_VERSION_CHECK(5,10,0)
-#include <QtGlobal> // For qrand() -- which is superseded by QRandomGenerator in later versions of Qt
-#else
 #include <QRandomGenerator>
-#endif
 #include <QVector>
 
 #include "Application.h"
@@ -350,16 +346,16 @@ Testing::Testing() :
    // This is important when using the Meson build system because Meson runs several unit tests in parallel (whereas
    // CMake executes them sequentially).  Both CMake and Meson invoke unit tests by running a program.  On Linux, this
    // means we are guaranteed a separate instance of this class for each run, and a unique value from
-   // QThread::currentThreadId().  On Mac, two parallel test runs can have the same value back from
-   // QThread::currentThreadId().
+   // QThread::currentThreadId() or std::this_thread::get_id().  On Mac, two parallel test runs can have the same value
+   // back from QThread::currentThreadId() and std::this_thread::get_id().
    //
    std::ostringstream buffer;
-   buffer << std::this_thread::get_id();
-   QString threadId = QString::fromStdString(buffer.str());
-   qDebug() << Q_FUNC_INFO << "QThread ID:" << QThread::currentThreadId() << "; StdLib Thread ID:" << threadId;
+   buffer << QRandomGenerator::securelySeeded().generate();
+   QString randomId = QString::fromStdString(buffer.str());
+   qDebug() << Q_FUNC_INFO << "QThread ID:" << QThread::currentThreadId() << "; Random ID:" << randomId;
 
    QString subDirName;
-   QTextStream{&subDirName} << CONFIG_APPLICATION_NAME_UC << "-UnitTestRun-" << threadId;
+   QTextStream{&subDirName} << CONFIG_APPLICATION_NAME_UC << "-UnitTestRun-" << randomId;
    if (!std::filesystem::create_directory(subDirName.toStdString(),
                                           this->pimpl->m_tempDir.path(),
                                           errorCode)) {
