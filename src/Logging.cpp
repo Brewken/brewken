@@ -200,7 +200,7 @@ namespace {
          if (!renameLogFileWithTimestamp(logDirectory)) {
             errStream <<
                "Could not rename the log file " << logFileFullName() << " in directory " <<
-               logDirectory.canonicalPath() << END_OF_LINE;
+               logDirectory.absolutePath() << END_OF_LINE;
          }
       }
 
@@ -371,7 +371,7 @@ bool Logging::initializeLogging() {
    );
 
    qInstallMessageHandler(logMessageHandler);
-   qDebug() << Q_FUNC_INFO << "Logging initialized.  Logs will be written to" << logDirectory.canonicalPath();
+   qDebug() << Q_FUNC_INFO << "Logging initialized.  Logs will be written to" << logDirectory.absolutePath();
 
    // It's quite useful on debug builds to check that stack trace logging is working, rather than to find out it's not
    // when you need the info to fix another bug.
@@ -396,20 +396,22 @@ bool Logging::setDirectory(std::optional<QDir> newDirectory, Logging::PersistNew
    // Supplying no directory in the parameter means use the default location, ie the config directory
    if (newDirectory.has_value()) {
       logDirectory = *newDirectory;
-      qDebug() << Q_FUNC_INFO << "Logging to specified directory: " << logDirectory.canonicalPath();
+      qDebug() << Q_FUNC_INFO << "Logging to specified directory: " << logDirectory.absolutePath();
    } else {
       logDirectory = PersistentSettings::getConfigDir();
-      qDebug() << Q_FUNC_INFO << "Logging to configuration directory: " << logDirectory.canonicalPath();
+      qDebug() << Q_FUNC_INFO << "Logging to configuration directory: " << logDirectory.absolutePath();
    }
 
    // We assert that, one way or another, we have above set the log directory to something.
-   Q_ASSERT(!logDirectory.canonicalPath().isEmpty());
+   // Note that we must use absolutePath here.  It can be valid for canonicalPath() to return empty string -- if log dir
+   // is current dir.
+   Q_ASSERT(!logDirectory.absolutePath().isEmpty());
 
    // Check if the new directory exists, if not create it.
    QString errorReason;
    if (!logDirectory.exists()) {
-      qDebug() << Q_FUNC_INFO << logDirectory.canonicalPath() << "does not exist, creating";
-      if (!logDirectory.mkpath(logDirectory.canonicalPath())) {
+      qDebug() << Q_FUNC_INFO << logDirectory.absolutePath() << "does not exist, creating";
+      if (!logDirectory.mkpath(logDirectory.absolutePath())) {
          errorReason = QObject::tr("Could not create new log file directory");
       }
    }
@@ -425,8 +427,8 @@ bool Logging::setDirectory(std::optional<QDir> newDirectory, Logging::PersistNew
 
    if (!errorReason.isEmpty()) {
       qCritical() <<
-         errorReason << logDirectory.canonicalPath() << QObject::tr(" reverting to ") <<
-         oldDirectory.canonicalPath();
+         errorReason << logDirectory.absolutePath() << QObject::tr(" reverting to ") <<
+         oldDirectory.absolutePath();
       logDirectory = oldDirectory;
       return false;
    }
@@ -472,15 +474,15 @@ bool Logging::setDirectory(std::optional<QDir> newDirectory, Logging::PersistNew
          if (logDirectory.exists(fileName)) {
             if (!renameLogFileWithTimestamp(logDirectory)) {
                errStream <<
-                  Q_FUNC_INFO << "Unable to rename " << fileName << " in directory " << logDirectory.canonicalPath() <<
+                  Q_FUNC_INFO << "Unable to rename " << fileName << " in directory " << logDirectory.absolutePath() <<
                   END_OF_LINE;
                return false;
             }
          }
          if (!logFile.rename(logDirectory.filePath(fileName))) {
             errStream <<
-               Q_FUNC_INFO << "Unable to move " << fileName << " from " << oldDirectory.canonicalPath() << " to " <<
-               logDirectory.canonicalPath() << END_OF_LINE;
+               Q_FUNC_INFO << "Unable to move " << fileName << " from " << oldDirectory.absolutePath() << " to " <<
+               logDirectory.absolutePath() << END_OF_LINE;
             return false;
          }
       }

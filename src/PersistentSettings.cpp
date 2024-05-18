@@ -150,8 +150,7 @@ void PersistentSettings::initialise(QString customUserDataDir) {
    // can (potentially) use one of those calls to initialise the user data directory.
    initialised = true;
 
-   qInfo() << Q_FUNC_INFO << "Config dir:" << configDir.canonicalPath() << " = " << configDir.absolutePath();
-   qInfo() << Q_FUNC_INFO << "Config dir:" << PersistentSettings::getConfigDir().canonicalPath();
+   qInfo() << Q_FUNC_INFO << "Config dir:" << configDir.canonicalPath() << "(" << configDir.absolutePath() << ")";
 
    // For dev and testing purposes, the user data directory can be overridden via a command-line option, hence the
    // parameter to this function

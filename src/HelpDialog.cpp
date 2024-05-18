@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * HelpDialog.cpp is part of Brewken, and is copyright the following authors 2021-2022:
+ * HelpDialog.cpp is part of Brewken, and is copyright the following authors 2021-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -84,14 +84,14 @@ public:
          HelpDialog::tr("Recipes, ingredients and other important data are stored in one or more files in the following folder (which is configurable via the 'Tools > Options' menu):") <<
          "</p>"
          "<ul>"
-         "<li><pre>" << this->makeClickableDirLink(PersistentSettings::getUserDataDir().canonicalPath()) << "</pre></li>"
+         "<li><pre>" << this->makeClickableDirLink(PersistentSettings::getUserDataDir().absolutePath()) << "</pre></li>"
          "</ul>"
          "<p>" << HelpDialog::tr("It is a good idea to take regular backups of this folder.") << "</p>"
          "<h2>" << HelpDialog::tr("Settings and Log files") << "</h2>"
          "<p>" <<
          HelpDialog::tr("The contents of the following folder(s) can be helpful for diagnosing problems:") <<
          "<ul>"
-         "<li>" << HelpDialog::tr("Configuration:") << "<pre>" << this->makeClickableDirLink(PersistentSettings::getConfigDir().canonicalPath()) << "</pre></li>"
+         "<li>" << HelpDialog::tr("Configuration:") << "<pre>" << this->makeClickableDirLink(PersistentSettings::getConfigDir().absolutePath()) << "</pre></li>"
          "<li>" << HelpDialog::tr("Logs:") << "<pre>" << this->makeClickableDirLink(Logging::getDirectory().absolutePath()) << "</pre></li>"
          "</ul>" <<
          HelpDialog::tr("The location of the log files can be configured via the 'Tools > Options' menu.") <<
@@ -107,8 +107,8 @@ public:
     * Given a path to a directory, make a link that will allow the the user to open that directory in
     * Explorer/Finder/Dolphin/etc
     */
-   QString makeClickableDirLink(QString const & canonicalPath) {
-      return QString{"<a href=\"file:///%1\">%1</a>"}.arg(canonicalPath);
+   QString makeClickableDirLink(QString const & directoryPath) {
+      return QString{"<a href=\"file:///%1\">%1</a>"}.arg(directoryPath);
    }
 
    std::unique_ptr<QLabel> label;
