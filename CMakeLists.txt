@@ -388,18 +388,10 @@ message(STATUS "Doing ${CMAKE_BUILD_TYPE} build (DO_RELEASE_BUILD = ${DO_RELEASE
 # Note that if you change the minimum Qt version, you need to make corresponding changes to the .github/workflows/*.yml
 # files so that GitHub uses the appropriate version of Qt for the automated builds.
 #
-# On Ubuntu 20.04, max version we can have here is 5.12.8, because that's what Ubuntu 20.04 topped out at.
-# Elsewhere we want a more recent version, especially on Mac, as older ones are not supported on Homebrew.
-#
 if(UNIX AND NOT APPLE)
    execute_process(COMMAND lsb_release -rs OUTPUT_VARIABLE RELEASE_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-   if(RELEASE_VERSION LESS 22.04)
-      # This is the latest version of Qt5 available on Ubuntu 20.04
-      set(QT5_MIN_VERSION 5.12.8)
-   else()
-      # This is the latest version of Qt5 available on Ubuntu 22.04
-      set(QT5_MIN_VERSION 5.15.3)
-   endif()
+   # This is the latest version of Qt5 available on Ubuntu 22.04
+   set(QT5_MIN_VERSION 5.15.3)
 else()
    # Windows and Mac have a slightly newer version of Qt 5.15 LTS
    set(QT5_MIN_VERSION 5.15.13)

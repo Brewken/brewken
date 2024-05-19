@@ -3583,10 +3583,6 @@ Log file may contain more details.</source>
         <translation type="unfinished">节省Save</translation>
     </message>
     <message>
-        <source>Resource directory &quot;%1&quot; is missing.  The software might not operate correctly without this directory and its contents.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Acidity</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3820,6 +3816,10 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resource directory %1 is missing.  Without this directory and its contents, the software will not operate correctly and may terminate abruptly.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

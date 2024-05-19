@@ -359,12 +359,14 @@ Testing::Testing() :
    if (!std::filesystem::create_directory(subDirName.toStdString(),
                                           this->pimpl->m_tempDir.path(),
                                           errorCode)) {
-
-
-      qCritical() <<
-         Q_FUNC_INFO << "Unable to create" << subDirName << "sub-directory of" <<
-         this->pimpl->m_tempDir.path().c_str() << " Error:" << errorCode;
-      throw std::runtime_error{"Unable to create unique temp directory"};
+      // On some of the automated builds we'll get the text of the exception but we won't see the log message.  So, we
+      // we want the exception text to have as much info as possible.
+      std::ostringstream errorMessage;
+      errorMessage <<
+         "Unable to create" << subDirName.constData() << "sub-directory of" << this->pimpl->m_tempDir.path().c_str() <<
+         " Error:" << errorCode;
+      qCritical() << Q_FUNC_INFO << QString::fromStdString(errorMessage.str());
+      throw std::runtime_error{errorMessage.str()};
    }
    std::filesystem::current_path(subDirName.toStdString(), errorCode);
    if (errorCode) {

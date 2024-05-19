@@ -117,9 +117,15 @@
 # Debian/Ubuntu.
 #-----------------------------------------------------------------------------------------------------------------------
 
+#
+# This handles the case where the script is executed from a different directory (eg calling ../bt from the mbuild
+# directory)
+#
+topDir=$(dirname $0)
+
 # This first Python script, run using the system-wide Python interpreter, will install a few bare necessities and
 # (re)create the Python venv
-python3 scripts/btInit.py
+python3 ${topDir}/scripts/btInit.py
 if [ $? -ne 0 ]; then
    exit $?
 fi
@@ -128,7 +134,7 @@ fi
 # Now we can switch to the venv
 #
 pwd
-source ./.venv/bin/activate
+source ${topDir}/.venv/bin/activate
 
 #
 # Uncomment the following to show exported environment variables for debugging.
@@ -142,4 +148,4 @@ source ./.venv/bin/activate
 #env
 
 # Run the main script, passing in all the command line arguments we received
-python3 scripts/buildTool.py $@
+python3 ${topDir}/scripts/buildTool.py $@
