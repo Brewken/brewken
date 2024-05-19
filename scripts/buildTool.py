@@ -2088,10 +2088,11 @@ def doPackage():
          #
 
          #
-         # Make the top-level directories
+         # Make the top-level directories that we're going to copy files into
          #
          log.debug('Creating Mac app bundle top-level directories')
          macBundleDirName = projectName + '_' + buildConfig['CONFIG_VERSION_STRING'] + '.app'
+         # dir_packages_platform = mbuild/packages/darwin
          dir_packages_mac = dir_packages_platform.joinpath(macBundleDirName).joinpath('Contents')
          dir_packages_mac_bin = dir_packages_mac.joinpath('MacOS')
          dir_packages_mac_rsc = dir_packages_mac.joinpath('Resources')
@@ -2100,19 +2101,41 @@ def doPackage():
          os.makedirs(dir_packages_mac_bin) # This will also automatically create parent directories
          os.makedirs(dir_packages_mac_frm)
          os.makedirs(dir_packages_mac_plg)
+
+         #
+         # From time to time, things change in the Mac toolchain.  It used to be that Meson would put:
+         #
+         #    - resources in mbuild/packages/darwin/usr/local/Contents/Resources
+         #    - binary    in mbuild/packages/darwin/usr/local/bin
+         #
+         # Something changed in 2024 so that now, the locations are:
+         #
+         #    - resources in mbuild/packages/darwin/opt/homebrew/Contents/Resources
+         #    - binary    in mbuild/packages/darwin/opt/homebrew/bin
+         #
+         # We also have:
+         #
+         #    - man page in mbuild/packages/darwin/opt/homebrew/share/man/man1/
+         #
+         # However, we are not currently shipping man page on Mac
+         #
+
          # Rather than create dir_packages_mac_rsc directly, it's simplest to copy the whole Resources tree from
          # mbuild/mackages/darwin/usr/local/Contents/Resources, as we want everything that's inside it
          log.debug('Copying Resources')
-         shutil.copytree(dir_packages_platform.joinpath('usr/local/Contents/Resources'), dir_packages_mac_rsc)
+#         shutil.copytree(dir_packages_platform.joinpath('usr/local/Contents/Resources'), dir_packages_mac_rsc)
+         shutil.copytree(dir_packages_platform.joinpath('opt/homebrew/Contents/Resources'), dir_packages_mac_rsc)
 
          # Copy the Information Property List file to where it belongs
          log.debug('Copying Information Property List file')
          shutil.copy2(dir_build.joinpath('Info.plist').as_posix(), dir_packages_mac)
 
          # Because Meson is geared towards local installs, in the mbuild/mackages/darwin directory, it is going to have
-         # placed the executable in the usr/local/bin subdirectory.  Copy it to the right place.
+         # placed the executable in the usr/local/bin or opt/homebrew/bin subdirectory.  Copy it to the right place.
          log.debug('Copying executable')
-         shutil.copy2(dir_packages_platform.joinpath('usr/local/bin').joinpath(capitalisedProjectName).as_posix(),
+#         shutil.copy2(dir_packages_platform.joinpath('usr/local/bin').joinpath(capitalisedProjectName).as_posix(),
+#                      dir_packages_mac_bin)
+         shutil.copy2(dir_packages_platform.joinpath('opt/homebrew/bin').joinpath(capitalisedProjectName).as_posix(),
                       dir_packages_mac_bin)
 
          #
