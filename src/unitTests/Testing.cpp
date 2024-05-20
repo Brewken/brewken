@@ -363,8 +363,8 @@ Testing::Testing() :
       // we want the exception text to have as much info as possible.
       std::ostringstream errorMessage;
       errorMessage <<
-         "Unable to create" << subDirName.constData() << "sub-directory of" << this->pimpl->m_tempDir.path() <<
-         " Error:" << errorCode;
+         "Unable to create " << subDirName.toStdString() << " sub-directory of " << this->pimpl->m_tempDir.path() <<
+         " Error: " << errorCode;
       qCritical() << Q_FUNC_INFO << QString::fromStdString(errorMessage.str());
       throw std::runtime_error{errorMessage.str()};
    }
