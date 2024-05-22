@@ -356,19 +356,20 @@ Testing::Testing() :
 
    QString subDirName;
    QTextStream{&subDirName} << CONFIG_APPLICATION_NAME_UC << "-UnitTestRun-" << randomId;
-   if (!std::filesystem::create_directory(subDirName.toStdString(),
+   std::filesystem::path const subDirRelPath{subDirName.toStdString()};
+   if (!std::filesystem::create_directory(subDirRelPath,
                                           this->pimpl->m_tempDir.path(),
                                           errorCode)) {
-      // On some of the automated builds we'll get the text of the exception but we won't see the log message.  So, we
-      // we want the exception text to have as much info as possible.
+      // On some of the automated builds we'll get the text of the exception here, but we won't see the log message.
+      // So, we we want the exception text to have as much info as possible.
       std::ostringstream errorMessage;
       errorMessage <<
-         "Unable to create " << subDirName.toStdString() << " sub-directory of " << this->pimpl->m_tempDir.path() <<
-         " Error: " << errorCode;
+         "Unable to create " << subDirRelPath << " sub-directory of " << this->pimpl->m_tempDir.path() <<
+         " Error: " << errorCode << "; permissions: " << std::filesystem::status(this->pimpl->m_tempDir.path());
       qCritical() << Q_FUNC_INFO << QString::fromStdString(errorMessage.str());
       throw std::runtime_error{errorMessage.str()};
    }
-   std::filesystem::current_path(subDirName.toStdString(), errorCode);
+   std::filesystem::current_path(subDirRelPath, errorCode);
    if (errorCode) {
       qCritical() <<
          Q_FUNC_INFO << "Unable to access" << subDirName << "sub-directory of" <<

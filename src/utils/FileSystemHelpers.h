@@ -52,21 +52,24 @@ namespace {
  * \brief Convenience function to allow output of \c std::filesystem::perms to \c QDebug or \c QTextStream stream
  *
  *        (For some reason, \c QDebug does not inherit from \c QTextStream so we template the stream class.)
+ *
+ *        NB: Need this to work for std::ostringstream too
  */
 template<class S>
 S & operator<<(S & stream, std::filesystem::perms const & permissions) {
 
-   QString output;
-   QTextStream outputAsStream{&output};
+   // Since we want this to work for std::ostringstream, we have to be careful that we end up writing char * to stream,
+   // rather than QString or std::string
+   std::ostringstream output;
 
    for (auto ii : allPermsAndFlags) {
       char const outputChar{
          std::filesystem::perms::none == (ii.permission & permissions) ? '-' : ii.flag
       };
-      outputAsStream << outputChar;
+      output << outputChar;
    }
 
-   stream << output;
+   stream << output.str().c_str();
 
    return stream;
 }
