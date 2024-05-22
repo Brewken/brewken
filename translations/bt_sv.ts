@@ -2855,13 +2855,6 @@ If you need help, please open an issue at %1</source>
     </message>
 </context>
 <context>
-    <name>NE</name>
-    <message>
-        <source>Change %1 %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>NamedEntity</name>
     <message>
         <source>Named Entity</source>
@@ -3145,35 +3138,6 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Could not open the file %1 for writing! please try again with a new filename or diretory</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QApplication</name>
-    <message>
-        <source>Brewken is already running!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Another instance of Brewken is already running.
-
-Running two copies of the program at once may lead to data loss.
-
-Press OK to quit.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Application terminates</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The application encountered a fatal error.
-Error message:
-%1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The application encountered a fatal error.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3815,11 +3779,11 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Add to Recipe</source>
-        <translation type="unfinished">Lägg till i receptet</translation>
+        <translation type="obsolete">Lägg till i receptet</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished">Ny</translation>
+        <translation type="obsolete">Ny</translation>
     </message>
     <message>
         <source>Add selected ingredient to recipe</source>
@@ -3943,34 +3907,6 @@ Program will now exit.</source>
     </message>
     <message>
         <source>days</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 Catalog / Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add selected %1 to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit selected %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6366,11 +6302,11 @@ Primärens slutgiltiga volym är %1.</translation>
     <name>editorClass</name>
     <message>
         <source>No</source>
-        <translation type="unfinished">Nej</translation>
+        <translation type="obsolete">Nej</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Ja</translation>
+        <translation type="obsolete">Ja</translation>
     </message>
 </context>
 <context>

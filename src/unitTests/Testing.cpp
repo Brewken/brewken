@@ -307,7 +307,7 @@ public:
     *        NOTE that we use std::filesystem in preference to QDir etc because it's easier to get diagnostics from the
     *             former when things go wrong.
     */
-   std::filesystem::directory_entry m_tempDir;
+   std::filesystem::path m_tempDir;
 
    std::shared_ptr<Equipment> m_equipFiveGalNoLoss;
    std::shared_ptr<Hop>       m_cascade_4pct;
@@ -322,14 +322,14 @@ Testing::Testing() :
    registerMetaTypes();
 
    qInfo() <<
-      Q_FUNC_INFO << "Temp directory:" << this->pimpl->m_tempDir.path().c_str() << ", permissions:" <<
-      std::filesystem::status(this->pimpl->m_tempDir.path());
+      Q_FUNC_INFO << "Temp directory:" << this->pimpl->m_tempDir.c_str() << ", permissions:" <<
+      std::filesystem::status(this->pimpl->m_tempDir);
 
    std::error_code errorCode{};
    std::filesystem::current_path(this->pimpl->m_tempDir, errorCode);
    if (errorCode) {
       qCritical() <<
-         Q_FUNC_INFO << "Unable to change directory to" << this->pimpl->m_tempDir.path().c_str() << errorCode;
+         Q_FUNC_INFO << "Unable to change directory to" << this->pimpl->m_tempDir.c_str() << errorCode;
       throw std::runtime_error{"Unable to change to temp directory"};
    }
 
@@ -358,14 +358,14 @@ Testing::Testing() :
    QTextStream{&subDirName} << CONFIG_APPLICATION_NAME_UC << "-UnitTestRun-" << randomId;
    std::filesystem::path const subDirRelPath{subDirName.toStdString()};
    if (!std::filesystem::create_directory(subDirRelPath,
-                                          this->pimpl->m_tempDir.path(),
+                                          this->pimpl->m_tempDir,
                                           errorCode)) {
       // On some of the automated builds we'll get the text of the exception here, but we won't see the log message.
       // So, we we want the exception text to have as much info as possible.
       std::ostringstream errorMessage;
       errorMessage <<
-         "Unable to create " << subDirRelPath << " sub-directory of " << this->pimpl->m_tempDir.path() <<
-         " Error: " << errorCode << "; permissions: " << std::filesystem::status(this->pimpl->m_tempDir.path());
+         "Unable to create " << subDirRelPath << " sub-directory of " << this->pimpl->m_tempDir <<
+         " Error: " << errorCode << "; permissions: " << std::filesystem::status(this->pimpl->m_tempDir);
       qCritical() << Q_FUNC_INFO << QString::fromStdString(errorMessage.str());
       throw std::runtime_error{errorMessage.str()};
    }
@@ -373,13 +373,13 @@ Testing::Testing() :
    if (errorCode) {
       qCritical() <<
          Q_FUNC_INFO << "Unable to access" << subDirName << "sub-directory of" <<
-         this->pimpl->m_tempDir.path().c_str() << "after creating it:" << errorCode;
+         this->pimpl->m_tempDir.c_str() << "after creating it:" << errorCode;
       throw std::runtime_error{"Unable to access unique temp directory"};
    }
 
-   this->pimpl->m_tempDir = std::filesystem::directory_entry{std::filesystem::current_path()};
+   this->pimpl->m_tempDir = std::filesystem::current_path();
 
-   qInfo() << Q_FUNC_INFO << "Using" << this->pimpl->m_tempDir.path().c_str() << "as temporary directory";
+   qInfo() << Q_FUNC_INFO << "Using" << this->pimpl->m_tempDir.c_str() << "as temporary directory";
    return;
 }
 
@@ -389,15 +389,15 @@ Testing::~Testing() {
    // created, not the system-wide one.  (It shouldn't be possible for this->pimpl->m_tempDir to be the root directory,
    // but it doesn't hurt to check!)
    //
-   std::filesystem::directory_entry systemTempDir{std::filesystem::temp_directory_path()};
-   if (this->pimpl->m_tempDir.exists() &&
+   std::filesystem::path systemTempDir{std::filesystem::temp_directory_path()};
+   if (std::filesystem::exists(this->pimpl->m_tempDir) &&
        this->pimpl->m_tempDir != systemTempDir &&
-       this->pimpl->m_tempDir.path().string().starts_with(systemTempDir.path().string()) &&
-       this->pimpl->m_tempDir.path() != this->pimpl->m_tempDir.path().root_path()) {
+       this->pimpl->m_tempDir.string().starts_with(systemTempDir.string()) &&
+       this->pimpl->m_tempDir != this->pimpl->m_tempDir.root_path()) {
       qInfo() <<
-         Q_FUNC_INFO << "Removing temporary directory" << this->pimpl->m_tempDir.path().c_str() << "and its contents";
+         Q_FUNC_INFO << "Removing temporary directory" << this->pimpl->m_tempDir.c_str() << "and its contents";
       std::error_code errorCode{};
-      auto numDeleted = std::filesystem::remove_all(this->pimpl->m_tempDir.path(), errorCode);
+      auto numDeleted = std::filesystem::remove_all(this->pimpl->m_tempDir, errorCode);
       if (!errorCode) {
          qInfo() << Q_FUNC_INFO << "Deleted" << numDeleted << "temporary files and directories";
       } else {
@@ -406,7 +406,7 @@ Testing::~Testing() {
          // error rather than throwing an exception (which might prevent other clean-up from happening).
          //
          qWarning() <<
-            Q_FUNC_INFO << "Unable to remove temporary directory" << this->pimpl->m_tempDir.path().c_str() << errorCode;
+            Q_FUNC_INFO << "Unable to remove temporary directory" << this->pimpl->m_tempDir.c_str() << errorCode;
       }
    }
    return;
@@ -448,7 +448,7 @@ void Testing::initTestCase() {
 
       // Set options so that any data modification does not affect any other data
       QString tempDirAbsPath{
-         FileSystemHelpers::toQString(std::filesystem::absolute(this->pimpl->m_tempDir.path()))
+         FileSystemHelpers::toQString(std::filesystem::absolute(this->pimpl->m_tempDir))
       };
       PersistentSettings::initialise(tempDirAbsPath);
 
@@ -461,7 +461,7 @@ void Testing::initTestCase() {
       Logging::setLogLevel(Logging::LogLevel_DEBUG);
       // Test logs go to a /tmp (or equivalent) so as not to clutter the application path with dummy data.
       QString logDirAbsPath{
-         FileSystemHelpers::toQString(std::filesystem::absolute(this->pimpl->m_tempDir.path()))
+         FileSystemHelpers::toQString(std::filesystem::absolute(this->pimpl->m_tempDir))
       };
       QDir logDirectory{logDirAbsPath};
       Logging::setDirectory(logDirectory, Logging::NewDirectoryIsTemporary);

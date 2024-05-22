@@ -305,7 +305,7 @@ namespace {
     * \brief This is only called from \c Application::getResourceDir to initialise the variable it returns
     *
     * \param resourceDirVar The static local variable inside Application::getResourceDir that is normally not accessible
-    *        outside that function, and which needs to be initialised exactly once.
+    *                       outside that function, and which needs to be initialised exactly once.
     */
    void initResourceDir(QDir & resourceDirVar) {
       //

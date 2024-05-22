@@ -1122,26 +1122,30 @@ message("appAndTestCommonLibraries: ${appAndTestCommonLibraries}")
 target_link_libraries(${fileName_executable} ${appAndTestCommonLibraries})
 
 #=================================Tests========================================
-# We build the unit test executable in the bin subdirectory because, on Windows, we're going to copy a lot of other
-# files in there (see below).
+# We used to build the unit test executable in the bin subdirectory because, on Windows, we're going to copy a lot of
+# other files in there (see below).  HOWEVER, we've never done that on the Meson build and it's a pain in the neck to
+# do things differently on the CMake build: when we're running the unit tests because of the way we look for the data
+# directory (see initResourceDir() function in Application.cpp).
 add_executable(${fileName_unitTestRunner}
                ${repoDir}/src/unitTests/Testing.cpp
                $<TARGET_OBJECTS:btobjlib>)
-set_target_properties(${fileName_unitTestRunner} PROPERTIES RUNTIME_OUTPUT_DIRECTORY bin)
+#set_target_properties(${fileName_unitTestRunner} PROPERTIES RUNTIME_OUTPUT_DIRECTORY bin)
 
 # Test app needs all the same libraries as the main app, plus Qt5::Test
 target_link_libraries(${fileName_unitTestRunner} ${appAndTestCommonLibraries} Qt5::Test)
 
-add_test(NAME pstdintTest                 COMMAND bin/${fileName_unitTestRunner} pstdintTest                )
-add_test(NAME recipeCalcTest_allGrain     COMMAND bin/${fileName_unitTestRunner} recipeCalcTest_allGrain    )
-add_test(NAME postBoilLossOgTest          COMMAND bin/${fileName_unitTestRunner} postBoilLossOgTest         )
-add_test(NAME testUnitConversions         COMMAND bin/${fileName_unitTestRunner} testUnitConversions        )
-add_test(NAME testNamedParameterBundle    COMMAND bin/${fileName_unitTestRunner} testNamedParameterBundle   )
-add_test(NAME testNumberDisplayAndParsing COMMAND bin/${fileName_unitTestRunner} testNumberDisplayAndParsing)
-add_test(NAME testAlgorithms              COMMAND bin/${fileName_unitTestRunner} testAlgorithms             )
-add_test(NAME testTypeLookups             COMMAND bin/${fileName_unitTestRunner} testTypeLookups            )
-add_test(NAME testInventory               COMMAND bin/${fileName_unitTestRunner} testInventory              )
-add_test(NAME testLogRotation             COMMAND bin/${fileName_unitTestRunner} testLogRotation            )
+message("Unit Test Runner: ./${fileName_unitTestRunner}")
+
+add_test(NAME pstdintTest                 COMMAND ./${fileName_unitTestRunner} pstdintTest                )
+add_test(NAME recipeCalcTest_allGrain     COMMAND ./${fileName_unitTestRunner} recipeCalcTest_allGrain    )
+add_test(NAME postBoilLossOgTest          COMMAND ./${fileName_unitTestRunner} postBoilLossOgTest         )
+add_test(NAME testUnitConversions         COMMAND ./${fileName_unitTestRunner} testUnitConversions        )
+add_test(NAME testNamedParameterBundle    COMMAND ./${fileName_unitTestRunner} testNamedParameterBundle   )
+add_test(NAME testNumberDisplayAndParsing COMMAND ./${fileName_unitTestRunner} testNumberDisplayAndParsing)
+add_test(NAME testAlgorithms              COMMAND ./${fileName_unitTestRunner} testAlgorithms             )
+add_test(NAME testTypeLookups             COMMAND ./${fileName_unitTestRunner} testTypeLookups            )
+add_test(NAME testInventory               COMMAND ./${fileName_unitTestRunner} testInventory              )
+add_test(NAME testLogRotation             COMMAND ./${fileName_unitTestRunner} testLogRotation            )
 
 #=================================Installs=====================================
 
