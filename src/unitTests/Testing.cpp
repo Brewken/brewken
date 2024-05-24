@@ -291,7 +291,7 @@ class Testing::impl {
 public:
    impl(Testing & self) :
       m_self{self},
-      m_tempDir{std::filesystem::temp_directory_path()},
+      m_tempDir{QDir::tempPath()},
       m_equipFiveGalNoLoss{},
       m_cascade_4pct{},
       m_twoRow{} {
@@ -304,10 +304,13 @@ public:
    /**
     * \brief Where we write database and log files etc
     *
-    *        NOTE that we use std::filesystem in preference to QDir etc because it's easier to get diagnostics from the
-    *             former when things go wrong.
+    *        I have tried both std::filesystem::path etc and QDir etc for this.  In several cases, the former offered
+    *        better diagnostics on Linux & Mac when things go wrong - eg you can get the system error code and it's easy
+    *        to look at file permissions etc.  However, trying to get it working on Windows was surprisingly painful
+    *        (even when going via UTF8, which should handle all the character set conversions).  So, for now at least,
+    *        we stick with QDir, as it mostly "just works" on all three platforms.
     */
-   std::filesystem::path m_tempDir;
+   QDir m_tempDir;
 
    std::shared_ptr<Equipment> m_equipFiveGalNoLoss;
    std::shared_ptr<Hop>       m_cascade_4pct;
@@ -321,33 +324,37 @@ Testing::Testing() :
 
    registerMetaTypes();
 
-   qInfo() <<
-      Q_FUNC_INFO << "Temp directory:" << this->pimpl->m_tempDir.c_str() << ", permissions:" <<
-      std::filesystem::status(this->pimpl->m_tempDir);
-
-   std::error_code errorCode{};
-   std::filesystem::current_path(this->pimpl->m_tempDir, errorCode);
-   if (errorCode) {
-      qCritical() <<
-         Q_FUNC_INFO << "Unable to change directory to" << this->pimpl->m_tempDir.c_str() << errorCode;
-      throw std::runtime_error{"Unable to change to temp directory"};
-   }
-
-   qInfo() <<
-      Q_FUNC_INFO << "Current directory:" << std::filesystem::current_path().c_str() << ", permissions:" <<
-      std::filesystem::status(std::filesystem::current_path());
+///   qInfo() <<
+///      Q_FUNC_INFO << "Temp directory:" << this->pimpl->m_tempDir << ", permissions:" <<
+///      std::filesystem::status(this->pimpl->m_tempDir);
+///
+///   std::error_code errorCode{};
+///   std::filesystem::current_path(this->pimpl->m_tempDir, errorCode);
+///   if (errorCode) {
+///      qCritical() <<
+///         Q_FUNC_INFO << "Unable to change directory to" << this->pimpl->m_tempDir << errorCode;
+///      throw std::runtime_error{"Unable to change to temp directory"};
+///   }
+///
+///   qInfo() <<
+///      Q_FUNC_INFO << "Current directory:" << std::filesystem::current_path().c_str() << ", permissions:" <<
+///      std::filesystem::status(std::filesystem::current_path());
 
    //
-   // Create a unique temporary directory using the current thread ID as part of a subdirectory name inside whatever
+   // Create a unique temporary directory using a random number as part of a subdirectory name inside whatever
    // system-standard temp directory Qt proposes to us.  (We also put the application name in the subdirectory name so
    // that anyone doing a manual clean up of their temp directory doesn't have to guess or wonder what created it.
    // Mostly our temp subdirectories will be deleted in our destructor, but core dumps happen etc.)
    //
    // This is important when using the Meson build system because Meson runs several unit tests in parallel (whereas
-   // CMake executes them sequentially).  Both CMake and Meson invoke unit tests by running a program.  On Linux, this
-   // means we are guaranteed a separate instance of this class for each run, and a unique value from
-   // QThread::currentThreadId() or std::this_thread::get_id().  On Mac, two parallel test runs can have the same value
-   // back from QThread::currentThreadId() and std::this_thread::get_id().
+   // CMake executes them sequentially).
+   //
+   // Previously we used the thread ID in the directory name, as both CMake and Meson invoke unit tests by running a
+   // program, so you might expect parallel instances of the program to have different thread IDs.  On Linux, this is
+   // indeed the case and we get different values from QThread::currentThreadId() or std::this_thread::get_id().  On
+   // MacOS however, two parallel test runs can have the same value back from QThread::currentThreadId() and
+   // std::this_thread::get_id(), so you end up with race conditions of two processes trying to create the same
+   // directory etc, leading to test failures.
    //
    std::ostringstream buffer;
    buffer << QRandomGenerator::securelySeeded().generate();
@@ -356,30 +363,19 @@ Testing::Testing() :
 
    QString subDirName;
    QTextStream{&subDirName} << CONFIG_APPLICATION_NAME_UC << "-UnitTestRun-" << randomId;
-   std::filesystem::path const subDirRelPath{subDirName.toStdString()};
-   if (!std::filesystem::create_directory(subDirRelPath,
-                                          this->pimpl->m_tempDir,
-                                          errorCode)) {
-      // On some of the automated builds we'll get the text of the exception here, but we won't see the log message.
-      // So, we we want the exception text to have as much info as possible.
-      std::ostringstream errorMessage;
-      errorMessage <<
-         "Unable to create " << subDirRelPath << " sub-directory of " << this->pimpl->m_tempDir <<
-         " Error: " << errorCode << "; permissions: " << std::filesystem::status(this->pimpl->m_tempDir);
-      qCritical() << Q_FUNC_INFO << QString::fromStdString(errorMessage.str());
-      throw std::runtime_error{errorMessage.str()};
-   }
-   std::filesystem::current_path(subDirRelPath, errorCode);
-   if (errorCode) {
+
+   if (!this->pimpl->m_tempDir.mkdir(subDirName)) {
       qCritical() <<
-         Q_FUNC_INFO << "Unable to access" << subDirName << "sub-directory of" <<
-         this->pimpl->m_tempDir.c_str() << "after creating it:" << errorCode;
+         Q_FUNC_INFO << "Unable to create" << subDirName << "sub-directory of" << this->pimpl->m_tempDir.absolutePath();
+      throw std::runtime_error{"Unable to create unique temp directory"};
+   }
+   if (!this->pimpl->m_tempDir.cd(subDirName)) {
+      qCritical() <<
+         Q_FUNC_INFO << "Unable to access" << this->pimpl->m_tempDir.absolutePath() << "after creating it";
       throw std::runtime_error{"Unable to access unique temp directory"};
    }
 
-   this->pimpl->m_tempDir = std::filesystem::current_path();
-
-   qInfo() << Q_FUNC_INFO << "Using" << this->pimpl->m_tempDir.c_str() << "as temporary directory";
+   qDebug() << Q_FUNC_INFO << "Using" << this->pimpl->m_tempDir.absolutePath() << "as temporary directory";
    return;
 }
 
@@ -390,23 +386,18 @@ Testing::~Testing() {
    // but it doesn't hurt to check!)
    //
    std::filesystem::path systemTempDir{std::filesystem::temp_directory_path()};
-   if (std::filesystem::exists(this->pimpl->m_tempDir) &&
-       this->pimpl->m_tempDir != systemTempDir &&
-       this->pimpl->m_tempDir.string().starts_with(systemTempDir.string()) &&
-       this->pimpl->m_tempDir != this->pimpl->m_tempDir.root_path()) {
+   if (this->pimpl->m_tempDir.exists() &&
+       this->pimpl->m_tempDir.absolutePath() != QDir::tempPath() &&
+       !this->pimpl->m_tempDir.isRoot()) {
       qInfo() <<
-         Q_FUNC_INFO << "Removing temporary directory" << this->pimpl->m_tempDir.c_str() << "and its contents";
-      std::error_code errorCode{};
-      auto numDeleted = std::filesystem::remove_all(this->pimpl->m_tempDir, errorCode);
-      if (!errorCode) {
-         qInfo() << Q_FUNC_INFO << "Deleted" << numDeleted << "temporary files and directories";
-      } else {
+         Q_FUNC_INFO << "Removing temporary directory" << this->pimpl->m_tempDir.absolutePath() << "and its contents";
+      if (!this->pimpl->m_tempDir.removeRecursively()) {
          //
          // It's not the end of the world if we couldn't remove a temporary directory so, if it happens, just log an
          // error rather than throwing an exception (which might prevent other clean-up from happening).
          //
          qWarning() <<
-            Q_FUNC_INFO << "Unable to remove temporary directory" << this->pimpl->m_tempDir.c_str() << errorCode;
+            Q_FUNC_INFO << "Unable to remove temporary directory" << this->pimpl->m_tempDir.absolutePath();
       }
    }
    return;
@@ -447,10 +438,7 @@ void Testing::initTestCase() {
       qDebug() << "Initialising PersistentSettings";
 
       // Set options so that any data modification does not affect any other data
-      QString tempDirAbsPath{
-         FileSystemHelpers::toQString(std::filesystem::absolute(this->pimpl->m_tempDir))
-      };
-      PersistentSettings::initialise(tempDirAbsPath);
+      PersistentSettings::initialise(this->pimpl->m_tempDir.absolutePath());
 
       // Log test setup
       // Verify that the Logging initialises normally
@@ -460,11 +448,7 @@ void Testing::initTestCase() {
       // We always want debug logging for tests as it's useful when a test fails
       Logging::setLogLevel(Logging::LogLevel_DEBUG);
       // Test logs go to a /tmp (or equivalent) so as not to clutter the application path with dummy data.
-      QString logDirAbsPath{
-         FileSystemHelpers::toQString(std::filesystem::absolute(this->pimpl->m_tempDir))
-      };
-      QDir logDirectory{logDirAbsPath};
-      Logging::setDirectory(logDirectory, Logging::NewDirectoryIsTemporary);
+      Logging::setDirectory(QDir{this->pimpl->m_tempDir.absolutePath()}, Logging::NewDirectoryIsTemporary);
       qDebug() << "logging initialised";
 
       // Inside initializeLogging(), there's a check to see whether we're the test application.  If so, it turns off

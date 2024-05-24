@@ -20,6 +20,7 @@
 #include <array>
 #include <filesystem>
 
+#include <QDebug>
 #include <QString>
 #include <QTextStream>
 
@@ -105,9 +106,22 @@ S & operator<<(S & stream, std::filesystem::file_status const & status) {
 
 namespace FileSystemHelpers {
    /**
-   * \brief Helper function for converting \c std::filesystem::path to \c QString
-   */
+    * \brief Helper function for converting \c std::filesystem::path to \c QString
+    */
    QString toQString(std::filesystem::path const & path);
+
+   /**
+    * \brief Helper function for converting \c QString to \c std::filesystem::path
+    */
+   std::filesystem::path makePath(QString const & val);
 }
+
+/**
+ * \brief Convenience function to allow output of \c std::filesystem::path to \c QDebug stream
+ *
+ *        Not templated as don't want to interfere with output to std::ostringstream etc.
+ */
+QDebug & operator<<(QDebug & stream, std::filesystem::path const & path);
+
 
 #endif
