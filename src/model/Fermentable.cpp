@@ -200,12 +200,12 @@ Fermentable::Fermentable(QString name) :
    m_supplier                 {""                      },
    m_notes                    {""                      },
    m_coarseFineDiff_pct       {std::nullopt            },
-   m_moisture_pct             {0.0                     },
+   m_moisture_pct             {std::nullopt            },
    m_diastaticPower_lintner   {std::nullopt            },
-   m_protein_pct              {0.0                     },
-   m_maxInBatch_pct           {100.0                   },
-   m_recommendMash            {false                   },
-   m_ibuGalPerLb              {0.0                     },
+   m_protein_pct              {std::nullopt            },
+   m_maxInBatch_pct           {std::nullopt            },
+   m_recommendMash            {std::nullopt            },
+   m_ibuGalPerLb              {std::nullopt            },
 ///   m_isMashed                 {false                   },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    m_grainGroup               {std::nullopt            },
@@ -322,12 +322,12 @@ QString                                Fermentable::origin                   () 
 QString                                Fermentable::supplier                 () const { return                    this->m_supplier                 ; }
 QString                                Fermentable::notes                    () const { return                    this->m_notes                    ; }
 std::optional<double>                  Fermentable::coarseFineDiff_pct       () const { return                    this->m_coarseFineDiff_pct       ; }
-double                                 Fermentable::moisture_pct             () const { return                    this->m_moisture_pct             ; }
+std::optional<double>                  Fermentable::moisture_pct             () const { return                    this->m_moisture_pct             ; }
 std::optional<double>                  Fermentable::diastaticPower_lintner   () const { return                    this->m_diastaticPower_lintner   ; }
-double                                 Fermentable::protein_pct              () const { return                    this->m_protein_pct              ; }
-double                                 Fermentable::maxInBatch_pct           () const { return                    this->m_maxInBatch_pct           ; }
-bool                                   Fermentable::recommendMash            () const { return                    this->m_recommendMash            ; }
-double                                 Fermentable::ibuGalPerLb              () const { return                    this->m_ibuGalPerLb              ; }
+std::optional<double>                  Fermentable::protein_pct              () const { return                    this->m_protein_pct              ; }
+std::optional<double>                  Fermentable::maxInBatch_pct           () const { return                    this->m_maxInBatch_pct           ; }
+std::optional<bool>                    Fermentable::recommendMash            () const { return                    this->m_recommendMash            ; }
+std::optional<double>                  Fermentable::ibuGalPerLb              () const { return                    this->m_ibuGalPerLb              ; }
 ///bool                                   Fermentable::isMashed                 () const { return                    this->m_isMashed                 ; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 std::optional<Fermentable::GrainGroup> Fermentable::grainGroup               () const { return                    this->m_grainGroup               ; }
@@ -365,16 +365,16 @@ void Fermentable::setType                     (Type                      const  
 void Fermentable::setOrigin                   (QString                   const & val) { SET_AND_NOTIFY(PropertyNames::Fermentable::origin                   , this->m_origin                   , val); return; }
 void Fermentable::setSupplier                 (QString                   const & val) { SET_AND_NOTIFY(PropertyNames::Fermentable::supplier                 , this->m_supplier                 , val); return; }
 void Fermentable::setNotes                    (QString                   const & val) { SET_AND_NOTIFY(PropertyNames::Fermentable::notes                    , this->m_notes                    , val); return; }
-void Fermentable::setRecommendMash            (bool                      const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::recommendMash            , this->m_recommendMash            , val); return; }
+void Fermentable::setRecommendMash            (std::optional<bool>       const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::recommendMash            , this->m_recommendMash            , val); return; }
 ///void Fermentable::setIsMashed                 (bool                      const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::isMashed                 , this->m_isMashed                 , val); return; }
-void Fermentable::setIbuGalPerLb              (double                    const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::ibuGalPerLb              , this->m_ibuGalPerLb              , val); return; }
+void Fermentable::setIbuGalPerLb              (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::ibuGalPerLb              , this->m_ibuGalPerLb              , val); return; }
 ///void Fermentable::setYield_pct                (double                    const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::yield_pct                , this->m_yield_pct                , this->enforceMinAndMax(val, "amount",         0.0, 100.0)); return; }
 void Fermentable::setColor_srm                (double                    const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::color_srm                , this->m_color_srm                , this->enforceMin      (val, "color"));                      return; }
 void Fermentable::setCoarseFineDiff_pct       (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::coarseFineDiff_pct       , this->m_coarseFineDiff_pct       , this->enforceMinAndMax(val, "coarseFineDiff", 0.0, 100.0)); return; }
-void Fermentable::setMoisture_pct             (double                    const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::moisture_pct             , this->m_moisture_pct             , this->enforceMinAndMax(val, "moisture",       0.0, 100.0)); return; }
+void Fermentable::setMoisture_pct             (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::moisture_pct             , this->m_moisture_pct             , this->enforceMinAndMax(val, "moisture",       0.0, 100.0)); return; }
 void Fermentable::setDiastaticPower_lintner   (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::diastaticPower_lintner   , this->m_diastaticPower_lintner   , this->enforceMin      (val, "diastatic power"));            return; }
-void Fermentable::setProtein_pct              (double                    const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::protein_pct              , this->m_protein_pct              , this->enforceMinAndMax(val, "protein",        0.0, 100.0)); return; }
-void Fermentable::setMaxInBatch_pct           (double                    const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::maxInBatch_pct           , this->m_maxInBatch_pct           , this->enforceMinAndMax(val, "max in batch",   0.0, 100.0)); return; }
+void Fermentable::setProtein_pct              (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::protein_pct              , this->m_protein_pct              , this->enforceMinAndMax(val, "protein",        0.0, 100.0)); return; }
+void Fermentable::setMaxInBatch_pct           (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::maxInBatch_pct           , this->m_maxInBatch_pct           , this->enforceMinAndMax(val, "max in batch",   0.0, 100.0)); return; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 void Fermentable::setGrainGroup               (std::optional<GrainGroup> const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::grainGroup               , this->m_grainGroup               , val                                  ); return; }
 void Fermentable::setGrainGroupAsInt          (std::optional<int>        const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::grainGroup               , this->m_grainGroup               , Optional::fromOptInt<GrainGroup>(val)); return; }

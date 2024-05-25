@@ -65,11 +65,12 @@ public:
 
    template<typename E, typename = std::enable_if_t<is_non_optional_enum<E>::value> >
    SimpleUndoableUpdate(NamedEntity & updatee,
+                        PropertyPath const propertyPath,
                         TypeInfo const & typeInfo,
                         E newValue,
                         QString const & description,
                         QUndoCommand * parent = nullptr) :
-      SimpleUndoableUpdate(updatee, typeInfo, static_cast<int>(newValue), description, parent) {
+      SimpleUndoableUpdate(updatee, propertyPath, typeInfo, static_cast<int>(newValue), description, parent) {
       Q_ASSERT(typeInfo.isEnum());
       Q_ASSERT(!typeInfo.isOptional());
       return;
@@ -77,11 +78,12 @@ public:
 
    template<typename E, typename = std::enable_if_t<is_non_optional_enum<E>::value> >
    SimpleUndoableUpdate(NamedEntity & updatee,
+                        PropertyPath const propertyPath,
                         TypeInfo const & typeInfo,
                         std::optional<E> newValue,
                         QString const & description,
                         QUndoCommand * parent = nullptr) :
-      SimpleUndoableUpdate(updatee, typeInfo, Optional::toOptInt(newValue), description, parent) {
+      SimpleUndoableUpdate(updatee, propertyPath, typeInfo, Optional::toOptInt(newValue), description, parent) {
       Q_ASSERT(typeInfo.isEnum());
       Q_ASSERT(typeInfo.isOptional());
       return;
@@ -93,11 +95,12 @@ public:
     */
    template<IsOptionalOther T>
    SimpleUndoableUpdate(NamedEntity & updatee,
+                        PropertyPath const propertyPath,
                         TypeInfo const & typeInfo,
                         T newValue,
                         QString const & description,
                         QUndoCommand * parent = nullptr) :
-      SimpleUndoableUpdate(updatee, typeInfo, QVariant::fromValue<T>(newValue), description, parent) {
+      SimpleUndoableUpdate(updatee, propertyPath, typeInfo, QVariant::fromValue<T>(newValue), description, parent) {
       // Uncomment this block if you need to diagnose problems that result in hitting the asserts below
 //      if (!typeInfo.isOptional()) {
 //         qCritical().noquote() << Q_FUNC_INFO << Logging::getStackTrace();
@@ -112,13 +115,35 @@ public:
     */
    template<IsRequiredOther T>
    SimpleUndoableUpdate(NamedEntity & updatee,
+                        PropertyPath const propertyPath,
                         TypeInfo const & typeInfo,
                         T newValue,
                         QString const & description,
                         QUndoCommand * parent = nullptr) :
       SimpleUndoableUpdate(updatee,
+                           propertyPath,
                            typeInfo,
                            Optional::variantFromRaw(newValue, typeInfo.isOptional()),
+                           description,
+                           parent) {
+      return;
+   }
+
+   /**
+    * \brief When there isn't a non-trivial PropertyPath, we obtain it from TypeInfo.  (Unfortunately, you cannot have
+    *        a parameter default value based on another parameter value, so we can't just move the parameter to the end
+    *        and write `PropertyPath const propertyPath = typeInfo.propertyName` in the signatures above.
+    */
+   template<typename T>
+   SimpleUndoableUpdate(NamedEntity & updatee,
+                        TypeInfo const & typeInfo,
+                        T newValue,
+                        QString const & description,
+                        QUndoCommand * parent = nullptr) :
+      SimpleUndoableUpdate(updatee,
+                           typeInfo.propertyName,
+                           typeInfo,
+                           newValue,
                            description,
                            parent) {
       return;

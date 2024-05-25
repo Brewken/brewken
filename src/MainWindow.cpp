@@ -2413,24 +2413,24 @@ void MainWindow::doOrRedoUpdate(QUndoCommand * update) {
    return;
 }
 
-void MainWindow::doOrRedoUpdate(NamedEntity & updatee,
-                                TypeInfo const & typeInfo,
-                                QVariant newValue,
-                                QString const & description,
-                                [[maybe_unused]] QUndoCommand * parent) {
-   this->doOrRedoUpdate(new SimpleUndoableUpdate(updatee, typeInfo, newValue, description));
-   return;
-}
-
-void MainWindow::doOrRedoUpdate(NamedEntity & updatee,
-                                PropertyPath const & propertyPath,
-                                TypeInfo const & typeInfo,
-                                QVariant newValue,
-                                QString const & description,
-                                [[maybe_unused]] QUndoCommand * parent) {
-   this->doOrRedoUpdate(new SimpleUndoableUpdate(updatee, propertyPath, typeInfo, newValue, description));
-   return;
-}
+///void MainWindow::doOrRedoUpdate(NamedEntity & updatee,
+///                                TypeInfo const & typeInfo,
+///                                QVariant newValue,
+///                                QString const & description,
+///                                [[maybe_unused]] QUndoCommand * parent) {
+///   this->doOrRedoUpdate(new SimpleUndoableUpdate(updatee, typeInfo, newValue, description));
+///   return;
+///}
+///
+///void MainWindow::doOrRedoUpdate(NamedEntity & updatee,
+///                                PropertyPath const & propertyPath,
+///                                TypeInfo const & typeInfo,
+///                                QVariant newValue,
+///                                QString const & description,
+///                                [[maybe_unused]] QUndoCommand * parent) {
+///   this->doOrRedoUpdate(new SimpleUndoableUpdate(updatee, propertyPath, typeInfo, newValue, description));
+///   return;
+///}
 
 
 // For undo/redo, we use Qt's Undo framework

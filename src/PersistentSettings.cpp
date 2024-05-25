@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * PersistentSettings.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * PersistentSettings.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Chris Pavetto <chrispavetto@gmail.com>
@@ -150,6 +150,8 @@ void PersistentSettings::initialise(QString customUserDataDir) {
    // can (potentially) use one of those calls to initialise the user data directory.
    initialised = true;
 
+   qInfo() << Q_FUNC_INFO << "Config dir:" << configDir.canonicalPath() << "(" << configDir.absolutePath() << ")";
+
    // For dev and testing purposes, the user data directory can be overridden via a command-line option, hence the
    // parameter to this function
    if (!customUserDataDir.isEmpty()) {
@@ -171,11 +173,15 @@ void PersistentSettings::initialise(QString customUserDataDir) {
 
 QDir PersistentSettings::getConfigDir() {
    Q_ASSERT(initialised);
+   // Note that it can be valid for canonicalPath() to return empty string -- if config dir is current dir
+   Q_ASSERT(!configDir.absolutePath().isEmpty());
    return configDir;
 }
 
 QDir PersistentSettings::getUserDataDir() {
    Q_ASSERT(initialised);
+   // Note that it can be valid for canonicalPath() to return empty string -- if user data dir is current dir
+   Q_ASSERT(!userDataDir.absolutePath().isEmpty());
    return userDataDir;
 }
 

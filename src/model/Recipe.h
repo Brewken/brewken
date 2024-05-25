@@ -284,14 +284,14 @@ public:
    /**
     * \brief In BeerXML, a recipe has a date which is supposed to be when it was brewed.  This is slightly meaningless
     *        unless you take it to mean "first brewed".  We then take that to be the "created" date in BeerJSON.
-    *        ⮜⮜⮜ TODO In both BeerXML and BeerJSON, this is an optional field ⮞⮞⮞
+    *        NB: In both BeerXML and BeerJSON, this is an optional field
     */
-   Q_PROPERTY(QDate   date               READ date               WRITE setDate             )
+   Q_PROPERTY(std::optional<QDate>   date               READ date               WRITE setDate             )
    /**
     * \brief The carbonation in volumes of CO2 at standard temperature and pressure (STP).
-    *        ⮜⮜⮜ TODO In both BeerXML and BeerJSON, this is an optional field ⮞⮞⮞
+    *        NB: In both BeerXML and BeerJSON, this is an optional field
     */
-   Q_PROPERTY(double  carbonation_vols   READ carbonation_vols   WRITE setCarbonation_vols )
+   Q_PROPERTY(std::optional<double>  carbonation_vols   READ carbonation_vols   WRITE setCarbonation_vols )
    //! \brief Whether the beer is force carbonated.
    Q_PROPERTY(bool    forcedCarbonation  READ forcedCarbonation  WRITE setForcedCarbonation)
    /**
@@ -312,16 +312,21 @@ public:
    //! \brief Whether the recipe is locked against changes
    Q_PROPERTY(bool    locked             READ locked             WRITE setLocked           )
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   //! \brief The final beer pH at the end of fermentation.  TODO: This is not yet exposed in the UI
+   //! \brief The final beer pH at the end of fermentation.
    Q_PROPERTY(std::optional<double> beerAcidity_pH               READ beerAcidity_pH                WRITE setBeerAcidity_pH)
-   //! \brief The total apparent attenuation of the finished beer after fermentation.  TODO: This is not yet exposed in the UI
+   //! \brief The total apparent attenuation of the finished beer after fermentation.
    Q_PROPERTY(std::optional<double> apparentAttenuation_pct      READ apparentAttenuation_pct       WRITE setApparentAttenuation_pct)
 
 
    //=========================================== CALCULATED STORED PROPERTIES ==========================================
-   //! \brief The calculated OG.
+   // These are optional in both BeerXML and BeerJSON, but they don't need to be optional here.  When reading in from
+   // BeerXML or BeerJSON, we ignore the values if they are present, as we'll recalculate them ourselves.
+   //
+   // Same goes for ABV_pct, IBU, color_srm below (which are optional BeerJSON fields but not part of BeerXML)
+   //
+   //! \brief The calculated OG
    Q_PROPERTY(double  og                 READ og                 WRITE setOg               )
-   //! \brief The calculated FG.
+   //! \brief The calculated FG
    Q_PROPERTY(double  fg                 READ fg                 WRITE setFg               )
 
    //========================================= CALCULATED UNSTORED PROPERTIES ==========================================
@@ -450,8 +455,6 @@ public:
 ///    *    std::shared_ptr<Hop> sameCopyOfFooHop = myRecipe->remove<Hop>(*copyOfFooHop);       // UNDO
 ///    *    std::shared_ptr<Hop> stillSameCopyOfFooHop = myRecipe->add<Hop>(*sameCopyOfFooHop); // REDO
 ///    *
-///    * TBD: (MY 2020-11-23) It would be good one day to separate out "instance of use of" into a separate class.
-///    *
 ///    */
    template<class NE> std::shared_ptr<NE> add(std::shared_ptr<NE> var);
 
@@ -537,8 +540,8 @@ public:
    double  tertiaryTemp_c    () const;
    double  age_days          () const;
    double  ageTemp_c         () const;
-   QDate   date              () const;
-   double  carbonation_vols  () const;
+   std::optional<QDate>   date              () const;
+   std::optional<double>  carbonation_vols  () const;
    bool    forcedCarbonation () const;
    QString primingSugarName  () const;
    double  carbonationTemp_c () const;
@@ -704,8 +707,8 @@ public:
 ///   void setTertiaryTemp_c    (double  const   val);
    void setAge_days          (double  const   val);
    void setAgeTemp_c         (double  const   val);
-   void setDate              (QDate   const & val);
-   void setCarbonation_vols  (double  const   val);
+   void setDate              (std::optional<QDate>   const   val);
+   void setCarbonation_vols  (std::optional<double>  const   val);
    void setForcedCarbonation (bool    const   val);
    void setPrimingSugarName  (QString const & val);
    void setCarbonationTemp_c (double  const   val);
@@ -761,8 +764,8 @@ private:
 ///   double                m_tertiaryTemp_c         ;
    double                m_age                    ;
    double                m_ageTemp_c              ;
-   QDate                 m_date                   ;
-   double                m_carbonation_vols       ;
+   std::optional<QDate>  m_date                   ;
+   std::optional<double> m_carbonation_vols       ;
    bool                  m_forcedCarbonation      ;
    QString               m_primingSugarName       ;
    double                m_carbonationTemp_c      ;

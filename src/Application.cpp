@@ -127,14 +127,14 @@ namespace {
       // dir is just as bad as a missing one.  So, instead, we'll display a little more dire warning.
       //
       // .:TBD:. Maybe we should terminate the app here as it's likely that there's some problem with the install and
-      //         users are going to hit other problems.
+      //         users are going to hit other problems, including the program crashing.
       //
       QDir resourceDir = Application::getResourceDir();
       bool resourceDirSuccess = resourceDir.exists();
       if (!resourceDirSuccess) {
          QString errMsg{
-            QObject::tr("Resource directory \"%1\" is missing.  The software might not operate correctly without this "
-                        "directory and its contents.").arg(resourceDir.path())
+            QObject::tr("Resource directory %1 is missing.  Without this directory and its contents, the software "
+                        "will not operate correctly and may terminate abruptly.").arg(resourceDir.absolutePath())
          };
          qCritical() << Q_FUNC_INFO << errMsg;
 
@@ -145,6 +145,25 @@ namespace {
                errMsg
             );
          }
+      } else {
+         qInfo() << Q_FUNC_INFO << "Resource directory" << resourceDir.absolutePath() << "exists";
+         QString directoryListing;
+         QTextStream dirListStream{&directoryListing};
+         QDirIterator ii(resourceDir.absolutePath(), QDirIterator::Subdirectories);
+         while (ii.hasNext()) {
+            // For the moment, the output format is a bit clunky, and we do not correctly skip over things we should
+            // omit such as the parent directory from the ".." link, or multiple visits to the current directory by the
+            // iterator.
+            auto fileName = ii.next();
+            if (fileName != "..") {
+               auto fileInfo = ii.fileInfo();
+               dirListStream <<
+                  "   " << fileInfo.absoluteFilePath() << "\t\t(" << fileInfo.permissions() << ") " << fileInfo.size() <<
+                  " bytes\n";
+            }
+
+         }
+         qDebug().noquote() << Q_FUNC_INFO << "Resource directory contents:" << '\n' << directoryListing;
       }
 
       return resourceDirSuccess &&
@@ -286,7 +305,7 @@ namespace {
     * \brief This is only called from \c Application::getResourceDir to initialise the variable it returns
     *
     * \param resourceDirVar The static local variable inside Application::getResourceDir that is normally not accessible
-    *        outside that function, and which needs to be initialised exactly once.
+    *                       outside that function, and which needs to be initialised exactly once.
     */
    void initResourceDir(QDir & resourceDirVar) {
       //
@@ -314,36 +333,47 @@ namespace {
       // people were doing their own compilation.   So, now, we do (2) for everything but use (3) as the back-up on
       // Linux in the (hopefully extremely rare) case that /proc is not available.
       //
-
-
+      // ADDITIONALLY, we need to handle the case of the brewken_tests application we build to run unit tests.  This
+      // lives in the mbuild (meson) or build (CMake) directory and needs to get its resources from the source tree
+      // (../data directory).
+      //
       QString path = QCoreApplication::applicationDirPath();
       if (!path.endsWith('/')) {
          path += "/";
       }
 
-#if defined(Q_OS_LINUX)
-      // === Linux ===
-      // We'll assume the return value from QCoreApplication::applicationDirPath is invalid if it does not end in /bin
-      // (because there's no way it would make sense for us to be in an sbin directory
-      if (path.endsWith("/bin/")) {
-         path += "../share/brewken/";
+      // Note that the Qt "application name" is not the same as the executable name on disk; it is what is set by the
+      // call to QCoreApplication::setApplicationName when the application is started.
+      QString applicationName = QCoreApplication::applicationName();
+      qInfo() << Q_FUNC_INFO << "Application name" << applicationName;
+      if (applicationName.endsWith("-test")) {
+         qInfo() << Q_FUNC_INFO << "Assuming this is Unit Testing executable and resources are in ../data directory";
+         path += "../data/";
       } else {
-         qWarning() <<
-            Q_FUNC_INFO << "Cannot determine application binary location (got" << path << ") so using compile-time "
-            "constant for resource dir:" << CONFIG_DATA_DIR;
-         path = QString(CONFIG_DATA_DIR);
-      }
+
+#if defined(Q_OS_LINUX)
+         // === Linux ===
+         // We'll assume the return value from QCoreApplication::applicationDirPath is invalid if it does not end in
+         // /bin (because there's no way it would make sense for us to be in an sbin directory
+         if (path.endsWith("/bin/")) {
+            path += "../share/brewken/";
+         } else {
+            qWarning() <<
+               Q_FUNC_INFO << "Cannot determine application binary location (got" << path << ") so using compile-time "
+               "constant for resource dir:" << CONFIG_DATA_DIR;
+            path = QString(CONFIG_DATA_DIR);
+         }
 #elif defined(Q_OS_MACOS)
-      // === Mac ===
-      // We should be inside an app bundle.
-      path += "../Resources/";
+         // === Mac ===
+         // We should be inside an app bundle.
+         path += "../Resources/";
 #elif defined(Q_OS_WIN)
-      // === Windows ===
-      path += "../data/";
+         // === Windows ===
+         path += "../data/";
 #else
 #error "Unsupported OS"
 #endif
-
+      }
       resourceDirVar = QDir{path};
 
       qInfo() << Q_FUNC_INFO << "Determined resource directory is" << resourceDirVar.absolutePath();

@@ -106,22 +106,30 @@ public:
 
    //! \brief Doing updates via this method makes them undoable (and redoable).  This is the simplified version
    //         which suffices for modifications to most individual non-relational attributes.
+   template<typename T>
    void doOrRedoUpdate(NamedEntity & updatee,
                        TypeInfo const & typeInfo,
-                       QVariant newValue,
+                       T newValue,
                        QString const & description,
-                       QUndoCommand * parent = nullptr);
+                       [[maybe_unused]] QUndoCommand * parent = nullptr) {
+      this->doOrRedoUpdate(new SimpleUndoableUpdate(updatee, typeInfo, newValue, description));
+      return;
+   }
 
    /**
     * \brief This version of \c doOrRedoUpdate is needed when updating a property that has (or might have) a non-trivial
     *        \c PropertyPath
     */
+   template<typename T>
    void doOrRedoUpdate(NamedEntity & updatee,
                        PropertyPath const & propertyPath,
                        TypeInfo const & typeInfo,
-                       QVariant newValue,
+                       T newValue,
                        QString const & description,
-                       QUndoCommand * parent = nullptr);
+                       [[maybe_unused]] QUndoCommand * parent = nullptr) {
+      this->doOrRedoUpdate(new SimpleUndoableUpdate(updatee, propertyPath, typeInfo, newValue, description));
+      return;
+   }
 
    /**
     * \brief Add given \c Fermentable / \c Hop / \c Misc / \c Yeast to the Recipe

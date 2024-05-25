@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * OptionDialog.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * OptionDialog.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
@@ -474,12 +474,12 @@ public:
       );
 
       // User data directory
-      this->input_userDataDir.setText(PersistentSettings::getUserDataDir().canonicalPath());
+      this->input_userDataDir.setText(PersistentSettings::getUserDataDir().absolutePath());
 
       // Backup stuff
       // By default backups go in the same directory as the DB
       this->input_backupDir.setText(PersistentSettings::value(PersistentSettings::Names::directory,
-                                                              PersistentSettings::getUserDataDir().canonicalPath(),
+                                                              PersistentSettings::getUserDataDir().absolutePath(),
                                                               PersistentSettings::Sections::backups).toString());
       this->spinBox_numBackups.setValue(PersistentSettings::value(PersistentSettings::Names::maximum,
                                                                   10,
@@ -769,8 +769,8 @@ void OptionDialog::resetToDefault() {
       this->pimpl->input_pgPassword.setText(QString(""));
       this->pimpl->checkBox_savePgPassword.setChecked(false);
    } else {
-      this->pimpl->input_userDataDir.setText(PersistentSettings::getConfigDir().canonicalPath());
-      this->pimpl->input_backupDir.setText(PersistentSettings::getConfigDir().canonicalPath());
+      this->pimpl->input_userDataDir.setText(PersistentSettings::getConfigDir().absolutePath());
+      this->pimpl->input_backupDir.setText(PersistentSettings::getConfigDir().absolutePath());
       this->pimpl->spinBox_frequency.setValue(4);
       this->pimpl->spinBox_numBackups.setValue(10);
    }

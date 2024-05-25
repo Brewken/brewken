@@ -43,20 +43,6 @@ namespace {
       return;
    }
 
-   QVariant getComboBoxValue(BtComboBox * comboBox, TypeInfo const & typeInfo) {
-      if (typeInfo.isOptional()) {
-         return QVariant::fromValue(comboBox->getOptIntValue());
-      }
-      return QVariant::fromValue(comboBox->getNonOptIntValue());
-   }
-
-   QVariant getComboBoxValue(BtBoolComboBox * comboBox, TypeInfo const & typeInfo) {
-      if (typeInfo.isOptional()) {
-         return QVariant::fromValue(comboBox->getOptBoolValue());
-      }
-      return QVariant::fromValue(comboBox->getNonOptBoolValue());
-   }
-
 }
 
 /**
@@ -277,13 +263,13 @@ public:
 
          if (fieldType == NonPhysicalQuantity::Enum) {
             BtComboBox * comboBox = qobject_cast<BtComboBox *>(editor);
-            model->setData(index, getComboBoxValue(comboBox, typeInfo), Qt::EditRole);
+            model->setData(index, comboBox->getValue(typeInfo), Qt::EditRole);
             return;
          }
 
          if (fieldType == NonPhysicalQuantity::Bool) {
             BtBoolComboBox * boolComboBox = qobject_cast<BtBoolComboBox *>(editor);
-            model->setData(index, getComboBoxValue(boolComboBox, typeInfo), Qt::EditRole);
+            model->setData(index, boolComboBox->getValue(typeInfo), Qt::EditRole);
             return;
          }
 
@@ -309,7 +295,7 @@ public:
          // Selector for editable amount that can be more than one physical quantity.  (See comment above in
          // getEditWidget() for more details.)
          BtComboBox * comboBox = qobject_cast<BtComboBox *>(editor);
-         model->setData(index, getComboBoxValue(comboBox, typeInfo), Qt::EditRole);
+         model->setData(index, comboBox->getValue(typeInfo), Qt::EditRole);
          return;
       }
 

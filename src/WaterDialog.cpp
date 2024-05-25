@@ -288,9 +288,9 @@ void WaterDialog::setRecipe(Recipe *rec) {
 
    if (this->m_base) {
 
-      m_mashRO = this->m_base->mashRo_pct();
+      m_mashRO = this->m_base->mashRo_pct().value_or(0.0);
       spinBox_mashRO->setValue( QVariant(m_mashRO * 100).toInt());
-      m_spargeRO = this->m_base->spargeRo_pct();
+      m_spargeRO = this->m_base->spargeRo_pct().value_or(0.0);
       spinBox_spargeRO->setValue( QVariant(m_spargeRO * 100).toInt());
 
       baseProfileButton->setWater(this->m_base);
@@ -423,7 +423,7 @@ double WaterDialog::calculateRA() const {
    double residual = 0.0;
    if (this->m_base) {
 
-      double base_alk = ( 1.0 - m_base->mashRo_pct() ) * m_base->alkalinity_ppm();
+      double base_alk = ( 1.0 - m_base->mashRo_pct().value_or(0.0) ) * m_base->alkalinity_ppm().value_or(0.0);
       if (!m_base->alkalinityAsHCO3()) {
          base_alk = 1.22 * base_alk;
       }

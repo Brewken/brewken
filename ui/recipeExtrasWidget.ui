@@ -58,12 +58,6 @@
              <height>0</height>
             </size>
            </property>
-           <property name="maximumSize">
-            <size>
-             <width>256</width>
-             <height>16777215</height>
-            </size>
-           </property>
           </widget>
          </item>
          <item row="1" column="0">
@@ -73,32 +67,6 @@
            </property>
            <property name="buddy">
             <cstring>lineEdit_asstBrewer</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_tasteRating">
-           <property name="text">
-            <string>Taste Rating</string>
-           </property>
-           <property name="buddy">
-            <cstring>spinBox_tasteRating</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QSpinBox" name="spinBox_tasteRating">
-           <property name="maximumSize">
-            <size>
-             <width>256</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="buttonSymbols">
-            <enum>QAbstractSpinBox::UpDownArrows</enum>
-           </property>
-           <property name="maximum">
-            <number>50</number>
            </property>
           </widget>
          </item>
@@ -116,15 +84,29 @@
              <height>0</height>
             </size>
            </property>
-           <property name="maximumSize">
-            <size>
-             <width>256</width>
-             <height>16777215</height>
-            </size>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_tasteRating">
+           <property name="text">
+            <string>Taste Rating</string>
+           </property>
+           <property name="buddy">
+            <cstring>spinBox_tasteRating</cstring>
            </property>
           </widget>
          </item>
-         <item row="9" column="0">
+         <item row="2" column="1">
+          <widget class="QSpinBox" name="spinBox_tasteRating">
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::UpDownArrows</enum>
+           </property>
+           <property name="maximum">
+            <number>50</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
           <widget class="QLabel" name="label_age">
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
@@ -137,7 +119,7 @@
            </property>
           </widget>
          </item>
-         <item row="9" column="1">
+         <item row="3" column="1">
           <widget class="SmartLineEdit" name="lineEdit_age">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -145,21 +127,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimumSize">
-            <size>
-             <width>64</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>256</width>
-             <height>16777215</height>
-            </size>
-           </property>
           </widget>
          </item>
-         <item row="10" column="0">
+         <item row="4" column="0">
           <widget class="SmartLabel" name="label_ageTemp">
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
@@ -172,7 +142,7 @@
            </property>
           </widget>
          </item>
-         <item row="10" column="1">
+         <item row="4" column="1">
           <widget class="SmartLineEdit" name="lineEdit_ageTemp">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -186,15 +156,9 @@
              <height>0</height>
             </size>
            </property>
-           <property name="maximumSize">
-            <size>
-             <width>256</width>
-             <height>16777215</height>
-            </size>
-           </property>
           </widget>
          </item>
-         <item row="11" column="0">
+         <item row="5" column="0">
           <widget class="QLabel" name="label_date">
            <property name="text">
             <string>Date First Brewed</string>
@@ -204,24 +168,8 @@
            </property>
           </widget>
          </item>
-         <item row="11" column="1">
-          <widget class="QDateEdit" name="dateEdit_date">
-           <property name="maximumSize">
-            <size>
-             <width>256</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="dateTime">
-            <datetime>
-             <hour>0</hour>
-             <minute>0</minute>
-             <second>0</second>
-             <year>2011</year>
-             <month>1</month>
-             <day>1</day>
-            </datetime>
-           </property>
+         <item row="5" column="1">
+          <widget class="BtOptionalDateEdit" name="dateEdit_date">
            <property name="displayFormat">
             <string>dd MMM yyyy</string>
            </property>
@@ -230,7 +178,8 @@
            </property>
           </widget>
          </item>
-         <item row="12" column="0">
+
+         <item row="6" column="0">
           <widget class="SmartLabel" name="label_carbVols">
            <property name="text">
             <string>Carbonation Volumes</string>
@@ -240,7 +189,7 @@
            </property>
           </widget>
          </item>
-         <item row="12" column="1">
+         <item row="6" column="1">
           <widget class="SmartLineEdit" name="lineEdit_carbVols">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -248,23 +197,42 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimumSize">
-            <size>
-             <width>64</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>256</width>
-             <height>16777215</height>
-            </size>
-           </property>
            <property name="mouseTracking">
             <bool>true</bool>
            </property>
           </widget>
          </item>
+
+         <item row="7" column="0">
+          <widget class="SmartLabel" name="label_acidity">
+           <property name="text">
+            <string>Final beer pH</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEdit_acidity</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="SmartLineEdit" name="lineEdit_acidity">
+          </widget>
+         </item>
+
+         <item row="8" column="0">
+          <widget class="QLabel" name="label_attenuation">
+           <property name="text">
+            <string>Total apparent attenuation</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEdit_attenuation</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="SmartLineEdit" name="lineEdit_attenuation">
+          </widget>
+         </item>
+
         </layout>
        </item>
        <item>
@@ -340,18 +308,17 @@
    <extends>QPlainTextEdit</extends>
    <header location="global">BtTextEdit.h</header>
   </customwidget>
+  <customwidget>
+   <class>BtOptionalDateEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header location="global">widgets/BtOptionalDateEdit.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>scrollArea</tabstop>
   <tabstop>lineEdit_brewer</tabstop>
   <tabstop>lineEdit_asstBrewer</tabstop>
   <tabstop>spinBox_tasteRating</tabstop>
-  <tabstop>lineEdit_primaryAge</tabstop>
-  <tabstop>lineEdit_primaryTemp</tabstop>
-  <tabstop>lineEdit_secAge</tabstop>
-  <tabstop>lineEdit_secTemp</tabstop>
-  <tabstop>lineEdit_tertAge</tabstop>
-  <tabstop>lineEdit_tertTemp</tabstop>
   <tabstop>lineEdit_age</tabstop>
   <tabstop>lineEdit_ageTemp</tabstop>
   <tabstop>dateEdit_date</tabstop>

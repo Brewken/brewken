@@ -204,6 +204,8 @@ template<> void SmartField::init<SmartLabel>([[maybe_unused]] char const * const
 //   qDebug() << Q_FUNC_INFO << fieldFqName << ":" << typeInfo << ", precision=" << precision;
 
    // It's a coding error to call this version of init with a NonPhysicalQuantity
+   // Note that one way to trigger this assert is to put a SmartLabel where you need a QLabel.  (One day, we'll make it
+   // so you don't have to think about this.)
    Q_ASSERT(typeInfo.fieldType && !std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType));
 
    // It's a coding error if SmartLabel not initialised first

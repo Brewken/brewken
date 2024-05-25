@@ -235,6 +235,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/utils/BtStringConst.cpp
     ${repoDir}/src/utils/BtStringStream.cpp
     ${repoDir}/src/utils/EnumStringMapping.cpp
+    ${repoDir}/src/utils/FileSystemHelpers.cpp
     ${repoDir}/src/utils/Fonts.cpp
     ${repoDir}/src/utils/ImportRecordCount.cpp
     ${repoDir}/src/utils/MetaTypes.cpp
@@ -246,6 +247,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/widgets/Animator.cpp
     ${repoDir}/src/widgets/BtBoolComboBox.cpp
     ${repoDir}/src/widgets/BtComboBox.cpp
+    ${repoDir}/src/widgets/BtOptionalDateEdit.cpp
     ${repoDir}/src/widgets/CustomComboBox.cpp
     ${repoDir}/src/widgets/InfoButton.cpp
     ${repoDir}/src/widgets/InfoText.cpp

@@ -2661,10 +2661,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Resource directory &quot;%1&quot; is missing.  The software might not operate correctly without this directory and its contents.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Acidity</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2834,6 +2830,10 @@ Program will now exit.</source>
     </message>
     <message>
         <source>days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resource directory %1 is missing.  Without this directory and its contents, the software will not operate correctly and may terminate abruptly.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3544,6 +3544,14 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Edit Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change pH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Apparent Attenuation</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7391,6 +7399,14 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Final beer pH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total apparent attenuation</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

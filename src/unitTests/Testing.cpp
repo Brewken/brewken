@@ -22,10 +22,14 @@
 #include "unitTests/Testing.h"
 
 #include <cmath>
+#include <cstdint>
 #include <exception>
+#include <filesystem>
+#include <iostream>
 #include <iostream> // For std::cout
 #include <math.h>
-#include <memory>
+#include <sstream>
+#include <thread>
 
 #include <boost/json/src.hpp> // Needs to be included exactly once in the code to use header-only version of Boost.JSON
 
@@ -34,13 +38,11 @@
 #include <QDebug>
 #include <QString>
 #include <QtTest/QtTest>
-#if QT_VERSION < QT_VERSION_CHECK(5,10,0)
-#include <QtGlobal> // For qrand() -- which is superseded by QRandomGenerator in later versions of Qt
-#else
 #include <QRandomGenerator>
-#endif
 #include <QVector>
 
+#include "Application.h"
+#include "Logging.h"
 #include "Algorithms.h"
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"
@@ -60,6 +62,8 @@
 #include "model/RecipeAdditionFermentable.h"
 #include "model/RecipeAdditionHop.h"
 #include "PersistentSettings.h"
+#include "utils/ErrorCodeToStream.h"
+#include "utils/FileSystemHelpers.h"
 
 namespace {
 
@@ -297,7 +301,15 @@ public:
    //================================================ MEMBER VARIABLES =================================================
    Testing & m_self;
 
-   //! \brief Where we write database and log files etc
+   /**
+    * \brief Where we write database and log files etc
+    *
+    *        I have tried both std::filesystem::path etc and QDir etc for this.  In several cases, the former offered
+    *        better diagnostics on Linux & Mac when things go wrong - eg you can get the system error code and it's easy
+    *        to look at file permissions etc.  However, trying to get it working on Windows was surprisingly painful
+    *        (even when going via UTF8, which should handle all the character set conversions).  So, for now at least,
+    *        we stick with QDir, as it mostly "just works" on all three platforms.
+    */
    QDir m_tempDir;
 
    std::shared_ptr<Equipment> m_equipFiveGalNoLoss;
@@ -312,18 +324,46 @@ Testing::Testing() :
 
    registerMetaTypes();
 
+///   qInfo() <<
+///      Q_FUNC_INFO << "Temp directory:" << this->pimpl->m_tempDir << ", permissions:" <<
+///      std::filesystem::status(this->pimpl->m_tempDir);
+///
+///   std::error_code errorCode{};
+///   std::filesystem::current_path(this->pimpl->m_tempDir, errorCode);
+///   if (errorCode) {
+///      qCritical() <<
+///         Q_FUNC_INFO << "Unable to change directory to" << this->pimpl->m_tempDir << errorCode;
+///      throw std::runtime_error{"Unable to change to temp directory"};
+///   }
+///
+///   qInfo() <<
+///      Q_FUNC_INFO << "Current directory:" << std::filesystem::current_path().c_str() << ", permissions:" <<
+///      std::filesystem::status(std::filesystem::current_path());
+
    //
-   // Create a unique temporary directory using the current thread ID as part of a subdirectory name inside whatever
+   // Create a unique temporary directory using a random number as part of a subdirectory name inside whatever
    // system-standard temp directory Qt proposes to us.  (We also put the application name in the subdirectory name so
    // that anyone doing a manual clean up of their temp directory doesn't have to guess or wonder what created it.
    // Mostly our temp subdirectories will be deleted in our destructor, but core dumps happen etc.)
    //
    // This is important when using the Meson build system because Meson runs several unit tests in parallel (whereas
-   // CMake executes them sequentially).  We are guaranteed a separate instance of this class for each run because
-   // both CMake and Meson invoke unit tests by running a program.
+   // CMake executes them sequentially).
    //
+   // Previously we used the thread ID in the directory name, as both CMake and Meson invoke unit tests by running a
+   // program, so you might expect parallel instances of the program to have different thread IDs.  On Linux, this is
+   // indeed the case and we get different values from QThread::currentThreadId() or std::this_thread::get_id().  On
+   // MacOS however, two parallel test runs can have the same value back from QThread::currentThreadId() and
+   // std::this_thread::get_id(), so you end up with race conditions of two processes trying to create the same
+   // directory etc, leading to test failures.
+   //
+   std::ostringstream buffer;
+   buffer << QRandomGenerator::securelySeeded().generate();
+   QString randomId = QString::fromStdString(buffer.str());
+   qDebug() << Q_FUNC_INFO << "QThread ID:" << QThread::currentThreadId() << "; Random ID:" << randomId;
+
    QString subDirName;
-   QTextStream{&subDirName} << CONFIG_APPLICATION_NAME_UC << "-UnitTestRun-" << QThread::currentThreadId();
+   QTextStream{&subDirName} << CONFIG_APPLICATION_NAME_UC << "-UnitTestRun-" << randomId;
+
    if (!this->pimpl->m_tempDir.mkdir(subDirName)) {
       qCritical() <<
          Q_FUNC_INFO << "Unable to create" << subDirName << "sub-directory of" << this->pimpl->m_tempDir.absolutePath();
@@ -342,19 +382,22 @@ Testing::Testing() :
 Testing::~Testing() {
    //
    // We have to be a bit careful in our cleaning up.  We only want to try to remove the unique temporary directory we
-   // created, not the system-wide one.  (It shouldn't be possible for this->pimpl->m_tempDir to be the root directory, but it
-   // doesn't hurt to check!)
+   // created, not the system-wide one.  (It shouldn't be possible for this->pimpl->m_tempDir to be the root directory,
+   // but it doesn't hurt to check!)
    //
+   std::filesystem::path systemTempDir{std::filesystem::temp_directory_path()};
    if (this->pimpl->m_tempDir.exists() &&
        this->pimpl->m_tempDir.absolutePath() != QDir::tempPath() &&
        !this->pimpl->m_tempDir.isRoot()) {
-      qInfo() << Q_FUNC_INFO << "Removing temporary directory" << this->pimpl->m_tempDir.absolutePath() << "and its contents";
+      qInfo() <<
+         Q_FUNC_INFO << "Removing temporary directory" << this->pimpl->m_tempDir.absolutePath() << "and its contents";
       if (!this->pimpl->m_tempDir.removeRecursively()) {
          //
          // It's not the end of the world if we couldn't remove a temporary directory so, if it happens, just log an
          // error rather than throwing an exception (which might prevent other clean-up from happening).
          //
-         qInfo() << Q_FUNC_INFO << "Unable to remove temporary directory" << this->pimpl->m_tempDir.absolutePath();
+         qWarning() <<
+            Q_FUNC_INFO << "Unable to remove temporary directory" << this->pimpl->m_tempDir.absolutePath();
       }
    }
    return;
@@ -392,19 +435,21 @@ void Testing::initTestCase() {
       QCoreApplication::setOrganizationDomain("brewken.com/test");
       QCoreApplication::setApplicationName("brewken-test");
 
+      qDebug() << "Initialising PersistentSettings";
+
       // Set options so that any data modification does not affect any other data
       PersistentSettings::initialise(this->pimpl->m_tempDir.absolutePath());
 
       // Log test setup
-      // Verify that the Logging initializes normally
-      qDebug() << "Initiallizing Logging module";
+      // Verify that the Logging initialises normally
+      qDebug() << "Initialising Logging module";
       Logging::initializeLogging();
       // Now change/override a few settings
       // We always want debug logging for tests as it's useful when a test fails
       Logging::setLogLevel(Logging::LogLevel_DEBUG);
       // Test logs go to a /tmp (or equivalent) so as not to clutter the application path with dummy data.
-      Logging::setDirectory(this->pimpl->m_tempDir.absolutePath(), Logging::NewDirectoryIsTemporary);
-      qDebug() << "logging initialized";
+      Logging::setDirectory(QDir{this->pimpl->m_tempDir.absolutePath()}, Logging::NewDirectoryIsTemporary);
+      qDebug() << "logging initialised";
 
       // Inside initializeLogging(), there's a check to see whether we're the test application.  If so, it turns off
       // logging output to stderr.

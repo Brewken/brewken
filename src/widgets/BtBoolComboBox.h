@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/BtBoolComboBox.h is part of Brewken, and is copyright the following authors 2023:
+ * widgets/BtBoolComboBox.h is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -23,6 +23,8 @@
 #include <QComboBox>
 
 #include "utils/TypeLookup.h"
+
+class QVariant;
 
 /**
  * \class BtBoolComboBox extends \c QComboBox to handle booleans.
@@ -93,6 +95,10 @@ public:
     */
    [[nodiscard]] std::optional<bool> getOptBoolValue() const;
 
+   /**
+    * \brief Get value of a combo box, using \c typeInfo to determine whether it is optional or not
+    */
+   [[nodiscard]] QVariant getValue(TypeInfo const & typeInfo) const;
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
