@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * serialization/json/JsonMeasureableUnitsMapping.cpp is part of Brewken, and is copyright the following authors 2023:
+ * serialization/json/JsonMeasureableUnitsMapping.cpp is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -17,7 +17,20 @@
 
 #include <stdexcept>
 
+#include <boost/algorithm/string/predicate.hpp>
+
 #include <QDebug>
+
+JsonMeasureableUnitsMapping::JsonMeasureableUnitsMapping(std::initializer_list<decltype(nameToUnit)::value_type> init,
+                                                         JsonXPath const unitField,
+                                                         JsonXPath const valueField) :
+   nameToUnit{init},
+   unitField{unitField},
+   valueField{valueField} {
+   return;
+}
+
+JsonMeasureableUnitsMapping::~JsonMeasureableUnitsMapping() = default;
 
 std::string_view JsonMeasureableUnitsMapping::getNameForUnit(Measurement::Unit const & unitToMatch) const {
    // We could use std::find_if here with a lambda, but a loop with structured bindings is more concise in this instance
@@ -38,4 +51,49 @@ Measurement::PhysicalQuantity JsonMeasureableUnitsMapping::getPhysicalQuantity()
    // We assume that each mapping only holds Units corresponding to one PhysicalQuantity, so it suffices to return the
    // PhysicalQuantity of the first element in the map`
    return this->nameToUnit.begin()->second->getPhysicalQuantity();
+}
+
+bool JsonMeasureableUnitsMapping::containsUnit(std::string_view const unitName, MatchType const matchType) const {
+
+   if (matchType == JsonMeasureableUnitsMapping::MatchType::CaseSensitive) {
+      return this->nameToUnit.contains(unitName);
+   }
+
+   Q_ASSERT(matchType == JsonMeasureableUnitsMapping::MatchType::CaseInsensitive);
+
+   //
+   // In theory this is somewhat inefficient.  In practice, the size of the collections we are searching is so small
+   // (just a handful of entries) that it doesn't matter.
+   //
+   for (auto ii = this->nameToUnit.cbegin(); ii != this->nameToUnit.cend(); ++ii) {
+      if (boost::iequals(ii->first, unitName)) {
+         return true;
+      }
+   }
+   return false;
+
+}
+
+Measurement::Unit const * JsonMeasureableUnitsMapping::findUnit(std::string_view const unitName,
+                                                                MatchType const matchType) const {
+
+   if (matchType == JsonMeasureableUnitsMapping::MatchType::CaseSensitive) {
+      return this->nameToUnit.find(unitName)->second;
+   }
+
+   Q_ASSERT(matchType == JsonMeasureableUnitsMapping::MatchType::CaseInsensitive);
+
+   //
+   // See comment above in containsUnit() about efficiency.
+   //
+   for (auto ii = this->nameToUnit.cbegin(); ii != this->nameToUnit.cend(); ++ii) {
+      if (boost::iequals(ii->first, unitName)) {
+         return ii->second;
+      }
+   }
+   return nullptr;
+}
+
+Measurement::Unit const * JsonMeasureableUnitsMapping::defaultUnit() const {
+   return this->nameToUnit.cbegin()->second;
 }

@@ -148,17 +148,24 @@ namespace {
          return std::nullopt;
       }
 
+      //
       // The schema validation should have ensured that the unit name is constrained to one of the values we are
       // expecting, so it's almost certainly a coding error if it doesn't.
-      if (!std::get<JsonMeasureableUnitsMapping const *>(fieldDefinition.valueDecoder)->nameToUnit.contains(unitName)) {
+      //
+      // Note that we have to do case-insensitive matching here.  Eg, although the BeerJSON schema defines ColorUnitType
+      // as an enum of "EBC", "Lovi" and "SRM", schema validation will accept "srm" as valid.  AFAIK, it doesn't matter
+      // if the case is "wrong" because there are no enums where members differ only by case.
+      //
+      auto mapper = std::get<JsonMeasureableUnitsMapping const *>(fieldDefinition.valueDecoder);
+      if (!mapper->containsUnit(unitName, JsonMeasureableUnitsMapping::MatchType::CaseInsensitive)) {
          qCritical() << Q_FUNC_INFO << "Unexpected unit name:" << std::string(unitName).c_str();
          // Stop here on debug build
          Q_ASSERT(false);
          return std::nullopt;
       }
 
-      Measurement::Unit const * unit =
-         std::get<JsonMeasureableUnitsMapping const *>(fieldDefinition.valueDecoder)->nameToUnit.find(unitName)->second;
+      Measurement::Unit const * unit = mapper->findUnit(unitName,
+                                                        JsonMeasureableUnitsMapping::MatchType::CaseInsensitive);
       Measurement::Amount canonicalValue = unit->toCanonical(value);
 
       qDebug() <<
@@ -212,8 +219,9 @@ namespace {
       Measurement::Unit const * unit = nullptr;
       for (auto const unitsMapping :
            *std::get<ListOfJsonMeasureableUnitsMappings const *>(fieldDefinition.valueDecoder)) {
-         if (unitsMapping->nameToUnit.contains(unitName)) {
-            unit = unitsMapping->nameToUnit.find(unitName)->second;
+         // As above, we need to be case insensitive here and this should not create ambiguity
+         if (unitsMapping->containsUnit(unitName, JsonMeasureableUnitsMapping::MatchType::CaseInsensitive)) {
+            unit = unitsMapping->findUnit(unitName, JsonMeasureableUnitsMapping::MatchType::CaseInsensitive);
             break;
          }
       }
@@ -221,7 +229,9 @@ namespace {
       // The schema validation should have ensured that the unit name is constrained to one of the values we are
       // expecting, so it's almost certainly a coding error if it doesn't.
       if (!unit) {
-         qCritical() << Q_FUNC_INFO << "Unexpected unit name:" << std::string(unitName).c_str();
+         qCritical() <<
+            Q_FUNC_INFO << "Unexpected unit name:" << std::string(unitName).c_str() << "for field" <<
+            fieldDefinition.xPath << "(" << fieldDefinition.type << ")";
          // Stop here on debug build
          Q_ASSERT(false);
          return std::nullopt;
@@ -1069,7 +1079,7 @@ void JsonRecord::insertValue(JsonRecordDefinition::FieldDefinition const & field
             JsonMeasureableUnitsMapping const * const unitsMapping =
                std::get<JsonMeasureableUnitsMapping const *>(fieldDefinition.valueDecoder);
             Q_ASSERT(unitsMapping);
-            Measurement::Unit const * const aUnit = unitsMapping->nameToUnit.cbegin()->second;
+            Measurement::Unit const * const aUnit = unitsMapping->defaultUnit();
             Measurement::Unit const & canonicalUnit = aUnit->getCanonical();
             qDebug() << Q_FUNC_INFO << canonicalUnit;
 

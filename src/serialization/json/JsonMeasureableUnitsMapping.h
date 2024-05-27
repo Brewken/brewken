@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * serialization/json/JsonMeasureableUnitsMapping.h is part of Brewken, and is copyright the following authors 2022-2023:
+ * serialization/json/JsonMeasureableUnitsMapping.h is part of Brewken, and is copyright the following authors 2022-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -23,7 +23,6 @@
 #include "serialization/json/JsonXPath.h"
 #include "measurement/Unit.h"
 
-
 /**
  * \brief Maps a set of BeerJSON "measurable units" to our internal data structures (\c Measurement::Unit in particular)
  *
@@ -37,7 +36,9 @@
  *              in BeerJSON
  * \c valueField is the key used to pull out the double value representing the measurement itself
  */
-struct JsonMeasureableUnitsMapping {
+class JsonMeasureableUnitsMapping {
+
+private:
    // We could use boost::bimap here, but it doesn't support brace initializer lists, which is a bit tiresome.  Given
    // that the size of this mapping is always small (<20 entries), even doing linear search is not going to be that
    // complicated.
@@ -46,9 +47,15 @@ struct JsonMeasureableUnitsMapping {
    // Boost.JSON.  We use std::map rather than QMap because it's easier to search both sides of the map (ie search by
    // value as well as search by key).
    std::map<std::string_view, Measurement::Unit const *> nameToUnit;
+public:
+   JsonXPath const  unitField;
+   JsonXPath const valueField;
 
-   JsonXPath const unitField = JsonXPath{"unit"};
-   JsonXPath const valueField = JsonXPath{"value"};
+public:
+   JsonMeasureableUnitsMapping(std::initializer_list<decltype(nameToUnit)::value_type> init,
+                               JsonXPath const unitField  = JsonXPath{"unit"},
+                               JsonXPath const valueField = JsonXPath{"value"});
+   ~JsonMeasureableUnitsMapping();
 
    Measurement::PhysicalQuantity getPhysicalQuantity() const;
 
@@ -57,6 +64,31 @@ struct JsonMeasureableUnitsMapping {
     *        units of the corresponding \c Measurement::PhysicalQuantity
     */
    std::string_view getNameForUnit(Measurement::Unit const & unitToMatch) const;
+
+   enum class MatchType {
+      CaseSensitive,
+      CaseInsensitive
+   };
+
+   /**
+    * \brief Whether the the mapping contains the supplied unit name
+    * \param unitName
+    * \param matchCase
+    */
+   bool containsUnit(std::string_view const unitName, MatchType const matchType) const;
+
+   /**
+    * \brief Returns the unit for the supplied unit name
+    * \param unitName
+    * \param matchCase
+    */
+   Measurement::Unit const * findUnit(std::string_view const unitName, MatchType const matchType) const;
+
+   /**
+    * \return The first unit in the map.  This is what we use for writing out to JSON.  (We don't try to work out which
+    *         unit matches our canonical metric ones.)
+    */
+   Measurement::Unit const * defaultUnit() const;
 };
 
 #endif

@@ -72,11 +72,11 @@ namespace {
    //
    JsonMeasureableUnitsMapping const BEER_JSON_MASS_UNIT_MAPPER {
       // MassUnitType in measurable_units.json in BeerJSON schema
-      {{"mg",    &Measurement::Units::milligrams},
-       {"mg",    &Measurement::Units::grams     },
-       {"kg",    &Measurement::Units::kilograms },
-       {"lb",    &Measurement::Units::pounds    },
-       {"oz",    &Measurement::Units::ounces    }}
+      {{"mg", &Measurement::Units::milligrams},
+       { "g", &Measurement::Units::grams     },
+       {"kg", &Measurement::Units::kilograms },
+       {"lb", &Measurement::Units::pounds    },
+       {"oz", &Measurement::Units::ounces    }}
    };
 
    JsonMeasureableUnitsMapping const BEER_JSON_VOLUME_UNIT_MAPPER {
