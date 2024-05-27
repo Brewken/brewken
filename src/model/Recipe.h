@@ -56,8 +56,6 @@ AddPropertyName(beerAcidity_pH         )
 AddPropertyName(boil                   )
 AddPropertyName(boilGrav               )
 AddPropertyName(boilId                 )
-///AddPropertyName(boilSize_l             ) // Deprecated, but retained for BeerXML -- see comments below
-///AddPropertyName(boilTime_min           ) // Deprecated, but retained for BeerXML -- see comments below
 AddPropertyName(boilVolume_l           )
 AddPropertyName(brewer                 )
 AddPropertyName(brewNotes              )
@@ -76,7 +74,6 @@ AddPropertyName(fermentableAdditionIds )
 AddPropertyName(fermentableAdditions   )
 AddPropertyName(fermentation           )
 AddPropertyName(fermentationId         )
-///AddPropertyName(fermentationStages     )
 AddPropertyName(fg                     )
 AddPropertyName(finalVolume_l          )
 AddPropertyName(forcedCarbonation      )
@@ -98,21 +95,15 @@ AddPropertyName(notes                  )
 AddPropertyName(og                     )
 AddPropertyName(points                 )
 AddPropertyName(postBoilVolume_l       )
-///AddPropertyName(primaryAge_days        )
-///AddPropertyName(primaryTemp_c          )
 AddPropertyName(primingSugarEquiv      )
 AddPropertyName(primingSugarName       )
 AddPropertyName(saltAdjustmentIds      )
 AddPropertyName(saltAdjustments        )
-///AddPropertyName(secondaryAge_days      )
-///AddPropertyName(secondaryTemp_c        )
 AddPropertyName(SRMColor               )
 AddPropertyName(style                  )
 AddPropertyName(styleId                )
 AddPropertyName(tasteNotes             )
 AddPropertyName(tasteRating            )
-///AddPropertyName(tertiaryAge_days       )
-///AddPropertyName(tertiaryTemp_c         )
 AddPropertyName(type                   )
 AddPropertyName(waterUseIds            )
 AddPropertyName(waterUses              )
@@ -235,20 +226,6 @@ public:
     * \brief The batch size is the target size of the finished batch (in liters) aka the volume into the fermenter.
     */
    Q_PROPERTY(double  batchSize_l        READ batchSize_l        WRITE setBatchSize_l      )
-///   /**
-///    * \brief The boil size is the starting size for the main boil of the wort (in liters).  NOTE: This property is
-///    *        retained (and fully functional) for BeerXML support but is \b deprecated for other use as the same
-///    *        information is now in the (NB optional) \c preBoilSize_l property of (NB optional) \c Boil.  To SET a boil
-///    *        size of `double boilSizeLiters` on `Recipe r`, call `r.nonOptBoil()->setPreBoilSize_l(boilSizeLiters)`.
-///    */
-///   Q_PROPERTY(double  boilSize_l         READ boilSize_l         /* WRITE setBoilSize_l */      )
-///   /**
-///    * \brief The boil time in minutes.    NOTE: This property is retained (and fully functional) for BeerXML support but
-///    *        is \b deprecated for other use as the same information is now in the \c boilTime_mins property of (NB
-///    *        optional) \c Boil.  To SET a boil time of `double boilTimeMinutes` on `Recipe r`, call
-///    *        `r.nonOptBoil()->setBoilTime_mins(boilTimeMinutes)`.
-///    */
-///   Q_PROPERTY(double  boilTime_min       READ boilTime_min       /* WRITE setBoilTime_min */    )
    //! \brief The overall efficiency in percent.
    Q_PROPERTY(double  efficiency_pct     READ efficiency_pct     WRITE setEfficiency_pct   )
    //! \brief The assistant brewer.  This becomes "coauthor" in BeerJSON
@@ -263,20 +240,6 @@ public:
     *         .:TBD:. This is stored as a double but the UI constrains it to an unsigned int.
     */
    Q_PROPERTY(double  tasteRating        READ tasteRating        WRITE setTasteRating      )
-///   //! \brief The number of fermentation stages.
-///   Q_PROPERTY(int     fermentationStages READ fermentationStages WRITE setFermentationStages)
-///   //! \brief How many days in primary.
-///   Q_PROPERTY(double  primaryAge_days    READ primaryAge_days    WRITE setPrimaryAge_days  )
-///   //! \brief The temp in C in the primary.
-///   Q_PROPERTY(double  primaryTemp_c      READ primaryTemp_c      WRITE setPrimaryTemp_c    )
-///   //! \brief How many days in secondary.
-///   Q_PROPERTY(double  secondaryAge_days  READ secondaryAge_days  WRITE setSecondaryAge_days)
-///   //! \brief The temp in C in secondary.
-///   Q_PROPERTY(double  secondaryTemp_c    READ secondaryTemp_c    WRITE setSecondaryTemp_c  )
-///   //! \brief How many days in tertiary.
-///   Q_PROPERTY(double  tertiaryAge_days   READ tertiaryAge_days   WRITE setTertiaryAge_days )
-///   //! \brief The temp in C in tertiary.
-///   Q_PROPERTY(double  tertiaryTemp_c     READ tertiaryTemp_c     WRITE setTertiaryTemp_c   )
    //! \brief The number of days to age the beer after bottling.
    Q_PROPERTY(double  age_days           READ age_days           WRITE setAge_days         )
    //! \brief The temp in C as beer is aging after bottling.
@@ -428,34 +391,36 @@ public:
     */
    static void connectSignalsForAllRecipes();
 
-///   /*!
-///    * \brief Add (a copy if necessary of) a Hop/Fermentable/Instruction etc (that may or may not already be in an
-///    *        ObjectStore).
-///    *
-///    * When we add a Hop/Fermentable/Yeast/etc to a Recipe, we make a copy of thing we're adding to serve as an "instance
-///    * of use of" record.  Amongst other things, this allows the same Hop/Fermentable/Yeast/etc to be added multiple
-///    * times to a recipe - eg the same type of hops might well be added at multiple points in the recipe.  It also allows
-///    * an ingredient in a recipe to be modified without those modifications affecting the use of the ingredient in other
-///    * recipes (eg if you want to modify the % alpha acid on a hop).  An "instance of use of" instance of a
-///    * Hop/Fermentable/Yeast/etc will always have parent record which is the actual Hop/Fermentable/Yeast/etc to which it
-///    * relates.
-///    *
-///    * Calling the templated \c Recipe::add function returns the copy "instance of use of" object for whatever
-///    * Hop/Fermentable/Yeast/etc was added.  This returned object is what needs to be passed to \c Recipe::remove to
-///    * remove that instance of use of the Hop/Fermentable/Yeast/etc from the Recipe.  When you  call \c Recipe::remove it
-///    * returns the "instance of use of" object that was removed, which you as caller now own (because it will no longer
-///    * be in the ObjectStore).  If you want to undo the remove (or redo an add that the remove itself was undoing), you
-///    * can call \c Recipe::add with the "instance of use of" object returned from \c Recipe::remove, in which case
-///    * \c Recipe::add will determine that the "instance of use of" object can be used directly without needing to be
-///    * copied.  (The \c Recipe::add method will also recognise when an object has been removed from the ObjectStore and
-///    * will reinsert it, so the caller doesn't need to worry about this.)  Thus, eg, the following sequence of calls is
-///    * valid:
-///    *
-///    *    std::shared_ptr<Hop> copyOfFooHop = myRecipe->add<Hop>(fooHop);                     // DO
-///    *    std::shared_ptr<Hop> sameCopyOfFooHop = myRecipe->remove<Hop>(*copyOfFooHop);       // UNDO
-///    *    std::shared_ptr<Hop> stillSameCopyOfFooHop = myRecipe->add<Hop>(*sameCopyOfFooHop); // REDO
-///    *
-///    */
+   /*!
+    * \brief Add (a copy if necessary of) a Hop/Fermentable/Instruction etc (that may or may not already be in an
+    *        ObjectStore).
+    *
+    * TODO: Need to finish killing off this member function!
+    *
+    * When we add a Hop/Fermentable/Yeast/etc to a Recipe, we make a copy of thing we're adding to serve as an "instance
+    * of use of" record.  Amongst other things, this allows the same Hop/Fermentable/Yeast/etc to be added multiple
+    * times to a recipe - eg the same type of hops might well be added at multiple points in the recipe.  It also allows
+    * an ingredient in a recipe to be modified without those modifications affecting the use of the ingredient in other
+    * recipes (eg if you want to modify the % alpha acid on a hop).  An "instance of use of" instance of a
+    * Hop/Fermentable/Yeast/etc will always have parent record which is the actual Hop/Fermentable/Yeast/etc to which it
+    * relates.
+    *
+    * Calling the templated \c Recipe::add function returns the copy "instance of use of" object for whatever
+    * Hop/Fermentable/Yeast/etc was added.  This returned object is what needs to be passed to \c Recipe::remove to
+    * remove that instance of use of the Hop/Fermentable/Yeast/etc from the Recipe.  When you  call \c Recipe::remove it
+    * returns the "instance of use of" object that was removed, which you as caller now own (because it will no longer
+    * be in the ObjectStore).  If you want to undo the remove (or redo an add that the remove itself was undoing), you
+    * can call \c Recipe::add with the "instance of use of" object returned from \c Recipe::remove, in which case
+    * \c Recipe::add will determine that the "instance of use of" object can be used directly without needing to be
+    * copied.  (The \c Recipe::add method will also recognise when an object has been removed from the ObjectStore and
+    * will reinsert it, so the caller doesn't need to worry about this.)  Thus, eg, the following sequence of calls is
+    * valid:
+    *
+    *    std::shared_ptr<Hop> copyOfFooHop = myRecipe->add<Hop>(fooHop);                     // DO
+    *    std::shared_ptr<Hop> sameCopyOfFooHop = myRecipe->remove<Hop>(*copyOfFooHop);       // UNDO
+    *    std::shared_ptr<Hop> stillSameCopyOfFooHop = myRecipe->add<Hop>(*sameCopyOfFooHop); // REDO
+    *
+    */
    template<class NE> std::shared_ptr<NE> add(std::shared_ptr<NE> var);
 
    /**
@@ -522,8 +487,6 @@ public:
    Type    type              () const;
    QString brewer            () const;
    double  batchSize_l       () const;
-///   [[deprecated]] double  boilSize_l        () const;
-///   [[deprecated]] double  boilTime_min      () const;
    double  efficiency_pct    () const;
    QString asstBrewer        () const;
    QString notes             () const;
@@ -533,7 +496,6 @@ public:
    double  fg                () ;
    int     fermentationStages() const;
    double  primaryAge_days   () const;
-///   double  primaryTemp_c     () const;
    double  secondaryAge_days () const;
    double  secondaryTemp_c   () const;
    double  tertiaryAge_days  () const;
@@ -654,8 +616,6 @@ public:
    void setBoilId        (int const id);
    void setFermentationId(int const id);
    void setInstructionIds(QVector<int> ids);
-///   void setSaltIds       (QVector<int> ids);
-///   void setWaterIds      (QVector<int> ids);
    void setAncestorId    (int ancestorId, bool notify = true);
    //! @}
 
@@ -689,8 +649,6 @@ public:
    void setType              (Type    const   val);
    void setBrewer            (QString const & val);
    void setBatchSize_l       (double  const   val);
-///   [[deprecated]] void setBoilSize_l        (double  const   val);
-///   void setBoilTime_min      (double  const   val);
    void setEfficiency_pct    (double  const   val);
    void setAsstBrewer        (QString const & val);
    void setNotes             (QString const & val);
@@ -699,12 +657,6 @@ public:
    void setOg                (double  const   val);
    void setFg                (double  const   val);
    void setFermentationStages(int     const   val);
-///   void setPrimaryAge_days   (double  const   val);
-///   void setPrimaryTemp_c     (double  const   val);
-///   void setSecondaryAge_days (double  const   val);
-///   void setSecondaryTemp_c   (double  const   val);
-///   void setTertiaryAge_days  (double  const   val);
-///   void setTertiaryTemp_c    (double  const   val);
    void setAge_days          (double  const   val);
    void setAgeTemp_c         (double  const   val);
    void setDate              (std::optional<QDate>   const   val);
@@ -719,8 +671,6 @@ public:
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    void setBeerAcidity_pH         (std::optional<double> const val);
    void setApparentAttenuation_pct(std::optional<double> const val);
-
-///   virtual Recipe * getOwningRecipe() const;
 
    /**
     * \brief A Recipe owns some of its contained objects, so needs to delete those if it itself is being deleted
@@ -753,15 +703,8 @@ private:
    QString               m_brewer                 ;
    QString               m_asstBrewer             ;
    double                m_batchSize_l            ;
-///   double  m_boilTime_min;
    double                m_efficiency_pct         ;
    int                   m_fermentationStages     ;
-///   double                m_primaryAge_days        ;
-///   double                m_primaryTemp_c          ;
-///   double                m_secondaryAge_days      ;
-///   double                m_secondaryTemp_c        ;
-///   double                m_tertiaryAge_days       ;
-///   double                m_tertiaryTemp_c         ;
    double                m_age                    ;
    double                m_ageTemp_c              ;
    std::optional<QDate>  m_date                   ;

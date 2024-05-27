@@ -105,10 +105,6 @@ static_assert(std::is_base_of<Ingredient, Misc>::value);
 Misc::Misc(QString name) :
    Ingredient{name},
    m_type          {Misc::Type::Spice},
-///   m_use           {std::nullopt     },
-///   m_time_min      {0.0              },
-///   m_amount        {0.0              },
-///   m_amountIsWeight{false            },
    m_useFor        {""               },
    m_notes         {""               },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -119,83 +115,46 @@ Misc::Misc(QString name) :
 
 Misc::Misc(NamedParameterBundle const & namedParameterBundle) :
    Ingredient{namedParameterBundle},
-   SET_REGULAR_FROM_NPB (m_type                , namedParameterBundle, PropertyNames::Misc::type     ),
-///   SET_OPT_ENUM_FROM_NPB(m_use      , Misc::Use, namedParameterBundle, PropertyNames::Misc::use      ),
-///   SET_REGULAR_FROM_NPB (m_time_min            , namedParameterBundle, PropertyNames::Misc::time_min ),
-   SET_REGULAR_FROM_NPB (m_useFor              , namedParameterBundle, PropertyNames::Misc::useFor   ),
-   SET_REGULAR_FROM_NPB (m_notes               , namedParameterBundle, PropertyNames::Misc::notes    ),
+   SET_REGULAR_FROM_NPB (m_type     , namedParameterBundle, PropertyNames::Misc::type     ),
+   SET_REGULAR_FROM_NPB (m_useFor   , namedParameterBundle, PropertyNames::Misc::useFor   ),
+   SET_REGULAR_FROM_NPB (m_notes    , namedParameterBundle, PropertyNames::Misc::notes    ),
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   SET_REGULAR_FROM_NPB (m_producer            , namedParameterBundle, PropertyNames::Misc::producer ),
-   SET_REGULAR_FROM_NPB (m_productId           , namedParameterBundle, PropertyNames::Misc::productId) {
+   SET_REGULAR_FROM_NPB (m_producer , namedParameterBundle, PropertyNames::Misc::producer ),
+   SET_REGULAR_FROM_NPB (m_productId, namedParameterBundle, PropertyNames::Misc::productId) {
 
-///   this->setEitherOrReqParams(namedParameterBundle,
-///                              PropertyNames::Misc::amount,
-///                              PropertyNames::Misc::amountIsWeight,
-///                              PropertyNames::Misc::amountWithUnits,
-///                              Measurement::PhysicalQuantity::Mass,
-///                              this->m_amount,
-///                              this->m_amountIsWeight);
    return;
 }
 
 Misc::Misc(Misc const & other) :
-   Ingredient{other                        },
-   m_type                  {other.m_type          },
-///   m_use                   {other.m_use           },
-///   m_time_min              {other.m_time_min      },
-///   m_amount                {other.m_amount        },
-///   m_amountIsWeight        {other.m_amountIsWeight},
-   m_useFor                {other.m_useFor        },
-   m_notes                 {other.m_notes         },
+   Ingredient{other             },
+   m_type     {other.m_type     },
+   m_useFor   {other.m_useFor   },
+   m_notes    {other.m_notes    },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   m_producer              {other.m_producer      },
-   m_productId             {other.m_productId     } {
+   m_producer {other.m_producer },
+   m_productId{other.m_productId} {
    return;
 }
 
 Misc::~Misc() = default;
 
 //============================"GET" METHODS=====================================
-Misc::Type               Misc::type          () const { return                    m_type          ; }
-///std::optional<Misc::Use> Misc::use           () const { return                    m_use           ; }
-///std::optional<int>       Misc::useAsInt      () const { return Optional::toOptInt(m_use)          ; }
-///double                   Misc::amount        () const { return                    m_amount        ; }
-///double                   Misc::time_min      () const { return                    m_time_min      ; }
-///bool                     Misc::amountIsWeight() const { return                    m_amountIsWeight; }
-QString                  Misc::useFor        () const { return                    m_useFor        ; }
-QString                  Misc::notes         () const { return                    m_notes         ; }
+Misc::Type Misc::type          () const { return m_type     ; }
+QString    Misc::useFor        () const { return m_useFor   ; }
+QString    Misc::notes         () const { return m_notes    ; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-QString                  Misc::producer      () const { return                    m_producer      ; }
-QString                  Misc::productId     () const { return                    m_productId     ; }
-
-///Measurement::Amount Misc::amountWithUnits() const { return Measurement::Amount{this->m_amount, this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters}; }
+QString    Misc::producer      () const { return m_producer ; }
+QString    Misc::productId     () const { return m_productId; }
 
 //============================"SET" METHODS=====================================
-void Misc::setType          (Type                     const   val) { SET_AND_NOTIFY( PropertyNames::Misc::type          , this->m_type          , val); }
-///void Misc::setUse           (std::optional<Misc::Use> const   val) { SET_AND_NOTIFY( PropertyNames::Misc::use           , this->m_use           , val); }
-///void Misc::setUseAsInt      (std::optional<int>       const   val) { SET_AND_NOTIFY( PropertyNames::Misc::use           , this->m_use           , Optional::fromOptInt<Use>(val)); }
-void Misc::setUseFor        (QString                  const & val) { SET_AND_NOTIFY( PropertyNames::Misc::useFor        , this->m_useFor        , val); }
-void Misc::setNotes         (QString                  const & val) { SET_AND_NOTIFY( PropertyNames::Misc::notes         , this->m_notes         , val); }
-///void Misc::setAmountIsWeight(bool                     const   val) { SET_AND_NOTIFY( PropertyNames::Misc::amountIsWeight, this->m_amountIsWeight, val); }
-///void Misc::setAmount        (double                   const   val) { SET_AND_NOTIFY( PropertyNames::Misc::amount        , this->m_amount        , this->enforceMin(val, "amount")); }
-///void Misc::setTime_min      (double                   const   val) { SET_AND_NOTIFY( PropertyNames::Misc::time_min      , this->m_time_min      , this->enforceMin(val, "time_min"  )); }
+void Misc::setType     (Type    const   val) { SET_AND_NOTIFY( PropertyNames::Misc::type    , this->m_type     , val); }
+void Misc::setUseFor   (QString const & val) { SET_AND_NOTIFY( PropertyNames::Misc::useFor  , this->m_useFor   , val); }
+void Misc::setNotes    (QString const & val) { SET_AND_NOTIFY( PropertyNames::Misc::notes   , this->m_notes    , val); }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-void Misc::setProducer      (QString                  const & val) { SET_AND_NOTIFY(PropertyNames::Misc::producer       , this->m_producer      , val); }
-void Misc::setProductId     (QString                  const & val) { SET_AND_NOTIFY(PropertyNames::Misc::productId      , this->m_productId     , val); }
-
-
-///void Misc::setAmountWithUnits(Measurement::Amount const   val) {
-///   SET_AND_NOTIFY(PropertyNames::Misc::amount        , this->m_amount        , val.quantity);
-///   SET_AND_NOTIFY(PropertyNames::Misc::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
-///   return;
-///}
+void Misc::setProducer (QString const & val) { SET_AND_NOTIFY(PropertyNames::Misc::producer , this->m_producer , val); }
+void Misc::setProductId(QString const & val) { SET_AND_NOTIFY(PropertyNames::Misc::productId, this->m_productId, val); }
 
 //========================OTHER METHODS=========================================
-
-///Recipe * Misc::getOwningRecipe() const {
-//////   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
-///   return nullptr;
-///}
 
 // Insert the boiler-plate stuff for inventory
 INGREDIENT_BASE_COMMON_CODE(Misc)

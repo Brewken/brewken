@@ -26,7 +26,10 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string notr="true">Brewken - $CONFIG_VERSION_STRING</string>
+   <!-- It would be brilliant if we could do this sort of variable substitution here, but, AFAIK, we can't.  What
+        actually happens is that the entire text of this field is overwritten in a call to setWindowTitle() in
+        MainWindow::MainWindow(). -->
+   <string notr="true">$CONFIG_APPLICATION_NAME_UC - $CONFIG_VERSION_STRING</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../brewken.qrc">
@@ -40,7 +43,7 @@
        <enum>Qt::Horizontal</enum>
       </property>
       <widget class="QWidget" name="widget_tree" native="true">
-       <layout class="QVBoxLayout" name="verticalLayout_12">
+       <layout class="QVBoxLayout" name="verticalLayout_central">
         <item>
          <widget class="QLabel" name="label_Brewken">
           <property name="sizePolicy">
@@ -332,7 +335,7 @@
                    </widget>
                   </item>
                   <item>
-                   <spacer name="horizontalSpacer">
+                   <spacer name="horizontalSpacer_1">
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
                     </property>
@@ -1425,7 +1428,7 @@
              <attribute name="title">
               <string>Mash</string>
              </attribute>
-             <layout class="QVBoxLayout" name="verticalLayout_7">
+             <layout class="QVBoxLayout" name="verticalLayout_mashSteps">
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_mashes">
                 <item>
@@ -1510,7 +1513,7 @@
                    </widget>
                   </item>
                   <item>
-                   <spacer name="verticalSpacer">
+                   <spacer name="verticalSpacer_8">
                     <property name="orientation">
                      <enum>Qt::Vertical</enum>
                     </property>
@@ -1532,7 +1535,7 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="label_2">
+                 <widget class="QLabel" name="label_mash">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -1568,7 +1571,7 @@
                  </widget>
                 </item>
                 <item>
-                 <spacer name="horizontalSpacer_4">
+                 <spacer name="horizontalSpacer_mashCombo">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -1631,7 +1634,7 @@
              <attribute name="title">
               <string>Boil</string>
              </attribute>
-             <layout class="QVBoxLayout" name="verticalLayout_7">
+             <layout class="QVBoxLayout" name="verticalLayout_boilSteps">
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_boiles">
                 <item>
@@ -1699,7 +1702,7 @@
                    </widget>
                   </item>
                   <item>
-                   <spacer name="verticalSpacer">
+                   <spacer name="verticalSpacer_9">
                     <property name="orientation">
                      <enum>Qt::Vertical</enum>
                     </property>
@@ -1721,7 +1724,7 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="label_2">
+                 <widget class="QLabel" name="label_boil">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -1757,7 +1760,7 @@
                  </widget>
                 </item>
                 <item>
-                 <spacer name="horizontalSpacer_4">
+                 <spacer name="horizontalSpacer_boilCombo">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -1820,7 +1823,7 @@
              <attribute name="title">
               <string>Fermentation</string>
              </attribute>
-             <layout class="QVBoxLayout" name="verticalLayout_7">
+             <layout class="QVBoxLayout" name="verticalLayout_fermentationSteps">
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_fermentationes">
                 <item>
@@ -1888,7 +1891,7 @@
                    </widget>
                   </item>
                   <item>
-                   <spacer name="verticalSpacer">
+                   <spacer name="verticalSpacer_10">
                     <property name="orientation">
                      <enum>Qt::Vertical</enum>
                     </property>
@@ -1910,7 +1913,7 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="label_2">
+                 <widget class="QLabel" name="label_fermentation">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -1946,7 +1949,7 @@
                  </widget>
                 </item>
                 <item>
-                 <spacer name="horizontalSpacer_4">
+                 <spacer name="horizontalSpacer_fermentationCombo">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -2032,7 +2035,7 @@
     <addaction name="separator"/>
     <addaction name="actionHelp"/>
     <addaction name="separator"/>
-    <addaction name="actionAbout_Brewken"/>
+    <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -2155,16 +2158,20 @@
     <string>Help</string>
    </property>
   </action>
-  <action name="actionAbout_Brewken">
+  <action name="actionAbout">
    <property name="icon">
     <iconset resource="../brewken.qrc">
      <normaloff>:/images/smallInfo.svg</normaloff>:/images/smallInfo.svg</iconset>
    </property>
    <property name="text">
-    <string>About &amp;Brewken</string>
+   <!-- As above, the entire text of this field is overwritten in a call to actionAbout->setText() in
+        MainWindow::MainWindow() -->
+    <string notr="true">About $CONFIG_APPLICATION_NAME_UC</string>
    </property>
    <property name="toolTip">
-    <string>About Brewken</string>
+   <!-- As above, the entire text of this field is overwritten in a call to actionAbout->setToolTip() in
+        MainWindow::MainWindow() -->
+    <string notr="true">About $CONFIG_APPLICATION_NAME_UC</string>
    </property>
   </action>
   <action name="actionExportToXml">

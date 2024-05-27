@@ -517,9 +517,8 @@ public:
 
       QString halfName = QString("%1.%2").arg("databaseBackup").arg(QDate::currentDate().toString("yyyyMMdd"));
       QString newName = halfName;
-      // Unique filenames are a pain in the ass. In the case you open Brewken
-      // twice in a day, this loop makes sure we don't over write (or delete) the
-      // wrong thing
+      // Unique filenames are a pain in the ass. In the case you open the application twice in a day, this loop makes
+      // sure we don't over write (or delete) the wrong thing.
       int foobar = 0;
       while ( foobar < 10000 && QFile::exists( backupDir + "/" + newName ) ) {
          foobar++;

@@ -432,8 +432,10 @@ void Testing::initTestCase() {
 
    try {
       // Create a different set of options to avoid clobbering real options
-      QCoreApplication::setOrganizationDomain("brewken.com/test");
-      QCoreApplication::setApplicationName("brewken-test");
+      static QString const unitTestDomain = QString{"%1/test"}.arg(CONFIG_ORGANIZATION_DOMAIN);
+      QCoreApplication::setOrganizationDomain(unitTestDomain);
+      static QString const unitTestAppName = QString{"%1-test"}.arg(CONFIG_APPLICATION_NAME_LC);
+      QCoreApplication::setApplicationName(unitTestAppName);
 
       qDebug() << "Initialising PersistentSettings";
 
@@ -461,7 +463,7 @@ void Testing::initTestCase() {
       PersistentSettings::insert(PersistentSettings::Names::ibu_formula  , "tinseth");
       PersistentSettings::insert(PersistentSettings::Names::forcedLocale , "fr_FR"  );
 
-      // Tell Brewken not to require any "user" input on starting
+      // Tell the application not to require any "user" input on starting
       Application::setInteractive(false);
 
       //
@@ -900,7 +902,7 @@ void Testing::cleanupTestCase() {
    }
 
    // Clear all persistent properties linked with this test suite.
-   // It will clear all settings that are application specific, user-scoped, and in the Brewken namespace.
+   // It will clear all settings that are application specific, user-scoped, and in the application namespace.
    QSettings().clear();
 
    //

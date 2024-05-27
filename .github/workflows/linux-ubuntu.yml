@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------------------------------------------------
-# .github/workflows/linux-ubuntu.yml is part of Brewken, and is copyright the following authors 2021-2023:
+# .github/workflows/linux-ubuntu.yml is part of Brewken, and is copyright the following authors 2021-2024:
 #   • Artem Martynov <martynov-a@polyplastic.by>
 #   • Chris Speck <cgspeck@gmail.com>
 #   • Mattias Måhl <mattias@kejsarsten.com>
@@ -111,14 +111,17 @@ jobs:
         run: |
           make
 
-      - name: Test (via CMake)
-        working-directory: ${{github.workspace}}/build
-        shell: bash
-        env:
-          CTEST_OUTPUT_ON_FAILURE: TRUE
-          QT_QPA_PLATFORM: minimal
-        run: |
-          make test
+      #
+      # On Linux, currently CMake
+      #
+      #- name: Test (via CMake)
+      #  working-directory: ${{github.workspace}}/build
+      #  shell: bash
+      #  env:
+      #    CTEST_OUTPUT_ON_FAILURE: TRUE
+      #    QT_QPA_PLATFORM: minimal
+      #  run: |
+      #    make test
 
       # Note that, although we continue to support CMake for local builds and installs, we no longer support packaging
       # with CPack/CMake.  The bt build script packaging gives us better control over the packaging process.

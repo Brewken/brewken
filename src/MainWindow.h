@@ -57,7 +57,7 @@ class RecipeAdditionHop;
 /*!
  * \class MainWindow
  *
- * \brief Brewken's main window. This is a view/controller class.
+ * \brief The application's main window. This is a view/controller class.
  */
 class MainWindow : public QMainWindow, public Ui::mainWindow {
    Q_OBJECT

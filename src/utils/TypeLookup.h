@@ -155,50 +155,6 @@ struct TypeInfo {
                       fieldType,
                       propertyName};
    }
-
-///   template<typename T>        const static TypeInfo construct(BtStringConst const & propertyName,
-///                                                               std::optional<BtFieldType> fieldType,
-///                                                               TypeLookup const * typeLookup);  // No general case, only specialisations
-///   template<IsRequiredEnum  T> const static TypeInfo construct(BtStringConst const & propertyName,
-///                                                               TypeLookup const * typeLookup,
-///                                                               std::optional<BtFieldType> fieldType = std::nullopt) {
-///      return TypeInfo{typeid(T),
-///                      Classification::RequiredEnum ,
-///                      makePointerType<T>(),
-///                      typeLookup,
-///                      fieldType,
-///                      propertyName};
-///   }
-///   template<IsRequiredOther T> const static TypeInfo construct(BtStringConst const & propertyName,
-///                                                               TypeLookup const * typeLookup,
-///                                                               std::optional<BtFieldType> fieldType = std::nullopt) {
-///      return TypeInfo{typeid(T),
-///                      Classification::RequiredOther,
-///                      makePointerType<T>(),
-///                      typeLookup,
-///                      fieldType,
-///                      propertyName};
-///   }
-///   template<IsOptionalEnum  T> const static TypeInfo construct(BtStringConst const & propertyName,
-///                                                               TypeLookup const * typeLookup,
-///                                                               std::optional<BtFieldType> fieldType = std::nullopt) {
-///      return TypeInfo{typeid(typename T::value_type),
-///                      Classification::OptionalEnum ,
-///                      makePointerType<T>(),
-///                      typeLookup,
-///                      fieldType,
-///                      propertyName};
-///   }
-///   template<IsOptionalOther T> const static TypeInfo construct(BtStringConst const & propertyName,
-///                                                               TypeLookup const * typeLookup,
-///                                                               std::optional<BtFieldType> fieldType = std::nullopt) {
-///      return TypeInfo{typeid(typename T::value_type),
-///                      Classification::OptionalOther,
-///                      makePointerType<T>(),
-///                      typeLookup,
-///                      fieldType,
-///                      propertyName};
-///   }
 };
 
 

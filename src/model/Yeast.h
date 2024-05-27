@@ -39,11 +39,7 @@ class RecipeAdditionYeast;
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Yeast { BtStringConst const property{#property}; }
-///AddPropertyName(addToSecondary           )
 AddPropertyName(alcoholTolerance_pct     )
-///AddPropertyName(amount                   )
-///AddPropertyName(amountIsWeight           )
-///AddPropertyName(amountWithUnits          )
 AddPropertyName(attenuationMax_pct       )
 AddPropertyName(attenuationMin_pct       )
 AddPropertyName(bestFor                  )
@@ -62,7 +58,6 @@ AddPropertyName(minTemperature_c         )
 AddPropertyName(notes                    )
 AddPropertyName(phenolicOffFlavorPositive)
 AddPropertyName(productId                )
-///AddPropertyName(timesCultured            ) Moved to RecipeAdditionYeast
 AddPropertyName(type                     )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
@@ -209,14 +204,6 @@ public:
    Q_PROPERTY(Type                   type                      READ type                      WRITE setType                     )
    //! \brief The \c Form.
    Q_PROPERTY(Form                   form                      READ form                      WRITE setForm                     )
-///   //! \brief The amount in either liters or kg depending on \c amountIsWeight().
-///   Q_PROPERTY(double                 amount                    READ amount                    WRITE setAmount                   )
-///   /**
-///    * \brief Whether the \c amount() is weight (kg) or volume (liters).
-///    *
-///    * .:TBD:. For BeerJSON at least, we should enforce mass for Dry and volume for all other cases.
-///    */
-///   Q_PROPERTY(bool                   amountIsWeight            READ amountIsWeight            WRITE setAmountIsWeight           )
    //! \brief The lab from which it came.  NB: In BeerJSON this is called "producer".
    Q_PROPERTY(QString                laboratory                READ laboratory                WRITE setLaboratory               )
    //! \brief The product ID.
@@ -238,13 +225,9 @@ public:
    Q_PROPERTY(QString                bestFor                   READ bestFor                   WRITE setBestFor                  )
    //! \brief The maximum recommended number of reculturings.      ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    Q_PROPERTY(std::optional<int>     maxReuse                  READ maxReuse                  WRITE setMaxReuse                 )
-   //! \brief Whether the yeast is added to secondary or primary.  ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-///   Q_PROPERTY(std::optional<bool>    addToSecondary            READ addToSecondary            WRITE setAddToSecondary           )
 
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 
-///   //! \brief Amounts of a \c Yeast can be measured by mass or by volume (depending usually on its \c Form)
-///   Q_PROPERTY(Measurement::Amount        amountWithUnits           READ amountWithUnits           WRITE setAmountWithUnits          )
    //! \brief The recommended limit of abv by the culture producer before attenuation stops.
    Q_PROPERTY(std::optional<double>  alcoholTolerance_pct      READ alcoholTolerance_pct      WRITE setAlcoholTolerance_pct     )
    Q_PROPERTY(std::optional<double>  attenuationMin_pct        READ attenuationMin_pct        WRITE setAttenuationMin_pct       )
@@ -275,8 +258,6 @@ public:
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    Type                        type                     () const;
    Form                        form                     () const;
-///   double                      amount                   () const;
-///   bool                        amountIsWeight           () const;
    QString                     laboratory               () const;
    QString                     productId                () const;
    std::optional<double>       minTemperature_c         () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
@@ -286,9 +267,7 @@ public:
    QString                     notes                    () const;
    QString                     bestFor                  () const;
    std::optional<int>          maxReuse                 () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-///   std::optional<bool>         addToSecondary           () const; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-///   MassOrVolumeAmt             amountWithUnits          () const;
    std::optional<double>       alcoholTolerance_pct     () const;
    std::optional<double>       attenuationMin_pct       () const;
    std::optional<double>       attenuationMax_pct       () const;
@@ -303,8 +282,6 @@ public:
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setType                     (Type                        const   val);
    void setForm                     (Form                        const   val);
-///   void setAmount                   (double                      const   val);
-///   void setAmountIsWeight           (bool                        const   val);
    void setLaboratory               (QString                     const & val);
    void setProductId                (QString                     const & val);
    void setMinTemperature_c         (std::optional<double>       const   val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
@@ -314,9 +291,7 @@ public:
    void setNotes                    (QString                     const & val);
    void setBestFor                  (QString                     const & val);
    void setMaxReuse                 (std::optional<int>          const   val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-///   void setAddToSecondary           (std::optional<bool>         const   val); // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-///   void setAmountWithUnits          (MassOrVolumeAmt             const   val);
    void setAlcoholTolerance_pct     (std::optional<double>       const   val);
    void setAttenuationMin_pct       (std::optional<double>       const   val);
    void setAttenuationMax_pct       (std::optional<double>       const   val);
@@ -328,14 +303,6 @@ public:
    void setKillerProducingKlusToxin (std::optional<bool>         const   val);
    void setKillerNeutral            (std::optional<bool>         const   val);
 
-///   // .:TBD:. I'm not wild about using "quanta" here (presumably to mean number of packets or number of cultures)
-///   //         Storing an int in a double is safe, so, for now, just leave this in place but as a wrapper around the more
-///   //         generic setInventoryAmount().
-///   void setInventoryQuanta (int             const   val);
-
-///   // Insert boiler-plate declarations for inventory
-///   INVENTORY_COMMON_HEADER_DECLS
-
    /**
     * \brief Get the best attenuation figure to use for this yeast.
     *
@@ -343,8 +310,6 @@ public:
     *        are set, return the mean of those two figures.  Otherwise returns \c Yeast::DefaultAttenuation_pct
     */
    double getTypicalAttenuation_pct() const;
-
-///   virtual Recipe * getOwningRecipe() const;
 
 signals:
 
@@ -355,8 +320,6 @@ protected:
 private:
    Type                        m_type                     ;
    Form                        m_form                     ;
-///   double                      m_amount                   ;
-///   bool                        m_amountIsWeight           ;
    QString                     m_laboratory               ;
    QString                     m_productId                ;
    std::optional<double>       m_minTemperature_c         ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
@@ -364,10 +327,7 @@ private:
    std::optional<Flocculation> m_flocculation             ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    QString                     m_notes                    ;
    QString                     m_bestFor                  ;
-///   std::optional<int>          m_timesCultured            ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
    std::optional<int>          m_maxReuse                 ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-///   std::optional<bool>         m_addToSecondary           ; // ⮜⮜⮜ Optional in BeerXML ⮞⮞⮞
-///   int                         m_inventory_id             ;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<double>       m_alcoholTolerance_pct     ;
    std::optional<double>       m_attenuationMin_pct       ;

@@ -31,6 +31,7 @@
 #include <QVariant>
 
 #include "Application.h"
+#include "config.h"
 #include "database/BtSqlQuery.h"
 #include "database/Database.h"
 #include "database/DbTransaction.h"
@@ -44,7 +45,7 @@ int constexpr DatabaseSchemaHelper::dbVersion = 11;
 
 namespace {
    // TODO It would be neat to be able to supply folder name as a parameter to XML/JSON import
-   char const * const FOLDER_FOR_SUPPLIED_RECIPES = "brewken";
+   char const * const FOLDER_FOR_SUPPLIED_RECIPES = CONFIG_APPLICATION_NAME_LC;
 
    struct QueryAndParameters {
       QString sql;

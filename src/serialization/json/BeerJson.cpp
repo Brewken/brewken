@@ -909,7 +909,10 @@ namespace {
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "original_gravity"       , PropertyNames::Recipe::og            , &BEER_JSON_DENSITY_UNIT_MAPPER},
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "final_gravity"          , PropertyNames::Recipe::fg            , &BEER_JSON_DENSITY_UNIT_MAPPER},
          {JsonRecordDefinition::FieldType::SingleUnitValue     , "alcohol_by_volume"      , PropertyNames::Recipe::ABV_pct       , &BEER_JSON_PERCENT_UNIT       },
-         {JsonRecordDefinition::FieldType::SingleUnitValue     , "ibu_estimate"           , PropertyNames::Recipe::IBU           , &BEER_JSON_BITTERNESS_UNIT    },
+         // TODO: BeerJSON ibu_estimate field of recipe is IBUEstimateType ("Rager", "Tinseth", "Garetz", "Other").  We
+         //       do not currently support having recipe-specific IBU estimate type, but could consider this as a future
+         //       enhancement.
+         {JsonRecordDefinition::FieldType::Enum                , "ibu_estimate"           , BtString::NULL_STR                   },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "color_estimate"         , PropertyNames::Recipe::color_srm     , &BEER_JSON_COLOR_UNIT_MAPPER  },
          {JsonRecordDefinition::FieldType::SingleUnitValue     , "beer_pH"                , PropertyNames::Recipe::beerAcidity_pH, &BEER_JSON_ACIDITY_UNIT       },
          // TBD: IDK why this has no units in contrast with styles/carbonation/minimum and styles/carbonation/maximum

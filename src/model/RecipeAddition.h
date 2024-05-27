@@ -26,8 +26,6 @@
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::RecipeAddition { BtStringConst const property{#property}; }
-///AddPropertyName(recipeId       )
-///AddPropertyName(ingredientId   )
 AddPropertyName(stage          )
 AddPropertyName(step           )
 AddPropertyName(addAtTime_mins )
@@ -143,11 +141,6 @@ public:
 
    //=================================================== PROPERTIES ====================================================
 
-///   /**
-///    * \brief The ID of the recipe in which the addition is being made
-///    */
-///   Q_PROPERTY(int recipeId READ recipeId WRITE setRecipeId)
-
    /**
     * \brief Strictly speaking in BeerJSON, this is an optional parameter, but we have to assume something if it's not
     *        present, so we make it required and subclasses should default it in their constructor (eg to
@@ -200,7 +193,6 @@ public:
    Q_PROPERTY(std::optional<double> duration_mins   READ duration_mins    WRITE setDuration_mins)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-///   int                   recipeId       () const;
    Stage                 stage          () const;
    std::optional<int>    step           () const;
    std::optional<double> addAtTime_mins () const;
@@ -208,10 +200,7 @@ public:
    std::optional<double> addAtAcidity_pH() const;
    std::optional<double> duration_mins  () const;
 
-///   Recipe *              recipe         () const;
-
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-///   void setRecipeId       (int                   const val);
    void setStage          (Stage                 const val);
    void setStep           (std::optional<int>    const val);
    void setAddAtTime_mins (std::optional<double> const val);
@@ -223,7 +212,6 @@ protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
 
 protected:
-///   int                   m_recipeId       ;
    Stage                 m_stage          ;
    std::optional<int>    m_step           ;
    std::optional<double> m_addAtTime_mins ;

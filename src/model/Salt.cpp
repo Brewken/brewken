@@ -72,7 +72,6 @@ bool Salt::isEqualTo(NamedEntity const & other) const {
    Salt const & rhs = static_cast<Salt const &>(other);
    // Base class will already have ensured names are equal
    return (
-///      this->m_whenToAdd == rhs.m_whenToAdd &&
       this->m_type   == rhs.m_type
    );
 }
@@ -84,14 +83,9 @@ ObjectStore & Salt::getObjectStoreTypedInstance() const {
 TypeLookup const Salt::typeLookup {
    "Salt",
    {
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::amount        , Salt::m_amount          , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume      ),
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::amountIsWeight, Salt::m_amountIsWeight  ,         NonPhysicalQuantity::Bool      ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::isAcid        , Salt::m_is_acid         ,         NonPhysicalQuantity::Bool      ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::percentAcid   , Salt::m_percent_acid    ,         NonPhysicalQuantity::Percentage),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::type          , Salt::m_type            ,         NonPhysicalQuantity::Enum      ),
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Salt::whenToAdd     , Salt::m_whenToAdd       ,         NonPhysicalQuantity::Enum      ),
-
-///      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Salt::amountWithUnits, Salt::amountWithUnits, Measurement::ChoiceOfPhysicalQuantity::Mass_Volume  ),
    },
    // Parent classes lookup
    {&Ingredient::typeLookup,
@@ -100,39 +94,24 @@ TypeLookup const Salt::typeLookup {
 static_assert(std::is_base_of<Ingredient, Salt>::value);
 
 Salt::Salt(QString name) :
-   Ingredient{name},
-///   m_amount         {0.0},
-///   m_whenToAdd      {Salt::WhenToAdd::NEVER},
-   m_type           {Salt::Type::CaCl2},
-///   m_amountIsWeight{true},
-   m_percent_acid   {0.0},
-   m_is_acid        {false} {
+   Ingredient    {name},
+   m_type        {Salt::Type::CaCl2},
+   m_percent_acid{0.0},
+   m_is_acid     {false} {
    return;
 }
 
 Salt::Salt(NamedParameterBundle const & namedParameterBundle) :
    Ingredient       {namedParameterBundle},
-///   SET_REGULAR_FROM_NPB (m_whenToAdd   , namedParameterBundle, PropertyNames::Salt::whenToAdd  ),
    SET_REGULAR_FROM_NPB (m_type        , namedParameterBundle, PropertyNames::Salt::type       ),
    SET_REGULAR_FROM_NPB (m_percent_acid, namedParameterBundle, PropertyNames::Salt::percentAcid),
    SET_REGULAR_FROM_NPB (m_is_acid     , namedParameterBundle, PropertyNames::Salt::isAcid     ) {
-
-///   this->setEitherOrReqParams(namedParameterBundle,
-///                              PropertyNames::Salt::amount,
-///                              PropertyNames::Salt::amountIsWeight,
-///                              PropertyNames::Salt::amountWithUnits,
-///                              Measurement::PhysicalQuantity::Mass,
-///                              this->m_amount,
-///                              this->m_amountIsWeight);
    return;
 }
 
 Salt::Salt(Salt const & other) :
    Ingredient       {other                   },
-///   m_amount          {other.m_amount          },
-///   m_whenToAdd       {other.m_whenToAdd       },
    m_type            {other.m_type            },
-///   m_amountIsWeight{other.m_amountIsWeight},
    m_percent_acid    {other.m_percent_acid    },
    m_is_acid         {other.m_is_acid         } {
    return;
@@ -141,11 +120,8 @@ Salt::Salt(Salt const & other) :
 Salt::~Salt() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
-///double          Salt::amount        () const { return this->m_amount          ; }
-///Salt::WhenToAdd Salt::whenToAdd     () const { return this->m_whenToAdd       ; }
 Salt::Type      Salt::type          () const { return this->m_type            ; }
 bool            Salt::isAcid        () const { return this->m_is_acid         ; }
-///bool            Salt::amountIsWeight() const { return this->m_amountIsWeight; }
 double          Salt::percentAcid   () const { return this->m_percent_acid    ; }
 
 Measurement::PhysicalQuantity Salt::suggestedMeasure() const {
@@ -166,19 +142,7 @@ Measurement::PhysicalQuantity Salt::suggestedMeasure() const {
    return Measurement::PhysicalQuantity::Mass; // Should be unreachable, but GCC gives a warning if we don't have this
 }
 
-///MassOrVolumeAmt Salt::amountWithUnits() const {
-///   return MassOrVolumeAmt{this->m_amount,
-///                          this->m_amountIsWeight ? Measurement::Units::kilograms : Measurement::Units::liters};
-///}
-
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-///void Salt::setAmount(double val) {
-///   SET_AND_NOTIFY(PropertyNames::Salt::amount, this->m_amount, val);
-///}
-///
-///void Salt::setWhenToAdd(Salt::WhenToAdd val) {
-///   SET_AND_NOTIFY(PropertyNames::Salt::whenToAdd, this->m_whenToAdd, val);
-///}
 
 // This may come to haunt me, but I am setting the isAcid flag and the
 // amount_is_weight flags here.
@@ -197,7 +161,6 @@ void Salt::setType(Salt::Type type) {
    }
    SET_AND_NOTIFY(PropertyNames::Salt::type,           this->m_type,    type);
    SET_AND_NOTIFY(PropertyNames::Salt::isAcid,         this->m_is_acid, isAcid);
-///   SET_AND_NOTIFY(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, !(type == Salt::Type::LacticAcid || type == Salt::Type::H3PO4));
    if (isAcid && newPercentAcid == 0.0) {
       switch (type) {
          case Salt::Type::LacticAcid    : newPercentAcid = 88; break;
@@ -211,10 +174,6 @@ void Salt::setType(Salt::Type type) {
    return;
 }
 
-///void Salt::setAmountIsWeight(bool val) {
-///   SET_AND_NOTIFY(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, val);
-///}
-
 void Salt::setIsAcid(bool val) {
    SET_AND_NOTIFY(PropertyNames::Salt::isAcid, this->m_is_acid, val);
 }
@@ -223,12 +182,6 @@ void Salt::setPercentAcid(double val) {
    // .:TBD:. Maybe we should check here that we are an acid...
    SET_AND_NOTIFY(PropertyNames::Salt::percentAcid, this->m_percent_acid, val);
 }
-
-///void Salt::setAmountWithUnits(MassOrVolumeAmt const   val) {
-///   SET_AND_NOTIFY(PropertyNames::Salt::amount        , this->m_amount        , val.quantity);
-///   SET_AND_NOTIFY(PropertyNames::Salt::amountIsWeight, this->m_amountIsWeight, val.unit->getPhysicalQuantity() == Measurement::PhysicalQuantity::Mass);
-///   return;
-///}
 
 //====== maths ===========
 //
@@ -391,10 +344,6 @@ double Salt::massConcPpm_SO4_perGramPerLiter() const {
    }
    return 0.0; // Should be unreachable, but GCC gives a warning if we don't have this
 }
-
-///Recipe * Salt::getOwningRecipe() const {
-///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
-///}
 
 // Insert the boiler-plate stuff for inventory
 INGREDIENT_BASE_COMMON_CODE(Salt)

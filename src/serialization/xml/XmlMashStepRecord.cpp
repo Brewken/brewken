@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * serialization/xml/XmlMashStepRecord.cpp is part of Brewken, and is copyright the following authors 2020-2023:
+ * serialization/xml/XmlMashStepRecord.cpp is part of Brewken, and is copyright the following authors 2020-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -34,7 +34,7 @@ XmlRecord::ProcessingResult XmlMashStepRecord::normaliseAndStoreInDb(std::shared
    // input.
    //
    // (2) Despite what one might infer from the constructor signatures, every MashStep is, in theory, supposed to have a
-   // name.  (It does after all inherit from NamedEntity.)  However, at least some versions of Brewken have allowed
+   // name.  (It does after all inherit from NamedEntity.)  However, at least some versions of Brewtarget have allowed
    // creation and export of recipes with one or more unnamed MashSteps.  Moreover, the BeerXML 1.0 standard only says
    // the NAME tag has to be present, not that it can't be empty.  (We might wish that the standard had been more
    // explicit about such things, but it is what it is.)

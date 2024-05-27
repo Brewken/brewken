@@ -61,8 +61,6 @@ bool RecipeAddition::isEqualTo(NamedEntity const & other) const {
 TypeLookup const RecipeAddition::typeLookup {
    "RecipeAddition",
    {
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::recipeId       , RecipeAddition::m_recipeId       ),
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::ingredientId   , RecipeAddition::m_ingredientId   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::stage          , RecipeAddition::m_stage          ,           NonPhysicalQuantity::Enum          ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::step           , RecipeAddition::m_step           ,           NonPhysicalQuantity::OrdinalNumeral),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::RecipeAddition::addAtTime_mins , RecipeAddition::m_addAtTime_mins , Measurement::PhysicalQuantity::Time          ),
@@ -87,8 +85,6 @@ RecipeAddition::RecipeAddition(QString name, int const recipeId, int const ingre
 
 RecipeAddition::RecipeAddition(NamedParameterBundle const & namedParameterBundle) :
    IngredientInRecipe{namedParameterBundle},
-///   SET_REGULAR_FROM_NPB (m_recipeId       , namedParameterBundle, PropertyNames::RecipeAddition::recipeId       ),
-///   SET_REGULAR_FROM_NPB (m_ingredientId   , namedParameterBundle, PropertyNames::RecipeAddition::ingredientId   ),
    // Note that we do not set m_stage here as it is for subclasses to determine how that should be defaulted if it is
    // not present.
    SET_REGULAR_FROM_NPB (m_step           , namedParameterBundle, PropertyNames::RecipeAddition::step           ),
@@ -101,8 +97,6 @@ RecipeAddition::RecipeAddition(NamedParameterBundle const & namedParameterBundle
 
 RecipeAddition::RecipeAddition(RecipeAddition const & other) :
    IngredientInRecipe{other                        },
-///   m_recipeId       {other.m_recipeId       },
-///   m_ingredientId   {other.m_ingredientId   },
    m_stage          {other.m_stage          },
    m_step           {other.m_step           },
    m_addAtTime_mins {other.m_addAtTime_mins },
@@ -132,8 +126,6 @@ RecipeAddition::~RecipeAddition() = default;
 }
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
-///int                        RecipeAddition::recipeId       () const { return this->m_recipeId       ; }
-///int                        RecipeAddition::ingredientId   () const { return this->m_ingredientId   ; }
 RecipeAddition::Stage RecipeAddition::stage          () const { return this->m_stage          ; }
 std::optional<int>    RecipeAddition::step           () const { return this->m_step           ; }
 std::optional<double> RecipeAddition::addAtTime_mins () const { return this->m_addAtTime_mins ; }
@@ -141,14 +133,7 @@ std::optional<double> RecipeAddition::addAtGravity_sg() const { return this->m_a
 std::optional<double> RecipeAddition::addAtAcidity_pH() const { return this->m_addAtAcidity_pH; }
 std::optional<double> RecipeAddition::duration_mins  () const { return this->m_duration_mins  ; }
 
-///Recipe * RecipeAddition::recipe() const {
-///   return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
-///}
-
-
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
-///void RecipeAddition::setRecipeId       (int                   const val) { SET_AND_NOTIFY(PropertyNames::RecipeAddition::recipeId       , this->m_recipeId       , val); return; }
-///void RecipeAddition::setIngredientId   (int                   const val) { SET_AND_NOTIFY(PropertyNames::RecipeAddition::ingredientId   , this->m_ingredientId   , val); return; }
 void RecipeAddition::setStage          (Stage                 const val) { SET_AND_NOTIFY(PropertyNames::RecipeAddition::stage          , this->m_stage          , val); return; }
 void RecipeAddition::setStep           (std::optional<int>    const val) { SET_AND_NOTIFY(PropertyNames::RecipeAddition::step           , this->m_step           , val); return; }
 void RecipeAddition::setAddAtTime_mins (std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::RecipeAddition::addAtTime_mins , this->m_addAtTime_mins , val); return; }

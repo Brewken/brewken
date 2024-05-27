@@ -132,23 +132,6 @@ private:
 protected:
    [[nodiscard]] bool normaliseAndStoreChildRecordsInDb(QTextStream & userMessage, ImportRecordCount & stats);
 
-///   /**
-///    * \brief Called by \c toJson to write out any fields that are themselves records.
-///    *        Subclasses should provide the obvious recursive implementation.
-///    * \param fieldDefinition Which of the fields we're trying to export.  It will be of type \c JsonRecord::Record
-///    * \param subRecord A suitably constructed subclass of \c JsonRecord that can do the export.  (Note that because
-///    *                  exporting to JSON is const on \c JsonRecord, we only need one of these even if there are multiple
-///    *                  records to export.)
-///    * \param namedEntityToExport The object containing (or referencing) the data we want to export to JSON
-///    * \param out Where to write the JSON
-///    */
-///   virtual void subRecordToJson(JsonRecordDefinition::FieldDefinition const & fieldDefinition,
-///                                JsonRecord const & subRecord,
-///                                NamedEntity const & namedEntityToExport,
-///                                QTextStream & out,
-///                                int indentLevel,
-///                                char const * const indentString) const;
-
 private:
    /**
     * \brief Add a value to a JSON object

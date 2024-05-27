@@ -56,7 +56,6 @@ AddPropertyName(notes            )
 AddPropertyName(ogMax            )
 AddPropertyName(ogMin            )
 AddPropertyName(overallImpression)
-///AddPropertyName(profile          )
 AddPropertyName(styleGuide       )
 AddPropertyName(styleLetter      )
 AddPropertyName(type             )
@@ -176,8 +175,6 @@ public:
    Q_PROPERTY(std::optional<double> abvMax_pct       READ abvMax_pct         WRITE setAbvMax_pct       )
    //! \brief The notes.
    Q_PROPERTY(QString notes                          READ notes              WRITE setNotes            )
-   //! \brief Flavor and aroma profile for this style.  NB: This is not part of BeerJSON        TODO This should go to flavor probably
-///   Q_PROPERTY(QString profile                        READ profile            WRITE setProfile          )
    //! \brief The ingredients.
    Q_PROPERTY(QString ingredients                    READ ingredients        WRITE setIngredients      )
    //! \brief The commercial examples.
@@ -190,27 +187,26 @@ public:
    Q_PROPERTY(QString overallImpression              READ overallImpression  WRITE setOverallImpression)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-   QString               category      () const;
-   QString               categoryNumber() const;
-   QString               styleLetter   () const;
-   QString               styleGuide    () const;
-   Type                  type          () const;
-   double                ogMin         () const;
-   double                ogMax         () const;
-   double                fgMin         () const;
-   double                fgMax         () const;
-   double                ibuMin        () const;
-   double                ibuMax        () const;
-   double                colorMin_srm  () const;
-   double                colorMax_srm  () const;
-   std::optional<double> carbMin_vol   () const;
-   std::optional<double> carbMax_vol   () const;
-   std::optional<double> abvMin_pct    () const;
-   std::optional<double> abvMax_pct    () const;
-   QString               notes         () const;
-///   QString               profile       () const;
-   QString               ingredients   () const;
-   QString               examples      () const;
+   QString               category         () const;
+   QString               categoryNumber   () const;
+   QString               styleLetter      () const;
+   QString               styleGuide       () const;
+   Type                  type             () const;
+   double                ogMin            () const;
+   double                ogMax            () const;
+   double                fgMin            () const;
+   double                fgMax            () const;
+   double                ibuMin           () const;
+   double                ibuMax           () const;
+   double                colorMin_srm     () const;
+   double                colorMax_srm     () const;
+   std::optional<double> carbMin_vol      () const;
+   std::optional<double> carbMax_vol      () const;
+   std::optional<double> abvMin_pct       () const;
+   std::optional<double> abvMax_pct       () const;
+   QString               notes            () const;
+   QString               ingredients      () const;
+   QString               examples         () const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    QString               aroma            () const;
    QString               appearance       () const;
@@ -237,7 +233,6 @@ public:
    void setAbvMin_pct       (std::optional<double> const   val);
    void setAbvMax_pct       (std::optional<double> const   val);
    void setNotes            (QString               const & val);
-///   void setProfile          (QString               const & val);
    void setIngredients      (QString               const & val);
    void setExamples         (QString               const & val);
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -246,8 +241,6 @@ public:
    void setFlavor           (QString               const & val);
    void setMouthfeel        (QString               const & val);
    void setOverallImpression(QString               const & val);
-
-///   virtual Recipe * getOwningRecipe() const;
 
 signals:
 
@@ -274,7 +267,6 @@ private:
    std::optional<double> m_abvMin_pct       ;
    std::optional<double> m_abvMax_pct       ;
    QString               m_notes            ;
-///   QString               m_profile          ;
    QString               m_ingredients      ;
    QString               m_examples         ;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞

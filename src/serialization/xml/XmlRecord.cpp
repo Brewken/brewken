@@ -74,10 +74,6 @@ XmlRecord::XmlRecord(XmlCoding           const & xmlCoding,
 
 XmlRecord::~XmlRecord() = default;
 
-///QString XmlRecord::m_recordDefinition.m_recordName const {
-///   return this->recordName;
-///}
-
 bool XmlRecord::load(xalanc::DOMSupport & domSupport,
                      xalanc::XalanNode * rootNodeOfRecord,
                      QTextStream & userMessage) {
@@ -723,14 +719,6 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
                   valueToSet = QVariant::fromValue(
                      childRecordDefinition.m_upAndDownCasters.m_pointerUpcaster(processedChildren.first())
                   );
-///               } else {
-///                  // Should be the only possibility left.
-///                  Q_ASSERT(typeInfo.pointerType == TypeInfo::PointerType::OptionalSharedPointer);
-///                  Q_ASSERT(childRecordDefinition.m_upAndDownCasters.m_optionalPointerUpcaster);
-///                  std::optional<std::shared_ptr<NamedEntity>> processedChild {processedChildren.first()};
-///                  valueToSet = QVariant::fromValue(
-///                     childRecordDefinition.m_upAndDownCasters.m_optionalPointerUpcaster(processedChild)
-///                  );
                }
 
             } else {
@@ -759,31 +747,6 @@ bool XmlRecord::normaliseAndStoreChildRecordsInDb(QTextStream & userMessage,
       }
    }
 
-///      if (XmlRecordDefinition::FieldType::Record == ii->fieldDefinition->fieldType) {
-///         char const * const propertyName = *ii->fieldDefinition->propertyName;
-///         Q_ASSERT(nullptr != propertyName);
-///         // It's a coding error if we had a property defined for a record that's not trying to populate a NamedEntity
-///         // (ie for the root record).
-///         Q_ASSERT(nullptr != this->m_namedEntity.get());
-///         // It's a coding error if we're trying to set a non-existent property on the NamedEntity subclass for this
-///         // record.
-///         QMetaObject const * metaObject = this->m_namedEntity->metaObject();
-///         int propertyIndex = metaObject->indexOfProperty(propertyName);
-///         Q_ASSERT(propertyIndex >= 0);
-///         QMetaProperty metaProperty = metaObject->property(propertyIndex);
-///         Q_ASSERT(metaProperty.isWritable());
-///         // It's a coding error if we can't create a valid QVariant from a pointer to class we are trying to "set"
-///         Q_ASSERT(QVariant::fromValue(ii->xmlRecord->namedEntity.get()).isValid());
-///
-///         qDebug() <<
-///            Q_FUNC_INFO << "Setting" << propertyName << "property (type = " <<
-///            this->m_namedEntity->metaObject()->property(
-///               this->m_namedEntity->metaObject()->indexOfProperty(propertyName)
-///            ).typeName() << ") on" << this->m_recordDefinition.m_namedEntityClassName << "object";
-///         this->m_namedEntity->setProperty(propertyName,
-///                                        QVariant::fromValue(ii->xmlRecord->namedEntity.get()));
-///      }
-///   }
    return true;
 }
 
@@ -916,7 +879,6 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
          }
          qDebug() << Q_FUNC_INFO << xPathElements;
          qDebug() << Q_FUNC_INFO << xPathElements.last();
-///         std::shared_ptr<XmlRecord> subRecord = this->m_coding.getNewXmlRecord(xPathElements.last());
          std::unique_ptr<XmlRecord> subRecord{this->m_recordDefinition.makeRecord(this->m_coding)};
 
          if (XmlRecordDefinition::FieldType::Record == fieldDefinition.type) {
@@ -950,15 +912,6 @@ void XmlRecord::toXml(NamedEntity const & namedEntityToExport,
                childNamedEntitySp =
                   childRecordDefinition.m_upAndDownCasters.m_pointerDowncaster(childNamedEntityVariant);
                childNamedEntity = childNamedEntitySp.get();
-///            } else {
-///               // Should be the only possibility left
-///               Q_ASSERT(typeInfo.pointerType == TypeInfo::PointerType::OptionalSharedPointer);
-///               std::optional<std::shared_ptr<NamedEntity>> temp =
-///                  childRecordDefinition.m_upAndDownCasters.m_optionalPointerDowncaster(childNamedEntityVariant);
-///               if (temp) {
-///                  childNamedEntitySp = *temp;
-///                  childNamedEntity = childNamedEntitySp.get();
-///               }
             }
 
             if (childNamedEntity) {

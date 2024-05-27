@@ -72,11 +72,6 @@ public:
 
    //=================================================== PROPERTIES ====================================================
 
-   /**
-    * \brief The ID of the recipe in which the addition is being made
-    */
-///   Q_PROPERTY(int recipeId READ recipeId WRITE setRecipeId)
-
    Q_PROPERTY(Water * water   READ water   WRITE setWater)
 
    /**
@@ -85,16 +80,10 @@ public:
    Q_PROPERTY(int volume_l READ volume_l WRITE setVolume_l)
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-///   int     recipeId    () const;
-///   int     ingredientId() const;
    Water * water       () const;
    double  volume_l    () const;
 
-///   Recipe * recipe      () const;
-
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-///   void setRecipeId    (int     const val);
-///   void setIngredientId(int     const val);
    void setWater       (Water * const val);
    void setVolume_l    (double  const val);
 
@@ -103,8 +92,7 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 protected:
-///   int    m_recipeId    ;
-   double m_volume_l    ;
+   double m_volume_l;
 
 };
 

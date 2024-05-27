@@ -32,6 +32,7 @@
 #include <QThread>
 #include <QTime>
 
+#include "config.h"
 #include "PersistentSettings.h"
 
 // Qt has changed how you do endl in writing to a QTextStream
@@ -49,9 +50,9 @@ namespace {
    Logging::Level currentLoggingLevel = Logging::LogLevel_INFO;
 
    // We decompose the log filename into its body and suffix for log rotation
-   // The _current_ log file is always "brewken.log"
-   QString const logFilename{"brewken"};
-   QString const logFilenameExtension{"log"};
+   // The _current_ log file is always "[applicaiton name].log"
+   static QString const logFilename = QString{CONFIG_APPLICATION_NAME_LC};
+   static QString const logFilenameExtension{"log"};
 
    // Stores the path to the log files
    QDir logDirectory;

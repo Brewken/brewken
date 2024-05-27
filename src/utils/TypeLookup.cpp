@@ -89,9 +89,3 @@ TypeInfo const & TypeLookup::getType(BtStringConst const & propertyName) const {
    Q_ASSERT(false);
    throw std::bad_typeid();
 }
-
-///bool TypeLookup::isOptional(BtStringConst const & propertyName) const {
-///   // This call to getType() will throw std::bad_typeid if there's no info for propertyName, so we don't have to handle
-///   // that case here
-///   return this->getType(propertyName).isOptional();
-///}

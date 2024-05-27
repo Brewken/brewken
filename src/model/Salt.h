@@ -37,13 +37,9 @@ class RecipeAdjustmentSalt;
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Salt { BtStringConst const property{#property}; }
-///AddPropertyName(amount         )
-///AddPropertyName(amountIsWeight )
-///AddPropertyName(amountWithUnits)
 AddPropertyName(isAcid         )
 AddPropertyName(percentAcid    )
 AddPropertyName(type           )
-///AddPropertyName(whenToAdd      )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -118,41 +114,22 @@ public:
    virtual ~Salt();
 
    // On a base or target profile, bicarbonate and alkalinity cannot both be used. I'm gonna have fun figuring that out
-///   //! \brief The amount of salt to be added (always a weight)
-///   Q_PROPERTY(double    amount         READ amount         WRITE setAmount          )
-///   //! \brief When to add the salt (mash or sparge)
-///   Q_PROPERTY(WhenToAdd whenToAdd      READ whenToAdd      WRITE setWhenToAdd       )
    //! \brief What kind of salt this is
    Q_PROPERTY(Type      type           READ type           WRITE setType            )
-///   //! \brief Is this a weight (like CaCO3) or a volume (like H3PO3)
-///   Q_PROPERTY(bool      amountIsWeight READ amountIsWeight WRITE setAmountIsWeight  )
    //! \brief What percent is acid (used for lactic acid, H3PO4 and acid malts)
    Q_PROPERTY(double    percentAcid    READ percentAcid    WRITE setPercentAcid     )
    //! \brief Is this an acid or salt?
    Q_PROPERTY(bool      isAcid         READ isAcid         WRITE setIsAcid          )
    Q_PROPERTY(Measurement::PhysicalQuantity suggestedMeasure READ suggestedMeasure)
 
-///   Q_PROPERTY(Measurement::Amount    amountWithUnits   READ amountWithUnits   WRITE setAmountWithUnits)
-
-///   double          amount()         const;
-///   Salt::WhenToAdd whenToAdd()      const;
    Salt::Type      type()           const;
-///   bool            amountIsWeight() const;
    double          percentAcid()    const;
    bool            isAcid()         const;
-///   int             miscId()         const;
    Measurement::PhysicalQuantity suggestedMeasure() const;
 
-///   MassOrVolumeAmt amountWithUnits    () const;
-
-///   void setAmount        (double          val);
-///   void setWhenToAdd     (Salt::WhenToAdd val);
    void setType          (Salt::Type      val);
-///   void setAmountIsWeight(bool            val);
    void setPercentAcid   (double          val);
    void setIsAcid        (bool            val);
-
-///   void setAmountWithUnits(MassOrVolumeAmt const   val);
 
    /**
     * \return Mass concentration (in parts per million) of Calcium (Ca) for one gram of this salt in one liter of water
@@ -189,8 +166,6 @@ public:
     */
    double massConcPpm_SO4_perGramPerLiter () const;
 
-///   virtual Recipe * getOwningRecipe() const;
-
 signals:
 
 protected:
@@ -198,12 +173,9 @@ protected:
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-///   double m_amount;
-///   Salt::WhenToAdd m_whenToAdd;
    Salt::Type m_type;
-///   bool m_amountIsWeight;
-   double m_percent_acid;
-   bool m_is_acid;
+   double     m_percent_acid;
+   bool       m_is_acid;
 };
 
 BT_DECLARE_METATYPES(Salt)

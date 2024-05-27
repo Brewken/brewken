@@ -40,6 +40,7 @@
 #include <QVector>
 #include <QWidget>
 
+#include "config.h"
 #include "database/Database.h"
 #include "Localization.h"
 #include "Logging.h"
@@ -375,7 +376,7 @@ public:
                                                                 "Number of backups to keep: -1 means never remove, 0 means never backup", nullptr));
       // Actually the backups happen after every X times the program is closed, but the tooltip is already long enough!
       this->label_frequency.setToolTip(QApplication::translate("optionsDialog",
-                                                               "How many times Brewken needs to be run to trigger another backup: 1 means always backup", nullptr));
+                                                               "How many times %1 needs to be run to trigger another backup: 1 means always backup", nullptr).arg(CONFIG_APPLICATION_NAME_UC));
 #endif
       return;
    }
@@ -510,8 +511,8 @@ public:
       this->input_pgHostname.setText(PersistentSettings::value(PersistentSettings::Names::dbHostname, "localhost").toString());
       this->input_pgPortNum.setText(PersistentSettings::value(PersistentSettings::Names::dbPortnum, "5432").toString());
       this->input_pgSchema.setText(PersistentSettings::value(PersistentSettings::Names::dbSchema, "public").toString());
-      this->input_pgDbName.setText(PersistentSettings::value(PersistentSettings::Names::dbName, "brewken").toString());
-      this->input_pgUsername.setText(PersistentSettings::value(PersistentSettings::Names::dbUsername, "brewken").toString());
+      this->input_pgDbName.setText(PersistentSettings::value(PersistentSettings::Names::dbName, CONFIG_APPLICATION_NAME_LC).toString());
+      this->input_pgUsername.setText(PersistentSettings::value(PersistentSettings::Names::dbUsername, CONFIG_APPLICATION_NAME_LC).toString());
       this->input_pgPassword.setText(PersistentSettings::value(PersistentSettings::Names::dbPassword, "").toString());
       this->checkBox_savePgPassword.setChecked(PersistentSettings::contains(PersistentSettings::Names::dbPassword));
 
@@ -764,8 +765,8 @@ void OptionDialog::resetToDefault() {
       this->pimpl->input_pgHostname.setText(QString("localhost"));
       this->pimpl->input_pgPortNum.setText(QString("5432"));
       this->pimpl->input_pgSchema.setText(QString("public"));
-      this->pimpl->input_pgDbName.setText(QString("brewken"));
-      this->pimpl->input_pgUsername.setText(QString("brewken"));
+      this->pimpl->input_pgDbName.setText(QString(CONFIG_APPLICATION_NAME_LC));
+      this->pimpl->input_pgUsername.setText(QString(CONFIG_APPLICATION_NAME_LC));
       this->pimpl->input_pgPassword.setText(QString(""));
       this->pimpl->checkBox_savePgPassword.setChecked(false);
    } else {
@@ -952,10 +953,10 @@ bool OptionDialog::saveDatabaseConfig() {
    if (this->pimpl->dbConnectionTestState == NEEDS_TEST || this->pimpl->dbConnectionTestState == TEST_FAILED) {
       QMessageBox::critical(
          nullptr,
-                            tr("Test connection or cancel"),
-         tr("Saving the options without testing the connection can cause Brewken to not restart.  Your changes have "
+         tr("Test connection or cancel"),
+         tr("Saving the options without testing the connection can cause %1 to not restart.  Your changes have "
             "been discarded, which is likely really, really crappy UX.  Please open a bug explaining exactly how you "
-            "got to this message.")
+            "got to this message.").arg(CONFIG_APPLICATION_NAME_UC)
                            );
       return false;
    }
@@ -986,8 +987,8 @@ bool OptionDialog::transferDatabase() {
    // preserve the information required.
    try {
       QString theQuestion =
-         tr("Would you like Brewken to transfer your data to the new database? "
-            "NOTE: If you've already loaded the data, say No");
+         tr("Would you like %1 to transfer your data to the new database? "
+            "NOTE: If you've already loaded the data, say No").arg(CONFIG_APPLICATION_NAME_UC);
       if (QMessageBox::Yes == QMessageBox::question(this, tr("Transfer database"), theQuestion)) {
          Database::instance().convertDatabase(this->pimpl->input_pgHostname.text(),
                                               this->pimpl->input_pgDbName.text(),
@@ -1007,7 +1008,11 @@ bool OptionDialog::transferDatabase() {
          PersistentSettings::insert(PersistentSettings::Names::dbName,     this->pimpl->input_pgDbName.text());
          PersistentSettings::insert(PersistentSettings::Names::dbUsername, this->pimpl->input_pgUsername.text());
       }
-      QMessageBox::information(this, tr("Restart"), tr("Please restart Brewken to connect to the new database"));
+      QMessageBox::information(
+         this,
+         tr("Restart"),
+         tr("Please restart %1 to connect to the new database").arg(CONFIG_APPLICATION_NAME_UC)
+      );
    } catch (QString e) {
       qCritical() << Q_FUNC_INFO << e;
       success = false;
@@ -1037,7 +1042,7 @@ void OptionDialog::saveSqliteConfig() {
       QMessageBox::information(
          this,
          tr("Restart"),
-         tr("Please restart Brewken.")
+         tr("Please restart %1.").arg(CONFIG_APPLICATION_NAME_UC)
       );
    }
 

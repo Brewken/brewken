@@ -21,6 +21,7 @@
 #include <QMessageBox>
 #include <QButtonGroup>
 
+#include "config.h"
 #include "database/ObjectStoreWrapper.h"
 #include "listModels/EquipmentListModel.h"
 #include "model/Boil.h"
@@ -147,7 +148,8 @@ ScaleRecipeIntroPage::ScaleRecipeIntroPage(QWidget* parent) :
 }
 
 void ScaleRecipeIntroPage::doLayout() {
-   setPixmap(QWizard::WatermarkPixmap, QPixmap(":images/brewken.svg"));
+   static QString const logoFile = QString{":images/%1.svg"}.arg(CONFIG_APPLICATION_NAME_LC);
+   setPixmap(QWizard::WatermarkPixmap, QPixmap(logoFile));
 
    layout->addWidget(label);
       label->setWordWrap(true);

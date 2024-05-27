@@ -27,7 +27,7 @@
 /*!
  * \class BtTreeFilterProxyModel
  *
- * \brief Proxy model for sorting Brewken trees.
+ * \brief Proxy model for sorting BtTreeModel trees.
  */
 class BtTreeFilterProxyModel : public QSortFilterProxyModel {
    Q_OBJECT

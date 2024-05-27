@@ -61,7 +61,6 @@ AddPropertyName(projPoints       )
 AddPropertyName(projStrikeTemp_c )
 AddPropertyName(projVolIntoBK_l  )
 AddPropertyName(projVolIntoFerm_l)
-///AddPropertyName(recipeId         )
 AddPropertyName(sg               )
 AddPropertyName(strikeTemp_c     )
 AddPropertyName(volumeIntoBK_l   )
@@ -138,7 +137,6 @@ public:
    Q_PROPERTY(double  projPoints          READ projPoints          WRITE setProjPoints          STORED false)
    Q_PROPERTY(double  projFermPoints      READ projFermPoints      WRITE setProjFermPoints      STORED false)
    Q_PROPERTY(double  projAtten           READ projAtten           WRITE setProjAtten           STORED false)
-///   Q_PROPERTY(int     recipeId  READ getRecipeId WRITE setRecipeId STORED false )
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    QDate   brewDate         () const;
@@ -175,7 +173,6 @@ public:
    double  projPoints       () const;
    double  projFermPoints   () const;
    double  projAtten        () const;
-///   int getRecipeId() const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setABV              (double var);
@@ -213,9 +210,6 @@ public:
    void populateNote(Recipe* parent);
    void recalculateEff(Recipe* parent);
    void setLoading(bool flag);
-///   void setRecipeId(int recipeId);
-///   void setRecipe(Recipe * recipe);
-
 
    // Calculations
    double calculateEffIntoBK_pct();
@@ -227,8 +221,6 @@ public:
    double calculateActualABV_pct();
    //! Actual attenuation, based on measured og/fg
    double calculateAttenuation_pct();
-
-///   virtual Recipe * getOwningRecipe() const;
 
 signals:
    void brewDateChanged(const QDate &);
@@ -271,13 +263,8 @@ private:
    double  m_projPoints       ;
    double  m_projFermPoints   ;
    double  m_projAtten        ;
-///   int  m_recipeId;
-
 };
 
 BT_DECLARE_METATYPES(BrewNote)
-
-//Q_DECLARE_METATYPE(QList<                BrewNote *>)
-//Q_DECLARE_METATYPE(QList<std::shared_ptr<BrewNote> >)
 
 #endif

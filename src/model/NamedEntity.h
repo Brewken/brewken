@@ -580,20 +580,6 @@ protected:
    }
 
 public:
-///   /**
-///    * \brief In certain circumstances, we need to be able to convert a `QList<Hop *>` or `QList<Fermentable *>` etc to
-///    *        QList<NamedEntity *>.  This function does that work.
-///    */
-///   template<typename T>
-///   static QList<NamedEntity *> downcastRawList(QList<T *> const & inputList) {
-///      QList<NamedEntity *> outputList;
-///      outputList.reserve(inputList.size());
-///      for (T * ii : inputList) {
-///         outputList.append(static_cast<NamedEntity *>(ii));
-///      }
-///      return outputList;
-///   }
-
 
    /**
     * \brief Converts a QVariant containing `std::shared_ptr<Hop>` or `std::shared_ptr<Fermentable>` etc to
@@ -612,34 +598,6 @@ public:
    static QVariant upcastPointer(std::shared_ptr<NamedEntity> input) {
       return QVariant::fromValue(std::static_pointer_cast<T>(input));
    }
-
-///   /**
-///    * \brief Converts a QVariant containing `std::optional<std::shared_ptr<Hop>>` or
-///    *        `std::optional<std::shared_ptr<Fermentable>>` etc to
-///    *        `std::optional<std::shared_ptr<NamedEntity>>`.
-///    */
-///   template<typename T>
-///   static std::optional<std::shared_ptr<NamedEntity>> downcastOptionalPointer(QVariant const & input) {
-///      auto contents{input.value<std::optional<std::shared_ptr<T>>>()};
-///      if (contents) {
-///         return std::static_pointer_cast<NamedEntity>(*contents);
-///      }
-///      return std::nullopt;
-///   }
-///
-///   /**
-///    * \brief Opposite of \c downcastOptionalPointer. Converts `std::optional<std::shared_ptr<NamedEntity>>` to a
-///    *        QVariant containing `std::optional<std::shared_ptr<Hop>>` or `std::optional<std::shared_ptr<Fermentable>>`
-///    *        etc.
-///    */
-///   template<typename T>
-///   static QVariant upcastOptionalPointer(std::optional<std::shared_ptr<NamedEntity>> input) {
-///      std::optional<std::shared_ptr<T>> output;
-///      if (input) {
-///         output = std::static_pointer_cast<T>(*input);
-///      }
-///      return QVariant::fromValue(output);
-///   }
 
    /**
     * \brief Converts `QList<shared_ptr<Hop>>` or `QList<shared_ptr<Fermentable>>` etc to
@@ -698,8 +656,6 @@ public:
    struct UpAndDownCasters{
       std::shared_ptr<NamedEntity>                (*m_pointerDowncaster        )(QVariant const &                           );
       QVariant                                    (*m_pointerUpcaster          )(std::shared_ptr<NamedEntity>               );
-///      std::optional<std::shared_ptr<NamedEntity>> (*m_optionalPointerDowncaster)(QVariant const &                           );
-///      QVariant                                    (*m_optionalPointerUpcaster  )(std::optional<std::shared_ptr<NamedEntity>>);
       QVariant                                    (*m_listUpcaster             )(QList<std::shared_ptr<NamedEntity>> const &);
       QList<std::shared_ptr<NamedEntity>>         (*m_listDowncaster           )(QVariant const &                           );
    };
@@ -713,8 +669,6 @@ public:
       return {
          NamedEntity::downcastPointer        <T>,
          NamedEntity::upcastPointer          <T>,
-///         NamedEntity::downcastOptionalPointer<T>,
-///         NamedEntity::upcastOptionalPointer  <T>,
          NamedEntity::upcastListToVariant    <T>,
          NamedEntity::downcastListFromVariant<T>
       };

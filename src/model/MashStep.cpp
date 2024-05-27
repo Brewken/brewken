@@ -56,16 +56,11 @@ bool MashStep::isEqualTo(NamedEntity const & other) const {
    return (
       this->m_type         == rhs.m_type         &&
       this->m_amount_l     == rhs.m_amount_l     &&
-///      this->m_stepTemp_c   == rhs.m_stepTemp_c   &&
       this->m_infuseTemp_c == rhs.m_infuseTemp_c &&
       // Parent classes have to be equal too
       this->Step::isEqualTo(other)
    );
 }
-
-///ObjectStore & MashStep::getObjectStoreTypedInstance() const {
-///   return ObjectStoreTyped<MashStep>::getInstance();
-///}
 
 TypeLookup const MashStep::typeLookup {
    "MashStep",
@@ -74,7 +69,6 @@ TypeLookup const MashStep::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::MashStep::amount_l              , MashStep::m_amount_l              , Measurement::PhysicalQuantity::Volume        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::MashStep::infuseAmount_l        , MashStep::m_amount_l              , Measurement::PhysicalQuantity::Volume        ), // Type Lookup retained for BeerXML
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::MashStep::decoctionAmount_l     , MashStep::m_amount_l              , Measurement::PhysicalQuantity::Volume        ), // Type Lookup retained for BeerXML
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::MashStep::stepTemp_c            , MashStep::m_stepTemp_c            , Measurement::PhysicalQuantity::Temperature   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::MashStep::infuseTemp_c          , MashStep::m_infuseTemp_c          , Measurement::PhysicalQuantity::Temperature   ),
       // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::MashStep::liquorToGristRatio_lKg, MashStep::m_liquorToGristRatio_lKg, Measurement::PhysicalQuantity::SpecificVolume),
@@ -90,7 +84,6 @@ MashStep::MashStep(QString name) :
    Step                    {name},
    m_type                  {MashStep::Type::Infusion},
    m_amount_l              {0.0                     },
-///   m_stepTemp_c            {0.0                     },
    m_infuseTemp_c          {std::nullopt            },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    m_liquorToGristRatio_lKg{std::nullopt            } {
@@ -101,7 +94,6 @@ MashStep::MashStep(NamedParameterBundle const & namedParameterBundle) :
    Step                    (namedParameterBundle                                                                           ),
    SET_REGULAR_FROM_NPB (m_type                  , namedParameterBundle, PropertyNames::MashStep::type                  ),
    SET_REGULAR_FROM_NPB (m_amount_l              , namedParameterBundle, PropertyNames::MashStep::amount_l              , 0.0),
-///   SET_REGULAR_FROM_NPB (m_stepTemp_c            , namedParameterBundle, PropertyNames::MashStep::stepTemp_c            ),
    SET_REGULAR_FROM_NPB (m_infuseTemp_c          , namedParameterBundle, PropertyNames::MashStep::infuseTemp_c          ),
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    SET_REGULAR_FROM_NPB (m_liquorToGristRatio_lKg, namedParameterBundle, PropertyNames::MashStep::liquorToGristRatio_lKg) {
@@ -126,7 +118,6 @@ MashStep::MashStep(MashStep const & other) :
    Step                    {other},
    m_type                  {other.m_type                  },
    m_amount_l              {other.m_amount_l              },
-///   m_stepTemp_c            {other.m_stepTemp_c            },
    m_infuseTemp_c          {other.m_infuseTemp_c          },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    m_liquorToGristRatio_lKg{other.m_liquorToGristRatio_lKg} {
@@ -138,7 +129,6 @@ MashStep::~MashStep() = default;
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
 MashStep::Type        MashStep::type                  () const { return this->m_type                  ; }
 double                MashStep::amount_l              () const { return this->m_amount_l              ; }
-///double                MashStep::stepTemp_c            () const { return this->m_stepTemp_c            ; }
 std::optional<double> MashStep::infuseTemp_c          () const { return this->m_infuseTemp_c          ; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 std::optional<double> MashStep::liquorToGristRatio_lKg() const { return this->m_liquorToGristRatio_lKg; }
@@ -180,13 +170,8 @@ bool MashStep::isDecoction() const {
    return (m_type == MashStep::Type::Decoction);
 }
 
-///Recipe * MashStep::getOwningRecipe() const {
-///   return Step::doGetOwningRecipe<Mash>(this);
-///}
-
 [[nodiscard]] bool MashStep:: stepTimeIsRequired() const { return true; }
 [[nodiscard]] bool MashStep::startTempIsRequired() const { return true; }
-
 
 // Insert boiler-plate wrapper functions that call down to StepBase
 STEP_COMMON_CODE(Mash)
