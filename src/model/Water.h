@@ -57,6 +57,7 @@ AddPropertyName(type            )
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
 
+class RecipeUseOfWater;
 
 /*!
  * \class Water
@@ -119,6 +120,12 @@ public:
 
    static EnumStringMapping const ionStringMapping;
    static EnumStringMapping const ionDisplayNames;
+
+   //
+   // Although Water is a bit different from other "ingredients", this alias is still helpful for templating functions
+   // where it is valid to great RecipeUseOfWater as a RecipeAddition class.
+   //
+   using RecipeAdditionClass = RecipeUseOfWater;
 
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
