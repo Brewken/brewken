@@ -30,6 +30,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 
+#include "config.h"
 #include "BtHorizontalTabs.h"
 #include "database/ObjectStoreWrapper.h"
 #include "HeatCalculations.h"
@@ -129,7 +130,7 @@ bool EquipmentEditor::validateBeforeSave() {
    // realise but this will break things" errors.  We otherwise trust the user to be able to spot if s/he has
    // accidentally entered nonsensical field values.
    //
-   QString message = tr("This equipment profile may break Brewken's maths");
+   QString message = tr("This equipment profile may break %1's maths").arg(CONFIG_APPLICATION_NAME_UC);
    QString inform = QString("%1%2").arg(tr("The following values are not set:")).arg(QString("<ul>"));
    if (qFuzzyIsNull(lineEdit_mashTunVolume->getNonOptCanonicalQty()))    {
       problems = true;

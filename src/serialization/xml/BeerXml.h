@@ -18,8 +18,6 @@
 #define SERIALIZATION_XML_BEERXML_H
 #pragma once
 
-///#include <memory> // For PImpl
-
 #include <QFile>
 #include <QString>
 #include <QTextStream>
@@ -63,9 +61,6 @@ public:
    bool importFromXML(QString const & filename, QTextStream & userMessage);
 
 private:
-///   // Private implementation details - see https://herbsutter.com/gotw/_100/
-///   class impl;
-///   std::unique_ptr<impl> pimpl;
 
    /**
     * Private constructor as singleton

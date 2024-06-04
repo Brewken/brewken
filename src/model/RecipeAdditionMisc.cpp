@@ -81,7 +81,6 @@ RecipeAdditionMisc::RecipeAdditionMisc(NamedParameterBundle const & namedParamet
    //
    m_stage = namedParameterBundle.val<RecipeAddition::Stage>(PropertyNames::RecipeAddition::stage,
                                                              RecipeAddition::Stage::Boil);
-///   qDebug() << Q_FUNC_INFO << "RecipeAdditionMisc #" << this->key() << ": Recipe #" << this->m_recipeId << ", Misc #" << this->m_ingredientId;
    return;
 }
 
@@ -128,13 +127,8 @@ Misc * RecipeAdditionMisc::misc() const {
       return nullptr;
    }
 
-///   qDebug() << Q_FUNC_INFO << "RecipeAdditionMisc #" << this->key() << ": Recipe #" << this->m_recipeId << ", Misc #" << this->m_ingredientId << "@" << ObjectStoreWrapper::getByIdRaw<Misc>(this->m_ingredientId);
    return ObjectStoreWrapper::getByIdRaw<Misc>(this->m_ingredientId);
 }
-
-///Recipe * RecipeAdditionMisc::getOwningRecipe() const {
-///   return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
-///}
 
 NamedEntity * RecipeAdditionMisc::ensureExists(BtStringConst const & property) {
    if (property == PropertyNames::RecipeAdditionMisc::misc) {

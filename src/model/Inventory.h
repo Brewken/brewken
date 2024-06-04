@@ -34,8 +34,6 @@ class TypeLookup;
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Inventory { BtStringConst const property{#property}; }
-///AddPropertyName(id)      // Deprecated.  Use PropertyNames::NamedEntity::key instead
-///AddPropertyName(amount)  // Deprecated.  Use PropertyNames::IngredientAmount::quantity instead
 AddPropertyName(ingredientId)
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
@@ -120,7 +118,6 @@ public:
    virtual void setMeasure (Measurement::PhysicalQuantity const   val) = 0;
    virtual void setIsWeight(bool                          const   val) = 0;
 
-
    //============================================= OTHER MEMBER FUNCTIONS ==============================================
 
    /**
@@ -134,11 +131,6 @@ public:
     *        as it's needed for \c ObjectStoreTyped::softDelete().
     */
    void setDisplay(bool var);
-
-///   /**
-///    * TBD: This is needed because NamedEntity has it, but I'd like to refactor it out at some point.
-///    */
-///   virtual Recipe * getOwningRecipe() const;
 
    /**
     * \brief We need this for ObjectStoreTyped to call
@@ -253,7 +245,7 @@ protected:                                                                      
  *        Note we have to be careful about comment formats in macro definitions
  */
 #define INVENTORY_COMMON_CODE(IngredientName, LcIngredientName) \
-QString Inventory##IngredientName::localisedName() { return tr(#IngredientName " Inventory"); }                           \
+QString Inventory##IngredientName::localisedName() { return tr(#IngredientName " Inventory"); }                      \
 ObjectStore & Inventory##IngredientName::getObjectStoreTypedInstance() const {                                       \
    return ObjectStoreTyped<Inventory##IngredientName>::getInstance();                                                \
 }                                                                                                                    \
@@ -286,101 +278,5 @@ Inventory##IngredientName::~Inventory##IngredientName() = default;              
 IngredientName * Inventory##IngredientName::LcIngredientName() const {                                               \
    return ObjectStoreWrapper::getByIdRaw<IngredientName>(this->m_ingredientId);                                      \
 }                                                                                                                    \
-
-
-//////////////////////////////////////////////// OLD OLD OLD OLD OLD OLD ////////////////////////////////////////////////
-///class OldInventory : public QObject {
-///   Q_OBJECT
-///
-///public:
-///   /**
-///    * \brief See comment in model/NamedEntity.h
-///    */
-///   static QString localisedName();
-///
-///   /**
-///    * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
-///    *        info.
-///    */
-///   static TypeLookup const typeLookup;
-///
-///   OldInventory();
-///   OldInventory(NamedParameterBundle const & namedParameterBundle);
-///   OldInventory(OldInventory const & other);
-///
-///   ~OldInventory();
-///
-///   Q_PROPERTY(int    id     READ getId     WRITE setId    )
-///   Q_PROPERTY(double amount READ getAmount WRITE setAmount)
-///
-///   /**
-///    * \brief Returns the ID of the Inventory object, which is unique for a given subclass of Inventory (eg InventoryHop)
-///    */
-///   int getId() const;
-///
-///   /**
-///    * \brief Returns the amount of the ingredient in the inventory.  Note that the interpretation of this amount (eg,
-///    *        whether it's kilograms, liters, etc) is the responsibility of the ingredient class.
-///    */
-///   double getAmount() const;
-///
-///   void setId(int id);
-///   void setAmount(double amount);
-///
-///   /**
-///    * \brief Synonym for \c setId(), as it's needed for \c ObjectStoreTyped::hardDelete()
-///    */
-///   void setKey(int id);
-///
-///   /**
-///    * \brief This doesn't actually do anything, but using ObjectStoreTyped means we have to provide an implementation,
-///    *        as it's needed for \c ObjectStoreTyped::softDelete().
-///    */
-///   void setDeleted(bool var);
-///
-///   /**
-///    * \brief This doesn't actually do anything, but using ObjectStoreTyped means we have to provide an implementation,
-///    *        as it's needed for \c ObjectStoreTyped::softDelete().
-///    */
-///   void setDisplay(bool var);
-///
-///   /**
-///    * \brief Returns the name of the ingredient class (eg Hop, Fermentable, Misc, Yeast) to which this Inventory class
-///    *        relates.  Subclasses need to provide the (trivial) implementation of this.  Primarily useful for logging
-///    *        and debugging.
-///    */
-///   virtual char const * getIngredientClass() const = 0;
-///
-///   /**
-///    * \brief We need this for ObjectStoreTyped to call
-///    */
-///   void hardDeleteOwnedEntities();
-///
-///protected:
-///   /**
-///    * \brief Subclasses need to override this function to return the appropriate instance of \c ObjectStoreTyped.
-///    */
-///   virtual ObjectStore & getObjectStoreTypedInstance() const = 0;
-///
-///private:
-///   // Private implementation details - see https://herbsutter.com/gotw/_100/
-///   class impl;
-///   std::unique_ptr<impl> pimpl;
-///};
-///// Thankfully C++11 allows us to inherit constructors using "using"
-//////class InventoryFermentable : public OldInventory { using OldInventory::OldInventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
-///class InventoryMisc        : public OldInventory { using OldInventory::OldInventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
-///class InventoryYeast       : public OldInventory { using OldInventory::OldInventory; public: virtual char const * getIngredientClass() const; protected: virtual ObjectStore & getObjectStoreTypedInstance() const; };
-///
-///namespace InventoryUtils {
-///   /**
-///    * \brief Helper function to set inventory amount for a given object
-///    */
-///   template<class Ing>
-///   void setAmount(Ing & ing, double amount);
-///
-///   template<class Ing>
-///   double getAmount(Ing const & ing);
-///}
 
 #endif

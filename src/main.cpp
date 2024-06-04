@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * main.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * main.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
    // time, but it seems these run-time calls are always required.
    //
    // We take advantage of this to allow different persistent settings in debug mode, so that changes made will not
-   // interfere with another installed instance of Brewken
+   // interfere with another installed instance of the application.
    //
    // We deliberately do not call app.setOrganizationName() as it just creates an extra level of directories in the Qt
    // default file locations (eg on Linux config location is ~/.config/orgName/appName if both organization and
@@ -117,7 +117,7 @@ int main(int argc, char **argv) {
    // extra directory layer).
    //
    ExceptionCatchingQApplication app(argc, argv);
-   app.setOrganizationDomain("brewken.com");
+   app.setOrganizationDomain(CONFIG_ORGANIZATION_DOMAIN);
    // We used to vary the application name (and therefore location of config files etc) depending on whether we're
    // building with debug or release version of Qt, but on the whole I don't think this is helpful
    app.setApplicationName(CONFIG_APPLICATION_NAME_LC);
@@ -175,14 +175,14 @@ int main(int argc, char **argv) {
    }
 
    //
-   // Check whether another instance of Brewken is running.  We want to avoid two instances running at the same time
-   // because, at best, one of them will be locked out of the database (if using SQLite) and, at worst, race conditions
-   // etc between the two instances could lead to data loss/corruption.
+   // Check whether another instance of the application is running.  We want to avoid two instances running at the same
+   // time because, at best, one of them will be locked out of the database (if using SQLite) and, at worst, race
+   // conditions etc between the two instances could lead to data loss/corruption.
    //
    // Using QSharedMemory seems to be the standard way to do this in Qt according to various discussions on Stack
-   // Overflow and Qt forums.  Essentially, we try to create one byte of cross-process shared memory with identifier
-   // "Brewken".  If this fails, it means another process (ie another instance of Brewken) has already created
-   // such shared memory (which gets automatically destroyed when the application exits).
+   // Overflow and Qt forums.  Essentially, we try to create one byte of cross-process shared memory with application
+   // name as the identifier.  If this fails, it means another process (ie another instance of the application) has
+   // already created such shared memory (which gets automatically destroyed when the application exits).
    //
    // We want to allow the user to override this warning because, according to the Qt documentation, it is possible, on
    // Linux, that we get a "false positive".  Specifically, if the application crashed, then the shared memory will not
@@ -202,10 +202,10 @@ int main(int argc, char **argv) {
       if (!sharedMemory.create(1)) {
          enum QMessageBox::StandardButton buttonPressed =
             QMessageBox::warning(NULL,
-                                 QApplication::tr("Brewken is already running!"),
-                                 QApplication::tr("Another instance of Brewken is already running.\n\n"
-                                                "Running two copies of the program at once may lead to data loss.\n\n"
-                                                "Press OK to quit."),
+                                 QApplication::tr("%1 is already running!").arg(CONFIG_APPLICATION_NAME_UC),
+                                 QApplication::tr("Another instance of %1 is already running.\n\n"
+                                                  "Running two copies of the program at once may lead to data loss.\n\n"
+                                                  "Press OK to quit.").arg(CONFIG_APPLICATION_NAME_UC),
                                  QMessageBox::Ignore | QMessageBox::Ok,
                                  QMessageBox::Ok);
          if (buttonPressed == QMessageBox::Ok) {

@@ -254,7 +254,8 @@ namespace {
                                     QMessageBox::Yes | QMessageBox::No,
                                     QMessageBox::Yes) == QMessageBox::Yes ) {
             // ...take them to the website.
-            QDesktopServices::openUrl(QUrl("https://github.com/Brewken/brewken/releases"));
+            static QString const releasesPage = QString{"%1/releases"}.arg(CONFIG_HOMEPAGE_URL);
+            QDesktopServices::openUrl(QUrl(releasesPage));
          } else  {
             // ... and the user does NOT want to download the new version...
             // ... and they want us to stop bothering them...
@@ -291,7 +292,8 @@ namespace {
       // Nobody else needs to access this QNetworkAccessManager object, but it needs to carry on existing after this
       // function returns (otherwise the HTTP GET request will get cancelled), hence why we make it static.
       static QNetworkAccessManager * manager = new QNetworkAccessManager();
-      QUrl url("https://api.github.com/repos/Brewken/brewken/releases/latest");
+      static QString const releasesLatest = QString{"https://api.github.com/repos/%1/%2/releases/latest"}.arg(CONFIG_APPLICATION_NAME_UC, CONFIG_APPLICATION_NAME_LC);
+      QUrl url(releasesLatest);
       responseToCheckForNewVersion = manager->get(QNetworkRequest(url));
       // Since Qt5, you can connect signals to simple functions (see https://wiki.qt.io/New_Signal_Slot_Syntax)
       QObject::connect(responseToCheckForNewVersion, &QNetworkReply::finished, mw, &finishCheckForNewVersion);
@@ -356,7 +358,7 @@ namespace {
          // We'll assume the return value from QCoreApplication::applicationDirPath is invalid if it does not end in
          // /bin (because there's no way it would make sense for us to be in an sbin directory
          if (path.endsWith("/bin/")) {
-            path += "../share/brewken/";
+            path += QString{"../share/%1/"}.arg(CONFIG_APPLICATION_NAME_LC);
          } else {
             qWarning() <<
                Q_FUNC_INFO << "Cannot determine application binary location (got" << path << ") so using compile-time "
@@ -441,7 +443,7 @@ bool Application::initialize() {
 }
 
 void Application::cleanup() {
-   qDebug() << Q_FUNC_INFO << "Brewken is cleaning up.";
+   qDebug() << Q_FUNC_INFO << CONFIG_APPLICATION_NAME_UC << "is cleaning up.";
    // Should I do qApp->removeTranslator() first?
    MainWindow::DeleteMainWindow();
 

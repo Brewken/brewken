@@ -161,16 +161,11 @@ namespace {
          {ObjectStore::FieldType::String, "name"                          , PropertyNames::NamedEntity::name                     },
          {ObjectStore::FieldType::Bool  , "deleted"                       , PropertyNames::NamedEntity::deleted                  },
          {ObjectStore::FieldType::Bool  , "display"                       , PropertyNames::NamedEntity::display                  },
-         {ObjectStore::FieldType::String, "folder"                        , PropertyNames::FolderBase::folder                   },
-///         {ObjectStore::FieldType::Int   , "inventory_id"                  , PropertyNames::NamedEntityWithInventory::inventoryId , &PRIMARY_TABLE<InventoryFermentable>},
-///         {ObjectStore::FieldType::Bool  , "add_after_boil"                , PropertyNames::Fermentable::addAfterBoil             },
-///         {ObjectStore::FieldType::Double, "amount"                        , PropertyNames::Fermentable::amount                   },
-///         {ObjectStore::FieldType::Bool  , "amount_is_weight"              , PropertyNames::Fermentable::amountIsWeight           }, // ⮜⮜⮜ Added for BeerJSON support ⮞⮞⮞
+         {ObjectStore::FieldType::String, "folder"                        , PropertyNames::FolderBase::folder                    },
          {ObjectStore::FieldType::Double, "coarse_fine_diff"              , PropertyNames::Fermentable::coarseFineDiff_pct       },
          {ObjectStore::FieldType::Double, "color"                         , PropertyNames::Fermentable::color_srm                },
          {ObjectStore::FieldType::Double, "diastatic_power"               , PropertyNames::Fermentable::diastaticPower_lintner   },
          {ObjectStore::FieldType::Enum  , "ftype"                         , PropertyNames::Fermentable::type                     , &Fermentable::typeStringMapping},
-///         {ObjectStore::FieldType::Bool  , "is_mashed"                     , PropertyNames::Fermentable::isMashed                 },
          {ObjectStore::FieldType::Double, "ibu_gal_per_lb"                , PropertyNames::Fermentable::ibuGalPerLb              },
          {ObjectStore::FieldType::Double, "max_in_batch"                  , PropertyNames::Fermentable::maxInBatch_pct           },
          {ObjectStore::FieldType::Double, "moisture"                      , PropertyNames::Fermentable::moisture_pct             },
@@ -179,7 +174,6 @@ namespace {
          {ObjectStore::FieldType::String, "supplier"                      , PropertyNames::Fermentable::supplier                 },
          {ObjectStore::FieldType::Double, "protein"                       , PropertyNames::Fermentable::protein_pct              },
          {ObjectStore::FieldType::Bool  , "recommend_mash"                , PropertyNames::Fermentable::recommendMash            },
-///         {ObjectStore::FieldType::Double, "yield"                         , PropertyNames::Fermentable::yield_pct                },
          // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
          {ObjectStore::FieldType::Enum  , "grain_group"                   , PropertyNames::Fermentable::grainGroup               , &Fermentable::grainGroupStringMapping},
          {ObjectStore::FieldType::String, "producer"                      , PropertyNames::Fermentable::producer                 },
@@ -203,17 +197,6 @@ namespace {
          {ObjectStore::FieldType::Double, "beta_glucan_ppm"               , PropertyNames::Fermentable::betaGlucan_ppm           },
       }
    };
-///   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Fermentable> {
-///      {
-///         "fermentable_children",
-///         {
-///            {ObjectStore::FieldType::Int, "id"                                                                                    },
-///            {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Fermentable>},
-///            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, &PRIMARY_TABLE<Fermentable>},
-///         },
-///         ObjectStore::MAX_ONE_ENTRY
-///      }
-///   };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for InventoryFermentable
@@ -240,10 +223,7 @@ namespace {
          {ObjectStore::FieldType::Bool  , "display"              , PropertyNames::NamedEntity::display   },
          {ObjectStore::FieldType::Bool  , "deleted"              , PropertyNames::NamedEntity::deleted   },
          {ObjectStore::FieldType::String, "folder"               , PropertyNames::FolderBase::folder     },
-///         {ObjectStore::FieldType::Int   , "inventory_id"         , PropertyNames::NamedEntityWithInventory::inventoryId, &PRIMARY_TABLE<InventoryHop>},
          {ObjectStore::FieldType::Double, "alpha"                , PropertyNames::Hop::alpha_pct         },
-///         {ObjectStore::FieldType::Double, "amount"               , PropertyNames::Hop::amount         },
-///         {ObjectStore::FieldType::Bool  , "amount_is_weight"     , PropertyNames::Hop::amountIsWeight },
          {ObjectStore::FieldType::Double, "beta"                 , PropertyNames::Hop::beta_pct          },
          {ObjectStore::FieldType::Double, "caryophyllene"        , PropertyNames::Hop::caryophyllene_pct },
          {ObjectStore::FieldType::Double, "cohumulone"           , PropertyNames::Hop::cohumulone_pct    },
@@ -254,9 +234,7 @@ namespace {
          {ObjectStore::FieldType::String, "notes"                , PropertyNames::Hop::notes             },
          {ObjectStore::FieldType::String, "origin"               , PropertyNames::Hop::origin            },
          {ObjectStore::FieldType::String, "substitutes"          , PropertyNames::Hop::substitutes       },
-///         {ObjectStore::FieldType::Double, "time"                 , PropertyNames::Hop::time_min       },
          {ObjectStore::FieldType::Enum  , "htype"                , PropertyNames::Hop::type              , &Hop::typeStringMapping},
-///         {ObjectStore::FieldType::Enum  , "use"                  , PropertyNames::Hop::use            , &Hop::useStringMapping},
          // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
          {ObjectStore::FieldType::String, "producer"             , PropertyNames::Hop::producer          },
          {ObjectStore::FieldType::String, "product_id"           , PropertyNames::Hop::productId         },
@@ -273,18 +251,6 @@ namespace {
          {ObjectStore::FieldType::Double, "xanthohumol_pct"      , PropertyNames::Hop::xanthohumol_pct   },
       }
    };
-///   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Hop> {
-///      {
-///         "hop_children",
-///         {
-///            {ObjectStore::FieldType::Int, "id"                                                                            },
-///            {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Hop>},
-///            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, &PRIMARY_TABLE<Hop>},
-///         },
-///         ObjectStore::MAX_ONE_ENTRY
-///      }
-///   };
-
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for InventoryHop
@@ -488,13 +454,8 @@ namespace {
          {ObjectStore::FieldType::String, "name"            , PropertyNames::NamedEntity::name                    },
          {ObjectStore::FieldType::Bool  , "deleted"         , PropertyNames::NamedEntity::deleted                 },
          {ObjectStore::FieldType::Bool  , "display"         , PropertyNames::NamedEntity::display                 },
-         {ObjectStore::FieldType::String, "folder"          , PropertyNames::FolderBase::folder                  },
-///         {ObjectStore::FieldType::Int   , "inventory_id"    , PropertyNames::NamedEntityWithInventory::inventoryId, &PRIMARY_TABLE<InventoryMisc>},
+         {ObjectStore::FieldType::String, "folder"          , PropertyNames::FolderBase::folder                   },
          {ObjectStore::FieldType::Enum  , "mtype"           , PropertyNames::Misc::type                           , &Misc::typeStringMapping},
-///         {ObjectStore::FieldType::Enum  , "use"             , PropertyNames::Misc::use                            , &Misc::useStringMapping },
-///         {ObjectStore::FieldType::Double, "time"            , PropertyNames::Misc::time_min                       },
-///         {ObjectStore::FieldType::Double, "amount"          , PropertyNames::Misc::amount                         },
-///         {ObjectStore::FieldType::Bool  , "amount_is_weight", PropertyNames::Misc::amountIsWeight                 },
          {ObjectStore::FieldType::String, "use_for"         , PropertyNames::Misc::useFor                         },
          {ObjectStore::FieldType::String, "notes"           , PropertyNames::Misc::notes                          },
          // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -502,17 +463,6 @@ namespace {
          {ObjectStore::FieldType::String, "product_id"      , PropertyNames::Misc::productId                      },
       }
    };
-///   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Misc> {
-///      {
-///         "misc_children",
-///         {
-///            {ObjectStore::FieldType::Int, "id"                                                                             },
-///            {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Misc>},
-///            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, &PRIMARY_TABLE<Misc>},
-///         },
-///         ObjectStore::MAX_ONE_ENTRY
-///      }
-///   };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for InventoryMisc
@@ -539,9 +489,6 @@ namespace {
          {ObjectStore::FieldType::Bool  , "deleted"         , PropertyNames::NamedEntity::deleted },
          {ObjectStore::FieldType::Bool  , "display"         , PropertyNames::NamedEntity::display },
          {ObjectStore::FieldType::String, "folder"          , PropertyNames::FolderBase::folder  },
-///         {ObjectStore::FieldType::Int   , "addTo"           , PropertyNames::Salt::whenToAdd      }, // TODO: Really an Enum.  Would be less fragile to store this as text than a number.  Also, column name...
-///         {ObjectStore::FieldType::Double, "amount"          , PropertyNames::Salt::amount         },
-///         {ObjectStore::FieldType::Bool  , "amount_is_weight", PropertyNames::Salt::amountIsWeight },
          {ObjectStore::FieldType::Bool  , "is_acid"         , PropertyNames::Salt::isAcid         },
          {ObjectStore::FieldType::Double, "percent_acid"    , PropertyNames::Salt::percentAcid    },
          {ObjectStore::FieldType::Enum  , "stype"           , PropertyNames::Salt::type           , &Salt::typeStringMapping},
@@ -592,7 +539,6 @@ namespace {
          {ObjectStore::FieldType::String, "notes"             , PropertyNames::Style::notes            },
          {ObjectStore::FieldType::Double, "og_max"            , PropertyNames::Style::ogMax            },
          {ObjectStore::FieldType::Double, "og_min"            , PropertyNames::Style::ogMin            },
-///         {ObjectStore::FieldType::String, "profile"           , PropertyNames::Style::profile          },
          {ObjectStore::FieldType::String, "style_guide"       , PropertyNames::Style::styleGuide       },
          {ObjectStore::FieldType::String, "style_letter"      , PropertyNames::Style::styleLetter      },
          {ObjectStore::FieldType::Enum  , "stype"             , PropertyNames::Style::type             , &Style::typeStringMapping},
@@ -604,17 +550,6 @@ namespace {
          {ObjectStore::FieldType::String, "overall_impression", PropertyNames::Style::overallImpression},
       }
    };
-///   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Style> {
-///      {
-///         "style_children",
-///         {
-///            {ObjectStore::FieldType::Int, "id"                                                                              },
-///            {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Style>},
-///            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, &PRIMARY_TABLE<Style>},
-///         },
-///         ObjectStore::MAX_ONE_ENTRY
-///      }
-///   };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Water
@@ -628,7 +563,6 @@ namespace {
          {ObjectStore::FieldType::Bool  , "deleted"      , PropertyNames::NamedEntity::deleted   },
          {ObjectStore::FieldType::String, "folder"       , PropertyNames::FolderBase::folder    },
          {ObjectStore::FieldType::String, "notes"        , PropertyNames::Water::notes           },
-///         {ObjectStore::FieldType::Double, "amount"       , PropertyNames::Water::amount          },
          {ObjectStore::FieldType::Double, "calcium"      , PropertyNames::Water::calcium_ppm     },
          {ObjectStore::FieldType::Double, "bicarbonate"  , PropertyNames::Water::bicarbonate_ppm },
          {ObjectStore::FieldType::Double, "sulfate"      , PropertyNames::Water::sulfate_ppm     },
@@ -650,17 +584,6 @@ namespace {
          {ObjectStore::FieldType::Double, "flouride_ppm" , PropertyNames::Water::flouride_ppm    },
       }
    };
-///   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Water> {
-///      {
-///         "water_children",
-///         {
-///            {ObjectStore::FieldType::Int, "id"                                                                              },
-///            {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Water>},
-///            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, &PRIMARY_TABLE<Water>},
-///         },
-///         ObjectStore::MAX_ONE_ENTRY
-///      }
-///   };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for Yeast
@@ -673,18 +596,12 @@ namespace {
          {ObjectStore::FieldType::Bool  , "display"                     , PropertyNames::NamedEntity::display                 },
          {ObjectStore::FieldType::Bool  , "deleted"                     , PropertyNames::NamedEntity::deleted                 },
          {ObjectStore::FieldType::String, "folder"                      , PropertyNames::FolderBase::folder                  },
-///         {ObjectStore::FieldType::Int   , "inventory_id"                , PropertyNames::NamedEntityWithInventory::inventoryId, &PRIMARY_TABLE<InventoryYeast>},
-///         {ObjectStore::FieldType::Bool  , "add_to_secondary"            , PropertyNames::Yeast::addToSecondary                },
-///         {ObjectStore::FieldType::Bool  , "amount_is_weight"            , PropertyNames::Yeast::amountIsWeight                },
-///         {ObjectStore::FieldType::Double, "amount"                      , PropertyNames::Yeast::amount                        },
-///         {ObjectStore::FieldType::Double, "attenuation"                 , PropertyNames::Yeast::attenuation_pct               },
          {ObjectStore::FieldType::Double, "max_temperature"             , PropertyNames::Yeast::maxTemperature_c              },
          {ObjectStore::FieldType::Double, "min_temperature"             , PropertyNames::Yeast::minTemperature_c              },
          {ObjectStore::FieldType::Enum  , "flocculation"                , PropertyNames::Yeast::flocculation                  , &Yeast::flocculationStringMapping},
          {ObjectStore::FieldType::Enum  , "form"                        , PropertyNames::Yeast::form                          , &Yeast::formStringMapping        },
          {ObjectStore::FieldType::Enum  , "ytype"                       , PropertyNames::Yeast::type                          , &Yeast::typeStringMapping        },
          {ObjectStore::FieldType::Int   , "max_reuse"                   , PropertyNames::Yeast::maxReuse                      },
-///         {ObjectStore::FieldType::Int   , "times_cultured"              , PropertyNames::Yeast::timesCultured                 },
          {ObjectStore::FieldType::String, "best_for"                    , PropertyNames::Yeast::bestFor                       },
          {ObjectStore::FieldType::String, "laboratory"                  , PropertyNames::Yeast::laboratory                    },
          {ObjectStore::FieldType::String, "notes"                       , PropertyNames::Yeast::notes                         },
@@ -702,17 +619,6 @@ namespace {
          {ObjectStore::FieldType::Bool  , "killer_neutral"              , PropertyNames::Yeast::killerNeutral                 },
       }
    };
-///   template<> ObjectStore::JunctionTableDefinitions const JUNCTION_TABLES<Yeast> {
-///      {
-///         "yeast_children",
-///         {
-///            {ObjectStore::FieldType::Int, "id"                                                                              },
-///            {ObjectStore::FieldType::Int, "child_id",  PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Yeast>},
-///            {ObjectStore::FieldType::Int, "parent_id", PropertyNames::NamedEntity::parentKey, &PRIMARY_TABLE<Yeast>},
-///         },
-///         ObjectStore::MAX_ONE_ENTRY
-///      }
-///   };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Database field mappings for InventoryYeast
@@ -743,32 +649,23 @@ namespace {
          {ObjectStore::FieldType::Double, "age_temp"           , PropertyNames::Recipe::ageTemp_c         },
          {ObjectStore::FieldType::String, "assistant_brewer"   , PropertyNames::Recipe::asstBrewer        },
          {ObjectStore::FieldType::Double, "batch_size"         , PropertyNames::Recipe::batchSize_l       },
-///         {ObjectStore::FieldType::Double, "boil_size"          , PropertyNames::Recipe::boilSize_l        },
-///         {ObjectStore::FieldType::Double, "boil_time"          , PropertyNames::Recipe::boilTime_min      },
          {ObjectStore::FieldType::String, "brewer"             , PropertyNames::Recipe::brewer            },
          {ObjectStore::FieldType::Double, "carb_volume"        , PropertyNames::Recipe::carbonation_vols  },
          {ObjectStore::FieldType::Double, "carbonationtemp_c"  , PropertyNames::Recipe::carbonationTemp_c },
          {ObjectStore::FieldType::Date  , "date"               , PropertyNames::Recipe::date              },
          {ObjectStore::FieldType::Double, "efficiency"         , PropertyNames::Recipe::efficiency_pct    },
          {ObjectStore::FieldType::Int   , "equipment_id"       , PropertyNames::Recipe::equipmentId       , &PRIMARY_TABLE<Equipment>},
-///         {ObjectStore::FieldType::Int   , "fermentation_stages", PropertyNames::Recipe::fermentationStages}, // TBD: This could become UInt with corresponding changes in model/Recipe.h
          {ObjectStore::FieldType::Double, "fg"                 , PropertyNames::Recipe::fg                },
          {ObjectStore::FieldType::Bool  , "forced_carb"        , PropertyNames::Recipe::forcedCarbonation },
          {ObjectStore::FieldType::Double, "keg_priming_factor" , PropertyNames::Recipe::kegPrimingFactor  },
          {ObjectStore::FieldType::Int   , "mash_id"            , PropertyNames::Recipe::mashId            , &PRIMARY_TABLE<Mash>},
          {ObjectStore::FieldType::String, "notes"              , PropertyNames::Recipe::notes             },
          {ObjectStore::FieldType::Double, "og"                 , PropertyNames::Recipe::og                },
-///         {ObjectStore::FieldType::Double, "primary_age"        , PropertyNames::Recipe::primaryAge_days   },
-///         {ObjectStore::FieldType::Double, "primary_temp"       , PropertyNames::Recipe::primaryTemp_c     },
          {ObjectStore::FieldType::Double, "priming_sugar_equiv", PropertyNames::Recipe::primingSugarEquiv },
          {ObjectStore::FieldType::String, "priming_sugar_name" , PropertyNames::Recipe::primingSugarName  },
-///         {ObjectStore::FieldType::Double, "secondary_age"      , PropertyNames::Recipe::secondaryAge_days },
-///         {ObjectStore::FieldType::Double, "secondary_temp"     , PropertyNames::Recipe::secondaryTemp_c   },
          {ObjectStore::FieldType::Int   , "style_id"           , PropertyNames::Recipe::styleId           , &PRIMARY_TABLE<Style>},
          {ObjectStore::FieldType::String, "taste_notes"        , PropertyNames::Recipe::tasteNotes        },
          {ObjectStore::FieldType::Double, "taste_rating"       , PropertyNames::Recipe::tasteRating       },
-///         {ObjectStore::FieldType::Double, "tertiary_age"       , PropertyNames::Recipe::tertiaryAge_days  },
-///         {ObjectStore::FieldType::Double, "tertiary_temp"      , PropertyNames::Recipe::tertiaryTemp_c    },
          {ObjectStore::FieldType::Enum  , "type"               , PropertyNames::Recipe::type              , &Recipe::typeStringMapping},
          {ObjectStore::FieldType::Int   , "ancestor_id"        , PropertyNames::Recipe::ancestorId        , &PRIMARY_TABLE<Recipe>},
          {ObjectStore::FieldType::Bool  , "locked"             , PropertyNames::Recipe::locked            },
@@ -784,22 +681,6 @@ namespace {
       // .:TODO:. BrewNote table stores its recipe ID, so there isn't a brewnote junction table
       // There is a lot of boiler-plate here, and we could have gone for a much more compact representation of junction
       // tables, but this keeps the definition format relatively closely aligned with that of primary tables.
-///      {
-///         "fermentable_in_recipe",
-///         {
-///            {ObjectStore::FieldType::Int, "id"                                                                                            },
-///            {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Recipe>     },
-///            {ObjectStore::FieldType::Int, "fermentable_id",    PropertyNames::Recipe::fermentableIds, &PRIMARY_TABLE<Fermentable>},
-///         }
-///      },
-///      {
-///         "hop_in_recipe",
-///         {
-///            {ObjectStore::FieldType::Int, "id"                                                                                            },
-///            {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Recipe>     },
-///            {ObjectStore::FieldType::Int, "hop_id",            PropertyNames::Recipe::hopIds,         &PRIMARY_TABLE<Hop>        },
-///         }
-///      },
       {
          "instruction_in_recipe",
          {
@@ -809,38 +690,6 @@ namespace {
             {ObjectStore::FieldType::Int, "instruction_number"                                                                            },
          }
       },
-///      {
-///         "misc_in_recipe",
-///         {
-///            {ObjectStore::FieldType::Int, "id"                                                                                            },
-///            {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Recipe>     },
-///            {ObjectStore::FieldType::Int, "misc_id",           PropertyNames::Recipe::miscIds,        &PRIMARY_TABLE<Misc>       },
-///         }
-///      },
-///      {
-///         "salt_in_recipe",
-///         {
-///            {ObjectStore::FieldType::Int, "id"                                                                                            },
-///            {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Recipe>     },
-///            {ObjectStore::FieldType::Int, "salt_id",           PropertyNames::Recipe::saltIds,        &PRIMARY_TABLE<Salt>       },
-///         }
-///      },
-///      {
-///         "water_in_recipe",
-///         {
-///            {ObjectStore::FieldType::Int, "id"                                                                                            },
-///            {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Recipe>     },
-///            {ObjectStore::FieldType::Int, "water_id",          PropertyNames::Recipe::waterIds,       &PRIMARY_TABLE<Water>      },
-///         }
-///      },
-///      {
-///         "yeast_in_recipe",
-///         {
-///            {ObjectStore::FieldType::Int, "id"                                                                                            },
-///            {ObjectStore::FieldType::Int, "recipe_id",         PropertyNames::NamedEntity::key,       &PRIMARY_TABLE<Recipe>     },
-///            {ObjectStore::FieldType::Int, "yeast_id",          PropertyNames::Recipe::yeastIds,       &PRIMARY_TABLE<Yeast>      },
-///         }
-///      },
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -982,7 +831,7 @@ namespace {
          // NB: BrewNotes don't have names in DB
          {ObjectStore::FieldType::Bool  , "display"                , PropertyNames::NamedEntity::display       },
          {ObjectStore::FieldType::Bool  , "deleted"                , PropertyNames::NamedEntity::deleted       },
-         {ObjectStore::FieldType::String, "folder"                 , PropertyNames::FolderBase::folder},
+         // NB: BrewNotes don't have folders, as each one is owned by a Recipe
          {ObjectStore::FieldType::Double, "abv"                    , PropertyNames::BrewNote::abv              },
          {ObjectStore::FieldType::Double, "attenuation"            , PropertyNames::BrewNote::attenuation      },
          {ObjectStore::FieldType::Double, "boil_off"               , PropertyNames::BrewNote::boilOff_l        },
@@ -992,7 +841,6 @@ namespace {
          {ObjectStore::FieldType::Date  , "fermentdate"            , PropertyNames::BrewNote::fermentDate      },
          {ObjectStore::FieldType::Double, "fg"                     , PropertyNames::BrewNote::fg               },
          {ObjectStore::FieldType::Double, "final_volume"           , PropertyNames::BrewNote::finalVolume_l    },
-         // NB: BrewNotes don't have folders, as each one is owned by a Recipe
          {ObjectStore::FieldType::Double, "mash_final_temp"        , PropertyNames::BrewNote::mashFinTemp_c    },
          {ObjectStore::FieldType::String, "notes"                  , PropertyNames::BrewNote::notes            },
          {ObjectStore::FieldType::Double, "og"                     , PropertyNames::BrewNote::og               },

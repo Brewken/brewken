@@ -39,16 +39,11 @@ class RecipeAdditionMisc;
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Misc { BtStringConst const property{#property}; }
-///AddPropertyName(amount         )
-///AddPropertyName(amountIsWeight )
-///AddPropertyName(amountWithUnits)
-AddPropertyName(notes          )
-AddPropertyName(producer       )
-AddPropertyName(productId      )
-///AddPropertyName(time_min       )
-AddPropertyName(type           )
-AddPropertyName(useFor         )
-///AddPropertyName(use            )
+AddPropertyName(notes    )
+AddPropertyName(producer )
+AddPropertyName(productId)
+AddPropertyName(type     )
+AddPropertyName(useFor   )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -125,80 +120,43 @@ public:
 
    //! \brief The \c Type.
    Q_PROPERTY(Type type   READ type   WRITE setType)
-///   /**
-///    * \brief The \c Use.  This becomes an optional field with the introduction of BeerJSON.
-///    *
-///    *        See comment in \c model/Fermentable.h for \c grainGroup property for why this has to be
-///    *        \c std::optional<int>, not \c std::optional<Use>
-///    */
-///   Q_PROPERTY(std::optional<int> use   READ useAsInt   WRITE setUseAsInt)
-///   //! \brief The time used in minutes.
-///   Q_PROPERTY(double time_min              READ time_min              WRITE setTime_min             )
-///   //! \brief The amount in either kg or L, depending on \c amountIsWeight().
-///   Q_PROPERTY(double amount READ amount WRITE setAmount)
-///   //! \brief Whether the amount is weight (kg), or volume (L).
-///   Q_PROPERTY(bool amountIsWeight READ amountIsWeight WRITE setAmountIsWeight)
    //! \brief What to use it for.
    Q_PROPERTY(QString useFor READ useFor WRITE setUseFor)
    //! \brief The notes.
    Q_PROPERTY(QString notes READ notes WRITE setNotes)
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-///   /**
-///    * \brief Amounts of a \c Misc can be measured by mass or by volume (depending usually on what it is)
-///    */
-///   Q_PROPERTY(Measurement::Amount    amountWithUnits   READ amountWithUnits   WRITE setAmountWithUnits)
    Q_PROPERTY(QString            producer          READ producer          WRITE setProducer       )
    Q_PROPERTY(QString            productId         READ productId         WRITE setProductId      )
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
-   Type               type           () const;
-///   double             amount         () const;
-///   double             time_min       () const;
-///   bool               amountIsWeight () const;
-   QString            useFor         () const;
-   QString            notes          () const;
-///   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-///   Measurement::Amount    amountWithUnits() const;
-   QString            producer       () const;
-   QString            productId      () const;
+   Type    type     () const;
+   QString useFor   () const;
+   QString notes    () const;
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   QString producer () const;
+   QString productId() const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
-   void setType           (Type               const   val);
-///   void setAmount         (double             const   val);
-///   void setTime_min       (double             const   val);
-///   void setAmountIsWeight (bool               const   val);
-   void setUseFor         (QString            const & val);
-   void setNotes          (QString            const & val);
-///   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-///   void setAmountWithUnits(Measurement::Amount    const   val);
-   void setProducer       (QString            const & val);
-   void setProductId      (QString            const & val);
-
-///   // Insert boiler-plate declarations for inventory
-///   INVENTORY_COMMON_HEADER_DECLS
-
-///   virtual Recipe * getOwningRecipe() const;
+   void setType     (Type    const   val);
+   void setUseFor   (QString const & val);
+   void setNotes    (QString const & val);
+   // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
+   void setProducer (QString const & val);
+   void setProductId(QString const & val);
 
 signals:
-
-   //! \brief Emitted when \c name() changes.
-   // Declared in Base Class NamedEntity, should not be overloaded
-   //void changedName(QString);
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
-   Type               m_type          ;
-///   double             m_time_min      ;
-///   double             m_amount        ;
-///   bool               m_amountIsWeight;
-   QString            m_useFor        ;
-   QString            m_notes         ;
+   Type    m_type     ;
+   QString m_useFor   ;
+   QString m_notes    ;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   QString            m_producer      ;
-   QString            m_productId     ;
+   QString m_producer ;
+   QString m_productId;
 };
 
 BT_DECLARE_METATYPES(Misc)

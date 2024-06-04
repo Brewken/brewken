@@ -148,7 +148,6 @@ TypeLookup const Fermentable::typeLookup {
    "Fermentable",
    {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::type                     , Fermentable::m_type                     ,           NonPhysicalQuantity::Enum           ),
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::yield_pct                , Fermentable::m_yield_pct                ,           NonPhysicalQuantity::Percentage     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::color_srm                , Fermentable::m_color_srm                , Measurement::PhysicalQuantity::Color          ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::origin                   , Fermentable::m_origin                   ,           NonPhysicalQuantity::String         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::supplier                 , Fermentable::m_supplier                 ,           NonPhysicalQuantity::String         ),
@@ -160,7 +159,6 @@ TypeLookup const Fermentable::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::maxInBatch_pct           , Fermentable::m_maxInBatch_pct           ,           NonPhysicalQuantity::Percentage     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::recommendMash            , Fermentable::m_recommendMash            ,           NonPhysicalQuantity::Bool           ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::ibuGalPerLb              , Fermentable::m_ibuGalPerLb              ,           NonPhysicalQuantity::Dimensionless  ), // Not really dimensionless...
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::isMashed                 , Fermentable::m_isMashed                 ,           NonPhysicalQuantity::Bool           ),
       // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::grainGroup               , Fermentable::m_grainGroup               ,           NonPhysicalQuantity::Enum           ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::producer                 , Fermentable::m_producer                 ,           NonPhysicalQuantity::String         ),
@@ -182,8 +180,6 @@ TypeLookup const Fermentable::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::fan_ppm                  , Fermentable::m_fan_ppm                  , Measurement::PhysicalQuantity::MassFractionOrConc),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::fermentability_pct       , Fermentable::m_fermentability_pct       ,           NonPhysicalQuantity::Percentage     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Fermentable::betaGlucan_ppm           , Fermentable::m_betaGlucan_ppm           , Measurement::PhysicalQuantity::MassFractionOrConc),
-
-///      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Fermentable::amountWithUnits    , Fermentable::amountWithUnits            , Measurement::ChoiceOfPhysicalQuantity::Mass_Volume        ),
    },
    // Parent classes lookup
    {&Ingredient::typeLookup,
@@ -194,7 +190,6 @@ static_assert(std::is_base_of<Ingredient, Fermentable>::value);
 Fermentable::Fermentable(QString name) :
    Ingredient                 {name},
    m_type                     {Fermentable::Type::Grain},
-///   m_yield_pct                {0.0                     },
    m_color_srm                {0.0                     },
    m_origin                   {""                      },
    m_supplier                 {""                      },
@@ -206,7 +201,6 @@ Fermentable::Fermentable(QString name) :
    m_maxInBatch_pct           {std::nullopt            },
    m_recommendMash            {std::nullopt            },
    m_ibuGalPerLb              {std::nullopt            },
-///   m_isMashed                 {false                   },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    m_grainGroup               {std::nullopt            },
    m_producer                 {""                      },
@@ -234,7 +228,6 @@ Fermentable::Fermentable(QString name) :
 Fermentable::Fermentable(NamedParameterBundle const & namedParameterBundle) :
    Ingredient   {namedParameterBundle},
    SET_REGULAR_FROM_NPB (m_type                               , namedParameterBundle, PropertyNames::Fermentable::type                             ),
-///   SET_REGULAR_FROM_NPB (m_yield_pct                          , namedParameterBundle, PropertyNames::Fermentable::yield_pct                        ),
    SET_REGULAR_FROM_NPB (m_color_srm                          , namedParameterBundle, PropertyNames::Fermentable::color_srm                        ),
    SET_REGULAR_FROM_NPB (m_origin                             , namedParameterBundle, PropertyNames::Fermentable::origin                , QString()),
    SET_REGULAR_FROM_NPB (m_supplier                           , namedParameterBundle, PropertyNames::Fermentable::supplier              , QString()),
@@ -246,7 +239,6 @@ Fermentable::Fermentable(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_maxInBatch_pct                     , namedParameterBundle, PropertyNames::Fermentable::maxInBatch_pct                   ),
    SET_REGULAR_FROM_NPB (m_recommendMash                      , namedParameterBundle, PropertyNames::Fermentable::recommendMash                    ),
    SET_REGULAR_FROM_NPB (m_ibuGalPerLb                        , namedParameterBundle, PropertyNames::Fermentable::ibuGalPerLb                      ),
-///   SET_REGULAR_FROM_NPB (m_isMashed                           , namedParameterBundle, PropertyNames::Fermentable::isMashed              , false    ),
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    SET_OPT_ENUM_FROM_NPB(m_grainGroup, Fermentable::GrainGroup, namedParameterBundle, PropertyNames::Fermentable::grainGroup                       ),
    SET_REGULAR_FROM_NPB (m_producer                           , namedParameterBundle, PropertyNames::Fermentable::producer                         ),
@@ -275,7 +267,6 @@ Fermentable::Fermentable(NamedParameterBundle const & namedParameterBundle) :
 Fermentable::Fermentable(Fermentable const & other) :
    Ingredient                 {other                         },
    m_type                     {other.m_type                  },
-///   m_yield_pct                {other.m_yield_pct             },
    m_color_srm                {other.m_color_srm             },
    m_origin                   {other.m_origin                },
    m_supplier                 {other.m_supplier              },
@@ -287,7 +278,6 @@ Fermentable::Fermentable(Fermentable const & other) :
    m_maxInBatch_pct           {other.m_maxInBatch_pct        },
    m_recommendMash            {other.m_recommendMash         },
    m_ibuGalPerLb              {other.m_ibuGalPerLb           },
-///   m_isMashed                 {other.m_isMashed              },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    m_grainGroup               {other.m_grainGroup            },
    m_producer                 {other.m_producer              },
@@ -316,7 +306,6 @@ Fermentable::~Fermentable() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
 Fermentable::Type                      Fermentable::type                     () const { return                    this->m_type                     ; }
-///double                                 Fermentable::yield_pct                () const { return                    this->m_yield_pct                ; }
 double                                 Fermentable::color_srm                () const { return                    this->m_color_srm                ; }
 QString                                Fermentable::origin                   () const { return                    this->m_origin                   ; }
 QString                                Fermentable::supplier                 () const { return                    this->m_supplier                 ; }
@@ -328,7 +317,6 @@ std::optional<double>                  Fermentable::protein_pct              () 
 std::optional<double>                  Fermentable::maxInBatch_pct           () const { return                    this->m_maxInBatch_pct           ; }
 std::optional<bool>                    Fermentable::recommendMash            () const { return                    this->m_recommendMash            ; }
 std::optional<double>                  Fermentable::ibuGalPerLb              () const { return                    this->m_ibuGalPerLb              ; }
-///bool                                   Fermentable::isMashed                 () const { return                    this->m_isMashed                 ; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 std::optional<Fermentable::GrainGroup> Fermentable::grainGroup               () const { return                    this->m_grainGroup               ; }
 std::optional<int>                     Fermentable::grainGroupAsInt          () const { return Optional::toOptInt(this->m_grainGroup)              ; }
@@ -366,9 +354,7 @@ void Fermentable::setOrigin                   (QString                   const &
 void Fermentable::setSupplier                 (QString                   const & val) { SET_AND_NOTIFY(PropertyNames::Fermentable::supplier                 , this->m_supplier                 , val); return; }
 void Fermentable::setNotes                    (QString                   const & val) { SET_AND_NOTIFY(PropertyNames::Fermentable::notes                    , this->m_notes                    , val); return; }
 void Fermentable::setRecommendMash            (std::optional<bool>       const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::recommendMash            , this->m_recommendMash            , val); return; }
-///void Fermentable::setIsMashed                 (bool                      const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::isMashed                 , this->m_isMashed                 , val); return; }
 void Fermentable::setIbuGalPerLb              (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::ibuGalPerLb              , this->m_ibuGalPerLb              , val); return; }
-///void Fermentable::setYield_pct                (double                    const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::yield_pct                , this->m_yield_pct                , this->enforceMinAndMax(val, "amount",         0.0, 100.0)); return; }
 void Fermentable::setColor_srm                (double                    const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::color_srm                , this->m_color_srm                , this->enforceMin      (val, "color"));                      return; }
 void Fermentable::setCoarseFineDiff_pct       (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::coarseFineDiff_pct       , this->m_coarseFineDiff_pct       , this->enforceMinAndMax(val, "coarseFineDiff", 0.0, 100.0)); return; }
 void Fermentable::setMoisture_pct             (std::optional<double>     const   val) { SET_AND_NOTIFY(PropertyNames::Fermentable::moisture_pct             , this->m_moisture_pct             , this->enforceMinAndMax(val, "moisture",       0.0, 100.0)); return; }

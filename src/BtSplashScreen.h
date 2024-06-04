@@ -26,7 +26,7 @@
 /*!
  * \class BtSplashScreen
  *
- * \brief A class for showing the Brewken splash screen on startup.
+ * \brief A class for showing the application splash screen on startup.
  */
 class BtSplashScreen : public QSplashScreen
 {

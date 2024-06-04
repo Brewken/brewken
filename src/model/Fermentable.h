@@ -65,7 +65,6 @@ AddPropertyName(hardnessPrpGlassy_pct    )
 AddPropertyName(hardnessPrpHalf_pct      )
 AddPropertyName(hardnessPrpMealy_pct     )
 AddPropertyName(ibuGalPerLb              )
-///AddPropertyName(isMashed                 )
 AddPropertyName(kernelSizePrpPlump_pct   )
 AddPropertyName(kernelSizePrpThin_pct    )
 AddPropertyName(kolbachIndex_pct         )
@@ -81,7 +80,6 @@ AddPropertyName(recommendMash            )
 AddPropertyName(supplier                 )
 AddPropertyName(type                     )
 AddPropertyName(viscosity_cP             )
-///AddPropertyName(yield_pct                )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
@@ -195,13 +193,6 @@ public:
    //=================================================== PROPERTIES ====================================================
    //! \brief The \c Type.
    Q_PROPERTY(Type           type                   READ type                   WRITE setType                               )
-///   /**
-///    * \brief Percent dry yield (fine grain) for the grain, or the raw yield by weight if this is an extract adjunct or
-///    *        sugar.
-///    *
-///    *        NB: Not supported by BeerJSON -- see fineGrindYield_pct instead
-///    */
-///   Q_PROPERTY(double         yield_pct              READ yield_pct              WRITE setYield_pct                          )
    //! \brief The color in SRM.
    Q_PROPERTY(double         color_srm              READ color_srm              WRITE setColor_srm                          )
    //! \brief The origin.
@@ -246,8 +237,6 @@ public:
     *        .:TBD:. If we care about this, then it would be more consistent to store in internally as a metric measure.
     */
    Q_PROPERTY(std::optional<double> ibuGalPerLb            READ ibuGalPerLb            WRITE setIbuGalPerLb                        )
-///   //! \brief Whether the grains actually is mashed.
-///   Q_PROPERTY(bool           isMashed               READ isMashed               WRITE setIsMashed                           )
    //! \brief Whether this fermentable is an extract.
    Q_PROPERTY(bool           isExtract              READ isExtract                                              STORED false)
    //! \brief Whether this fermentable is a sugar. Somewhat redundant, but it makes for nice symmetry elsewhere
@@ -465,7 +454,6 @@ public:
 
    //============================================ "GETTER" MEMBER FUNCTIONS ============================================
    Type    type                                       () const;
-///   double  yield_pct                                  () const;
    double  color_srm                                  () const;
    QString origin                                     () const;
    QString supplier                                   () const;
@@ -477,7 +465,6 @@ public:
    std::optional<double>     maxInBatch_pct           () const;
    std::optional<bool>       recommendMash            () const;
    std::optional<double>     ibuGalPerLb              () const;
-///   bool    isMashed                                   () const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<GrainGroup> grainGroup               () const;
    std::optional<int>        grainGroupAsInt          () const;
@@ -507,7 +494,6 @@ public:
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setType                     (Type                      const   val);
-///   void setYield_pct                (double                    const   val);
    void setColor_srm                (double                    const   val);
    void setOrigin                   (QString                   const & val);
    void setSupplier                 (QString                   const & val);
@@ -519,7 +505,6 @@ public:
    void setMaxInBatch_pct           (std::optional<double>     const   val);
    void setRecommendMash            (std::optional<bool>       const   val);
    void setIbuGalPerLb              (std::optional<double>     const   val);
-///   void setIsMashed                 (bool                      const   val);
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    void setGrainGroup               (std::optional<GrainGroup> const   val);
    void setGrainGroupAsInt          (std::optional<int>        const   val);
@@ -543,20 +528,13 @@ public:
    void setFermentability_pct       (std::optional<double>     const   val);
    void setBetaGlucan_ppm           (std::optional<double>     const   val);
 
-   // Insert boiler-plate declarations for inventory
-///   INVENTORY_COMMON_HEADER_DECLS
-
-///   virtual Recipe * getOwningRecipe() const;
-
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const;
    virtual ObjectStore & getObjectStoreTypedInstance() const;
 
 private:
    Type                      m_type                     ;
-///   double                    m_yield_pct                ;
    double                    m_color_srm                ;
-///   bool                      m_addAfterBoil             ; // Primarily valid in "Use Of" instance
    QString                   m_origin                   ;
    QString                   m_supplier                 ;
    QString                   m_notes                    ;
@@ -567,7 +545,6 @@ private:
    std::optional<double>     m_maxInBatch_pct           ;
    std::optional<bool>       m_recommendMash            ;
    std::optional<double>     m_ibuGalPerLb              ;
-///   bool                      m_isMashed                 ; // Primarily valid in "Use Of" instance
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<GrainGroup> m_grainGroup               ;
    QString                   m_producer                 ;

@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * BtSplashScreen.cpp is part of Brewken, and is copyright the following authors 2009-2015:
+ * BtSplashScreen.cpp is part of Brewken, and is copyright the following authors 2009-2024:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -14,27 +15,32 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
+#include "BtSplashScreen.h"
 
 #include <QPixmap>
-#include "BtSplashScreen.h"
+
+#include "config.h"
+
+namespace {
+   static QString const logoFile = QString{":images/%1.svg"}.arg(CONFIG_APPLICATION_NAME_LC);
+}
 
 #if QT_VERSION < QT_VERSION_CHECK(5,15,0)
 BtSplashScreen::BtSplashScreen(QWidget* parent) :
-   QSplashScreen(parent, QPixmap(":/images/brewken.svg"))
-{
+   QSplashScreen(parent, QPixmap(logoFile)) {
    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
    showMessage(tr("Loading..."));
+   return;
 }
 #else
 BtSplashScreen::BtSplashScreen(QScreen* parent) :
-   QSplashScreen(parent, QPixmap(":/images/brewken.svg"))
-{
+   QSplashScreen(parent, QPixmap(logoFile)) {
    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
    showMessage(tr("Loading..."));
+   return;
 }
 #endif
 
-void BtSplashScreen::showMessage(QString const& message)
-{
+void BtSplashScreen::showMessage(QString const& message) {
    QSplashScreen::showMessage(message, Qt::AlignLeft, Qt::white);
 }

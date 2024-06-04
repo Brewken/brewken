@@ -161,8 +161,8 @@
 namespace {
 
    /**
-    * \brief Generates the pop-up you see when you hover over the Brewken image above the trees, which is supposed to
-    *        show the database type you are connected to, and some useful information with respect to that database.
+    * \brief Generates the pop-up you see when you hover over the application logo image above the trees, which is
+    *        supposed to show the database type you are connected to, and some useful related information.
     */
    QString getLabelToolTip() {
       Database const & database = Database::instance();
@@ -237,7 +237,6 @@ public:
 
    impl(MainWindow & self) :
       m_self{self},
-///      fileOpener{},
       m_undoStack{std::make_unique<QUndoStack>(&m_self)},
       m_boilStepTableModel            {nullptr},
       m_fermentationStepTableModel    {nullptr},
@@ -613,9 +612,6 @@ public:
       std::shared_ptr<typename StepClass::StepOwnerClass> stepOwner =
          this->m_self.m_recipeObs->get<typename StepClass::StepOwnerClass>();
       if (!stepOwner) {
-///         QMessageBox::information(this, tr("No mash"), tr("Trying to add a mash step without a mash. Please create a mash first.") );
-///         return;
-
          auto defaultStepOwner = std::make_shared<typename StepClass::StepOwnerClass>();
          ObjectStoreWrapper::insert(defaultStepOwner);
          this->setStepOwner(defaultStepOwner);
@@ -738,7 +734,6 @@ public:
    //================================================ MEMBER VARIABLES =================================================
 
    MainWindow & m_self;
-///   QFileDialog* fileOpener;
 
    // Undo / Redo, using the Qt Undo framework
    std::unique_ptr<QUndoStack> m_undoStack;
@@ -901,8 +896,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), pimpl{std::make_u
       }
    }
 
-   // Set the window title.
-   setWindowTitle( QString("Brewken - %1").arg(CONFIG_VERSION_STRING) );
+   // Set the window title and a couple of other strings.  (This replaces the corresponding texts in the mainWindow.ui
+   // file.)
+   this->setWindowTitle(QString{"%1 - %2"}.arg(CONFIG_APPLICATION_NAME_UC, CONFIG_VERSION_STRING) );
+   this->actionAbout->setText   (tr("About %1").arg(CONFIG_APPLICATION_NAME_UC));
+   this->actionAbout->setToolTip(tr("About %1").arg(CONFIG_APPLICATION_NAME_UC));
 
    // Null out the recipe
    m_recipeObs = nullptr;
@@ -1294,7 +1292,7 @@ void MainWindow::restoreSavedState() {
 void MainWindow::setupTriggers() {
    // Connect actions defined in *.ui files to methods in code
    connect(actionExit                      , &QAction::triggered, this                                      , &QWidget::close                    ); // > File > Exit
-   connect(actionAbout_Brewken             , &QAction::triggered, this->pimpl->m_aboutDialog.get()          , &QWidget::show                     ); // > About > About Brewken
+   connect(actionAbout                     , &QAction::triggered, this->pimpl->m_aboutDialog.get()          , &QWidget::show                     ); // > About > About Brewken
    connect(actionHelp                      , &QAction::triggered, this->pimpl->m_helpDialog.get()           , &QWidget::show                     ); // > About > Help
 
    connect(actionNewRecipe                 , &QAction::triggered, this                                      , &MainWindow::newRecipe             ); // > File > New Recipe
@@ -1701,8 +1699,6 @@ void MainWindow::setRecipe(Recipe* recipe) {
    }
    this->m_recipeObs = recipe;
 
-///   this->recStyle = recipe->style();
-///   this->recEquip = recipe->equipment();
    this->displayRangesEtcForCurrentRecipeStyle();
 
    // Reset all previous recipe shit.
@@ -2282,40 +2278,6 @@ void MainWindow::updateRecipeEfficiency() {
    return;
 }
 
-///template<class NE>
-///void MainWindow::addToRecipe(std::shared_ptr<NE> ne) {
-///   Q_ASSERT(ne);
-///
-///   this->doOrRedoUpdate(
-///      newUndoableAddOrRemove(*this->m_recipeObs,
-///                             &Recipe::add<NE>,
-///                             ne,
-///                             &Recipe::remove<NE>,
-///                             QString(tr("Add %1 to recipe")).arg(NE::localisedName()))
-///   );
-///
-///   // Since we just added an ingredient, switch the focus to the tab that lists that type of ingredient.  We rely here
-///   // on the individual tabs following a naming convention (recipeHopTab, recipeFermentableTab, etc)
-///   // Note that we want the untranslated class name because this is not for display but to refer to a QWidget inside
-///   // tabWidget_ingredients
-///   auto const widgetName = QString("recipe%1Tab").arg(NE::staticMetaObject.className());
-///   qDebug() << Q_FUNC_INFO << widgetName;
-///   QWidget * widget = this->tabWidget_ingredients->findChild<QWidget *>(widgetName);
-///   Q_ASSERT(widget);
-///   this->tabWidget_ingredients->setCurrentWidget(widget);
-///
-///   // We don't need to call this->pimpl->m_hopAdditionsTableModel->addHop(hop) here (or the equivalent for fermentable, misc or
-///   // yeast) because the change to the recipe will already have triggered the necessary updates to
-///   // this->pimpl->m_hopAdditionsTableModel/this->pimpl->m_fermentableTableModel/etc.
-///   return;
-///}
-/////
-///// Instantiate the above template function for the types that are going to use it
-///// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
-/////
-///template void MainWindow::addToRecipe(std::shared_ptr<Misc       > ne);
-///template void MainWindow::addToRecipe(std::shared_ptr<Yeast      > ne);
-
 template<class NE>
 void MainWindow::addIngredientToRecipe(NE * ne) {
    if (!this->m_recipeObs) {
@@ -2413,26 +2375,6 @@ void MainWindow::doOrRedoUpdate(QUndoCommand * update) {
    return;
 }
 
-///void MainWindow::doOrRedoUpdate(NamedEntity & updatee,
-///                                TypeInfo const & typeInfo,
-///                                QVariant newValue,
-///                                QString const & description,
-///                                [[maybe_unused]] QUndoCommand * parent) {
-///   this->doOrRedoUpdate(new SimpleUndoableUpdate(updatee, typeInfo, newValue, description));
-///   return;
-///}
-///
-///void MainWindow::doOrRedoUpdate(NamedEntity & updatee,
-///                                PropertyPath const & propertyPath,
-///                                TypeInfo const & typeInfo,
-///                                QVariant newValue,
-///                                QString const & description,
-///                                [[maybe_unused]] QUndoCommand * parent) {
-///   this->doOrRedoUpdate(new SimpleUndoableUpdate(updatee, propertyPath, typeInfo, newValue, description));
-///   return;
-///}
-
-
 // For undo/redo, we use Qt's Undo framework
 void MainWindow::editUndo() {
    Q_ASSERT(this->pimpl->m_undoStack != 0);
@@ -2465,51 +2407,6 @@ template<> void MainWindow::remove(std::shared_ptr<RecipeAdditionYeast      > it
 template<> void MainWindow::remove(std::shared_ptr<MashStep                 > itemToRemove) { this->pimpl->            m_mashStepTableModel->remove(itemToRemove); return; }
 template<> void MainWindow::remove(std::shared_ptr<BoilStep                 > itemToRemove) { this->pimpl->            m_boilStepTableModel->remove(itemToRemove); return; }
 template<> void MainWindow::remove(std::shared_ptr<FermentationStep         > itemToRemove) { this->pimpl->    m_fermentationStepTableModel->remove(itemToRemove); return; }
-
-///void MainWindow::removeSelectedFermentable() {
-///
-///   QModelIndexList selected = fermentableAdditionTable->selectionModel()->selectedIndexes();
-///   int size = selected.size();
-///
-///   qDebug() << QString("MainWindow::removeSelectedFermentable() %1 items selected to remove").arg(size);
-///
-///   if (size == 0) {
-///      return;
-///   }
-///
-///   QList< std::shared_ptr<Fermentable> > itemsToRemove;
-///   for(int i = 0; i < size; i++) {
-///      QModelIndex viewIndex = selected.at(i);
-///      QModelIndex modelIndex = this->pimpl->m_fermentableAdditionsTableProxy->mapToSource(viewIndex);
-///
-///      itemsToRemove.append(this->pimpl->m_fermentableAdditionsTableModel->getRow(modelIndex.row()));
-///   }
-///
-///   for (auto item : itemsToRemove) {
-///      this->doOrRedoUpdate(
-///         newUndoableAddOrRemove(*this->m_recipeObs,
-///                                &Recipe::remove<Fermentable>,
-///                                item,
-///                                &Recipe::add<Fermentable>,
-///                                &MainWindow::removeFermentable,
-///                                static_cast<void (MainWindow::*)(std::shared_ptr<Fermentable>)>(nullptr),
-///                                tr("Remove fermentable from recipe"))
-///      );
-///    }
-///
-///    return;
-///}
-
-///void MainWindow::editSelectedFermentable() {
-///   Fermentable* f = this->pimpl->selectedFermentable();
-///   if (!f) {
-///      return;
-///   }
-///
-///   this->pimpl->m_fermentableEditor->setEditItem(ObjectStoreWrapper::getSharedFromRaw(f));
-///   this->pimpl->m_fermentableEditor->show();
-///   return;
-///}
 
 void MainWindow::editMiscOfSelectedMiscAddition() {
    RecipeAdditionMisc * miscAddition = this->pimpl->selectedMiscAddition();
@@ -2573,64 +2470,6 @@ void MainWindow::editYeastOfSelectedYeastAddition() {
    this->pimpl->m_yeastEditor->show();
    return;
 }
-///
-///void MainWindow::removeSelectedMisc() {
-///   QModelIndexList selected = miscAdditionTable->selectionModel()->selectedIndexes();
-///   QList< std::shared_ptr<Misc> > itemsToRemove;
-///
-///   int size = selected.size();
-///   if (size == 0) {
-///      return;
-///   }
-///
-///   for (int i = 0; i < size; i++) {
-///      QModelIndex viewIndex = selected.at(i);
-///      QModelIndex modelIndex = this->pimpl->m_miscTableProxy->mapToSource(viewIndex);
-///
-///      itemsToRemove.append(this->pimpl->m_miscTableModel->getRow(modelIndex.row()));
-///   }
-///
-///   for (auto item : itemsToRemove) {
-///      this->doOrRedoUpdate(
-///         newUndoableAddOrRemove(*this->m_recipeObs,
-///                                 &Recipe::remove<Misc>,
-///                                 item,
-///                                 &Recipe::add<Misc>,
-///                                 &MainWindow::removeMisc,
-///                                 static_cast<void (MainWindow::*)(std::shared_ptr<Misc>)>(nullptr),
-///                                 tr("Remove misc from recipe"))
-///      );
-///   }
-///}
-///
-///void MainWindow::removeSelectedYeast() {
-///   QModelIndexList selected = yeastAdditionTable->selectionModel()->selectedIndexes();
-///   QList< std::shared_ptr<Yeast> > itemsToRemove;
-///
-///   int size = selected.size();
-///   if (size == 0) {
-///      return;
-///   }
-///
-///   for(int i = 0; i < size; i++) {
-///      QModelIndex viewIndex = selected.at(i);
-///      QModelIndex modelIndex = this->pimpl->m_yeastTableProxy->mapToSource(viewIndex);
-///
-///      itemsToRemove.append(this->pimpl->m_yeastTableModel->getRow(modelIndex.row()));
-///   }
-///
-///   for (auto item : itemsToRemove) {
-///      this->doOrRedoUpdate(
-///         newUndoableAddOrRemove(*this->m_recipeObs,
-///                                 &Recipe::remove<Yeast>,
-///                                 item,
-///                                 &Recipe::add<Yeast>,
-///                                 &MainWindow::removeYeast,
-///                                 static_cast<void (MainWindow::*)(std::shared_ptr<Yeast>)>(nullptr),
-///                                 tr("Remove yeast from recipe"))
-///      );
-///   }
-///}
 
 void MainWindow::newRecipe()
 {
@@ -2976,7 +2815,7 @@ void MainWindow::restoreFromBackup() {
    if (!success) {
       QMessageBox::warning( this, tr("Oops!"), tr("Operation failed.  See log file for more details.") );
    } else {
-      QMessageBox::information(this, tr("Restart"), tr("Please restart Brewken."));
+      QMessageBox::information(this, tr("Restart"), tr("Please restart %1.").arg(CONFIG_APPLICATION_NAME_UC));
       //TODO: do this without requiring restarting :)
    }
    return;

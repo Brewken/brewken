@@ -91,9 +91,9 @@ AboutDialog::AboutDialog(QWidget * parent) :
          "  </style>"
          " </head>"
          ""
-         " <h1>Brewken %1</h1>"
+         " <h1>%1 %2</h1>"
          " <p>"
-         "  Brewken, free software for developing beer recipes, is copyright:"
+         "  %1, free software for developing beer recipes, is copyright:"
          " </p>"
          " <ul>"
          "  <li>2018      Adam Hawes &lt;ach@hawes.net.au&gt;</li>"
@@ -176,27 +176,27 @@ AboutDialog::AboutDialog(QWidget * parent) :
          ""
          " <h2>License (GPLv3)</h2>"
          " <p>"
-         "  Brewken is free software: you can redistribute it and/or modify<br/>"
+         "  %1 is free software: you can redistribute it and/or modify<br/>"
          "  it under the terms of the GNU General Public License as published by<br/>"
          "  the Free Software Foundation, either version 3 of the License, or<br/>"
          "  (at your option) any later version.<br/>"
          "  <br/>"
-         "  Brewken is distributed in the hope that it will be useful,<br/>"
+         "  %1 is distributed in the hope that it will be useful,<br/>"
          "  but WITHOUT ANY WARRANTY; without even the implied warranty of<br/>"
          "  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br/>"
          "  GNU General Public License for more details.<br/>"
          "  <br/>"
          "  You should have received a copy of the GNU General Public License<br/>"
-         "  along with Brewken.  If not, see &lt;<a href=\"http://www.gnu.org/licenses/\">http://www.gnu.org/licenses/</a>&gt;"
+         "  along with %1.  If not, see &lt;<a href=\"http://www.gnu.org/licenses/\">http://www.gnu.org/licenses/</a>&gt;"
          " </p>"
          ""
          " <h2>Source Code</h2>"
          " <p>"
-         "  Brewken's source code is available at <a href=\"https://github.com/Brewken/brewken\">github.com/Brewken/brewken</a>"
+         "  %1's source code is available at <a href=\"%3\">%3</a>"
          " </p>"
          "</html>"
       )
-      .arg(CONFIG_VERSION_STRING)
+      .arg(CONFIG_APPLICATION_NAME_UC, CONFIG_VERSION_STRING, CONFIG_HOMEPAGE_URL)
    );
    return;
 }
@@ -227,6 +227,6 @@ void AboutDialog::doLayout()  {
 }
 
 void AboutDialog::retranslateUi() {
-   setWindowTitle(tr("About Brewken"));
+   setWindowTitle(tr("About %1").arg(CONFIG_APPLICATION_NAME_UC));
    return;
 }

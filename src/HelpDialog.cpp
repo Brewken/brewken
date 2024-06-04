@@ -58,6 +58,8 @@ public:
     * Set the text.  This is a separate function because we want to be able to redisplay in a different language.
     */
    void setText(HelpDialog & helpDialog) {
+      static QString const wikiUrl   = QString{"%1/wiki"  }.arg(CONFIG_HOMEPAGE_URL);
+      static QString const issuesUrl = QString{"%1/issues"}.arg(CONFIG_HOMEPAGE_URL);
       QString mainText;
       QTextStream mainTextAsStream{&mainText};
       mainTextAsStream <<
@@ -68,20 +70,23 @@ public:
          "</style>"
          "</head>"
          ""
-         "<h1>Brewken</h1>"
+         "<h1>" << CONFIG_APPLICATION_NAME_UC << "</h1>"
          "version " << CONFIG_VERSION_STRING << " " << HelpDialog::tr("for") << " " << QSysInfo::prettyProductName() <<
          "<h2>" << HelpDialog::tr("Online Help") << "</h2>"
          "<p>" <<
-         HelpDialog::tr("<p>The Brewken wiki is at ") << "<a href=\"https://github.com/Brewken/brewken/wiki\">https://github.com/Brewken/brewken/wiki</a>.</p>"
+         HelpDialog::tr("<p>The %1 wiki is at "
+                        "<a href=\"%2\">%2</a>.</p>").arg(CONFIG_APPLICATION_NAME_UC, wikiUrl) <<
          "<p>" <<
-         HelpDialog::tr("If you find a bug, or have an idea for an enhancement, please raise an issue at ") << "<br/>"
-         "<a href=\"https://github.com/Brewken/brewken/issues\">https://github.com/Brewken/brewken/issues</a>.<br/>"
+         HelpDialog::tr("If you find a bug, or have an idea for an enhancement, please raise an issue at <br/>"
+                        "<a href=\"%1\">%1</a>.").arg(issuesUrl) <<
+         "<br/>"
          "<br/>" <<
          HelpDialog::tr("<em>If it's Brewken, we can fix it...</em>") <<
          "</p>"
          "<h2>" << HelpDialog::tr("Your Data") << "</h2>"
          "<p>" <<
-         HelpDialog::tr("Recipes, ingredients and other important data are stored in one or more files in the following folder (which is configurable via the 'Tools > Options' menu):") <<
+         HelpDialog::tr("Recipes, ingredients and other important data are stored in one or more files in the "
+                        "following folder (which is configurable via the 'Tools > Options' menu):") <<
          "</p>"
          "<ul>"
          "<li><pre>" << this->makeClickableDirLink(PersistentSettings::getUserDataDir().absolutePath()) << "</pre></li>"

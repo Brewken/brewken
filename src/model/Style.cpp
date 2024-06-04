@@ -83,7 +83,6 @@ TypeLookup const Style::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::abvMin_pct       , Style::m_abvMin_pct       ,           NonPhysicalQuantity::Percentage ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::abvMax_pct       , Style::m_abvMax_pct       ,           NonPhysicalQuantity::Percentage ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::notes            , Style::m_notes            ,           NonPhysicalQuantity::String     ),
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::profile          , Style::m_profile          ,           NonPhysicalQuantity::String     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::ingredients      , Style::m_ingredients      ,           NonPhysicalQuantity::String     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Style::examples         , Style::m_examples         ,           NonPhysicalQuantity::String     ),
       // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -123,7 +122,6 @@ Style::Style(QString name) :
    m_abvMin_pct       {std::nullopt     },
    m_abvMax_pct       {std::nullopt     },
    m_notes            {""               },
-///   m_profile          {""               },
    m_ingredients      {""               },
    m_examples         {""               },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -156,7 +154,6 @@ Style::Style(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_abvMin_pct       , namedParameterBundle, PropertyNames::Style::abvMin_pct       ),
    SET_REGULAR_FROM_NPB (m_abvMax_pct       , namedParameterBundle, PropertyNames::Style::abvMax_pct       ),
    SET_REGULAR_FROM_NPB (m_notes            , namedParameterBundle, PropertyNames::Style::notes            ),
-///   SET_REGULAR_FROM_NPB (m_profile          , namedParameterBundle, PropertyNames::Style::profile          ),
    SET_REGULAR_FROM_NPB (m_ingredients      , namedParameterBundle, PropertyNames::Style::ingredients      ),
    SET_REGULAR_FROM_NPB (m_examples         , namedParameterBundle, PropertyNames::Style::examples         ),
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -189,7 +186,6 @@ Style::Style(Style const & other) :
    m_abvMin_pct       {other.m_abvMin_pct       },
    m_abvMax_pct       {other.m_abvMax_pct       },
    m_notes            {other.m_notes            },
-///   m_profile          {other.m_profile          },
    m_ingredients      {other.m_ingredients      },
    m_examples         {other.m_examples         },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -222,7 +218,6 @@ std::optional<double> Style::carbMax_vol      () const { return m_carbMax_vol   
 std::optional<double> Style::abvMin_pct       () const { return m_abvMin_pct       ; }
 std::optional<double> Style::abvMax_pct       () const { return m_abvMax_pct       ; }
 QString               Style::notes            () const { return m_notes            ; }
-///QString               Style::profile          () const { return m_profile          ; }
 QString               Style::ingredients      () const { return m_ingredients      ; }
 QString               Style::examples         () const { return m_examples         ; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
@@ -260,10 +255,6 @@ void Style::setAppearance       (QString               const & val) { SET_AND_NO
 void Style::setFlavor           (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Style::flavor           , this->m_flavor           , val); }
 void Style::setMouthfeel        (QString               const & val) { SET_AND_NOTIFY(PropertyNames::Style::mouthfeel        , this->m_mouthfeel        , val); }
 void Style::setOverallImpression(QString               const & val) { SET_AND_NOTIFY(PropertyNames::Style::overallImpression, this->m_overallImpression, val); }
-
-///Recipe * Style::getOwningRecipe() const {
-///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
-///}
 
 // Boilerplate code for FolderBase
 FOLDER_BASE_COMMON_CODE(Style)

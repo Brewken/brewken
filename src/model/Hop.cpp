@@ -131,11 +131,7 @@ TypeLookup const Hop::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::form                 , Hop::m_form                 ,           NonPhysicalQuantity::Enum         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::beta_pct             , Hop::m_beta_pct             ,           NonPhysicalQuantity::Percentage   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::origin               , Hop::m_origin               ,           NonPhysicalQuantity::String       ),
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::use                  , Hop::m_use                  ,           NonPhysicalQuantity::Enum         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::type                 , Hop::m_type                 ,           NonPhysicalQuantity::Enum         ),
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amount               , Hop::m_amount               , Measurement::PqEitherMassOrVolume           ), // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::amountIsWeight       , Hop::m_amountIsWeight       ,           NonPhysicalQuantity::Bool         ), // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::time_min             , Hop::m_time_min             , Measurement::PhysicalQuantity::Time         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::notes                , Hop::m_notes                ,           NonPhysicalQuantity::String       ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::hsi_pct              , Hop::m_hsi_pct              ,           NonPhysicalQuantity::Percentage   ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Hop::substitutes          , Hop::m_substitutes          ,           NonPhysicalQuantity::String       ),
@@ -170,9 +166,7 @@ Hop::Hop(QString name) :
    m_form                 {std::nullopt},
    m_beta_pct             {std::nullopt},
    m_origin               {""          },
-///   m_use                  {std::nullopt},
    m_type                 {std::nullopt},
-///   m_time_min             {0.0         },
    m_notes                {""          },
    m_hsi_pct              {0.0         },
    m_substitutes          {""          },
@@ -203,9 +197,7 @@ Hop::Hop(NamedParameterBundle const & namedParameterBundle) :
    SET_OPT_ENUM_FROM_NPB(m_form      , Hop::Form, namedParameterBundle, PropertyNames::Hop::form                 ),
    SET_REGULAR_FROM_NPB (m_beta_pct             , namedParameterBundle, PropertyNames::Hop::beta_pct             ),
    SET_REGULAR_FROM_NPB (m_origin               , namedParameterBundle, PropertyNames::Hop::origin               ),
-///   SET_OPT_ENUM_FROM_NPB(m_use       , Hop::Use , namedParameterBundle, PropertyNames::Hop::use                  ),
    SET_OPT_ENUM_FROM_NPB(m_type      , Hop::Type, namedParameterBundle, PropertyNames::Hop::type                 ),
-///   SET_REGULAR_FROM_NPB (m_time_min             , namedParameterBundle, PropertyNames::Hop::time_min             ),
    SET_REGULAR_FROM_NPB (m_notes                , namedParameterBundle, PropertyNames::Hop::notes                ),
    SET_REGULAR_FROM_NPB (m_hsi_pct              , namedParameterBundle, PropertyNames::Hop::hsi_pct              ),
    SET_REGULAR_FROM_NPB (m_substitutes          , namedParameterBundle, PropertyNames::Hop::substitutes          ),
@@ -231,72 +223,67 @@ Hop::Hop(NamedParameterBundle const & namedParameterBundle) :
 }
 
 Hop::Hop(Hop const & other) :
-   Ingredient{other                        },
-   m_alpha_pct             {other.m_alpha_pct            },
-   m_form                  {other.m_form                 },
-   m_beta_pct              {other.m_beta_pct             },
-   m_origin                {other.m_origin               },
-///   m_use                   {other.m_use                  },
-   m_type                  {other.m_type                 },
-///   m_time_min              {other.m_time_min             },
-   m_notes                 {other.m_notes                },
-   m_hsi_pct               {other.m_hsi_pct              },
-   m_substitutes           {other.m_substitutes          },
-   m_humulene_pct          {other.m_humulene_pct         },
-   m_caryophyllene_pct     {other.m_caryophyllene_pct    },
-   m_cohumulone_pct        {other.m_cohumulone_pct       },
-   m_myrcene_pct           {other.m_myrcene_pct          },
+   Ingredient          {other                     },
+   m_alpha_pct         {other.m_alpha_pct         },
+   m_form              {other.m_form              },
+   m_beta_pct          {other.m_beta_pct          },
+   m_origin            {other.m_origin            },
+   m_type              {other.m_type              },
+   m_notes             {other.m_notes             },
+   m_hsi_pct           {other.m_hsi_pct           },
+   m_substitutes       {other.m_substitutes       },
+   m_humulene_pct      {other.m_humulene_pct      },
+   m_caryophyllene_pct {other.m_caryophyllene_pct },
+   m_cohumulone_pct    {other.m_cohumulone_pct    },
+   m_myrcene_pct       {other.m_myrcene_pct       },
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-   m_totalOil_mlPer100g {other.m_totalOil_mlPer100g},
-   m_farnesene_pct         {other.m_farnesene_pct        },
-   m_geraniol_pct          {other.m_geraniol_pct         },
-   m_bPinene_pct          {other.m_bPinene_pct         },
-   m_linalool_pct          {other.m_linalool_pct         },
-   m_limonene_pct          {other.m_limonene_pct         },
-   m_nerol_pct             {other.m_nerol_pct            },
-   m_pinene_pct            {other.m_pinene_pct           },
-   m_polyphenols_pct       {other.m_polyphenols_pct      },
-   m_xanthohumol_pct       {other.m_xanthohumol_pct      },
-   m_producer              {other.m_producer             },
-   m_productId            {other.m_productId           },
-   m_year                  {other.m_year                 } {
+   m_totalOil_mlPer100g{other.m_totalOil_mlPer100g},
+   m_farnesene_pct     {other.m_farnesene_pct     },
+   m_geraniol_pct      {other.m_geraniol_pct      },
+   m_bPinene_pct       {other.m_bPinene_pct       },
+   m_linalool_pct      {other.m_linalool_pct      },
+   m_limonene_pct      {other.m_limonene_pct      },
+   m_nerol_pct         {other.m_nerol_pct         },
+   m_pinene_pct        {other.m_pinene_pct        },
+   m_polyphenols_pct   {other.m_polyphenols_pct   },
+   m_xanthohumol_pct   {other.m_xanthohumol_pct   },
+   m_producer          {other.m_producer          },
+   m_productId         {other.m_productId         },
+   m_year              {other.m_year              } {
    return;
 }
 
 Hop::~Hop() = default;
 
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
-double                   Hop::alpha_pct            () const { return this->m_alpha_pct            ; }
-std::optional<Hop::Form> Hop::form                 () const { return this->m_form                 ; }
-std::optional<int>       Hop::formAsInt            () const { return Optional::toOptInt(m_form)   ; }
-std::optional<double>    Hop::beta_pct             () const { return this->m_beta_pct             ; }
-QString                  Hop::origin               () const { return this->m_origin               ; }
-///double                   Hop::amount               () const { return this->m_amount               ; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
-///bool                     Hop::amountIsWeight       () const { return this->m_amountIsWeight       ; } // Deprecated - moved to RecipeAdditionHop  TODO: Remove this, once we have RecipeAdditionHop working
-/// double                   Hop::time_min             () const { return this->m_time_min             ; }
-QString                  Hop::notes                () const { return this->m_notes                ; }
-std::optional<Hop::Type> Hop::type                 () const { return this->m_type                 ; }
-std::optional<int>       Hop::typeAsInt            () const { return Optional::toOptInt(m_type)   ; }
-std::optional<double>    Hop::hsi_pct              () const { return this->m_hsi_pct              ; }
-QString                  Hop::substitutes          () const { return this->m_substitutes          ; }
-std::optional<double>    Hop::humulene_pct         () const { return this->m_humulene_pct         ; }
-std::optional<double>    Hop::caryophyllene_pct    () const { return this->m_caryophyllene_pct    ; }
-std::optional<double>    Hop::cohumulone_pct       () const { return this->m_cohumulone_pct       ; }
-std::optional<double>    Hop::myrcene_pct          () const { return this->m_myrcene_pct          ; }
+double                   Hop::alpha_pct         () const { return this->m_alpha_pct         ; }
+std::optional<Hop::Form> Hop::form              () const { return this->m_form              ; }
+std::optional<int>       Hop::formAsInt         () const { return Optional::toOptInt(m_form); }
+std::optional<double>    Hop::beta_pct          () const { return this->m_beta_pct          ; }
+QString                  Hop::origin            () const { return this->m_origin            ; }
+QString                  Hop::notes             () const { return this->m_notes             ; }
+std::optional<Hop::Type> Hop::type              () const { return this->m_type              ; }
+std::optional<int>       Hop::typeAsInt         () const { return Optional::toOptInt(m_type); }
+std::optional<double>    Hop::hsi_pct           () const { return this->m_hsi_pct           ; }
+QString                  Hop::substitutes       () const { return this->m_substitutes       ; }
+std::optional<double>    Hop::humulene_pct      () const { return this->m_humulene_pct      ; }
+std::optional<double>    Hop::caryophyllene_pct () const { return this->m_caryophyllene_pct ; }
+std::optional<double>    Hop::cohumulone_pct    () const { return this->m_cohumulone_pct    ; }
+std::optional<double>    Hop::myrcene_pct       () const { return this->m_myrcene_pct       ; }
 // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-std::optional<double>   Hop::totalOil_mlPer100g() const { return this->m_totalOil_mlPer100g; }
-std::optional<double>   Hop::farnesene_pct        () const { return this->m_farnesene_pct        ; }
-std::optional<double>   Hop::geraniol_pct         () const { return this->m_geraniol_pct         ; }
-std::optional<double>   Hop::bPinene_pct         () const { return this->m_bPinene_pct         ; }
-std::optional<double>   Hop::linalool_pct         () const { return this->m_linalool_pct         ; }
-std::optional<double>   Hop::limonene_pct         () const { return this->m_limonene_pct         ; }
-std::optional<double>   Hop::nerol_pct            () const { return this->m_nerol_pct            ; }
-std::optional<double>   Hop::pinene_pct           () const { return this->m_pinene_pct           ; }
-std::optional<double>   Hop::polyphenols_pct      () const { return this->m_polyphenols_pct      ; }
-std::optional<double>   Hop::xanthohumol_pct      () const { return this->m_xanthohumol_pct      ; }
-QString                 Hop::producer             () const { return this->m_producer             ; }
-QString                 Hop::productId           () const { return this->m_productId           ; }
-QString                 Hop::year                 () const { return this->m_year                 ; }
+std::optional<double>    Hop::totalOil_mlPer100g() const { return this->m_totalOil_mlPer100g; }
+std::optional<double>    Hop::farnesene_pct     () const { return this->m_farnesene_pct     ; }
+std::optional<double>    Hop::geraniol_pct      () const { return this->m_geraniol_pct      ; }
+std::optional<double>    Hop::bPinene_pct       () const { return this->m_bPinene_pct       ; }
+std::optional<double>    Hop::linalool_pct      () const { return this->m_linalool_pct      ; }
+std::optional<double>    Hop::limonene_pct      () const { return this->m_limonene_pct      ; }
+std::optional<double>    Hop::nerol_pct         () const { return this->m_nerol_pct         ; }
+std::optional<double>    Hop::pinene_pct        () const { return this->m_pinene_pct        ; }
+std::optional<double>    Hop::polyphenols_pct   () const { return this->m_polyphenols_pct   ; }
+std::optional<double>    Hop::xanthohumol_pct   () const { return this->m_xanthohumol_pct   ; }
+QString                  Hop::producer          () const { return this->m_producer          ; }
+QString                  Hop::productId         () const { return this->m_productId         ; }
+QString                  Hop::year              () const { return this->m_year              ; }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
 void Hop::setAlpha_pct            (double                   const   val) { SET_AND_NOTIFY(PropertyNames::Hop::alpha_pct            , this->m_alpha_pct            , this->enforceMinAndMax(val, "alpha", 0.0, 100.0)); return; }
@@ -331,11 +318,6 @@ void Hop::setXanthohumol_pct      (std::optional<double>    const   val) { SET_A
 void Hop::setProducer             (QString                  const & val) { SET_AND_NOTIFY(PropertyNames::Hop::producer             , this->m_producer             , val                                                             ); return; }
 void Hop::setProductId           (QString                  const & val) { SET_AND_NOTIFY(PropertyNames::Hop::productId           , this->m_productId           , val                                                             ); return; }
 void Hop::setYear                 (QString                  const   val) { SET_AND_NOTIFY(PropertyNames::Hop::year                 , this->m_year                 , val                                                             ); return; }
-
-///Recipe * Hop::getOwningRecipe() const {
-//////   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
-///   return nullptr;
-///}
 
 // Insert the boiler-plate stuff for inventory
 INGREDIENT_BASE_COMMON_CODE(Hop)

@@ -432,12 +432,5 @@ double Equipment::wortEndOfBoil_l( double kettleWort_l ) const {
    return kettleWort_l - (boilTime_min().value_or(Equipment::default_boilTime_mins)/(double)60)*kettleEvaporationPerHour_l().value_or(Equipment::default_kettleEvaporationPerHour_l);
 }
 
-///// Although it's a similar one-liner implementation for many subclasses of NamedEntity, we can't push the
-///// implementation of this down to the base class, as Recipe::uses() is templated and won't work with type erasure.
-///Recipe * Equipment::getOwningRecipe() const {
-///   return ObjectStoreWrapper::findFirstMatching<Recipe>( [this](Recipe * rec) {return rec->uses(*this);} );
-///}
-
-
 // Boilerplate code for FolderBase
 FOLDER_BASE_COMMON_CODE(Equipment)

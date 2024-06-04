@@ -36,6 +36,7 @@
 #include <QSqlDatabase>
 #include <QString>
 
+#include "config.h"
 #include "utils/NoCopy.h"
 
 class BtStringConst;
@@ -131,10 +132,10 @@ public:
    static bool verifyDbConnection(Database::DbType testDb,
                                   QString const& hostname,
                                   int portnum = 5432,
-                                  QString const & schema="public",
-                                  QString const & database="brewken",
-                                  QString const & username="brewken",
-                                  QString const & password="brewken");
+                                  QString const & schema   = "public",
+                                  QString const & database = QString{CONFIG_APPLICATION_NAME_LC},
+                                  QString const & username = QString{CONFIG_APPLICATION_NAME_LC},
+                                  QString const & password = QString{CONFIG_APPLICATION_NAME_LC});
 
    /**
     * \brief This returns \c true if the \c Database object connected to the DB and was able to check the schema version

@@ -88,7 +88,6 @@ TypeLookup const BrewNote::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::projStrikeTemp_c , BrewNote::m_projStrikeTemp_c , Measurement::PhysicalQuantity::Temperature),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::projVolIntoBK_l  , BrewNote::m_projVolIntoBK_l  , Measurement::PhysicalQuantity::Volume     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::projVolIntoFerm_l, BrewNote::m_projVolIntoFerm_l, Measurement::PhysicalQuantity::Volume     ),
-///      PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::recipeId         , BrewNote::m_recipeId                                                     ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::sg               , BrewNote::m_sg               , Measurement::PhysicalQuantity::Density    ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::strikeTemp_c     , BrewNote::m_strikeTemp_c     , Measurement::PhysicalQuantity::Temperature),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::BrewNote::volumeIntoBK_l   , BrewNote::m_volumeIntoBK_l   , Measurement::PhysicalQuantity::Volume     ),
@@ -142,9 +141,7 @@ BrewNote::BrewNote(QDate dateNow, QString const & name) :
    m_projABV_pct      {0.0    },
    m_projPoints       {0.0    },
    m_projFermPoints   {0.0    },
-   m_projAtten        {0.0    }
-///   , m_recipeId         {-1     }
-   {
+   m_projAtten        {0.0    } {
    return;
 }
 
@@ -180,9 +177,7 @@ BrewNote::BrewNote(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_projABV_pct      , namedParameterBundle, PropertyNames::BrewNote::projABV_pct      ),
    SET_REGULAR_FROM_NPB (m_projPoints       , namedParameterBundle, PropertyNames::BrewNote::projPoints       ),
    SET_REGULAR_FROM_NPB (m_projFermPoints   , namedParameterBundle, PropertyNames::BrewNote::projFermPoints   ),
-   SET_REGULAR_FROM_NPB (m_projAtten        , namedParameterBundle, PropertyNames::BrewNote::projAtten        )
-///   , SET_REGULAR_FROM_NPB (m_recipeId         , namedParameterBundle, PropertyNames::BrewNote::recipeId         ) {
-   {
+   SET_REGULAR_FROM_NPB (m_projAtten        , namedParameterBundle, PropertyNames::BrewNote::projAtten        ) {
    return;
 }
 
@@ -366,8 +361,6 @@ double  BrewNote::projPoints       () const { return this->m_projPoints       ; 
 double  BrewNote::projFermPoints   () const { return this->m_projFermPoints   ; }
 double  BrewNote::projAtten        () const { return this->m_projAtten        ; }
 double  BrewNote::boilOff_l        () const { return this->m_boilOff_l        ; }
-///int    BrewNote::getRecipeId() const { return this->m_recipeId; }
-
 
 // Setters=====================================================================
 void BrewNote::setBrewDate(QDate const & date) {
@@ -497,18 +490,6 @@ void BrewNote::setProjEff_pct      (double var) { SET_AND_NOTIFY(PropertyNames::
 void BrewNote::setProjABV_pct      (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::projABV_pct      , this->m_projABV_pct      , var); }
 void BrewNote::setProjAtten        (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::projAtten        , this->m_projAtten        , var); }
 void BrewNote::setBoilOff_l        (double var) { SET_AND_NOTIFY(PropertyNames::BrewNote::boilOff_l        , this->m_boilOff_l        , var); }
-///void BrewNote::setRecipeId(int recipeId) { this->m_recipeId = recipeId; }
-///void BrewNote::setRecipe(Recipe * recipe) {
-///   Q_ASSERT(nullptr != recipe);
-///   this->m_recipeId = recipe->key();
-///   return;
-///}
-
-///Recipe * BrewNote::getOwningRecipe() const {
-///   // getById will return nullptr if the recipe ID is invalid, which is what we want here
-///   return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
-///}
-
 
 // calculators -- these kind of act as both setters and getters.  Likely bad
 // form

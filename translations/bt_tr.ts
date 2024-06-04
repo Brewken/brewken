@@ -4,7 +4,7 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <source>About Brewken</source>
+        <source>About %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -928,10 +928,6 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This equipment profile may break Brewken&apos;s maths</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Numerical values on zero-sized &quot;optional&quot; vessels will be unset or zeroed when you save</source>
         <translation type="unfinished"></translation>
     </message>
@@ -973,6 +969,10 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Data Discard Warnings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This equipment profile may break %1&apos;s maths</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1165,14 +1165,6 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;The Brewken wiki is at </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>If you find a bug, or have an idea for an enhancement, please raise an issue at </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;em&gt;If it&apos;s Brewken, we can fix it...&lt;/em&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1210,6 +1202,14 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;The %1 wiki is at &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If you find a bug, or have an idea for an enhancement, please raise an issue at &lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1596,10 +1596,6 @@ If you didn&apos;t yet do this, click Abort.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please restart Brewken.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Nothing to export</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1653,6 +1649,14 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Remove %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>About %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please restart %1.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2134,19 +2138,19 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Saving the options without testing the connection can cause Brewken to not restart.  Your changes have been discarded, which is likely really, really crappy UX.  Please open a bug explaining exactly how you got to this message.</source>
+        <source>Saving the options without testing the connection can cause %1 to not restart.  Your changes have been discarded, which is likely really, really crappy UX.  Please open a bug explaining exactly how you got to this message.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Would you like Brewken to transfer your data to the new database? NOTE: If you&apos;ve already loaded the data, say No</source>
+        <source>Would you like %1 to transfer your data to the new database? NOTE: If you&apos;ve already loaded the data, say No</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please restart Brewken to connect to the new database</source>
+        <source>Please restart %1 to connect to the new database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please restart Brewken.</source>
+        <source>Please restart %1.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2182,18 +2186,6 @@ If you need help, please open an issue at %1</source>
 <context>
     <name>QApplication</name>
     <message>
-        <source>Brewken is already running!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Another instance of Brewken is already running.
-
-Running two copies of the program at once may lead to data loss.
-
-Press OK to quit.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Application terminates</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2205,6 +2197,18 @@ Error message:
     </message>
     <message>
         <source>The application encountered a fatal error.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 is already running!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Another instance of %1 is already running.
+
+Running two copies of the program at once may lead to data loss.
+
+Press OK to quit.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6304,14 +6308,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>About &amp;Brewken</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>About Brewken</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Boil</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7128,10 +7124,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>How many times Brewken needs to be run to trigger another backup: 1 means always backup</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;qt&gt;
    &lt;b&gt;Know another language?&lt;/b&gt;
    &lt;br&gt;&lt;br&gt;
@@ -7139,6 +7131,10 @@ The final volume in the primary is %1.</source>
   &lt;a href=&quot;https://github.com/Brewken/brewken/wiki/Translations&quot;&gt;
   provide a translation&lt;/a&gt; so that your friends can use Brewken!
 &lt;/qt&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>How many times %1 needs to be run to trigger another backup: 1 means always backup</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

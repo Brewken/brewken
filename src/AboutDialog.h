@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * AboutDialog.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * AboutDialog.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Greg Greenaae <ggreenaae@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -30,7 +30,7 @@ class QWidget;
 /*!
  * \class AboutDialog
  *
- * \brief Simple "about" dialog for Brewken.
+ * \brief Simple "about" dialog for the application.
  */
 class AboutDialog : public QDialog {
    Q_OBJECT

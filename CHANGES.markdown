@@ -5,9 +5,17 @@ Note however that we also process it into a Debian-compliant text change log, so
 In particular, the Release Timestamp section is needed as part of this (and you need to be meticulous about the date
 format therein).
 
-## Forthcoming in v1.0.0
+## Forthcoming in v1.1.0
+
+* Improvements to BeerJSON support
+
+
+## v1.0.0
 
 * BeerJSON support
+
+### Release Timestamp
+Mon, 27 May 2024 05:30:01 +0100
 
 ## v0.1.0
 

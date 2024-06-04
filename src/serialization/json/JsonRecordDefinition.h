@@ -408,10 +408,10 @@ public:
 
    JsonRecordConstructorWrapper jsonRecordConstructorWrapper;
 
+   std::vector<FieldDefinition> const fieldDefinitions;
+
    //! See comments in model/OutlineableNamedEntity.h
    bool isOutlineRecord;
-
-   std::vector<FieldDefinition> const fieldDefinitions;
 };
 
 
