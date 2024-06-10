@@ -23,7 +23,6 @@
 
 #include "Application.h"
 #include "config.h"
-#include "database/BtSqlQuery.h"
 #include "database/DatabaseSchemaHelper.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Recipe.h"

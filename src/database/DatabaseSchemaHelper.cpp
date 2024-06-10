@@ -2036,10 +2036,13 @@ int DatabaseSchemaHelper::getDefaultContentVersionFromDb(QSqlDatabase & db) {
 }
 
 bool DatabaseSchemaHelper::setDefaultContentVersionFromDb(QSqlDatabase & db, int val) {
-   BtSqlQuery sqlQuery("UPDATE settings SET default_content_version=:version WHERE id=1", db);
+   BtSqlQuery sqlQuery{db};
+   QString const queryString{"UPDATE settings SET default_content_version=:version WHERE id=1"};
+   sqlQuery.prepare(queryString);
    QVariant bindValue{QString::number(val)};
    sqlQuery.bindValue(":version", bindValue);
-   return sqlQuery.exec();
+   bool ret = sqlQuery.exec();
+   return ret;
 }
 
 
