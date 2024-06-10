@@ -960,11 +960,11 @@
     <name>Database</name>
     <message>
         <source>Merge Database</source>
-        <translation>Spojit databáze</translation>
+        <translation type="vanished">Spojit databáze</translation>
     </message>
     <message>
         <source>There may be new ingredients and recipes available. Would you like to add these to your database?</source>
-        <translation>Možná jsou k dispozici nové přísady a recepty. Chcete je přidat do své databáze?</translation>
+        <translation type="vanished">Možná jsou k dispozici nové přísady a recepty. Chcete je přidat do své databáze?</translation>
     </message>
     <message>
         <source>Database password</source>
@@ -1073,6 +1073,13 @@ If you didn&apos;t yet do this, click Abort.</source>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DefaultContentLoader</name>
+    <message>
+        <source>Merge Database</source>
+        <translation type="obsolete">Spojit databáze</translation>
     </message>
 </context>
 <context>
@@ -3931,6 +3938,18 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Database</source>
+        <translation type="unfinished">Spojit databáze</translation>
+    </message>
+    <message>
+        <source>New ingredients etc are available. Would you like to add them to your database?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error matching %1 file pattern in %2 directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9293,7 +9312,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Date First Brewed</source>
-        <translation>Poprvé uvařeno</translation>
+        <translation type="vanished">Poprvé uvařeno</translation>
     </message>
     <message>
         <source>dd MMM yyyy</source>
@@ -9317,6 +9336,10 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

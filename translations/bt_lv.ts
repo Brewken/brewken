@@ -837,14 +837,6 @@
 <context>
     <name>Database</name>
     <message>
-        <source>Merge Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>There may be new ingredients and recipes available. Would you like to add these to your database?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Database password</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2962,6 +2954,18 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New ingredients etc are available. Would you like to add them to your database?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error matching %1 file pattern in %2 directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7537,10 +7541,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Date First Brewed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>dd MMM yyyy</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7562,6 +7562,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -1003,11 +1003,11 @@
     <name>Database</name>
     <message>
         <source>Merge Database</source>
-        <translation>Объединение базы данных</translation>
+        <translation type="vanished">Объединение базы данных</translation>
     </message>
     <message>
         <source>There may be new ingredients and recipes available. Would you like to add these to your database?</source>
-        <translation>Возможно доступны новые ингридиенты и рецепты. Желаете добавить их в вашу базу данных?</translation>
+        <translation type="vanished">Возможно доступны новые ингридиенты и рецепты. Желаете добавить их в вашу базу данных?</translation>
     </message>
     <message>
         <source>Database password</source>
@@ -1116,6 +1116,13 @@ If you didn&apos;t yet do this, click Abort.</source>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DefaultContentLoader</name>
+    <message>
+        <source>Merge Database</source>
+        <translation type="obsolete">Объединение базы данных</translation>
     </message>
 </context>
 <context>
@@ -3978,6 +3985,18 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Database</source>
+        <translation type="unfinished">Объединение базы данных</translation>
+    </message>
+    <message>
+        <source>New ingredients etc are available. Would you like to add them to your database?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error matching %1 file pattern in %2 directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9364,7 +9383,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Date First Brewed</source>
-        <translation>Дата первой варки</translation>
+        <translation type="vanished">Дата первой варки</translation>
     </message>
     <message>
         <source>dd MMM yyyy</source>
@@ -9388,6 +9407,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

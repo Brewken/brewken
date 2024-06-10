@@ -999,11 +999,11 @@
     <name>Database</name>
     <message>
         <source>Merge Database</source>
-        <translation>Adatbázis összefésülése</translation>
+        <translation type="vanished">Adatbázis összefésülése</translation>
     </message>
     <message>
         <source>There may be new ingredients and recipes available. Would you like to add these to your database?</source>
-        <translation>Új alkotóelemek és receptek elérhetőek. Szeretné ezeket az adatbázisba illeszteni?</translation>
+        <translation type="vanished">Új alkotóelemek és receptek elérhetőek. Szeretné ezeket az adatbázisba illeszteni?</translation>
     </message>
     <message>
         <source>Database password</source>
@@ -1112,6 +1112,13 @@ If you didn&apos;t yet do this, click Abort.</source>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DefaultContentLoader</name>
+    <message>
+        <source>Merge Database</source>
+        <translation type="obsolete">Adatbázis összefésülése</translation>
     </message>
 </context>
 <context>
@@ -3990,6 +3997,18 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Database</source>
+        <translation type="unfinished">Adatbázis összefésülése</translation>
+    </message>
+    <message>
+        <source>New ingredients etc are available. Would you like to add them to your database?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error matching %1 file pattern in %2 directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9223,10 +9242,6 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Date First Brewed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>dd MMM yyyy</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9248,6 +9263,10 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

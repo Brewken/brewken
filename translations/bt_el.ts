@@ -960,11 +960,11 @@
     <name>Database</name>
     <message>
         <source>Merge Database</source>
-        <translation>Συγχώνευση της βάσης δεδομένων</translation>
+        <translation type="vanished">Συγχώνευση της βάσης δεδομένων</translation>
     </message>
     <message>
         <source>There may be new ingredients and recipes available. Would you like to add these to your database?</source>
-        <translation>Πιθανόν να είναι διαθέσιμα νέα συστατικά και συνταγές. Θα θέλατε να προστεθούν στην υπάρχουσα βάση δεδομένων;</translation>
+        <translation type="vanished">Πιθανόν να είναι διαθέσιμα νέα συστατικά και συνταγές. Θα θέλατε να προστεθούν στην υπάρχουσα βάση δεδομένων;</translation>
     </message>
     <message>
         <source>Database password</source>
@@ -1073,6 +1073,13 @@ If you didn&apos;t yet do this, click Abort.</source>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DefaultContentLoader</name>
+    <message>
+        <source>Merge Database</source>
+        <translation type="obsolete">Συγχώνευση της βάσης δεδομένων</translation>
     </message>
 </context>
 <context>
@@ -3935,6 +3942,18 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Database</source>
+        <translation type="unfinished">Συγχώνευση της βάσης δεδομένων</translation>
+    </message>
+    <message>
+        <source>New ingredients etc are available. Would you like to add them to your database?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error matching %1 file pattern in %2 directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9307,7 +9326,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Date First Brewed</source>
-        <translation>Ημ/νια αρχικής παρασκευής</translation>
+        <translation type="vanished">Ημ/νια αρχικής παρασκευής</translation>
     </message>
     <message>
         <source>dd MMM yyyy</source>
@@ -9331,6 +9350,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

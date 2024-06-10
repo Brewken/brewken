@@ -1019,11 +1019,11 @@
     <name>Database</name>
     <message>
         <source>Merge Database</source>
-        <translation>Database Samenvoegen</translation>
+        <translation type="vanished">Database Samenvoegen</translation>
     </message>
     <message>
         <source>There may be new ingredients and recipes available. Would you like to add these to your database?</source>
-        <translation>Er zijn mogelijk nieuwe ingrediënten en recepten verkrijgbaar. Wilt u deze toevoegen aan uw database?</translation>
+        <translation type="vanished">Er zijn mogelijk nieuwe ingrediënten en recepten verkrijgbaar. Wilt u deze toevoegen aan uw database?</translation>
     </message>
     <message>
         <source>Database password</source>
@@ -1132,6 +1132,13 @@ If you didn&apos;t yet do this, click Abort.</source>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DefaultContentLoader</name>
+    <message>
+        <source>Merge Database</source>
+        <translation type="obsolete">Database Samenvoegen</translation>
     </message>
 </context>
 <context>
@@ -4012,6 +4019,18 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Database</source>
+        <translation type="unfinished">Database Samenvoegen</translation>
+    </message>
+    <message>
+        <source>New ingredients etc are available. Would you like to add them to your database?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error matching %1 file pattern in %2 directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9270,7 +9289,7 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Date First Brewed</source>
-        <translation>Datum Eerste Brouwsel</translation>
+        <translation type="vanished">Datum Eerste Brouwsel</translation>
     </message>
     <message>
         <source>dd MMM yyyy</source>
@@ -9294,6 +9313,10 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

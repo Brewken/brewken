@@ -995,11 +995,11 @@
     <name>Database</name>
     <message>
         <source>Merge Database</source>
-        <translation>Datenbank zusammenführen</translation>
+        <translation type="vanished">Datenbank zusammenführen</translation>
     </message>
     <message>
         <source>There may be new ingredients and recipes available. Would you like to add these to your database?</source>
-        <translation>Es sind möglicherweise neue Zutaten und Rezepte verfügbar. Möchten sie diese zu ihrer Datenbank hinzufügen?</translation>
+        <translation type="vanished">Es sind möglicherweise neue Zutaten und Rezepte verfügbar. Möchten sie diese zu ihrer Datenbank hinzufügen?</translation>
     </message>
     <message>
         <source>Database password</source>
@@ -1108,6 +1108,13 @@ If you didn&apos;t yet do this, click Abort.</source>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DefaultContentLoader</name>
+    <message>
+        <source>Merge Database</source>
+        <translation type="obsolete">Datenbank zusammenführen</translation>
     </message>
 </context>
 <context>
@@ -3978,6 +3985,18 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Database</source>
+        <translation type="unfinished">Datenbank zusammenführen</translation>
+    </message>
+    <message>
+        <source>New ingredients etc are available. Would you like to add them to your database?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error matching %1 file pattern in %2 directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9325,7 +9344,7 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Date First Brewed</source>
-        <translation>Datum des ersten Brauens</translation>
+        <translation type="vanished">Datum des ersten Brauens</translation>
     </message>
     <message>
         <source>dd MMM yyyy</source>
@@ -9349,6 +9368,10 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

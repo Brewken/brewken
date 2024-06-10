@@ -156,6 +156,9 @@ public:
    static constexpr double default_topUpWater_l               = 0.0;
    //! @}
 
+   //=================================================== PROPERTIES ====================================================
+   //! \brief Folder.  See model/FolderBase for implementation of the getter & setter.
+   Q_PROPERTY(QString folder READ folder WRITE setFolder)
    /**
     * \brief The boil size in liters: the pre-boil volume used in this particular instance for this equipment setup.
     *        Note that this may be a calculated value depending on the calcBoilVolume property.

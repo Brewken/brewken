@@ -93,6 +93,8 @@ public:
    virtual ~Mash();
 
    //=================================================== PROPERTIES ====================================================
+   //! \brief Folder.  See model/FolderBase for implementation of the getter & setter.
+   Q_PROPERTY(QString folder READ folder WRITE setFolder)
    //! \brief The initial grain temp in Celsius.
    Q_PROPERTY(double                grainTemp_c               READ grainTemp_c               WRITE setGrainTemp_c  )
    //! \brief The notes.
