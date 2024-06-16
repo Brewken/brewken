@@ -1024,14 +1024,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Unable to import new default data
-
-%1
-
-Log file may contain more details.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Filename</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1099,6 +1091,14 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to import some or all of new default data
+
+%1
+
+Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6849,15 +6849,11 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Checar se a quantidade está em Kg em vez de L.</translation>
-    </message>
-    <message>
-        <source>Amount is weight?</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Checar se a quantidade está em Kg em vez de L.</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished">Verifique se a quantidade informada é um peso ao invés de um volume</translation>
+        <translation type="obsolete">Verifique se a quantidade informada é um peso ao invés de um volume</translation>
     </message>
     <message>
         <source>GrainGroup</source>
@@ -6954,6 +6950,14 @@ O volume final do fermentador primário é %1.</translation>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Tipo Quantidade</translation>
     </message>
 </context>
 <context>
@@ -9943,15 +9947,15 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Check it if the amount given is in kg instead of L.</source>
-        <translation>Verifique se a quantidade informada é em quilograma ao inves de litros.</translation>
+        <translation type="vanished">Verifique se a quantidade informada é em quilograma ao inves de litros.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Quantidade é peso?</translation>
+        <translation type="vanished">Quantidade é peso?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Verifique se a quantidade informada é um peso ao invés de um volume</translation>
+        <translation type="vanished">Verifique se a quantidade informada é um peso ao invés de um volume</translation>
     </message>
     <message>
         <source>Lab</source>

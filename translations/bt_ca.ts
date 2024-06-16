@@ -1044,14 +1044,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Unable to import new default data
-
-%1
-
-Log file may contain more details.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Filename</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1119,6 +1111,14 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to import some or all of new default data
+
+%1
+
+Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6945,15 +6945,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Marcar si la quantitat es mesura en Kg en comptes de L.</translation>
-    </message>
-    <message>
-        <source>Amount is weight?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Marcar si la quantitat es mesura en Kg en comptes de L.</translation>
     </message>
     <message>
         <source>GrainGroup</source>
@@ -7050,6 +7042,14 @@ El volum final al primari és de %1.</translation>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Tipus de quantitat</translation>
     </message>
 </context>
 <context>
@@ -10039,15 +10039,15 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Check it if the amount given is in kg instead of L.</source>
-        <translation>Marqueu si és en kilos i no en litres</translation>
+        <translation type="vanished">Marqueu si és en kilos i no en litres</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Quantitat en massa?</translation>
+        <translation type="vanished">Quantitat en massa?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Indica si la quantitat esta expressada en massa o volum</translation>
+        <translation type="vanished">Indica si la quantitat esta expressada en massa o volum</translation>
     </message>
     <message>
         <source>Lab</source>

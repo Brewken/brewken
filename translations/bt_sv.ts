@@ -1052,14 +1052,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Unable to import new default data
-
-%1
-
-Log file may contain more details.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Filename</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1127,6 +1119,14 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to import some or all of new default data
+
+%1
+
+Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6891,15 +6891,15 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Kontrollera om mängden är listad i kg istället för L.</translation>
+        <translation type="obsolete">Kontrollera om mängden är listad i kg istället för L.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation type="unfinished">Mängden är i vikt?</translation>
+        <translation type="obsolete">Mängden är i vikt?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished">Markera denna om värdet indikerar vikt istället för volym</translation>
+        <translation type="obsolete">Markera denna om värdet indikerar vikt istället för volym</translation>
     </message>
     <message>
         <source>GrainGroup</source>
@@ -6996,6 +6996,14 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Mängdbeteckning</translation>
     </message>
 </context>
 <context>
@@ -9885,15 +9893,15 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Check it if the amount given is in kg instead of L.</source>
-        <translation>Markera denna om mängden anges i kilo istället för liter.</translation>
+        <translation type="vanished">Markera denna om mängden anges i kilo istället för liter.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Mängden är i vikt?</translation>
+        <translation type="vanished">Mängden är i vikt?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Markera denna om värdet indikerar vikt istället för volym</translation>
+        <translation type="vanished">Markera denna om värdet indikerar vikt istället för volym</translation>
     </message>
     <message>
         <source>Lab</source>

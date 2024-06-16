@@ -1036,14 +1036,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Unable to import new default data
-
-%1
-
-Log file may contain more details.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Filename</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1111,6 +1103,14 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to import some or all of new default data
+
+%1
+
+Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6872,18 +6872,6 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Amount is weight?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>GrainGroup</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6978,6 +6966,14 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Mennyiségi egység</translation>
     </message>
 </context>
 <context>
@@ -9788,18 +9784,6 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Amount</source>
         <translation type="vanished">Mennyiség</translation>
-    </message>
-    <message>
-        <source>Check it if the amount given is in kg instead of L.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Amount is weight?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Lab</source>

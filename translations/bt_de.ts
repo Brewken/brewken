@@ -1032,14 +1032,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Unable to import new default data
-
-%1
-
-Log file may contain more details.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Filename</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1107,6 +1099,14 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to import some or all of new default data
+
+%1
+
+Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6850,15 +6850,15 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Anhaken, wenn Menge in kg statt L angegeben wird.</translation>
+        <translation type="obsolete">Anhaken, wenn Menge in kg statt L angegeben wird.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation type="unfinished">Mengenangabe ist Gewicht</translation>
+        <translation type="obsolete">Mengenangabe ist Gewicht</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished">Angehakt, wenn die Mengenangabe in Gewicht anstatt Volumen erfolgt</translation>
+        <translation type="obsolete">Angehakt, wenn die Mengenangabe in Gewicht anstatt Volumen erfolgt</translation>
     </message>
     <message>
         <source>GrainGroup</source>
@@ -6955,6 +6955,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Mengenangabe</translation>
     </message>
 </context>
 <context>
@@ -9924,15 +9932,15 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Check it if the amount given is in kg instead of L.</source>
-        <translation>Anhaken, wenn Mengenangabe in kg antatt L</translation>
+        <translation type="vanished">Anhaken, wenn Mengenangabe in kg antatt L</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Mengenangabe ist Gewicht</translation>
+        <translation type="vanished">Mengenangabe ist Gewicht</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Angehakt, wenn die Mengenangabe in Gewicht anstatt Volumen erfolgt</translation>
+        <translation type="vanished">Angehakt, wenn die Mengenangabe in Gewicht anstatt Volumen erfolgt</translation>
     </message>
     <message>
         <source>Lab</source>

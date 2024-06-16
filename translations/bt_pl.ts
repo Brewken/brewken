@@ -997,14 +997,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Unable to import new default data
-
-%1
-
-Log file may contain more details.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Filename</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1072,6 +1064,14 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to import some or all of new default data
+
+%1
+
+Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6732,15 +6732,15 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Zaznacz jeśli ilość podana jest w kg a nie w L.</translation>
+        <translation type="obsolete">Zaznacz jeśli ilość podana jest w kg a nie w L.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation type="unfinished">Czy ilość jest wagą?</translation>
+        <translation type="obsolete">Czy ilość jest wagą?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished">Zaznacz jeśli podana ilość jest wagą a nie objętością</translation>
+        <translation type="obsolete">Zaznacz jeśli podana ilość jest wagą a nie objętością</translation>
     </message>
     <message>
         <source>GrainGroup</source>
@@ -6837,6 +6837,14 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Rodzaj kwoty</translation>
     </message>
 </context>
 <context>
@@ -9814,15 +9822,15 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>Check it if the amount given is in kg instead of L.</source>
-        <translation>Zaznacz jeśli ilość podana jest w kg a nie w L.</translation>
+        <translation type="vanished">Zaznacz jeśli ilość podana jest w kg a nie w L.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Czy ilość jest wagą?</translation>
+        <translation type="vanished">Czy ilość jest wagą?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Zaznacz jeśli podana ilość jest wagą a nie objętością</translation>
+        <translation type="vanished">Zaznacz jeśli podana ilość jest wagą a nie objętością</translation>
     </message>
     <message>
         <source>Lab</source>

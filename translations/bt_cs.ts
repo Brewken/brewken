@@ -997,14 +997,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Unable to import new default data
-
-%1
-
-Log file may contain more details.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Filename</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1072,6 +1064,14 @@ If you didn&apos;t yet do this, click Abort.</source>
     </message>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to import some or all of new default data
+
+%1
+
+Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6818,15 +6818,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Zaškrtněte, pokud se množství přísady vyjadřuje v kg místo l.</translation>
-    </message>
-    <message>
-        <source>Amount is weight?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Zaškrtněte, pokud se množství přísady vyjadřuje v kg místo l.</translation>
     </message>
     <message>
         <source>GrainGroup</source>
@@ -6923,6 +6915,14 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Druh množství</translation>
     </message>
 </context>
 <context>
@@ -9896,15 +9896,15 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Check it if the amount given is in kg instead of L.</source>
-        <translation>Zaškrtněte, pokud je objem v kg místo l.</translation>
+        <translation type="vanished">Zaškrtněte, pokud je objem v kg místo l.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Možství je hmotnost?</translation>
+        <translation type="vanished">Možství je hmotnost?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Zaškrtněte, pokud je zadané množství hmotnostní, nikoli objemové</translation>
+        <translation type="vanished">Zaškrtněte, pokud je zadané množství hmotnostní, nikoli objemové</translation>
     </message>
     <message>
         <source>Lab</source>

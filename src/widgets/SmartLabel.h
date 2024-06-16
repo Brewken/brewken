@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/SmartLabel.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * widgets/SmartLabel.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -153,7 +153,7 @@ public:
    /**
     * \brief Maybe for consistency this should be \c getSettings() but that jars somewhat!
     */
-   [[nodiscard]] SmartAmountSettings & settings();
+   [[nodiscard]] SmartAmountSettings const & settings() const;
 
    /**
     * \brief This is called by \c SmartBase and just wraps \c changedSystemOfMeasurementOrScale
