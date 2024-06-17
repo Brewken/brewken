@@ -944,11 +944,11 @@
     <name>Database</name>
     <message>
         <source>Merge Database</source>
-        <translation>合并数据库</translation>
+        <translation type="vanished">合并数据库</translation>
     </message>
     <message>
         <source>There may be new ingredients and recipes available. Would you like to add these to your database?</source>
-        <translation>有可能是新的成分和配方。你想添加到你的数据库？</translation>
+        <translation type="vanished">有可能是新的成分和配方。你想添加到你的数据库？</translation>
     </message>
     <message>
         <source>Database password</source>
@@ -978,14 +978,6 @@
         <source>Successfully read new default data
 
 %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unable to import new default data
-
-%1
-
-Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1057,6 +1049,21 @@ If you didn&apos;t yet do this, click Abort.</source>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to import some or all of new default data
+
+%1
+
+Log file may contain more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DefaultContentLoader</name>
+    <message>
+        <source>Merge Database</source>
+        <translation type="obsolete">合并数据库</translation>
     </message>
 </context>
 <context>
@@ -3836,6 +3843,18 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Database</source>
+        <translation type="unfinished">合并数据库</translation>
+    </message>
+    <message>
+        <source>New ingredients etc are available. Would you like to add them to your database?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error matching %1 file pattern in %2 directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6682,15 +6701,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">检查如果上市量（公斤）代替L。</translation>
+        <translation type="obsolete">检查如果上市量（公斤）代替L。</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation type="unfinished">金额重量？Amount is weight?</translation>
+        <translation type="obsolete">金额重量？Amount is weight?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished">检查，如果给定的量是重量，而不是数量</translation>
+        <translation type="obsolete">检查，如果给定的量是重量，而不是数量</translation>
     </message>
     <message>
         <source>GrainGroup</source>
@@ -6787,6 +6806,14 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">金额类型MiscTableModel |</translation>
     </message>
 </context>
 <context>
@@ -9160,7 +9187,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Date First Brewed</source>
-        <translation>首先酿造的日期Date First Brewed</translation>
+        <translation type="vanished">首先酿造的日期Date First Brewed</translation>
     </message>
     <message>
         <source>dd MMM yyyy</source>
@@ -9184,6 +9211,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9740,15 +9771,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Check it if the amount given is in kg instead of L.</source>
-        <translation>如果给定的数量是公斤代替L.检查Check it if the amount given is in kg instead of L.</translation>
+        <translation type="vanished">如果给定的数量是公斤代替L.检查Check it if the amount given is in kg instead of L.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>金额重量？Amount is weight?</translation>
+        <translation type="vanished">金额重量？Amount is weight?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>检查，如果给定的量是重量，而不是数量</translation>
+        <translation type="vanished">检查，如果给定的量是重量，而不是数量</translation>
     </message>
     <message>
         <source>Lab</source>

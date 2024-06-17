@@ -211,13 +211,14 @@ public:
 
 
    //=============================================== REGULAR PROPERTIES ================================================
+   //! \brief Folder.  See model/FolderBase for implementation of the getter & setter.
+   Q_PROPERTY(QString folder READ folder WRITE setFolder)
    //
    // Note that boilSize_l and boilTime_min, which were previously properties of Recipe are now moved to Boil.  Given
    // Recipe r:
    //   - to SET a boil size of `double boilSizeLiters`, call `r.nonOptBoil()->setPreBoilSize_l(boilSizeLiters)`;
    //   - to SET a boil time of `double boilTimeMinutes`, call `r.nonOptBoil()->setBoilTime_mins(boilTimeMinutes)`.
    //
-
    //! \brief The \b Type
    Q_PROPERTY(Type    type               READ type               WRITE setType             )
    //! \brief The brewer.  This becomes "author" in BeerJSON
@@ -246,7 +247,8 @@ public:
    Q_PROPERTY(double  ageTemp_c          READ ageTemp_c          WRITE setAgeTemp_c        )
    /**
     * \brief In BeerXML, a recipe has a date which is supposed to be when it was brewed.  This is slightly meaningless
-    *        unless you take it to mean "first brewed".  We then take that to be the "created" date in BeerJSON.
+    *        unless you take it to mean "first brewed".  We then take that to be the "created" date in BeerJSON and our
+    *        UI.
     *        NB: In both BeerXML and BeerJSON, this is an optional field
     */
    Q_PROPERTY(std::optional<QDate>   date               READ date               WRITE setDate             )

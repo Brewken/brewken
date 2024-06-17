@@ -37,7 +37,6 @@
 AddPropertyName(description      )
 AddPropertyName(fermentationSteps)
 AddPropertyName(notes            )
-AddPropertyName(numSteps         )
 AddPropertyName(primary          )
 AddPropertyName(secondary        )
 AddPropertyName(tertiary         )
@@ -75,6 +74,8 @@ public:
    virtual ~Fermentation();
 
    //=================================================== PROPERTIES ====================================================
+   //! \brief Folder.  See model/FolderBase for implementation of the getter & setter.
+   Q_PROPERTY(QString folder READ folder WRITE setFolder)
    Q_PROPERTY(QString                                    description         READ description     WRITE setDescription)
    Q_PROPERTY(QString                                    notes               READ notes           WRITE setNotes      )
    //! \brief The individual fermentation steps.  (See \c StepOwnerBase for getter/setter implementation.)

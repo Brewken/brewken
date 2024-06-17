@@ -1007,11 +1007,11 @@
     <name>Database</name>
     <message>
         <source>Merge Database</source>
-        <translation>Unir la base de dades</translation>
+        <translation type="vanished">Unir la base de dades</translation>
     </message>
     <message>
         <source>There may be new ingredients and recipes available. Would you like to add these to your database?</source>
-        <translation>Hi ha nous ingredients i receptes disponibles. Vol afegir-les a la la seva base de dades?</translation>
+        <translation type="vanished">Hi ha nous ingredients i receptes disponibles. Vol afegir-les a la la seva base de dades?</translation>
     </message>
     <message>
         <source>Database password</source>
@@ -1041,14 +1041,6 @@
         <source>Successfully read new default data
 
 %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unable to import new default data
-
-%1
-
-Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1120,6 +1112,21 @@ If you didn&apos;t yet do this, click Abort.</source>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to import some or all of new default data
+
+%1
+
+Log file may contain more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DefaultContentLoader</name>
+    <message>
+        <source>Merge Database</source>
+        <translation type="obsolete">Unir la base de dades</translation>
     </message>
 </context>
 <context>
@@ -4040,6 +4047,18 @@ Program will now exit.</source>
         <source>%1 name:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Merge Database</source>
+        <translation type="unfinished">Unir la base de dades</translation>
+    </message>
+    <message>
+        <source>New ingredients etc are available. Would you like to add them to your database?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error matching %1 file pattern in %2 directory</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -6926,15 +6945,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Marcar si la quantitat es mesura en Kg en comptes de L.</translation>
-    </message>
-    <message>
-        <source>Amount is weight?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Marcar si la quantitat es mesura en Kg en comptes de L.</translation>
     </message>
     <message>
         <source>GrainGroup</source>
@@ -7031,6 +7042,14 @@ El volum final al primari és de %1.</translation>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Tipus de quantitat</translation>
     </message>
 </context>
 <context>
@@ -9436,7 +9455,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Date First Brewed</source>
-        <translation>Data primera elaboració</translation>
+        <translation type="vanished">Data primera elaboració</translation>
     </message>
     <message>
         <source>dd MMM yyyy</source>
@@ -9460,6 +9479,10 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10016,15 +10039,15 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Check it if the amount given is in kg instead of L.</source>
-        <translation>Marqueu si és en kilos i no en litres</translation>
+        <translation type="vanished">Marqueu si és en kilos i no en litres</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Quantitat en massa?</translation>
+        <translation type="vanished">Quantitat en massa?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Indica si la quantitat esta expressada en massa o volum</translation>
+        <translation type="vanished">Indica si la quantitat esta expressada en massa o volum</translation>
     </message>
     <message>
         <source>Lab</source>

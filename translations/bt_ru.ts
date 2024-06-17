@@ -1003,11 +1003,11 @@
     <name>Database</name>
     <message>
         <source>Merge Database</source>
-        <translation>Объединение базы данных</translation>
+        <translation type="vanished">Объединение базы данных</translation>
     </message>
     <message>
         <source>There may be new ingredients and recipes available. Would you like to add these to your database?</source>
-        <translation>Возможно доступны новые ингридиенты и рецепты. Желаете добавить их в вашу базу данных?</translation>
+        <translation type="vanished">Возможно доступны новые ингридиенты и рецепты. Желаете добавить их в вашу базу данных?</translation>
     </message>
     <message>
         <source>Database password</source>
@@ -1037,14 +1037,6 @@
         <source>Successfully read new default data
 
 %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unable to import new default data
-
-%1
-
-Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1116,6 +1108,21 @@ If you didn&apos;t yet do this, click Abort.</source>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to import some or all of new default data
+
+%1
+
+Log file may contain more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DefaultContentLoader</name>
+    <message>
+        <source>Merge Database</source>
+        <translation type="obsolete">Объединение базы данных</translation>
     </message>
 </context>
 <context>
@@ -3978,6 +3985,18 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Database</source>
+        <translation type="unfinished">Объединение базы данных</translation>
+    </message>
+    <message>
+        <source>New ingredients etc are available. Would you like to add them to your database?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error matching %1 file pattern in %2 directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6878,15 +6897,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Включите, если количество задано в кг, а не в литрах.</translation>
+        <translation type="obsolete">Включите, если количество задано в кг, а не в литрах.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation type="unfinished">Количество - вес?</translation>
-    </message>
-    <message>
-        <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Количество - вес?</translation>
     </message>
     <message>
         <source>GrainGroup</source>
@@ -6982,6 +6997,14 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9364,7 +9387,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Date First Brewed</source>
-        <translation>Дата первой варки</translation>
+        <translation type="vanished">Дата первой варки</translation>
     </message>
     <message>
         <source>dd MMM yyyy</source>
@@ -9388,6 +9411,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9944,15 +9971,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Check it if the amount given is in kg instead of L.</source>
-        <translation>Отметьте, если количество указано в кг вместо л.</translation>
+        <translation type="vanished">Отметьте, если количество указано в кг вместо л.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Количество - вес?</translation>
+        <translation type="vanished">Количество - вес?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Отмечено, если указанное количество - вес, а не объем</translation>
+        <translation type="vanished">Отмечено, если указанное количество - вес, а не объем</translation>
     </message>
     <message>
         <source>Lab</source>

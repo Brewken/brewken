@@ -960,11 +960,11 @@
     <name>Database</name>
     <message>
         <source>Merge Database</source>
-        <translation>Połącz bazy danych</translation>
+        <translation type="vanished">Połącz bazy danych</translation>
     </message>
     <message>
         <source>There may be new ingredients and recipes available. Would you like to add these to your database?</source>
-        <translation>Są dostępne nowe składniki i receptury. Czy chcesz je dodać do swojej bazy danych?</translation>
+        <translation type="vanished">Są dostępne nowe składniki i receptury. Czy chcesz je dodać do swojej bazy danych?</translation>
     </message>
     <message>
         <source>Database password</source>
@@ -994,14 +994,6 @@
         <source>Successfully read new default data
 
 %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unable to import new default data
-
-%1
-
-Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1073,6 +1065,21 @@ If you didn&apos;t yet do this, click Abort.</source>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to import some or all of new default data
+
+%1
+
+Log file may contain more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DefaultContentLoader</name>
+    <message>
+        <source>Merge Database</source>
+        <translation type="obsolete">Połącz bazy danych</translation>
     </message>
 </context>
 <context>
@@ -3871,6 +3878,18 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Database</source>
+        <translation type="unfinished">Połącz bazy danych</translation>
+    </message>
+    <message>
+        <source>New ingredients etc are available. Would you like to add them to your database?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error matching %1 file pattern in %2 directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6713,15 +6732,15 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Zaznacz jeśli ilość podana jest w kg a nie w L.</translation>
+        <translation type="obsolete">Zaznacz jeśli ilość podana jest w kg a nie w L.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation type="unfinished">Czy ilość jest wagą?</translation>
+        <translation type="obsolete">Czy ilość jest wagą?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished">Zaznacz jeśli podana ilość jest wagą a nie objętością</translation>
+        <translation type="obsolete">Zaznacz jeśli podana ilość jest wagą a nie objętością</translation>
     </message>
     <message>
         <source>GrainGroup</source>
@@ -6818,6 +6837,14 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Rodzaj kwoty</translation>
     </message>
 </context>
 <context>
@@ -9211,7 +9238,7 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>Date First Brewed</source>
-        <translation>Data pierwszego warzenia</translation>
+        <translation type="vanished">Data pierwszego warzenia</translation>
     </message>
     <message>
         <source>dd MMM yyyy</source>
@@ -9235,6 +9262,10 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9791,15 +9822,15 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>Check it if the amount given is in kg instead of L.</source>
-        <translation>Zaznacz jeśli ilość podana jest w kg a nie w L.</translation>
+        <translation type="vanished">Zaznacz jeśli ilość podana jest w kg a nie w L.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Czy ilość jest wagą?</translation>
+        <translation type="vanished">Czy ilość jest wagą?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Zaznacz jeśli podana ilość jest wagą a nie objętością</translation>
+        <translation type="vanished">Zaznacz jeśli podana ilość jest wagą a nie objętością</translation>
     </message>
     <message>
         <source>Lab</source>

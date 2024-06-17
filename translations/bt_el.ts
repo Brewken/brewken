@@ -960,11 +960,11 @@
     <name>Database</name>
     <message>
         <source>Merge Database</source>
-        <translation>Συγχώνευση της βάσης δεδομένων</translation>
+        <translation type="vanished">Συγχώνευση της βάσης δεδομένων</translation>
     </message>
     <message>
         <source>There may be new ingredients and recipes available. Would you like to add these to your database?</source>
-        <translation>Πιθανόν να είναι διαθέσιμα νέα συστατικά και συνταγές. Θα θέλατε να προστεθούν στην υπάρχουσα βάση δεδομένων;</translation>
+        <translation type="vanished">Πιθανόν να είναι διαθέσιμα νέα συστατικά και συνταγές. Θα θέλατε να προστεθούν στην υπάρχουσα βάση δεδομένων;</translation>
     </message>
     <message>
         <source>Database password</source>
@@ -994,14 +994,6 @@
         <source>Successfully read new default data
 
 %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unable to import new default data
-
-%1
-
-Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1073,6 +1065,21 @@ If you didn&apos;t yet do this, click Abort.</source>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to import some or all of new default data
+
+%1
+
+Log file may contain more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DefaultContentLoader</name>
+    <message>
+        <source>Merge Database</source>
+        <translation type="obsolete">Συγχώνευση της βάσης δεδομένων</translation>
     </message>
 </context>
 <context>
@@ -3935,6 +3942,18 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Database</source>
+        <translation type="unfinished">Συγχώνευση της βάσης δεδομένων</translation>
+    </message>
+    <message>
+        <source>New ingredients etc are available. Would you like to add them to your database?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error matching %1 file pattern in %2 directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6813,15 +6832,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Τσέκαρε το εαν το ποσό που αναγράφεται είναι σε κιλά αντί για λίτρα</translation>
+        <translation type="obsolete">Τσέκαρε το εαν το ποσό που αναγράφεται είναι σε κιλά αντί για λίτρα</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation type="unfinished">Το ποσό αναφέρεται σε βάρος;</translation>
-    </message>
-    <message>
-        <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Το ποσό αναφέρεται σε βάρος;</translation>
     </message>
     <message>
         <source>GrainGroup</source>
@@ -6918,6 +6933,14 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Μονάδα μέτρησης</translation>
     </message>
 </context>
 <context>
@@ -9307,7 +9330,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Date First Brewed</source>
-        <translation>Ημ/νια αρχικής παρασκευής</translation>
+        <translation type="vanished">Ημ/νια αρχικής παρασκευής</translation>
     </message>
     <message>
         <source>dd MMM yyyy</source>
@@ -9331,6 +9354,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9887,15 +9914,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Check it if the amount given is in kg instead of L.</source>
-        <translation>Έλεγχος εάν η ποσότητα είναι σε κιλά αντί για λίτρα</translation>
+        <translation type="vanished">Έλεγχος εάν η ποσότητα είναι σε κιλά αντί για λίτρα</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Το ποσό αναφέρεται σε βάρος;</translation>
+        <translation type="vanished">Το ποσό αναφέρεται σε βάρος;</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Τσέκαρε  εάν το νούμερο αναφέρεται σε βάρος αντί για όγκο</translation>
+        <translation type="vanished">Τσέκαρε  εάν το νούμερο αναφέρεται σε βάρος αντί για όγκο</translation>
     </message>
     <message>
         <source>Lab</source>

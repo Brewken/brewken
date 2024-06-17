@@ -960,11 +960,11 @@
     <name>Database</name>
     <message>
         <source>Merge Database</source>
-        <translation>Spojit databáze</translation>
+        <translation type="vanished">Spojit databáze</translation>
     </message>
     <message>
         <source>There may be new ingredients and recipes available. Would you like to add these to your database?</source>
-        <translation>Možná jsou k dispozici nové přísady a recepty. Chcete je přidat do své databáze?</translation>
+        <translation type="vanished">Možná jsou k dispozici nové přísady a recepty. Chcete je přidat do své databáze?</translation>
     </message>
     <message>
         <source>Database password</source>
@@ -994,14 +994,6 @@
         <source>Successfully read new default data
 
 %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unable to import new default data
-
-%1
-
-Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1073,6 +1065,21 @@ If you didn&apos;t yet do this, click Abort.</source>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to import some or all of new default data
+
+%1
+
+Log file may contain more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DefaultContentLoader</name>
+    <message>
+        <source>Merge Database</source>
+        <translation type="obsolete">Spojit databáze</translation>
     </message>
 </context>
 <context>
@@ -3931,6 +3938,18 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Database</source>
+        <translation type="unfinished">Spojit databáze</translation>
+    </message>
+    <message>
+        <source>New ingredients etc are available. Would you like to add them to your database?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error matching %1 file pattern in %2 directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6799,15 +6818,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Zaškrtněte, pokud se množství přísady vyjadřuje v kg místo l.</translation>
-    </message>
-    <message>
-        <source>Amount is weight?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Zaškrtněte, pokud se množství přísady vyjadřuje v kg místo l.</translation>
     </message>
     <message>
         <source>GrainGroup</source>
@@ -6904,6 +6915,14 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Druh množství</translation>
     </message>
 </context>
 <context>
@@ -9293,7 +9312,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Date First Brewed</source>
-        <translation>Poprvé uvařeno</translation>
+        <translation type="vanished">Poprvé uvařeno</translation>
     </message>
     <message>
         <source>dd MMM yyyy</source>
@@ -9317,6 +9336,10 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9873,15 +9896,15 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Check it if the amount given is in kg instead of L.</source>
-        <translation>Zaškrtněte, pokud je objem v kg místo l.</translation>
+        <translation type="vanished">Zaškrtněte, pokud je objem v kg místo l.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Možství je hmotnost?</translation>
+        <translation type="vanished">Možství je hmotnost?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Zaškrtněte, pokud je zadané množství hmotnostní, nikoli objemové</translation>
+        <translation type="vanished">Zaškrtněte, pokud je zadané množství hmotnostní, nikoli objemové</translation>
     </message>
     <message>
         <source>Lab</source>

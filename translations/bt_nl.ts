@@ -1019,11 +1019,11 @@
     <name>Database</name>
     <message>
         <source>Merge Database</source>
-        <translation>Database Samenvoegen</translation>
+        <translation type="vanished">Database Samenvoegen</translation>
     </message>
     <message>
         <source>There may be new ingredients and recipes available. Would you like to add these to your database?</source>
-        <translation>Er zijn mogelijk nieuwe ingrediënten en recepten verkrijgbaar. Wilt u deze toevoegen aan uw database?</translation>
+        <translation type="vanished">Er zijn mogelijk nieuwe ingrediënten en recepten verkrijgbaar. Wilt u deze toevoegen aan uw database?</translation>
     </message>
     <message>
         <source>Database password</source>
@@ -1053,14 +1053,6 @@
         <source>Successfully read new default data
 
 %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unable to import new default data
-
-%1
-
-Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1132,6 +1124,21 @@ If you didn&apos;t yet do this, click Abort.</source>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to import some or all of new default data
+
+%1
+
+Log file may contain more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DefaultContentLoader</name>
+    <message>
+        <source>Merge Database</source>
+        <translation type="obsolete">Database Samenvoegen</translation>
     </message>
 </context>
 <context>
@@ -4014,6 +4021,18 @@ Program will now exit.</source>
         <source>%1 name:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Merge Database</source>
+        <translation type="unfinished">Database Samenvoegen</translation>
+    </message>
+    <message>
+        <source>New ingredients etc are available. Would you like to add them to your database?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error matching %1 file pattern in %2 directory</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -6892,15 +6911,11 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Controleer of de hoeveelheid vermeld staat in kg i.p.v. L.</translation>
+        <translation type="obsolete">Controleer of de hoeveelheid vermeld staat in kg i.p.v. L.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation type="unfinished">Hoeveelheid is gewicht?</translation>
-    </message>
-    <message>
-        <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Hoeveelheid is gewicht?</translation>
     </message>
     <message>
         <source>GrainGroup</source>
@@ -6997,6 +7012,14 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Hoeveelheid Type</translation>
     </message>
 </context>
 <context>
@@ -9270,7 +9293,7 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Date First Brewed</source>
-        <translation>Datum Eerste Brouwsel</translation>
+        <translation type="vanished">Datum Eerste Brouwsel</translation>
     </message>
     <message>
         <source>dd MMM yyyy</source>
@@ -9294,6 +9317,10 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9846,15 +9873,15 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Check it if the amount given is in kg instead of L.</source>
-        <translation>Controleer of de opgegeven hoeveelheid in kg is i.p.v.in L.</translation>
+        <translation type="vanished">Controleer of de opgegeven hoeveelheid in kg is i.p.v.in L.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Hoeveelheid is gewicht?</translation>
+        <translation type="vanished">Hoeveelheid is gewicht?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Controleer of de opgegeven hoeveelheid een gewicht is i.p.v. een volume</translation>
+        <translation type="vanished">Controleer of de opgegeven hoeveelheid een gewicht is i.p.v. een volume</translation>
     </message>
     <message>
         <source>Lab</source>

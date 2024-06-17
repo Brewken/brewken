@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * ImportExport.h is part of Brewken, and is copyright the following authors 2013-2024:
+ * serialization/ImportExport.h is part of Brewken, and is copyright the following authors 2013-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *
@@ -14,9 +14,11 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef IMPORTEXPORT_H
-#define IMPORTEXPORT_H
+#ifndef SERIALIZATION_IMPORTEXPORT_H
+#define SERIALIZATION_IMPORTEXPORT_H
 #pragma once
+
+#include <optional>
 
 #include <QList>
 
@@ -30,14 +32,20 @@ class Water;
 class Yeast;
 
 namespace ImportExport {
+
    /**
-    * \brief Import recipes, hops, equipment, etc from BeerXML or BeerJSON files specified by the user
+    * \brief Import recipes, hops, equipment, etc from BeerXML or BeerJSON files either specified by the user or in the
+    *        parameter.
     *
     *        For export, we let the user choose between BeerXML and BeerJSON by the file extension they choose.  This is
     *        similar to how other programs work (eg LibreOffice, Gimp), so I think it's OK, but we'll see what feedback
     *        is on usability.
+    *
+    * \param inputFiles If \c std::nullopt (ie not supplied) then user will be prompted for file(s) through the UI
+    *
+    * \return \c true if succeeded, \c false otherwise
     */
-   void importFromFiles();
+   bool importFromFiles(std::optional<QStringList> inputFiles = std::nullopt);
 
    /**
     * \brief Import recipes, hops, equipment, etc to a BeerXML or BeerJSON file specified by the user

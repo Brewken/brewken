@@ -956,11 +956,11 @@
     <name>Database</name>
     <message>
         <source>Merge Database</source>
-        <translation>Flett database</translation>
+        <translation type="vanished">Flett database</translation>
     </message>
     <message>
         <source>There may be new ingredients and recipes available. Would you like to add these to your database?</source>
-        <translation>Det kan være nye in indegrienser og oppskrifter tilgjegelig. Ønsker du å legge disse til databasen?</translation>
+        <translation type="vanished">Det kan være nye in indegrienser og oppskrifter tilgjegelig. Ønsker du å legge disse til databasen?</translation>
     </message>
     <message>
         <source>Database password</source>
@@ -990,14 +990,6 @@
         <source>Successfully read new default data
 
 %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unable to import new default data
-
-%1
-
-Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1069,6 +1061,21 @@ If you didn&apos;t yet do this, click Abort.</source>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to import some or all of new default data
+
+%1
+
+Log file may contain more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DefaultContentLoader</name>
+    <message>
+        <source>Merge Database</source>
+        <translation type="obsolete">Flett database</translation>
     </message>
 </context>
 <context>
@@ -3931,6 +3938,18 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Database</source>
+        <translation type="unfinished">Flett database</translation>
+    </message>
+    <message>
+        <source>New ingredients etc are available. Would you like to add them to your database?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error matching %1 file pattern in %2 directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6808,15 +6827,11 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Sjekk etter om mengde listet opp er i kg i stedet for L.</translation>
+        <translation type="obsolete">Sjekk etter om mengde listet opp er i kg i stedet for L.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation type="unfinished">Mengde er i vekt?</translation>
-    </message>
-    <message>
-        <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Mengde er i vekt?</translation>
     </message>
     <message>
         <source>GrainGroup</source>
@@ -6913,6 +6928,14 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Enhetstype</translation>
     </message>
 </context>
 <context>
@@ -9305,7 +9328,7 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Date First Brewed</source>
-        <translation>Dato først brygget</translation>
+        <translation type="vanished">Dato først brygget</translation>
     </message>
     <message>
         <source>dd MMM yyyy</source>
@@ -9329,6 +9352,10 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9885,15 +9912,15 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Check it if the amount given is in kg instead of L.</source>
-        <translation>Sjekk etter om mengden er gitt i kg instedet for L.</translation>
+        <translation type="vanished">Sjekk etter om mengden er gitt i kg instedet for L.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Mengde er i vekt?</translation>
+        <translation type="vanished">Mengde er i vekt?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Sjekk etter om mengden er gitt i vekt instedet for volum.</translation>
+        <translation type="vanished">Sjekk etter om mengden er gitt i vekt instedet for volum.</translation>
     </message>
     <message>
         <source>Lab</source>

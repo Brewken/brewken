@@ -1015,11 +1015,11 @@
     <name>Database</name>
     <message>
         <source>Merge Database</source>
-        <translation>Unisci database</translation>
+        <translation type="vanished">Unisci database</translation>
     </message>
     <message>
         <source>There may be new ingredients and recipes available. Would you like to add these to your database?</source>
-        <translation>Ci possono essere nuovi ingredienti e ricette disponibili. Vuoi aggiungere questi al database?</translation>
+        <translation type="vanished">Ci possono essere nuovi ingredienti e ricette disponibili. Vuoi aggiungere questi al database?</translation>
     </message>
     <message>
         <source>Database password</source>
@@ -1049,14 +1049,6 @@
         <source>Successfully read new default data
 
 %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unable to import new default data
-
-%1
-
-Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1128,6 +1120,21 @@ If you didn&apos;t yet do this, click Abort.</source>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to import some or all of new default data
+
+%1
+
+Log file may contain more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DefaultContentLoader</name>
+    <message>
+        <source>Merge Database</source>
+        <translation type="obsolete">Unisci database</translation>
     </message>
 </context>
 <context>
@@ -3990,6 +3997,18 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge Database</source>
+        <translation type="unfinished">Unisci database</translation>
+    </message>
+    <message>
+        <source>New ingredients etc are available. Would you like to add them to your database?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error matching %1 file pattern in %2 directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6879,15 +6898,11 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation type="unfinished">Controllare se l&apos;importo indicato è in kg invece di L.</translation>
-    </message>
-    <message>
-        <source>Amount is weight?</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Controllare se l&apos;importo indicato è in kg invece di L.</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation type="unfinished">Controlla se la data quantità è peso invece di volume</translation>
+        <translation type="obsolete">Controlla se la data quantità è peso invece di volume</translation>
     </message>
     <message>
         <source>GrainGroup</source>
@@ -6984,6 +6999,14 @@ Il Volume finale del primo è %1.</translation>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Tipo di Quantità</translation>
     </message>
 </context>
 <context>
@@ -9399,7 +9422,7 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Date First Brewed</source>
-        <translation>Data di prima birrificazione</translation>
+        <translation type="vanished">Data di prima birrificazione</translation>
     </message>
     <message>
         <source>dd MMM yyyy</source>
@@ -9423,6 +9446,10 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Total apparent attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9979,15 +10006,15 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Check it if the amount given is in kg instead of L.</source>
-        <translation>Controllare se l&apos;importo indicato è in kg invece di L.</translation>
+        <translation type="vanished">Controllare se l&apos;importo indicato è in kg invece di L.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Importo è il peso?</translation>
+        <translation type="vanished">Importo è il peso?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Controlla se la data quantità è peso invece di volume</translation>
+        <translation type="vanished">Controlla se la data quantità è peso invece di volume</translation>
     </message>
     <message>
         <source>Lab</source>

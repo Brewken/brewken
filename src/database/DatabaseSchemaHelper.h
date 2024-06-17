@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/DatabaseSchemaHelper.h is part of Brewken, and is copyright the following authors 2009-2021:
+ * database/DatabaseSchemaHelper.h is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -32,9 +32,13 @@ class QTextStream;
 namespace DatabaseSchemaHelper {
 
    //! \brief Database version. Increment on any schema change.
-   extern int const dbVersion;
+   extern int const latestVersion;
 
-   extern bool upgrade;
+   //! \brief Get where we are up to with default content files
+   int getDefaultContentVersionFromDb(QSqlDatabase & db);
+
+   //! \brief Set where we are up to with default content files
+   bool setDefaultContentVersionFromDb(QSqlDatabase & db, int val);
 
    /*!
     * \brief Create a blank database whose schema version is \c dbVersion
@@ -47,7 +51,7 @@ namespace DatabaseSchemaHelper {
    bool migrate(Database & database, int oldVersion, int newVersion, QSqlDatabase connection);
 
    //! \brief Current schema version of the given database
-   int currentVersion(QSqlDatabase db = QSqlDatabase());
+   int schemaVersion(QSqlDatabase & db);
 
    //! \brief does the heavy lifting to copy the contents from one db to the next
    bool copyToNewDatabase(Database & newDatabase, QSqlDatabase & connectionNew);
@@ -57,7 +61,7 @@ namespace DatabaseSchemaHelper {
     *
     * \return \c true if succeeded, \c false otherwise
     */
-   bool updateDatabase(QTextStream & userMessage);
+///   bool updateDatabase(QTextStream & userMessage);
 }
 
 #endif
