@@ -21,7 +21,6 @@
 #include <QMessageBox>
 #include <QObject>
 
-#include "BtTreeView.h"
 #include "MainWindow.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
