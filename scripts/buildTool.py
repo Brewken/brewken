@@ -769,6 +769,12 @@ def installDependencies():
          #
          # As noted above, we no longer support 32-bit ('i686') builds and now only support 64-bit ('x86_64') ones.
          #
+         # 2024-07-29: TBD: Not totally sure we need angleproject.  It wasn't previously a requirement, but, as of
+         #                  recently, windeployqt complains if it can't find it.  The alternative would be to pass
+         #                  "-no-angle" as a parameter to windeployqt.  However, that option seems to not be present
+         #                  in Qt 6 (see https://doc.qt.io/qt-6/windows-deployment.html vs
+         #                  https://doc.qt.io/qt-5/windows-deployment.html).
+         #
          arch = 'x86_64'
          installList = ['base-devel',
                         'cmake',
@@ -781,14 +787,15 @@ def installDependencies():
                         'mingw-w64-' + arch + '-libbacktrace',
                         'mingw-w64-' + arch + '-meson',
                         'mingw-w64-' + arch + '-nsis',
-                        'mingw-w64-' + arch + '-freetype', #
-                        'mingw-w64-' + arch + '-harfbuzz', #
+                        'mingw-w64-' + arch + '-freetype',
+                        'mingw-w64-' + arch + '-harfbuzz',
                         'mingw-w64-' + arch + '-qt5-base',
                         'mingw-w64-' + arch + '-qt5-static',
                         'mingw-w64-' + arch + '-qt5',
                         'mingw-w64-' + arch + '-toolchain',
                         'mingw-w64-' + arch + '-xalan-c',
-                        'mingw-w64-' + arch + '-xerces-c']
+                        'mingw-w64-' + arch + '-xerces-c',
+                        'mingw-w64-' + arch + '-angleproject'] # See comment above
          for packageToInstall in installList:
             log.debug('Installing ' + packageToInstall)
             btUtils.abortOnRunFail(
