@@ -679,27 +679,27 @@
     <name>BtTreeModel</name>
     <message>
         <source>Name</source>
-        <translation>名Name</translation>
+        <translation type="vanished">名Name</translation>
     </message>
     <message>
         <source>Brew Date</source>
-        <translation>酿造日期</translation>
+        <translation type="vanished">酿造日期</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation>样式Style</translation>
+        <translation type="vanished">样式Style</translation>
     </message>
     <message>
         <source>Boil Time</source>
-        <translation>煮沸时间Boil Time</translation>
+        <translation type="vanished">煮沸时间Boil Time</translation>
     </message>
     <message>
         <source>Color</source>
-        <translation>颜色Color</translation>
+        <translation type="vanished">颜色Color</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>类型Type</translation>
+        <translation type="vanished">类型Type</translation>
     </message>
     <message>
         <source>Use</source>
@@ -707,202 +707,50 @@
     </message>
     <message>
         <source>Form</source>
-        <translation>形式Form</translation>
+        <translation type="vanished">形式Form</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation>类别</translation>
-    </message>
-    <message>
-        <source>Number</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Letter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Guide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PATH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>FULLPATH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Could not copy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>There was an unexpected error creating %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ca</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HCO3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SO4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Na</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>pH</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">类别</translation>
     </message>
     <message>
         <source>Origin</source>
-        <translation type="unfinished">来源Origin</translation>
-    </message>
-    <message>
-        <source>% Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">来源Origin</translation>
     </message>
 </context>
 <context>
     <name>BtTreeView</name>
     <message>
         <source>New</source>
-        <translation>新New</translation>
+        <translation type="vanished">新New</translation>
     </message>
     <message>
         <source>Recipe</source>
-        <translation>食谱</translation>
-    </message>
-    <message>
-        <source>Brew It!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Brew Again</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Recalculate eff</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">食谱</translation>
     </message>
     <message>
         <source>Equipment</source>
-        <translation>设备Equipment</translation>
-    </message>
-    <message>
-        <source>Fermentable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hop</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">设备Equipment</translation>
     </message>
     <message>
         <source>Misc</source>
-        <translation>其他</translation>
+        <translation type="vanished">其他</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation>样式Style</translation>
+        <translation type="vanished">样式Style</translation>
     </message>
     <message>
         <source>Yeast</source>
-        <translation>酵母Yeast</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete %1 %2?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>BrewNote</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel All</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">酵母Yeast</translation>
     </message>
     <message>
         <source>Copy %1</source>
-        <translation>复制Copy %1</translation>
+        <translation type="vanished">复制Copy %1</translation>
     </message>
     <message>
         <source>Enter a unique name for the copy of %1.</source>
-        <translation>输入一个唯一的名称为％1副本。Enter a unique name for the copy of %1.</translation>
-    </message>
-    <message>
-        <source>An empty name will skip copying this %1.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Detach Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Snapshot Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Water</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>To File (BeerXML or BeerJSON)</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">输入一个唯一的名称为％1副本。Enter a unique name for the copy of %1.</translation>
     </message>
 </context>
 <context>
@@ -1071,6 +919,14 @@ Log file may contain more details.</source>
     <message>
         <source>Equipment</source>
         <translation type="unfinished">设备Equipment</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil Time</source>
+        <translation type="unfinished">煮沸时间Boil Time</translation>
     </message>
 </context>
 <context>
@@ -1405,6 +1261,18 @@ Log file may contain more details.</source>
         <source>Fermentable</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">颜色Color</translation>
+    </message>
 </context>
 <context>
     <name>FermentableDialog</name>
@@ -1608,6 +1476,21 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Folder</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PATH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FULLPATH</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>HelpDialog</name>
     <message>
         <source>for</source>
@@ -1743,6 +1626,22 @@ Log file may contain more details.</source>
     <message>
         <source>Powder</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>% Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Origin</source>
+        <translation type="unfinished">来源Origin</translation>
     </message>
 </context>
 <context>
@@ -2569,6 +2468,14 @@ If you need help, please open an issue at %1</source>
         <source>Miscellaneous</source>
         <translation type="unfinished">杂项Miscellaneous</translation>
     </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MiscDialog</name>
@@ -3208,10 +3115,6 @@ Press OK to quit.</source>
         <translation>样式Style</translation>
     </message>
     <message>
-        <source>Folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error attempting to create directory &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3451,10 +3354,6 @@ Press OK to quit.</source>
     <message>
         <source>Could not open SQLite DB file %1.
 %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Water</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3857,6 +3756,14 @@ Program will now exit.</source>
         <source>Error matching %1 file pattern in %2 directory</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -4157,6 +4064,22 @@ The final volume in the primary is %1.</source>
     <message>
         <source>, </source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Date</source>
+        <translation type="unfinished">酿造日期</translation>
+    </message>
+    <message>
+        <source>Style</source>
+        <translation type="unfinished">样式Style</translation>
     </message>
 </context>
 <context>
@@ -5090,6 +5013,26 @@ The final volume in the primary is %1.</source>
         <source>Style</source>
         <translation type="unfinished">样式Style</translation>
     </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Category</source>
+        <translation type="unfinished">类别</translation>
+    </message>
+    <message>
+        <source>Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Letter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Guide</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StyleEditor</name>
@@ -5342,6 +5285,168 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
+    <name>TreeModel</name>
+    <message>
+        <source>Brew Date</source>
+        <translation type="obsolete">酿造日期</translation>
+    </message>
+    <message>
+        <source>Style</source>
+        <translation type="obsolete">样式Style</translation>
+    </message>
+    <message>
+        <source>Boil Time</source>
+        <translation type="obsolete">煮沸时间Boil Time</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="obsolete">颜色Color</translation>
+    </message>
+    <message>
+        <source>Origin</source>
+        <translation type="obsolete">来源Origin</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="obsolete">形式Form</translation>
+    </message>
+    <message>
+        <source>Category</source>
+        <translation type="obsolete">类别</translation>
+    </message>
+    <message>
+        <source>Could not copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There was an unexpected error creating %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TreeView</name>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">新New</translation>
+    </message>
+    <message>
+        <source>Recipe</source>
+        <translation type="unfinished">食谱</translation>
+    </message>
+    <message>
+        <source>Show Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detach Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snapshot Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew It!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recalculate eff</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Equipment</source>
+        <translation type="unfinished">设备Equipment</translation>
+    </message>
+    <message>
+        <source>Fermentable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Misc</source>
+        <translation type="unfinished">其他</translation>
+    </message>
+    <message>
+        <source>Style</source>
+        <translation type="unfinished">样式Style</translation>
+    </message>
+    <message>
+        <source>Yeast</source>
+        <translation type="unfinished">酵母Yeast</translation>
+    </message>
+    <message>
+        <source>Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To File (BeerXML or BeerJSON)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy %1</source>
+        <translation type="unfinished">复制Copy %1</translation>
+    </message>
+    <message>
+        <source>Enter a unique name for the copy of %1.</source>
+        <translation type="unfinished">输入一个唯一的名称为％1副本。Enter a unique name for the copy of %1.</translation>
+    </message>
+    <message>
+        <source>An empty name will skip copying this %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete %1 %2?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BrewNote</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>UnitAndScalePopUpMenu</name>
     <message>
         <source>Default</source>
@@ -5391,6 +5496,34 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ca</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SO4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cl</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Na</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mg</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>pH</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5635,6 +5768,22 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Yeast</source>
         <translation type="unfinished">酵母Yeast</translation>
+    </message>
+    <message>
+        <source>Laboratory</source>
+        <translation type="unfinished">实验室Laboratory</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">形式Form</translation>
     </message>
 </context>
 <context>
