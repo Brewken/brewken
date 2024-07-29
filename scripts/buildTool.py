@@ -97,8 +97,10 @@ if (exe_pip is None or exe_pip == ''):
 log.info('Found pip at: ' + exe_pip)
 
 # Of course, when you run the pip in the venv, it might complain that it is not up-to-date.  So we should ensure that
-# first.
-btUtils.abortOnRunFail(subprocess.run([exe_pip, 'install', '--upgrade', 'pip']))
+# first.  Note that it is Python we must run to upgrade pip, as pip cannot upgrade itself.  (Pip will happily _try_ to
+# upgrade itself, but then, on Windows at least, will get stuck when it tries to remove the old version of itself
+# because "process cannot access the file because it is being used by another process".)
+btUtils.abortOnRunFail(subprocess.run([exe_python, '-m', 'pip', 'install', '--upgrade', 'pip']))
 
 #
 # We use the packaging module (see https://pypi.org/project/packaging/) for handling version numbers (as described at
