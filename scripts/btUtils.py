@@ -71,7 +71,7 @@ def abortOnRunFail(runResult: subprocess.CompletedProcess):
       log = logging.getLogger(__name__)
 
       # According to https://docs.python.org/3/library/subprocess.html#subprocess.CompletedProcess,
-      # CompletedProcess.args (the arguments used to launch the process) "may be a list or a string", but its not clear
+      # CompletedProcess.args (the arguments used to launch the process) "may be a list or a string", but it's not clear
       # when it would be one or the other.
       if (isinstance(runResult.args, str)):
          log.critical('Error running ' + runResult.args)

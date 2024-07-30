@@ -695,27 +695,27 @@
     <name>BtTreeModel</name>
     <message>
         <source>Name</source>
-        <translation>Ονομασία</translation>
+        <translation type="vanished">Ονομασία</translation>
     </message>
     <message>
         <source>Brew Date</source>
-        <translation>Ημέρα Ζυθοποίησης</translation>
+        <translation type="vanished">Ημέρα Ζυθοποίησης</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation>Στυλ</translation>
+        <translation type="vanished">Στυλ</translation>
     </message>
     <message>
         <source>Boil Time</source>
-        <translation>Χρόνος βρασμού</translation>
+        <translation type="vanished">Χρόνος βρασμού</translation>
     </message>
     <message>
         <source>Color</source>
-        <translation>Χρώμα</translation>
+        <translation type="vanished">Χρώμα</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>Είδος</translation>
+        <translation type="vanished">Είδος</translation>
     </message>
     <message>
         <source>Use</source>
@@ -723,202 +723,126 @@
     </message>
     <message>
         <source>Form</source>
-        <translation>Μορφή</translation>
+        <translation type="vanished">Μορφή</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation>Κατηγορία</translation>
+        <translation type="vanished">Κατηγορία</translation>
     </message>
     <message>
         <source>Number</source>
-        <translation>Αριθμός</translation>
+        <translation type="vanished">Αριθμός</translation>
     </message>
     <message>
         <source>Letter</source>
-        <translation>Γράμμα</translation>
+        <translation type="vanished">Γράμμα</translation>
     </message>
     <message>
         <source>Guide</source>
-        <translation>Οδηγός</translation>
+        <translation type="vanished">Οδηγός</translation>
     </message>
     <message>
         <source>PATH</source>
-        <translation>Διαδρομή</translation>
+        <translation type="vanished">Διαδρομή</translation>
     </message>
     <message>
         <source>FULLPATH</source>
-        <translation>Πλήρης διαδρομή</translation>
-    </message>
-    <message>
-        <source>Could not copy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>There was an unexpected error creating %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ca</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HCO3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SO4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Na</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>pH</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Πλήρης διαδρομή</translation>
     </message>
     <message>
         <source>Origin</source>
-        <translation type="unfinished">Προέλευση</translation>
-    </message>
-    <message>
-        <source>% Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Προέλευση</translation>
     </message>
 </context>
 <context>
     <name>BtTreeView</name>
     <message>
         <source>New</source>
-        <translation>Νέα</translation>
+        <translation type="vanished">Νέα</translation>
     </message>
     <message>
         <source>Recipe</source>
-        <translation>Συνταγή</translation>
+        <translation type="vanished">Συνταγή</translation>
     </message>
     <message>
         <source>Brew It!</source>
-        <translation>Ζυθοποίησε!</translation>
+        <translation type="vanished">Ζυθοποίησε!</translation>
     </message>
     <message>
         <source>Brew Again</source>
-        <translation>Ζυθοποίησε πάλι</translation>
+        <translation type="vanished">Ζυθοποίησε πάλι</translation>
     </message>
     <message>
         <source>Change date</source>
-        <translation>Αλλαγή ημερομηνίας</translation>
+        <translation type="vanished">Αλλαγή ημερομηνίας</translation>
     </message>
     <message>
         <source>Recalculate eff</source>
-        <translation>Επανυπολογισμός απόδ.</translation>
+        <translation type="vanished">Επανυπολογισμός απόδ.</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Διαγραφή</translation>
+        <translation type="vanished">Διαγραφή</translation>
     </message>
     <message>
         <source>Equipment</source>
-        <translation>Εξοπλισμός</translation>
+        <translation type="vanished">Εξοπλισμός</translation>
     </message>
     <message>
         <source>Fermentable</source>
-        <translation>Ζυμώσιμα</translation>
+        <translation type="vanished">Ζυμώσιμα</translation>
     </message>
     <message>
         <source>Hop</source>
-        <translation>Λυκίσκος</translation>
+        <translation type="vanished">Λυκίσκος</translation>
     </message>
     <message>
         <source>Misc</source>
-        <translation>Διαφ.</translation>
+        <translation type="vanished">Διαφ.</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation>Στυλ</translation>
+        <translation type="vanished">Στυλ</translation>
     </message>
     <message>
         <source>Yeast</source>
-        <translation>Μαγιά</translation>
+        <translation type="vanished">Μαγιά</translation>
     </message>
     <message>
         <source>Folder</source>
-        <translation>Φάκελος</translation>
+        <translation type="vanished">Φάκελος</translation>
     </message>
     <message>
         <source>Copy</source>
-        <translation>Αντιγραφή</translation>
+        <translation type="vanished">Αντιγραφή</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation>Εξαγωγή</translation>
+        <translation type="vanished">Εξαγωγή</translation>
     </message>
     <message>
         <source>Import</source>
-        <translation>Εισαγωγή</translation>
+        <translation type="vanished">Εισαγωγή</translation>
     </message>
     <message>
         <source>Delete %1</source>
-        <translation>Διαγραφή %1</translation>
+        <translation type="vanished">Διαγραφή %1</translation>
     </message>
     <message>
         <source>Delete %1 %2?</source>
-        <translation>Διαγραφή %1 %2?</translation>
+        <translation type="vanished">Διαγραφή %1 %2?</translation>
     </message>
     <message>
         <source>BrewNote</source>
-        <translation>Σημείωσεις</translation>
-    </message>
-    <message>
-        <source>Cancel All</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Σημείωσεις</translation>
     </message>
     <message>
         <source>Copy %1</source>
-        <translation>Αντιγραφή %1</translation>
+        <translation type="vanished">Αντιγραφή %1</translation>
     </message>
     <message>
         <source>Enter a unique name for the copy of %1.</source>
-        <translation>Εισάγετε ένα μοναδικό όνομα για την αντιγραφή του %1</translation>
-    </message>
-    <message>
-        <source>An empty name will skip copying this %1.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Detach Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Snapshot Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Water</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>To File (BeerXML or BeerJSON)</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Εισάγετε ένα μοναδικό όνομα για την αντιγραφή του %1</translation>
     </message>
 </context>
 <context>
@@ -1087,6 +1011,14 @@ Log file may contain more details.</source>
     <message>
         <source>Equipment</source>
         <translation type="unfinished">Εξοπλισμός</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil Time</source>
+        <translation type="unfinished">Χρόνος βρασμού</translation>
     </message>
 </context>
 <context>
@@ -1421,6 +1353,18 @@ Log file may contain more details.</source>
         <source>Fermentable</source>
         <translation type="unfinished">Ζυμώσιμα</translation>
     </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Χρώμα</translation>
+    </message>
 </context>
 <context>
     <name>FermentableDialog</name>
@@ -1628,6 +1572,21 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Folder</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PATH</source>
+        <translation type="unfinished">Διαδρομή</translation>
+    </message>
+    <message>
+        <source>FULLPATH</source>
+        <translation type="unfinished">Πλήρης διαδρομή</translation>
+    </message>
+</context>
+<context>
     <name>HelpDialog</name>
     <message>
         <source>for</source>
@@ -1763,6 +1722,22 @@ Log file may contain more details.</source>
     <message>
         <source>Powder</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>% Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Origin</source>
+        <translation type="unfinished">Προέλευση</translation>
     </message>
 </context>
 <context>
@@ -2648,6 +2623,14 @@ If you need help, please open an issue at %1</source>
     <message>
         <source>Miscellaneous</source>
         <translation type="unfinished">Διάφορα</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3553,10 +3536,6 @@ Press OK to quit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Water</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Successfully read &quot;%1&quot;
 
 %2</source>
@@ -3956,6 +3935,10 @@ Program will now exit.</source>
         <source>Error matching %1 file pattern in %2 directory</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Water</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -4256,6 +4239,22 @@ The final volume in the primary is %1.</source>
     <message>
         <source>, </source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Date</source>
+        <translation type="unfinished">Ημέρα Ζυθοποίησης</translation>
+    </message>
+    <message>
+        <source>Style</source>
+        <translation type="unfinished">Στυλ</translation>
     </message>
 </context>
 <context>
@@ -5213,6 +5212,26 @@ The final volume in the primary is %1.</source>
         <source>Style</source>
         <translation type="unfinished">Στυλ</translation>
     </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Category</source>
+        <translation type="unfinished">Κατηγορία</translation>
+    </message>
+    <message>
+        <source>Number</source>
+        <translation type="unfinished">Αριθμός</translation>
+    </message>
+    <message>
+        <source>Letter</source>
+        <translation type="unfinished">Γράμμα</translation>
+    </message>
+    <message>
+        <source>Guide</source>
+        <translation type="unfinished">Οδηγός</translation>
+    </message>
 </context>
 <context>
     <name>StyleEditor</name>
@@ -5465,6 +5484,188 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
+    <name>TreeModel</name>
+    <message>
+        <source>Brew Date</source>
+        <translation type="obsolete">Ημέρα Ζυθοποίησης</translation>
+    </message>
+    <message>
+        <source>Style</source>
+        <translation type="obsolete">Στυλ</translation>
+    </message>
+    <message>
+        <source>Boil Time</source>
+        <translation type="obsolete">Χρόνος βρασμού</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="obsolete">Χρώμα</translation>
+    </message>
+    <message>
+        <source>Origin</source>
+        <translation type="obsolete">Προέλευση</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="obsolete">Μορφή</translation>
+    </message>
+    <message>
+        <source>Category</source>
+        <translation type="obsolete">Κατηγορία</translation>
+    </message>
+    <message>
+        <source>Number</source>
+        <translation type="obsolete">Αριθμός</translation>
+    </message>
+    <message>
+        <source>Letter</source>
+        <translation type="obsolete">Γράμμα</translation>
+    </message>
+    <message>
+        <source>Guide</source>
+        <translation type="obsolete">Οδηγός</translation>
+    </message>
+    <message>
+        <source>PATH</source>
+        <translation type="obsolete">Διαδρομή</translation>
+    </message>
+    <message>
+        <source>FULLPATH</source>
+        <translation type="obsolete">Πλήρης διαδρομή</translation>
+    </message>
+    <message>
+        <source>Could not copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There was an unexpected error creating %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TreeView</name>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe</source>
+        <translation type="unfinished">Συνταγή</translation>
+    </message>
+    <message>
+        <source>Show Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detach Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snapshot Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew It!</source>
+        <translation type="unfinished">Ζυθοποίησε!</translation>
+    </message>
+    <message>
+        <source>Brew Again</source>
+        <translation type="unfinished">Ζυθοποίησε πάλι</translation>
+    </message>
+    <message>
+        <source>Change date</source>
+        <translation type="unfinished">Αλλαγή ημερομηνίας</translation>
+    </message>
+    <message>
+        <source>Recalculate eff</source>
+        <translation type="unfinished">Επανυπολογισμός απόδ.</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">Διαγραφή</translation>
+    </message>
+    <message>
+        <source>Equipment</source>
+        <translation type="unfinished">Εξοπλισμός</translation>
+    </message>
+    <message>
+        <source>Fermentable</source>
+        <translation type="unfinished">Ζυμώσιμα</translation>
+    </message>
+    <message>
+        <source>Hop</source>
+        <translation type="unfinished">Λυκίσκος</translation>
+    </message>
+    <message>
+        <source>Misc</source>
+        <translation type="unfinished">Διαφ.</translation>
+    </message>
+    <message>
+        <source>Style</source>
+        <translation type="unfinished">Στυλ</translation>
+    </message>
+    <message>
+        <source>Yeast</source>
+        <translation type="unfinished">Μαγιά</translation>
+    </message>
+    <message>
+        <source>Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation type="unfinished">Φάκελος</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation type="unfinished">Αντιγραφή</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="unfinished">Εξαγωγή</translation>
+    </message>
+    <message>
+        <source>To File (BeerXML or BeerJSON)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation type="unfinished">Εισαγωγή</translation>
+    </message>
+    <message>
+        <source>Cancel All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy %1</source>
+        <translation type="unfinished">Αντιγραφή %1</translation>
+    </message>
+    <message>
+        <source>Enter a unique name for the copy of %1.</source>
+        <translation type="unfinished">Εισάγετε ένα μοναδικό όνομα για την αντιγραφή του %1</translation>
+    </message>
+    <message>
+        <source>An empty name will skip copying this %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete %1</source>
+        <translation type="unfinished">Διαγραφή %1</translation>
+    </message>
+    <message>
+        <source>Delete %1 %2?</source>
+        <translation type="unfinished">Διαγραφή %1 %2?</translation>
+    </message>
+    <message>
+        <source>BrewNote</source>
+        <translation type="unfinished">Σημείωσεις</translation>
+    </message>
+</context>
+<context>
     <name>UnitAndScalePopUpMenu</name>
     <message>
         <source>Default</source>
@@ -5514,6 +5715,34 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ca</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SO4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cl</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Na</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mg</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>pH</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5754,6 +5983,22 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Yeast</source>
         <translation type="unfinished">Μαγιά</translation>
+    </message>
+    <message>
+        <source>Laboratory</source>
+        <translation type="unfinished">Εργαστήριο/Εταιρία</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Μορφή</translation>
     </message>
 </context>
 <context>
