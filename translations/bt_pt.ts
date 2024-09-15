@@ -1620,10 +1620,6 @@ Log file may contain more details.</source>
 <context>
     <name>HelpDialog</name>
     <message>
-        <source>for</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Online Help</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1673,6 +1669,10 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>If you find a bug, or have an idea for an enhancement, please raise an issue at &lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>version %1 for %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3106,7 +3106,7 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Unrecognized IBU formula type. %1</source>
-        <translation>Fórmula de IBU não reconhecida. %1</translation>
+        <translation type="vanished">Fórmula de IBU não reconhecida. %1</translation>
     </message>
     <message>
         <source>Directory Problem</source>
@@ -3482,7 +3482,7 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished">Desconhecido</translation>
+        <translation type="obsolete">Desconhecido</translation>
     </message>
     <message>
         <source>Detailed (for debugging)</source>
@@ -3948,6 +3948,50 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tinseth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Noonan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mIBU</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SMPH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Length</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>cm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>m</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ft</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4581,6 +4625,10 @@ O volume final do fermentador primário é %1.</translation>
     <message>
         <source>Step</source>
         <translation type="unfinished">Etapa</translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="unfinished">Atenuação</translation>
     </message>
 </context>
 <context>
@@ -5833,7 +5881,7 @@ O volume final do fermentador primário é %1.</translation>
     <name>WaterTableModel</name>
     <message>
         <source>Bad model index. row = %1</source>
-        <translation>Índice de modelo inválido. Linha = %1</translation>
+        <translation type="vanished">Índice de modelo inválido. Linha = %1</translation>
     </message>
     <message>
         <source>Bad column: %1</source>
@@ -6011,6 +6059,10 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6193,6 +6245,18 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New hop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7204,6 +7268,14 @@ O volume final do fermentador primário é %1.</translation>
         <source>Amount Type</source>
         <translation type="unfinished">Tipo Quantidade</translation>
     </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7276,11 +7348,11 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Temp. lag time</source>
-        <translation type="unfinished">tempo de atraso</translation>
+        <translation type="obsolete">tempo de atraso</translation>
     </message>
     <message>
         <source>Lag time</source>
-        <translation type="unfinished">Atraso</translation>
+        <translation type="obsolete">Atraso</translation>
     </message>
     <message>
         <source>Infuse temp.</source>
@@ -7680,6 +7752,14 @@ O volume final do fermentador primário é %1.</translation>
     <message>
         <source>Amount Type</source>
         <translation type="unfinished">Tipo Quantidade</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8776,15 +8856,15 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation>Checar se a quantidade está em Kg em vez de L.</translation>
+        <translation type="vanished">Checar se a quantidade está em Kg em vez de L.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Quantidade é o peso?</translation>
+        <translation type="vanished">Quantidade é o peso?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Verifique se a quantidade informada é um peso ao invés de um volume</translation>
+        <translation type="vanished">Verifique se a quantidade informada é um peso ao invés de um volume</translation>
     </message>
     <message>
         <source>Use for:</source>
@@ -8845,6 +8925,14 @@ O volume final do fermentador primário é %1.</translation>
     <message>
         <source>Amount Type</source>
         <translation type="unfinished">Tipo Quantidade</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10248,11 +10336,11 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Attenuation (%)</source>
-        <translation>Atenuação (%)</translation>
+        <translation type="vanished">Atenuação (%)</translation>
     </message>
     <message>
         <source>Apparent attenuation as percentage of OG points</source>
-        <translation>Atenuação aparente como percentagem de medida do OG</translation>
+        <translation type="vanished">Atenuação aparente como percentagem de medida do OG</translation>
     </message>
     <message>
         <source>Times Recultured</source>
@@ -10425,6 +10513,14 @@ O volume final do fermentador primário é %1.</translation>
     <message>
         <source>Amount Type</source>
         <translation type="unfinished">Tipo Quantidade</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

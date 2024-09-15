@@ -166,6 +166,7 @@ public:
     *        info.
     */
    static TypeLookup const typeLookup;
+   TYPE_LOOKUP_GETTER
 
    Recipe(QString name);
    Recipe(NamedParameterBundle const & namedParameterBundle);
@@ -435,7 +436,8 @@ public:
     *
     *        We want this to have the same signature as add because it makes the implementation of Undo/Redo easier
     */
-   template<class NE> std::shared_ptr<NE> remove(std::shared_ptr<NE> var);
+//   template<class NE> std::shared_ptr<NE> remove(std::shared_ptr<NE> var);
+   std::shared_ptr<Instruction> remove(std::shared_ptr<Instruction> var);
 
    /**
     * \brief Use this for removing \c RecipeAdditionHop, etc.
@@ -582,8 +584,8 @@ public:
    template<class NE> static BtStringConst const & propertyNameFor();
 
    /**
-    * \brief This is used in \c RecipeAttributeButtonBase and also in places where we want to do templated code for
-    *        Mash, Boil, Fermentation.
+    * \brief This is used in \c RecipeAttributeButtonBase and also in places such as \c EditorWithRecipeBase where we
+    *        want to do templated code for Mash, Boil, Fermentation, etc.
     *
     *        No general implementation.  Only specialisations, all defined in model/Recipe.cpp.
     */

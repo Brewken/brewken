@@ -32,18 +32,17 @@ BoilStepTableModel::BoilStepTableModel(QTableView * parent, bool editable) :
       parent,
       editable,
       {
-         TABLE_MODEL_HEADER(BoilStep, Name        , tr("Name"         ), PropertyNames:: NamedEntity::name     ),
-         TABLE_MODEL_HEADER(BoilStep, StepTime    , tr("Step Time"    ), PropertyNames::        Step::stepTime_mins),
-         TABLE_MODEL_HEADER(BoilStep, StartTemp   , tr("Start Temp"   ), PropertyNames::        Step::startTemp_c),
-         TABLE_MODEL_HEADER(BoilStep, RampTime    , tr("Ramp Time"    ), PropertyNames::        Step::rampTime_mins),
-         TABLE_MODEL_HEADER(BoilStep, EndTemp     , tr("End Temp"     ), PropertyNames::        Step::endTemp_c),
-         TABLE_MODEL_HEADER(BoilStep, StartAcidity, tr("Start Acidity"), PropertyNames::        Step::startAcidity_pH),
-         TABLE_MODEL_HEADER(BoilStep, EndAcidity  , tr("End Acidity"  ), PropertyNames::        Step::endAcidity_pH  ),
+         TABLE_MODEL_HEADER(BoilStep, Name        , tr("Name"         ), PropertyNames:: NamedEntity::name           ),
+         TABLE_MODEL_HEADER(BoilStep, StepTime    , tr("Step Time"    ), PropertyNames::        Step::stepTime_mins  , PrecisionInfo{0}),
+         TABLE_MODEL_HEADER(BoilStep, StartTemp   , tr("Start Temp"   ), PropertyNames::        Step::startTemp_c    , PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(BoilStep, RampTime    , tr("Ramp Time"    ), PropertyNames::        Step::rampTime_mins  , PrecisionInfo{0}),
+         TABLE_MODEL_HEADER(BoilStep, EndTemp     , tr("End Temp"     ), PropertyNames::        Step::endTemp_c      , PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(BoilStep, StartAcidity, tr("Start Acidity"), PropertyNames::        Step::startAcidity_pH, PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(BoilStep, EndAcidity  , tr("End Acidity"  ), PropertyNames::        Step::endAcidity_pH  , PrecisionInfo{1}),
          TABLE_MODEL_HEADER(BoilStep, StartGravity, tr("Start Gravity"), PropertyNames::StepExtended::startGravity_sg),
          TABLE_MODEL_HEADER(BoilStep, EndGravity  , tr("End Gravity"  ), PropertyNames::StepExtended::  endGravity_sg),
          TABLE_MODEL_HEADER(BoilStep, ChillingType, tr("Chilling Type"), PropertyNames::    BoilStep::chillingType   , EnumInfo{BoilStep::chillingTypeStringMapping,
                                                                                                                                 BoilStep::chillingTypeDisplayNames}),
-
       }
    },
    TableModelBase<BoilStepTableModel, BoilStep>{},
@@ -74,45 +73,12 @@ void BoilStepTableModel::updateTotals()                                      { r
 
 
 QVariant BoilStepTableModel::data(QModelIndex const & index, int role) const {
-   if (!this->m_stepOwnerObs) {
+   if (!this->m_stepOwnerObs || !this->indexAndRoleOk(index, role)) {
       return QVariant();
    }
 
-   if (!this->isIndexOk(index)) {
-      return QVariant();
-   }
-
-   // Make sure we only respond to the DisplayRole role.
-   if (role != Qt::DisplayRole) {
-      return QVariant();
-   }
-
-   auto row = this->rows[index.row()];
-
-   auto const columnIndex = static_cast<BoilStepTableModel::ColumnIndex>(index.column());
-   switch (columnIndex) {
-      case BoilStepTableModel::ColumnIndex::Name        :
-      case BoilStepTableModel::ColumnIndex::StepTime    :
-      case BoilStepTableModel::ColumnIndex::StartTemp   :
-      case BoilStepTableModel::ColumnIndex::RampTime    :
-      case BoilStepTableModel::ColumnIndex::EndTemp     :
-      case BoilStepTableModel::ColumnIndex::StartAcidity:
-      case BoilStepTableModel::ColumnIndex::EndAcidity  :
-      case BoilStepTableModel::ColumnIndex::StartGravity:
-      case BoilStepTableModel::ColumnIndex::EndGravity  :
-      case BoilStepTableModel::ColumnIndex::ChillingType:
-         return this->readDataFromModel(index, role);
-
-      // No default case as we want the compiler to warn us if we missed one
-   }
-   return QVariant();
-}
-
-QVariant BoilStepTableModel::headerData( int section, Qt::Orientation orientation, int role ) const {
-   if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
-      return this->getColumnLabel(section);
-   }
-   return QVariant();
+   // No special handling required for any of our columns
+   return this->readDataFromModel(index, role);
 }
 
 Qt::ItemFlags BoilStepTableModel::flags(const QModelIndex& index ) const {
@@ -124,39 +90,12 @@ Qt::ItemFlags BoilStepTableModel::flags(const QModelIndex& index ) const {
 }
 
 bool BoilStepTableModel::setData(QModelIndex const & index, QVariant const & value, int role) {
-   if (!this->m_stepOwnerObs) {
+   if (!this->m_stepOwnerObs || !this->indexAndRoleOk(index, role)) {
       return false;
    }
 
-   if (!this->isIndexOk(index)) {
-      return false;
-   }
-
-   if (index.row() >= static_cast<int>(this->rows.size()) || role != Qt::EditRole ) {
-      return false;
-   }
-
-
-   bool retVal = false;
-
-   auto const columnIndex = static_cast<BoilStepTableModel::ColumnIndex>(index.column());
-   switch (columnIndex) {
-      case BoilStepTableModel::ColumnIndex::Name        :
-      case BoilStepTableModel::ColumnIndex::StepTime    :
-      case BoilStepTableModel::ColumnIndex::StartTemp   :
-      case BoilStepTableModel::ColumnIndex::RampTime    :
-      case BoilStepTableModel::ColumnIndex::EndTemp     :
-      case BoilStepTableModel::ColumnIndex::StartAcidity:
-      case BoilStepTableModel::ColumnIndex::EndAcidity  :
-      case BoilStepTableModel::ColumnIndex::StartGravity:
-      case BoilStepTableModel::ColumnIndex::EndGravity  :
-      case BoilStepTableModel::ColumnIndex::ChillingType:
-         retVal = this->writeDataToModel(index, value, role);
-         break;
-
-      // No default case as we want the compiler to warn us if we missed one
-   }
-   return retVal;
+   // No special handling required for any of our columns
+   return this->writeDataToModel(index, value, role);
 }
 
 /////==========================CLASS BoilStepItemDelegate===============================

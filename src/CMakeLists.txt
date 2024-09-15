@@ -211,7 +211,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/sortFilterProxyModels/YeastSortFilterProxyModel.cpp
     ${repoDir}/src/tableModels/BoilStepTableModel.cpp
     ${repoDir}/src/tableModels/BtTableModel.cpp
-    ${repoDir}/src/tableModels/BtTableModelInventory.cpp
     ${repoDir}/src/tableModels/EquipmentTableModel.cpp
     ${repoDir}/src/tableModels/FermentableTableModel.cpp
     ${repoDir}/src/tableModels/FermentationStepTableModel.cpp
@@ -238,6 +237,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/utils/EnumStringMapping.cpp
     ${repoDir}/src/utils/FileSystemHelpers.cpp
     ${repoDir}/src/utils/Fonts.cpp
+    ${repoDir}/src/utils/FuzzyCompare.cpp
     ${repoDir}/src/utils/ImportRecordCount.cpp
     ${repoDir}/src/utils/MetaTypes.cpp
     ${repoDir}/src/utils/OStreamWriterForQFile.cpp

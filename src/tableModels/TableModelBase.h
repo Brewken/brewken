@@ -356,10 +356,10 @@ public:
    }
 
    /**
-    * \brief Currently only used on SaltTableModel I think
+    * \brief Currently only used in WaterDialog I think
     */
    bool remove(QModelIndex const & index) {
-      if (!this->isIndexOk(index)) {
+      if (!this->indexOk(index)) {
          return false;
       }
 
@@ -430,9 +430,9 @@ protected:
    }
 
    /**
-    * \brief Check supplied index is within bounds
+    * \brief Check that supplied index is within bounds.
     */
-   bool isIndexOk(QModelIndex const & index) const {
+   bool indexOk(QModelIndex const & index) const {
       if (index.row() >= static_cast<int>(this->rows.size())) {
          qCritical() << Q_FUNC_INFO << "Bad model index. row = " << index.row() << "; max row = " << this->rows.size();
          return false;
@@ -444,12 +444,43 @@ protected:
          qCritical() << Q_FUNC_INFO << "Null pointer at row" << index.row() << "of" << this->rows.size();
          return false;
       }
+
+      return true;
+   }
+
+   /**
+    * \brief Check that supplied index is within bounds, and that the role is one for which we would normally want to
+    *        return data.
+    *
+    *        Per https://doc.qt.io/qt-6/qt.html#ItemDataRole-enum, there are a dozen or so different "roles" that we can
+    *        get called for, mostly from the Qt framework itself.  If we don't have anything special to say for a
+    *        particular role, eg if we don't want to return a custom QFont when requested with Qt::FontRole, then
+    *        https://doc.qt.io/qt-6/qabstractitemmodel.html#data says we just need to return "an invalid (default-
+    *        constructed) QVariant".
+    *
+    *        Note that if we do not send data back for the edit role, then double-clicking a cell to edit it will blank
+    *        the contents, which can be rather annoying. See
+    *        https://stackoverflow.com/questions/55855284/qabstracttablemodel-editing-without-clearing-previous-data-in-cell.)
+    */
+   bool indexAndRoleOk(QModelIndex const & index, int const role) const {
+      if (!this->indexOk(index)) {
+         // indexOk() will already have logged an error
+         return false;
+      }
+
+      if (role != Qt::DisplayRole && role != Qt::EditRole) {
+         // No need to log anything here, as it's perfectly normal to get called with other roles
+         return false;
+      }
+
       return true;
    }
 
    /**
     * \brief Child classes should call this from their \c data() member function (overriding
-    *        \c QAbstractTableModel::data()) to read data for any column that does not require special handling
+    *        \c QAbstractTableModel::data()) to read data for any column that does not require special handling.
+    *
+    *        Caller is expected to have called \c indexAndRoleOk before calling this function.
     *
     * NOTE: The debug logging in this function is commented out because the function gets called A LOT.  I tend to
     *       uncomment these lines only when working on a problem in this area of the code, otherwise the log file fills
@@ -466,16 +497,6 @@ protected:
       //    HopItemDelegate::setEditorData()
       //    QAbstractItemView::edit()
       //
-      // Per https://doc.qt.io/qt-6/qt.html#ItemDataRole-enum, there are a dozen or so different "roles" that we can
-      // get called for, mostly from the Qt framework itself.  If we don't have anything special to say for a particular
-      // role, eg if we don't want to return a custom QFont when requested with Qt::FontRole, then
-      // https://doc.qt.io/qt-6/qabstractitemmodel.html#data says we just need to return "an invalid (default-
-      // constructed) QVariant".
-      //
-      if (role != Qt::DisplayRole && role != Qt::EditRole) {
-         return QVariant{};
-      }
-
       auto row = this->rows[index.row()];
       auto const columnIndex = static_cast<ColumnIndex>(index.column());
       auto const & columnInfo = this->get_ColumnInfo(columnIndex);
@@ -672,6 +693,8 @@ protected:
     * \brief Child classes should call this from their \c setData() member function (overriding
     *        \c QAbstractTableModel::setData()) to write data for any column that does not require special handling
     *
+    *        Caller is expected to have called \c indexAndRoleOk before calling this function.
+    *
     * \param physicalQuantity Needs to be supplied if and only if the column type is
     *                         \c Measurement::MixedPhysicalQuantities
     *
@@ -700,6 +723,8 @@ protected:
 
       TypeInfo const & typeInfo = columnInfo.typeInfo;
 
+      // Uncomment this if one of the physicalQuantity-related asserts below is firing
+//      qDebug().noquote() << Q_FUNC_INFO << "physicalQuantity: " << physicalQuantity << Logging::getStackTrace();
       // For all non physical quantities, including enums and bools, ItemDelegate::writeDataToModel will already have
       // created the right type of QVariant for us, including handling whether or not it is optional.
       QVariant processedValue;
@@ -868,20 +893,25 @@ protected:
    /**
     * \brief Called from \c Derived::changed slot
     *
-    * \param propNameOfOurIdsInRecipe  This needs to be something valid in all cases, but is only used if Derived is a
+    * \param propNameOfOurAdditionsInRecipe  This needs to be something valid in all cases, but is only used if Derived is a
     *                                  recipe observer.
     */
    template<class Caller>
    void propertyChanged(QMetaProperty prop,
                         [[maybe_unused]] QVariant val,
-                        BtStringConst const & propNameOfOurIdsInRecipe) {
+                        BtStringConst const & propNameOfOurAdditionsInRecipe) {
+      QObject * rawSender = this->derived().sender();
+      QString senderClassName{"Null"};
+      if (rawSender) {
+         senderClassName = rawSender->metaObject()->className();
+      }
       // Normally leave this logging statement commented out as it generates a lot of logging (because this function is
       // called a lot!)
 //      qDebug() <<
-//         Q_FUNC_INFO << "Property" << prop.name() << "; val" << val << "; propNameOfOurIdsInRecipe" <<
-//         propNameOfOurIdsInRecipe;
+//         Q_FUNC_INFO << "Sender:" << senderClassName << "; property:" << prop.name() << "; val:" << val <<
+//         "; propNameOfOurAdditionsInRecipe:" << propNameOfOurAdditionsInRecipe;
       // Is sender one of our items?
-      NE * itemSender = qobject_cast<NE *>(this->derived().sender());
+      NE * itemSender = qobject_cast<NE *>(rawSender);
       if (itemSender) {
          int ii = this->findIndexOf(itemSender);
          if (ii < 0) {
@@ -896,8 +926,8 @@ protected:
       }
 
       // See if our recipe gained or lost items.
-      Recipe * recSender = qobject_cast<Recipe *>(this->derived().sender());
-      if (recSender && prop.name() == propNameOfOurIdsInRecipe) {
+      Recipe * recSender = qobject_cast<Recipe *>(rawSender);
+      if (recSender && prop.name() == propNameOfOurAdditionsInRecipe) {
          this->checkRecipeItems<Caller>(recSender);
       }
 
@@ -938,8 +968,6 @@ protected:
       virtual int rowCount(QModelIndex const & parent = QModelIndex()) const;                                   \
       /** \brief Reimplemented from QAbstractTableModel. */                                                     \
       virtual QVariant data(QModelIndex const & index, int role = Qt::DisplayRole) const;                       \
-      /** \brief Reimplemented from QAbstractTableModel. */                                                     \
-      virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;  \
       /** \brief Reimplemented from QAbstractTableModel. */                                                     \
       virtual Qt::ItemFlags flags(const QModelIndex& index) const;                                              \
       /** \brief Reimplemented from QAbstractTableModel. */                                                     \

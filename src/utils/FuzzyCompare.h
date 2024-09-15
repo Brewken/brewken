@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/BoilEditor.h is part of Brewken, and is copyright the following authors 2024:
+ * utils/FuzzyCompare.h is part of Brewken, and is copyright the following authors 2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,30 +13,32 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef EDITORS_BOILEDITOR_H
-#define EDITORS_BOILEDITOR_H
+#ifndef UTILS_FUZZYCOMPARE_H
+#define UTILS_FUZZYCOMPARE_H
 #pragma once
 
-#include <QDialog>
-#include <QMetaProperty>
-#include <QVariant>
+#include <optional>
 
-#include "ui_boilEditor.h"
+namespace Utils {
+   /**
+    * \brief Extends qFuzzyCompare to deal with the case where either value is 0.0
+    *
+    *        We want to be careful about implicit argument conversion, so we'll use the same trick as in
+    *        EditorBase::setEditItem
+    */
+   bool FuzzyCompare(double lhs, double rhs);
 
-#include "editors/EditorWithRecipeBase.h"
-#include "model/Boil.h"
+   /**
+    * \brief Extends FuzzyCompare to deal with the case where values are optional
+    */
+   bool FuzzyCompare(std::optional<double> lhs, std::optional<double> rhs);
 
-/*!
- * \class BoilEditor
- *
- * \brief View/controller dialog for editing a boil.
- *
- *        See also \c NamedBoilEditor
- */
-class BoilEditor : public QDialog, public Ui::boilEditor, public EditorWithRecipeBase<BoilEditor, Boil> {
-   Q_OBJECT
+   /**
+    * \brief We want to be careful about implicit argument conversion for FuzzyCompare, so we use the same trick here as
+    *        in EditorBase::setEditItem to prevent it
+    */
+   template <typename D, typename E> void FuzzyCompare(D, E) = delete;
 
-   EDITOR_WITH_RECIPE_COMMON_DECL(Boil)
-};
+}
 
 #endif

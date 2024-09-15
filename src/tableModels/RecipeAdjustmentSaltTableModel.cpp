@@ -97,9 +97,12 @@ void RecipeAdjustmentSaltTableModel::removed(std::shared_ptr<RecipeAdjustmentSal
 void RecipeAdjustmentSaltTableModel::updateTotals() { return; }
 
 void RecipeAdjustmentSaltTableModel::catchSalt() {
+   // TODO: Need to give the saltAdjustment a Salt, which needs to be something that exists in the DB
+   //
    // This gets stored in the DB in saveAndClose()
-   auto gaq = std::make_shared<RecipeAdjustmentSalt>("");
-   this->add(gaq);
+   qDebug() << Q_FUNC_INFO;
+   auto saltAdjustment = std::make_shared<RecipeAdjustmentSalt>("");
+   this->add(saltAdjustment);
    return;
 }
 
@@ -213,20 +216,21 @@ double RecipeAdjustmentSaltTableModel::totalAcidWeight(Salt::Type type) const {
       auto salt = saltAdjustment->salt();
       if (salt->type() == type) {
          double mult  = multiplier(*saltAdjustment);
-         // Acid malts are easy
-         if ( type == Salt::Type::AcidulatedMalt ) {
-            ret += 1000.0 * saltAdjustment->amount().quantity * salt->percentAcid();
-         }
-         // Lactic acid isn't quite so easy
-         else if ( type == Salt::Type::LacticAcid ) {
-            double density = salt->percentAcid()/88.0 * (lactic_density - 1.0) + 1.0;
+         if (type == Salt::Type::AcidulatedMalt) {
+            // Acid malts are easy
+            Q_ASSERT(salt->percentAcid());
+            ret += 1000.0 * saltAdjustment->amount().quantity * *salt->percentAcid();
+         } else if (type == Salt::Type::LacticAcid) {
+            // Lactic acid isn't quite so easy
+            Q_ASSERT(salt->percentAcid());
+            double density = *salt->percentAcid()/88.0 * (lactic_density - 1.0) + 1.0;
             double lactic_wgt = 1000.0 * saltAdjustment->amount().quantity * mult * density;
-            ret += (salt->percentAcid()/100.0) * lactic_wgt;
-         }
-         else if ( type == Salt::Type::H3PO4 ) {
-            double density = salt->percentAcid()/85.0 * (H3PO4_density - 1.0) + 1.0;
+            ret += (*salt->percentAcid()/100.0) * lactic_wgt;
+         } else if (type == Salt::Type::H3PO4) {
+            Q_ASSERT(salt->percentAcid());
+            double density = *salt->percentAcid()/85.0 * (H3PO4_density - 1.0) + 1.0;
             double H3PO4_wgt = 1000.0 * saltAdjustment->amount().quantity * density;
-            ret += (salt->percentAcid()/100.0) * H3PO4_wgt;
+            ret += (*salt->percentAcid()/100.0) * H3PO4_wgt;
          }
       }
    }
@@ -234,34 +238,12 @@ double RecipeAdjustmentSaltTableModel::totalAcidWeight(Salt::Type type) const {
 }
 
 QVariant RecipeAdjustmentSaltTableModel::data(QModelIndex const & index, int role) const {
-   if (!this->isIndexOk(index)) {
+   if (!this->indexAndRoleOk(index, role)) {
       return QVariant();
    }
 
-   auto row = this->rows[index.row()];
-
-   auto const columnIndex = static_cast<RecipeAdjustmentSaltTableModel::ColumnIndex>(index.column());
-   switch (columnIndex) {
-      case RecipeAdjustmentSaltTableModel::ColumnIndex::Name          :
-      case RecipeAdjustmentSaltTableModel::ColumnIndex::Type          :
-      case RecipeAdjustmentSaltTableModel::ColumnIndex::Amount        :
-      case RecipeAdjustmentSaltTableModel::ColumnIndex::AmountType    :
-      case RecipeAdjustmentSaltTableModel::ColumnIndex::TotalInventory:
-      case RecipeAdjustmentSaltTableModel::ColumnIndex::AddTo         :
-      case RecipeAdjustmentSaltTableModel::ColumnIndex::PctAcid       :
-         return this->readDataFromModel(index, role);
-
-      // No default case as we want the compiler to warn us if we missed one
-   }
-   // Should be unreachable
-   return QVariant();
-}
-
-QVariant RecipeAdjustmentSaltTableModel::headerData( int section, Qt::Orientation orientation, int role ) const {
-   if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
-      return this->getColumnLabel(section);
-   }
-   return QVariant();
+   // No special handling required for any of our columns
+   return this->readDataFromModel(index, role);
 }
 
 Qt::ItemFlags RecipeAdjustmentSaltTableModel::flags(const QModelIndex& index) const {
@@ -278,39 +260,22 @@ Qt::ItemFlags RecipeAdjustmentSaltTableModel::flags(const QModelIndex& index) co
 }
 
 bool RecipeAdjustmentSaltTableModel::setData(QModelIndex const & index, QVariant const & value, int role) {
-   if (!this->isIndexOk(index)) {
+   if (!this->indexAndRoleOk(index, role)) {
       return false;
    }
 
-   if (role != Qt::EditRole) {
-      return false;
-   }
+   // No special handling required for any of our columns...
+   bool const retVal = this->writeDataToModel(index, value, role);
 
-   bool retval = false;
-
-   auto const columnIndex = static_cast<RecipeAdjustmentSaltTableModel::ColumnIndex>(index.column());
-   switch (columnIndex) {
-      case RecipeAdjustmentSaltTableModel::ColumnIndex::Name          :
-      case RecipeAdjustmentSaltTableModel::ColumnIndex::Type          :
-      case RecipeAdjustmentSaltTableModel::ColumnIndex::Amount        :
-      case RecipeAdjustmentSaltTableModel::ColumnIndex::AmountType    :
-      case RecipeAdjustmentSaltTableModel::ColumnIndex::TotalInventory:
-      case RecipeAdjustmentSaltTableModel::ColumnIndex::AddTo         :
-      case RecipeAdjustmentSaltTableModel::ColumnIndex::PctAcid       :
-         retval = this->writeDataToModel(index, value, role);
-         break;
-
-      // No default case as we want the compiler to warn us if we missed one
-   }
-
-   if (retval) {
+   // ...but some other post-modification things we check
+   if (retVal) {
       emit newTotals();
    }
    emit dataChanged(index,index);
    QHeaderView* headerView = m_parentTableWidget->horizontalHeader();
    headerView->resizeSections(QHeaderView::ResizeToContents);
 
-   return retval;
+   return retVal;
 }
 
 void RecipeAdjustmentSaltTableModel::saveAndClose() {
@@ -318,6 +283,11 @@ void RecipeAdjustmentSaltTableModel::saveAndClose() {
    // we've added a new salt. Wonder if this will work?
    for (auto saltAddition : this->rows) {
       if (saltAddition->key() < 0) {
+         // Note that ingredient() gives us a shared pointer, whereas salt() gives us a raw one.
+         auto salt {saltAddition->ingredient()};
+         if (salt->key() < 0) {
+            ObjectStoreWrapper::insert(salt);
+         }
          ObjectStoreWrapper::insert(saltAddition);
          this->recObs->addAddition(saltAddition);
       }
@@ -326,7 +296,7 @@ void RecipeAdjustmentSaltTableModel::saveAndClose() {
 }
 
 // Insert the boiler-plate stuff that we cannot do in TableModelBase
-TABLE_MODEL_COMMON_CODE(RecipeAdjustmentSalt, salt, PropertyNames::Recipe::saltAdjustmentIds)
+TABLE_MODEL_COMMON_CODE(RecipeAdjustmentSalt, salt, PropertyNames::Recipe::saltAdjustments)
 //=============================================== CLASS SaltItemDelegate ===============================================
 
 // Insert the boiler-plate stuff that we cannot do in ItemDelegate

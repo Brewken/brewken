@@ -54,8 +54,10 @@ AddPropertyName(hltType                    )
 AddPropertyName(hltVolume_l                )
 AddPropertyName(hltWeight_kg               )
 AddPropertyName(hopUtilization_pct         )
+AddPropertyName(kettleInternalDiameter_cm  )
 AddPropertyName(kettleEvaporationPerHour_l )
 AddPropertyName(kettleNotes                )
+AddPropertyName(kettleOpeningDiameter_cm   )
 AddPropertyName(kettleOutflowPerMinute_l   )
 AddPropertyName(kettleSpecificHeat_calGC   )
 AddPropertyName(kettleType                 )
@@ -135,6 +137,7 @@ public:
     *        info.
     */
    static TypeLookup const typeLookup;
+   TYPE_LOOKUP_GETTER
 
    Equipment(QString name = "");
    Equipment(NamedParameterBundle const & namedParameterBundle);
@@ -146,7 +149,7 @@ public:
     * \brief Some default values we use in calculations when no value is set in this record
     */
    //! @{
-   static constexpr double default_boilTime_mins               = 60.0;
+   static constexpr double default_boilTime_mins              = 60.0;
    static constexpr double default_hopUtilization_pct         = 100.0;
    static constexpr double default_kettleEvaporationPerHour_l = 4.0;
    static constexpr double default_mashTunGrainAbsorption_LKg = 1.086; // See also PhysicalConstants::grainAbsorption_Lkg
@@ -280,6 +283,19 @@ public:
     */
    Q_PROPERTY(double boilingPoint_c        READ boilingPoint_c        WRITE setBoilingPoint_c        )
 
+
+   /**
+    * \brief The interior diameter of the kettle at the surface of the wort.  Used to calculate the surface area of wort
+    *        exposed to air, eg for mIBU calculation.  NB: Not part of BeerXML or BeerJSON
+    */
+   Q_PROPERTY(std::optional<double> kettleInternalDiameter_cm   READ kettleInternalDiameter_cm   WRITE setKettleInternalDiameter_cm   )
+
+   /**
+    * \brief The interior diameter of the opening in the kettle through which steam can escape.  Used in mIBU
+    *        calculation.  NB: Not part of BeerXML or BeerJSON
+    */
+   Q_PROPERTY(std::optional<double> kettleOpeningDiameter_cm    READ kettleOpeningDiameter_cm    WRITE setKettleOpeningDiameter_cm   )
+
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
 
    Q_PROPERTY(QString               hltType                           READ hltType                           WRITE setHltType                          )
@@ -337,17 +353,19 @@ public:
    std::optional<double> mashTunWeight_kg           () const;
    std::optional<double> mashTunSpecificHeat_calGC  () const;
    std::optional<double> topUpWater_l               () const;
-   double                kettleTrubChillerLoss_l          () const;
+   double                kettleTrubChillerLoss_l    () const;
    std::optional<double> evapRate_pctHr             () const;
    std::optional<double> kettleEvaporationPerHour_l () const;
    std::optional<double> boilTime_min               () const;
    bool                  calcBoilVolume             () const;
-   double                lauterTunDeadspaceLoss_l      () const;
+   double                lauterTunDeadspaceLoss_l   () const;
    std::optional<double> topUpKettle_l              () const;
    std::optional<double> hopUtilization_pct         () const;
    QString               kettleNotes                () const;
    std::optional<double> mashTunGrainAbsorption_LKg () const;
    double                boilingPoint_c             () const;
+   std::optional<double> kettleInternalDiameter_cm  () const;
+   std::optional<double> kettleOpeningDiameter_cm   () const;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    QString               hltType                    () const;
    QString               mashTunType                () const;
@@ -397,6 +415,8 @@ public:
    void setKettleNotes                (QString               const & val);
    void setMashTunGrainAbsorption_LKg (std::optional<double> const   val);
    void setBoilingPoint_c             (double                const   val);
+   void setKettleInternalDiameter_cm  (std::optional<double> const   val);
+   void setKettleOpeningDiameter_cm   (std::optional<double> const   val);
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    void setHltType                    (QString               const & val);
    void setMashTunType                (QString               const & val);
@@ -457,12 +477,14 @@ private:
    std::optional<double> m_kettleEvaporationPerHour_l;
    std::optional<double> m_boilTime_min              ;
    bool                  m_calcBoilVolume            ;
-   double                m_lauterTunDeadspaceLoss_l         ;
+   double                m_lauterTunDeadspaceLoss_l  ;
    std::optional<double> m_topUpKettle_l             ;
    std::optional<double> m_hopUtilization_pct        ;
    QString               m_kettleNotes               ;
    std::optional<double> m_mashTunGrainAbsorption_LKg;
    double                m_boilingPoint_c            ;
+   std::optional<double> m_kettleInternalDiameter_cm ;
+   std::optional<double> m_kettleOpeningDiameter_cm  ;
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    QString               m_hltType                    ;
    QString               m_mashTunType                ;

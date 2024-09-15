@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/SmartAmounts.cpp is part of Brewken, and is copyright the following authors 2023:
+ * widgets/SmartAmounts.cpp is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -28,13 +28,13 @@ template<> void SmartAmounts::Init<SmartLabel>(char const * const editorName,
                                                char const * const labelFqName,
                                                SmartLabel &       label,
                                                char const * const fieldName,
-                                               char const * const fieldlFqName,
+                                               char const * const fieldFqName,
                                                SmartField &       field,
                                                TypeInfo                    const & typeInfo,
                                                std::optional<unsigned int> const   precision,
                                                QString                     const & maximalDisplayString) {
    label.init(editorName, labelName, labelFqName, &field, typeInfo);
-   field.init(editorName, fieldName, fieldlFqName, label, typeInfo, precision, maximalDisplayString);
+   field.init(editorName, fieldName, fieldFqName, label, typeInfo, precision, maximalDisplayString);
    return;
 }
 
@@ -43,12 +43,12 @@ template<> void SmartAmounts::Init<QLabel    >(char const * const editorName,
                                                [[maybe_unused]] char const * const labelFqName,
                                                QLabel &           label,
                                                char const * const fieldName,
-                                               char const * const fieldlFqName,
+                                               char const * const fieldFqName,
                                                SmartField &       field,
                                                TypeInfo                    const & typeInfo,
                                                std::optional<unsigned int> const   precision,
                                                QString                     const & maximalDisplayString) {
-   field.init(editorName, fieldName, fieldlFqName, label, typeInfo, precision, maximalDisplayString);
+   field.init(editorName, fieldName, fieldFqName, label, typeInfo, precision, maximalDisplayString);
    return;
 }
 
@@ -68,7 +68,7 @@ void SmartAmounts::InitNoSf(char const * const   editorName,
 void SmartAmounts::InitFixed(char const * const editorName,
                              QLabel &           label,
                              char const * const fieldName,
-                             char const * const fieldlFqName,
+                             char const * const fieldFqName,
                              SmartField &       field,
                              TypeInfo          const & typeInfo,
                              Measurement::Unit const & fixedDisplayUnit,
@@ -76,7 +76,7 @@ void SmartAmounts::InitFixed(char const * const editorName,
                              QString                     const & maximalDisplayString) {
    field.initFixed(editorName,
                    fieldName,
-                   fieldlFqName,
+                   fieldFqName,
                    label,
                    typeInfo,
                    fixedDisplayUnit,

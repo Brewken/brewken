@@ -67,6 +67,7 @@
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
 #include "PhysicalConstants.h"
+#include "utils/AutoCompare.h"
 
 namespace {
 
@@ -205,13 +206,14 @@ template<> BtStringConst const & Recipe::propertyNameFor<Equipment              
 template<> BtStringConst const & Recipe::propertyNameFor<Fermentation             >() { return PropertyNames::Recipe::fermentationId        ; }
 template<> BtStringConst const & Recipe::propertyNameFor<Instruction              >() { return PropertyNames::Recipe::instructionIds        ; }
 template<> BtStringConst const & Recipe::propertyNameFor<Mash                     >() { return PropertyNames::Recipe::mashId                ; }
-template<> BtStringConst const & Recipe::propertyNameFor<RecipeAdditionFermentable>() { return PropertyNames::Recipe::fermentableAdditionIds; }
-template<> BtStringConst const & Recipe::propertyNameFor<RecipeAdditionHop        >() { return PropertyNames::Recipe::hopAdditionIds        ; }
-template<> BtStringConst const & Recipe::propertyNameFor<RecipeAdditionMisc       >() { return PropertyNames::Recipe::miscAdditionIds       ; }
-template<> BtStringConst const & Recipe::propertyNameFor<RecipeAdditionYeast      >() { return PropertyNames::Recipe::yeastAdditionIds      ; }
-template<> BtStringConst const & Recipe::propertyNameFor<RecipeAdjustmentSalt     >() { return PropertyNames::Recipe::saltAdjustmentIds     ; }
-template<> BtStringConst const & Recipe::propertyNameFor<RecipeUseOfWater         >() { return PropertyNames::Recipe::waterUseIds           ; }
 template<> BtStringConst const & Recipe::propertyNameFor<Style                    >() { return PropertyNames::Recipe::styleId               ; }
+// NB it is fermentableAdditions not fermentableAdditionIds that we want to use here, etc
+template<> BtStringConst const & Recipe::propertyNameFor<RecipeAdditionFermentable>() { return PropertyNames::Recipe::fermentableAdditions; }
+template<> BtStringConst const & Recipe::propertyNameFor<RecipeAdditionHop        >() { return PropertyNames::Recipe::hopAdditions        ; }
+template<> BtStringConst const & Recipe::propertyNameFor<RecipeAdditionMisc       >() { return PropertyNames::Recipe::miscAdditions       ; }
+template<> BtStringConst const & Recipe::propertyNameFor<RecipeAdditionYeast      >() { return PropertyNames::Recipe::yeastAdditions      ; }
+template<> BtStringConst const & Recipe::propertyNameFor<RecipeAdjustmentSalt     >() { return PropertyNames::Recipe::saltAdjustments     ; }
+template<> BtStringConst const & Recipe::propertyNameFor<RecipeUseOfWater         >() { return PropertyNames::Recipe::waterUses           ; }
 
 // TBD: This is needed for WaterButton, but we should have a proper look at that some day
 template<> BtStringConst const & Recipe::propertyNameFor<Water                    >() { return PropertyNames::Recipe::waterUses             ; }
@@ -1281,7 +1283,7 @@ public:
       for (auto yeastAddition : this->m_self.yeastAdditions()) {
          // Get the yeast with the greatest attenuation.
          if (yeastAddition->attenuation_pct() > attenuation_pct) {
-            attenuation_pct = yeastAddition->yeast()->getTypicalAttenuation_pct();
+            attenuation_pct = yeastAddition->yeast()->attenuationTypical_pct();
          }
       }
       // This means we have yeast, but they neglected to provide attenuation percentages.
@@ -1556,22 +1558,38 @@ EnumStringMapping const Recipe::typeDisplayNames {
 bool Recipe::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
    Recipe const & rhs = static_cast<Recipe const &>(other);
+
    // Base class will already have ensured names are equal
    return (
-      this->m_type              == rhs.m_type              &&
-      this->m_batchSize_l       == rhs.m_batchSize_l       &&
-      this->m_efficiency_pct    == rhs.m_efficiency_pct    &&
-      this->m_age               == rhs.m_age               &&
-      this->m_ageTemp_c         == rhs.m_ageTemp_c         &&
+      Utils::AutoCompare(this->m_type          , rhs.m_type          ) &&
+      Utils::AutoCompare(this->m_batchSize_l   , rhs.m_batchSize_l   ) &&
+      Utils::AutoCompare(this->m_efficiency_pct, rhs.m_efficiency_pct) &&
+      Utils::AutoCompare(this->m_age           , rhs.m_age           ) &&
+      Utils::AutoCompare(this->m_ageTemp_c     , rhs.m_ageTemp_c     ) &&
+      Utils::AutoCompare(this->m_og            , rhs.m_og            ) &&
+      Utils::AutoCompare(this->m_fg            , rhs.m_fg            ) &&
       ObjectStoreWrapper::compareById<Style    >(this->m_styleId,     rhs.m_styleId    ) &&
       ObjectStoreWrapper::compareById<Mash     >(this->m_mashId,      rhs.m_mashId     ) &&
       ObjectStoreWrapper::compareById<Boil     >(this->m_boilId,      rhs.m_boilId     ) &&
-      ObjectStoreWrapper::compareById<Equipment>(this->m_equipmentId, rhs.m_equipmentId) &&
-      this->m_og                == rhs.m_og                &&
-      this->m_fg                == rhs.m_fg                &&
-      ObjectStoreWrapper::compareListByIds<Instruction      >(this->pimpl->instructionIds  , rhs.pimpl->instructionIds  )
+      //
+      // We don't include any of the following in the equality test:
+      //    - BrewNotes as those are records of actually brewing a Recipe and shouldn't form part of determining whether
+      //      two Recipes are identical.
+      //    - Instructions, since these are generated from the Recipe
+      //    - Equipment, as you could brew the same recipe on different sets of equipment
+      //    - Salt additions, since salts are typically added to correct water profiles
+      //
+//      ObjectStoreWrapper::compareById<Equipment>(this->m_equipmentId, rhs.m_equipmentId) &&
+//      ObjectStoreWrapper::compareListByIds<Instruction      >(this->pimpl->instructionIds  , rhs.pimpl->instructionIds) &&
+      // The comparisons for each type of addition depend on them being in some canonical ordering that does not depend
+      // on their database IDs.  However, we don't have to worry about this here.  The AutoCompare does the sorting for
+      // us (on copies of the lists) using the operator<=> defined in RecipeAdditionBase.
+      Utils::AutoCompare(this->fermentableAdditions(), rhs.fermentableAdditions()) &&
+      Utils::AutoCompare(this->        hopAdditions(), rhs.        hopAdditions()) &&
+      Utils::AutoCompare(this->       miscAdditions(), rhs.       miscAdditions()) &&
+      Utils::AutoCompare(this->      yeastAdditions(), rhs.      yeastAdditions()) &&
+      Utils::AutoCompare(this->waterUses           (), rhs.waterUses           ())
 
-      // TODO: What about BrewNote, RecipeAdditionFermentable, RecipeAdditionHop, RecipeAdditionMisc, RecipeAdditionYeast, RecipeAdjustmentSalt, RecipeUseOfWater
    );
 }
 
@@ -2131,8 +2149,19 @@ template<class RA> std::shared_ptr<RA> Recipe::addAddition(std::shared_ptr<RA> a
       ObjectStoreWrapper::insert(addition);
    }
 
-   connect(addition->ingredient().get(), &NamedEntity::changed, this, &Recipe::acceptChangeToContainedObject);
-   this->propagatePropertyChange(Recipe::propertyNameFor<RA>());
+   //
+   // Doing this connect here means that a signal will be sent to acceptChangeToContainedObject() by the call to
+   // notifyPropertyChange() below.
+   //
+   connect(addition.get(), &NamedEntity::changed, this, &Recipe::acceptChangeToContainedObject);
+
+   //
+   // We don't want to call this->propagatePropertyChange here because the RecipeAddition is not stored either in the
+   // Recipe database table or or one of the Recipe junction tables (see comments in database/ObjectStoreTyped.cpp).
+   //
+   // Instead, we merely want to emit the signals to tell anyone listening that the property was updated
+   //
+   this->notifyPropertyChange(Recipe::propertyNameFor<RA>());
 
    this->recalcIfNeeded(addition->ingredient()->metaObject()->className());
    return addition;
@@ -2183,39 +2212,39 @@ template<> bool Recipe::uses<RecipeAdditionYeast      >(RecipeAdditionYeast     
 template<> bool Recipe::uses<RecipeAdjustmentSalt     >(RecipeAdjustmentSalt      const & val) const { return val.recipeId() == this->key(); }
 template<> bool Recipe::uses<RecipeUseOfWater         >(RecipeUseOfWater          const & val) const { return val.recipeId() == this->key(); }
 
-template<class NE> std::shared_ptr<NE> Recipe::remove(std::shared_ptr<NE> var) {
+std::shared_ptr<Instruction> Recipe::remove(std::shared_ptr<Instruction> var) {
    // It's a coding error to supply a null shared pointer
    Q_ASSERT(var);
 
    int idToRemove = var->key();
-   if (!this->pimpl->accessIds<NE>().removeOne(idToRemove)) {
+   if (!this->pimpl->accessIds<Instruction>().removeOne(idToRemove)) {
       // It's a coding error if we try to remove something from the Recipe that wasn't in it in the first place!
       qCritical() <<
          Q_FUNC_INFO << "Tried to remove" << var->metaObject()->className() << "with ID" << idToRemove <<
          "but couldn't find it in Recipe #" << this->key();
       Q_ASSERT(false);
    } else {
-      this->propagatePropertyChange(Recipe::propertyNameFor<NE>());
-      this->pimpl->recalcIBU(); // .:TODO:. Don't need to do this recalculation when it's Instruction
+      this->propagatePropertyChange(Recipe::propertyNameFor<Instruction>());
+      // NB: Don't need to call this->pimpl->recalcIBU() for removing an Instruction!
    }
 
    //
-   // Because Hop/Fermentable/etc objects in a Recipe are actually "Instance of use of Hop/Fermentable/etc" we usually
-   // want to delete the object from the ObjectStore at this point.  But, because we're a bit paranoid, we'll check
-   // first that the object we're removing has a parent (ie really is an "instance of use of") and is not used in any
-   // other Recipes.
+   // Because Instruction objects are owned by their Recipe we usually want to delete them object from the ObjectStore
+   // at this point.  But, because we're a bit paranoid, we'll check first that the object we're removing has a parent
+   // (ie really is an "instance of use of") and is not used in any other Recipes.  THIS EXTRA CHECK IS ALMOST CERTAINLY
+   // UNNECESSARY.
    //
    if (isUnusedInstanceOfUseOf(*var)) {
       qDebug() <<
          Q_FUNC_INFO << "Deleting" << var->metaObject()->className() << "#" << var->key() <<
          "as it is \"instance of use of\" that is no longer needed";
-      ObjectStoreWrapper::hardDelete<NE>(var->key());
+      ObjectStoreWrapper::hardDelete<Instruction>(var->key());
    }
    // The caller now owns the removed object unless and until they pass it in to Recipe::add() (typically to undo the
    // remove).
    return var;
 }
-template std::shared_ptr<Instruction> Recipe::remove(std::shared_ptr<Instruction> var);
+//template std::shared_ptr<Instruction> Recipe::remove(std::shared_ptr<Instruction> var);
 
 template<class RA> std::shared_ptr<RA> Recipe::removeAddition(std::shared_ptr<RA> addition) {
    // It's a coding error to supply a null shared pointer
@@ -2226,8 +2255,11 @@ template<class RA> std::shared_ptr<RA> Recipe::removeAddition(std::shared_ptr<RA
 
    addition->setRecipeId(-1);
 
-   disconnect(addition->ingredient().get(), &NamedEntity::changed, this, &Recipe::acceptChangeToContainedObject);
-   this->propagatePropertyChange(Recipe::propertyNameFor<RA>());
+   disconnect(addition.get(), &NamedEntity::changed, this, &Recipe::acceptChangeToContainedObject);
+   //
+   // For the same reason as in addAddition(), we don't want to call this->propagatePropertyChange here
+   //
+   this->notifyPropertyChange(Recipe::propertyNameFor<RA>());
 
    this->recalcIfNeeded(addition->ingredient()->metaObject()->className());
 
@@ -2713,19 +2745,22 @@ void Recipe::recalcIfNeeded(QString classNameOfWhatWasAddedOrChanged) {
    // We could just compare with "Hop", "Equipment", etc but there's then no compile-time checking of typos.  Using
    // ::staticMetaObject.className() is a bit more clunky but it's safer.
 
-   if (classNameOfWhatWasAddedOrChanged == Hop::staticMetaObject.className()) {
+   if (classNameOfWhatWasAddedOrChanged ==               Hop::staticMetaObject.className() ||
+       classNameOfWhatWasAddedOrChanged == RecipeAdditionHop::staticMetaObject.className()) {
       this->pimpl->recalcIBU();
       return;
    }
 
-   if (classNameOfWhatWasAddedOrChanged == Equipment::staticMetaObject.className() ||
-       classNameOfWhatWasAddedOrChanged == Fermentable::staticMetaObject.className() ||
-       classNameOfWhatWasAddedOrChanged == Mash::staticMetaObject.className()) {
+   if (classNameOfWhatWasAddedOrChanged ==                 Equipment::staticMetaObject.className() ||
+       classNameOfWhatWasAddedOrChanged ==               Fermentable::staticMetaObject.className() ||
+       classNameOfWhatWasAddedOrChanged == RecipeAdditionFermentable::staticMetaObject.className() ||
+       classNameOfWhatWasAddedOrChanged ==                      Mash::staticMetaObject.className()) {
       this->recalcAll();
       return;
    }
 
-   if (classNameOfWhatWasAddedOrChanged == Yeast::staticMetaObject.className()) {
+   if (classNameOfWhatWasAddedOrChanged ==               Yeast::staticMetaObject.className() ||
+       classNameOfWhatWasAddedOrChanged == RecipeAdditionYeast::staticMetaObject.className()) {
       this->pimpl->recalcOgFg();
       this->pimpl->recalcABV_pct();
       return;
@@ -2822,8 +2857,15 @@ double Recipe::ibuFromHopAddition(RecipeAdditionHop const & hopAddition) {
    Q_ASSERT(hopAddition.recipeId() == this->key());
 
    double AArating = hopAddition.hop()->alpha_pct() / 100.0;
-   // .:TBD.JSON:.  What to do if hopAddition is measured by volume?
-   if (hopAddition.amountIsWeight()) {
+   // .:TBD:.  What to do if hopAddition is measured by volume?
+   //
+   // Per https://beersmith.com/blog/2016/08/31/using-hop-extracts-for-beer-brewing/, for CO2 Hop Extract, a first
+   // approximation would be 1 gram hop = 1 ml of hop extract.
+   //
+   // The same page suggests that, for Isomerized Hop Extract,
+   //    IBU = (extract_vol_ml * alpha_content_pct * 1000) / (volume_beer_liters)
+   //
+   if (!hopAddition.amountIsWeight()) {
       qCritical() << Q_FUNC_INFO << "Using Hop volume as weight - THIS IS PROBABLY WRONG!";
    }
    double grams = hopAddition.quantity() * 1000.0;
@@ -2831,7 +2873,7 @@ double Recipe::ibuFromHopAddition(RecipeAdditionHop const & hopAddition) {
    // Assume 100% utilization until further notice
    double hopUtilization = 1.0;
    // Assume 60 min boil until further notice
-   int boilTime = 60;
+   int boilTime_mins = 60;
 
    // NOTE: we used to carefully calculate the average boil gravity and use it in the
    // IBU calculations. However, due to John Palmer
@@ -2841,15 +2883,31 @@ double Recipe::ibuFromHopAddition(RecipeAdditionHop const & hopAddition) {
 
    if (equipment) {
       hopUtilization = equipment->hopUtilization_pct().value_or(Equipment::default_hopUtilization_pct) / 100.0;
-      boilTime = static_cast<int>(equipment->boilTime_min().value_or(Equipment::default_boilTime_mins));
+      boilTime_mins = static_cast<int>(equipment->boilTime_min().value_or(Equipment::default_boilTime_mins));
    }
 
+   auto boil = this->boil();
+   if (boil) {
+      boilTime_mins = boil->boilTime_mins();
+   }
+
+   IbuMethods::IbuCalculationParms parms = {
+      .AArating              = AArating,
+      .hops_grams            = grams,
+      .postBoilVolume_liters = this->pimpl->m_finalVolumeNoLosses_l,
+      .wortGravity_sg        = m_og,
+      .boilTime_minutes      = static_cast<int>(boilTime_mins),  // Seems unlikely in reality that there would be fractions of a minute
+      .coolTime_minutes          = boil->coolTime_mins(),
+      .kettleInternalDiameter_cm = equipment->kettleInternalDiameter_cm(),
+      .kettleOpeningDiameter_cm  = equipment->kettleOpeningDiameter_cm (),
+   };
    if (hopAddition.isFirstWort()) {
-      ibus = fwhAdjust * IbuMethods::getIbus(AArating, grams, this->pimpl->m_finalVolumeNoLosses_l, m_og, boilTime);
+      ibus = fwhAdjust * IbuMethods::getIbus(parms);
    } else if (hopAddition.stage() == RecipeAddition::Stage::Boil) {
-      ibus = IbuMethods::getIbus(AArating, grams, this->pimpl->m_finalVolumeNoLosses_l, m_og, minutes);
+      parms.boilTime_minutes = minutes;
+      ibus = IbuMethods::getIbus(parms);
    } else if (hopAddition.stage() == RecipeAddition::Stage::Mash && mashHopAdjust > 0.0) {
-      ibus = mashHopAdjust * IbuMethods::getIbus(AArating, grams, this->pimpl->m_finalVolumeNoLosses_l, m_og, boilTime);
+      ibus = mashHopAdjust * IbuMethods::getIbus(parms);
    }
 
    // Adjust for hopAddition form. Tinseth's table was created from whole cone data,

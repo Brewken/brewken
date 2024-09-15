@@ -243,7 +243,7 @@ bool NamedEntity::operator!=(NamedEntity const & other) const {
    return !(*this == other);
 }
 
-auto NamedEntity::operator<=>(NamedEntity const & other) const {
+std::strong_ordering NamedEntity::operator<=>(NamedEntity const & other) const {
    // The spaceship operator is not defined for two QString objects, but it is defined for a pair of std::u16string,
    // which is close to the same thing (in that QString stores "a string of 16-bit QChars, where each QChar corresponds
    // to one UTF-16 code unit".
@@ -462,14 +462,20 @@ void NamedEntity::propagatePropertyChange(BtStringConst const & propertyName, bo
 
    // Send a signal if needed
    if (notify) {
-      // It's obviously a coding error to supply a property name that is not registered with Qt as a property of this
-      // object
-      int idx = this->metaObject()->indexOfProperty(*propertyName);
-      Q_ASSERT(idx >= 0);
-      QMetaProperty metaProperty = this->metaObject()->property(idx);
-      QVariant value = metaProperty.read(this);
-      emit this->changed(metaProperty, value);
+      this->notifyPropertyChange(propertyName);
    }
+
+   return;
+}
+
+void NamedEntity::notifyPropertyChange(BtStringConst const & propertyName) const {
+   // It's obviously a coding error to supply a property name that is not registered with Qt as a property of this
+   // object
+   int idx = this->metaObject()->indexOfProperty(*propertyName);
+   Q_ASSERT(idx >= 0);
+   QMetaProperty metaProperty = this->metaObject()->property(idx);
+   QVariant value = metaProperty.read(this);
+   emit this->changed(metaProperty, value);
 
    return;
 }

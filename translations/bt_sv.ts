@@ -1672,10 +1672,6 @@ Log file may contain more details.</source>
 <context>
     <name>HelpDialog</name>
     <message>
-        <source>for</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Online Help</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1725,6 +1721,10 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>If you find a bug, or have an idea for an enhancement, please raise an issue at &lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>version %1 for %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3207,7 +3207,7 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Unrecognized IBU formula type. %1</source>
-        <translation>Okänd typ för IBU formel. %1</translation>
+        <translation type="vanished">Okänd typ för IBU formel. %1</translation>
     </message>
     <message>
         <source>Directory Problem</source>
@@ -3547,7 +3547,7 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished">Okänd</translation>
+        <translation type="obsolete">Okänd</translation>
     </message>
     <message>
         <source>Detailed (for debugging)</source>
@@ -4009,6 +4009,50 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tinseth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Noonan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mIBU</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SMPH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Length</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>cm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>m</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ft</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4650,6 +4694,10 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>Step</source>
         <translation type="unfinished">Steg</translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="unfinished">Förjäsningsgrad</translation>
     </message>
 </context>
 <context>
@@ -5895,7 +5943,7 @@ Primärens slutgiltiga volym är %1.</translation>
     <name>WaterTableModel</name>
     <message>
         <source>Bad model index. row = %1</source>
-        <translation>Felaktigt modellindex. rad = %1</translation>
+        <translation type="vanished">Felaktigt modellindex. rad = %1</translation>
     </message>
     <message>
         <source>Bad column: %1</source>
@@ -6074,6 +6122,10 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>Form</source>
         <translation type="unfinished">Formulär</translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">Produkt-ID</translation>
     </message>
 </context>
 <context>
@@ -6256,6 +6308,18 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>Notes</source>
         <translation type="unfinished">Anteckningar</translation>
+    </message>
+    <message>
+        <source>New hop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7270,6 +7334,14 @@ Primärens slutgiltiga volym är %1.</translation>
         <source>Amount Type</source>
         <translation type="unfinished">Mängdbeteckning</translation>
     </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7338,11 +7410,11 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Temp. lag time</source>
-        <translation type="unfinished">Temp. fördröjningstid</translation>
+        <translation type="obsolete">Temp. fördröjningstid</translation>
     </message>
     <message>
         <source>Lag time</source>
-        <translation type="unfinished">Fördröjningstid</translation>
+        <translation type="obsolete">Fördröjningstid</translation>
     </message>
     <message>
         <source>Infuse temp.</source>
@@ -7746,6 +7818,14 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>Amount Type</source>
         <translation type="unfinished">Mängdbeteckning</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8834,15 +8914,15 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation>Kontrollera om mängden är listad i kg istället för L.</translation>
+        <translation type="vanished">Kontrollera om mängden är listad i kg istället för L.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Mängden är i vikt?</translation>
+        <translation type="vanished">Mängden är i vikt?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Markera denna om värdet indikerar vikt istället för volym</translation>
+        <translation type="vanished">Markera denna om värdet indikerar vikt istället för volym</translation>
     </message>
     <message>
         <source>Use for:</source>
@@ -8903,6 +8983,14 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>Amount Type</source>
         <translation type="unfinished">Mängdbeteckning</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10214,11 +10302,11 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Attenuation (%)</source>
-        <translation>Förtunning (%)</translation>
+        <translation type="vanished">Förtunning (%)</translation>
     </message>
     <message>
         <source>Apparent attenuation as percentage of OG points</source>
-        <translation>Uppenbar försvagnings som procent av OG värde</translation>
+        <translation type="vanished">Uppenbar försvagnings som procent av OG värde</translation>
     </message>
     <message>
         <source>Times Recultured</source>
@@ -10391,6 +10479,14 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>Amount Type</source>
         <translation type="unfinished">Mängdbeteckning</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

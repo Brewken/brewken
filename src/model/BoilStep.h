@@ -78,6 +78,7 @@ public:
     *        info.
     */
    static TypeLookup const typeLookup;
+   TYPE_LOOKUP_GETTER
 
    BoilStep(QString name = "");
    BoilStep(NamedParameterBundle const & namedParameterBundle);
