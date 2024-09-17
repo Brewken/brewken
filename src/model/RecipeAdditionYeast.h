@@ -47,7 +47,7 @@ class RecipeAdditionYeast : public RecipeAddition,
                             public IngredientAmount<RecipeAdditionYeast, Yeast> {
    Q_OBJECT
 
-   RECIPE_ADDITION_DECL(Yeast)
+   RECIPE_ADDITION_DECL(RecipeAdditionYeast, Yeast)
 
    INGREDIENT_AMOUNT_DECL(RecipeAdditionYeast, Yeast)
 
@@ -62,6 +62,7 @@ public:
     *        info.
     */
    static TypeLookup const typeLookup;
+   TYPE_LOOKUP_GETTER
 
    RecipeAdditionYeast(QString name = "", int const recipeId = -1, int const ingredientId = -1);
    RecipeAdditionYeast(NamedParameterBundle const & namedParameterBundle);

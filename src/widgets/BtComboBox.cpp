@@ -109,13 +109,29 @@ void BtComboBox::init(char const * const        editorName        ,
    // In the special case where we're handling Measurement::ChoiceOfPhysicalQuantity, we need to pick up the right
    // initial value
    if (this->pimpl->m_controlledField) {
-      Q_ASSERT(holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*typeInfo.fieldType));
-      Measurement::PhysicalQuantity const physicalQuantity = this->pimpl->m_controlledField->getPhysicalQuantity();
-      this->setValue(static_cast<int>(physicalQuantity));
+      this->autoSetFromControlledField();
    }
 
    return;
 }
+
+void BtComboBox::autoSetFromControlledField() {
+   // It's a coding error to call this when there is no controlled field
+   Q_ASSERT(this->pimpl->m_controlledField);
+
+   // Equally it's a coding error if we have a controlled field for anything other than choice of physical quantity
+   Q_ASSERT(holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(*this->pimpl->m_typeInfo->fieldType));
+
+   Measurement::PhysicalQuantity const physicalQuantity = this->pimpl->m_controlledField->getPhysicalQuantity();
+
+   // Uncomment the next statement for diagnosing asserts!
+//   qDebug() <<
+//      Q_FUNC_INFO << "TypeInfo:" << this->pimpl->m_typeInfo->fieldType << ", physicalQuantity: " << physicalQuantity;
+
+   this->setValue(static_cast<int>(physicalQuantity));
+   return;
+}
+
 
 [[nodiscard]] bool BtComboBox::isOptional() const {
    Q_ASSERT(this->pimpl->m_initialised);
@@ -169,10 +185,18 @@ QVariant BtComboBox::getValue(TypeInfo const & typeInfo) const {
    return *value;
 }
 
-void BtComboBox::onIndexChanged(int const index) {
+void BtComboBox::onIndexChanged([[maybe_unused]] int const index) {
    if (this->pimpl->m_initialised && this->pimpl->m_controlledField) {
-      Measurement::PhysicalQuantity const physicalQuantity = static_cast<Measurement::PhysicalQuantity>(index);
-      this->pimpl->m_controlledField->selectPhysicalQuantity(physicalQuantity);
+      // Uncomment the next statement for diagnosing asserts!
+//      qDebug() <<
+//         Q_FUNC_INFO << "index:" << index << ", raw value:" << this->currentData() << ", decodes to: " <<
+//         this->getOptIntValue();
+      std::optional<int> const rawPhysicalQuantity = this->getOptIntValue();
+      if (rawPhysicalQuantity) {
+         Measurement::PhysicalQuantity const physicalQuantity =
+            static_cast<Measurement::PhysicalQuantity>(*rawPhysicalQuantity);
+         this->pimpl->m_controlledField->selectPhysicalQuantity(physicalQuantity);
+      }
    }
    return;
 }

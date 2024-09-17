@@ -144,8 +144,6 @@ public:
          Measurement::UnitSystem::getInstance(previousScaleInfo.systemOfMeasurement, physicalQuantity)
       };
 
-      qDebug() << Q_FUNC_INFO << "¥¥¥ unitSystem" << unitSystem;
-
       Measurement::Unit const * defaultUnit{
          previousScaleInfo.relativeScale ? unitSystem.scaleUnit(*previousScaleInfo.relativeScale) : unitSystem.unit()
       };
@@ -268,6 +266,10 @@ void SmartField::initFixed(char const *                const   editorName,
   return this->pimpl->m_initialised;
 }
 
+[[nodiscard]] bool SmartField::isEmptyOrBlank() const {
+   return Optional::isEmptyOrBlank(this->getRawText());
+}
+
 [[nodiscard]] SmartAmountSettings const & SmartField::settings() const {
    // Note that this can be called from within this class before we have set the this->pimpl->m_initialised flag
    if (this->pimpl->m_smartBuddyLabel) {
@@ -289,6 +291,8 @@ char const * SmartField::getFqFieldName() const {
 // This shouldn't make any difference to callers.
 template<typename T, typename> void SmartField::setQuantity(std::optional<T> quantity) {
    Q_ASSERT(this->pimpl->m_initialised);
+   // Usually leave this debug log commented out unless trouble-shooting as it generates a lot of logging
+//   qDebug() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << "quantity =" << quantity;
 
    if (this->getTypeInfo().typeIndex != typeid(T)) {
       // This is a coding error
@@ -358,16 +362,116 @@ void SmartField::setAmount(Measurement::Amount const & amount) {
    return;
 }
 
+void SmartField::setAmount(std::optional<Measurement::Amount> const & amount) {
+   Q_ASSERT(this->pimpl->m_initialised);
+   if (!amount) {
+      this->setRawText("");
+      return;
+   }
+   this->setAmount(*amount);
+   return;
+}
 
 // Instantiate the above template functions for the types that are going to use it
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
 // saves having to put a bunch of std::string stuff there.)
-template void SmartField::setQuantity(std::optional<int         > amount);
-template void SmartField::setQuantity(std::optional<unsigned int> amount);
-template void SmartField::setQuantity(std::optional<double      > amount);
-template void SmartField::setQuantity(int          amount);
-template void SmartField::setQuantity(unsigned int amount);
-template void SmartField::setQuantity(double       amount);
+template void SmartField::setQuantity(std::optional<int         > quantity);
+template void SmartField::setQuantity(std::optional<unsigned int> quantity);
+template void SmartField::setQuantity(std::optional<double      > quantity);
+template void SmartField::setQuantity(int          quantity);
+template void SmartField::setQuantity(unsigned int quantity);
+template void SmartField::setQuantity(double       quantity);
+
+void SmartField::setFromVariant(QVariant const & value) {
+   Q_ASSERT(this->pimpl->m_initialised);
+   auto const & typeInfo {this->getTypeInfo()};
+   // Usually leave this debug log commented out unless trouble-shooting as it generates a lot of logging
+//   qDebug() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << "value =" << value << ", typeInfo =" << typeInfo;
+
+   //
+   // For built-in numerics, we just need to invoke the right template instance of setQuantity, which will figure out
+   // itself what conversions, if any, are required.  For amounts, we just call setAmount instead.  And strings also
+   // have special handling.  (We don't need to use a SmartField for strings as a QLineEdit would suffice.  But, if we
+   // can allow it, we should as it makes things less fraglie.  For the moment, we assume there is no such thing as an
+   // optional string because it is sufficient to use empty string for "no value".)
+   //
+   // Remember that typeInfo.typeIndex has std::optional stripped out, hence the need for typeInfo.isOptional()
+   //
+   auto const ti {typeInfo.typeIndex};
+   if (ti == typeid(int)) {
+      if (typeInfo.isOptional()) {
+         this->setQuantity(value.value<std::optional<int>>());
+      } else {
+         this->setQuantity(value.value<int>());
+      }
+   } else if (ti == typeid(unsigned int)) {
+      if (typeInfo.isOptional()) {
+         this->setQuantity(value.value<std::optional<unsigned int>>());
+      } else {
+         this->setQuantity(value.value<unsigned int>());
+      }
+   } else if (ti == typeid(double)) {
+      if (typeInfo.isOptional()) {
+         this->setQuantity(value.value<std::optional<double>>());
+      } else {
+         this->setQuantity(value.value<double>());
+      }
+   } else if (ti == typeid(Measurement::Amount)) {
+      if (typeInfo.isOptional()) {
+         this->setAmount(value.value<Measurement::Amount >());
+      } else {
+         this->setAmount(value.value<std::optional<Measurement::Amount>>());
+      }
+   } else if (ti == typeid(QString)) {
+      Q_ASSERT(!typeInfo.isOptional());
+      this->setRawText(value.value<QString>());
+   } else {
+      // If we got here it's a coding error
+      qCritical() <<
+         Q_FUNC_INFO << this->pimpl->m_fieldFqName << ": Unrecognised type" << this->getTypeInfo() << "for" << value;
+      Q_ASSERT(false);
+   }
+   return;
+}
+
+QVariant SmartField::getAsVariant() const {
+   Q_ASSERT(this->pimpl->m_initialised);
+   auto const & typeInfo {this->getTypeInfo()};
+   //
+   // Logic here mirrors that in setFromVariant above, except that we have to determine whether unit conversion might be
+   // needed for doubles.
+   //
+   auto const ti {typeInfo.typeIndex};
+   if (ti == typeid(int)) {
+      return typeInfo.isOptional() ? QVariant::fromValue(this->getOptValue   <int>()) :
+                                     QVariant::fromValue(this->getNonOptValue<int>());
+   }
+   if (ti == typeid(unsigned int)) {
+      return typeInfo.isOptional() ? QVariant::fromValue(this->getOptValue   <unsigned int>()) :
+                                     QVariant::fromValue(this->getNonOptValue<unsigned int>());
+   }
+   if (ti == typeid(double)) {
+      if (typeInfo.fieldType && std::holds_alternative<Measurement::PhysicalQuantity>(*typeInfo.fieldType)) {
+         return typeInfo.isOptional() ? QVariant::fromValue(this->getOptCanonicalQty   ()) :
+                                        QVariant::fromValue(this->getNonOptCanonicalQty());
+      }
+      return typeInfo.isOptional() ? QVariant::fromValue(this->getOptValue   <int>()) :
+                                     QVariant::fromValue(this->getNonOptValue<int>());
+   }
+   if (ti == typeid(Measurement::Amount)) {
+      return typeInfo.isOptional() ? QVariant::fromValue(this->getOptCanonicalAmt   ()) :
+                                     QVariant::fromValue(this->getNonOptCanonicalAmt());
+   }
+   if (ti == typeid(QString)) {
+      Q_ASSERT(!typeInfo.isOptional());
+      return QVariant::fromValue(this->getRawText());
+   }
+
+   // If we got here it's a coding error
+   qCritical() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << ": Unrecognised type" << this->getTypeInfo();
+   Q_ASSERT(false);
+   return QVariant{};
+}
 
 void SmartField::setPrecision(unsigned int const precision) {
    this->pimpl->m_precision = precision;
@@ -379,6 +483,8 @@ void SmartField::setPrecision(unsigned int const precision) {
 }
 
 Measurement::Amount SmartField::getNonOptCanonicalAmt() const {
+   // Uncomment this if asserts below are firing
+//   qDebug().noquote() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << ":" << Logging::getStackTrace();
    Q_ASSERT(this->pimpl->m_initialised);
    // It's a coding error to call this for a NonPhysicalQuantity
    Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType));
@@ -420,7 +526,8 @@ template<typename T> T SmartField::getNonOptValue(bool * const ok) const {
    qDebug() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << ": Converting" << rawText;
 
    // It's a coding error to call this for an optional value.  We put the assert after the log statement to help
-   // with debugging!
+   // with debugging!  (It's usually sufficient to grep the code for the logged this->pimpl->m_fieldFqName to find the
+   // bug.)
    Q_ASSERT(!this->getTypeInfo().isOptional());
 
    if (std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType)) {

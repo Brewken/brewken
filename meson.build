@@ -767,7 +767,6 @@ commonSourceFiles = files([
    'src/sortFilterProxyModels/YeastSortFilterProxyModel.cpp',
    'src/tableModels/BoilStepTableModel.cpp',
    'src/tableModels/BtTableModel.cpp',
-   'src/tableModels/BtTableModelInventory.cpp',
    'src/tableModels/EquipmentTableModel.cpp',
    'src/tableModels/FermentableTableModel.cpp',
    'src/tableModels/FermentationStepTableModel.cpp',
@@ -794,6 +793,7 @@ commonSourceFiles = files([
    'src/utils/EnumStringMapping.cpp',
    'src/utils/FileSystemHelpers.cpp',
    'src/utils/Fonts.cpp',
+   'src/utils/FuzzyCompare.cpp',
    'src/utils/ImportRecordCount.cpp',
    'src/utils/MetaTypes.cpp',
    'src/utils/OStreamWriterForQFile.cpp',
@@ -1212,7 +1212,7 @@ installSubDir_translations = installSubDir_data + '/translations_qm'
 #=======================================================================================================================
 
 # Compile Qt's resources collection files (.qrc) into C++ files for compilation
-generatedFromQrc = qt.compile_resources(sources : projectName + '.qrc')
+generatedFromQrc = qt.compile_resources(sources : 'resources.qrc')
 
 # Compile Qt's ui files (.ui) into header files.
 generatedFromUi = qt.compile_ui(sources : uiFiles)
@@ -1338,7 +1338,8 @@ exportedVariables = {
    'CONFIG_ORGANIZATION_NAME' : 'The ' + capitalisedProjectName + ' Team',
 
    # Similarly, installers often want a URL link.  We also use this in the program, to tell users where to get support.
-   'CONFIG_HOMEPAGE_URL' : 'https://github.com/' + capitalisedProjectName + '/' + projectName,
+   'CONFIG_GITHUB_URL' : 'https://github.com/' + capitalisedProjectName + '/' + projectName,
+   'CONFIG_WEBSITE_URL' : 'https://www.brewken.com/',
    'CONFIG_ORGANIZATION_DOMAIN' : 'brewken.com',
 
    #

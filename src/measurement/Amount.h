@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/Amount.h is part of Brewken, and is copyright the following authors 2022-2023:
+ * measurement/Amount.h is part of Brewken, and is copyright the following authors 2022-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -16,6 +16,8 @@
 #ifndef MEASUREMENT_AMOUNT_H
 #define MEASUREMENT_AMOUNT_H
 #pragma once
+
+#include <compare>
 
 // Note that we cannot #include "measurement/Unit.h" because that header file already includes this one
 
@@ -64,14 +66,23 @@ namespace Measurement {
       //! Move assignment operator
       Amount & operator=(Amount && other) noexcept;
 
+      //! Equality operator does fuzzy comparison
+      bool operator==(Amount const & other) const;
+
+      //! Inequality operator implemented in terms of equality operator
+      bool operator!=(Amount const & other) const;
+
+      //! Three-way comparison (aka spaceship) operator
+      std::partial_ordering operator<=>(Amount const & other) const;
+
       //! Checks for an uninitialised (or badly initialised) amount
       bool isValid() const;
    };
 
 }
 
-bool operator<(Measurement::Amount const & lhs, Measurement::Amount const & rhs);
-bool operator==(Measurement::Amount const & lhs, Measurement::Amount const & rhs);
+///bool operator<(Measurement::Amount const & lhs, Measurement::Amount const & rhs);
+///bool operator==(Measurement::Amount const & lhs, Measurement::Amount const & rhs);
 
 /**
  * \brief Convenience function to allow output of \c Measurement::Amount to \c QDebug or \c QTextStream stream etc

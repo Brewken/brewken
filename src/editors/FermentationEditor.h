@@ -20,11 +20,11 @@
 #include <QDialog>
 #include <QMetaProperty>
 #include <QVariant>
+
 #include "ui_fermentationEditor.h"
 
-// Forward declarations.
-class Recipe;
-class Fermentation;
+#include "editors/EditorWithRecipeBase.h"
+#include "model/Fermentation.h"
 
 /*!
  * \class FermentationEditor
@@ -33,26 +33,34 @@ class Fermentation;
  *
  *        See also \c NamedFermentationEditor
  */
-class FermentationEditor : public QDialog, public Ui::fermentationEditor {
+class FermentationEditor : public QDialog,
+                           public Ui::fermentationEditor,
+                           public EditorWithRecipeBase<FermentationEditor, Fermentation> {
    Q_OBJECT
-public:
-   FermentationEditor(QWidget * parent = nullptr);
-   ~FermentationEditor();
 
-public slots:
-   void showEditor();
-   void closeEditor();
-   void saveAndClose();
-   //! Set the fermentation we wish to view/edit.
-   void setFermentation(std::shared_ptr<Fermentation> fermentation);
-   void setRecipe(Recipe* r);
-
-   void changed(QMetaProperty,QVariant);
-private:
-   void showChanges(QMetaProperty* prop = nullptr);
-   void clear();
-   Recipe* m_rec;
-   std::shared_ptr<Fermentation> m_fermentationObs;
+   EDITOR_WITH_RECIPE_COMMON_DECL(Fermentation)
 };
+
+///class FermentationEditor : public QDialog, public Ui::fermentationEditor {
+///   Q_OBJECT
+///public:
+///   FermentationEditor(QWidget * parent = nullptr);
+///   ~FermentationEditor();
+///
+///public slots:
+///   void showEditor();
+///   void closeEditor();
+///   void saveAndClose();
+///   //! Set the fermentation we wish to view/edit.
+///   void setFermentation(std::shared_ptr<Fermentation> fermentation);
+///   void setRecipe(Recipe* r);
+///
+///   void changed(QMetaProperty,QVariant);
+///private:
+///   void showChanges(QMetaProperty* prop = nullptr);
+///   void clear();
+///   Recipe* m_rec;
+///   std::shared_ptr<Fermentation> m_fermentationObs;
+///};
 
 #endif

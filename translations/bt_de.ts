@@ -1636,10 +1636,6 @@ Log file may contain more details.</source>
 <context>
     <name>HelpDialog</name>
     <message>
-        <source>for</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Online Help</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1689,6 +1685,10 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>If you find a bug, or have an idea for an enhancement, please raise an issue at &lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>version %1 for %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3150,7 +3150,7 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Unrecognized IBU formula type. %1</source>
-        <translation>Unbekannter IBU-Typ. %1</translation>
+        <translation type="vanished">Unbekannter IBU-Typ. %1</translation>
     </message>
     <message>
         <source>Directory Problem</source>
@@ -3518,7 +3518,7 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished">unbekannt</translation>
+        <translation type="obsolete">unbekannt</translation>
     </message>
     <message>
         <source>Detailed (for debugging)</source>
@@ -3984,6 +3984,50 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tinseth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Noonan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mIBU</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SMPH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Length</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>cm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>m</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ft</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4617,6 +4661,10 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     <message>
         <source>Step</source>
         <translation type="unfinished">Schritt</translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="unfinished">Vergärungsgrad</translation>
     </message>
 </context>
 <context>
@@ -5854,7 +5902,7 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     <name>WaterTableModel</name>
     <message>
         <source>Bad model index. row = %1</source>
-        <translation>Fehlerhafter »model index«. Zeile = %1</translation>
+        <translation type="vanished">Fehlerhafter »model index«. Zeile = %1</translation>
     </message>
     <message>
         <source>Bad column: %1</source>
@@ -6028,6 +6076,10 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6210,6 +6262,18 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New hop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7201,6 +7265,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <source>Amount Type</source>
         <translation type="unfinished">Mengenangabe</translation>
     </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7273,11 +7345,11 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Temp. lag time</source>
-        <translation type="unfinished">Temperatur-Anstiegszeit</translation>
+        <translation type="obsolete">Temperatur-Anstiegszeit</translation>
     </message>
     <message>
         <source>Lag time</source>
-        <translation type="unfinished">Verzögerung</translation>
+        <translation type="obsolete">Verzögerung</translation>
     </message>
     <message>
         <source>Infuse temp.</source>
@@ -7681,6 +7753,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     <message>
         <source>Amount Type</source>
         <translation type="unfinished">Mengenangabe</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8773,15 +8853,15 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation>Anhaken, wenn Menge in kg statt L angegeben wird.</translation>
+        <translation type="vanished">Anhaken, wenn Menge in kg statt L angegeben wird.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Mengenangabe ist Gewicht</translation>
+        <translation type="vanished">Mengenangabe ist Gewicht</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Angehakt, wenn die Mengenangabe in Gewicht anstatt Volumen erfolgt</translation>
+        <translation type="vanished">Angehakt, wenn die Mengenangabe in Gewicht anstatt Volumen erfolgt</translation>
     </message>
     <message>
         <source>Use for:</source>
@@ -8842,6 +8922,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     <message>
         <source>Amount Type</source>
         <translation type="unfinished">Mengenangabe</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10225,11 +10313,11 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Attenuation (%)</source>
-        <translation>Vergärungsgrad (%)</translation>
+        <translation type="vanished">Vergärungsgrad (%)</translation>
     </message>
     <message>
         <source>Apparent attenuation as percentage of OG points</source>
-        <translation>scheinbarer Vergärungsgrad in Prozent</translation>
+        <translation type="vanished">scheinbarer Vergärungsgrad in Prozent</translation>
     </message>
     <message>
         <source>Times Recultured</source>
@@ -10402,6 +10490,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     <message>
         <source>Amount Type</source>
         <translation type="unfinished">Mengenangabe</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

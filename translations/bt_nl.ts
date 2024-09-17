@@ -1672,10 +1672,6 @@ Log file may contain more details.</source>
 <context>
     <name>HelpDialog</name>
     <message>
-        <source>for</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Online Help</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1725,6 +1721,10 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>If you find a bug, or have an idea for an enhancement, please raise an issue at &lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>version %1 for %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3224,7 +3224,7 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Unrecognized IBU formula type. %1</source>
-        <translation>IBU formule type niet herkend. %1</translation>
+        <translation type="vanished">IBU formule type niet herkend. %1</translation>
     </message>
     <message>
         <source>Directory Problem</source>
@@ -3588,7 +3588,7 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished">Onbekend</translation>
+        <translation type="obsolete">Onbekend</translation>
     </message>
     <message>
         <source>Detailed (for debugging)</source>
@@ -4030,6 +4030,50 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tinseth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Noonan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mIBU</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SMPH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Length</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>cm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>m</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ft</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4671,6 +4715,10 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Step</source>
         <translation type="unfinished">Stap</translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="unfinished">Vergisting</translation>
     </message>
 </context>
 <context>
@@ -5915,7 +5963,7 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <name>WaterTableModel</name>
     <message>
         <source>Bad model index. row = %1</source>
-        <translation>Bad model index. row = %1</translation>
+        <translation type="vanished">Bad model index. row = %1</translation>
     </message>
     <message>
         <source>Bad column: %1</source>
@@ -6094,6 +6142,10 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Form</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="unfinished">Product ID</translation>
     </message>
 </context>
 <context>
@@ -6275,6 +6327,18 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New hop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7282,6 +7346,14 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <source>Amount Type</source>
         <translation type="unfinished">Hoeveelheid Type</translation>
     </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7354,11 +7426,11 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Temp. lag time</source>
-        <translation type="unfinished">Temp. lagfase</translation>
+        <translation type="obsolete">Temp. lagfase</translation>
     </message>
     <message>
         <source>Lag time</source>
-        <translation type="unfinished">lagfase</translation>
+        <translation type="obsolete">lagfase</translation>
     </message>
     <message>
         <source>Infuse temp.</source>
@@ -7758,6 +7830,14 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Amount Type</source>
         <translation type="unfinished">Hoeveelheid Type</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8810,15 +8890,15 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Check it if the amount listed is in kg instead of L.</source>
-        <translation>Controleer of de hoeveelheid vermeld staat in kg i.p.v. L.</translation>
+        <translation type="vanished">Controleer of de hoeveelheid vermeld staat in kg i.p.v. L.</translation>
     </message>
     <message>
         <source>Amount is weight?</source>
-        <translation>Hoeveelheid is gewicht?</translation>
+        <translation type="vanished">Hoeveelheid is gewicht?</translation>
     </message>
     <message>
         <source>Checked if the given amount is weight instead of volume</source>
-        <translation>Controleer of de opgegeven hoeveelheid gewicht is i.p.v. volume</translation>
+        <translation type="vanished">Controleer of de opgegeven hoeveelheid gewicht is i.p.v. volume</translation>
     </message>
     <message>
         <source>Use for:</source>
@@ -8879,6 +8959,14 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Amount Type</source>
         <translation type="unfinished">Hoeveelheid Type</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10190,11 +10278,11 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Attenuation (%)</source>
-        <translation>Vergisting (%)</translation>
+        <translation type="vanished">Vergisting (%)</translation>
     </message>
     <message>
         <source>Apparent attenuation as percentage of OG points</source>
-        <translation>Schijnbare Vergisting als percentage van het oorspronkelijke SG</translation>
+        <translation type="vanished">Schijnbare Vergisting als percentage van het oorspronkelijke SG</translation>
     </message>
     <message>
         <source>Times Recultured</source>
@@ -10367,6 +10455,14 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Amount Type</source>
         <translation type="unfinished">Hoeveelheid Type</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

@@ -36,7 +36,7 @@
 #include "database/DbTransaction.h"
 #include "database/ObjectStoreTyped.h"
 
-int constexpr DatabaseSchemaHelper::latestVersion = 11;
+int constexpr DatabaseSchemaHelper::latestVersion = 13;
 
 // Default namespace hides functions from everything outside this file.
 namespace {
@@ -556,7 +556,7 @@ namespace {
             "description"     " " << db.getDbNativeTypeName<QString>()     << ", "
             "notes"           " " << db.getDbNativeTypeName<QString>()     << ", "
             "pre_boil_size_l" " " << db.getDbNativeTypeName<double>()      << ", "
-            "boil_Time_mins"  " " << db.getDbNativeTypeName<double>()      << ", "
+            "boil_time_mins"  " " << db.getDbNativeTypeName<double>()      << ", "
             "temp_recipe_id"  " " << db.getDbNativeTypeName<int>()         <<
          ");";
 
@@ -631,6 +631,58 @@ namespace {
          {QString("UPDATE fermentable SET inventory_id = CAST(inventory_id AS int) WHERE inventory_id IS NOT null")},
          {QString("UPDATE misc        SET inventory_id = CAST(inventory_id AS int) WHERE inventory_id IS NOT null")},
          {QString("UPDATE yeast       SET inventory_id = CAST(inventory_id AS int) WHERE inventory_id IS NOT null")},
+         //
+         // For historical reasons, some people have a lot of indexes in their database, others do not.  Where they
+         // relate to columns we are getting rid of we need to drop them if present.  Fortunately, the syntax for doing
+         // this is the same for SQLite and PostgreSQL.
+         //
+         // We actually go a bit further and drop some indexes on columns we aren't getting rid of.  This is because the
+         // indexes serve little purpose.  We load all the data from the DB into memory at start-up and then access rows
+         // by primary key to make amendments etc.
+         //
+         // NOTE: we cannot drop indexes beginning "sqlite_autoindex_" as we would get an error "index associated with
+         //       UNIQUE or PRIMARY KEY constraint cannot be dropped".
+         //
+         {QString("DROP INDEX IF EXISTS bt_hop_hop_id                       ")},
+         {QString("DROP INDEX IF EXISTS hop_children_parent_id              ")},
+         {QString("DROP INDEX IF EXISTS hop_in_recipe_recipe_id             ")},
+         {QString("DROP INDEX IF EXISTS hop_in_recipe_hop_id                ")},
+         {QString("DROP INDEX IF EXISTS instruction_in_recipe_recipe_id     ")},
+         {QString("DROP INDEX IF EXISTS instruction_in_recipe_instruction_id")},
+         {QString("DROP INDEX IF EXISTS equipment_children_parent_id        ")},
+         {QString("DROP INDEX IF EXISTS misc_inventory_id                   ")},
+         {QString("DROP INDEX IF EXISTS misc_children_parent_id             ")},
+         {QString("DROP INDEX IF EXISTS misc_in_recipe_recipe_id            ")},
+         {QString("DROP INDEX IF EXISTS misc_in_recipe_misc_id              ")},
+         {QString("DROP INDEX IF EXISTS brewnote_recipe_id                  ")},
+         {QString("DROP INDEX IF EXISTS bt_equipment_equipment_id           ")},
+         {QString("DROP INDEX IF EXISTS bt_fermentable_fermentable_id       ")},
+         {QString("DROP INDEX IF EXISTS bt_misc_misc_id                     ")},
+         {QString("DROP INDEX IF EXISTS bt_style_style_id                   ")},
+         {QString("DROP INDEX IF EXISTS bt_water_water_id                   ")},
+         {QString("DROP INDEX IF EXISTS bt_yeast_yeast_id                   ")},
+         {QString("DROP INDEX IF EXISTS fermentable_inventory_id            ")},
+         {QString("DROP INDEX IF EXISTS fermentable_children_parent_id      ")},
+         {QString("DROP INDEX IF EXISTS fermentable_in_recipe_recipe_id     ")},
+         {QString("DROP INDEX IF EXISTS fermentable_in_recipe_fermentable_id")},
+         {QString("DROP INDEX IF EXISTS hop_inventory_id                    ")},
+         {QString("DROP INDEX IF EXISTS mashstep_mash_id                    ")},
+         {QString("DROP INDEX IF EXISTS recipe_equipment_id                 ")},
+         {QString("DROP INDEX IF EXISTS recipe_mash_id                      ")},
+         {QString("DROP INDEX IF EXISTS recipe_style_id                     ")},
+         {QString("DROP INDEX IF EXISTS recipe_ancestor_id                  ")},
+         {QString("DROP INDEX IF EXISTS recipe_children_parent_id           ")},
+         {QString("DROP INDEX IF EXISTS salt_misc_id                        ")},
+         {QString("DROP INDEX IF EXISTS salt_in_recipe_salt_id              ")},
+         {QString("DROP INDEX IF EXISTS salt_in_recipe_recipe_id            ")},
+         {QString("DROP INDEX IF EXISTS style_children_parent_id            ")},
+         {QString("DROP INDEX IF EXISTS water_children_parent_id            ")},
+         {QString("DROP INDEX IF EXISTS water_in_recipe_recipe_id           ")},
+         {QString("DROP INDEX IF EXISTS water_in_recipe_water_id            ")},
+         {QString("DROP INDEX IF EXISTS yeast_inventory_id                  ")},
+         {QString("DROP INDEX IF EXISTS yeast_children_parent_id            ")},
+         {QString("DROP INDEX IF EXISTS yeast_in_recipe_recipe_id           ")},
+         {QString("DROP INDEX IF EXISTS yeast_in_recipe_yeast_id            ")},
          //
          // Salt::Type is currently stored as a raw number.  We convert it to a string to bring it into line with other
          // enums.  Current values are:
@@ -732,7 +784,15 @@ namespace {
          //
          // Yeast: Extended and additional fields for BeerJSON
          //
-         // We only need to update the old Yeast type, form and flocculation mappings.  The new ones should "just work".
+         // We only need to update the old Yeast type, form and flocculation mappings.  The new ones ("very low",
+         // "medium low", "medium high") should "just work".
+         //
+         // For "parent" yeast records, attenuation is replaced by attenuation_min_pct and attenuation_max_pct.  (For
+         // "child" ones it moves to attenuation_pct on yeast_in_recipe, which is done below.)  Although it's unlikely
+         // to be strictly correct, we set attenuation_min_pct and attenuation_max_pct both to hold the same value as
+         // the old attenuation column, on the grounds that this is better than nothing, except in a case where the old
+         // attenuation column holds 0.
+         //
          {QString("     UPDATE yeast SET ytype = 'ale'       WHERE ytype = 'Ale'      ")},
          {QString("     UPDATE yeast SET ytype = 'lager'     WHERE ytype = 'Lager'    ")},
          {QString("     UPDATE yeast SET ytype = 'other'     WHERE ytype = 'Wheat'    ")}, // NB: Wheat becomes Other
@@ -756,6 +816,8 @@ namespace {
          {QString("ALTER TABLE yeast ADD COLUMN killer_producing_k28_toxin   %1").arg(db.getDbNativeTypeName<bool  >())},
          {QString("ALTER TABLE yeast ADD COLUMN killer_producing_klus_toxin  %1").arg(db.getDbNativeTypeName<bool  >())},
          {QString("ALTER TABLE yeast ADD COLUMN killer_neutral               %1").arg(db.getDbNativeTypeName<bool  >())},
+         {QString("     UPDATE yeast SET attenuation_min_pct = attenuation WHERE attenuation != 0")},
+         {QString("     UPDATE yeast SET attenuation_max_pct = attenuation WHERE attenuation != 0")},
          //
          // Style: Extended and additional fields for BeerJSON.  Plus fix inconsistent column name
          //
@@ -887,7 +949,7 @@ namespace {
                       "description    , "
                       "notes          , "
                       "pre_boil_size_l, "
-                      "boil_Time_mins , "
+                      "boil_time_mins , "
                       "temp_recipe_id   "
                   ") SELECT "
                      "'Boil for ' || name, "
@@ -1662,7 +1724,8 @@ namespace {
          //
          {QString("ALTER TABLE yeast DROP COLUMN add_to_secondary")},
          //
-         // Attenuation percent moves from being a Yeast property to a RecipeAdditionYeast one
+         // For "child" yeast records, attenuation percent moves from being a Yeast property to a RecipeAdditionYeast
+         // one.
          //
          {QString("UPDATE yeast_in_recipe "
                   "SET attenuation_pct = y.attenuation "
@@ -1797,15 +1860,58 @@ namespace {
          {QString("ALTER TABLE fermentable_in_inventory ADD COLUMN unit   %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE        misc_in_inventory ADD COLUMN unit   %1").arg(db.getDbNativeTypeName<QString>())},
          {QString("ALTER TABLE       yeast_in_inventory ADD COLUMN unit   %1").arg(db.getDbNativeTypeName<QString>())},
+         //
+         // For historical reasons, some users have some duff entries in the xxx_in_inventory tables.  It's worth
+         // cleaning them up here.  Note that empirical testing shows the "WHERE inventory_id IS NOT NULL" bit is needed
+         // here.
+         //
+         {QString("DELETE FROM         hop_in_inventory WHERE id NOT IN (SELECT inventory_id FROM         hop WHERE inventory_id IS NOT NULL)")},
+         {QString("DELETE FROM fermentable_in_inventory WHERE id NOT IN (SELECT inventory_id FROM fermentable WHERE inventory_id IS NOT NULL)")},
+         {QString("DELETE FROM        misc_in_inventory WHERE id NOT IN (SELECT inventory_id FROM        misc WHERE inventory_id IS NOT NULL)")},
+         {QString("DELETE FROM       yeast_in_inventory WHERE id NOT IN (SELECT inventory_id FROM       yeast WHERE inventory_id IS NOT NULL)")},
+         //
          // At this point, all hop and fermentable amounts will be weights, because prior versions of the DB did not
          // support measuring them by volume.
+         //
+         // There is a bit of a gotcha waiting for us here.  In the old schema, where each hop refers to a
+         // hop_in_inventory row, there can and will be multiple hops sharing the same inventory row.  In the new
+         // schema, where each hop_in_inventory row refers to a hop, different hops cannot share an inventory.  (This is
+         // all by design, as we ultimately want to be able to manage multiple inventory entries per hop.  That way you
+         // can separately track the Fuggles that you bought last year (and need to use up) from the ones you bought
+         // last week (so you won't run out when you use up last year's).
+         //
+         // Although we have, by this point, deleted the "child" entries in hop that signified "use of hop in recipe"
+         // (replacing them with entries in hop_in_recipe).  There can still be multiple entries for "the same" hop in
+         // the hop table, all sharing the same hop_in_inventory row.  Specifically this is because of hops marked
+         // deleted or not displayable.  The simple answer would be to ignore deleted and non-displayable hops.  But
+         // this creates another problem because there can be inventory entries for hops that are only deleted.  And,
+         // whilst we might have a natural instinct to just delete the hop_in_inventory rows that have no corresponding
+         // displayable not-deleted hop, that feels wrong as we would be throwing data away that might one day be
+         // needed (eg if someone wants to undelete a hop that they deleted in error).
+         //
+         // So, we do something "clever".  For the "update hop_in_inventory rows to point at hop rows" query, we feed it
+         // the list of hops in a sort of reverse order, specifically such that the deleted and non-displayable ones
+         // occur before the others.  Thus, where there are multiple hop rows pointing to the same hop_in_inventory row,
+         // the latter will get updated multiple times and, if there is a corresponding displayable non-deleted hop,
+         // that will be the last one that the hop_in_inventory row is updated to point to, so it will "win" over the
+         // others.  Despite sounding a bit complicated, it's makes the SQL simpler than a lot of other approaches!
+         //
+         // It _should_ be the case that there is at most one displayable non-deleted hop per row of hop_in_inventory.
+         // However, just in case this is ever not true, we go a bit further and say that, after ordering hops so that
+         // all the deleted and non-displayable ones are parsed first, the remaining ones are put in reverse ID order,
+         // which means the oldest entries (with the smallest IDs) get processed last and are most likely to "win" in
+         // conflicts.  At the moment at least, it seems the most reasonable tie-breaker.
+         //
+         // Of course, all the above applies, mutatis mutandis, to fermentables, miscs, and yeasts as well.
+         //
          {QString("UPDATE hop_in_inventory "
                   "SET hop_id = h.id, "
                       "unit = 'kilograms' "
                   "FROM ("
                      "SELECT id, "
                             "inventory_id "
-                     "FROM hop"
+                     "FROM hop "
+                     "ORDER BY NOT deleted, display, id DESC "
                   ") AS h "
                   "WHERE hop_in_inventory.id = h.inventory_id")},
          {QString("UPDATE fermentable_in_inventory "
@@ -1814,7 +1920,8 @@ namespace {
                   "FROM ("
                      "SELECT id, "
                             "inventory_id "
-                     "FROM fermentable"
+                     "FROM fermentable "
+                     "ORDER BY NOT deleted, display, id DESC "
                   ") AS f "
                   "WHERE fermentable_in_inventory.id = f.inventory_id ")},
          // For misc, we need to support both weights and volumes.
@@ -1825,7 +1932,8 @@ namespace {
                      "SELECT id, "
                             "inventory_id, "
                             "CASE WHEN amount_is_weight THEN 'kilograms' ELSE 'liters' END AS unit "
-                     "FROM misc"
+                     "FROM misc "
+                     "ORDER BY NOT deleted, display, id DESC "
                   ") AS m "
                   "WHERE misc_in_inventory.id = m.inventory_id")},
          // HOWEVER, for inventory purposes, yeast is actually stored as "number of packets" (aka quanta in various old
@@ -1836,7 +1944,8 @@ namespace {
                   "FROM ("
                      "SELECT id, "
                             "inventory_id "
-                     "FROM yeast"
+                     "FROM yeast "
+                     "ORDER BY NOT deleted, display, id DESC "
                   ") AS y "
                   "WHERE yeast_in_inventory.id = y.inventory_id")},
          // Now we transferred info across, we don't need the inventory_id column on hop or fermentable
@@ -1957,10 +2066,79 @@ namespace {
          // of having the better column name IMHO.
          //
          {QString("ALTER TABLE settings DROP COLUMN repopulatechildrenonnextstart")},
-         {QString("ALTER TABLE settings  ADD COLUMN default_content_version").arg(db.getDbNativeTypeName<unsigned int>())},
+         {QString("ALTER TABLE settings  ADD COLUMN default_content_version %1").arg(db.getDbNativeTypeName<unsigned int>())},
          {QString("UPDATE settings SET default_content_version = 0")},
       };
 
+      return executeSqlQueries(q, migrationQueries);
+   }
+
+   /**
+    * \brief This is not actually a schema change, but rather data fixes that were missed from migrate_to_11 - mostly
+    *        things where we should have been less case-sensitive.
+    */
+   bool migrate_to_12([[maybe_unused]] Database & db, BtSqlQuery q) {
+      QVector<QueryAndParameters> const migrationQueries{
+         {QString(     "UPDATE hop SET htype = 'aroma/bittering' WHERE lower(htype) = 'both'"     )},
+         {QString("     UPDATE fermentable SET ftype = 'dry extract' WHERE lower(ftype) = 'dry extract'")},
+         {QString("     UPDATE fermentable SET ftype = 'dry extract' WHERE lower(ftype) = 'dryextract'" )},
+         {QString("     UPDATE fermentable SET ftype = 'other'       WHERE lower(ftype) = 'adjunct'"    )},
+         {QString("     UPDATE misc SET mtype = 'water agent' WHERE lower(mtype) = 'water agent'")},
+         {QString("     UPDATE misc SET mtype = 'water agent' WHERE lower(mtype) = 'wateragent'" )},
+         {QString("     UPDATE yeast SET ytype = 'other'     WHERE lower(ytype) = 'wheat'    ")},
+         {QString("     UPDATE yeast SET flocculation = 'very high' WHERE lower(flocculation) = 'very high'")},
+         {QString("     UPDATE yeast SET flocculation = 'very high' WHERE lower(flocculation) = 'veryhigh'" )},
+         {QString("     UPDATE style SET stype = 'beer'  WHERE lower(stype) = 'lager'")},
+         {QString("     UPDATE style SET stype = 'beer'  WHERE lower(stype) = 'ale'  ")},
+         {QString("     UPDATE style SET stype = 'beer'  WHERE lower(stype) = 'wheat'")},
+         {QString("     UPDATE style SET stype = 'other' WHERE lower(stype) = 'mixed'")},
+         {QString("     UPDATE mash_step SET mstype = 'sparge'         WHERE lower(mstype) = 'flysparge'  ")},
+         {QString("     UPDATE mash_step SET mstype = 'sparge'         WHERE lower(mstype) = 'fly sparge'  ")},
+         {QString("     UPDATE mash_step SET mstype = 'drain mash tun' WHERE lower(mstype) = 'batchsparge'")},
+         {QString("     UPDATE mash_step SET mstype = 'drain mash tun' WHERE lower(mstype) = 'batch sparge'")},
+         {QString("     UPDATE recipe SET type = 'partial mash' WHERE lower(type) = 'partial mash'")},
+         {QString("     UPDATE recipe SET type = 'partial mash' WHERE lower(type) = 'partialmash'")},
+         {QString("     UPDATE recipe SET type = 'all grain'    WHERE lower(type) = 'all grain'   ")},
+         {QString("     UPDATE recipe SET type = 'all grain'    WHERE lower(type) = 'allgrain'   ")},
+      };
+      return executeSqlQueries(q, migrationQueries);
+   }
+
+   /**
+    * \brief Small schema change to support measuring diameter of boil kettle for new IBU calculations.  Plus, some
+    *        tidy-ups to Salt and Boil / BoilStep which we didn't get to before.
+    */
+   bool migrate_to_13([[maybe_unused]] Database & db, BtSqlQuery q) {
+      QVector<QueryAndParameters> const migrationQueries{
+         {QString("ALTER TABLE equipment  ADD COLUMN kettleInternalDiameter_cm %1").arg(db.getDbNativeTypeName<double>())},
+         {QString("ALTER TABLE equipment  ADD COLUMN kettleOpeningDiameter_cm  %1").arg(db.getDbNativeTypeName<double>())},
+         // The is_acid column is unnecessary as we know whether it's an acide from the stype column
+         {QString("ALTER TABLE salt DROP COLUMN is_acid")},
+         // The addTo column is not needed as it is now replaced by salt_in_recipe.when_to_add and the contents brought
+         // over in migrate_to_11 above.  Same goes for amount_is_weight, which is replaced by salt_in_recipe.unit and
+         // salt_in_inventory.unit.
+         {QString("ALTER TABLE salt DROP COLUMN addTo")},
+         {QString("ALTER TABLE salt DROP COLUMN amount_is_weight")},
+         //
+         // The boil.boil_time_mins column is, in reality the length of the boil proper, so it should have gone straight
+         // to the relevant boil_step.  We correct that here and do away with the column on boil.
+         //
+         // Per the comment in model/Boil.h on minimumBoilTemperature_c, 81.0°C is the temperature above which we assume
+         // a step is a boil.
+         //
+         {QString("UPDATE boil_step "
+                  "SET step_time_mins = b.boil_time_mins "
+                  "FROM ("
+                     "SELECT id, "
+                            "boil_time_mins "
+                     "FROM boil"
+                  ") AS b "
+                  "WHERE boil_step.step_time_mins IS NULL "
+                    "AND boil_step.start_temp_c >= 81.0 "
+                    "AND boil_step.end_temp_c >= 81.0 "
+                    "AND boil_step.boil_id = b.id ")},
+         {QString("ALTER TABLE boil DROP COLUMN boil_time_mins")},
+      };
       return executeSqlQueries(q, migrationQueries);
    }
 
@@ -2003,6 +2181,12 @@ namespace {
             break;
          case 10:
             ret &= migrate_to_11(database, sqlQuery);
+            break;
+         case 11:
+            ret &= migrate_to_12(database, sqlQuery);
+            break;
+         case 12:
+            ret &= migrate_to_13(database, sqlQuery);
             break;
          default:
             qCritical() << QString("Unknown version %1").arg(oldVersion);

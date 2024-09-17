@@ -32,7 +32,7 @@
    <string notr="true">$CONFIG_APPLICATION_NAME_UC - $CONFIG_VERSION_STRING</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../brewken.qrc">
+   <iconset resource="../resources.qrc">
     <normaloff>:/images/brewken.svg</normaloff>:/images/brewken.svg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -56,7 +56,7 @@
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../brewken.qrc">:/images/BrewkenLogo.png</pixmap>
+           <pixmap resource="../resources.qrc">:/images/BrewkenLogo.png</pixmap>
           </property>
          </widget>
         </item>
@@ -91,7 +91,7 @@
             <string>Recipes</string>
            </property>
            <attribute name="icon">
-            <iconset resource="../brewken.qrc">
+            <iconset resource="../resources.qrc">
              <normaloff>:/images/brewken.svg</normaloff>:/images/brewken.svg</iconset>
            </attribute>
            <attribute name="title">
@@ -115,7 +115,7 @@
             <bool>true</bool>
            </property>
            <attribute name="icon">
-            <iconset resource="../brewken.qrc">
+            <iconset resource="../resources.qrc">
              <normaloff>:/images/smallStyle.svg</normaloff>:/images/smallStyle.svg</iconset>
            </attribute>
            <attribute name="title">
@@ -136,7 +136,7 @@
           </widget>
           <widget class="QWidget" name="tabTree_equip">
            <attribute name="icon">
-            <iconset resource="../brewken.qrc">
+            <iconset resource="../resources.qrc">
              <normaloff>:/images/smallKettle.svg</normaloff>:/images/smallKettle.svg</iconset>
            </attribute>
            <attribute name="title">
@@ -153,7 +153,7 @@
           </widget>
           <widget class="QWidget" name="tabTree_ferm">
            <attribute name="icon">
-            <iconset resource="../brewken.qrc">
+            <iconset resource="../resources.qrc">
              <normaloff>:/images/smallBarley.svg</normaloff>:/images/smallBarley.svg</iconset>
            </attribute>
            <attribute name="title">
@@ -170,7 +170,7 @@
           </widget>
           <widget class="QWidget" name="tabTree_hops">
            <attribute name="icon">
-            <iconset resource="../brewken.qrc">
+            <iconset resource="../resources.qrc">
              <normaloff>:/images/smallHop.svg</normaloff>:/images/smallHop.svg</iconset>
            </attribute>
            <attribute name="title">
@@ -187,7 +187,7 @@
           </widget>
           <widget class="QWidget" name="tabTree_misc">
            <attribute name="icon">
-            <iconset resource="../brewken.qrc">
+            <iconset resource="../resources.qrc">
              <normaloff>:/images/smallQuestion.svg</normaloff>:/images/smallQuestion.svg</iconset>
            </attribute>
            <attribute name="title">
@@ -204,7 +204,7 @@
           </widget>
           <widget class="QWidget" name="tabTree_yeast">
            <attribute name="icon">
-            <iconset resource="../brewken.qrc">
+            <iconset resource="../resources.qrc">
              <normaloff>:/images/smallYeast.svg</normaloff>:/images/smallYeast.svg</iconset>
            </attribute>
            <attribute name="title">
@@ -221,7 +221,7 @@
           </widget>
           <widget class="QWidget" name="tabTree_water">
            <attribute name="icon">
-            <iconset resource="../brewken.qrc">
+            <iconset resource="../resources.qrc">
              <normaloff>:/images/smallWater.svg</normaloff>:/images/smallWater.svg</iconset>
            </attribute>
            <attribute name="title">
@@ -357,160 +357,6 @@
                  <layout class="QVBoxLayout" name="verticalLayout_left">
                   <item>
                    <layout class="QGridLayout" name="gridLayout_fields">
-                    <item row="9" column="1">
-                     <widget class="QLabel" name="label_calories">
-                      <property name="font">
-                       <font>
-                        <family>Sans Serif</family>
-                        <pointsize>9</pointsize>
-                        <weight>50</weight>
-                        <bold>false</bold>
-                        <kerning>true</kerning>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>1.0</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="8" column="1">
-                     <widget class="SmartLineEdit" name="lineEdit_boilSg">
-                      <property name="enabled">
-                       <bool>false</bool>
-                      </property>
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>100</width>
-                        <height>16777214</height>
-                       </size>
-                      </property>
-                      <property name="mouseTracking">
-                       <bool>false</bool>
-                      </property>
-                      <property name="acceptDrops">
-                       <bool>false</bool>
-                      </property>
-                      <property name="frame">
-                       <bool>false</bool>
-                      </property>
-                      <property name="readOnly">
-                       <bool>true</bool>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="7" column="0">
-                     <widget class="SmartLabel" name="label_boilTime">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="contextMenuPolicy">
-                       <enum>Qt::CustomContextMenu</enum>
-                      </property>
-                      <property name="text">
-                       <string>&amp;Boil Time</string>
-                      </property>
-                      <property name="buddy">
-                       <cstring>lineEdit_boilTime</cstring>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="3" column="0">
-                     <widget class="QLabel" name="equipmentLabel">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="text">
-                       <string>E&amp;quipment</string>
-                      </property>
-                      <property name="buddy">
-                       <cstring>qWidget_equipmentBox</cstring>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="7" column="1">
-                     <widget class="SmartLineEdit" name="lineEdit_boilTime">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>100</width>
-                        <height>0</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>100</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                      <property name="contextMenuPolicy">
-                       <enum>Qt::DefaultContextMenu</enum>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="8" column="0">
-                     <widget class="SmartLabel" name="label_boilSg">
-                      <property name="contextMenuPolicy">
-                       <enum>Qt::CustomContextMenu</enum>
-                      </property>
-                      <property name="text">
-                       <string>Boil SG</string>
-                      </property>
-                      <property name="buddy">
-                       <cstring>lineEdit_boilSg</cstring>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="6" column="1">
-                     <widget class="SmartLineEdit" name="lineEdit_efficiency">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>100</width>
-                        <height>0</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>100</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                      <property name="contextMenuPolicy">
-                       <enum>Qt::DefaultContextMenu</enum>
-                      </property>
-                      <property name="toolTip">
-                       <string>The extraction efficiency you expect</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
                     <item row="2" column="0">
                      <widget class="QLabel" name="styleLabel">
                       <property name="sizePolicy">
@@ -527,147 +373,7 @@
                       </property>
                      </widget>
                     </item>
-                    <item row="3" column="1">
-                     <widget class="QWidget" name="qWidget_equipmentBox" native="true">
-                      <layout class="QHBoxLayout" name="horizontalLayout_2">
-                       <property name="topMargin">
-                        <number>1</number>
-                       </property>
-                       <item>
-                        <widget class="EquipmentButton" name="equipmentButton">
-                         <property name="minimumSize">
-                          <size>
-                           <width>0</width>
-                           <height>0</height>
-                          </size>
-                         </property>
-                         <property name="maximumSize">
-                          <size>
-                           <width>16777215</width>
-                           <height>16777215</height>
-                          </size>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="CustomComboBox" name="equipmentComboBox">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="maximumSize">
-                          <size>
-                           <width>30</width>
-                           <height>16777215</height>
-                          </size>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </widget>
-                    </item>
-                    <item row="5" column="0">
-                     <widget class="SmartLabel" name="label_targetBoilSize">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="contextMenuPolicy">
-                       <enum>Qt::CustomContextMenu</enum>
-                      </property>
-                      <property name="text">
-                       <string>Tar&amp;get Boil Size</string>
-                      </property>
-                      <property name="buddy">
-                       <cstring>lineEdit_boilSize</cstring>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="10" column="0">
-                     <widget class="QCheckBox" name="checkBox_locked">
-                      <property name="layoutDirection">
-                       <enum>Qt::RightToLeft</enum>
-                      </property>
-                      <property name="text">
-                       <string>Recipe Locked</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="4" column="0">
-                     <widget class="SmartLabel" name="label_targetBatchSize">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="contextMenuPolicy">
-                       <enum>Qt::CustomContextMenu</enum>
-                      </property>
-                      <property name="text">
-                       <string>Target Batch Si&amp;ze</string>
-                      </property>
-                      <property name="buddy">
-                       <cstring>lineEdit_batchSize</cstring>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="4" column="1">
-                     <widget class="SmartLineEdit" name="lineEdit_batchSize">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>100</width>
-                        <height>0</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>100</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                      <property name="toolTip">
-                       <string>Target batch size</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="6" column="0">
-                     <widget class="QLabel" name="label_efficiency">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="text">
-                       <string>&amp;Efficiency (%)</string>
-                      </property>
-                      <property name="buddy">
-                       <cstring>lineEdit_efficiency</cstring>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="9" column="0">
-                     <widget class="QLabel" name="label_caloriesper">
-                      <property name="text">
-                       <string>Calories/12oz</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="1">
+                    <item row="2" column="1" colspan="2">
                      <widget class="QWidget" name="qWidget_styleBox" native="true">
                       <layout class="QHBoxLayout" name="horizontalLayout_11">
                        <item>
@@ -720,8 +426,78 @@
                       </layout>
                      </widget>
                     </item>
-                    <item row="5" column="1">
-                     <widget class="SmartLineEdit" name="lineEdit_boilSize">
+                    <item row="3" column="0">
+                     <widget class="QLabel" name="equipmentLabel">
+                      <property name="text">
+                       <string>E&amp;quipment</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>qWidget_equipmentBox</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="1" colspan="2">
+                     <widget class="QWidget" name="qWidget_equipmentBox" native="true">
+                      <layout class="QHBoxLayout" name="horizontalLayout_2">
+                       <property name="topMargin">
+                        <number>1</number>
+                       </property>
+                       <item>
+                        <widget class="EquipmentButton" name="equipmentButton">
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>16777215</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="CustomComboBox" name="equipmentComboBox">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>30</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item row="4" column="0">
+                     <widget class="SmartLabel" name="label_targetBatchSize">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="contextMenuPolicy">
+                       <enum>Qt::CustomContextMenu</enum>
+                      </property>
+                      <property name="text">
+                       <string>Target Batch Si&amp;ze</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>lineEdit_batchSize</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="4" column="1">
+                     <widget class="SmartLineEdit" name="lineEdit_batchSize">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                         <horstretch>0</horstretch>
@@ -741,10 +517,191 @@
                        </size>
                       </property>
                       <property name="toolTip">
-                       <string>Target boil size</string>
+                       <string>Target batch size</string>
                       </property>
                       <property name="alignment">
-                       <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="5" column="0">
+                     <widget class="SmartLabel" name="label_targetBoilSize">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="contextMenuPolicy">
+                       <enum>Qt::CustomContextMenu</enum>
+                      </property>
+                      <property name="text">
+                       <string>Tar&amp;get Boil Size</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>lineEdit_boilSize</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="5" column="1">
+                     <widget class="SmartLineEdit" name="lineEdit_boilSize">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="mouseTracking">
+                       <bool>false</bool>
+                      </property>
+                      <property name="acceptDrops">
+                       <bool>false</bool>
+                      </property>
+                      <property name="frame">
+                       <bool>false</bool>
+                      </property>
+                      <property name="readOnly">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="5" column="2">
+                     <widget class="QLabel" name="label_boilSizeExplanation">
+                      <property name="contextMenuPolicy">
+                       <enum>Qt::CustomContextMenu</enum>
+                      </property>
+                      <property name="text">
+                       <string>(See Boil tab below)</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="6" column="0">
+                     <widget class="QLabel" name="label_efficiency">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="text">
+                       <string>&amp;Efficiency (%)</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>lineEdit_efficiency</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="6" column="1">
+                     <widget class="SmartLineEdit" name="lineEdit_efficiency">
+                      <property name="contextMenuPolicy">
+                       <enum>Qt::DefaultContextMenu</enum>
+                      </property>
+                      <property name="toolTip">
+                       <string>The extraction efficiency you expect</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="7" column="0">
+                     <widget class="SmartLabel" name="label_boilTime">
+                      <property name="contextMenuPolicy">
+                       <enum>Qt::CustomContextMenu</enum>
+                      </property>
+                      <property name="text">
+                       <string>Boil Time</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="7" column="1">
+                     <widget class="SmartLineEdit" name="lineEdit_boilTime">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="mouseTracking">
+                       <bool>false</bool>
+                      </property>
+                      <property name="acceptDrops">
+                       <bool>false</bool>
+                      </property>
+                      <property name="frame">
+                       <bool>false</bool>
+                      </property>
+                      <property name="readOnly">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="7" column="2">
+                     <widget class="QLabel" name="label_boilTimeExplanation">
+                      <property name="contextMenuPolicy">
+                       <enum>Qt::CustomContextMenu</enum>
+                      </property>
+                      <property name="text">
+                       <string>(See Boil tab below)</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="8" column="0">
+                     <widget class="SmartLabel" name="label_boilSg">
+                      <property name="contextMenuPolicy">
+                       <enum>Qt::CustomContextMenu</enum>
+                      </property>
+                      <property name="text">
+                       <string>Boil SG</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>lineEdit_boilSg</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="8" column="1">
+                     <widget class="SmartLineEdit" name="lineEdit_boilSg">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="mouseTracking">
+                       <bool>false</bool>
+                      </property>
+                      <property name="acceptDrops">
+                       <bool>false</bool>
+                      </property>
+                      <property name="frame">
+                       <bool>false</bool>
+                      </property>
+                      <property name="readOnly">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="9" column="0">
+                     <widget class="QLabel" name="label_caloriesper">
+                      <property name="text">
+                       <string>Calories/12oz</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="9" column="1">
+                     <widget class="QLabel" name="label_calories">
+                      <property name="font">
+                       <font>
+                        <family>Sans Serif</family>
+                        <pointsize>9</pointsize>
+                        <weight>50</weight>
+                        <bold>false</bold>
+                        <kerning>true</kerning>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>1.0</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="10" column="0">
+                     <widget class="QCheckBox" name="checkBox_locked">
+                      <property name="layoutDirection">
+                       <enum>Qt::RightToLeft</enum>
+                      </property>
+                      <property name="text">
+                       <string>Recipe Locked</string>
                       </property>
                      </widget>
                     </item>
@@ -1150,7 +1107,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
                   </property>
                  </widget>
@@ -1164,7 +1121,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
                   </property>
                  </widget>
@@ -1178,7 +1135,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/edit.svg</normaloff>:/images/edit.svg</iconset>
                   </property>
                  </widget>
@@ -1222,7 +1179,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
                   </property>
                  </widget>
@@ -1236,7 +1193,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
                   </property>
                  </widget>
@@ -1250,7 +1207,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/edit.svg</normaloff>:/images/edit.svg</iconset>
                   </property>
                  </widget>
@@ -1298,7 +1255,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
                   </property>
                  </widget>
@@ -1312,7 +1269,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
                   </property>
                  </widget>
@@ -1326,7 +1283,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/edit.svg</normaloff>:/images/edit.svg</iconset>
                   </property>
                  </widget>
@@ -1374,7 +1331,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
                   </property>
                  </widget>
@@ -1388,7 +1345,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
                   </property>
                  </widget>
@@ -1402,7 +1359,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/edit.svg</normaloff>:/images/edit.svg</iconset>
                   </property>
                  </widget>
@@ -1452,7 +1409,7 @@
                      <string/>
                     </property>
                     <property name="icon">
-                     <iconset resource="../brewken.qrc">
+                     <iconset resource="../resources.qrc">
                       <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
                     </property>
                    </widget>
@@ -1466,7 +1423,7 @@
                      <string/>
                     </property>
                     <property name="icon">
-                     <iconset resource="../brewken.qrc">
+                     <iconset resource="../resources.qrc">
                       <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
                     </property>
                    </widget>
@@ -1480,7 +1437,7 @@
                      <string/>
                     </property>
                     <property name="icon">
-                     <iconset resource="../brewken.qrc">
+                     <iconset resource="../resources.qrc">
                       <normaloff>:/images/edit.svg</normaloff>:/images/edit.svg</iconset>
                     </property>
                    </widget>
@@ -1589,7 +1546,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
                   </property>
                  </widget>
@@ -1600,7 +1557,7 @@
                    <string>Mash step up</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/smallUpArrow.svg</normaloff>:/images/smallUpArrow.svg</iconset>
                   </property>
                  </widget>
@@ -1611,7 +1568,7 @@
                    <string>Mash step down</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/smallDownArrow.svg</normaloff>:/images/smallDownArrow.svg</iconset>
                   </property>
                  </widget>
@@ -1658,7 +1615,7 @@
                      <string/>
                     </property>
                     <property name="icon">
-                     <iconset resource="../brewken.qrc">
+                     <iconset resource="../resources.qrc">
                       <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
                     </property>
                    </widget>
@@ -1672,7 +1629,7 @@
                      <string/>
                     </property>
                     <property name="icon">
-                     <iconset resource="../brewken.qrc">
+                     <iconset resource="../resources.qrc">
                       <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
                     </property>
                    </widget>
@@ -1686,7 +1643,7 @@
                      <string/>
                     </property>
                     <property name="icon">
-                     <iconset resource="../brewken.qrc">
+                     <iconset resource="../resources.qrc">
                       <normaloff>:/images/edit.svg</normaloff>:/images/edit.svg</iconset>
                     </property>
                    </widget>
@@ -1778,7 +1735,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
                   </property>
                  </widget>
@@ -1789,7 +1746,7 @@
                    <string>Boil step up</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/smallUpArrow.svg</normaloff>:/images/smallUpArrow.svg</iconset>
                   </property>
                  </widget>
@@ -1800,7 +1757,7 @@
                    <string>Boil step down</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/smallDownArrow.svg</normaloff>:/images/smallDownArrow.svg</iconset>
                   </property>
                  </widget>
@@ -1847,7 +1804,7 @@
                      <string/>
                     </property>
                     <property name="icon">
-                     <iconset resource="../brewken.qrc">
+                     <iconset resource="../resources.qrc">
                       <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
                     </property>
                    </widget>
@@ -1861,7 +1818,7 @@
                      <string/>
                     </property>
                     <property name="icon">
-                     <iconset resource="../brewken.qrc">
+                     <iconset resource="../resources.qrc">
                       <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
                     </property>
                    </widget>
@@ -1875,7 +1832,7 @@
                      <string/>
                     </property>
                     <property name="icon">
-                     <iconset resource="../brewken.qrc">
+                     <iconset resource="../resources.qrc">
                       <normaloff>:/images/edit.svg</normaloff>:/images/edit.svg</iconset>
                     </property>
                    </widget>
@@ -1967,7 +1924,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
                   </property>
                  </widget>
@@ -1978,7 +1935,7 @@
                    <string>Fermentation step up</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/smallUpArrow.svg</normaloff>:/images/smallUpArrow.svg</iconset>
                   </property>
                  </widget>
@@ -1989,7 +1946,7 @@
                    <string>Fermentation step down</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="../brewken.qrc">
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/images/smallDownArrow.svg</normaloff>:/images/smallDownArrow.svg</iconset>
                   </property>
                  </widget>
@@ -2046,7 +2003,7 @@
       <string>&amp;Database</string>
      </property>
      <property name="icon">
-      <iconset resource="../brewken.qrc">
+      <iconset resource="../resources.qrc">
        <normaloff>:/images/server-database.png</normaloff>:/images/server-database.png</iconset>
      </property>
      <addaction name="actionBackup_Database"/>
@@ -2148,7 +2105,7 @@
   </widget>
   <action name="actionHelp">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/smallQuestion.svg</normaloff>:/images/smallQuestion.svg</iconset>
    </property>
    <property name="text">
@@ -2160,7 +2117,7 @@
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/smallInfo.svg</normaloff>:/images/smallInfo.svg</iconset>
    </property>
    <property name="text">
@@ -2176,7 +2133,7 @@
   </action>
   <action name="actionExportToXml">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/smallOutArrow.svg</normaloff>:/images/smallOutArrow.svg</iconset>
    </property>
    <property name="text">
@@ -2185,7 +2142,7 @@
   </action>
   <action name="actionFermentables">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/smallBarley.svg</normaloff>:/images/smallBarley.svg</iconset>
    </property>
    <property name="text">
@@ -2197,7 +2154,7 @@
   </action>
   <action name="actionHops">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/smallHop.svg</normaloff>:/images/smallHop.svg</iconset>
    </property>
    <property name="text">
@@ -2209,7 +2166,7 @@
   </action>
   <action name="actionMiscs">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/smallQuestion.svg</normaloff>:/images/smallQuestion.svg</iconset>
    </property>
    <property name="text">
@@ -2221,7 +2178,7 @@
   </action>
   <action name="actionYeasts">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/smallYeast.svg</normaloff>:/images/smallYeast.svg</iconset>
    </property>
    <property name="text">
@@ -2233,7 +2190,7 @@
   </action>
   <action name="actionEquipments">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/smallKettle.svg</normaloff>:/images/smallKettle.svg</iconset>
    </property>
    <property name="text">
@@ -2245,7 +2202,7 @@
   </action>
   <action name="actionStyles">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/smallStyle.svg</normaloff>:/images/smallStyle.svg</iconset>
    </property>
    <property name="text">
@@ -2257,7 +2214,7 @@
   </action>
   <action name="actionPrint">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/printer.png</normaloff>:/images/printer.png</iconset>
    </property>
    <property name="text">
@@ -2269,7 +2226,7 @@
   </action>
   <action name="actionExit">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/exit.svg</normaloff>:/images/exit.svg</iconset>
    </property>
    <property name="text">
@@ -2281,7 +2238,7 @@
   </action>
   <action name="actionImportFromXml">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/smallArrow.svg</normaloff>:/images/smallArrow.svg</iconset>
    </property>
    <property name="text">
@@ -2290,7 +2247,7 @@
   </action>
   <action name="actionOptions">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/preferences-other.png</normaloff>:/images/preferences-other.png</iconset>
    </property>
    <property name="text">
@@ -2299,7 +2256,7 @@
   </action>
   <action name="actionManual">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/help-contents.png</normaloff>:/images/help-contents.png</iconset>
    </property>
    <property name="text">
@@ -2308,7 +2265,7 @@
   </action>
   <action name="actionScale_Recipe">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/kbruch.png</normaloff>:/images/kbruch.png</iconset>
    </property>
    <property name="text">
@@ -2317,7 +2274,7 @@
   </action>
   <action name="action_recipeToTextClipboard">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/clipboard.svg</normaloff>:/images/clipboard.svg</iconset>
    </property>
    <property name="text">
@@ -2326,7 +2283,7 @@
   </action>
   <action name="actionOG_Correction_Help">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/hydrometer.svg</normaloff>:/images/hydrometer.svg</iconset>
    </property>
    <property name="text">
@@ -2335,7 +2292,7 @@
   </action>
   <action name="actionConvert_Units">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/convert.svg</normaloff>:/images/convert.svg</iconset>
    </property>
    <property name="text">
@@ -2354,7 +2311,7 @@
   </action>
   <action name="actionCopy_Recipe">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/edit-copy.png</normaloff>:/images/edit-copy.png</iconset>
    </property>
    <property name="text">
@@ -2363,7 +2320,7 @@
   </action>
   <action name="actionPriming_Calculator">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/bubbles.svg</normaloff>:/images/bubbles.svg</iconset>
    </property>
    <property name="text">
@@ -2372,7 +2329,7 @@
   </action>
   <action name="actionRefractometer_Tools">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/refractometer.svg</normaloff>:/images/refractometer.svg</iconset>
    </property>
    <property name="text">
@@ -2381,7 +2338,7 @@
   </action>
   <action name="actionPitch_Rate_Calculator">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/yeastVial.svg</normaloff>:/images/yeastVial.svg</iconset>
    </property>
    <property name="text">
@@ -2390,7 +2347,7 @@
   </action>
   <action name="actionBackup_Database">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/backup.png</normaloff>:/images/backup.png</iconset>
    </property>
    <property name="text">
@@ -2402,7 +2359,7 @@
   </action>
   <action name="actionRestore_Database">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/restore.svg</normaloff>:/images/restore.svg</iconset>
    </property>
    <property name="text">
@@ -2414,7 +2371,7 @@
   </action>
   <action name="actionNewRecipe">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/smallPlus.svg</normaloff>:/images/smallPlus.svg</iconset>
    </property>
    <property name="text">
@@ -2423,7 +2380,7 @@
   </action>
   <action name="actionTimers">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/clock.svg</normaloff>:/images/clock.svg</iconset>
    </property>
    <property name="text">
@@ -2435,7 +2392,7 @@
   </action>
   <action name="actionSave">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/filesave.svg</normaloff>:/images/filesave.svg</iconset>
    </property>
    <property name="text">
@@ -2447,7 +2404,7 @@
   </action>
   <action name="actionDeleteSelected">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/smallMinus.svg</normaloff>:/images/smallMinus.svg</iconset>
    </property>
    <property name="text">
@@ -2459,7 +2416,7 @@
   </action>
   <action name="actionMashs">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/mashpaddle.svg</normaloff>
      <normalon>:/images/bubbles.svg</normalon>:/images/mashpaddle.svg</iconset>
    </property>
@@ -2472,7 +2429,7 @@
   </action>
   <action name="actionStrikeWater_Calculator">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/smallWater.svg</normaloff>:/images/smallWater.svg</iconset>
    </property>
    <property name="text">
@@ -2481,7 +2438,7 @@
   </action>
   <action name="actionRecipeBBCode">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/clipboard.svg</normaloff>:/images/clipboard.svg</iconset>
    </property>
    <property name="text">
@@ -2490,7 +2447,7 @@
   </action>
   <action name="actionHydrometer_Temp_Adjustment">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/hydrometer.svg</normaloff>:/images/hydrometer.svg</iconset>
    </property>
    <property name="text">
@@ -2504,7 +2461,7 @@
   </action>
   <action name="actionWater_Chemistry">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/testtube.svg</normaloff>:/images/testtube.svg</iconset>
    </property>
    <property name="text">
@@ -2523,7 +2480,7 @@
   </action>
   <action name="actionAncestors">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/merge.png</normaloff>:/images/merge.png</iconset>
    </property>
    <property name="text">
@@ -2532,7 +2489,7 @@
   </action>
   <action name="action_brewit">
    <property name="icon">
-    <iconset resource="../brewken.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/images/grain2glass.svg</normaloff>:/images/grain2glass.svg</iconset>
    </property>
    <property name="text">
@@ -2710,6 +2667,6 @@
   <tabstop>pushButton_saveMash</tabstop>
  </tabstops>
  <resources>
-  <include location="../brewken.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
 </ui>

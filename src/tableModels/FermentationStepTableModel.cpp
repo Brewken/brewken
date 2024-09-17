@@ -39,12 +39,21 @@ FermentationStepTableModel::FermentationStepTableModel(QTableView * parent, bool
       parent,
       editable,
       {
+         //
+         // As noted elsewhere, we store the step time for fermentation times in minutes, so we can reuse code with
+         // mash steps, boil steps etc, but the Measurement system will automatically show them in days (because
+         // sufficiently large numbers of minutes will get shown as days).
+         //
+         // TODO: What is not great is that, currently, if step time is "30 days" and you edit to replace it with "29",
+         //       the system will convert this to "29 mins", which is almost certainly not what the user means.  Even if
+         //       you type "29 day", it will still get converted to "29 mins", which is definitely wrong.
+         //
          TABLE_MODEL_HEADER(FermentationStep, Name        , tr("Name"         ), PropertyNames::     NamedEntity::name           ),
          TABLE_MODEL_HEADER(FermentationStep, StepTime    , tr("Step Time"    ), PropertyNames::            Step::stepTime_mins  , PrecisionInfo{0}),
-         TABLE_MODEL_HEADER(FermentationStep, StartTemp   , tr("Start Temp"   ), PropertyNames::            Step::startTemp_c    ),
-         TABLE_MODEL_HEADER(FermentationStep, EndTemp     , tr("End Temp"     ), PropertyNames::            Step::endTemp_c      ),
-         TABLE_MODEL_HEADER(FermentationStep, StartAcidity, tr("Start Acidity"), PropertyNames::            Step::startAcidity_pH),
-         TABLE_MODEL_HEADER(FermentationStep, EndAcidity  , tr("End Acidity"  ), PropertyNames::            Step::endAcidity_pH  ),
+         TABLE_MODEL_HEADER(FermentationStep, StartTemp   , tr("Start Temp"   ), PropertyNames::            Step::startTemp_c    , PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(FermentationStep, EndTemp     , tr("End Temp"     ), PropertyNames::            Step::endTemp_c      , PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(FermentationStep, StartAcidity, tr("Start Acidity"), PropertyNames::            Step::startAcidity_pH, PrecisionInfo{1}),
+         TABLE_MODEL_HEADER(FermentationStep, EndAcidity  , tr("End Acidity"  ), PropertyNames::            Step::endAcidity_pH  , PrecisionInfo{1}),
          TABLE_MODEL_HEADER(FermentationStep, StartGravity, tr("Start Gravity"), PropertyNames::    StepExtended::startGravity_sg),
          TABLE_MODEL_HEADER(FermentationStep, EndGravity  , tr("End Gravity"  ), PropertyNames::    StepExtended::  endGravity_sg),
          TABLE_MODEL_HEADER(FermentationStep, FreeRise    , tr("Free Rise"    ), PropertyNames::FermentationStep::freeRise       , BoolInfo{tr("No"), tr("Yes")}),
@@ -78,47 +87,13 @@ void FermentationStepTableModel::added  ([[maybe_unused]] std::shared_ptr<Fermen
 void FermentationStepTableModel::removed([[maybe_unused]] std::shared_ptr<FermentationStep> item) { return; }
 void FermentationStepTableModel::updateTotals()                                      { return; }
 
-
 QVariant FermentationStepTableModel::data(QModelIndex const & index, int role) const {
-   if (!this->m_stepOwnerObs) {
+   if (!this->m_stepOwnerObs || !this->indexAndRoleOk(index, role)) {
       return QVariant();
    }
 
-   if (!this->isIndexOk(index)) {
-      return QVariant();
-   }
-
-   // Make sure we only respond to the DisplayRole role.
-   if (role != Qt::DisplayRole) {
-      return QVariant();
-   }
-
-   auto row = this->rows[index.row()];
-
-   auto const columnIndex = static_cast<FermentationStepTableModel::ColumnIndex>(index.column());
-   switch (columnIndex) {
-      case FermentationStepTableModel::ColumnIndex::Name        :
-      case FermentationStepTableModel::ColumnIndex::StepTime    :
-      case FermentationStepTableModel::ColumnIndex::StartTemp   :
-      case FermentationStepTableModel::ColumnIndex::EndTemp     :
-      case FermentationStepTableModel::ColumnIndex::StartAcidity:
-      case FermentationStepTableModel::ColumnIndex::EndAcidity  :
-      case FermentationStepTableModel::ColumnIndex::StartGravity:
-      case FermentationStepTableModel::ColumnIndex::EndGravity  :
-      case FermentationStepTableModel::ColumnIndex::FreeRise    :
-      case FermentationStepTableModel::ColumnIndex::Vessel      :
-         return this->readDataFromModel(index, role);
-
-      // No default case as we want the compiler to warn us if we missed one
-   }
-   return QVariant();
-}
-
-QVariant FermentationStepTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
-   if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
-      return this->getColumnLabel(section);
-   }
-   return QVariant();
+   // No special handling required for any of our columns
+   return this->readDataFromModel(index, role);
 }
 
 Qt::ItemFlags FermentationStepTableModel::flags(const QModelIndex& index ) const {
@@ -130,39 +105,12 @@ Qt::ItemFlags FermentationStepTableModel::flags(const QModelIndex& index ) const
 }
 
 bool FermentationStepTableModel::setData(QModelIndex const & index, QVariant const & value, int role) {
-   if (!this->m_stepOwnerObs) {
+   if (!this->m_stepOwnerObs || !this->indexAndRoleOk(index, role)) {
       return false;
    }
 
-   if (!this->isIndexOk(index)) {
-      return false;
-   }
-
-   if (index.row() >= static_cast<int>(this->rows.size()) || role != Qt::EditRole ) {
-      return false;
-   }
-
-
-   bool retVal = false;
-
-   auto const columnIndex = static_cast<FermentationStepTableModel::ColumnIndex>(index.column());
-   switch (columnIndex) {
-      case FermentationStepTableModel::ColumnIndex::Name        :
-      case FermentationStepTableModel::ColumnIndex::StepTime    :
-      case FermentationStepTableModel::ColumnIndex::StartTemp   :
-      case FermentationStepTableModel::ColumnIndex::EndTemp     :
-      case FermentationStepTableModel::ColumnIndex::StartAcidity:
-      case FermentationStepTableModel::ColumnIndex::EndAcidity  :
-      case FermentationStepTableModel::ColumnIndex::StartGravity:
-      case FermentationStepTableModel::ColumnIndex::EndGravity  :
-      case FermentationStepTableModel::ColumnIndex::FreeRise    :
-      case FermentationStepTableModel::ColumnIndex::Vessel      :
-         retVal = this->writeDataToModel(index, value, role);
-         break;
-
-      // No default case as we want the compiler to warn us if we missed one
-   }
-   return retVal;
+   // No special handling required for any of our columns
+   return this->writeDataToModel(index, value, role);
 }
 
 /////==========================CLASS FermentationStepItemDelegate===============================

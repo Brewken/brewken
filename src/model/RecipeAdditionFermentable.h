@@ -44,7 +44,7 @@ class RecipeAdditionFermentable : public RecipeAddition,
                                   public IngredientAmount<RecipeAdditionFermentable, Fermentable> {
    Q_OBJECT
 
-   RECIPE_ADDITION_DECL(Fermentable)
+   RECIPE_ADDITION_DECL(RecipeAdditionFermentable, Fermentable)
 
    INGREDIENT_AMOUNT_DECL(RecipeAdditionFermentable, Fermentable)
 
@@ -59,6 +59,7 @@ public:
     *        info.
     */
    static TypeLookup const typeLookup;
+   TYPE_LOOKUP_GETTER
 
    RecipeAdditionFermentable(QString name = "", int const recipeId = -1, int const ingredientId = -1);
    RecipeAdditionFermentable(NamedParameterBundle const & namedParameterBundle);

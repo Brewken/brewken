@@ -118,6 +118,14 @@ int BtTableModel::columnCount(QModelIndex const & /*parent*/) const {
    return this->m_columnInfos.size();
 }
 
+QVariant BtTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
+   if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+      return this->getColumnLabel(section);
+   }
+
+   return QVariant();
+}
+
 void BtTableModel::contextMenu(QPoint const & point) {
    qDebug() << Q_FUNC_INFO;
    QHeaderView* hView = qobject_cast<QHeaderView*>(this->sender());

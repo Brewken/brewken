@@ -91,7 +91,7 @@ if(APPLE AND NOT CMAKE_OSX_ARCHITECTURES)
    # Per https://cmake.org/cmake/help/latest/variable/CMAKE_OSX_ARCHITECTURES.html, "the value of this variable should
    # be set prior to the first project() or enable_language() command invocation because it may influence configuration
    # of the toolchain and flags".
-   set(CMAKE_OSX_ARCHITECTURES x86_64) # Build intel 64-bit binary.
+   set(CMAKE_OSX_ARCHITECTURES x86_64, arm64) # Build both x86_64 and arm64 for Apple silicon.
    #set(CMAKE_OSX_ARCHITECTURES i386 x86_64) # Build intel binary.
    #set(CMAKE_OSX_ARCHITECTURES ppc i386 ppc64 x86_64) # Build universal binary.
 endif()
@@ -107,7 +107,8 @@ message(STATUS "PROJECT_SOURCE_DIR is ${PROJECT_SOURCE_DIR}")
 # Sometimes we do need the capitalised version of the project name
 set(capitalisedProjectName Brewken)
 # We use this in the program, to tell users where to get support.
-set(CONFIG_HOMEPAGE_URL "https://github.com/${capitalisedProjectName}/${projectName}")
+set(CONFIG_GITHUB_URL "https://github.com/${capitalisedProjectName}/${projectName}")
+set(CONFIG_WEBSITE_URL "https://www.brewken.com/")
 set(CONFIG_ORGANIZATION_DOMAIN "brewken.com")
 
 #=======================================================================================================================
@@ -801,7 +802,7 @@ configure_file(src/config.in src/config.h)
 #=======================================================================================================================
 # We don't need to list the embedded resource files themselves here, just the "Resource Collection File" that lists what
 # they are.
-set(filesToCompile_qrc "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.qrc")
+set(filesToCompile_qrc "${CMAKE_CURRENT_SOURCE_DIR}/resources.qrc")
 
 #=======================================================================================================================
 #=========================================== Files included with the program ===========================================
@@ -816,7 +817,8 @@ set(filesToInstall_docs ${repoDir}/README.md)
 set(filesToInstall_data ${repoDir}/data/default_db.sqlite
                         ${repoDir}/data/DefaultContent001-OriginalDefaultData.xml
                         ${repoDir}/data/DefaultContent002-BJCP_2021_Styles.json
-                        ${repoDir}/data/DefaultContent003-Ingredients-Hops-Yeasts.json)
+                        ${repoDir}/data/DefaultContent003-Ingredients-Hops-Yeasts.json
+                        ${repoDir}/data/DefaultContent004-MoreYeasts.json)
 
 # Desktop files to install.
 set(filesToInstall_desktop ${repoDir}/linux/${PROJECT_NAME}.desktop)

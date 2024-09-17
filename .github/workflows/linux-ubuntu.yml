@@ -45,7 +45,7 @@ jobs:
         #
         os: [ubuntu-22.04, ubuntu-24.04]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -111,17 +111,14 @@ jobs:
         run: |
           make
 
-      #
-      # On Linux, currently CMake
-      #
-      #- name: Test (via CMake)
-      #  working-directory: ${{github.workspace}}/build
-      #  shell: bash
-      #  env:
-      #    CTEST_OUTPUT_ON_FAILURE: TRUE
-      #    QT_QPA_PLATFORM: minimal
-      #  run: |
-      #    make test
+      - name: Test (via CMake)
+        working-directory: ${{github.workspace}}/build
+        shell: bash
+        env:
+          CTEST_OUTPUT_ON_FAILURE: TRUE
+          QT_QPA_PLATFORM: minimal
+        run: |
+          make test
 
       # Note that, although we continue to support CMake for local builds and installs, we no longer support packaging
       # with CPack/CMake.  The bt build script packaging gives us better control over the packaging process.

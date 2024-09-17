@@ -105,6 +105,9 @@ public:
    ~TreeNodeBase() = default;
 
    static QVariant header(int section) {
+      if (section < 0 || section >= static_cast<int>(Info::NumberOfColumns)) {
+         return QVariant();
+      }
       return QVariant(Derived::columnDisplayNames[section]);
    }
 
