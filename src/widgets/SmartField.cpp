@@ -372,6 +372,12 @@ void SmartField::setAmount(std::optional<Measurement::Amount> const & amount) {
    return;
 }
 
+void SmartField::setDefault() {
+   Q_ASSERT(this->pimpl->m_initialised);
+   this->setRawText("");
+   return;
+}
+
 // Instantiate the above template functions for the types that are going to use it
 // (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header, which
 // saves having to put a bunch of std::string stuff there.)

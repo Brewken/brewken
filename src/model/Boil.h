@@ -35,7 +35,7 @@
 AddPropertyName(description  )
 AddPropertyName(notes        )
 AddPropertyName(preBoilSize_l)
-AddPropertyName(boilTime_mins)
+AddPropertyName(boilTime_mins) // Only used for BeerXML
 AddPropertyName(boilSteps    )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================

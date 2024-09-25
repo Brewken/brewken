@@ -18,9 +18,9 @@
 #include "MainWindow.h"
 #include "measurement/Unit.h"
 
-BoilStepEditor::BoilStepEditor(QWidget* parent) :
+BoilStepEditor::BoilStepEditor(QWidget* parent, QString const editorName) :
    QDialog{parent},
-   EditorBase<BoilStepEditor, BoilStep>() {
+   EditorBase<BoilStepEditor, BoilStep>(editorName) {
    this->setupUi(this);
 
    // NB: label_description / textEdit_description don't need initialisation here as neither is a smart field

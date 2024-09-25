@@ -153,8 +153,32 @@ void BtComboBox::setValue(int value) {
    return;
 }
 
-QVariant BtComboBox::getValue(TypeInfo const & typeInfo) const {
-   if (typeInfo.isOptional()) {
+
+void BtComboBox::setDefault() {
+   this->setCurrentIndex(0);
+   return;
+}
+
+void BtComboBox::setFromVariant(QVariant const & value) {
+   Q_ASSERT(this->pimpl->m_initialised);
+   // We assume the QVariant holds an int or an optional int, as we do for serialisation etc, as otherwise it gets hard
+   // to handle strongly-typed enums generically at runtime.
+   if (this->pimpl->m_typeInfo->isOptional()) {
+      auto vv {value.value<std::optional<int>>()};
+      if (vv) {
+         this->setValue(*vv);
+      } else {
+         this->setNull();
+      }
+   } else {
+      this->setValue(value.value<int>());
+   }
+   return;
+}
+
+QVariant BtComboBox::getAsVariant() const {
+   Q_ASSERT(this->pimpl->m_initialised);
+   if (this->pimpl->m_typeInfo->isOptional()) {
       return QVariant::fromValue(this->getOptIntValue());
    }
    return QVariant::fromValue(this->getNonOptIntValue());

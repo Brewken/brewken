@@ -25,9 +25,9 @@
 #include "measurement/Unit.h"
 #include "sortFilterProxyModels/StyleSortFilterProxyModel.h"
 
-StyleEditor::StyleEditor(QWidget* parent) :
+StyleEditor::StyleEditor(QWidget* parent, QString const editorName) :
    QDialog{parent},
-   EditorBase<StyleEditor, Style>() {
+   EditorBase<StyleEditor, Style>(editorName) {
    setupUi(this);
 
    this->tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);

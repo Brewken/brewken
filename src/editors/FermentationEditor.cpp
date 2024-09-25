@@ -22,9 +22,9 @@
 #include "model/Fermentation.h"
 #include "model/Recipe.h"
 
-FermentationEditor::FermentationEditor(QWidget* parent) :
+FermentationEditor::FermentationEditor(QWidget* parent, QString const editorName) :
    QDialog(parent),
-   EditorWithRecipeBase<FermentationEditor, Fermentation>() {
+   EditorWithRecipeBase<FermentationEditor, Fermentation>(editorName) {
    this->setupUi(this);
    this->postSetupUiInit(
       {

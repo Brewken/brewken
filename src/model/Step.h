@@ -37,7 +37,7 @@ AddPropertyName(rampTime_mins  )
 AddPropertyName(startAcidity_pH)
 AddPropertyName(startTemp_c    )
 AddPropertyName(stepNumber     )
-AddPropertyName(stepTime_days  )
+AddPropertyName(stepTime_days  ) // Mostly needed for BeerXML
 AddPropertyName(stepTime_mins  )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================

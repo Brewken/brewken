@@ -47,9 +47,9 @@
 // user to grab this value (and that of other common materials if we can find them).
 //
 
-EquipmentEditor::EquipmentEditor(QWidget* parent/*, bool singleEquipEditor*/) :
+EquipmentEditor::EquipmentEditor(QWidget* parent, QString const editorName) :
    QDialog(parent),
-   EditorBase<EquipmentEditor, Equipment>() {
+   EditorBase<EquipmentEditor, Equipment>(editorName) {
    this->setupUi(this);
 
    this->tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);

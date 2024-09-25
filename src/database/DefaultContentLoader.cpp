@@ -156,6 +156,8 @@ DefaultContentLoader::UpdateResult DefaultContentLoader::updateContentIfNecessar
                                 allRecipesBeforeImport.begin(), allRecipesBeforeImport.end(),
                                 std::back_inserter(newlyImportedRecipes));
             qDebug() << Q_FUNC_INFO << newlyImportedRecipes.size() << "newly imported Recipes";
+            // TODO: It would be neat, at some point, to to have a mechanism for setting a property on multiple objects
+            //       of the same type, so that we could do it in a single DB update.
             for (auto recipe : newlyImportedRecipes) {
                recipe->setFolder(FOLDER_FOR_SUPPLIED_RECIPES);
             }

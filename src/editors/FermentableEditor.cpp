@@ -30,9 +30,9 @@
 
 // TODO: Need a separate editor for inventory
 
-FermentableEditor::FermentableEditor(QWidget* parent) :
+FermentableEditor::FermentableEditor(QWidget* parent, QString const editorName) :
    QDialog(parent),
-   EditorBase<FermentableEditor, Fermentable>() {
+   EditorBase<FermentableEditor, Fermentable>(editorName) {
    setupUi(this);
 
    this->tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);

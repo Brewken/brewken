@@ -22,9 +22,9 @@
 #include "model/Boil.h"
 #include "model/Recipe.h"
 
-BoilEditor::BoilEditor(QWidget* parent) :
+BoilEditor::BoilEditor(QWidget* parent, QString const editorName) :
    QDialog(parent),
-   EditorWithRecipeBase<BoilEditor, Boil>() {
+   EditorWithRecipeBase<BoilEditor, Boil>(editorName) {
    this->setupUi(this);
    this->postSetupUiInit(
       {

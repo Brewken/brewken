@@ -18,9 +18,9 @@
 #include "MainWindow.h"
 #include "measurement/Unit.h"
 
-FermentationStepEditor::FermentationStepEditor(QWidget* parent) :
+FermentationStepEditor::FermentationStepEditor(QWidget* parent, QString const editorName) :
    QDialog{parent},
-   EditorBase<FermentationStepEditor, FermentationStep>() {
+   EditorBase<FermentationStepEditor, FermentationStep>(editorName) {
    this->setupUi(this);
 
    // NB: Although FermentationStep inherits (via StepExtended) from Step, the rampTime_mins field is not used and

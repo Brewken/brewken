@@ -28,9 +28,9 @@
 #include "database/ObjectStoreWrapper.h"
 #include "measurement/Unit.h"
 
-MiscEditor::MiscEditor(QWidget * parent) :
+MiscEditor::MiscEditor(QWidget * parent, QString const editorName) :
    QDialog(parent),
-   EditorBase<MiscEditor, Misc>() {
+   EditorBase<MiscEditor, Misc>(editorName) {
    setupUi(this);
 
    tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);

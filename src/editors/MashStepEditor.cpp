@@ -21,9 +21,9 @@
 #include "MainWindow.h"
 #include "measurement/Unit.h"
 
-MashStepEditor::MashStepEditor(QWidget* parent) :
+MashStepEditor::MashStepEditor(QWidget* parent, QString const editorName) :
    QDialog{parent},
-   EditorBase<MashStepEditor, MashStep>() {
+   EditorBase<MashStepEditor, MashStep>(editorName) {
    this->setupUi(this);
 
    // NB: label_description / textEdit_description don't need initialisation here as neither is a smart field

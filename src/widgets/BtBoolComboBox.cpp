@@ -128,6 +128,21 @@ void BtBoolComboBox::setNull() {
    return;
 }
 
+void BtBoolComboBox::setDefault() {
+   this->setCurrentIndex(0);
+   return;
+}
+
+void BtBoolComboBox::setFromVariant(QVariant const & value) {
+   Q_ASSERT(this->pimpl->m_initialised);
+   if (this->pimpl->m_typeInfo->isOptional()) {
+      this->setValue(value.value<std::optional<bool>>());
+   } else {
+      this->setValue(value.value<bool>());
+   }
+   return;
+}
+
 [[nodiscard]] bool BtBoolComboBox::getNonOptBoolValue() const {
    Q_ASSERT(!this->isOptional());
    QString const rawValue = this->currentData().toString();
@@ -146,8 +161,15 @@ void BtBoolComboBox::setNull() {
    return rawValue == trueValue;
 }
 
-[[nodiscard]] QVariant BtBoolComboBox::getValue(TypeInfo const & typeInfo) const {
-   if (typeInfo.isOptional()) {
+///[[nodiscard]] QVariant BtBoolComboBox::getValue(TypeInfo const & typeInfo) const {
+///   if (typeInfo.isOptional()) {
+///      return QVariant::fromValue(this->getOptBoolValue());
+///   }
+///   return QVariant::fromValue(this->getNonOptBoolValue());
+///}
+
+[[nodiscard]] QVariant BtBoolComboBox::getAsVariant() const {
+   if (this->pimpl->m_typeInfo->isOptional()) {
       return QVariant::fromValue(this->getOptBoolValue());
    }
    return QVariant::fromValue(this->getNonOptBoolValue());

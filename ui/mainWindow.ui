@@ -236,6 +236,25 @@
             </item>
            </layout>
           </widget>
+
+          <widget class="QWidget" name="tabTree_mash">
+           <attribute name="icon">
+            <iconset resource="../resources.qrc">
+             <normaloff>:/images/iconMash.svg</normaloff>:/images/iconMash.svg</iconset>
+           </attribute>
+           <attribute name="title">
+            <string/>
+           </attribute>
+           <attribute name="toolTip">
+            <string>Mashes</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_12">
+            <item>
+             <widget class="MashTreeView" name="treeView_mash"/>
+            </item>
+           </layout>
+          </widget>
+
          </widget>
         </item>
        </layout>
@@ -2526,6 +2545,11 @@
    <class>StyleRangeWidget</class>
    <extends>QWidget</extends>
    <header>StyleRangeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MashTreeView</class>
+   <extends>QTreeView</extends>
+   <header>trees/TreeView.h</header>
   </customwidget>
   <customwidget>
    <class>MiscTreeView</class>

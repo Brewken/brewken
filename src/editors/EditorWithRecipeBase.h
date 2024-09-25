@@ -30,11 +30,11 @@
  *           EDITOR_WITH_RECIPE_COMMON_DECL should be placed in the header file instead of EDITOR_COMMON_DECL
  *           EDITOR_WITH_RECIPE_COMMON_CODE should be placed in the .cpp   file instead of EDITOR_COMMON_CODE
  */
-template<class Derived, class NE>
-class EditorWithRecipeBase : public EditorBase<Derived, NE> {
+template<class Derived, class NE, LiveEditItem LEI = LiveEditItem::Disabled>
+class EditorWithRecipeBase : public EditorBase<Derived, NE, LEI> {
 public:
-   EditorWithRecipeBase() :
-      EditorBase<Derived, NE>{},
+   EditorWithRecipeBase(QString const editorName) :
+      EditorBase<Derived, NE>{editorName},
       m_recipeObs{nullptr} {
       return;
    }

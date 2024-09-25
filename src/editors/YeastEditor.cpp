@@ -29,9 +29,9 @@
 #include "database/ObjectStoreWrapper.h"
 #include "measurement/Unit.h"
 
-YeastEditor::YeastEditor(QWidget * parent) :
+YeastEditor::YeastEditor(QWidget * parent, QString const editorName) :
    QDialog(parent),
-   EditorBase<YeastEditor, Yeast>() {
+   EditorBase<YeastEditor, Yeast>(editorName) {
    setupUi(this);
 
    this->tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);
