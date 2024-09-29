@@ -26,346 +26,52 @@
 #include <QString>
 #include <QPlainTextEdit>
 
+#include "BtHorizontalTabs.h"
 #include "database/ObjectStoreWrapper.h"
+#include "editors/EditorBaseField.h"
 #include "model/NamedEntity.h"
+#include "model/Recipe.h" // Need to include this this to be able to cast Recipe to QObject
 #include "utils/CuriouslyRecurringTemplateBase.h"
-#include "widgets/BtBoolComboBox.h"
-#include "widgets/BtComboBox.h"
 
 /**
- * \brief Most fields are written together.  However, some are marked 'Late' because they need to be written after
- *        the object is created.
+ * \brief This is used as a template parameter to turn on and off various \b small features in \c EditorBase (in
+ *        conjunction with the concepts defined below).
  *
- *        Logically this belongs inside EditorBaseField, but that's templated, so it would get a bit hard to refer to if
- *        we put it there.
+ * \sa EditorBase
  */
-enum class WhenToWriteField {
-   Normal,
-   Late
-};
-
-/**
- * \brief Field info for a field of a subclass of \c EditorBase.
- *
- *        Note that we can't put this inside the \c EditorBase class declaration as we also want to use it there, and
- *        we'd get errors about "invalid use of incomplete type ‘class EditorBase<Derived, NE>’".
- *
- *        We template on both label and edit field types.  This is partly so we call the right overload of
- *        \c SmartAmounts::Init, partly because \c QLineEdit and \c QTextEdit don't have a useful common base class, and
- *        partly because we want to access member functions of \c SmartLineEdit that don't exist on \c QLineEdit or
- *        \c QTextEdit.
- *
- *        Note that the member functions are mostly const because they are not modifying this struct -- merely things
- *        referenced by the struct.
- */
-template<class LabelType, class EditFieldType>
-struct EditorBaseField {
-
-   char const * labelName;
-   LabelType * label;
-   EditFieldType * editField;
-   BtStringConst const & property;
-   // This field isn't used for all values of EditFieldType, but we don't try to make it conditional for the same
-   // reasons as EditorBase::m_liveEditItem below.
-   std::optional<int> precision = std::nullopt;
-   WhenToWriteField whenToWrite = WhenToWriteField::Normal;
-
+struct EditorBaseOptions {
    /**
-    * \brief Constructor for when we don't have a SmartLineEdit or similar
-    *
-    *        NB: Both \c precision and \c whenToWrite have defaults, but precision is the one that more often needs
-    *        something other than default to be specified, so we put it first in the argument list.
+    * \brief Enabling this turns on the temporary live copy of edit item, whose fields are updated straight away as
+    *        edits are made.  This is useful for showing calculated values or drawing charts.
     */
-   EditorBaseField([[maybe_unused]] char const * const editorClass,
-                   char const * const labelName,
-                   [[maybe_unused]] char const * const labelFqName,
-                   LabelType * label,
-                   [[maybe_unused]] char const * const editFieldName,
-                   [[maybe_unused]] char const * const editFieldFqName,
-                   EditFieldType * editField,
-                   BtStringConst const & property,
-                   [[maybe_unused]] TypeInfo const & typeInfo,
-                   std::optional<int> precision = std::nullopt,
-                   WhenToWriteField whenToWrite = WhenToWriteField::Normal)
-   requires (!std::same_as<EditFieldType, SmartLineEdit > &&
-             !std::same_as<EditFieldType, BtComboBox    > &&
-             !std::same_as<EditFieldType, BtBoolComboBox>) :
-      labelName  {labelName  },
-      label      {label      },
-      editField  {editField  },
-      property   {property   },
-      precision  {precision  },
-      whenToWrite{whenToWrite} {
-      return;
-   }
-
-   //! Constructor for when we have a SmartLineEdit
-   EditorBaseField(char const * const editorClass,
-                   char const * const labelName,
-                   char const * const labelFqName,
-                   LabelType * label,
-                   char const * const editFieldName,
-                   char const * const editFieldFqName,
-                   SmartLineEdit * editField,
-                   BtStringConst const & property,
-                   TypeInfo const & typeInfo,
-                   std::optional<int> precision = std::nullopt,
-                   WhenToWriteField whenToWrite = WhenToWriteField::Normal)
-   requires (std::same_as<EditFieldType, SmartLineEdit>) :
-      labelName  {labelName  },
-      label      {label      },
-      editField  {editField  },
-      property   {property   },
-      precision  {precision  },
-      whenToWrite{whenToWrite} {
-      SmartAmounts::Init(editorClass,
-                         labelName,
-                         labelFqName,
-                         *label,
-                         editFieldName,
-                         editFieldFqName,
-                         *editField,
-                         typeInfo,
-                         precision);
-      return;
-   }
-
-   //! Constructor for when we have a BtComboBox
-   EditorBaseField(char const * const editorClass,
-                   char const * const labelName,
-                   char const * const labelFqName,
-                   LabelType * label,
-                   char const * const editFieldName,
-                   char const * const editFieldFqName,
-                   BtComboBox * editField,
-                   BtStringConst const & property,
-                   TypeInfo const & typeInfo,
-                   EnumStringMapping const & nameMapping,
-                   EnumStringMapping const & displayNameMapping,
-                   std::vector<int>  const * restrictTo = nullptr,
-                   SmartLineEdit *           controlledField = nullptr,
-                   WhenToWriteField whenToWrite = WhenToWriteField::Normal)
-   requires (std::same_as<EditFieldType, BtComboBox>) :
-      labelName  {labelName  },
-      label      {label      },
-      editField  {editField  },
-      property   {property   },
-      precision  {std::nullopt},
-      whenToWrite{whenToWrite} {
-      editField->init(editorClass,
-                      editFieldName,
-                      editFieldFqName,
-                      nameMapping,
-                      displayNameMapping,
-                      typeInfo,
-                      restrictTo,
-                      controlledField);
-      return;
-   }
-
-   //! Constructor for when we have a BtBoolComboBox
-   EditorBaseField(char const * const editorClass,
-                   char const * const labelName,
-                   [[maybe_unused]] char const * const labelFqName,
-                   LabelType * label,
-                   char const * const editFieldName,
-                   char const * const editFieldFqName,
-                   BtBoolComboBox * editField,
-                   BtStringConst const & property,
-                   TypeInfo const & typeInfo,
-                   QString const & unsetDisplay = QObject::tr("No"),
-                   QString const & setDisplay   = QObject::tr("Yes"),
-                   WhenToWriteField whenToWrite = WhenToWriteField::Normal)
-   requires (std::same_as<EditFieldType, BtBoolComboBox>) :
-      labelName  {labelName  },
-      label      {label      },
-      editField  {editField  },
-      property   {property   },
-      precision  {std::nullopt},
-      whenToWrite{whenToWrite} {
-      // We could use BT_BOOL_COMBO_BOX_INIT here, but we'd be repeating a bunch of work we already did in EDITOR_FIELD
-      editField->init(editorClass,
-                      editFieldName,
-                      editFieldFqName,
-                      unsetDisplay,
-                      setDisplay,
-                      typeInfo);
-      return;
-   }
-
-   //
-   // You might think that in these connectFieldChanged, it would suffice to use QObject * as the type of context, but
-   // this gave an error about "invalid conversion from ‘QObject*’ to
-   // ‘const QtPrivate::FunctionPointer<void (WaterEditor::*)()>::Object*’ {aka ‘const WaterEditor*’} [-fpermissive]".
-   // Rather than fight this, we just add another template parameter.
-   //
-
-   //! Simple case - the field tells us editing finished via the \c editingFinished signal
-   template <typename Derived, typename Functor>
-   void connectFieldChanged(Derived * context, Functor functor) const
-   requires (std::same_as<EditFieldType, QLineEdit>) {
-      // We ignore the defaulted parameter on connect, and its return value, as we don't need them
-      context->connect(this->editField, &EditFieldType::editingFinished, context, functor, Qt::AutoConnection);
-      return;
-   }
-
-   //! I don't know \c QPlainTextEdit does not have an \c editingFinished signal
-   template <typename Derived, typename Functor>
-   void connectFieldChanged(Derived * context, Functor functor) const
-   requires (std::same_as<EditFieldType, QTextEdit> ||
-             std::same_as<EditFieldType, QPlainTextEdit>) {
-      context->connect(this->editField, &EditFieldType::textChanged, context, functor, Qt::AutoConnection);
-      return;
-   }
-
-   //! \c SmartLineEdit uses \c editingFinished itself, and subsequently emits \c textModified after text corrections
-   template <typename Derived, typename Functor>
-   void connectFieldChanged(Derived * context, Functor functor) const
-   requires (std::same_as<EditFieldType, SmartLineEdit>) {
-      context->connect(this->editField, &EditFieldType::textModified, context, functor, Qt::AutoConnection);
-      return;
-   }
-
-   //! Combo boxes are slightly different
-   template <typename Derived, typename Functor>
-   void connectFieldChanged(Derived * context, Functor functor) const
-   requires (std::same_as<EditFieldType, BtComboBox> ||
-             std::same_as<EditFieldType, BtBoolComboBox>) {
-      // QOverload is needed on next line because the signal currentIndexChanged is overloaded in QComboBox - see
-      // https://doc.qt.io/qt-5/qcombobox.html#currentIndexChanged
-      context->connect(this->editField, QOverload<int>::of(&QComboBox::currentIndexChanged), context, functor, Qt::AutoConnection);
-      return;
-   }
-
-   QVariant getFieldValue() const requires (std::same_as<EditFieldType, QTextEdit     > ||
-                                            std::same_as<EditFieldType, QPlainTextEdit>) {
-      return this->editField->toPlainText();
-   }
-
-   QVariant getFieldValue() const requires (std::same_as<EditFieldType, QLineEdit>) {
-      return this->editField->text();
-   }
-
-   QVariant getFieldValue() const requires (std::same_as<EditFieldType, SmartLineEdit > ||
-                                            std::same_as<EditFieldType, BtComboBox    > ||
-                                            std::same_as<EditFieldType, BtBoolComboBox>) {
-      // Through the magic of templates, and naming conventions, one line suffices for all three types
-      return this->editField->getAsVariant();
-   }
-
+   bool liveEditItem = false;
    /**
-    * \brief Set property on supplied object from edit field
+    * \brief Enabling this turns on the automatic update of the first tab to show the name of the item being edited.
+    *        This relies on the \c Derived class having a \c QTabWidget called \c tabWidget_editor (and that the object
+    *        name is provided by the \c PropertyNames::NamedEntity::name property).
     */
-   void setPropertyFromEditField(QObject & object) const {
-      object.setProperty(*property, this->getFieldValue());
-      return;
-   }
-
-   void setEditFieldText(QString const & val) const requires (std::same_as<EditFieldType, QTextEdit     > ||
-                                                              std::same_as<EditFieldType, QPlainTextEdit>) {
-      this->editField->setPlainText(val);
-      return;
-   }
-
-   void setEditFieldText(QString const & val) const requires (std::same_as<EditFieldType, QLineEdit    > ||
-                                                              std::same_as<EditFieldType, SmartLineEdit>) {
-      this->editField->setText(val);
-      return;
-   }
-
-   void setEditField(QVariant const & val) const requires (std::same_as<EditFieldType, QTextEdit     > ||
-                                                           std::same_as<EditFieldType, QPlainTextEdit> ||
-                                                           std::same_as<EditFieldType, QLineEdit     >) {
-      this->setEditFieldText(val.toString());
-      return;
-   }
-
-   void setEditField(QVariant const & val) const requires (std::same_as<EditFieldType, SmartLineEdit > ||
-                                                           std::same_as<EditFieldType, BtComboBox    > ||
-                                                           std::same_as<EditFieldType, BtBoolComboBox>) {
-      this->editField->setFromVariant(val);
-      return;
-   }
-
-   //! This clears the field, or sets it to the default value
-   void clearEditField()  const requires (std::same_as<EditFieldType, QTextEdit     > ||
-                                          std::same_as<EditFieldType, QPlainTextEdit> ||
-                                          std::same_as<EditFieldType, QLineEdit     >) {
-      this->setEditFieldText("");
-      return;
-   }
-   void clearEditField() const requires (std::same_as<EditFieldType, SmartLineEdit > ||
-                                         std::same_as<EditFieldType, BtComboBox    > ||
-                                         std::same_as<EditFieldType, BtBoolComboBox>) {
-      this->editField->setDefault();
-      return;
-   }
-
+   bool nameTab = false;
    /**
-    * \brief Set edit field from property on supplied object
+    * \brief Enabling this turns on the observation of (the current) \c Recipe.  Typically it makes sense for us to be
+    *        able to watch a \c Recipe when it can have at most one of the thing we are editing (\c Boil, \c Equipment,
+    *        \c Fermentation, \c Mash, \c Style).
     */
-   void setEditFieldFromProperty(QObject & object) const {
-      this->setEditField(object.property(*property));
-      return;
-   }
-
+   bool recipe = false;
+   /**
+    * \brief Enabling this means we show the edit item's ID (obtained from the \c NamedEntity::key() function) in a
+    *        label field called \c label_id_value.
+    */
+   bool idDisplay = false;
 };
-
-using EditorBaseFieldVariant = std::variant<
-   // Not all permutations are valid, hence why some are commented out
-   EditorBaseField<QLabel, QLineEdit     >,
-   EditorBaseField<QLabel, QTextEdit     >,
-   EditorBaseField<QLabel, QPlainTextEdit>,
-   EditorBaseField<QLabel, SmartLineEdit >,
-   EditorBaseField<QLabel, BtComboBox    >,
-   EditorBaseField<QLabel, BtBoolComboBox>,
-   EditorBaseField<SmartLabel, QLineEdit     >,
-//   EditorBaseField<SmartLabel, QTextEdit     >,
-//   EditorBaseField<SmartLabel, QPlainTextEdit>,
-   EditorBaseField<SmartLabel, SmartLineEdit >,
-   EditorBaseField<SmartLabel, BtComboBox    >,
-   EditorBaseField<SmartLabel, BtBoolComboBox>
->;
-
-/**
- * \brief This macro is similar to SMART_FIELD_INIT, but allows us to pass the EditorBaseField constructor.
- *
- *        We assume that, where Foo is some subclass of NamedEntity, then the editor class for Foo is always called
- *        FooEditor.
- *
- *        Note that we can't just write decltype(*label) because (as explained at
- *        https://stackoverflow.com/questions/34231547/decltype-a-dereferenced-pointer-in-c), *label is actually a
- *        reference, and we can't have a member of EditorBaseField be a pointer to a reference.  Fortunately
- *        std::remove_pointer does what we want.
- */
-#define EDITOR_FIELD(modelClass, label, editField, property, ...) \
-   EditorBaseFieldVariant{ \
-      EditorBaseField<std::remove_pointer<decltype(label)>::type, std::remove_pointer<decltype(editField)>::type>{\
-         #modelClass "Editor", \
-         #label, \
-         #modelClass "Editor->" #label, \
-         label, \
-         #editField, \
-         #modelClass "Editor->" #editField, \
-         editField, \
-         property, \
-         modelClass ::typeLookup.getType(property) \
-         __VA_OPT__(, __VA_ARGS__) \
-      } \
-   }
-
-/**
- * \brief Trivial enum flag used by \c EditorBase to make instantiations more self-explanatory
- */
-enum class LiveEditItem {
-   Disabled,
-   Enabled
-};
-
-template <LiveEditItem LEI> struct has_LiveEditItem : public std::false_type{};
-template <>                 struct has_LiveEditItem<LiveEditItem::Enabled> : public std::true_type{};
+template <EditorBaseOptions eb> struct has_LiveEditItem : public std::integral_constant<bool, eb.liveEditItem>{};
+template <EditorBaseOptions eb> struct has_NameTab      : public std::integral_constant<bool, eb.nameTab     >{};
+template <EditorBaseOptions eb> struct has_Recipe       : public std::integral_constant<bool, eb.recipe      >{};
+template <EditorBaseOptions eb> struct has_IdDisplay    : public std::integral_constant<bool, eb.idDisplay   >{};
 // See comment in utils/TypeTraits.h for definition of CONCEPT_FIX_UP (and why, for now, we need it)
-template <LiveEditItem LEI> concept CONCEPT_FIX_UP HasLiveEditItem = has_LiveEditItem<LEI>::value;
+template <EditorBaseOptions eb> concept CONCEPT_FIX_UP HasLiveEditItem = has_LiveEditItem<eb>::value;
+template <EditorBaseOptions eb> concept CONCEPT_FIX_UP HasNameTab      = has_NameTab     <eb>::value;
+template <EditorBaseOptions eb> concept CONCEPT_FIX_UP HasRecipe       = has_Recipe      <eb>::value;
+template <EditorBaseOptions eb> concept CONCEPT_FIX_UP HasIdDisplay    = has_IdDisplay   <eb>::value;
 
 /**
  * \class EditorBase
@@ -400,26 +106,19 @@ template <LiveEditItem LEI> concept CONCEPT_FIX_UP HasLiveEditItem = has_LiveEdi
  *        Note that we cannot do the equivalent for the header file declarations because the Qt MOC does not expand
  *        non-Qt macros.
  *
- *        The derived class also needs to implement the following substantive member functions that \c EditorBase will
- *        call:
- *          - \c void \c writeFieldsToEditItem -- Writes most fields from the editor GUI fields into the object being
- *                                                edited
- *          - \c void \c writeLateFieldsToEditItem -- Writes any fields that must wait until the object definitely
- *                                                    exists in the DB
- *          - \c void \c readFieldsFromEditItem -- (Re)read one or all fields from the object into the relevant GUI
- *                                                 field(s).
- *
- *        Additionally, derived class needs to have the following QPushButton members (typically defined in the .ui file):
- *           pushButton_new, pushButton_save, pushButton_cancel
+ *        Additionally, derived class needs to have the following \c QPushButton members (typically defined in the .ui
+ *        file):
+ *           \c pushButton_new, \c pushButton_save, \c pushButton_cancel
  *
  *        The LiveEditItem template parameter determines whether we keep a "live" copy of whatever is being edited (ie
  *        a copy object to which edits will be applied in real time).  This is useful to show fields calculated by the
  *        NE object itself or (as in the case of \c WaterEditor) to feed data to a chart.  Subclasses that set
- *        LEI = LiveEditItem::Enabled need the following additional private member functions:
+ *        \c editorBaseOptions.liveEditItem to \c true need the following additional private member functions:
  *           - \c void \c postInputFieldModified -- Update any chart following input field modification.
  */
 template<class Derived> class EditorPhantom;
-template<class Derived, class NE, LiveEditItem LEI = LiveEditItem::Disabled>
+template<class Derived, class NE,
+                        EditorBaseOptions editorBaseOptions>
 class EditorBase : public CuriouslyRecurringTemplateBase<EditorPhantom, Derived> {
 public:
    /**
@@ -443,17 +142,30 @@ public:
    }
    ~EditorBase() = default;
 
+   //! No-op version
+   void setupTabs() requires (!HasNameTab<editorBaseOptions>) { return; }
+   //! Substantive version
+   void setupTabs() requires (HasNameTab<editorBaseOptions>) {
+      this->derived().tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);
+      return;
+   }
+
    /**
     * \brief Derived should call this after calling setupUi
+    *
+    *        NOTE that where two fields are linked to the same property (typically where we have an amount field and a
+    *        combo box that controls whether that amount is mass/volume/etc) they \b must be adjacent in
+    *        initializer_list.  (This is because of how we do early break out when only
     */
-   void postSetupUiInit(std::vector<EditorBaseFieldVariant> fields) {
+   void postSetupUiInit(std::initializer_list<EditorBaseFieldVariant> fields) {
       this->m_fields = std::make_unique<std::vector<EditorBaseFieldVariant>>(fields);
+      this->setupTabs();
       this->connectSignalsAndSlots();
       return;
    }
 
    //! \brief No-op version
-   void connectLiveEditSignalsAndSlots() requires (!HasLiveEditItem<LEI>) {
+   void connectLiveEditSignalsAndSlots() requires (!HasLiveEditItem<editorBaseOptions>) {
       return;
    }
 
@@ -462,7 +174,7 @@ public:
     *        update the corresponding property of the live edit item.  We connect the relevant signal to
     *        Derived::inputFieldModified, which then calls doInputFieldModified
     */
-   void connectLiveEditSignalsAndSlots() requires HasLiveEditItem<LEI> {
+   void connectLiveEditSignalsAndSlots() requires HasLiveEditItem<editorBaseOptions> {
       if (this->m_fields) {
          for (auto const & field : *this->m_fields) {
             // Using std::visit and a lambda allows us to do generic things on std::variant
@@ -478,12 +190,13 @@ public:
    }
 
    //! \brief No-op version
-   void doInputFieldModified([[maybe_unused]] QObject const * const signalSender) requires (!HasLiveEditItem<LEI>) {
+   void doInputFieldModified([[maybe_unused]] QObject const * const signalSender)
+   requires (!HasLiveEditItem<editorBaseOptions>) {
       return;
    }
 
    //! \brief Substantive version
-   void doInputFieldModified(QObject const * const signalSender) requires (HasLiveEditItem<LEI>) {
+   void doInputFieldModified(QObject const * const signalSender) requires (HasLiveEditItem<editorBaseOptions>) {
       if (this->m_fields && this->m_liveEditItem && signalSender && signalSender->parent() == &this->derived()) {
          bool foundMatch = false;
          for (auto const & field : *this->m_fields) {
@@ -533,11 +246,11 @@ public:
    }
 
    //! \brief No-op version
-   void makeLiveEditItem() requires (!HasLiveEditItem<LEI>) {
+   void makeLiveEditItem() requires (!HasLiveEditItem<editorBaseOptions>) {
       return;
    }
 
-   void makeLiveEditItem() requires HasLiveEditItem<LEI> {
+   void makeLiveEditItem() requires HasLiveEditItem<editorBaseOptions> {
       this->m_liveEditItem = std::make_unique<NE>(*this->m_editItem);
       return;
    }
@@ -554,7 +267,7 @@ public:
       this->m_editItem = editItem;
       if (this->m_editItem) {
          this->derived().connect(this->m_editItem.get(), &NamedEntity::changed, &this->derived(), &Derived::changed);
-         this->readFromEditItem(std::nullopt);
+         this->readFieldsFromEditItem(std::nullopt);
       }
 
       this->makeLiveEditItem();
@@ -635,11 +348,11 @@ public:
          return;
       }
 
-      this->writeNormalFields();
+      this->writeNormalFieldsToEditItem();
       if (this->m_editItem->key() < 0) {
          ObjectStoreWrapper::insert(this->m_editItem);
       }
-      this->writeLateFields();
+      this->writeLateFieldsToEditItem();
 
       this->derived().setVisible(false);
       return;
@@ -654,24 +367,66 @@ public:
       return;
    }
 
+   //! \brief No-op version
+   void updateNameTabIfNeeded([[maybe_unused]] std::optional<QString> propName)
+   requires (!HasNameTab<editorBaseOptions>) {
+      return;
+   }
+   //! \brief Substantive version
+   void updateNameTabIfNeeded(std::optional<QString> propName) requires (HasNameTab<editorBaseOptions>) {
+      if (!propName || *propName == PropertyNames::NamedEntity::name) {
+         this->derived().tabWidget_editor->setTabText(0, this->m_editItem->name());
+      }
+      return;
+   }
+
+   //! \brief No-op version
+   void showId() requires (!HasIdDisplay<editorBaseOptions>) { return; }
+   //! \brief Substantive version
+   void showId() requires (HasIdDisplay<editorBaseOptions>) {
+      // This label does not have an input field; it just shows the ID of the item
+      this->derived().label_id_value->setText(QString::number(this->m_editItem->key()));
+      return;
+   }
+
+   //! Derived classes can override this for any extra behaviour
+   void postReadFieldsFromEditItem([[maybe_unused]] std::optional<QString> propName) { return; }
+
    /**
-    * \brief Read either one field (if \c propName specified) or all (if it is \c std::nullopt) into the UI from the
+    * \brief (Re)read either one field (if \c propName specified) or all (if it is \c std::nullopt) into the UI from the
     *        model item.
     */
-   void readFromEditItem(std::optional<QString> propName) {
+   void readFieldsFromEditItem(std::optional<QString> propName) {
       if (this->m_editItem && this->m_fields) {
+         bool matched = false;
          for (auto const & field : *this->m_fields) {
             if (std::visit(
+               //
                // This lambda returns true if we should stop subsequent loop processing, or false if we should carry on
-               // looking at subsequent fields
-               [this, &propName](auto&& fieldInfo) {
+               // looking at subsequent fields.  Because the code inside the lambda cannot directly break out of the
+               // for loop, we have to return this boolean to tell the calling code whether to break out.
+               //
+               [this, &propName, &matched](auto&& fieldInfo) {
+                  //
+                  // The update rule is simple -- we either update all fields (because no property name is supplied) or
+                  // only the field(s) for the supplied property name.
+                  //
+                  // In most cases, there will only be one field per property name.  However, we also have to handle the
+                  // case where we have a combo-box that is controlling the physical quantity for another field (eg
+                  // whether an input field is mass or volume).  By convention, where there is more than one field for a
+                  // property name, the records must be adjacent in the m_fields vector.  This makes our "break"
+                  // criteria relatively simple:
+                  //    - We have a property name
+                  //    - We already matched it at least once
+                  //    - The current field does not match
+                  //
                   if (!propName || *propName == fieldInfo.property) {
                      fieldInfo.setEditFieldFromProperty(*this->m_editItem);
                      if (propName) {
-                        // We want to break out here if we were only updating one property, but we can't do that from
-                        // inside a lambda, so we need to tell the calling code to break out of the loop.
-                        return true;
+                        matched = true;
                      }
+                  } else if (!propName && matched) {
+                     return true;
                   }
                   return false;
                },
@@ -681,20 +436,40 @@ public:
             }
          }
       }
-      // TODO: For the moment, we still do this call, but ultimately we'll eliminate it.
-      this->derived().readFieldsFromEditItem(propName);
+      // The ID is not going to change unless we're reading in all fields
+      if (!propName) {
+         this->showId();
+      }
+      this->updateNameTabIfNeeded(propName);
+      // Note the need for derived() here to allow Derived to override
+      this->derived().postReadFieldsFromEditItem(propName);
       return;
    }
 
+   //! No-op version
+   bool handleChangeFromRecipe([[maybe_unused]] QObject * sender) requires (!HasRecipe<editorBaseOptions>) {
+      return false;
+   }
+   //! Substantive version
+   bool handleChangeFromRecipe(QObject * sender) requires (HasRecipe<editorBaseOptions>) {
+      if (this->m_recipeObs && sender == static_cast<QObject *>(this->m_recipeObs)) {
+         this->readAllFields();
+         return true;
+      }
+      return false;
+   }
    /**
     * \brief Subclass should call this from its \c changed slot
     *
     *        Note that \c QObject::sender has \c protected access specifier, so we can't call it from here, not even
     *        via the derived class pointer.  Therefore we have derived class call it and pass us the result.
     */
-   virtual void doChanged(QObject * sender, QMetaProperty prop, [[maybe_unused]] QVariant val) {
+   void doChanged(QObject * sender, QMetaProperty prop, [[maybe_unused]] QVariant val) {
+      if (this->handleChangeFromRecipe(sender)) {
+         return;
+      }
       if (this->m_editItem && sender == this->m_editItem.get()) {
-         this->readFromEditItem(prop.name());
+         this->readFieldsFromEditItem(prop.name());
       }
       return;
    }
@@ -715,7 +490,7 @@ public:
 
    void readAllFields() {
       if (this->m_editItem) {
-         this->readFromEditItem(std::nullopt);
+         this->readFieldsFromEditItem(std::nullopt);
       } else {
          this->doClearFields();
       }
@@ -739,17 +514,47 @@ public:
 
    }
 
-   void writeNormalFields() {
+   //! Derived classes can override this for any extra behaviour
+   void postWriteNormalFieldsToEditItem() { return; }
+
+   //! Write most fields from the editor GUI fields into the object being edited
+   void writeNormalFieldsToEditItem() {
       this->writeFields(WhenToWriteField::Normal);
-      // TODO: For the moment, we still do this call, but ultimately we'll eliminate it.
-      this->derived().writeFieldsToEditItem();
+      // Note the need for derived() here to allow Derived to override
+      this->derived().postWriteNormalFieldsToEditItem();
       return;
    }
 
-   void writeLateFields() {
+   //! Derived classes can override this for any extra behaviour
+   void postWriteLateFieldsToEditItem() { return; }
+
+   //! Write any fields that must wait until the object definitely exists in the DB
+   void writeLateFieldsToEditItem() {
       this->writeFields(WhenToWriteField::Late);
-      // TODO: For the moment, we still do this call, but ultimately we'll eliminate it.
-      this->derived().writeLateFieldsToEditItem();
+      // Note the need for derived() here to allow Derived to override
+      this->derived().postWriteLateFieldsToEditItem();
+      return;
+   }
+
+   void setRecipe(Recipe * recipe) requires HasRecipe<editorBaseOptions> {
+      this->m_recipeObs = recipe;
+      // TBD: We could automatically set the edit item as follows:
+//   if (this->m_recipeObs) {
+//      this->m_editItem = this->m_recipeObs->get<NE>()
+//   }
+      return;
+   }
+
+   //! \brief Show the editor and re-read the edit item.  Used for editors with Recipe.
+   void doShowEditor() {
+      this->readAllFields();
+      this->derived().setVisible(true);
+      return;
+   }
+
+   //! \brief Close (hide) the editor without saving anything.  Used for editors with Recipe.
+   void doCloseEditor() {
+      this->derived().setVisible(false);
       return;
    }
 
@@ -786,6 +591,11 @@ protected:
     *        we don't worry about the overhead of unnecessarily having this member when LEI is LiveEditItem::Disabled.
     */
    std::unique_ptr<NE> m_liveEditItem;
+
+   /**
+    * \brief The \c Recipe, if any, that we are "observing".
+    */
+   Recipe * m_recipeObs = nullptr;
 };
 
 /**
@@ -793,16 +603,14 @@ protected:
  *
  *        Note we have to be careful about comment formats in macro definitions
  */
-#define EDITOR_COMMON_DECL(NeName, ...)                                                   \
+#define EDITOR_COMMON_DECL(NeName, Options)                                          \
    /* This allows EditorBase to call protected and private members of Derived */     \
-   friend class EditorBase<NeName##Editor, NeName __VA_OPT__(, __VA_ARGS__)>;        \
+   friend class EditorBase<NeName##Editor, NeName, Options>;                         \
                                                                                      \
    public:                                                                           \
       NeName##Editor(QWidget * parent = nullptr, QString const editorName = "");     \
       virtual ~NeName##Editor();                                                     \
                                                                                      \
-      void writeFieldsToEditItem();                                                  \
-      void writeLateFieldsToEditItem();                                              \
       void readFieldsFromEditItem(std::optional<QString> propName);                  \
                                                                                      \
    public slots:                                                                     \
@@ -812,15 +620,20 @@ protected:
       void changed(QMetaProperty, QVariant);                                         \
       void clickedNew();                                                             \
       void inputFieldModified();                                                     \
+      /* Additional standard slots for editors with recipe */                        \
+      void showEditor();                                                             \
+      void closeEditor();                                                            \
 
 /**
  * \brief Derived classes should include this in their implementation file
  */
-#define EDITOR_COMMON_CODE(EditorName) \
-   void EditorName::saveAndClose() { this->doSaveAndClose(); return; }                                                \
-   void EditorName::clearAndClose() { this->doClearAndClose(); return; }                                              \
-   void EditorName::changed(QMetaProperty prop, QVariant val) { this->doChanged(this->sender(), prop, val); return; } \
-   void EditorName::clickedNew() { this->newEditItem(); return; }                                                     \
-   void EditorName::inputFieldModified() { this->doInputFieldModified(this->sender()); return; };                     \
+#define EDITOR_COMMON_CODE(NeName) \
+   void NeName##Editor::saveAndClose() { this->doSaveAndClose(); return; }                                                \
+   void NeName##Editor::clearAndClose() { this->doClearAndClose(); return; }                                              \
+   void NeName##Editor::changed(QMetaProperty prop, QVariant val) { this->doChanged(this->sender(), prop, val); return; } \
+   void NeName##Editor::clickedNew() { this->newEditItem(); return; }                                                     \
+   void NeName##Editor::inputFieldModified() { this->doInputFieldModified(this->sender()); return; };                     \
+   void NeName##Editor::showEditor() { this->doShowEditor(); }                                                            \
+   void NeName##Editor::closeEditor() { this->doCloseEditor(); }                                                          \
 
 #endif

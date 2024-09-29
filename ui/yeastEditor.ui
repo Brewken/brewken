@@ -512,7 +512,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_bestfor">
+     <widget class="QWidget" name="tab_bestFor">
       <attribute name="title">
        <string>Best For</string>
       </attribute>
@@ -648,7 +648,6 @@
   <tabstop>comboBox_yeastFlocculation</tabstop>
   <tabstop>lineEdit_maxReuse</tabstop>
   <tabstop>lineEdit_timesCultured</tabstop>
-  <tabstop>boolCombo_addToSecondary</tabstop>
   <tabstop>pushButton_new</tabstop>
   <tabstop>pushButton_save</tabstop>
   <tabstop>pushButton_cancel</tabstop>

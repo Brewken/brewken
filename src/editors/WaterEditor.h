@@ -32,6 +32,7 @@
 #include "editors/EditorBase.h"
 #include "model/Water.h"
 
+#define WaterEditorOptions EditorBaseOptions{ .liveEditItem = true }
 /*!
  * \class WaterEditor
  *
@@ -39,10 +40,10 @@
  */
 class WaterEditor : public QDialog,
                     public Ui::waterEditor,
-                    public EditorBase<WaterEditor, Water, LiveEditItem::Enabled> {
+                    public EditorBase<WaterEditor, Water, WaterEditorOptions> {
    Q_OBJECT
 public:
-   EDITOR_COMMON_DECL(Water, LiveEditItem::Enabled)
+   EDITOR_COMMON_DECL(Water, WaterEditorOptions)
 ///   WaterEditor(QWidget *parent = nullptr, QString const editorName = "Unnamed");
 ///   virtual ~WaterEditor();
 ///
@@ -55,8 +56,8 @@ public:
 ///
 ///   void newWater(QString folder);
 
-public slots:
-   void showChanges(QMetaProperty const * prop = nullptr);
+///public slots:
+///   void showChanges(QMetaProperty const * prop = nullptr);
 ///   void inputFieldModified();
 ///   void changed(QMetaProperty, QVariant);
 ///   void saveAndClose();
@@ -65,9 +66,6 @@ public slots:
 private:
    void postSetEditItem();
    void postInputFieldModified();
-///   // Private implementation details - see https://herbsutter.com/gotw/_100/
-///   class impl;
-///   std::unique_ptr<impl> pimpl;
 };
 
 #endif

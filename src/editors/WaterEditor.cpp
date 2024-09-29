@@ -52,28 +52,28 @@
 
 WaterEditor::WaterEditor(QWidget *parent, QString const editorName) :
    QDialog(parent),
-   EditorBase<WaterEditor, Water, LiveEditItem::Enabled>(editorName) {
+   EditorBase<WaterEditor, Water, WaterEditorOptions>(editorName) {
 ///   pimpl{std::make_unique<impl>()} {
    this->setupUi(this);
    this->postSetupUiInit(
       {
-       EDITOR_FIELD(Water, label_name            , lineEdit_name             , PropertyNames::NamedEntity::name      ),
-       EDITOR_FIELD(Water, label_notes           , textEdit_notes            , PropertyNames::Water::notes           ),
-       EDITOR_FIELD(Water, label_ca              , lineEdit_ca               , PropertyNames::Water::calcium_ppm     , 2),
-       EDITOR_FIELD(Water, label_cl              , lineEdit_cl               , PropertyNames::Water::chloride_ppm    , 2),
-       EDITOR_FIELD(Water, label_mg              , lineEdit_mg               , PropertyNames::Water::magnesium_ppm   , 2),
-       EDITOR_FIELD(Water, label_so4             , lineEdit_so4              , PropertyNames::Water::sulfate_ppm     , 2),
-       EDITOR_FIELD(Water, label_na              , lineEdit_na               , PropertyNames::Water::sodium_ppm      , 2),
-       EDITOR_FIELD(Water, label_alk             , lineEdit_alk              , PropertyNames::Water::alkalinity_ppm  , 2),
-       EDITOR_FIELD(Water, label_pH              , lineEdit_ph               , PropertyNames::Water::ph              , 2),
-       EDITOR_FIELD(Water, label_alkalinityAsHCO3, boolCombo_alkalinityAsHCO3, PropertyNames::Water::alkalinityAsHCO3, tr("CaCO3"), tr("HCO3")),
+       EDITOR_FIELD_NORM(Water, label_name            , lineEdit_name             , NamedEntity::name      ),
+       EDITOR_FIELD_NORM(Water, label_notes           , textEdit_notes            , Water::notes           ),
+       EDITOR_FIELD_NORM(Water, label_ca              , lineEdit_ca               , Water::calcium_ppm     , 2),
+       EDITOR_FIELD_NORM(Water, label_cl              , lineEdit_cl               , Water::chloride_ppm    , 2),
+       EDITOR_FIELD_NORM(Water, label_mg              , lineEdit_mg               , Water::magnesium_ppm   , 2),
+       EDITOR_FIELD_NORM(Water, label_so4             , lineEdit_so4              , Water::sulfate_ppm     , 2),
+       EDITOR_FIELD_NORM(Water, label_na              , lineEdit_na               , Water::sodium_ppm      , 2),
+       EDITOR_FIELD_NORM(Water, label_alk             , lineEdit_alk              , Water::alkalinity_ppm  , 2),
+       EDITOR_FIELD_NORM(Water, label_pH              , lineEdit_ph               , Water::ph              , 2),
+       EDITOR_FIELD_NORM(Water, label_alkalinityAsHCO3, boolCombo_alkalinityAsHCO3, Water::alkalinityAsHCO3, tr("CaCO3"), tr("HCO3")),
        // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-       EDITOR_FIELD(Water, label_carbonate       , lineEdit_carbonate        , PropertyNames::Water::carbonate_ppm   , 2),
-       EDITOR_FIELD(Water, label_potassium       , lineEdit_potassium        , PropertyNames::Water::potassium_ppm   , 2),
-       EDITOR_FIELD(Water, label_iron            , lineEdit_iron             , PropertyNames::Water::iron_ppm        , 2),
-       EDITOR_FIELD(Water, label_nitrate         , lineEdit_nitrate          , PropertyNames::Water::nitrate_ppm     , 2),
-       EDITOR_FIELD(Water, label_nitrite         , lineEdit_nitrite          , PropertyNames::Water::nitrite_ppm     , 2),
-       EDITOR_FIELD(Water, label_flouride        , lineEdit_flouride         , PropertyNames::Water::flouride_ppm    , 2),
+       EDITOR_FIELD_NORM(Water, label_carbonate       , lineEdit_carbonate        , Water::carbonate_ppm   , 2),
+       EDITOR_FIELD_NORM(Water, label_potassium       , lineEdit_potassium        , Water::potassium_ppm   , 2),
+       EDITOR_FIELD_NORM(Water, label_iron            , lineEdit_iron             , Water::iron_ppm        , 2),
+       EDITOR_FIELD_NORM(Water, label_nitrate         , lineEdit_nitrate          , Water::nitrate_ppm     , 2),
+       EDITOR_FIELD_NORM(Water, label_nitrite         , lineEdit_nitrite          , Water::nitrite_ppm     , 2),
+       EDITOR_FIELD_NORM(Water, label_flouride        , lineEdit_flouride         , Water::flouride_ppm    , 2),
       }
    );
 
@@ -191,8 +191,8 @@ void WaterEditor::postSetEditItem() {
 ///   return;
 ///}
 
-void WaterEditor::showChanges([[maybe_unused]] QMetaProperty const * prop) {
-
+///void WaterEditor::showChanges([[maybe_unused]] QMetaProperty const * prop) {
+///
 ///   if (!this->m_editItem) {
 ///      return;
 ///   }
@@ -230,9 +230,9 @@ void WaterEditor::showChanges([[maybe_unused]] QMetaProperty const * prop) {
 ///   if (updateAll || propName == PropertyNames::Water::nitrate_ppm   ) { this->lineEdit_alk ->setQuantity(this->m_editItem->nitrate_ppm  ()); if (!updateAll) { return; } }
 ///   if (updateAll || propName == PropertyNames::Water::nitrite_ppm   ) { this->lineEdit_alk ->setQuantity(this->m_editItem->nitrite_ppm  ()); if (!updateAll) { return; } }
 ///   if (updateAll || propName == PropertyNames::Water::flouride_ppm  ) { this->lineEdit_alk ->setQuantity(this->m_editItem->flouride_ppm ()); if (!updateAll) { return; } }
-
-   return;
-}
+///
+///   return;
+///}
 
 ///void WaterEditor::inputFieldModified() {
 ///   //
@@ -348,16 +348,16 @@ void WaterEditor::postInputFieldModified() {
 ///   return;
 ///}
 
-void WaterEditor::writeFieldsToEditItem() {
-   return;
-}
+///void WaterEditor::writeFieldsToEditItem() {
+///   return;
+///}
+///
+///void WaterEditor::writeLateFieldsToEditItem() {
+///   return;
+///}
+///
+///void WaterEditor::readFieldsFromEditItem([[maybe_unused]] std::optional<QString> propName) {
+///   return;
+///}
 
-void WaterEditor::writeLateFieldsToEditItem() {
-   return;
-}
-
-void WaterEditor::readFieldsFromEditItem([[maybe_unused]] std::optional<QString> propName) {
-   return;
-}
-
-EDITOR_COMMON_CODE(WaterEditor)
+EDITOR_COMMON_CODE(Water)

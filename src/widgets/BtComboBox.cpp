@@ -116,6 +116,11 @@ void BtComboBox::init(char const * const        editorName        ,
 }
 
 void BtComboBox::autoSetFromControlledField() {
+   // Normally keep this log statement commented out otherwise it generates too many lines in the log file
+//   qDebug().noquote() <<
+//      Q_FUNC_INFO << this->pimpl->m_comboBoxFqName << ":" << this->pimpl->m_typeInfo->fieldType <<
+//      Logging::getStackTrace();
+
    // It's a coding error to call this when there is no controlled field
    Q_ASSERT(this->pimpl->m_controlledField);
 

@@ -168,13 +168,6 @@ NamedParameterBundle const & NamedParameterBundle::getBundle(BtStringConst const
    return this->m_containedBundles.at(*propertyName);
 }
 
-
-///template<class S>
-///S & operator<<(S & stream, NamedParameterBundle const & namedParameterBundle);
-///
-///template<class S>
-///S & operator<<(S & stream, NamedParameterBundle const * namedParameterBundle);
-
 template<class S>
 S & NamedParameterBundle::writeToStream(S & stream, QString const indent) const {
    stream << indent << this->size() << "element NamedParameterBundle @" <<
