@@ -44,24 +44,6 @@ class WaterEditor : public QDialog,
    Q_OBJECT
 public:
    EDITOR_COMMON_DECL(Water, WaterEditorOptions)
-///   WaterEditor(QWidget *parent = nullptr, QString const editorName = "Unnamed");
-///   virtual ~WaterEditor();
-///
-///   /*!
-///    * Sets the water we want to observe.
-///    *
-///    * \param water If \c nullptr then stop observing
-///    */
-///   void setWater(std::shared_ptr<Water> water);
-///
-///   void newWater(QString folder);
-
-///public slots:
-///   void showChanges(QMetaProperty const * prop = nullptr);
-///   void inputFieldModified();
-///   void changed(QMetaProperty, QVariant);
-///   void saveAndClose();
-///   void clearAndClose();
 
 private:
    void postSetEditItem();

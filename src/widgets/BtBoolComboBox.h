@@ -103,11 +103,6 @@ public:
    [[nodiscard]] std::optional<bool> getOptBoolValue() const;
 
    /**
-    * \brief Get value of a combo box, using \c typeInfo to determine whether it is optional or not
-    */
-///   [[nodiscard]] QVariant getValue(TypeInfo const & typeInfo) const;
-
-   /**
     * \brief Similar to \c SmartField::getAsVariant
     */
    [[nodiscard]] QVariant getAsVariant() const;

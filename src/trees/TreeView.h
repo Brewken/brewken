@@ -140,10 +140,10 @@ public:
 
 public slots:
    void newNamedEntity();
+   void versionedRecipe(Recipe * descendant);
 
 private slots:
    void expandFolder(TreeModel::TypeMasks kindaThing, QModelIndex fIdx);
-   void versionedRecipe(Recipe * descendant);
 
    void showAncestors();
    void hideAncestors();

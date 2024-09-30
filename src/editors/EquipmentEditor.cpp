@@ -108,7 +108,6 @@ EquipmentEditor::EquipmentEditor(QWidget* parent, QString const editorName) :
    connect(this->lineEdit_fermenterBatchSize       , &SmartLineEdit::textModified, this, &EquipmentEditor::updateCalcBoilVolume     );
    connect(this->pushButton_absorption             , &QAbstractButton::clicked   , this, &EquipmentEditor::resetAbsorption          );
 
-///   this->connectSignalsAndSlots();
    return;
 }
 

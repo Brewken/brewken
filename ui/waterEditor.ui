@@ -395,17 +395,17 @@
         </widget>
        </item>
        <item row="6" column="4">
-        <widget class="SmartLabel" name="label_flouride">
+        <widget class="SmartLabel" name="label_fluoride">
          <property name="text">
           <string notr="true">Flouride</string>
          </property>
          <property name="buddy">
-          <cstring>lineEdit_flouride</cstring>
+          <cstring>lineEdit_fluoride</cstring>
          </property>
         </widget>
        </item>
        <item row="6" column="5">
-        <widget class="SmartLineEdit" name="lineEdit_flouride">
+        <widget class="SmartLineEdit" name="lineEdit_fluoride">
         </widget>
        </item>
        <item row="7" column="1">

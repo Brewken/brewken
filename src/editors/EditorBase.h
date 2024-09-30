@@ -421,6 +421,8 @@ public:
                   //    - The current field does not match
                   //
                   if (!propName || *propName == fieldInfo.property) {
+                     // Normally leave this log statement commented out as it generates too many lines in the log file
+//                     qDebug() << Q_FUNC_INFO << "Reading" << fieldInfo.property;
                      fieldInfo.setEditFieldFromProperty(*this->m_editItem);
                      if (propName) {
                         matched = true;
