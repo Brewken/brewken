@@ -198,8 +198,8 @@ public:
       //
       // For the moment, we keep the database layer and update one column from one property, hence the split into two
       // separate calls here.  If we ended up doing this sort of stuff in a lot of places, we could expand the
-      // capabilities of ObjectStore etc to handle compound types such as Measurement::Amount.
-      //
+      // capabilities of ObjectStore etc to handle compound types such as Measurement::Amount.  Note, however, that very
+      // often, the unit is not changing, so a lot of the time this is still only one DB call.
       //
       this->doSetQuantity(val.quantity);
       this->doSetUnit    (val.unit    );

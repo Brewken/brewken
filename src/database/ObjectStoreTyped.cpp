@@ -582,7 +582,8 @@ namespace {
          {ObjectStore::FieldType::Double, "iron_ppm"     , PropertyNames::Water::iron_ppm        },
          {ObjectStore::FieldType::Double, "nitrate_ppm"  , PropertyNames::Water::nitrate_ppm     },
          {ObjectStore::FieldType::Double, "nitrite_ppm"  , PropertyNames::Water::nitrite_ppm     },
-         {ObjectStore::FieldType::Double, "flouride_ppm" , PropertyNames::Water::flouride_ppm    },
+         // .:TODO:. We should correct the typo in this column name (copy-and-paste from BeerJSON
+         {ObjectStore::FieldType::Double, "flouride_ppm" , PropertyNames::Water::fluoride_ppm    },
       }
    };
 
@@ -1041,7 +1042,7 @@ bool WriteAllObjectStoresToNewDb(Database & newDatabase, QSqlDatabase & connecti
    // having called dbTransaction.commit().  (It will also turn foreign keys back on either way -- whether the
    // transaction is committed or rolled back.)
    //
-   DbTransaction dbTransaction{newDatabase, connectionNew, DbTransaction::DISABLE_FOREIGN_KEYS};
+   DbTransaction dbTransaction{newDatabase, connectionNew, "Write All", DbTransaction::DISABLE_FOREIGN_KEYS};
 
    for (ObjectStore const * objectStore : getAllObjectStores()) {
       if (!objectStore->writeAllToNewDb(newDatabase, connectionNew)) {

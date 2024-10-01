@@ -844,7 +844,7 @@ namespace {
          {QString("ALTER TABLE water ADD COLUMN iron_ppm      %1").arg(db.getDbNativeTypeName<double>())},
          {QString("ALTER TABLE water ADD COLUMN nitrate_ppm   %1").arg(db.getDbNativeTypeName<double>())},
          {QString("ALTER TABLE water ADD COLUMN nitrite_ppm   %1").arg(db.getDbNativeTypeName<double>())},
-         {QString("ALTER TABLE water ADD COLUMN flouride_ppm  %1").arg(db.getDbNativeTypeName<double>())},
+         {QString("ALTER TABLE water ADD COLUMN flouride_ppm  %1").arg(db.getDbNativeTypeName<double>())}, // Should have been fluoride_ppm!
          //
          // Equipment: Extended and additional fields for BeerJSON.  This includes changing a lot of column names as
          // BeerJSON essentially has a record per vessel ("HLT", "Mash Tun", etc)
@@ -2188,6 +2188,7 @@ namespace {
          case 12:
             ret &= migrate_to_13(database, sqlQuery);
             break;
+         // TODO: On next DB update, correct water.flouride_ppm to water.fluoride_ppm
          default:
             qCritical() << QString("Unknown version %1").arg(oldVersion);
             return false;
@@ -2302,7 +2303,7 @@ bool DatabaseSchemaHelper::migrate(Database & database, int oldVersion, int newV
    // By the magic of RAII, this will abort if we exit this function (including by throwing an exception) without
    // having called dbTransaction.commit().  (It will also turn foreign keys back on either way -- whether the
    // transaction is committed or rolled back.)
-   DbTransaction dbTransaction{database, connection, DbTransaction::DISABLE_FOREIGN_KEYS};
+   DbTransaction dbTransaction{database, connection, "Migrate", DbTransaction::DISABLE_FOREIGN_KEYS};
 
    for ( ; oldVersion < newVersion && ret; ++oldVersion ) {
       ret &= migrateNext(database, oldVersion, connection);

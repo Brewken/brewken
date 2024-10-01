@@ -35,19 +35,10 @@
 #include "trees/TreeNode.h"
 
 // Forward declarations
-class BrewNote;
-class Folder;
 class BtStringConst;
-class TreeView;
-class Equipment;
-class Fermentable;
-class Hop;
-class Misc;
 class NamedEntity;
 class Recipe;
-class Style;
-class Water;
-class Yeast;
+class TreeView;
 
 /*!
  * \class TreeModel
@@ -74,6 +65,7 @@ public:
       Style       = (1 << 7),
       Folder      = (1 << 8),
       Water       = (1 << 9),
+      Mash        = (1 << 10),
    };
    Q_DECLARE_FLAGS(TypeMasks, TypeMask)
 
