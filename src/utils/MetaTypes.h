@@ -82,6 +82,7 @@ Q_DECLARE_METATYPE(Measurement::PhysicalQuantity)
 Q_DECLARE_METATYPE(Measurement::ChoiceOfPhysicalQuantity)
 
 // Measurement::Unit does not inherit from QObject, so we need this for Measurement::Units::unitStringMapping to work
+Q_DECLARE_OPAQUE_POINTER(Measurement::Unit *)
 Q_DECLARE_METATYPE(Measurement::Unit const *)
 
 /**

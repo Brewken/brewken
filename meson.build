@@ -141,8 +141,8 @@
 #   - Meson 0.59.0 or newer to use qt.compile_resources, qt.compile_ui and qt.compile_moc
 #   - Meson 0.60.0 or newer to use + to append items to lists (aka 'list.<plus>' feature -- at least that's what the
 #     warning message says if you've specified a lower minimum version of Meson)
-# We would/will need:
 #   - Meson 0.62.0 or newer for dep 'dl' custom lookup, but current version of Meson on Ubuntu 22.04 LTS is only 0.61.2
+#   - Meson 0.63.0 or newer to correctly locate versions of Qt >= 6.1 -- see https://mesonbuild.com/Qt6-module.html
 #
 # NB: Per https://mesonbuild.com/Reference-manual_functions.html#project the default_options settings "are only used
 #     when running Meson for the first time"!  So if you change any of the default_options settings you *MUST* delete
@@ -191,7 +191,7 @@
 project('brewken', 'cpp',
         version: '1.0.0',
         license: 'GPL-3.0-or-later',
-        meson_version: '>=0.60.0',
+        meson_version: '>=0.63.0',
         default_options : ['cpp_std=c++20',
                            'warning_level=3',
 #                           'prefer_static=true',  See comment above for why this is commented-out for now

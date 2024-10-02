@@ -661,37 +661,35 @@ def installDependencies():
                   )
                )
 
-###         #
-###         # Commented this out as, as of 2024, we don't support Ubuntu 20.04 any more.
-###         #
-###         # Ubuntu 20.04 packages only have Meson 0.53.2, and we need 0.60.0 or later.  In this case it means we have to
-###         # install Meson via pip, which is not ideal on Linux.
-###         #
-###         # Specifically, as explained at https://mesonbuild.com/Getting-meson.html#installing-meson-with-pip, although
-###         # using the pip3 install gets a newer version, we have to do the pip install as root (which is normally not
-###         # recommended).  If we don't do this, then running `meson install` (or even `sudo meson install`) will barf on
-###         # Linux (because we need to be able to install files into system directories).
-###         #
-###         # So, where a sufficiently recent version of Meson is available in the distro packages (eg
-###         # `sudo apt install meson` on Ubuntu etc) it is much better to install this.   Installing via pip is a last
-###         # resort.
-###         #
-###         # The distro ID we get from 'lsb_release -is' will be 'Ubuntu' for all the variants of Ubuntu (eg including
-###         # Kubuntu).  Not sure what happens on derivatives such as Linux Mint though.
-###         #
-###         distroName = str(
-###            btUtils.abortOnRunFail(subprocess.run(['lsb_release', '-is'], encoding = "utf-8", capture_output = True)).stdout
-###         ).rstrip()
-###         log.debug('Linux distro: ' + distroName)
-###         if ('Ubuntu' == distroName):
-###            ubuntuRelease = str(
-###               btUtils.abortOnRunFail(subprocess.run(['lsb_release', '-rs'], encoding = "utf-8", capture_output = True)).stdout
-###            ).rstrip()
-###            log.debug('Ubuntu release: ' + ubuntuRelease)
-###            if (Decimal(ubuntuRelease) < Decimal('22.04')):
-###               log.info('Installing newer version of Meson the hard way')
-###               btUtils.abortOnRunFail(subprocess.run(['sudo', 'apt', 'remove', '-y', 'meson']))
-###               btUtils.abortOnRunFail(subprocess.run(['sudo', 'pip3', 'install', 'meson']))
+         #
+         # Although Ubuntu 24.04 gives us Meson 1.3.2, Ubuntu 22.04 packages only have Meson 0.61.2.  We need Meson
+         # 0.63.0 or later.  In this case it means we have to install Meson via pip, which is not ideal on Linux.
+         #
+         # Specifically, as explained at https://mesonbuild.com/Getting-meson.html#installing-meson-with-pip, although
+         # using the pip3 install gets a newer version, we have to do the pip install as root (which is normally not
+         # recommended).  If we don't do this, then running `meson install` (or even `sudo meson install`) will barf on
+         # Linux (because we need to be able to install files into system directories).
+         #
+         # So, where a sufficiently recent version of Meson is available in the distro packages (eg
+         # `sudo apt install meson` on Ubuntu etc) it is much better to install this.   Installing via pip is a last
+         # resort.
+         #
+         # The distro ID we get from 'lsb_release -is' will be 'Ubuntu' for all the variants of Ubuntu (eg including
+         # Kubuntu).  Not sure what happens on derivatives such as Linux Mint though.
+         #
+         distroName = str(
+            btUtils.abortOnRunFail(subprocess.run(['lsb_release', '-is'], encoding = "utf-8", capture_output = True)).stdout
+         ).rstrip()
+         log.debug('Linux distro: ' + distroName)
+         if ('Ubuntu' == distroName):
+            ubuntuRelease = str(
+               btUtils.abortOnRunFail(subprocess.run(['lsb_release', '-rs'], encoding = "utf-8", capture_output = True)).stdout
+            ).rstrip()
+            log.debug('Ubuntu release: ' + ubuntuRelease)
+            if (Decimal(ubuntuRelease) < Decimal('24.04')):
+               log.info('Installing newer version of Meson the hard way')
+               btUtils.abortOnRunFail(subprocess.run(['sudo', 'apt', 'remove', '-y', 'meson']))
+               btUtils.abortOnRunFail(subprocess.run(['sudo', 'pip3', 'install', 'meson']))
 
       #-----------------------------------------------------------------------------------------------------------------
       #--------------------------------------------- Windows Dependencies ----------------------------------------------
@@ -772,6 +770,11 @@ def installDependencies():
          #
          # As noted above, we no longer support 32-bit ('i686') builds and now only support 64-bit ('x86_64') ones.
          #
+         # Compiling the list of required packages here involves a bit of trial-and-error.  It can be challenging to
+         # work out which package provided the missing binary or library that is preventing your build from working!
+         # A good starting point is the list at https://packages.msys2.org/base.  It may be that the list below is not
+         # minimal.  It should however be sufficient!
+         #
          # 2024-07-29: TBD: Not totally sure we need angleproject.  It wasn't previously a requirement, but, as of
          #                  recently, windeployqt complains if it can't find it.  The alternative would be to pass
          #                  "-no-angle" as a parameter to windeployqt.  However, that option seems to not be present
@@ -794,6 +797,8 @@ def installDependencies():
                         'mingw-w64-' + arch + '-harfbuzz',
                         'mingw-w64-' + arch + '-qt6-base',
                         'mingw-w64-' + arch + '-qt6-static',
+                        'mingw-w64-' + arch + '-qt6-tools',
+                        'mingw-w64-' + arch + '-qt6-translations',
                         'mingw-w64-' + arch + '-qt6',
                         'mingw-w64-' + arch + '-toolchain',
                         'mingw-w64-' + arch + '-xalan-c',
