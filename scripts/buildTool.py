@@ -439,6 +439,7 @@ def installDependencies():
                                                 'python3',
                                                 'python3-dev',
                                                 'qtbase5-dev',
+                                                'qt6-l10n-tools', # Needed for lupdate
                                                 'qt6-multimedia-dev',
                                                 'qt6-tools-dev',
                                                 'qt6-tools-dev-tools',
@@ -770,10 +771,16 @@ def installDependencies():
          #
          # As noted above, we no longer support 32-bit ('i686') builds and now only support 64-bit ('x86_64') ones.
          #
-         # Compiling the list of required packages here involves a bit of trial-and-error.  It can be challenging to
-         # work out which package provided the missing binary or library that is preventing your build from working!
-         # A good starting point is the list at https://packages.msys2.org/base.  It may be that the list below is not
-         # minimal.  It should however be sufficient!
+         # Compiling the list of required packages here involves a bit of trial-and-error.  A good starting point for
+         # what we probably need is found by searching for qt6 in the list at https://packages.msys2.org/base.  However,
+         # it can still be challenging to work out which package provided the missing binary or library that is
+         # preventing your build from working.
+         #
+         # Eg, when you install mingw-w64-x86_64-qt6-static, you get a message saying mingw-w64-x86_64-clang-libs is an
+         # "optional dependency" required for lupdate and qdoc.  Since we need lupdate, we therefore need to install
+         # clang-libs, even though our own compilation is done with GCC.
+         #
+         # So, it may be that the list below is not minimal, but it should be sufficient!
          #
          # 2024-07-29: TBD: Not totally sure we need angleproject.  It wasn't previously a requirement, but, as of
          #                  recently, windeployqt complains if it can't find it.  The alternative would be to pass
@@ -790,6 +797,7 @@ def installDependencies():
                         'git',
                         'mingw-w64-' + arch + '-boost',
                         'mingw-w64-' + arch + '-cmake',
+                        'mingw-w64-' + arch + '-clang-libs', # Needed for lupdate
                         'mingw-w64-' + arch + '-libbacktrace',
                         'mingw-w64-' + arch + '-meson',
                         'mingw-w64-' + arch + '-nsis',

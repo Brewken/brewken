@@ -131,7 +131,7 @@ QPair<double,double> SmartLabel::getRangeToDisplay(double const canonicalValueMi
    );
 }
 
-void SmartLabel::enterEvent([[maybe_unused]] QEvent * event) {
+void SmartLabel::enterEvent([[maybe_unused]] QEnterEvent * event) {
    this->textEffect(true);
    return;
 }
