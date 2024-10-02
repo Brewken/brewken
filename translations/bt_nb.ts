@@ -100,6 +100,18 @@
         <source>Post-boil for %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Automatically-generated pre-boil step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically-generated boil proper step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically-generated post-boil step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BoilStep</name>
@@ -2136,7 +2148,7 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Import %1?</source>
-        <translation>Importer %1?</translation>
+        <translation type="vanished">Importer %1?</translation>
     </message>
     <message>
         <source>No mash</source>
@@ -2344,6 +2356,14 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Please restart %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically-created Boil for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically-created Fermentation for %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3977,6 +3997,45 @@ Program will now exit.</source>
     </message>
     <message>
         <source>ft</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished">Nei</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished">Ja</translation>
+    </message>
+    <message>
+        <source>Boil for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically created by BeerXML import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentation for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Primary Fermentation Step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Secondary Fermentation Step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tertiary Fermentation Step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RaIngrd</name>
+    <message>
+        <source>Add %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5847,11 +5906,11 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Water name</source>
+        <source>CaCO3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Water name:</source>
+        <source>HCO3</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6219,7 +6278,7 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Boil Time</source>
-        <translation type="unfinished">Koketid</translation>
+        <translation type="obsolete">Koketid</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -7143,10 +7202,6 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <translation type="obsolete">Mengde er i vekt?</translation>
     </message>
     <message>
-        <source>GrainGroup</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Fermantable Grain Group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7254,6 +7309,10 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Grain Group</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7274,16 +7333,20 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Pre-Fermentation Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermentation Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Notes</source>
         <translation type="unfinished">Notater</translation>
+    </message>
+    <message>
+        <source>New hop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7803,7 +7866,7 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Target boil size</source>
-        <translation>Kokevolum mål</translation>
+        <translation type="vanished">Kokevolum mål</translation>
     </message>
     <message>
         <source>Efficiency (%)</source>
@@ -7827,7 +7890,7 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Boil Time</source>
-        <translation type="vanished">Koketid</translation>
+        <translation>Koketid</translation>
     </message>
     <message>
         <source>Target batch size</source>
@@ -8250,10 +8313,6 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Boil Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>E&amp;quipment</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8443,6 +8502,10 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Save Fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(See Boil tab below)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8826,7 +8889,7 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Tid</translation>
+        <translation type="vanished">Tid</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -10180,6 +10243,18 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <source>Alkalinity measured as</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New hop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>yeastEditor</name>
@@ -10325,7 +10400,7 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Add to Secondary</source>
-        <translation>Legg til i sekundær</translation>
+        <translation type="vanished">Legg til i sekundær</translation>
     </message>
     <message>
         <source>Checked means add this yeast to secondary instead of primary</source>
@@ -10393,10 +10468,6 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Maximum apparent attenuation as percentage of OG points</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Whether to add this yeast to secondary instead of primary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

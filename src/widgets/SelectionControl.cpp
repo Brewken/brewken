@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/SelectionControl.cpp is is part of Brewken, and is copyright the following authors 2018-2021:
+ * widgets/SelectionControl.cpp is is part of Brewken, and is copyright the following authors 2018-2024:
  *   • Iman Ahmadvand <iman72411@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -24,7 +24,7 @@ SelectionControl::SelectionControl(QWidget * parent) : QAbstractButton(parent) {
 
 SelectionControl::~SelectionControl() = default;
 
-void SelectionControl::enterEvent(QEvent * e) {
+void SelectionControl::enterEvent(QEnterEvent * e) {
    setCursor(Qt::PointingHandCursor);
    QAbstractButton::enterEvent(e);
    return;

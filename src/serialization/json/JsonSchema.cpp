@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * serialization/json/JsonSchema.cpp is part of Brewken, and is copyright the following authors 2021-2022:
+ * serialization/json/JsonSchema.cpp is part of Brewken, and is copyright the following authors 2021-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -20,6 +20,7 @@
 
 #include <QDebug>
 #include <QMap>
+#include <QObject>
 #include <QString>
 
 #include <valijson/adapters/boost_json_adapter.hpp>

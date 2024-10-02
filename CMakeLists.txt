@@ -83,6 +83,13 @@ cmake_policy(VERSION 3.16)
 # numbers via it (rather than manually setting individual major/minor/patch vars).
 cmake_policy(SET CMP0048 NEW)
 
+# Compatibility settings used with modern CMAKE (>= 3.29) used to pull BoostConfig.cmake from upstream
+# -> FindBoost cmake module was removed in recent versions.
+# See https://cmake.org/cmake/help/latest/module/FindBoost.html
+if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER_EQUAL 3.29)
+cmake_policy(SET CMP0167 NEW)
+endif()
+
 #=======================================================================================================================
 #================================================ Other preliminaries =================================================
 #=======================================================================================================================
@@ -392,11 +399,13 @@ message(STATUS "Doing ${CMAKE_BUILD_TYPE} build (DO_RELEASE_BUILD = ${DO_RELEASE
 #
 if(UNIX AND NOT APPLE)
    execute_process(COMMAND lsb_release -rs OUTPUT_VARIABLE RELEASE_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-   # This is the latest version of Qt5 available on Ubuntu 22.04
-   set(QT5_MIN_VERSION 5.15.3)
+   # As of 2024-09-30:
+   #   - Qt 6.2.4 is the maximum available in Ubuntu 22.04 (Jammy).
+   #   - Qt 6.4.2 is the maximum available in Ubuntu 24.04 (Noble).
+   set(QT5_MIN_VERSION 6.2.4)
 else()
-   # Windows and Mac have a slightly newer version of Qt 5.15 LTS
-   set(QT5_MIN_VERSION 5.15.13)
+   # Windows and Mac may have newer versions, but we keep everything the same for now
+   set(QT5_MIN_VERSION 6.2.4)
 endif()
 
 if(APPLE)

@@ -275,8 +275,8 @@ testRunnerTargetName = mainExecutableTargetName + '_tests'
 #=======================================================================================================================
 #==================================================== Meson modules ====================================================
 #=======================================================================================================================
-# Import the Qt tools.  See https://mesonbuild.com/Qt5-module.html
-qt = import('qt5')
+# Import the Qt tools.  See https://mesonbuild.com/Qt6-module.html
+qt = import('qt6')
 # File System module - see https://mesonbuild.com/Fs-module.html
 fs = import('fs')
 
@@ -325,16 +325,14 @@ sharedLibraryPaths = []
 # Note that if you change the minimum Qt version, you need to make corresponding changes to the .github/workflows/*.yml
 # files so that GitHub uses the appropriate version of Qt for the automated builds.
 #
-# 2024-05-19: Removed support for Ubuntu 20.04 because the latest version of Qt available in its packages is 5.12.8,
-#             which is no longer supported (and, amongst other things, has an old version of SQLite that does not
-#             support "DROP COLUMN").  Qt 5.15 is the long-term support version of Qt5.
+# As of 2024-09-30:
+#   - Qt 6.2.4 is the maximum available in Ubuntu 22.04 (Jammy).
+#   - Qt 6.4.2 is the maximum available in Ubuntu 24.04 (Noble).
 #
-# For the moment, max version we can have here is 5.15.3, because that's what Ubuntu 22.04 topped out at.  But note
-# that Meson will be happy with newer versions (5.15.13 on Windows & Mac).
-
+minVersionOfQt = '>=6.2.4'
 # Tell meson which Qt modules we need
-qtCommonDependencies = dependency('qt5',
-                                  version : '>=5.15.3',
+qtCommonDependencies = dependency('qt6',
+                                  version : minVersionOfQt,
                                   modules : ['Core',
                                              'Gui',          # Needed for QColor on Mac?
                                              'Multimedia',
@@ -348,9 +346,9 @@ qtCommonDependencies = dependency('qt5',
                                   static : true)
 # The Qt Gui module is only needed for the main program.  (We don't want the tests to try to load it or it could barf
 # in a GitHub action that does not have a display running.)
-qtMainExeDependencies = dependency('qt5', version : '>=5.15.3', modules: ['Gui'])
+qtMainExeDependencies = dependency('qt6', version : minVersionOfQt, modules: ['Gui'])
 # The Qt Test module is only needed for the unit tests
-qtTestRunnerDependencies = dependency('qt5', version : '>=5.15.3', modules: ['Test'])
+qtTestRunnerDependencies = dependency('qt6', version : minVersionOfQt, modules: ['Test'])
 
 #===================================================== Find Boost ======================================================
 # Boost is a collection of separate libraries, some, but not all, of which are header-only.  We only specify the Boost
