@@ -1088,7 +1088,7 @@ public:
             Q_ASSERT(ObjectStore::FieldType::Int == fieldDefn->fieldType);
             if (propertyBindValue.toInt() <= 0) {
                qDebug() << Q_FUNC_INFO << "Treating" << propertyBindValue << "foreign key value as NULL";
-               propertyBindValue = QVariant(QVariant::Int);
+               propertyBindValue = QVariant{QMetaType{QMetaType::Int}};
             }
          }
          sqlQuery.bindValue(QString{":%1"}.arg(*columnToUpdateInDb), propertyBindValue);

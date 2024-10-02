@@ -50,8 +50,12 @@
  */
 class BtSqlQuery : public QSqlQuery {
 public:
-   // Use the same constructors as QSqlQuery
+   // Use the same constructors as QSqlQuery...
    using QSqlQuery::QSqlQuery;
+   // ...except that QSqlQuery copy constructor is deprecated (and, if you use it, you get a warning: "QSqlQuery is not
+   // meant to be copied. Use move construction instead.").  So, let's not do copy construction!
+   BtSqlQuery(BtSqlQuery const & other) = delete;
+   BtSqlQuery(QSqlQuery const & other) = delete;
 
    /**
     * \brief As \c QSqlQuery::prepare() except we don't actually call QSqlQuery::prepare() unless and until a value is
