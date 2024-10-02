@@ -1230,7 +1230,21 @@ generatedFromMocForUnitTests = qt.compile_moc(headers : unitTestMocHeaders,
 #     manually from the command line with lrelease
 # Calling qt.compile_translations will do only the latter, so we need to do the former directly
 #
+#
+# NB: In Qt 5, the `lupdate` command line tool is just invoked as `lupdate` on all three of our build platforms.  In
+# Qt 6, it's a bit different.  We still call `lupdate` on Mac, but, on Windows we need to call `lupdate-qt6` (see file
+# list at https://packages.msys2.org/packages/mingw-w64-x86_64-qt6-tools).  This is presumably to allow Qt 5 and Qt 6 to
+# coexist, but we have to take account of it here.
+#
+lupdate_name = 'lupdate'
+if host_machine.system() == 'windows'
+   lupdate_name = 'lupdate-qt6'
+elif host_machine.system() == 'linux'
+   lupdate_name = 'lupdate'
+endif
+lupdate_executable = find_program(lupdate_name, required : true)
 
+#
 # Call lupdate to ensure the .ts files are synced with the source code.  We need:
 #    lupdate meson.project_source_root()/src meson.project_source_root()/ui -ts [list of .ts files]
 # This tells lupdate to recursively scan the src/ and ui/ subdirectories and update the specified ts files
@@ -1238,9 +1252,10 @@ generatedFromMocForUnitTests = qt.compile_moc(headers : unitTestMocHeaders,
 #
 # We make a point here of displaying the output of run_command because we want to show message emitted by lupdate about
 # what it did.
+#
 message('Running lupdate on the following ts files:', run_command('ls', translationSourceFiles, check: true).stdout())
 message(
-   run_command('lupdate',
+   run_command(lupdate_executable,
                meson.project_source_root() + '/src',
                meson.project_source_root() + '/ui',
                '-ts',

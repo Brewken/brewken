@@ -790,7 +790,8 @@ def installDependencies():
          #
          # Eg, when you install mingw-w64-x86_64-qt6-static, you get a message saying mingw-w64-x86_64-clang-libs is an
          # "optional dependency" required for lupdate and qdoc.  Since we need lupdate, we therefore need to install
-         # clang-libs, even though our own compilation is done with GCC.
+         # clang-libs, even though our own compilation is done with GCC.  (In fact, per comments in meson.build, lupdate
+         # also gets a name change to lupdate-qt6, but we don't have to worry about that here!)
          #
          # So, it may be that the list below is not minimal, but it should be sufficient!
          #
