@@ -189,7 +189,7 @@ public:
     * \brief We override the \c QWidget event handler \c mouseReleaseEvent to capture left mouse clicks on us.  (Right
     *        clicks get notified to us via the \c QWidget::customContextMenuRequested signal.)
     */
-   virtual void mouseReleaseEvent(QMouseEvent * event);
+   virtual void mouseReleaseEvent(QMouseEvent * event) override;
 
 
 private:

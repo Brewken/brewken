@@ -678,6 +678,13 @@ def installDependencies():
          # The distro ID we get from 'lsb_release -is' will be 'Ubuntu' for all the variants of Ubuntu (eg including
          # Kubuntu).  Not sure what happens on derivatives such as Linux Mint though.
          #
+         # ANOTHER problem on Ubuntu 22.04 is that lupdate doesn't work with Qt6, because it runs qtchooser which does
+         # not work with Qt6 on Ubuntu 22.04 because of the following "won't fix"
+         # bug: https://bugs.launchpad.net/ubuntu/+source/qtchooser/+bug/1964763.  The workaround suggested at
+         # https://askubuntu.com/questions/1460242/ubuntu-22-04-with-qt6-qmake-could-not-find-a-qt-installation-of is
+         # to run `sudo qtchooser -install qt6 $(which qmake6)`, so that's what we do here after sorting out the Meson
+         # install.
+         #
          distroName = str(
             btUtils.abortOnRunFail(subprocess.run(['lsb_release', '-is'], encoding = "utf-8", capture_output = True)).stdout
          ).rstrip()
@@ -691,6 +698,11 @@ def installDependencies():
                log.info('Installing newer version of Meson the hard way')
                btUtils.abortOnRunFail(subprocess.run(['sudo', 'apt', 'remove', '-y', 'meson']))
                btUtils.abortOnRunFail(subprocess.run(['sudo', 'pip3', 'install', 'meson']))
+               #
+               # Now fix lupdate
+               #
+               fullPath_qmake6 = shutil.which('qmake6')
+               btUtils.abortOnRunFail(subprocess.run(['sudo', 'qtchooser', '-install', 'qt6', fullPath_qmake6]))
 
       #-----------------------------------------------------------------------------------------------------------------
       #--------------------------------------------- Windows Dependencies ----------------------------------------------
@@ -804,6 +816,7 @@ def installDependencies():
                         'mingw-w64-' + arch + '-freetype',
                         'mingw-w64-' + arch + '-harfbuzz',
                         'mingw-w64-' + arch + '-qt6-base',
+                        'mingw-w64-' + arch + '-qt6-declarative', # Also needed for lupdate?
                         'mingw-w64-' + arch + '-qt6-static',
                         'mingw-w64-' + arch + '-qt6-tools',
                         'mingw-w64-' + arch + '-qt6-translations',
