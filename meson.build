@@ -1254,7 +1254,7 @@ lupdate_executable = find_program(lupdate_name, required : true)
 # what it did.
 #
 message(
-   'Running lupdate (' + lupdate_executable + ') on the following ts files:',
+   'Running lupdate (', lupdate_executable, ') on the following ts files:',
    run_command('ls', translationSourceFiles, check: true).stdout()
 )
 message(
