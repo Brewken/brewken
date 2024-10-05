@@ -402,15 +402,15 @@ if(UNIX AND NOT APPLE)
    # As of 2024-09-30:
    #   - Qt 6.2.4 is the maximum available in Ubuntu 22.04 (Jammy).
    #   - Qt 6.4.2 is the maximum available in Ubuntu 24.04 (Noble).
-   set(QT5_MIN_VERSION 6.2.4)
+   set(QT_MIN_VERSION 6.2.4)
 else()
    # Windows and Mac may have newer versions, but we keep everything the same for now
-   set(QT5_MIN_VERSION 6.2.4)
+   set(QT_MIN_VERSION 6.2.4)
 endif()
 
 if(APPLE)
    #
-   # The Qt5 documentation to using CMake at https://doc.qt.io/qt-5/cmake-get-started.html says we need to set
+   # The Qt6 documentation to using CMake at https://doc.qt.io/qt-5/cmake-get-started.html says we need to set
    # CMAKE_PREFIX_PATH environment variable to the Qt 5 installation prefix.  In theory, setting the corresponding CMake
    # variable should do the same job (per https://cmake.org/cmake/help/latest/variable/CMAKE_PREFIX_PATH.html).
    #
@@ -451,8 +451,8 @@ set_property(GLOBAL PROPERTY AUTOGEN_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/autog
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 #
-# Although it's possible to do individual find_package commands for each bit of Qt we want to use (Qt5Core, Qt5Widgets,
-# Qt5Sql, etc), the newer, and more compact, way of doing things (per
+# Although it's possible to do individual find_package commands for each bit of Qt we want to use (Qt6Core, Qt6Widgets,
+# Qt6Sql, etc), the newer, and more compact, way of doing things (per
 # https://cmake.org/cmake/help/latest/manual/cmake-qt.7.html and https://doc.qt.io/qt-5/cmake-get-started.html) is to do
 # one find for Qt as a whole and to list the components that we need.  Depending on what versions of CMake and Qt you
 # have installed, the way to find out what components exist varies a bit, but there is a relatively recent list at
@@ -476,16 +476,16 @@ set(qtToolsComponents
    LinguistTools
 )
 list(APPEND qtAllComponents ${qtCommonComponents} ${qtToolsComponents} ${qtTestComponents})
-find_package(Qt5 ${QT5_MIN_VERSION} COMPONENTS ${qtAllComponents} REQUIRED)
+find_package(Qt6 ${QT_MIN_VERSION} COMPONENTS ${qtAllComponents} REQUIRED)
 # Each package has its own include directories that we need to make sure the compiler knows about
 foreach(qtComponent IN LISTS qtAllComponents)
    # Sometimes it's useful that part of a variable name can be specified by expanding another variable!
-   include_directories(${Qt5${qtComponent}_INCLUDE_DIRS})
+   include_directories(${Qt6${qtComponent}_INCLUDE_DIRS})
 endforeach()
 
 # Qt wants position independent code in certain circumstances - specifically "You must build your code with position
 # independent code if Qt was built with -reduce-relocations. Compile your code with -fPIC (and not with -fPIE)."
-if(Qt5_POSITION_INDEPENDENT_CODE)
+if(Qt6_POSITION_INDEPENDENT_CODE)
    # This will initialize the POSITION_INDEPENDENT_CODE property on all the targets
    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
@@ -496,28 +496,28 @@ if(WIN32)
    #================================================= Windows Qt Stuff =================================================
    #====================================================================================================================
    # .:TBD:.  Not sure whether/why we need these additional Qt components on Windows
-   #find_package(Qt5MultimediaWidgets REQUIRED)
-   #find_package(Qt5OpenGL REQUIRED)
+   #find_package(Qt6MultimediaWidgets REQUIRED)
+   #find_package(Qt6OpenGL REQUIRED)
 
-#   get_target_property(QtMultimediaWidgets_location Qt5::MultimediaWidgets         LOCATION_${CMAKE_BUILD_TYPE})
-#   get_target_property(QtOpenGL_location            Qt5::OpenGL                    LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtCore_location              Qt5::Core                      LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtGui_location               Qt5::Gui                       LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtMultimedia_location        Qt5::Multimedia                LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtNetwork_location           Qt5::Network                   LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtPrintSupport_location      Qt5::PrintSupport              LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtQgif_location              Qt5::QGifPlugin                LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtQico_location              Qt5::QICOPlugin                LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtQjpeg_location             Qt5::QJpegPlugin               LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtQsvgIcon_location          Qt5::QSvgIconPlugin            LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtQsvg_location              Qt5::QSvgPlugin                LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtQtiff_location             Qt5::QTiffPlugin               LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtQWindows_location          Qt5::QWindowsIntegrationPlugin LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtSqliteDriver_location      Qt5::QSQLiteDriverPlugin       LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtSql_location               Qt5::Sql                       LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtSvg_location               Qt5::Svg                       LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtWidgets_location           Qt5::Widgets                   LOCATION_${CMAKE_BUILD_TYPE})
-   get_target_property(QtXml_location               Qt5::Xml                       LOCATION_${CMAKE_BUILD_TYPE})
+#   get_target_property(QtMultimediaWidgets_location Qt6::MultimediaWidgets         LOCATION_${CMAKE_BUILD_TYPE})
+#   get_target_property(QtOpenGL_location            Qt6::OpenGL                    LOCATION_${CMAKE_BUILD_TYPE})
+   get_target_property(QtCore_location              Qt6::Core                      LOCATION_${CMAKE_BUILD_TYPE})
+   get_target_property(QtGui_location               Qt6::Gui                       LOCATION_${CMAKE_BUILD_TYPE})
+   get_target_property(QtMultimedia_location        Qt6::Multimedia                LOCATION_${CMAKE_BUILD_TYPE})
+   get_target_property(QtNetwork_location           Qt6::Network                   LOCATION_${CMAKE_BUILD_TYPE})
+   get_target_property(QtPrintSupport_location      Qt6::PrintSupport              LOCATION_${CMAKE_BUILD_TYPE})
+   get_target_property(QtQgif_location              Qt6::QGifPlugin                LOCATION_${CMAKE_BUILD_TYPE})
+   get_target_property(QtQico_location              Qt6::QICOPlugin                LOCATION_${CMAKE_BUILD_TYPE})
+   get_target_property(QtQjpeg_location             Qt6::QJpegPlugin               LOCATION_${CMAKE_BUILD_TYPE})
+   get_target_property(QtQsvgIcon_location          Qt6::QSvgIconPlugin            LOCATION_${CMAKE_BUILD_TYPE})
+   get_target_property(QtQsvg_location              Qt6::QSvgPlugin                LOCATION_${CMAKE_BUILD_TYPE})
+   get_target_property(QtQtiff_location             Qt6::QTiffPlugin               LOCATION_${CMAKE_BUILD_TYPE})
+   get_target_property(QtQWindows_location          Qt6::QWindowsIntegrationPlugin LOCATION_${CMAKE_BUILD_TYPE})
+   get_target_property(QtSqliteDriver_location      Qt6::QSQLiteDriverPlugin       LOCATION_${CMAKE_BUILD_TYPE})
+   get_target_property(QtSql_location               Qt6::Sql                       LOCATION_${CMAKE_BUILD_TYPE})
+   get_target_property(QtSvg_location               Qt6::Svg                       LOCATION_${CMAKE_BUILD_TYPE})
+   get_target_property(QtWidgets_location           Qt6::Widgets                   LOCATION_${CMAKE_BUILD_TYPE})
+   get_target_property(QtXml_location               Qt6::Xml                       LOCATION_${CMAKE_BUILD_TYPE})
 
    # .:TBD:. Not clear whether/where these xxx_DLLs variables get used
    set(Qt_DLLs            ${QtCore_location}
@@ -547,7 +547,7 @@ if(WIN32)
 
    set(Platform_DLLs     ${QtQWindows_location})
 
-   get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
+   get_target_property(_qmake_executable Qt6::qmake IMPORTED_LOCATION)
    get_filename_component(QT5_BIN_DIR "${_qmake_executable}" DIRECTORY)
    message("QT5_BIN_DIR = ${QT5_BIN_DIR}")
 
@@ -560,8 +560,8 @@ if(WIN32)
    if(EXISTS ${WINDEPLOYQT_EXECUTABLE})
       # Per https://cmake.org/cmake/help/latest/command/add_executable.html, "IMPORTED executables are useful for
       # convenient reference from commands like add_custom_command()".
-      add_executable(Qt5::windeployqt IMPORTED)
-      set_target_properties(Qt5::windeployqt PROPERTIES IMPORTED_LOCATION ${WINDEPLOYQT_EXECUTABLE})
+      add_executable(Qt6::windeployqt IMPORTED)
+      set_target_properties(Qt6::windeployqt PROPERTIES IMPORTED_LOCATION ${WINDEPLOYQT_EXECUTABLE})
    endif()
 
    # International Components for Unicode
@@ -583,14 +583,14 @@ elseif(APPLE)
    if(EXISTS ${MACDEPLOYQT_EXECUTABLE})
       # Per https://cmake.org/cmake/help/latest/command/add_executable.html, "IMPORTED executables are useful for
       # convenient reference from commands like add_custom_command()".
-      add_executable(Qt5::macdeployqt IMPORTED)
-      set_target_properties(Qt5::macdeployqt PROPERTIES IMPORTED_LOCATION ${MACDEPLOYQT_EXECUTABLE})
+      add_executable(Qt6::macdeployqt IMPORTED)
+      set_target_properties(Qt6::macdeployqt PROPERTIES IMPORTED_LOCATION ${MACDEPLOYQT_EXECUTABLE})
    endif()
 
 endif()
 
 # Uncomment the following line to show what version of Qt is actually being used
-message(STATUS "Using Qt version " ${Qt5Core_VERSION})
+message(STATUS "Using Qt version " ${Qt6Core_VERSION})
 
 #===================================================== Find Boost ======================================================
 # Boost is a collection of separate libraries, some, but not all, of which are header-only.  We only specify the Boost
@@ -935,7 +935,7 @@ include(src/CMakeLists.txt)
 # There are various workarounds proposed on the internet -- eg setting the CLEAN_NO_CUSTOM property on the
 # ${repoDir}/translations directory (something which itself requires jumping through a few hoops) -- but I have not had
 # success with any of them.  Instead, taking inspiration from
-# https://codereview.qt-project.org/c/qt/qttools/+/261912/1/src/linguist/Qt5LinguistToolsMacros.cmake, we run lupdate
+# https://codereview.qt-project.org/c/qt/qttools/+/261912/1/src/linguist/Qt6LinguistToolsMacros.cmake, we run lupdate
 # manually and then let qt5_add_translation invoke lrelease.
 #
 # Of course we have to do declare everything backwards for the dependencies:
@@ -949,7 +949,7 @@ qt5_add_translation(QM_FILES ${translationSourceFiles})
 add_custom_target(translationsTarget DEPENDS ${QM_FILES})
 
 add_custom_command(TARGET translationsTarget PRE_BUILD
-                   COMMAND ${Qt5_LUPDATE_EXECUTABLE}
+                   COMMAND ${Qt6_LUPDATE_EXECUTABLE}
                    ARGS  ${filesToCompile_cpp} ${filesToCompile_ui} -I ${repoDir}/src -ts ${translationSourceFiles}
                    VERBATIM)
 #============================Icon for Windows==================================
@@ -1130,7 +1130,7 @@ if(APPLE)
                                          "-framework ApplicationServices")
 endif()
 foreach(qtComponent IN LISTS qtCommonComponents)
-   list(APPEND appAndTestCommonLibraries "Qt5::${qtComponent}")
+   list(APPEND appAndTestCommonLibraries "Qt6::${qtComponent}")
 endforeach()
 message("appAndTestCommonLibraries: ${appAndTestCommonLibraries}")
 target_link_libraries(${fileName_executable} ${appAndTestCommonLibraries})
@@ -1145,8 +1145,8 @@ add_executable(${fileName_unitTestRunner}
                $<TARGET_OBJECTS:btobjlib>)
 #set_target_properties(${fileName_unitTestRunner} PROPERTIES RUNTIME_OUTPUT_DIRECTORY bin)
 
-# Test app needs all the same libraries as the main app, plus Qt5::Test
-target_link_libraries(${fileName_unitTestRunner} ${appAndTestCommonLibraries} Qt5::Test)
+# Test app needs all the same libraries as the main app, plus Qt6::Test
+target_link_libraries(${fileName_unitTestRunner} ${appAndTestCommonLibraries} Qt6::Test)
 
 message("Unit Test Runner: ./${fileName_unitTestRunner}")
 
