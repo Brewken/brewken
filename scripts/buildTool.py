@@ -418,6 +418,10 @@ def installDependencies():
          #  - To keep us on our toes, some of the package name formats change between Qt5 and Qt6.  Eg qtmultimedia5-dev
          #    becomes qt6-multimedia-dev.  Also libqt5multimedia5-plugins has no direct successor in Qt6.
          #
+         # I have struggled to find how to install a Qt6 version of lupdate.  Compilation on Ubuntu 24.04 seems to work
+         # fine with the 5.15.13 version of lupdate, so we'll make sure that's installed.  Various other comments below
+         # about lupdate are (so far unsuccessful) attempts to get a Qt6 version of lupdate installed.
+         #
          log.info('Ensuring libraries and frameworks are installed')
          btUtils.abortOnRunFail(subprocess.run(['sudo', 'apt-get', 'update']))
          btUtils.abortOnRunFail(
@@ -438,11 +442,12 @@ def installDependencies():
                                                 'pandoc',
                                                 'python3',
                                                 'python3-dev',
-                                                'qmake6', # Possibly needed for lupdate
+                                                'qmake6', # Possibly needed for Qt6 lupdate
                                                 'qtbase5-dev',
-                                                'qt6-l10n-tools', # Needed for lupdate
+                                                'qt6-l10n-tools', # Needed for Qt6 lupdate?
                                                 'qt6-multimedia-dev',
                                                 'qt6-tools-dev',
+                                                'qttools5-dev-tools', # For Qt5 version of lupdate, per comment above
                                                 'qt6-tools-dev-tools',
                                                 'rpm',
                                                 'rpmlint']

@@ -556,12 +556,18 @@ if(WIN32)
    # tree "containing the Qt-related dependencies (libraries, QML imports, plugins, and translations) required to run
    # the application from that folder".
    #
-   find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${QT_BIN_DIR}")
-   if(EXISTS ${WINDEPLOYQT_EXECUTABLE})
-      # Per https://cmake.org/cmake/help/latest/command/add_executable.html, "IMPORTED executables are useful for
-      # convenient reference from commands like add_custom_command()".
-      add_executable(Qt6::windeployqt IMPORTED)
-      set_target_properties(Qt6::windeployqt PROPERTIES IMPORTED_LOCATION ${WINDEPLOYQT_EXECUTABLE})
+   # On some systems at least, looks like Qt6::windeployqt is already available in CMake (when Qt5::windeployqt) was
+   # not.  If it is, then we can't try to set it up again as we'll get an error ("add_executable cannot create imported
+   # target "Qt6::windeployqt" because another target with the same name already exists").
+   #
+   if (NOT TARGET Qt6::windeployqt)
+      find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${QT_BIN_DIR}")
+      if(EXISTS ${WINDEPLOYQT_EXECUTABLE})
+         # Per https://cmake.org/cmake/help/latest/command/add_executable.html, "IMPORTED executables are useful for
+         # convenient reference from commands like add_custom_command()".
+         add_executable(Qt6::windeployqt IMPORTED)
+         set_target_properties(Qt6::windeployqt PROPERTIES IMPORTED_LOCATION ${WINDEPLOYQT_EXECUTABLE})
+      endif()
    endif()
 
    # International Components for Unicode
