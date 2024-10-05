@@ -2426,10 +2426,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add %1 step to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Operation failed.  See log file for more details.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5334,6 +5330,13 @@ Il Volume finale del primo è %1.</translation>
     <message>
         <source>Step</source>
         <translation type="unfinished">Passo</translation>
+    </message>
+</context>
+<context>
+    <name>StepClass</name>
+    <message>
+        <source>Add %1 step to recipe</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
