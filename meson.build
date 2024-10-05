@@ -1253,7 +1253,10 @@ lupdate_executable = find_program(lupdate_name, required : true)
 # We make a point here of displaying the output of run_command because we want to show message emitted by lupdate about
 # what it did.
 #
-message('Running lupdate on the following ts files:', run_command('ls', translationSourceFiles, check: true).stdout())
+message(
+   'Running lupdate (' + lupdate_executable + ') on the following ts files:',
+   run_command('ls', translationSourceFiles, check: true).stdout()
+)
 message(
    run_command(lupdate_executable,
                meson.project_source_root() + '/src',

@@ -438,6 +438,7 @@ def installDependencies():
                                                 'pandoc',
                                                 'python3',
                                                 'python3-dev',
+                                                'qmake6', # Possibly needed for lupdate
                                                 'qtbase5-dev',
                                                 'qt6-l10n-tools', # Needed for lupdate
                                                 'qt6-multimedia-dev',
