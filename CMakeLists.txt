@@ -279,6 +279,16 @@ if(NOT ${NO_MESSING_WITH_FLAGS})
       endif()
    endif()
 
+   #
+   # On Ubuntu 22.04, the packages for Qt6 differ from those for Qt5 in that they require you to build with the PIC
+   # option, otherwise we'll get the error: "You must build your code with position independent code if Qt was built
+   # with -reduce-relocations. " "Compile your code with -fPIC (and not with -fPIE)."
+   #
+   if(UNIX AND NOT APPLE)
+      set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fPIC")
+      set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fPIC")
+   endif()
+
    # Speed up compilation if using gcc.
    if(UNIX AND NOT APPLE)
       set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -pipe")

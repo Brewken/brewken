@@ -1249,7 +1249,7 @@ public:
          //
          Q_ASSERT(sqlQuery.driver()->hasFeature(QSqlDriver::LastInsertId));
          QVariant rawPrimaryKey = sqlQuery.lastInsertId();
-         Q_ASSERT(rawPrimaryKey.canConvert(QMetaType::Int));
+         Q_ASSERT(rawPrimaryKey.canConvert<int>());
          primaryKeyInDb = rawPrimaryKey.toInt();
 
          //
