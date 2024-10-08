@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/InfoButton.cpp is part of Brewken, and is copyright the following authors 2023:
+ * widgets/InfoButton.cpp is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -54,9 +54,15 @@ namespace {
 }
 
 InfoButton::InfoButton(QWidget * parent) : QPushButton(parent), m_infoText{nullptr} {
+   //
    // Shrink the button down from its default size, otherwise the 'ⓘ' will be surrounded by too much space.  Leave a
    // bit of space around the 'ⓘ' however, otherwise it looks cramped.  (Yes, we are adding 10% twice -- once to make
    // the circle 10% bigger than it otherwise would be, and once to add 10% space around the outside of the circle.)
+   //
+   // This is one of the few places where we really do want to use setFixedSize (rather than setMinimumSize or
+   // setMinimumWidth).  It doesn't make sense to let Qt's layout manager grow the button just because the window it is
+   // in is expanded.
+   //
    double const diameter = static_cast<double>(this->getCircleDiameter());
    int const width = static_cast<int>(diameter * 1.1);
    int const height = width;

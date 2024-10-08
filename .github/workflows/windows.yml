@@ -166,6 +166,13 @@ jobs:
           rm CMakeCache.txt
           cmake .. -DCMAKE_RC_COMPILER:FILEPATH=windres.exe -G "MinGW Makefiles"
 
+      - name: Build (with Meson)
+        shell: msys2 {0}
+        run: |
+          cd /C/_/mbuild
+          pwd
+          meson compile
+
       # The pwd and find ../third-party commands below are just diagnostics, but it's generally useful to have too
       # much rather than not enough diagnostic info on these GitHub action builds
       - name: Build (with CMake)
@@ -176,13 +183,6 @@ jobs:
           tree -sh
           cmake --build .
           ls
-
-      - name: Build (with Meson)
-        shell: msys2 {0}
-        run: |
-          cd /C/_/mbuild
-          pwd
-          meson compile
 
       # The 'export QT_DEBUG_PLUGINS=1' give us diagnostics in the event that there are problems initialising QT
       # The 'export QT_QPA_PLATFORM=offscreen' stops Qt's xcb sub-module trying to connect to a non-existent display
