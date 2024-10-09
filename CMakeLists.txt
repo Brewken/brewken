@@ -68,9 +68,14 @@
 #     cmake -DDO_RELEASE_BUILD=OFF ..
 #
 
-# Uncomment the next line for slightly verbose build output
+# Uncomment the next "set" line for slightly verbose build output
 # Alternatively, for very verbose output, invoke make as follows:
-#    $ make VERBOSE=1
+#
+#    make VERBOSE=1
+#
+# On Windows, you need:
+#
+#    cmake --build . --verbose
 #
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
@@ -264,7 +269,15 @@ if(NOT ${NO_MESSING_WITH_FLAGS})
       # However, this is not sufficient.  So, for the moment, we suppress the rpmlint error (see
       # packaging/linux/rpmLintFilters.toml).
       #
-      set(CMAKE_CXX_FLAGS_RELEASE "-Wall -ansi -pedantic -Wno-long-long -O2 -z noexecstack")
+      # Additionally, NOTE that "-z options are just not supported for Windows versions of ld" (as mentioned at
+      # https://stackoverflow.com/questions/55418931/ld-exe-unrecognized-option-z).  So we have to exclude that option
+      # on Windows.
+      #
+      if(NOT WIN32)
+         set(CMAKE_CXX_FLAGS_RELEASE "-Wall -ansi -pedantic -Wno-long-long -O2 -z noexecstack")
+      else()
+         set(CMAKE_CXX_FLAGS_RELEASE "-Wall -ansi -pedantic -Wno-long-long -O2")
+      endif()
       #
       # -g3 should give even more debugging information thatn -g (which is equivalent to -g2)
       # -no-pie -fno-pie -rdynamic are needed for Boost stacktrace to work properly - at least according to comments
