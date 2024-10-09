@@ -175,13 +175,15 @@ jobs:
 
       # The pwd and find ../third-party commands below are just diagnostics, but it's generally useful to have too
       # much rather than not enough diagnostic info on these GitHub action builds
+      #
+      # This is the same reason we specify the --verbose option on CMake
       - name: Build (with CMake)
         shell: msys2 {0}
         run: |
           cd /C/_/build
           pwd
           tree -sh
-          cmake --build .
+          cmake --build . --verbose
           ls
 
       # The 'export QT_DEBUG_PLUGINS=1' give us diagnostics in the event that there are problems initialising QT
