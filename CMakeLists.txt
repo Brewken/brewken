@@ -279,7 +279,7 @@ if(NOT ${NO_MESSING_WITH_FLAGS})
          set(CMAKE_CXX_FLAGS_RELEASE "-Wall -ansi -pedantic -Wno-long-long -O2")
       endif()
       #
-      # -g3 should give even more debugging information thatn -g (which is equivalent to -g2)
+      # -g3 should give even more debugging information than -g (which is equivalent to -g2)
       # -no-pie -fno-pie -rdynamic are needed for Boost stacktrace to work properly - at least according to comments
       # at https://stackoverflow.com/questions/52583544/boost-stack-trace-not-showing-function-names-and-line-numbers
       #

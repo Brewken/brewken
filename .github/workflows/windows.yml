@@ -162,9 +162,9 @@ jobs:
         run: |
           cd /C/_
           ./configure
-          cd build
-          rm CMakeCache.txt
-          cmake .. -DCMAKE_RC_COMPILER:FILEPATH=windres.exe -G "MinGW Makefiles"
+#          cd build
+#          rm CMakeCache.txt
+#          cmake .. -DCMAKE_RC_COMPILER:FILEPATH=windres.exe -G "MinGW Makefiles"
 
       - name: Build (with Meson)
         shell: msys2 {0}
