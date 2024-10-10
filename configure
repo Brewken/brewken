@@ -16,6 +16,16 @@
 # <http://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------------------------------------------------
 
+#
+# This script can be used to help set up the build directory for doing CMake builds.
+#
+# ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
+# NB: Meson and the `bt` build tool Python script are now the primary way of building and packaging the software.  You
+#     can also still CMake to compile the product and install it locally, but we no longer support using CMake to do
+#     packaging.
+# ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
+#
+
 # Stop when something failed
 set -e
 

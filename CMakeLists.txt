@@ -311,7 +311,12 @@ endif()
 # otherwise we'll get the error: "You must build your code with position independent code if Qt was built with
 # -reduce-relocations. " "Compile your code with -fPIC (and not with -fPIE)."
 #
-if(UNIX AND NOT APPLE)
+# On certain instances of Windows, we'll get "relocation truncated to fit" linker errors if we don't build with position
+# independent code (see
+# https://stackoverflow.com/questions/10486116/what-does-this-gcc-error-relocation-truncated-to-fit-mean for more
+# explanation).
+#
+if((UNIX AND NOT APPLE) OR WIN32)
    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 

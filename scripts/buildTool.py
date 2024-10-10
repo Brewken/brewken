@@ -788,6 +788,10 @@ def installDependencies():
          # sites, so we now specify it routinely.
          #
          # As noted above, we no longer support 32-bit ('i686') builds and now only support 64-bit ('x86_64') ones.
+         # NOTE that, as explained at
+         # https://forum.qt.io/topic/140029/i-ve-downloaded-the-qt6-version-and-mingw-for-gcc-11-version/7, we will
+         # still see mention of "mingw32" in bits of the toolchain on 64-bit builds, but the "32" in the name is there
+         # for historical reasons and does not mean it's not a fully 64-bit build!
          #
          # Compiling the list of required packages here involves a bit of trial-and-error.  A good starting point for
          # what we probably need is found by searching for qt6 in the list at https://packages.msys2.org/base.  However,
