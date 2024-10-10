@@ -1923,11 +1923,14 @@ def doPackage():
          # folder tree "containing the Qt-related dependencies (libraries, QML imports, plugins, and translations)
          # required to run the application from that folder".
          #
+         # In the MSYS2 packaging of Qt6 at least, per https://packages.msys2.org/packages/mingw-w64-x86_64-qt6-base,
+         # windeployqt is renamed to windeployqt6.
+         #
          log.debug('Running windeployqt')
          previousWorkingDirectory = pathlib.Path.cwd().as_posix()
          os.chdir(dir_packages_win_bin)
          btUtils.abortOnRunFail(
-            subprocess.run(['windeployqt',
+            subprocess.run(['windeployqt6',
                             '--verbose', '2',        # 2 is the maximum
                             projectName + '.exe'],
                            capture_output=False)
