@@ -27,6 +27,7 @@
 #include <QMimeData>
 #include <QModelIndex>
 #include <QObject>
+#include <QRegularExpression>
 #include <QStringBuilder>
 #include <Qt>
 #include <QVariant>
@@ -578,7 +579,7 @@ template Misc        * TreeModel::getItem<Misc       >(QModelIndex const & index
 template Yeast       * TreeModel::getItem<Yeast      >(QModelIndex const & index) const;
 template BrewNote    * TreeModel::getItem<BrewNote   >(QModelIndex const & index) const;
 template Style       * TreeModel::getItem<Style      >(QModelIndex const & index) const;
-template Folder    * TreeModel::getItem<Folder   >(QModelIndex const & index) const;
+template Folder      * TreeModel::getItem<Folder     >(QModelIndex const & index) const;
 template Water       * TreeModel::getItem<Water      >(QModelIndex const & index) const;
 
 NamedEntity * TreeModel::thing(const QModelIndex & index) const {
@@ -600,7 +601,7 @@ template bool TreeModel::itemIs<Misc       >(QModelIndex const & index) const;
 template bool TreeModel::itemIs<Yeast      >(QModelIndex const & index) const;
 template bool TreeModel::itemIs<BrewNote   >(QModelIndex const & index) const;
 template bool TreeModel::itemIs<Style      >(QModelIndex const & index) const;
-template bool TreeModel::itemIs<Folder   >(QModelIndex const & index) const;
+template bool TreeModel::itemIs<Folder     >(QModelIndex const & index) const;
 template bool TreeModel::itemIs<Water      >(QModelIndex const & index) const;
 
 std::optional<TreeNode::Type> TreeModel::type(const QModelIndex & index) const {
@@ -989,7 +990,7 @@ QModelIndex TreeModel::createFolderTree(QStringList dirs, TreeNode * parent, QSt
          fPath = pPath % "/" % cur;   // If it isn't we need the parent path
       }
 
-      fPath.replace(QRegExp("//"), "/");
+      fPath.replace(QRegularExpression("//"), "/");
 
       // Set the full path, which will set the name and the path
       temp->setfullPath(fPath);

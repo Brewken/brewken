@@ -104,6 +104,18 @@
         <source>Post-boil for %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Automatically-generated pre-boil step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically-generated boil proper step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically-generated post-boil step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BoilStep</name>
@@ -2124,7 +2136,7 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Import %1?</source>
-        <translation>Importovat %1?</translation>
+        <translation type="vanished">Importovat %1?</translation>
     </message>
     <message>
         <source>No mash</source>
@@ -2315,10 +2327,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add %1 step to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Operation failed.  See log file for more details.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2332,6 +2340,14 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Please restart %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically-created Boil for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically-created Fermentation for %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3959,6 +3975,45 @@ Program will now exit.</source>
         <source>ft</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished">Ne</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished">Ano</translation>
+    </message>
+    <message>
+        <source>Boil for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically created by BeerXML import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentation for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Primary Fermentation Step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Secondary Fermentation Step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tertiary Fermentation Step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RaIngrd</name>
+    <message>
+        <source>Add %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -5180,6 +5235,13 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
 </context>
 <context>
+    <name>StepClass</name>
+    <message>
+        <source>Add %1 step to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>StepExtended</name>
     <message>
         <source>Extended Step</source>
@@ -5808,11 +5870,11 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Water name</source>
+        <source>CaCO3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Water name:</source>
+        <source>HCO3</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6180,7 +6242,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Boil Time</source>
-        <translation type="unfinished">Délka chmelovaru</translation>
+        <translation type="obsolete">Délka chmelovaru</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -7098,10 +7160,6 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="obsolete">Zaškrtněte, pokud se množství přísady vyjadřuje v kg místo l.</translation>
     </message>
     <message>
-        <source>GrainGroup</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Fermantable Grain Group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7209,6 +7267,10 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Grain Group</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7229,16 +7291,20 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Pre-Fermentation Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermentation Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Notes</source>
         <translation type="unfinished">Poznámky</translation>
+    </message>
+    <message>
+        <source>New hop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7754,7 +7820,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Target boil size</source>
-        <translation>Objem várky před chmelovarem</translation>
+        <translation type="vanished">Objem várky před chmelovarem</translation>
     </message>
     <message>
         <source>Efficiency (%)</source>
@@ -7778,7 +7844,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Boil Time</source>
-        <translation type="vanished">Délka chmelovaru</translation>
+        <translation>Délka chmelovaru</translation>
     </message>
     <message>
         <source>Target batch size</source>
@@ -8201,10 +8267,6 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Boil Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>E&amp;quipment</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8394,6 +8456,10 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Save Fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(See Boil tab below)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8777,7 +8843,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Čas</translation>
+        <translation type="vanished">Čas</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -10132,6 +10198,18 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <source>Alkalinity measured as</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New hop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>yeastEditor</name>
@@ -10277,7 +10355,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Add to Secondary</source>
-        <translation>Přidat při dokvašování</translation>
+        <translation type="vanished">Přidat při dokvašování</translation>
     </message>
     <message>
         <source>Checked means add this yeast to secondary instead of primary</source>
@@ -10337,10 +10415,6 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Maximum apparent attenuation as percentage of OG points</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Whether to add this yeast to secondary instead of primary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

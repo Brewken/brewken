@@ -104,6 +104,18 @@
         <source>Post-boil for %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Automatically-generated pre-boil step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically-generated boil proper step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically-generated post-boil step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BoilStep</name>
@@ -2243,7 +2255,7 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Import %1?</source>
-        <translation>Voleu importar «%1»?</translation>
+        <translation type="vanished">Voleu importar «%1»?</translation>
     </message>
     <message>
         <source>No mash</source>
@@ -2434,10 +2446,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add %1 step to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Operation failed.  See log file for more details.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2451,6 +2459,14 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Please restart %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically-created Boil for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically-created Fermentation for %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4094,6 +4110,45 @@ Program will now exit.</source>
         <source>ft</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished">No</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished">Sí</translation>
+    </message>
+    <message>
+        <source>Boil for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically created by BeerXML import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentation for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Primary Fermentation Step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Secondary Fermentation Step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tertiary Fermentation Step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RaIngrd</name>
+    <message>
+        <source>Add %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -5341,6 +5396,13 @@ El volum final al primari és de %1.</translation>
     </message>
 </context>
 <context>
+    <name>StepClass</name>
+    <message>
+        <source>Add %1 step to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>StepExtended</name>
     <message>
         <source>Extended Step</source>
@@ -5989,11 +6051,11 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Water name</source>
+        <source>CaCO3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Water name:</source>
+        <source>HCO3</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6361,7 +6423,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Boil Time</source>
-        <translation type="unfinished">Temps d&apos;ebullició</translation>
+        <translation type="obsolete">Temps d&apos;ebullició</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -7273,10 +7335,6 @@ El volum final al primari és de %1.</translation>
         <translation type="obsolete">Marcar si la quantitat es mesura en Kg en comptes de L.</translation>
     </message>
     <message>
-        <source>GrainGroup</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Fermantable Grain Group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7384,6 +7442,10 @@ El volum final al primari és de %1.</translation>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Grain Group</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7404,16 +7466,20 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Pre-Fermentation Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermentation Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Notes</source>
         <translation type="unfinished">Notes</translation>
+    </message>
+    <message>
+        <source>New hop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7929,7 +7995,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Target boil size</source>
-        <translation>Ebullició desitjada</translation>
+        <translation type="vanished">Ebullició desitjada</translation>
     </message>
     <message>
         <source>Efficiency (%)</source>
@@ -7953,7 +8019,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Boil Time</source>
-        <translation type="vanished">Temps d&apos;ebullició</translation>
+        <translation>Temps d&apos;ebullició</translation>
     </message>
     <message>
         <source>Target batch size</source>
@@ -8376,10 +8442,6 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Boil Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>E&amp;quipment</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8569,6 +8631,10 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Save Fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(See Boil tab below)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8952,7 +9018,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Temps</translation>
+        <translation type="vanished">Temps</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -10323,6 +10389,18 @@ El volum final al primari és de %1.</translation>
         <source>Alkalinity measured as</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New hop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>yeastEditor</name>
@@ -10468,7 +10546,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Add to Secondary</source>
-        <translation>Afegiu al secundari</translation>
+        <translation type="vanished">Afegiu al secundari</translation>
     </message>
     <message>
         <source>Checked means add this yeast to secondary instead of primary</source>
@@ -10536,10 +10614,6 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Maximum apparent attenuation as percentage of OG points</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Whether to add this yeast to secondary instead of primary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

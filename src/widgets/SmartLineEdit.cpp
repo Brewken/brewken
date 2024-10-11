@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/SmartLineEdit.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * widgets/SmartLineEdit.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Mattias Måhl <mattias@kejsarsten.com>
@@ -92,7 +92,7 @@ public:
          }
          this->calculateDisplaySize(sizingString);
       }
-      this->m_self.setFixedWidth(this->m_desiredWidthInPixels);
+      this->m_self.setMinimumWidth(this->m_desiredWidthInPixels);
       return;
    }
 

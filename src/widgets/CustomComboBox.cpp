@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/CustomComboBox.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * widgets/CustomComboBox.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -29,7 +29,7 @@ CustomComboBox::CustomComboBox(QWidget* parent) : QComboBox(parent) {
 CustomComboBox::~CustomComboBox() = default;
 
 void CustomComboBox::showPopup() {
-   view()->setFixedWidth(300);
+//   view()->setFixedWidth(300);
    QComboBox::showPopup();
    return;
 }

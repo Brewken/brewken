@@ -21,13 +21,14 @@
 
 #include <QTabWidget>
 
+#include "model/Fermentable.h"
+#include "model/Hop.h"
+#include "model/Misc.h"
+#include "model/Yeast.h"
+
 class Equipment;
-class Fermentable;
-class Hop;
-class Misc;
 class Recipe;
 class Style;
-class Yeast;
 
 /*!
  * \class BtTabWdiget

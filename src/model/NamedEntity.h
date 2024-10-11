@@ -31,6 +31,7 @@
 #include <QList>
 #include <QMetaProperty>
 #include <QObject>
+#include <QRegularExpression>
 #include <QVariant>
 
 #include "model/FolderBase.h"
@@ -82,7 +83,7 @@ AddPropertyName(parentKey)
  *        NOTE that, strictly, this is not needed on abstract classes, though it is relatively harmless to include on
  *        them.
  */
-#define TYPE_LOOKUP_GETTER inline virtual TypeLookup const & getTypeLookup() const { return typeLookup; }
+#define TYPE_LOOKUP_GETTER inline virtual TypeLookup const & getTypeLookup() const override { return typeLookup; }
 
 /*!
  * \class NamedEntity
@@ -159,8 +160,9 @@ public:
     *        which just returns the relevant object.  That's a turn-the-handle function
     */
    static TypeLookup const typeLookup;
-   // See comment above for what this does
-   TYPE_LOOKUP_GETTER
+   // See comment above for what this does.  We can't use the macro here because this is the base function that all
+   // other classes override (so this is the one place the override keyword is not valid.
+   inline virtual TypeLookup const & getTypeLookup() const { return typeLookup; }
 
    NamedEntity(QString t_name, bool t_display = false);
    NamedEntity(NamedEntity const & other);
@@ -255,7 +257,7 @@ public:
     * \brief Returns a regexp that will match the " (n)" (for n some positive integer) added on the end of a name to
     *        prevent name clashes.  It will also "capture" n to allow you to extract it.
     */
-   static QRegExp const & getDuplicateNameNumberMatcher();
+   static QRegularExpression const & getDuplicateNameNumberMatcher();
 
    void setName(QString const & var);
    void setDeleted(bool const var);

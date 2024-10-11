@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/UnitAndScalePopUpMenu.cpp is part of Brewken, and is copyright the following authors 2012-2023:
+ * widgets/UnitAndScalePopUpMenu.cpp is part of Brewken, and is copyright the following authors 2012-2024:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -17,6 +17,7 @@
  =====================================================================================================================*/
 #include "widgets/UnitAndScalePopUpMenu.h"
 
+#include <QActionGroup>
 #include <QApplication>
 #include <QDebug>
 
@@ -84,7 +85,7 @@ namespace {
 template<typename T>
 std::optional<T> UnitAndScalePopUpMenu::dataFromQAction(QAction const & action) {
    QVariant const data = action.data();
-   Q_ASSERT(data.type() == QVariant::Int);
+   Q_ASSERT(data.typeId() == QMetaType::Type::Int);
    int raw = data.toInt();
    if (raw < 0) {
       qDebug() << Q_FUNC_INFO << "Raw" << raw << "= null";

@@ -25,6 +25,7 @@
 #include <QDir>
 #include <QLibraryInfo>
 #include <QLocale>
+#include <QRegularExpression>
 #include <QTranslator>
 
 #include "Application.h"
@@ -150,15 +151,16 @@ QString const & Localization::getSystemLanguage() {
 }
 
 bool Localization::hasUnits(QString qstr) {
-   QString decimal = QRegExp::escape(Localization::getLocale().decimalPoint());
-   QString grouping = QRegExp::escape(Localization::getLocale().groupSeparator());
+   QString decimal = QRegularExpression::escape(Localization::getLocale().decimalPoint());
+   QString grouping = QRegularExpression::escape(Localization::getLocale().groupSeparator());
 
-   QRegExp amtUnit("((?:\\d+" + grouping + ")?\\d+(?:" + decimal + "\\d+)?|" + decimal + "\\d+)\\s*(\\w+)?");
-   amtUnit.indexIn(qstr);
+   QRegularExpression amtUnit("((?:\\d+" + grouping + ")?\\d+(?:" + decimal + "\\d+)?|" + decimal + "\\d+)\\s*(\\w+)?");
+   QRegularExpressionMatch match = amtUnit.match(qstr);
 
-   bool result = amtUnit.cap(2).size() > 0;
-
-   qDebug() << Q_FUNC_INFO << qstr << (result ? "has" : "does not have") << "units";
+   // We could use hasCaptured here, but for debugging it's helpful to be able to show what we matched.
+   QString const units = match.captured(2);
+   bool const result = units.size() > 0;
+   qDebug() << Q_FUNC_INFO << qstr << (result ? "has" : "does not have") << "units:" << units;
 
    return result;
 }
@@ -186,7 +188,7 @@ double Localization::toDouble(QString text, bool* ok) {
 double Localization::toDouble(NamedEntity const & element,
                               BtStringConst const & propertyName,
                               char const * const caller) {
-   if (element.property(*propertyName).canConvert(QVariant::String) ) {
+   if (element.property(*propertyName).canConvert<QString>()) {
       // Get the amount
       QString value = element.property(*propertyName).toString();
       bool ok = false;
@@ -220,7 +222,11 @@ void Localization::loadTranslations() {
    }
 
    // Load translators.
-   defaultTrans.load("qt_" + Localization::getLocale().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+   bool succeeded = defaultTrans.load("qt_" + Localization::getLocale().name(),
+                                      QLibraryInfo::path(QLibraryInfo::TranslationsPath));
+   if (!succeeded) {
+      qWarning() << Q_FUNC_INFO << "Error loading translations for" << Localization::getLocale().name();
+   }
    if (getCurrentLanguage().isEmpty()) {
       setLanguage(getSystemLanguage());
    }

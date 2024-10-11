@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BrewNoteWidget.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * BrewNoteWidget.cpp is part of Brewken, and is copyright the following authors 2009-2024:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
@@ -25,6 +25,7 @@
 
 #include "Localization.h"
 #include "measurement/Measurement.h"
+#include "measurement/UnitSystem.h"
 #include "model/BrewNote.h"
 #include "PersistentSettings.h"
 

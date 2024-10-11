@@ -255,4 +255,9 @@ namespace FolderUtils {
    void setFolder(NamedEntity * ne, QString const & val);
 }
 
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+class RecipeTreeModel : public TreeModel {
+
+};
+
 #endif
