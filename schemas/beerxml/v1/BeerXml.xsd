@@ -1,28 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- * beerxml/v1/BeerXml.xsd is part of Brewken, and is Copyright the following
- * authors 2020-2021
+ *======================================================================================================================
+ * beerxml/v1/BeerXml.xsd is part of Brewken, and is Copyright the following authors 2020-2024
  * - Matt Young <mfsy@yahoo.com>
  * - Mik Firestone <mikfire@gmail.com>
  *
- * Brewken is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  *
- * Brewken is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Brewken is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/>.
+ *======================================================================================================================
 -->
 <!--
   General Notes:
 
   It is not possible to validate a BeerXML 1.0 document solely with an XSD file, for reasons that are explained in the
-  Brewken C++ source code.  Nevertheless, this file goes some considerable way to doing such validation.
+  Brewtarget/Brewken C++ source code.  Nevertheless, this file goes some considerable way to doing such validation.
 
   Although they are generally helpful examples, there are some obvious errors in the BeerXML sample files downloadable
   from www.beerxml.com:
@@ -263,8 +261,12 @@
          <!-- In theory version should always be 1 (unless a new version of BeerXML is ever released, which seems
               unlikely given that BeerJSON is supposed to supersede it).  In reality, some BeerXML files have 0 as the
               version in a number of places.  This should not prevent us reading in the rest of the file, so we accept
-              it.  This comment applies to all the VERSION tags in this file.  -->
-         <xs:element name="VERSION" type="xs:nonNegativeInteger"/>
+              it.  Moreover, some software, such as the Grainfather online recipe editor at
+              https://community.grainfather.com/, does not include the VERSION tag in all the places the BeerXML
+              standard says it is required.  So we also accept it not being present.
+
+              This comment applies to all the VERSION tags in this file.  -->
+         <xs:element name="VERSION" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1"/>
          <xs:element name="CATEGORY_NUMBER" type="xs:string"/> <!-- Despite the name, this is a string because it could be something like "8A" -->
          <xs:element name="STYLE_LETTER" type="xs:string"/>
          <xs:element name="STYLE_GUIDE" type="xs:string"/>
@@ -325,7 +327,7 @@
    <xs:complexType name="EquipmentType">
       <xs:all>
          <xs:element name="NAME" type="NonBlankString"/>
-         <xs:element name="VERSION" type="xs:nonNegativeInteger"/>
+         <xs:element name="VERSION" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1"/>
          <xs:element name="BOIL_SIZE" type="VolumeInLiters"/>
          <xs:element name="BATCH_SIZE" type="VolumeInLiters"/>
          <xs:element name="TUN_VOLUME" type="VolumeInLiters" minOccurs="0" maxOccurs="1"/>
@@ -353,9 +355,9 @@
          <xs:element name="DISPLAY_LAUTER_DEADSPACE" type="xs:string" minOccurs="0" maxOccurs="1"/>
          <xs:element name="DISPLAY_TOP_UP_KETTLE" type="xs:string" minOccurs="0" maxOccurs="1"/>
 
-         <!-- ************************************************************************************
-              *** Extra fields not included in the BeerXML 1.0 standard but used by Brewken ***
-              ************************************************************************************ -->
+         <!-- ********************************************************************************************
+              *** Extra fields not included in the BeerXML 1.0 standard but used by Brewtarget/Brewken ***
+              ******************************************************************************************** -->
          <xs:element name="REAL_EVAP_RATE" type="SimplePercentage" minOccurs="0" maxOccurs="1"/>
          <xs:element name="ABSORPTION" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
          <xs:element name="BOILING_POINT" type="TemperatureInCelsius" minOccurs="0" maxOccurs="1"/>
@@ -374,7 +376,7 @@
    <xs:complexType name="HopType">
       <xs:all>
          <xs:element name="NAME" type="NonBlankString"/>
-         <xs:element name="VERSION" type="xs:nonNegativeInteger"/>
+         <xs:element name="VERSION" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1"/>
          <xs:element name="ALPHA" type="SimplePercentage"/>
          <xs:element name="AMOUNT" type="xs:decimal"/> <!-- In kg -->
          <xs:element name="USE">
@@ -445,7 +447,7 @@
    <xs:complexType name="FermentableType">
       <xs:all>
          <xs:element name="NAME" type="NonBlankString"/>
-         <xs:element name="VERSION" type="xs:nonNegativeInteger"/>
+         <xs:element name="VERSION" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1"/>
          <xs:element name="TYPE">
             <xs:simpleType>
                <xs:restriction base="xs:string">
@@ -483,9 +485,9 @@
          <xs:element name="INVENTORY" type="xs:string" minOccurs="0" maxOccurs="1"/>
          <xs:element name="DISPLAY_COLOR" type="xs:string" minOccurs="0" maxOccurs="1"/>
 
-         <!-- ***********************************************************************************
-              *** Extra field not included in the BeerXML 1.0 standard but used by Brewken ***
-              *********************************************************************************** -->
+         <!-- *******************************************************************************************
+              *** Extra field not included in the BeerXML 1.0 standard but used by Brewtarget/Brewken ***
+              ******************************************************************************************* -->
          <xs:element name="IS_MASHED" type="RobustBoolean" minOccurs="0" maxOccurs="1"/>
       </xs:all>
    </xs:complexType>
@@ -506,7 +508,7 @@
    <xs:complexType name="MiscType">
       <xs:all>
          <xs:element name="NAME" type="NonBlankString"/>
-         <xs:element name="VERSION" type="xs:nonNegativeInteger"/>
+         <xs:element name="VERSION" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1"/>
          <xs:element name="TYPE">
             <xs:simpleType>
                <xs:restriction base="xs:string">
@@ -561,7 +563,7 @@
    <xs:complexType name="YeastType">
       <xs:all>
          <xs:element name="NAME" type="NonBlankString"/>
-         <xs:element name="VERSION" type="xs:nonNegativeInteger"/>
+         <xs:element name="VERSION" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1"/>
          <xs:element name="TYPE">
             <xs:simpleType>
                <xs:restriction base="xs:string">
@@ -631,7 +633,7 @@
    <xs:complexType name="WaterType">
       <xs:all>
          <xs:element name="NAME" type="NonBlankString"/>
-         <xs:element name="VERSION" type="xs:nonNegativeInteger"/>
+         <xs:element name="VERSION" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1"/>
          <xs:element name="AMOUNT" type="VolumeInLiters"/>
          <xs:element name="CALCIUM" type="xs:decimal"/> <!-- In parts per million of Ca -->
          <xs:element name="BICARBONATE" type="xs:decimal"/> <!-- In parts per million of HCO3 -->
@@ -663,7 +665,7 @@
    <xs:complexType name="MashStepType">
       <xs:all>
          <xs:element name="NAME" type="xs:string"/> <!-- TBD whether this should be NonBlankString -->
-         <xs:element name="VERSION" type="xs:nonNegativeInteger"/>
+         <xs:element name="VERSION" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1"/>
          <xs:element name="TYPE">
             <xs:simpleType>
                <xs:restriction base="xs:string">
@@ -691,9 +693,9 @@
          <xs:element name="DISPLAY_STEP_TEMP" type="xs:string" minOccurs="0" maxOccurs="1"/>
          <xs:element name="DISPLAY_INFUSE_AMT" type="xs:string" minOccurs="0" maxOccurs="1"/>
 
-         <!-- ***********************************************************************************
-              *** Extra field not included in the BeerXML 1.0 standard but used by Brewken ***
-              *********************************************************************************** -->
+         <!-- *******************************************************************************************
+              *** Extra field not included in the BeerXML 1.0 standard but used by Brewtarget/Brewken ***
+              ******************************************************************************************* -->
          <xs:element name="DECOCTION_AMOUNT" type="VolumeInLiters" minOccurs="0" maxOccurs="1"/>
 
       </xs:all>
@@ -714,7 +716,7 @@
    <xs:complexType name="MashType">
       <xs:all>
          <xs:element name="NAME" type="xs:string"/> <!-- TBD whether this should be NonBlankString -->
-         <xs:element name="VERSION" type="xs:nonNegativeInteger"/>
+         <xs:element name="VERSION" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1"/>
          <xs:element name="GRAIN_TEMP" type="TemperatureInCelsius"/>
          <xs:element name="MASH_STEPS" type="MashStepsType"/>
          <xs:element name="NOTES" type="xs:string" minOccurs="0" maxOccurs="1"/>
@@ -750,7 +752,7 @@
    <xs:complexType name="InstructionType">
       <xs:all>
          <xs:element name="NAME" type="NonBlankString"/>
-         <xs:element name="VERSION" type="xs:nonNegativeInteger"/>
+         <xs:element name="VERSION" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1"/>
          <xs:element name="directions" type="xs:string"/>
          <xs:element name="hasTimer" type="RobustBoolean"/>
          <xs:element name="timervalue" type="xs:string"/> <!-- NB lowercase not camelCase. AFAICT this is a display-only value and should be blank if hasTimer is FALSE -->
@@ -772,7 +774,7 @@
         AFAICT this is the only record type that does not have a NAME field -->
    <xs:complexType name="BrewNoteType">
       <xs:all>
-         <xs:element name="VERSION" type="xs:nonNegativeInteger"/>
+         <xs:element name="VERSION" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1"/>
          <xs:element name="ACTUAL_ABV" type="xs:decimal"/>
          <xs:element name="ATTENUATION" type="SimplePercentage"/>
          <xs:element name="BOIL_OFF" type="VolumeInLiters"/>
@@ -820,7 +822,7 @@
    <xs:complexType name="RecipeType">
       <xs:all>
          <xs:element name="NAME" type="NonBlankString"/>
-         <xs:element name="VERSION" type="xs:nonNegativeInteger"/>
+         <xs:element name="VERSION" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1"/>
          <xs:element name="TYPE">
             <xs:simpleType>
                <xs:restriction base="xs:string">
@@ -831,7 +833,8 @@
             </xs:simpleType>
          </xs:element>
          <xs:element name="STYLE" type="StyleType"/> <!-- NB singular not plural here -->
-         <xs:element name="EQUIPMENT" type="EquipmentType"/> <!-- NB singular not plural here -->
+         <!-- Note that Equipment is optional -->
+         <xs:element name="EQUIPMENT" type="EquipmentType" minOccurs="0" maxOccurs="1"/> <!-- NB singular not plural here -->
          <xs:element name="BREWER" type="xs:string"/>
          <xs:element name="ASST_BREWER" type="xs:string" minOccurs="0" maxOccurs="1"/>
          <xs:element name="BATCH_SIZE" type="VolumeInLiters"/>

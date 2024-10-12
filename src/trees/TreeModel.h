@@ -256,7 +256,9 @@ namespace FolderUtils {
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-class RecipeTreeModel : public TreeModel {
+#include "trees/TreeModelBase.h"
+class RecipeTreeModel : public TreeModel,
+                        public TreeModelBase<RecipeTreeModel, Recipe> {
 
 };
 

@@ -29,7 +29,6 @@
 #include "model/IngredientAmount.h"
 #include "model/Inventory.h"
 #include "tableModels/BtTableModel.h"
-///#include "tableModels/BtTableModelInventory.h"
 #include "utils/CuriouslyRecurringTemplateBase.h"
 #include "utils/MetaTypes.h"
 
