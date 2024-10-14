@@ -68,6 +68,8 @@ struct TreeItemTraits;
  *        Tree structure:
  *
  *           TreeModel
+ *             │
+ *           TreeFolderNode<Recipe>
  *             ├── TreeFolderNode<Recipe>
  *             │   ├── TreeItemNode<Recipe>
  *             │   │   └── TreeItemNode<BrewNote>

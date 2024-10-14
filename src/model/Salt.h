@@ -49,6 +49,9 @@ AddPropertyName(type           )
  * \class Salt
  *
  * \brief Model for salt records in the database.
+ *
+ *        NOTE that, unlike most of the other \c NamedEntity classes, \c Salt is not included anywhere in either BeerXML
+ *        or BeerJSON.
  */
 class Salt : public Ingredient, public IngredientBase<Salt> {
    Q_OBJECT

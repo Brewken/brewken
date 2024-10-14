@@ -339,12 +339,6 @@
                       <height>0</height>
                      </size>
                     </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>360</width>
-                      <height>16777215</height>
-                     </size>
-                    </property>
                     <property name="toolTip">
                      <string>Name of recipe</string>
                     </property>
@@ -371,19 +365,17 @@
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_mainpanel">
-                <item>
+               <!-- Main bit of Recipe tab (below the recipe name line) -->
+               <widget class="QSplitter" name="splitter_vertical_recipe">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <widget class="QWidget" name="recipe_main_fields" native="true">
                  <layout class="QVBoxLayout" name="verticalLayout_left">
                   <item>
                    <layout class="QGridLayout" name="gridLayout_fields">
                     <item row="2" column="0">
                      <widget class="QLabel" name="styleLabel">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
                       <property name="text">
                        <string>&amp;Style</string>
                       </property>
@@ -517,24 +509,6 @@
                     </item>
                     <item row="4" column="1">
                      <widget class="SmartLineEdit" name="lineEdit_batchSize">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>100</width>
-                        <height>0</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>100</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
                       <property name="toolTip">
                        <string>Target batch size</string>
                       </property>
@@ -545,12 +519,6 @@
                     </item>
                     <item row="5" column="0">
                      <widget class="SmartLabel" name="label_targetBoilSize">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
                       <property name="contextMenuPolicy">
                        <enum>Qt::CustomContextMenu</enum>
                       </property>
@@ -593,12 +561,6 @@
                     </item>
                     <item row="6" column="0">
                      <widget class="QLabel" name="label_efficiency">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
                       <property name="text">
                        <string>&amp;Efficiency (%)</string>
                       </property>
@@ -703,7 +665,7 @@
                       <property name="font">
                        <font>
                         <family>Sans Serif</family>
-                        <pointsize>9</pointsize>
+                        <pointsize>10</pointsize>
                         <weight>50</weight>
                         <bold>false</bold>
                         <kerning>true</kerning>
@@ -740,15 +702,8 @@
                    </spacer>
                   </item>
                  </layout>
-                </item>
-                <item>
-                 <widget class="Line" name="line">
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
+                </widget><!-- recipe_main_fields -->
+                <widget class="QWidget" name="recipe_range_bars" native="true">
                  <layout class="QVBoxLayout" name="verticalLayout_lcd">
                   <item>
                    <layout class="QGridLayout" name="gridLayout_sliders">
@@ -1027,8 +982,8 @@
                    </spacer>
                   </item>
                  </layout>
-                </item>
-               </layout>
+                </widget> <!-- recipe_range_bars -->
+               </widget> <!-- splitter_vertical_recipe -->
               </item>
              </layout>
             </widget>
