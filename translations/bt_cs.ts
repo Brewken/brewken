@@ -392,6 +392,14 @@
         <source>Brewday</source>
         <translation type="unfinished">Varní list</translation>
     </message>
+    <message>
+        <source>Overwrite Existing Instructions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generating instructions will overwrite the existing ones.  This is not undoable.  Do you want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrewDayWidget</name>
@@ -4039,7 +4047,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 water to %2, </source>
-        <translation>%1 vody na teplotu %2, </translation>
+        <translation type="vanished">%1 vody na teplotu %2, </translation>
     </message>
     <message>
         <source>for upcoming infusions.</source>
@@ -4241,7 +4249,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>%1 water to %2 </source>
-        <translation>%1 vody na teplotu %2 </translation>
+        <translation type="vanished">%1 vody na teplotu %2 </translation>
     </message>
     <message>
         <source>mash</source>
@@ -6249,16 +6257,28 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="unfinished">Poznámky</translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nový</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Uložit</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Zrušit</translation>
     </message>
 </context>
 <context>
@@ -6958,6 +6978,26 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <source>This is also known as the batch size.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Internal Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nový</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Uložit</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Zrušit</translation>
+    </message>
 </context>
 <context>
     <name>fermentableEditor</name>
@@ -7271,6 +7311,18 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <source>Grain Group</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nový</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Uložit</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Zrušit</translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7295,16 +7347,28 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="unfinished">Poznámky</translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nový</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Uložit</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Zrušit</translation>
     </message>
 </context>
 <context>
@@ -7756,28 +7820,40 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nový</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Uložit</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Zrušit</translation>
+    </message>
 </context>
 <context>
     <name>instructionWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulář</translation>
+        <translation type="vanished">Formulář</translation>
     </message>
     <message>
         <source>Show a timer</source>
-        <translation>Zobrazit časovač</translation>
+        <translation type="vanished">Zobrazit časovač</translation>
     </message>
     <message>
         <source>Show timer</source>
-        <translation>Zobrazit časovač</translation>
+        <translation type="vanished">Zobrazit časovač</translation>
     </message>
     <message>
         <source>Mark this step completed</source>
-        <translation>Označit krok jako provedený</translation>
+        <translation type="vanished">Označit krok jako provedený</translation>
     </message>
     <message>
         <source>Step completed</source>
-        <translation>Krok proveden</translation>
+        <translation type="vanished">Krok proveden</translation>
     </message>
 </context>
 <context>
@@ -8894,10 +8970,6 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="unfinished">Poznámky</translation>
     </message>
     <message>
-        <source>New misc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8928,6 +9000,18 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nový</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Uložit</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Zrušit</translation>
     </message>
 </context>
 <context>
@@ -9964,15 +10048,15 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="vanished">Nový</translation>
+        <translation>Nový</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="vanished">Uložit</translation>
+        <translation>Uložit</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Zrušit</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Main</source>
@@ -10199,16 +10283,28 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nový</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Uložit</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Zrušit</translation>
     </message>
 </context>
 <context>
@@ -10504,6 +10600,18 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nový</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Uložit</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Zrušit</translation>
     </message>
 </context>
 </TS>

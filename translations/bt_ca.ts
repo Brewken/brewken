@@ -392,6 +392,14 @@
         <source>Brewday</source>
         <translation type="unfinished">Dia d&apos;elaboració</translation>
     </message>
+    <message>
+        <source>Overwrite Existing Instructions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generating instructions will overwrite the existing ones.  This is not undoable.  Do you want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrewDayWidget</name>
@@ -4174,7 +4182,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 water to %2, </source>
-        <translation>%1 d&apos;aigua a %2, </translation>
+        <translation type="vanished">%1 d&apos;aigua a %2, </translation>
     </message>
     <message>
         <source>for upcoming infusions.</source>
@@ -4376,7 +4384,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>%1 water to %2 </source>
-        <translation>%1 d&apos;aigua a %2 </translation>
+        <translation type="vanished">%1 d&apos;aigua a %2 </translation>
     </message>
     <message>
         <source>mash</source>
@@ -6430,16 +6438,28 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished">Notes</translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
     </message>
 </context>
 <context>
@@ -7135,6 +7155,26 @@ El volum final al primari és de %1.</translation>
         <source>This is also known as the batch size.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Internal Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
+    </message>
 </context>
 <context>
     <name>fermentableEditor</name>
@@ -7446,6 +7486,18 @@ El volum final al primari és de %1.</translation>
         <source>Grain Group</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7470,16 +7522,28 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished">Notes</translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
     </message>
 </context>
 <context>
@@ -7931,28 +7995,40 @@ El volum final al primari és de %1.</translation>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
+    </message>
 </context>
 <context>
     <name>instructionWidget</name>
     <message>
         <source>Form</source>
-        <translation>Format</translation>
+        <translation type="vanished">Format</translation>
     </message>
     <message>
         <source>Show a timer</source>
-        <translation>Mostra un temporitzador</translation>
+        <translation type="vanished">Mostra un temporitzador</translation>
     </message>
     <message>
         <source>Show timer</source>
-        <translation>Mostra un temporitzador</translation>
+        <translation type="vanished">Mostra un temporitzador</translation>
     </message>
     <message>
         <source>Mark this step completed</source>
-        <translation>Marcar aquest pas com a complert</translation>
+        <translation type="vanished">Marcar aquest pas com a complert</translation>
     </message>
     <message>
         <source>Step completed</source>
-        <translation>Pas complet</translation>
+        <translation type="vanished">Pas complet</translation>
     </message>
 </context>
 <context>
@@ -9069,10 +9145,6 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished">Notes</translation>
     </message>
     <message>
-        <source>New misc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9103,6 +9175,18 @@ El volum final al primari és de %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
     </message>
 </context>
 <context>
@@ -10155,15 +10239,15 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="vanished">Nou</translation>
+        <translation>Nou</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="vanished">Desa</translation>
+        <translation>Desa</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Cancel·lar</translation>
+        <translation>Cancel·lar</translation>
     </message>
     <message>
         <source>Main</source>
@@ -10390,16 +10474,28 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
     </message>
 </context>
 <context>
@@ -10703,6 +10799,18 @@ El volum final al primari és de %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
     </message>
 </context>
 </TS>

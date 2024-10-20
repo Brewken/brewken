@@ -392,6 +392,14 @@
         <source>Brewday</source>
         <translation type="unfinished">Μέρα ζυθοποίησης</translation>
     </message>
+    <message>
+        <source>Overwrite Existing Instructions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generating instructions will overwrite the existing ones.  This is not undoable.  Do you want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrewDayWidget</name>
@@ -4063,7 +4071,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 water to %2, </source>
-        <translation>%1 το νερό σε  %2, </translation>
+        <translation type="vanished">%1 το νερό σε  %2, </translation>
     </message>
     <message>
         <source>for upcoming infusions.</source>
@@ -4265,7 +4273,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>%1 water to %2 </source>
-        <translation>%1 νερό για %2 </translation>
+        <translation type="vanished">%1 νερό για %2 </translation>
     </message>
     <message>
         <source>mash</source>
@@ -6297,16 +6305,28 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished">Σημειώσεις</translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Αποθήκευση</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
 </context>
 <context>
@@ -7006,6 +7026,26 @@ The final volume in the primary is %1.</source>
         <source>This is also known as the batch size.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Internal Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Αποθήκευση</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Ακύρωση</translation>
+    </message>
 </context>
 <context>
     <name>fermentableEditor</name>
@@ -7321,6 +7361,18 @@ The final volume in the primary is %1.</source>
         <source>Grain Group</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Αποθήκευση</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Ακύρωση</translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7345,16 +7397,28 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished">Σημειώσεις</translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Αποθήκευση</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
 </context>
 <context>
@@ -7806,28 +7870,40 @@ The final volume in the primary is %1.</source>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Αποθήκευση</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Ακύρωση</translation>
+    </message>
 </context>
 <context>
     <name>instructionWidget</name>
     <message>
         <source>Form</source>
-        <translation>Μορφή</translation>
+        <translation type="vanished">Μορφή</translation>
     </message>
     <message>
         <source>Show a timer</source>
-        <translation>Χρονόμετρο</translation>
+        <translation type="vanished">Χρονόμετρο</translation>
     </message>
     <message>
         <source>Show timer</source>
-        <translation>Εμφάνιση χρονομέτρου</translation>
+        <translation type="vanished">Εμφάνιση χρονομέτρου</translation>
     </message>
     <message>
         <source>Mark this step completed</source>
-        <translation>ανήγγειλε αυτό το βήμα ώς ολοκληρωμένο</translation>
+        <translation type="vanished">ανήγγειλε αυτό το βήμα ώς ολοκληρωμένο</translation>
     </message>
     <message>
         <source>Step completed</source>
-        <translation>Το βήμα ολοκληρώθηκε</translation>
+        <translation type="vanished">Το βήμα ολοκληρώθηκε</translation>
     </message>
 </context>
 <context>
@@ -8944,10 +9020,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished">Σημειώσεις</translation>
     </message>
     <message>
-        <source>New misc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8978,6 +9050,18 @@ The final volume in the primary is %1.</source>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Αποθήκευση</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
 </context>
 <context>
@@ -10014,15 +10098,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>New</source>
-        <translation type="vanished">Νέο</translation>
+        <translation>Νέο</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="vanished">Αποθήκευση</translation>
+        <translation>Αποθήκευση</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Ακύρωση</translation>
+        <translation>Ακύρωση</translation>
     </message>
     <message>
         <source>Main</source>
@@ -10249,16 +10333,28 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Αποθήκευση</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
 </context>
 <context>
@@ -10562,6 +10658,18 @@ The final volume in the primary is %1.</source>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Αποθήκευση</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
 </context>
 </TS>

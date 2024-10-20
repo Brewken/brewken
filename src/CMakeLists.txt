@@ -60,7 +60,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/Html.cpp
     ${repoDir}/src/HydrometerTool.cpp
     ${repoDir}/src/IbuGuSlider.cpp
-    ${repoDir}/src/InstructionWidget.cpp
     ${repoDir}/src/InventoryFormatter.cpp
     ${repoDir}/src/Localization.cpp
     ${repoDir}/src/Logging.cpp
@@ -226,6 +225,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/tableModels/StyleTableModel.cpp
     ${repoDir}/src/tableModels/WaterTableModel.cpp
     ${repoDir}/src/tableModels/YeastTableModel.cpp
+    ${repoDir}/src/trees/RecipeTreeModel.cpp
     ${repoDir}/src/trees/TreeFilterProxyModel.cpp
     ${repoDir}/src/trees/TreeModel.cpp
     ${repoDir}/src/trees/TreeNode.cpp

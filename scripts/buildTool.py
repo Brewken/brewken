@@ -247,7 +247,7 @@ def downloadFile(url):
    log.info('Downloading ' + url + ' to ' + filename + ' in directory ' + pathlib.Path.cwd().as_posix())
    response = requests.get(url)
    if (response.status_code != 200):
-      log.critical('Error code ' + response.status_code + ' while downloading ' + url)
+      log.critical('Error code ' + str(response.status_code) + ' while downloading ' + url)
       exit(1)
    with open(filename, 'wb') as fd:
       for chunk in response.iter_content(chunk_size = 128):

@@ -388,6 +388,14 @@
         <source>Brewday</source>
         <translation>Brouwdag</translation>
     </message>
+    <message>
+        <source>Overwrite Existing Instructions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generating instructions will overwrite the existing ones.  This is not undoable.  Do you want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrewDayWidget</name>
@@ -4156,7 +4164,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 water to %2, </source>
-        <translation>%1 water naar %2, </translation>
+        <translation type="vanished">%1 water naar %2, </translation>
     </message>
     <message>
         <source>for upcoming infusions.</source>
@@ -4358,7 +4366,7 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>%1 water to %2 </source>
-        <translation>%1 water naar %2 </translation>
+        <translation type="vanished">%1 water naar %2 </translation>
     </message>
     <message>
         <source>mash</source>
@@ -6388,16 +6396,28 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nieuw</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Opslaan</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuleren</translation>
     </message>
 </context>
 <context>
@@ -7105,6 +7125,26 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <source>This is also known as the batch size.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Internal Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nieuw</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Opslaan</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuleren</translation>
+    </message>
 </context>
 <context>
     <name>fermentableEditor</name>
@@ -7412,6 +7452,18 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <source>Grain Group</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nieuw</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Opslaan</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuleren</translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7436,16 +7488,28 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nieuw</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Opslaan</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuleren</translation>
     </message>
 </context>
 <context>
@@ -7901,28 +7965,40 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nieuw</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Opslaan</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuleren</translation>
+    </message>
 </context>
 <context>
     <name>instructionWidget</name>
     <message>
         <source>Form</source>
-        <translation>Vorm</translation>
+        <translation type="vanished">Vorm</translation>
     </message>
     <message>
         <source>Show a timer</source>
-        <translation>Toon een timer</translation>
+        <translation type="vanished">Toon een timer</translation>
     </message>
     <message>
         <source>Show timer</source>
-        <translation>Toon timer</translation>
+        <translation type="vanished">Toon timer</translation>
     </message>
     <message>
         <source>Mark this step completed</source>
-        <translation>Markeer deze stap als compleet</translation>
+        <translation type="vanished">Markeer deze stap als compleet</translation>
     </message>
     <message>
         <source>Step completed</source>
-        <translation>Stap compleet</translation>
+        <translation type="vanished">Stap compleet</translation>
     </message>
 </context>
 <context>
@@ -8995,10 +9071,6 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New misc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9029,6 +9101,18 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nieuw</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Opslaan</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuleren</translation>
     </message>
 </context>
 <context>
@@ -9989,15 +10073,15 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="vanished">Nieuw</translation>
+        <translation>Nieuw</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="vanished">Opslaan</translation>
+        <translation>Opslaan</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Annuleren</translation>
+        <translation>Annuleren</translation>
     </message>
     <message>
         <source>Main</source>
@@ -10220,16 +10304,28 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nieuw</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Opslaan</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuleren</translation>
     </message>
 </context>
 <context>
@@ -10533,6 +10629,18 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nieuw</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Opslaan</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuleren</translation>
     </message>
 </context>
 </TS>

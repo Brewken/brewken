@@ -380,6 +380,14 @@
         <source>Brewday</source>
         <translation type="unfinished">Dia de Confecção de Cerveja</translation>
     </message>
+    <message>
+        <source>Overwrite Existing Instructions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generating instructions will overwrite the existing ones.  This is not undoable.  Do you want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrewDayWidget</name>
@@ -4074,7 +4082,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 water to %2, </source>
-        <translation>%1 de água para %2, </translation>
+        <translation type="vanished">%1 de água para %2, </translation>
     </message>
     <message>
         <source>for upcoming infusions.</source>
@@ -4276,7 +4284,7 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>%1 water to %2 </source>
-        <translation>%1 de água para %2 </translation>
+        <translation type="vanished">%1 de água para %2 </translation>
     </message>
     <message>
         <source>mash</source>
@@ -6310,16 +6318,28 @@ O volume final do fermentador primário é %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Novo</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Salvar</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
     </message>
 </context>
 <context>
@@ -7023,6 +7043,26 @@ O volume final do fermentador primário é %1.</translation>
         <source>This is also known as the batch size.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Internal Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Novo</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Salvar</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
+    </message>
 </context>
 <context>
     <name>fermentableEditor</name>
@@ -7338,6 +7378,18 @@ O volume final do fermentador primário é %1.</translation>
         <source>Grain Group</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Novo</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Salvar</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7362,16 +7414,28 @@ O volume final do fermentador primário é %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Novo</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Salvar</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
     </message>
 </context>
 <context>
@@ -7827,28 +7891,40 @@ O volume final do fermentador primário é %1.</translation>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Novo</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Salvar</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
+    </message>
 </context>
 <context>
     <name>instructionWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="vanished">Formulário</translation>
     </message>
     <message>
         <source>Show a timer</source>
-        <translation>Mostrar um cronômetro</translation>
+        <translation type="vanished">Mostrar um cronômetro</translation>
     </message>
     <message>
         <source>Show timer</source>
-        <translation>Mostrar o cronômetro</translation>
+        <translation type="vanished">Mostrar o cronômetro</translation>
     </message>
     <message>
         <source>Mark this step completed</source>
-        <translation>Marcar esse passo como concluído</translation>
+        <translation type="vanished">Marcar esse passo como concluído</translation>
     </message>
     <message>
         <source>Step completed</source>
-        <translation>Passo concluído</translation>
+        <translation type="vanished">Passo concluído</translation>
     </message>
 </context>
 <context>
@@ -8965,10 +9041,6 @@ O volume final do fermentador primário é %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New misc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8999,6 +9071,18 @@ O volume final do fermentador primário é %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Novo</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Salvar</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
     </message>
 </context>
 <context>
@@ -10047,15 +10131,15 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="vanished">Novo</translation>
+        <translation>Novo</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="vanished">Salvar</translation>
+        <translation>Salvar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Cancelar</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>Main</source>
@@ -10282,16 +10366,28 @@ O volume final do fermentador primário é %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Novo</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Salvar</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
     </message>
 </context>
 <context>
@@ -10595,6 +10691,18 @@ O volume final do fermentador primário é %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Novo</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Salvar</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
     </message>
 </context>
 </TS>

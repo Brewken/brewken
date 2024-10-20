@@ -384,6 +384,14 @@
         <source>Brewday</source>
         <translation type="unfinished">День варки</translation>
     </message>
+    <message>
+        <source>Overwrite Existing Instructions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generating instructions will overwrite the existing ones.  This is not undoable.  Do you want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrewDayWidget</name>
@@ -4114,7 +4122,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 water to %2, </source>
-        <translation>%1 воды к %2 </translation>
+        <translation type="vanished">%1 воды к %2 </translation>
     </message>
     <message>
         <source>for upcoming infusions.</source>
@@ -4316,7 +4324,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>%1 water to %2 </source>
-        <translation>%1 воды к %2 </translation>
+        <translation type="vanished">%1 воды к %2 </translation>
     </message>
     <message>
         <source>mash</source>
@@ -6366,16 +6374,28 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Новый</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Сохранить</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Отменить</translation>
     </message>
 </context>
 <context>
@@ -7079,6 +7099,26 @@ The final volume in the primary is %1.</source>
         <source>This is also known as the batch size.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Internal Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Новый</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Сохранить</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Отменить</translation>
+    </message>
 </context>
 <context>
     <name>fermentableEditor</name>
@@ -7394,6 +7434,18 @@ The final volume in the primary is %1.</source>
         <source>Grain Group</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Новый</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Сохранить</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Отменить</translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7418,16 +7470,28 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Новый</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Сохранить</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Отменить</translation>
     </message>
 </context>
 <context>
@@ -7883,28 +7947,40 @@ The final volume in the primary is %1.</source>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Новый</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Сохранить</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Отменить</translation>
+    </message>
 </context>
 <context>
     <name>instructionWidget</name>
     <message>
         <source>Form</source>
-        <translation>Форма</translation>
+        <translation type="vanished">Форма</translation>
     </message>
     <message>
         <source>Show a timer</source>
-        <translation>Показать таймер</translation>
+        <translation type="vanished">Показать таймер</translation>
     </message>
     <message>
         <source>Show timer</source>
-        <translation>Показать таймер</translation>
+        <translation type="vanished">Показать таймер</translation>
     </message>
     <message>
         <source>Mark this step completed</source>
-        <translation>Пометить этот этап, как завершённый</translation>
+        <translation type="vanished">Пометить этот этап, как завершённый</translation>
     </message>
     <message>
         <source>Step completed</source>
-        <translation>Этап завершён</translation>
+        <translation type="vanished">Этап завершён</translation>
     </message>
 </context>
 <context>
@@ -9017,10 +9093,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New misc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9051,6 +9123,18 @@ The final volume in the primary is %1.</source>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Новый</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Сохранить</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Отменить</translation>
     </message>
 </context>
 <context>
@@ -10079,15 +10163,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>New</source>
-        <translation type="vanished">Новый</translation>
+        <translation>Новый</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="vanished">Сохранить</translation>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Отменить</translation>
+        <translation>Отменить</translation>
     </message>
     <message>
         <source>Main</source>
@@ -10314,16 +10398,28 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Новый</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Сохранить</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Отменить</translation>
     </message>
 </context>
 <context>
@@ -10619,6 +10715,18 @@ The final volume in the primary is %1.</source>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Новый</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Сохранить</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Отменить</translation>
     </message>
 </context>
 </TS>

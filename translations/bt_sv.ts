@@ -392,6 +392,14 @@
         <source>Brewday</source>
         <translation type="unfinished">Bryggdagen</translation>
     </message>
+    <message>
+        <source>Overwrite Existing Instructions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generating instructions will overwrite the existing ones.  This is not undoable.  Do you want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrewDayWidget</name>
@@ -4135,7 +4143,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 water to %2, </source>
-        <translation>%1 vatten till %2, </translation>
+        <translation type="vanished">%1 vatten till %2, </translation>
     </message>
     <message>
         <source>for upcoming infusions.</source>
@@ -4337,7 +4345,7 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>%1 water to %2 </source>
-        <translation>%1 vatten till %2 </translation>
+        <translation type="vanished">%1 vatten till %2 </translation>
     </message>
     <message>
         <source>mash</source>
@@ -6372,16 +6380,28 @@ Primärens slutgiltiga volym är %1.</translation>
         <translation type="unfinished">Anteckningar</translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Spara</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
     </message>
 </context>
 <context>
@@ -7085,6 +7105,26 @@ Primärens slutgiltiga volym är %1.</translation>
         <source>This is also known as the batch size.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Internal Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Spara</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
+    </message>
 </context>
 <context>
     <name>fermentableEditor</name>
@@ -7404,6 +7444,18 @@ Primärens slutgiltiga volym är %1.</translation>
         <source>Grain Group</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Spara</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7428,16 +7480,28 @@ Primärens slutgiltiga volym är %1.</translation>
         <translation type="unfinished">Anteckningar</translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Spara</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
     </message>
 </context>
 <context>
@@ -7893,28 +7957,40 @@ Primärens slutgiltiga volym är %1.</translation>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Spara</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
+    </message>
 </context>
 <context>
     <name>instructionWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulär</translation>
+        <translation type="vanished">Formulär</translation>
     </message>
     <message>
         <source>Show a timer</source>
-        <translation>Visa en timer</translation>
+        <translation type="vanished">Visa en timer</translation>
     </message>
     <message>
         <source>Show timer</source>
-        <translation>Visa timer</translation>
+        <translation type="vanished">Visa timer</translation>
     </message>
     <message>
         <source>Mark this step completed</source>
-        <translation>Markera steg som slutfört</translation>
+        <translation type="vanished">Markera steg som slutfört</translation>
     </message>
     <message>
         <source>Step completed</source>
-        <translation>Steg slutfört</translation>
+        <translation type="vanished">Steg slutfört</translation>
     </message>
 </context>
 <context>
@@ -9023,10 +9099,6 @@ Primärens slutgiltiga volym är %1.</translation>
         <translation type="unfinished">Anteckningar</translation>
     </message>
     <message>
-        <source>New misc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9057,6 +9129,18 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Spara</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
     </message>
 </context>
 <context>
@@ -10017,15 +10101,15 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="vanished">Ny</translation>
+        <translation>Ny</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="vanished">Spara</translation>
+        <translation>Spara</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Avbryt</translation>
+        <translation>Avbryt</translation>
     </message>
     <message>
         <source>Main</source>
@@ -10248,16 +10332,28 @@ Primärens slutgiltiga volym är %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Spara</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
     </message>
 </context>
 <context>
@@ -10561,6 +10657,18 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Spara</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
     </message>
 </context>
 </TS>

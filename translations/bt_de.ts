@@ -388,6 +388,14 @@
         <source>Brewday</source>
         <translation type="unfinished">Brautag</translation>
     </message>
+    <message>
+        <source>Overwrite Existing Instructions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generating instructions will overwrite the existing ones.  This is not undoable.  Do you want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrewDayWidget</name>
@@ -4110,7 +4118,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 water to %2, </source>
-        <translation>%1 Wasser zu %2, </translation>
+        <translation type="vanished">%1 Wasser zu %2, </translation>
     </message>
     <message>
         <source>for upcoming infusions.</source>
@@ -4312,7 +4320,7 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>%1 water to %2 </source>
-        <translation>%1 Wasser zu %2 </translation>
+        <translation type="vanished">%1 Wasser zu %2 </translation>
     </message>
     <message>
         <source>mash</source>
@@ -6323,16 +6331,28 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Neu</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Speichern</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Abbruch</translation>
     </message>
 </context>
 <context>
@@ -7012,6 +7032,26 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <source>This is also known as the batch size.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Internal Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Neu</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Speichern</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Abbruch</translation>
+    </message>
 </context>
 <context>
     <name>fermentableEditor</name>
@@ -7331,6 +7371,18 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <source>Grain Group</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Neu</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Speichern</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Abbruch</translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7355,16 +7407,28 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Neu</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Speichern</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Abbruch</translation>
     </message>
 </context>
 <context>
@@ -7824,28 +7888,40 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Neu</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Speichern</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Abbruch</translation>
+    </message>
 </context>
 <context>
     <name>instructionWidget</name>
     <message>
         <source>Form</source>
-        <translation>von</translation>
+        <translation type="vanished">von</translation>
     </message>
     <message>
         <source>Show a timer</source>
-        <translation>Eine Stoppuhr zeigen</translation>
+        <translation type="vanished">Eine Stoppuhr zeigen</translation>
     </message>
     <message>
         <source>Show timer</source>
-        <translation>Eine Stoppuhr zeigen</translation>
+        <translation type="vanished">Eine Stoppuhr zeigen</translation>
     </message>
     <message>
         <source>Mark this step completed</source>
-        <translation>Diesen Schritt als fertig markieren</translation>
+        <translation type="vanished">Diesen Schritt als fertig markieren</translation>
     </message>
     <message>
         <source>Step completed</source>
-        <translation>Schritt ist fertig</translation>
+        <translation type="vanished">Schritt ist fertig</translation>
     </message>
 </context>
 <context>
@@ -8958,10 +9034,6 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New misc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8992,6 +9064,18 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Neu</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Speichern</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Abbruch</translation>
     </message>
 </context>
 <context>
@@ -10024,15 +10108,15 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="vanished">Neu</translation>
+        <translation>Neu</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="vanished">Speichern</translation>
+        <translation>Speichern</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Abbruch</translation>
+        <translation>Abbruch</translation>
     </message>
     <message>
         <source>Main</source>
@@ -10255,16 +10339,28 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Neu</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Speichern</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Abbruch</translation>
     </message>
 </context>
 <context>
@@ -10568,6 +10664,18 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Neu</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Speichern</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Abbruch</translation>
     </message>
 </context>
 </TS>

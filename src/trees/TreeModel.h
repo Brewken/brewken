@@ -255,11 +255,4 @@ namespace FolderUtils {
    void setFolder(NamedEntity * ne, QString const & val);
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-#include "trees/TreeModelBase.h"
-class RecipeTreeModel : public TreeModel,
-                        public TreeModelBase<RecipeTreeModel, Recipe> {
-
-};
-
 #endif

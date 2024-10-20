@@ -207,7 +207,7 @@ public:
 
    //! \brief returns the number of children of the folder
    int childCount() const requires IsSubstantiveVariant<ChildPtrTypes> {
-      return m_children.size();
+      return this->m_children.size();
    }
 
    int childCount() const requires IsNullVariant<ChildPtrTypes> {
@@ -219,6 +219,18 @@ public:
     */
    ChildPtrTypes child(int number) const requires IsSubstantiveVariant<ChildPtrTypes> {
       return this->m_children.at(number);
+   }
+
+   /**
+    * \brief Return a raw pointer to specified child, suitable for call to \c QAbstractItemModel::createIndex
+    */
+   void const * voidChild(std::size_t number) const requires IsSubstantiveVariant<ChildPtrTypes> {
+      if (number < this->m_children.size()) {
+         auto const & theChild = this->m_children.at(number);
+         std::visit([](auto visited){ return static_cast<void *>(visited.get()); },
+                    theChild );
+      }
+      return nullptr;
    }
 
    //! \brief returns the index of the item in its parents list

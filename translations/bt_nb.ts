@@ -388,6 +388,14 @@
         <source>Brewday</source>
         <translation type="unfinished">Bryggedag</translation>
     </message>
+    <message>
+        <source>Overwrite Existing Instructions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generating instructions will overwrite the existing ones.  This is not undoable.  Do you want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrewDayWidget</name>
@@ -4059,7 +4067,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 water to %2, </source>
-        <translation>%1 vann til %2, </translation>
+        <translation type="vanished">%1 vann til %2, </translation>
     </message>
     <message>
         <source>for upcoming infusions.</source>
@@ -4261,7 +4269,7 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>%1 water to %2 </source>
-        <translation>%1 vann til %2 </translation>
+        <translation type="vanished">%1 vann til %2 </translation>
     </message>
     <message>
         <source>mash</source>
@@ -6288,16 +6296,28 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <translation type="unfinished">Notater</translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Lagre</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
     </message>
 </context>
 <context>
@@ -7001,6 +7021,26 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <source>This is also known as the batch size.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Internal Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Lagre</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
+    </message>
 </context>
 <context>
     <name>fermentableEditor</name>
@@ -7316,6 +7356,18 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <source>Grain Group</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Lagre</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7340,16 +7392,28 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <translation type="unfinished">Notater</translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Lagre</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
     </message>
 </context>
 <context>
@@ -7805,28 +7869,40 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Lagre</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
+    </message>
 </context>
 <context>
     <name>instructionWidget</name>
     <message>
         <source>Form</source>
-        <translation>Skjema</translation>
+        <translation type="vanished">Skjema</translation>
     </message>
     <message>
         <source>Show a timer</source>
-        <translation>Vis et tidsur</translation>
+        <translation type="vanished">Vis et tidsur</translation>
     </message>
     <message>
         <source>Show timer</source>
-        <translation>Vis tidsur</translation>
+        <translation type="vanished">Vis tidsur</translation>
     </message>
     <message>
         <source>Mark this step completed</source>
-        <translation>Merk fase som ferdig</translation>
+        <translation type="vanished">Merk fase som ferdig</translation>
     </message>
     <message>
         <source>Step completed</source>
-        <translation>Fase ferdig</translation>
+        <translation type="vanished">Fase ferdig</translation>
     </message>
 </context>
 <context>
@@ -8943,10 +9019,6 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <translation type="unfinished">Notater</translation>
     </message>
     <message>
-        <source>New misc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8977,6 +9049,18 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Lagre</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
     </message>
 </context>
 <context>
@@ -10012,15 +10096,15 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="vanished">Ny</translation>
+        <translation>Ny</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="vanished">Lagre</translation>
+        <translation>Lagre</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Avbryt</translation>
+        <translation>Avbryt</translation>
     </message>
     <message>
         <source>Main</source>
@@ -10247,16 +10331,28 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Lagre</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
     </message>
 </context>
 <context>
@@ -10560,6 +10656,18 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Lagre</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
     </message>
 </context>
 </TS>

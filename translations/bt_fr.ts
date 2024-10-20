@@ -392,6 +392,14 @@
         <source>Brewday</source>
         <translation type="unfinished">Journée de brassage</translation>
     </message>
+    <message>
+        <source>Overwrite Existing Instructions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generating instructions will overwrite the existing ones.  This is not undoable.  Do you want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrewDayWidget</name>
@@ -4178,7 +4186,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 water to %2, </source>
-        <translation>%1 d&apos;eau à %2, </translation>
+        <translation type="vanished">%1 d&apos;eau à %2, </translation>
     </message>
     <message>
         <source>for upcoming infusions.</source>
@@ -4380,7 +4388,7 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     </message>
     <message>
         <source>%1 water to %2 </source>
-        <translation>%1 d&apos;eau à %2 </translation>
+        <translation type="vanished">%1 d&apos;eau à %2 </translation>
     </message>
     <message>
         <source>mash</source>
@@ -6430,16 +6438,28 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
         <translation type="unfinished">Notes</translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nouveau</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Sauvegarder</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuler</translation>
     </message>
 </context>
 <context>
@@ -7145,6 +7165,26 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
         <source>This is also known as the batch size.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Internal Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nouveau</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Sauvegarder</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuler</translation>
+    </message>
 </context>
 <context>
     <name>fermentableEditor</name>
@@ -7464,6 +7504,18 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
         <source>Grain Group</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nouveau</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Sauvegarder</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuler</translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7488,16 +7540,28 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
         <translation type="unfinished">Notes</translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nouveau</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Sauvegarder</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuler</translation>
     </message>
 </context>
 <context>
@@ -7953,28 +8017,40 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nouveau</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Sauvegarder</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuler</translation>
+    </message>
 </context>
 <context>
     <name>instructionWidget</name>
     <message>
         <source>Form</source>
-        <translation>Format</translation>
+        <translation type="vanished">Format</translation>
     </message>
     <message>
         <source>Show a timer</source>
-        <translation>Afficher une minuterie</translation>
+        <translation type="vanished">Afficher une minuterie</translation>
     </message>
     <message>
         <source>Show timer</source>
-        <translation>Afficher la minuterie</translation>
+        <translation type="vanished">Afficher la minuterie</translation>
     </message>
     <message>
         <source>Mark this step completed</source>
-        <translation>Marquer cette étape comme achevée</translation>
+        <translation type="vanished">Marquer cette étape comme achevée</translation>
     </message>
     <message>
         <source>Step completed</source>
-        <translation>Étape achevée</translation>
+        <translation type="vanished">Étape achevée</translation>
     </message>
 </context>
 <context>
@@ -9095,10 +9171,6 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
         <translation type="unfinished">Notes</translation>
     </message>
     <message>
-        <source>New misc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9129,6 +9201,18 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nouveau</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Sauvegarder</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuler</translation>
     </message>
 </context>
 <context>
@@ -10181,15 +10265,15 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="vanished">Nouveau</translation>
+        <translation>Nouveau</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="vanished">Sauvegarder</translation>
+        <translation>Sauvegarder</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <source>Main</source>
@@ -10416,16 +10500,28 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nouveau</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Sauvegarder</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuler</translation>
     </message>
 </context>
 <context>
@@ -10729,6 +10825,18 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nouveau</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Sauvegarder</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuler</translation>
     </message>
 </context>
 </TS>
