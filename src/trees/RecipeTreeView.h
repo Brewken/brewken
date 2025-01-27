@@ -80,7 +80,6 @@ private:
    QMenu * doGetContextMenu(QModelIndex const & selectedViewIndex);
 
    QMenu m_versionMenu = QMenu{};
-   QAction *       m_deleteAction = nullptr;
    QAction * m_showAncestorAction = nullptr;
    QAction * m_hideAncestorAction = nullptr;
    QAction *       m_orphanAction = nullptr;
