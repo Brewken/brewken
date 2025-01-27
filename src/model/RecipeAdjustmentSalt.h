@@ -28,7 +28,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::RecipeAdjustmentSalt { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::RecipeAdjustmentSalt { inline BtStringConst const property{#property}; }
 AddPropertyName(salt     )
 AddPropertyName(whenToAdd)
 #undef AddPropertyName
@@ -124,10 +124,6 @@ private:
    WhenToAdd m_whenToAdd;
 };
 
-Q_DECLARE_METATYPE(Salt)
-// As of Qt6, we get compiler errors if we uncomment the following, but, so far, everything seems to work fine with it
-// commented out!
-//Q_DECLARE_METATYPE(Salt *)
 BT_DECLARE_METATYPES(RecipeAdjustmentSalt)
 
 #endif

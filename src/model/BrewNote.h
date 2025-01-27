@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/BrewNote.h is part of Brewken, and is copyright the following authors 2009-2024:
+ * model/BrewNote.h is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
@@ -34,7 +34,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::BrewNote { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::BrewNote { inline BtStringConst const property{#property}; }
 AddPropertyName(abv              )
 AddPropertyName(attenuation      )
 AddPropertyName(boilOff_l        )
@@ -222,6 +222,9 @@ public:
    double calculateActualABV_pct();
    //! Actual attenuation, based on measured og/fg
    double calculateAttenuation_pct();
+
+   //! Needed by \c TreeModelBase
+   static QList<std::shared_ptr<BrewNote>> ownedBy(Recipe const & recipe);
 
 signals:
    void brewDateChanged(QDate const &);

@@ -33,7 +33,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::Style { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::Style { inline BtStringConst const property{#property}; }
 AddPropertyName(abvMax_pct       )
 AddPropertyName(abvMin_pct       )
 AddPropertyName(appearance       )
@@ -75,7 +75,7 @@ class Style : public NamedEntity,
    Q_OBJECT
    FOLDER_BASE_DECL(Style)
    // See model/FolderBase.h for info, getters and setters for these properties
-   Q_PROPERTY(QString folder        READ folder        WRITE setFolder     )
+   Q_PROPERTY(QString folderPath        READ folderPath        WRITE setFolderPath)
 
 public:
    /**
@@ -249,8 +249,8 @@ public:
 signals:
 
 protected:
-   virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual ObjectStore & getObjectStoreTypedInstance() const;
+   virtual bool isEqualTo(NamedEntity const & other) const override;
+   virtual ObjectStore & getObjectStoreTypedInstance() const override;
 
 private:
    QString               m_category         ;

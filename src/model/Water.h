@@ -32,7 +32,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::Water { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::Water { inline BtStringConst const property{#property}; }
 AddPropertyName(alkalinity_ppm  )
 AddPropertyName(alkalinityAsHCO3)
 ///AddPropertyName(amount          )
@@ -71,7 +71,7 @@ class Water : public OutlineableNamedEntity,
    Q_OBJECT
    FOLDER_BASE_DECL(Water)
    // See model/FolderBase.h for info, getters and setters for these properties
-   Q_PROPERTY(QString folder        READ folder        WRITE setFolder     )
+   Q_PROPERTY(QString folderPath        READ folderPath        WRITE setFolderPath)
 
 public:
    /**

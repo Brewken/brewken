@@ -214,6 +214,8 @@ public:
 
    ~ObjectStore();
 
+   QString name() const;
+
    /**
     * \brief Gets the state of the ObjectStore.  If it's \c ErrorInitialising, we probably need to terminate the
     *        program.  (This is because, if we were unable to read some or all data from the database during startup,
@@ -534,6 +536,12 @@ private:
 template<class S>
 S & operator<<(S & stream, ObjectStore::FieldType const fieldType) {
    stream << "FieldType #" << static_cast<int>(fieldType) << ": (" << ObjectStore::getDisplayName(fieldType) << ")";
+   return stream;
+}
+
+template<class S>
+S & operator<<(S & stream, ObjectStore const & objectStore) {
+   stream << QString{"Object Store for %1"}.arg(objectStore.name());
    return stream;
 }
 

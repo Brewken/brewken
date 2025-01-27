@@ -33,7 +33,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::Fermentation { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::Fermentation { inline BtStringConst const property{#property}; }
 AddPropertyName(description      )
 ///AddPropertyName(fermentationSteps)
 AddPropertyName(notes            )
@@ -55,8 +55,8 @@ class Fermentation : public NamedEntity,
    FOLDER_BASE_DECL(Fermentation)
    STEP_OWNER_COMMON_DECL(Fermentation, fermentation)
    // See model/FolderBase.h for info, getters and setters for these properties
-   Q_PROPERTY(QString folder        READ folder        WRITE setFolder     )
-   // See model/SteppedOwnerBase.h for info, getters and setters for these properties
+   Q_PROPERTY(QString folderPath        READ folderPath        WRITE setFolderPath)
+   // See model/StepOwnerBase.h for info, getters and setters for these properties
    Q_PROPERTY(QList<std::shared_ptr<FermentationStep>> steps   READ steps   WRITE setSteps   STORED false)
    Q_PROPERTY(unsigned int numSteps   READ numSteps   STORED false)
 

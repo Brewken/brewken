@@ -28,7 +28,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::RecipeAdditionYeast { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::RecipeAdditionYeast { inline BtStringConst const property{#property}; }
 AddPropertyName(addToSecondary   )  // Deprecated - retained only for BeerXML
 AddPropertyName(attenuation_pct  )
 AddPropertyName(yeast            )
@@ -116,8 +116,6 @@ private:
    std::optional<int   > m_cellCountBillions;
 };
 
-Q_DECLARE_METATYPE(Yeast)
-Q_DECLARE_METATYPE(Yeast *)
 BT_DECLARE_METATYPES(RecipeAdditionYeast)
 
 #endif

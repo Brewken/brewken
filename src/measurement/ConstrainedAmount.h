@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/ConstrainedAmount.h is part of Brewken, and is copyright the following authors 2022-2023:
+ * measurement/ConstrainedAmount.h is part of Brewken, and is copyright the following authors 2022-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@ namespace Measurement {
     *        you try to construct / assign / move it with a \c Measurement::Unit of the wrong
     *        \c Measurement::PhysicalQuantity
     */
-   template<Measurement::PhysicalQuantityConstTypes PQT, PQT const pqt>
+   template<Measurement::PhysicalQuantityTypes PQT, PQT const pqt>
    class ConstrainedAmount : public Measurement::Amount {
    public:
       /**
@@ -108,10 +108,10 @@ namespace Measurement {
    };
 }
 
-using MassOrVolumeAmt = Measurement::ConstrainedAmount<Measurement::ChoiceOfPhysicalQuantity const,
+using MassOrVolumeAmt = Measurement::ConstrainedAmount<Measurement::ChoiceOfPhysicalQuantity,
                                                        Measurement::ChoiceOfPhysicalQuantity::Mass_Volume>;;
 
-using MassVolumeOrCountAmt = Measurement::ConstrainedAmount<Measurement::ChoiceOfPhysicalQuantity const,
+using MassVolumeOrCountAmt = Measurement::ConstrainedAmount<Measurement::ChoiceOfPhysicalQuantity,
                                                             Measurement::ChoiceOfPhysicalQuantity::Mass_Volume_Count>;
 
 #endif

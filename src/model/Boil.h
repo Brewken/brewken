@@ -31,7 +31,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::Boil { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::Boil { inline BtStringConst const property{#property}; }
 AddPropertyName(description  )
 AddPropertyName(notes        )
 AddPropertyName(preBoilSize_l)
@@ -71,8 +71,8 @@ class Boil : public NamedEntity,
    FOLDER_BASE_DECL(Boil)
    STEP_OWNER_COMMON_DECL(Boil, boil)
    // See model/FolderBase.h for info, getters and setters for these properties
-   Q_PROPERTY(QString folder        READ folder        WRITE setFolder     )
-   // See model/SteppedOwnerBase.h for info, getters and setters for these properties
+   Q_PROPERTY(QString folderPath        READ folderPath        WRITE setFolderPath)
+   // See model/StepOwnerBase.h for info, getters and setters for these properties
    Q_PROPERTY(QList<std::shared_ptr<BoilStep>> steps   READ steps   WRITE setSteps   STORED false)
    Q_PROPERTY(unsigned int numSteps   READ numSteps   STORED false)
 

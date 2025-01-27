@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/BrewNote.cpp is part of Brewken, and is copyright the following authors 2009-2024:
+ * model/BrewNote.cpp is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Greg Meess <Daedalus12@gmail.com>
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
@@ -37,6 +37,11 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
 #include "model/RecipeAdditionYeast.h"
+
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_BrewNote.cpp"
+#endif
 
 QString BrewNote::localisedName() { return tr("Brew Note"); }
 
@@ -558,16 +563,17 @@ double BrewNote::calculateABV_pct() {
    // 1 + [(og - 1) * (1.0 - %/100)]
    double const estFg = 1 + ((m_og-1.0)*(1.0 - atten_pct/100.0));
 
-   double const calculatedABV = (m_og-estFg)*130;
-   this->setProjABV_pct(calculatedABV);
+   double const calculatedAbv_pct = Algorithms::abvFromOgAndFg(this->m_og, estFg);
 
-   return calculatedABV;
+   this->setProjABV_pct(calculatedAbv_pct);
+
+   return calculatedAbv_pct;
 }
 
 double BrewNote::calculateActualABV_pct() {
-   double const abv = (m_og - m_fg) * 130;
-   this->setABV(abv);
-   return abv;
+   double const abv_pct = Algorithms::abvFromOgAndFg(this->m_og, this->m_fg);
+   this->setABV(abv_pct);
+   return abv_pct;
 }
 
 double BrewNote::calculateAttenuation_pct() {
@@ -576,4 +582,8 @@ double BrewNote::calculateAttenuation_pct() {
     double const attenuation = ((m_og - m_fg) / (m_og - 1)) * 100;
     this->setAttenuation(attenuation);
     return attenuation;
+}
+
+QList<std::shared_ptr<BrewNote>> BrewNote::ownedBy(Recipe const & recipe) {
+   return recipe.brewNotes();
 }

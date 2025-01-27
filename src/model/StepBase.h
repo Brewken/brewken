@@ -21,15 +21,16 @@
 
 #include "model/Recipe.h"
 #include "model/Step.h"
-#include "model/SteppedBase.h"
+#include "model/EnumeratedBase.h"
 #include "PhysicalConstants.h"
 #include "utils/AutoCompare.h"
+#include "utils/OptionalHelpers.h"
 #include "utils/TypeTraits.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::StepBase { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::StepBase { inline BtStringConst const property{#property}; }
 AddPropertyName(rampTime_mins)
 AddPropertyName(startTemp_c  )
 AddPropertyName(stepTime_days) // Mostly needed for BeerXML
@@ -46,7 +47,7 @@ namespace {
 
    // Everything has to be double because our underlying measure (minutes) is allowed to be measured in fractions.
    constexpr double minutesInADay = 24.0 * 60.0;
-   std::optional<double> daysToMinutes(std::optional<double> val) {
+   inline std::optional<double> daysToMinutes(std::optional<double> const & val) {
       if (val) {
          return *val * minutesInADay;
       }
@@ -84,13 +85,13 @@ template <StepBaseOptions ebo> concept CONCEPT_FIX_UP RampTimeSupported = has_ra
  *        We also implement some properties where we want slightly different handling for the different derived classes.
  *        (The regular properties that are exactly the same for all derived classes are in \c Step and \c StepExtended.)
  *
- *        Note that we do \b not inherit from \c CuriouslyRecurringTemplateBase because \c SteppedBase already does
+ *        Note that we do \b not inherit from \c CuriouslyRecurringTemplateBase because \c EnumeratedBase already does
  *        this.  If we inherited again, we'd end up with two (identical) implementations of this->derived() that the
  *        compiler can't disambiguate between.
  */
 template<class Derived> class StepPhantom;
 template<class Derived, class Owner, StepBaseOptions stepBaseOptions>
-class StepBase : public SteppedBase<Derived, Owner> {
+class StepBase : public EnumeratedBase<Derived, Owner> {
 protected:
    // Note that, because this is static, it cannot be initialised inside the class definition
    static TypeLookup const typeLookup;
@@ -98,23 +99,23 @@ protected:
    //! Non-virtual equivalent of isEqualTo
    bool doIsEqualTo(StepBase const & other) const {
       return (
-         Utils::AutoCompare(this->m_stepTime_mins, other.m_stepTime_mins) &&
-         Utils::AutoCompare(this->m_startTemp_c  , other.m_startTemp_c  ) &&
-         Utils::AutoCompare(this->m_rampTime_mins, other.m_rampTime_mins) &&
+         AUTO_LOG_COMPARE(this, other, m_stepTime_mins) &&
+         AUTO_LOG_COMPARE(this, other, m_startTemp_c  ) &&
+         AUTO_LOG_COMPARE(this, other, m_rampTime_mins) &&
          // Parent classes have to be equal too
-         this->SteppedBase<Derived, Owner>::doIsEqualTo(other)
+         this->EnumeratedBase<Derived, Owner>::doIsEqualTo(other)
       );
    }
 
 private:
    friend Derived;
    StepBase() :
-      SteppedBase<Derived, Owner>{} {
+      EnumeratedBase<Derived, Owner>{} {
       return;
    }
 
    StepBase(NamedParameterBundle const & namedParameterBundle) :
-      SteppedBase<Derived, Owner>{namedParameterBundle},
+      EnumeratedBase<Derived, Owner>{namedParameterBundle},
       // See below for m_stepTime_mins
       SET_REGULAR_FROM_NPB (m_startTemp_c  , namedParameterBundle, PropertyNames::StepBase::startTemp_c  , std::nullopt),
       SET_REGULAR_FROM_NPB (m_rampTime_mins, namedParameterBundle, PropertyNames::StepBase::rampTime_mins, std::nullopt) {
@@ -142,8 +143,8 @@ private:
       return;
    }
 
-   StepBase(Derived const & other) :
-      SteppedBase<Derived, Owner>{other},
+   explicit StepBase(Derived const & other) :
+      EnumeratedBase<Derived, Owner>{other},
       m_stepTime_mins{other.m_stepTime_mins},
       m_startTemp_c  {other.m_startTemp_c  },
       m_rampTime_mins{other.m_rampTime_mins} {
@@ -244,6 +245,21 @@ public:
       return;
    }
 
+   //! \brief Convenience function for logging
+   virtual QString toString() const {
+      return QString{
+         "StepBase (m_stepTime_mins: %1; m_startTemp_c: %2; m_rampTime_mins: %3) %4"
+      }.arg(
+         Optional::toString(this->m_stepTime_mins)
+      ).arg(
+         Optional::toString(this->m_startTemp_c)
+      ).arg(
+         Optional::toString(this->m_rampTime_mins)
+      ).arg(
+         this->EnumeratedBase<Derived, Owner>::toString()
+      );
+   }
+
 protected:
    //================================================ MEMBER VARIABLES =================================================
    std::optional<double> m_stepTime_mins = std::nullopt;
@@ -288,12 +304,12 @@ TypeLookup const StepBase<Derived, Owner, stepBaseOptions>::typeLookup {
        )},
    },
    // Parent class lookup
-   {&SteppedBase<Derived, Owner>::typeLookup}
+   {&EnumeratedBase<Derived, Owner>::typeLookup}
 };
 
 /**
  * \brief Derived classes should include this in their header file, right after Q_OBJECT.  Concrete derived classes also
- *        need to include the following block (as well as the equivalent from \c model/SteppedBase.h):
+ *        need to include the following block (as well as the equivalent from \c model/EnumeratedBase.h):
  *
  *           // See model/StepBase.h for info, getters and setters for these properties
  *           Q_PROPERTY(std::optional<double> stepTime_mins   READ stepTime_mins   WRITE setStepTime_mins)
@@ -350,7 +366,7 @@ TypeLookup const StepBase<Derived, Owner, stepBaseOptions>::typeLookup {
  *        Note we have to be careful about comment formats in macro definitions.
  */
 #define STEP_COMMON_DECL(NeName, Options) \
-   STEPPED_COMMON_DECL(NeName##Step, NeName) \
+   ENUMERATED_COMMON_DECL(NeName##Step, NeName) \
    /* This allows StepBase to call protected and private members of Derived */  \
    friend class StepBase<NeName##Step,                                          \
                          NeName,                                                \
@@ -361,6 +377,6 @@ TypeLookup const StepBase<Derived, Owner, stepBaseOptions>::typeLookup {
  * \brief Derived classes should include this in their implementation file
  */
 #define STEP_COMMON_CODE(NeName) \
-   STEPPED_COMMON_CODE(NeName##Step)   \
+   ENUMERATED_COMMON_CODE(NeName##Step)   \
 
 #endif

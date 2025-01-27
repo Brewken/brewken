@@ -28,7 +28,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::Step { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::Step { inline BtStringConst const property{#property}; }
 AddPropertyName(description    )
 AddPropertyName(endAcidity_pH  )
 AddPropertyName(endTemp_c      )
@@ -130,7 +130,7 @@ public:
 signals:
 
 protected:
-   virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual bool isEqualTo(NamedEntity const & other) const override;
 
 protected:
    std::optional<double> m_endTemp_c      ;

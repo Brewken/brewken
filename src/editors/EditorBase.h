@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/EditorBase.h is part of Brewken, and is copyright the following authors 2023-2024:
+ * editors/EditorBase.h is part of Brewken, and is copyright the following authors 2023-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -30,9 +30,9 @@
 #include "BtHorizontalTabs.h"
 #include "database/ObjectStoreWrapper.h"
 #include "editors/EditorBaseField.h"
-#include "MainWindow.h"
 #include "model/NamedEntity.h"
 #include "model/Recipe.h" // Need to include this this to be able to cast Recipe to QObject
+#include "undoRedo/Undoable.h"
 #include "utils/CuriouslyRecurringTemplateBase.h"
 
 /**
@@ -59,11 +59,9 @@ public:
     * \brief If the step being edited is new, then, when save is clicked, this should be called
     */
    void addStepToStepOwner(std::shared_ptr<NE> step) {
-      //
-      // Going via MainWindow makes the action undoable
-      //
+      // Going via Undoable::addStepToStepOwner makes the action undoable
       Q_ASSERT(this->m_stepOwner);
-      MainWindow::instance().addStepToStepOwner(*this->m_stepOwner, step);
+      Undoable::addStepToStepOwner(*this->m_stepOwner, step);
       return;
    }
 
@@ -338,14 +336,14 @@ public:
     */
    template <typename D> void setEditItem(D) = delete;
 
-   void setFolder(std::shared_ptr<NE> ne, QString const & folder) requires HasFolder<NE> {
-      if (!folder.isEmpty()) {
-         ne->setFolder(folder);
+   void setFolderPath(std::shared_ptr<NE> ne, QString const & folderPath) requires HasFolder<NE> {
+      if (!folderPath.isEmpty()) {
+         ne->setFolderPath(folderPath);
       }
       return;
    }
 
-   void setFolder([[maybe_unused]] std::shared_ptr<NE> ne, [[maybe_unused]] QString const & folder) requires HasNoFolder<NE> {
+   void setFolderPath([[maybe_unused]] std::shared_ptr<NE> ne, [[maybe_unused]] QString const & folderPath) requires HasNoFolder<NE> {
       return;
    }
 
@@ -354,7 +352,7 @@ public:
     *
     *        This is also called from \c TreeView::newNamedEntity.
     */
-   void newEditItem(QString folder = "") {
+   void newEditItem(QString folderPath = "") {
       QString name = QInputDialog::getText(&this->derived(),
                                            QString(QObject::tr("%1 name")).arg(NE::staticMetaObject.className()),
                                            QString(QObject::tr("%1 name:")).arg(NE::staticMetaObject.className()));
@@ -363,7 +361,7 @@ public:
       }
 
       auto ne = std::make_shared<NE>(name);
-      this->setFolder(ne, folder);
+      this->setFolderPath(ne, folderPath);
 
       this->setEditItem(ne);
       this->derived().show();
@@ -561,6 +559,11 @@ public:
          for (auto const & field : *this->m_fields) {
             std::visit(
                [this, normalOrLate](auto&& fieldInfo) {
+                  // Normally leave this debug statement commented out as it generates too much logging
+//                  qDebug() <<
+//                     Q_FUNC_INFO << "Field:" << fieldInfo.labelName << ", property:" << *fieldInfo.property <<
+//                     ", hasControlledField:" << fieldInfo.hasControlledField << ", whenToWrite:" <<
+//                     fieldInfo.whenToWrite << ", value:" << fieldInfo.getFieldValue();
                   if (normalOrLate == fieldInfo.whenToWrite) {
                      fieldInfo.setPropertyFromEditField(*this->m_editItem);
                   }

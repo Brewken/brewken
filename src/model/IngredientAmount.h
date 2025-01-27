@@ -17,6 +17,8 @@
 #define MODEL_INGREDIENTAMOUNT_H
 #pragma once
 
+#include <type_traits>
+
 #include "measurement/Unit.h"
 #include "model/NamedParameterBundle.h"
 #include "utils/CuriouslyRecurringTemplateBase.h"
@@ -26,7 +28,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::IngredientAmount { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::IngredientAmount { inline BtStringConst const property{#property}; }
 AddPropertyName(amount  )
 AddPropertyName(isWeight) // Deprecated.  Used only for BeerXML support
 AddPropertyName(measure )
@@ -140,8 +142,8 @@ protected:
 
 public:
 
-   using AmountType = Measurement::ConstrainedAmount<decltype(IngredientClass::validMeasures),
-                                                     IngredientClass::validMeasures>;
+   using ValidMeasuresType = std::remove_const_t<decltype(IngredientClass::validMeasures)>;
+   using AmountType = Measurement::ConstrainedAmount<ValidMeasuresType, IngredientClass::validMeasures>;
 
    AmountType getAmount() const {
       return this->m_amount;
@@ -223,8 +225,7 @@ public:
    void doSetMeasure (Measurement::PhysicalQuantity const val) {
       // Since Q_ASSERT is a macro, it gets confused by some templated expressions, so we have to have this separate
       // variable
-      bool const measureIsValid = Measurement::isValid<decltype(IngredientClass::validMeasures),
-                                                       IngredientClass::validMeasures>(val);
+      bool const measureIsValid = Measurement::isValid<ValidMeasuresType, IngredientClass::validMeasures>(val);
       Q_ASSERT(measureIsValid);
       this->doSetUnit(&Measurement::Unit::getCanonicalUnit(val));
       return;
@@ -292,7 +293,28 @@ TypeLookup const IngredientAmount<Derived, IngredientClass>::typeLookup {
 
 
 /**
- * \brief Derived classes should include this in their header file, right after Q_OBJECT
+ * \brief Concrete derived classes should (either directly or via inclusion in an intermediate class's equivalent macro)
+ *        include this in their header file, right after Q_OBJECT.  Concrete derived classes also need to include the
+ *        following block (see comment in model/StepBase.h for why):
+ *
+ *           // See model/IngredientAmount.h for info, getters and setters for these properties
+ *           Q_PROPERTY(Measurement::Amount           amount    READ amount     WRITE setAmount  )
+ *           Q_PROPERTY(double                        quantity  READ quantity   WRITE setQuantity)
+ *           Q_PROPERTY(Measurement::Unit const *     unit      READ unit       WRITE setUnit    )
+ *           Q_PROPERTY(Measurement::PhysicalQuantity measure   READ measure    WRITE setMeasure )
+ *           Q_PROPERTY(bool                          isWeight  READ isWeight   WRITE setIsWeight)
+ *
+ *        Comments for these properties:
+ *
+ *           \c amount : Convenience to access \c quantity and \c unit simultaneously
+ *
+ *           \c quantity :
+ *
+ *           \c unit :
+ *
+ *           \c measure :
+ *
+ *           \c isWeight : Mostly for BeerXML support
  *
  *        Note we have to be careful about comment formats in macro definitions
  */

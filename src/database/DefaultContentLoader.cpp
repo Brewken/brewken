@@ -30,7 +30,7 @@
 
 namespace {
    // TODO It would be neat to be able to supply folder name as a parameter to XML/JSON import
-   char const * const FOLDER_FOR_SUPPLIED_RECIPES = CONFIG_APPLICATION_NAME_LC;
+   char const * const FOLDER_PATH_FOR_SUPPLIED_RECIPES = CONFIG_APPLICATION_NAME_LC;
 }
 
 int constexpr DefaultContentLoader::availableContentVersion = 4;
@@ -159,7 +159,7 @@ DefaultContentLoader::UpdateResult DefaultContentLoader::updateContentIfNecessar
             // TODO: It would be neat, at some point, to to have a mechanism for setting a property on multiple objects
             //       of the same type, so that we could do it in a single DB update.
             for (auto recipe : newlyImportedRecipes) {
-               recipe->setFolder(FOLDER_FOR_SUPPLIED_RECIPES);
+               recipe->setFolderPath(FOLDER_PATH_FOR_SUPPLIED_RECIPES);
             }
 
             //

@@ -29,18 +29,18 @@
  *
  * \brief Proxy model for sorting TreeModel trees.
  */
-class TreeFilterProxyModel : public QSortFilterProxyModel {
-   Q_OBJECT
-
-public:
-   TreeFilterProxyModel(QObject *parent, TreeModel::TypeMasks mask);
-
-protected:
-   bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
-   bool filterAcceptsRow( int source_row, const QModelIndex &source_parent) const;
-
-private:
-   TreeModel::TypeMasks m_treeMask;
-};
+///class TreeFilterProxyModel : public QSortFilterProxyModel {
+///   Q_OBJECT
+///
+///public:
+///   TreeFilterProxyModel(QObject *parent, TreeModel::TypeMasks mask);
+///
+///protected:
+///   bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
+///   bool filterAcceptsRow( int source_row, const QModelIndex &source_parent) const;
+///
+///private:
+//////   TreeModel::TypeMasks m_treeMask;
+///};
 
 #endif

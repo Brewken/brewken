@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * utils/OptionalHelpers.h is part of Brewken, and is copyright the following authors 2022-2023:
+ * utils/OptionalHelpers.h is part of Brewken, and is copyright the following authors 2022-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -201,6 +201,15 @@ namespace Optional {
     * \return \c true if \c input is empty or blank (ie contains only whitespace), \c false otherwise
     */
    [[nodiscard]] bool isEmptyOrBlank(QString const & input);
+
+   //! \brief Useful for logging
+   template <typename T>
+   QString toString(std::optional<T> const & val) {
+      if (val) {
+         return QString{"%1"}.arg(*val);
+      }
+      return "NULL";
+   }
 }
 
 /**

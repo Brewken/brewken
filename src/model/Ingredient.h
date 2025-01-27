@@ -27,7 +27,7 @@ class NamedParameterBundle;
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::Ingredient { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::Ingredient { inline BtStringConst const property{#property}; }
 AddPropertyName(totalInventory)
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
@@ -44,7 +44,7 @@ class Ingredient : public OutlineableNamedEntity,
    Q_OBJECT
    FOLDER_BASE_DECL(Ingredient)
    // See model/FolderBase.h for info, getters and setters for these properties
-   Q_PROPERTY(QString folder        READ folder        WRITE setFolder     )
+   Q_PROPERTY(QString folderPath        READ folderPath        WRITE setFolderPath)
 
 public:
    /**

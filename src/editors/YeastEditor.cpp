@@ -26,8 +26,12 @@
 
 #include "BtHorizontalTabs.h"
 #include "config.h"
-#include "database/ObjectStoreWrapper.h"
 #include "measurement/Unit.h"
+
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_YeastEditor.cpp"
+#endif
 
 YeastEditor::YeastEditor(QWidget * parent, QString const editorName) :
    QDialog(parent),

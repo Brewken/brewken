@@ -61,7 +61,7 @@ class Recipe;
 // IMPORTANT: These property names are unique within a class, but they are not globally unique, so we have to be a bit
 //            careful about how we use them in look-ups.
 //
-#define AddPropertyName(property) namespace PropertyNames::NamedEntity { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::NamedEntity { inline BtStringConst const property{#property}; }
 AddPropertyName(deleted)
 AddPropertyName(display)
 AddPropertyName(key)
@@ -165,7 +165,7 @@ public:
    inline virtual TypeLookup const & getTypeLookup() const { return typeLookup; }
 
    NamedEntity(QString t_name, bool t_display = false);
-   NamedEntity(NamedEntity const & other);
+   explicit NamedEntity(NamedEntity const & other);
 
    /**
     * \brief Note that, if you want a \b child of a \c NamedEntity (to add to a \c Recipe), you should call
@@ -248,6 +248,8 @@ public:
    Q_PROPERTY(int     parentKey READ getParentKey WRITE setParentKey)
 
    QString name() const;
+   //! \brief Returns name with any bracketed number stripped from the end (eg "Foobar" for "Foobar (2)")
+   QString strippedName() const;
    bool deleted() const;
    bool display() const;
    int key() const;
@@ -405,12 +407,26 @@ public:
     */
    virtual NamedEntity * ensureExists(BtStringConst const & property);
 
+   /**
+    * \brief Given a name that is a duplicate of an existing one, modify it to a potential alternative.
+    *        Callers should call this function as many times as necessary to find a non-clashing name.
+    *
+    *        Eg if the supplied clashing name is "Oatmeal Stout", we'll try adding a "duplicate number" in brackets to
+    *        the end of the name, ie amending it to "Oatmeal Stout (1)".  If the caller determines that that clashes too
+    *        then the next call (supplying "Oatmeal Stout (1)") will make us modify the name to "Oatmeal Stout (2)" (and
+    *        NOT "Oatmeal Stout (1) (1)"!).
+    *
+    * \param candidateName The name that we should attempt to modify.  (Modification is done in place.)
+    */
+   static void modifyClashingName(QString & candidateName);
+
 signals:
    /*!
     * \brief Passes the meta property that has changed about this object.
     *
     * NOTE: When subclassing, be \em extra careful not to create a member function with the same signature.
-    *       Otherwise, everything will silently break.
+    *       Otherwise, everything will silently break.  If this were a virtual member function, we could add the final
+    *       keyword here to enforce this, but it isn't so we can't.
     */
    void changed(QMetaProperty, QVariant value = QVariant()) const;
    void changedFolder(QString);
@@ -607,9 +623,15 @@ protected:
                                 T & memberVariable,
                                 T const newValue) {
       if (newValue == memberVariable) {
-         qDebug() <<
-            Q_FUNC_INFO << this->metaObject()->className() << "#" << this->key() << ": ignoring call to setter for" <<
-            propertyName << "as value (" << newValue << ") not changing";
+         //
+         // Don't bother with this log whilst we're still in the constructor, otherwise we'll get lots of messages about
+         // NULL and 0 not changing.
+         //
+         if (this->m_propagationAndSignalsEnabled) {
+            qDebug() <<
+               Q_FUNC_INFO << this->metaObject()->className() << "#" << this->key() << ": ignoring call to setter for" <<
+               propertyName << "as value (" << newValue << ") not changing";
+         }
          return true;
       }
       return false;
@@ -674,7 +696,7 @@ private:
  */
 template<class S>
 S & operator<<(S & stream, NamedEntity const & namedEntity) {
-   stream << namedEntity.metaObject()->className() << " #" << namedEntity.key() << "(" << namedEntity.name() << ")";
+   stream << namedEntity.metaObject()->className() << " #" << namedEntity.key() << " (" << namedEntity.name() << ")";
    return stream;
 }
 

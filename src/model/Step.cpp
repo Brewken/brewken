@@ -19,6 +19,11 @@
 #include "PhysicalConstants.h"
 #include "utils/AutoCompare.h"
 
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_Step.cpp"
+#endif
+
 QString Step::localisedName() { return tr("Step"); }
 
 bool Step::isEqualTo(NamedEntity const & other) const {
@@ -26,10 +31,10 @@ bool Step::isEqualTo(NamedEntity const & other) const {
    Step const & rhs = static_cast<Step const &>(other);
    // Base class will already have ensured names are equal
    return (
-      Utils::AutoCompare(this->m_endTemp_c      , rhs.m_endTemp_c      ) &&
-      Utils::AutoCompare(this->m_description    , rhs.m_description    ) &&
-      Utils::AutoCompare(this->m_startAcidity_pH, rhs.m_startAcidity_pH) &&
-      Utils::AutoCompare(this->m_endAcidity_pH  , rhs.m_endAcidity_pH  )
+      AUTO_LOG_COMPARE(this, rhs, m_endTemp_c      ) &&
+      AUTO_LOG_COMPARE(this, rhs, m_description    ) &&
+      AUTO_LOG_COMPARE(this, rhs, m_startAcidity_pH) &&
+      AUTO_LOG_COMPARE(this, rhs, m_endAcidity_pH  )
    );
 }
 

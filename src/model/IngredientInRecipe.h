@@ -22,7 +22,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::IngredientInRecipe { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::IngredientInRecipe { inline BtStringConst const property{#property}; }
 AddPropertyName(ingredientId   )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
@@ -70,7 +70,7 @@ public:
    void setIngredientId(int const val);
 
 protected:
-   virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual bool isEqualTo(NamedEntity const & other) const override;
 
 protected:
    int m_ingredientId;

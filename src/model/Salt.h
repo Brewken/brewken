@@ -36,7 +36,7 @@ class RecipeAdjustmentSalt;
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::Salt { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::Salt { inline BtStringConst const property{#property}; }
 AddPropertyName(isAcid         )
 AddPropertyName(percentAcid    )
 AddPropertyName(type           )
@@ -175,8 +175,8 @@ public:
 signals:
 
 protected:
-   virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual ObjectStore & getObjectStoreTypedInstance() const;
+   virtual bool isEqualTo(NamedEntity const & other) const override;
+   virtual ObjectStore & getObjectStoreTypedInstance() const override;
 
 private:
    Salt::Type            m_type;

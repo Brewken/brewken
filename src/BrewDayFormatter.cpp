@@ -30,6 +30,11 @@
 #include "model/Style.h"
 #include "PersistentSettings.h"
 
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_BrewDayFormatter.cpp"
+#endif
+
 BrewDayFormatter::BrewDayFormatter(QObject * parent)
    : QObject(parent) {
    recObs = nullptr;
@@ -197,7 +202,7 @@ QString BrewDayFormatter::buildInstructionHtml() {
              .arg(tr("Step"));
 
    bool useAlt = true;
-   for (auto instruction : recObs->steps()) {
+   for (auto instruction : recObs->instructions()) {
       useAlt = !useAlt;
       QString stepTime, tmp;
       QList<QString> reagents;
@@ -259,7 +264,7 @@ QList<QStringList> BrewDayFormatter::buildInstructionList() {
    ret.append(row);
    row.clear();
 
-   for (auto instruction : recObs->steps()) {
+   for (auto instruction : recObs->instructions()) {
       QString stepTime, tmp;
       QList<QString> reagents;
 

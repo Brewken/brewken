@@ -26,12 +26,12 @@
 #include <QVector>
 
 #include "model/NamedEntity.h"
-#include "model/SteppedBase.h"
+#include "model/EnumeratedBase.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::Instruction { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::Instruction { inline BtStringConst const property{#property}; }
 AddPropertyName(completed )
 AddPropertyName(directions)
 AddPropertyName(hasTimer  )
@@ -53,14 +53,14 @@ class Recipe;
  *             BeerXML files, because we can, but TBD whether this is possible with BeerJSON.
  *
  *        NB: We do not inherit from \c OwnedByRecipe, because doing so would duplicate part of what we get from
- *            \c SteppedBase.
+ *            \c EnumeratedBase.
  */
 class Instruction : public NamedEntity,
-                    public SteppedBase<Instruction, Recipe> {
+                    public EnumeratedBase<Instruction, Recipe> {
    Q_OBJECT
 
-   STEPPED_COMMON_DECL(Instruction, Recipe)
-   // See model/SteppedBase.h for info, getters and setters for these properties
+   ENUMERATED_COMMON_DECL(Instruction, Recipe)
+   // See model/EnumeratedBase.h for info, getters and setters for these properties
    Q_PROPERTY(int ownerId      READ ownerId      WRITE setOwnerId   )
    Q_PROPERTY(int stepNumber   READ stepNumber   WRITE setStepNumber)
 
@@ -69,6 +69,8 @@ public:
     * \brief See comment in model/NamedEntity.h
     */
    static QString localisedName();
+
+   using OwnerClass = Recipe;
 
    /**
     * \brief Mapping of names to types for the Qt properties of this class.  See \c NamedEntity::typeLookup for more
@@ -124,6 +126,18 @@ private:
 
    QList<QString> m_reagents;
 };
+
+/**
+ * \brief Because \c Instruction inherits from multiple bases, more than one of which has a match for \c operator<<, we
+ *        need to provide an overload of \c operator<< that combines the output of those for all the base classes.
+ */
+template<class S>
+S & operator<<(S & stream, Instruction const & instruction) {
+   stream <<
+      static_cast<NamedEntity const &>(instruction) << " " <<
+      static_cast<EnumeratedBase<Instruction, Recipe> const &>(instruction);
+   return stream;
+}
 
 BT_DECLARE_METATYPES(Instruction)
 

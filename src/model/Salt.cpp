@@ -22,6 +22,12 @@
 #include "model/InventorySalt.h"
 #include "model/NamedParameterBundle.h"
 #include "model/Recipe.h"
+#include "utils/AutoCompare.h"
+
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_Salt.cpp"
+#endif
 
 namespace {
    // Constants used in our mass concentration calculations below
@@ -72,7 +78,7 @@ bool Salt::isEqualTo(NamedEntity const & other) const {
    Salt const & rhs = static_cast<Salt const &>(other);
    // Base class will already have ensured names are equal
    return (
-      this->m_type   == rhs.m_type
+      AUTO_LOG_COMPARE(this, rhs, m_type)
    );
 }
 

@@ -24,7 +24,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::OwnedByRecipe { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::OwnedByRecipe { inline BtStringConst const property{#property}; }
 AddPropertyName(recipeId)
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
@@ -67,6 +67,10 @@ public:
    virtual std::shared_ptr<Recipe> owningRecipe() const override;
    int recipeId() const;
    std::shared_ptr<Recipe> recipe() const;
+
+   // TODO: ownerId / setOwnerId are needed by OwnedSet.  Should ideally merge them with recipeId / setRecipeId
+   inline void setOwnerId(int const val) { setRecipeId(val); return; }
+   inline int ownerId() const { return recipeId(); }
 
 protected:
    virtual bool isEqualTo(NamedEntity const & other) const override;

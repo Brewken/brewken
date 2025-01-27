@@ -29,11 +29,12 @@
 #include "model/Step.h"
 #include "model/StepBase.h"
 #include "utils/EnumStringMapping.h"
+#include "utils/OptionalHelpers.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::MashStep { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::MashStep { inline BtStringConst const property{#property}; }
 AddPropertyName(amount_l              )
 AddPropertyName(decoctionAmount_l     ) // Should only be used for BeerXML
 AddPropertyName(infuseAmount_l        ) // Should only be used for BeerXML
@@ -59,7 +60,7 @@ class MashStep : public Step, public StepBase<MashStep, Mash, MashStepOptions> {
    Q_OBJECT
 
    STEP_COMMON_DECL(Mash, MashStepOptions)
-   // See model/SteppedBase.h for info, getters and setters for these properties
+   // See model/EnumeratedBase.h for info, getters and setters for these properties
    Q_PROPERTY(int ownerId      READ ownerId      WRITE setOwnerId   )
    Q_PROPERTY(int stepNumber   READ stepNumber   WRITE setStepNumber)
    // See model/StepBase.h for info, getters and setters for these properties
@@ -193,7 +194,23 @@ public:
 signals:
 
 protected:
-   virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual bool isEqualTo(NamedEntity const & other) const override;
+
+   /**
+    * \brief Because \c MashStep inherits from multiple bases, more than one of which has a match for \c operator<<, we
+    *        need to provide an overload of \c operator<< that combines the output of those for all the base classes.
+    */
+   template<class S>
+   friend S & operator<<(S & stream, MashStep const & mashStep) {
+      stream <<
+         static_cast<Step const &>(mashStep) <<
+         ", type: " << MashStep::typeStringMapping[mashStep.m_type] <<
+         ", m_amount_l " << mashStep.m_amount_l <<
+         ", m_infuseTemp_c " << Optional::toString(mashStep.m_infuseTemp_c) <<
+         ", m_liquorToGristRatio_lKg " << Optional::toString(mashStep.m_liquorToGristRatio_lKg) << " " <<
+         static_cast<StepBase<MashStep, Mash, MashStepOptions> const &>(mashStep);
+      return stream;
+   }
 
 private:
    Type                  m_type                  ;
@@ -202,6 +219,7 @@ private:
    // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
    std::optional<double> m_liquorToGristRatio_lKg;
 };
+
 
 BT_DECLARE_METATYPES(MashStep)
 

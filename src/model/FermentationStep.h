@@ -27,7 +27,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::FermentationStep { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::FermentationStep { inline BtStringConst const property{#property}; }
 AddPropertyName(freeRise)
 AddPropertyName(vessel  )
 #undef AddPropertyName
@@ -47,7 +47,7 @@ class FermentationStep : public StepExtended, public StepBase<FermentationStep, 
    Q_OBJECT
 
    STEP_COMMON_DECL(Fermentation, FermentationStepOptions)
-   // See model/SteppedBase.h for info, getters and setters for these properties
+   // See model/EnumeratedBase.h for info, getters and setters for these properties
    Q_PROPERTY(int ownerId      READ ownerId      WRITE setOwnerId   )
    Q_PROPERTY(int stepNumber   READ stepNumber   WRITE setStepNumber)
    // See model/StepBase.h for info, getters and setters for these properties
@@ -107,6 +107,18 @@ private:
    std::optional<bool> m_freeRise;
    QString             m_vessel  ;
 };
+
+/**
+ * \brief Because \c FermentationStep inherits from multiple bases, more than one of which has a match for \c operator<<, we
+ *        need to provide an overload of \c operator<< that combines the output of those for all the base classes.
+ */
+template<class S>
+S & operator<<(S & stream, FermentationStep const & fermentationStep) {
+   stream <<
+      static_cast<StepExtended const &>(fermentationStep) << " " <<
+      static_cast<StepBase<FermentationStep, Fermentation, FermentationStepOptions> const &>(fermentationStep);
+   return stream;
+}
 
 BT_DECLARE_METATYPES(FermentationStep)
 

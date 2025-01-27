@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/RecipeAdditionFermentable.cpp is part of Brewken, and is copyright the following authors 2023-2024:
+ * model/RecipeAdditionFermentable.cpp is part of Brewken, and is copyright the following authors 2023-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -20,6 +20,11 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Boil.h"
 #include "model/BoilStep.h"
+
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_RecipeAdditionFermentable.cpp"
+#endif
 
 QString RecipeAdditionFermentable::localisedName() { return tr("Fermentable Addition"); }
 
@@ -157,6 +162,9 @@ double RecipeAdditionFermentable::equivSucrose_kg() const {
    }
    return ret;
 }
+
+// We rely on this being true in serialization/NamedEntityRecordBase.h, so let's check it at compile-time here
+static_assert(std::is_base_of<OwnedByRecipe, RecipeAdditionFermentable>::value);
 
 // Boilerplate code for IngredientAmount and RecipeAddition
 INGREDIENT_AMOUNT_COMMON_CODE(RecipeAdditionFermentable, Fermentable)
