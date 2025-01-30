@@ -121,8 +121,8 @@
 // =========================================================================
 
 TreeModel::TreeModel(TreeView * parent/*, TreeModel::TypeMasks types*/) :
-   QAbstractItemModel{parent},
-   m_treeView{parent} {
+   QAbstractItemModel{parent} /*,
+   m_treeView{parent}*/ {
 ///   // Initialize the tree structure
 ///   int items = 0;
 ///   this->rootItem = new TreeNode();

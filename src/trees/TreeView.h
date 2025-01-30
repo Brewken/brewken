@@ -27,6 +27,7 @@
 #include "trees/TreeNode.h"
 #include "trees/TreeFilterProxyModel.h"
 #include "utils/CuriouslyRecurringTemplateBase.h"
+#include "utils/NoCopy.h"
 
 // Forward declarations.
 class TreeModel;
@@ -192,6 +193,10 @@ protected:
 
 ///   int verifyDelete(int confirmDelete, QString tag, QString name);
 ///   QString verifyCopy(QString tag, QString name, bool * abort);
+
+private:
+   // Insert all the usual boilerplate to prevent copy/assignment/move
+   NO_COPY_DECLARATIONS(TreeView)
 };
 
 /////======================================================================================================================

@@ -19,14 +19,16 @@
 #define TREES_TREENODE_H
 #pragma once
 
+#include <QDebug>
 #include <QIcon>
 #include <QList>
 #include <QObject>
 #include <QModelIndex>
 #include <QVariant>
 
-#include "config.h"
 #include "Localization.h"
+#include "RecipeFormatter.h"
+#include "config.h"
 #include "measurement/Measurement.h"
 #include "model/BrewNote.h"
 #include "model/Equipment.h"
@@ -41,7 +43,7 @@
 #include "model/Yeast.h"
 #include "utils/CuriouslyRecurringTemplateBase.h"
 #include "utils/EnumStringMapping.h"
-#include "RecipeFormatter.h"
+#include "utils/NoCopy.h"
 
 /**
  * \brief Each tree has one primary type of object that it stores.  However, some trees (eg Recipe, Mash) can hold
@@ -87,10 +89,24 @@ enum class TreeNodeClassifier {
    PrimaryItem   = 1,
    SecondaryItem = 2,
 };
+//! \brief Convenience function for logging
+template<class S> S & operator<<(S & stream, TreeNodeClassifier const treeNodeClassifier) {
+   switch (treeNodeClassifier) {
+      case TreeNodeClassifier::Folder       : stream << "Folder"       ; break;
+      case TreeNodeClassifier::PrimaryItem  : stream << "PrimaryItem"  ; break;
+      case TreeNodeClassifier::SecondaryItem: stream << "SecondaryItem"; break;
+   }
+   return stream;
+}
 
 
 class TreeNode {
+protected:
+   TreeNode() = default;
+
 public:
+   ~TreeNode() = default;
+
    /**
     * \brief Derived classes implement this function, which then makes it easy for us to cast from TreeNode * to the
     *        actual type.
@@ -147,7 +163,27 @@ public:
 protected:
    bool m_showMe = true;
 
+private:
+   // Insert all the usual boilerplate to prevent copy/assignment/move
+   // Since a TreeNode owns its children, we don't want nodes to be copied.
+   NO_COPY_DECLARATIONS(TreeNode)
 };
+
+//! \brief Convenience function for logging
+template<class S> S & operator<<(S & stream, TreeNode const & treeNode) {
+   stream <<
+      treeNode.className() << "TreeNode (" << treeNode.classifier() << "):" << treeNode.name() << "(" <<
+      treeNode.childCount() << "children)";
+   return stream;
+}
+template<class S> S & operator<<(S & stream, TreeNode const * treeNode) {
+   if (treeNode) {
+      stream << *treeNode;
+   } else {
+      stream << "NULL";
+   }
+   return stream;
+}
 
 template<class NE> class TreeFolderNode;
 template<class NE> class TreeItemNode;
@@ -180,16 +216,6 @@ template <class NE> struct TreeNodeTraits<Folder, NE> {
       std::unreachable();
    }
 };
-
-///template<> QString TreeNodeTraits<TreeFolderNode<Recipe     >>::getRootName() { return Recipe     ::tr("Recipes"      ); }
-///template<> QString TreeNodeTraits<TreeFolderNode<Equipment  >>::getRootName() { return Equipment  ::tr("Equipments"   ); }
-///template<> QString TreeNodeTraits<TreeFolderNode<Fermentable>>::getRootName() { return Fermentable::tr("Fermentables" ); }
-///template<> QString TreeNodeTraits<TreeFolderNode<Hop        >>::getRootName() { return Hop        ::tr("Hops"         ); }
-///template<> QString TreeNodeTraits<TreeFolderNode<Misc       >>::getRootName() { return Misc       ::tr("Miscellaneous"); }
-///template<> QString TreeNodeTraits<TreeFolderNode<Yeast      >>::getRootName() { return Yeast      ::tr("Yeasts"       ); }
-///template<> QString TreeNodeTraits<TreeFolderNode<Style      >>::getRootName() { return Style      ::tr("Styles"       ); }
-///template<> QString TreeNodeTraits<TreeFolderNode<Water      >>::getRootName() { return Water      ::tr("Waters"       ); }
-
 
 template<> struct TreeNodeTraits<BrewNote, Recipe> {
    enum class ColumnIndex {
@@ -893,9 +919,9 @@ public:
    ~TreeFolderNode() = default;
 
    static EnumStringMapping const columnDisplayNames;
-   static bool isLessThan(TreeModel const & model,
-                          QModelIndex const & left,
-                          QModelIndex const & right,
+   static bool isLessThan([[maybe_unused]] TreeModel const & model,
+                          [[maybe_unused]] QModelIndex const & left,
+                          [[maybe_unused]] QModelIndex const & right,
                           TreeNodeTraits<Folder, NE>::ColumnIndex section,
                           Folder const & lhs,
                           Folder const & rhs) {

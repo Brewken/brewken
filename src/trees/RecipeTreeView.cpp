@@ -60,7 +60,7 @@ QMenu * RecipeTreeView::doGetContextMenu(QModelIndex const & selectedViewIndex) 
    auto [menu, selectedNode] = this->getContextMenuPair(selectedViewIndex);
 
    if (selectedNode->classifier() == TreeNodeClassifier::PrimaryItem) {
-      auto recipeNode = static_cast<TreeItemNode<Recipe> &>(*selectedNode);
+      auto & recipeNode = static_cast<TreeItemNode<Recipe> &>(*selectedNode);
 
       // TBD: Right at the top of the tree, it's possible to click on something that is neither a folder nor a recipe, so
       // we might have to check for that here.

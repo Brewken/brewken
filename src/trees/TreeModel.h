@@ -33,6 +33,7 @@
 #include <QVariant>
 
 #include "trees/TreeNode.h"
+#include "utils/NoCopy.h"
 
 // Forward declarations
 class BtStringConst;
@@ -303,12 +304,14 @@ private:
 
 ///   TreeNode * rootItem;
 ///   TreeView * parentTree;
-   TreeView * m_treeView;
+///   TreeView * m_treeView;
 ///   TypeMasks m_treeMask;
 ///   TreeNode::Type nodeType;
 ///   int m_maxColumns;
 ///   QString m_mimeType;
 
+   // Insert all the usual boilerplate to prevent copy/assignment/move
+   NO_COPY_DECLARATIONS(TreeModel)
 };
 
 

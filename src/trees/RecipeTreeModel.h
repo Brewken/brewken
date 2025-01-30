@@ -60,9 +60,10 @@ signals:
    void recipeSpawn(Recipe * descendant);
 
 protected:
+private:
    //! \b flip the switch to show descendants
    void setShowChild(QModelIndex child, bool val);
-   void addAncestoralTree(Recipe * rec, int i, TreeNode * parent);
+   void addAncestoralTree(Recipe const & rec, int i, TreeNode * parent);
 
    //! \brief Add brewnotes to a recipe as a subtree
    void addSubTree(std::shared_ptr<Recipe> const element,
@@ -72,7 +73,10 @@ protected:
 
 private:
    //! \brief convenience function to add brewnotes to a recipe as a subtree
-   void addBrewNoteSubTree(Recipe & recipe, int childNumber, TreeNode * parent, bool recurse = true);
+   void addBrewNoteSubTree(Recipe & recipe, int childNumber, TreeNode const & parent, bool recurse = true);
+
+   //! \brief Override \c TreeModelBase::loadTreeModel()
+   void loadTreeModel();
 
 };
 
