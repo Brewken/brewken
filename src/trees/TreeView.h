@@ -25,7 +25,7 @@
 #include <QMouseEvent>
 
 #include "trees/TreeNode.h"
-#include "trees/TreeFilterProxyModel.h"
+///#include "trees/TreeFilterProxyModel.h"
 #include "utils/CuriouslyRecurringTemplateBase.h"
 #include "utils/NoCopy.h"
 
@@ -52,11 +52,16 @@ class TreeView : public QTreeView {
 public:
    //! \brief The standard constructor
    TreeView(QWidget * parent = nullptr /*, TreeModel::TypeMasks mask = TreeModel::TypeMask::Recipe*/);
-   //! \brief returns the model associated with this tree
-   virtual TreeModel & model() = 0;
+   /**
+    * \brief returns the \c TreeModel associated with this tree.  Note that this bypasses the \c QSortFilterProxyModel
+    *        that maps between view and model (and which would be returned by a call to \c QTreeView::model).
+    */
+   virtual TreeModel & treeModel() = 0;
 ///   TreeModel * model() const;
 ///   //! \b returns the filter associated with this model
 ///   TreeFilterProxyModel * filter() const;
+
+   virtual TreeNode * treeNode(QModelIndex const & index) const = 0;
 
    //! Called from \c MainWindow::treeActivated
    virtual void activated(QModelIndex const & index) = 0;
@@ -189,7 +194,7 @@ protected:
    QPoint dragStart;
 ///   QWidget * m_editor;
 
-   bool doubleClick;
+   bool m_doubleClick;
 
 ///   int verifyDelete(int confirmDelete, QString tag, QString name);
 ///   QString verifyCopy(QString tag, QString name, bool * abort);

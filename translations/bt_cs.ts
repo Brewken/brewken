@@ -1110,6 +1110,14 @@ Log file may contain more details.</source>
         <source>Equipments</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Preboil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BoilTime</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>EquipmentEditor</name>
@@ -1458,6 +1466,10 @@ Log file may contain more details.</source>
     <message>
         <source>Fermentables</source>
         <translation type="unfinished">Suroviny</translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1851,6 +1863,18 @@ Log file may contain more details.</source>
     <message>
         <source>Hops</source>
         <translation type="unfinished">Chmele</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Alfa</translation>
+    </message>
+    <message>
+        <source>Beta</source>
+        <translation type="unfinished">Beta</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4539,6 +4563,30 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <source>Recipes</source>
         <translation type="unfinished">Recepty</translation>
     </message>
+    <message>
+        <source>unknown style</source>
+        <translation type="unfinished">neznámý styl</translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished">Není známo</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation type="unfinished">Konečná hustota</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Barva</translation>
+    </message>
+    <message>
+        <source>IBU</source>
+        <translation type="unfinished">IBU</translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -5188,39 +5236,31 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation>Kategorie</translation>
+        <translation type="vanished">Kategorie</translation>
     </message>
     <message>
         <source>Code</source>
-        <translation>Kód</translation>
-    </message>
-    <message>
-        <source>Guide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>BoilTime</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Kód</translation>
     </message>
     <message>
         <source>Beta</source>
-        <translation>Beta</translation>
+        <translation type="vanished">Beta</translation>
     </message>
     <message>
         <source>Lab</source>
-        <translation>Laboratoř</translation>
+        <translation type="vanished">Laboratoř</translation>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation>Prokvašení</translation>
+        <translation type="vanished">Prokvašení</translation>
     </message>
     <message>
         <source>Id</source>
-        <translation>Id</translation>
+        <translation type="vanished">Id</translation>
     </message>
     <message>
         <source>Flocculation</source>
-        <translation>Flokulace</translation>
+        <translation type="vanished">Flokulace</translation>
     </message>
     <message>
         <source>Miscs</source>
@@ -5253,30 +5293,6 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Recipe</source>
         <translation type="unfinished">Recept</translation>
-    </message>
-    <message>
-        <source>Ca</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Na</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add During</source>
@@ -5560,6 +5576,14 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Styles</source>
         <translation type="unfinished">Styly</translation>
+    </message>
+    <message>
+        <source>Code</source>
+        <translation type="unfinished">Kód</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Druh</translation>
     </message>
 </context>
 <context>
@@ -6022,6 +6046,14 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <source>Waters</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WaterDialog</name>
@@ -6288,6 +6320,22 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Yeasts</source>
         <translation type="unfinished">Kvasnice</translation>
+    </message>
+    <message>
+        <source>Lab</source>
+        <translation type="unfinished">Laboratoř</translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="unfinished">Prokvašení</translation>
+    </message>
+    <message>
+        <source>Id</source>
+        <translation type="unfinished">Id</translation>
+    </message>
+    <message>
+        <source>Flocculation</source>
+        <translation type="unfinished">Flokulace</translation>
     </message>
 </context>
 <context>

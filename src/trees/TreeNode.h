@@ -102,7 +102,10 @@ template<class S> S & operator<<(S & stream, TreeNodeClassifier const treeNodeCl
 
 class TreeNode {
 protected:
-   TreeNode() = default;
+   TreeNode(TreeModel & model) :
+      m_model{model} {
+      return;
+   }
 
 public:
    ~TreeNode() = default;
@@ -125,6 +128,11 @@ public:
    virtual TreeNode * rawChild(int number) const = 0;
 
    virtual TreeNode * rawParent() const = 0;
+
+   /**
+    * \brief NOTE that this is not currently supported if the underlying item is a \c Folder
+    */
+   virtual NamedEntity * rawUnderlyingItem() const = 0;
 
    virtual int numberOfChild(void const * childToCheck) = 0;
 
@@ -161,7 +169,25 @@ public:
    bool showMe() const;
 
 protected:
+   /**
+    * \brief This is currently used only in the Recipe tree.
+    *
+    *        If this is true then the node is to be displayed regardless of the return value of display for the item it
+    *        contains.
+    */
    bool m_showMe = true;
+
+   /**
+    * \brief The model to which this node belongs.
+    *
+    *        Every \c TreeNode object belongs to a \c TreeModel object.  Eg \c TreeFolderNode<Recipe>,
+    *        \c TreeItemNode<Recipe> and \c TreeItemNode<BrewNote> belong to \c RecipeTreeModel.  Strictly speaking, we
+    *        do not need to store a reference to the model here because it can be determined from the type of the node.
+    *        (There is only one \c RecipeTreeModel object, and all \c TreeItemNode<Recipe> nodes belong to it, etc.)
+    *        However, for the moment, it is convenient to have the reference to hand.  And no tree is going to have
+    *        millions of nodes, so it's not a huge memory overhead in absolute terms.
+    */
+   TreeModel & m_model;
 
 private:
    // Insert all the usual boilerplate to prevent copy/assignment/move
@@ -574,14 +600,18 @@ public:
    using ChildPtrTypes      = typename TreeNodeTraits<NE, TreeType>::ChildPtrTypes;
    static constexpr char const *       DragNDropMimeType = TreeNodeTraits<NE, TreeType>::DragNDropMimeType;
 
-   TreeNodeBase(ParentPtrTypes parent = nullptr,
+   TreeNodeBase(TreeModel & model,
+                ParentPtrTypes parent = nullptr,
                 std::shared_ptr<NE> underlyingItem = nullptr) :
+      TreeNode{model},
       m_parent{parent},
       m_underlyingItem{underlyingItem} {
       return;
    }
-   TreeNodeBase(TreeNode * parent,
+   TreeNodeBase(TreeModel & model,
+                TreeNode * parent,
                 std::shared_ptr<NE> underlyingItem) :
+      TreeNode{model},
       m_parent{
          [parent]() -> ParentPtrTypes {
             //
@@ -711,6 +741,17 @@ public:
 
    std::shared_ptr<NE> underlyingItem() const {
       return this->m_underlyingItem;
+   }
+
+   virtual NamedEntity * rawUnderlyingItem() const override {
+      if constexpr (std::same_as<NE, Folder>) {
+         // This function is not currently supported on Folder nodes, for the simple reason that Folder does not (yet)
+         // inherit from NamedEntity.
+         Q_ASSERT(false);
+         return nullptr;
+      } else {
+         return this->m_underlyingItem.get();
+      }
    }
 
    void setUnderlyingItem(std::shared_ptr<NE> val) {

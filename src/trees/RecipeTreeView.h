@@ -23,7 +23,7 @@
 
 #include "model/BrewNote.h"
 #include "model/Recipe.h"
-#include "qtModels/sortFilterProxyModels/RecipeSortFilterProxyModel.h"
+#include "trees/NamedEntityTreeSortFilterProxyModel.h"
 #include "trees/RecipeTreeModel.h"
 #include "trees/TreeView.h"
 #include "trees/TreeViewBase.h"
@@ -34,7 +34,7 @@ class OptionDialog;
 class RecipeTreeView : public TreeView,
                        public TreeViewBase<RecipeTreeView,
                                            RecipeTreeModel,
-                                           RecipeSortFilterProxyModel,
+                                           RecipeTreeSortFilterProxyModel,
                                            MainWindow,  // This is in place of RecipeEditor
                                            Recipe,
                                            BrewNote> {

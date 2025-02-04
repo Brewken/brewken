@@ -69,7 +69,7 @@ private:
     *        TREE_MODEL_COMMON_CODE).
     */
    TreeModelBase() :
-   m_rootNode {std::make_unique<TreeFolderNode<NE>>()} {
+   m_rootNode{std::make_unique<TreeFolderNode<NE>>(this->derived())} {
       return;
    }
 
@@ -148,7 +148,6 @@ public:
       }
 
       return this->doTreeNode(parent)->childCount();
-
    }
 
    int doColumnCount([[maybe_unused]] QModelIndex const & parent) const {
@@ -201,44 +200,44 @@ public:
       return folder->path();
    }
 
-   bool doLessThan(QModelIndex const & left, QModelIndex const & right) const {
-      TreeNode const * lhs = this->doTreeNode(left );
-      TreeNode const * rhs = this->doTreeNode(right);
-
-      // If the two node types are the same then we can leave the comparison to the overloaded functions in TreeNode.h /
-      // TreeNode.cpp
-      if (lhs->classifier() == TreeNodeClassifier::Folder &&
-          rhs->classifier() == TreeNodeClassifier::Folder) {
-         return TreeFolderNode<NE>::lessThan(this->derived(),
-                                             left,
-                                             right,
-                                             static_cast<TreeFolderNode<NE> const &>(*lhs),
-                                             static_cast<TreeFolderNode<NE> const &>(*rhs));
-      }
-
-      if (lhs->classifier() == TreeNodeClassifier::PrimaryItem &&
-          rhs->classifier() == TreeNodeClassifier::PrimaryItem) {
-         return TreeItemNode<NE>::lessThan(this->derived(),
-                                           left,
-                                           right,
-                                           static_cast<TreeItemNode<NE> const &>(*lhs),
-                                           static_cast<TreeItemNode<NE> const &>(*rhs));
-      }
-
-      if constexpr (!IsVoid<SNE>) {
-         if (lhs->classifier() == TreeNodeClassifier::SecondaryItem &&
-             rhs->classifier() == TreeNodeClassifier::SecondaryItem) {
-            return TreeItemNode<SNE>::lessThan(this->derived(),
-                                               left,
-                                               right,
-                                               static_cast<TreeItemNode<SNE> const &>(*lhs),
-                                               static_cast<TreeItemNode<SNE> const &>(*rhs));
-         }
-      }
-
-      // If the node types are different, then the only meaningful comparison we can do is on the name
-      return lhs->name() < rhs->name();
-   }
+///   bool doLessThan(QModelIndex const & left, QModelIndex const & right) const {
+///      TreeNode const * lhs = this->doTreeNode(left );
+///      TreeNode const * rhs = this->doTreeNode(right);
+///
+///      // If the two node types are the same then we can leave the comparison to the overloaded functions in TreeNode.h /
+///      // TreeNode.cpp
+///      if (lhs->classifier() == TreeNodeClassifier::Folder &&
+///          rhs->classifier() == TreeNodeClassifier::Folder) {
+///         return TreeFolderNode<NE>::lessThan(this->derived(),
+///                                             left,
+///                                             right,
+///                                             static_cast<TreeFolderNode<NE> const &>(*lhs),
+///                                             static_cast<TreeFolderNode<NE> const &>(*rhs));
+///      }
+///
+///      if (lhs->classifier() == TreeNodeClassifier::PrimaryItem &&
+///          rhs->classifier() == TreeNodeClassifier::PrimaryItem) {
+///         return TreeItemNode<NE>::lessThan(this->derived(),
+///                                           left,
+///                                           right,
+///                                           static_cast<TreeItemNode<NE> const &>(*lhs),
+///                                           static_cast<TreeItemNode<NE> const &>(*rhs));
+///      }
+///
+///      if constexpr (!IsVoid<SNE>) {
+///         if (lhs->classifier() == TreeNodeClassifier::SecondaryItem &&
+///             rhs->classifier() == TreeNodeClassifier::SecondaryItem) {
+///            return TreeItemNode<SNE>::lessThan(this->derived(),
+///                                               left,
+///                                               right,
+///                                               static_cast<TreeItemNode<SNE> const &>(*lhs),
+///                                               static_cast<TreeItemNode<SNE> const &>(*rhs));
+///         }
+///      }
+///
+///      // If the node types are different, then the only meaningful comparison we can do is on the name
+///      return lhs->name() < rhs->name();
+///   }
 
    /**
     * \brief Returns "the list of allowed MIME types", which is to say the MIME types that can be dropped on this model
@@ -273,7 +272,17 @@ public:
          }
 ///         QModelIndex const modelIndex{this->m_sortFilterProxy.mapToSource(viewIndex)};
 
+         //
+         // Note below that we have to be careful about character encoding.  If, eg, we write
+         //
+         //    encodedDataStream << NE::staticMetaObject.className()
+         //
+         // we would get strange results, because QObject::staticMetaObject.className() returns a C-style string which
+         // will give us garbage when we try to read it as a QString at the other end.  (Eg "Fermentable" ends up as
+         // "䙥牭敮瑡扬攀"!
+         //
          TreeNode * treeNode = this->doTreeNode(modelIndex);
+         qDebug() << Q_FUNC_INFO << *treeNode;
          switch (treeNode->classifier()) {
             case TreeNodeClassifier::Folder:
                {
@@ -281,7 +290,7 @@ public:
                   auto folder = folderTreeNode.underlyingItem();
                   // For the moment, Folder does not inherit from NamedEntity, and does not have an ID
                   encodedDataStream <<
-                     Folder::staticMetaObject.className() << -1 << folder->fullPath();
+                     QString{Folder::staticMetaObject.className()} << -1 << folder->fullPath();
                   mimeType = TreeFolderNode<NE>::DragNDropMimeType;
                }
                break;
@@ -289,7 +298,7 @@ public:
                {
                   auto & itemTreeNode = static_cast<TreeItemNode<NE> &>(*treeNode);
                   auto item = itemTreeNode.underlyingItem();
-                  encodedDataStream << NE::staticMetaObject.className() << item->key() << item->name();
+                  encodedDataStream << QString{NE::staticMetaObject.className()} << item->key() << item->name();
                   mimeType = TreeItemNode<NE>::DragNDropMimeType;
                }
                break;
@@ -301,7 +310,7 @@ public:
                   auto & secondaryItemTreeNode = static_cast<TreeItemNode<SNE> &>(*treeNode);
                   auto secondaryItem = secondaryItemTreeNode.underlyingItem();
                   encodedDataStream <<
-                     SNE::staticMetaObject.className() << secondaryItem->key() << secondaryItem->name();
+                     QString{SNE::staticMetaObject.className()} << secondaryItem->key() << secondaryItem->name();
                   mimeType = TreeItemNode<SNE>::DragNDropMimeType;
                } else {
                   // If this tree does not support secondary items, then it should not be possible to attempt to drag
@@ -777,10 +786,10 @@ public:
 ///   }
 
    auto makeNode(TreeNode * parentNode, std::shared_ptr<NE> element) {
-      return std::make_shared<TreeItemNode<NE>>(parentNode, element);
+      return std::make_shared<TreeItemNode<NE>>(this->derived(), parentNode, element);
    }
    auto makeNode(TreeNode * parentNode, std::shared_ptr<SNE> element) requires (!IsVoid<SNE>) {
-      return std::make_shared<TreeItemNode<SNE>>(parentNode, element);
+      return std::make_shared<TreeItemNode<SNE>>(this->derived(), parentNode, element);
    }
 
    template<class ElementType, HasNodeClassifier TreeNodeType>
@@ -792,7 +801,7 @@ public:
       // components that the model has changed.
       TreeModelRowInsertGuard treeModelRowInsertGuard(this->derived(), parentIndex, row, row);
 
-      auto childNode = std::make_shared<TreeItemNode<ElementType>>(&parentNode, element);
+      auto childNode = std::make_shared<TreeItemNode<ElementType>>(this->derived(), &parentNode, element);
 
       // Parent node can only be one of two types. (It cannot be SecondaryItem because, although we allow Recipes to
       // contain Recipes -- for Recipe versioning -- we don't allow BrewNotes to contain BrewNotes etc.)
@@ -800,18 +809,11 @@ public:
       if constexpr (TreeNodeType::NodeClassifier == TreeNodeClassifier::Folder) {
          auto & parentFolderNode = static_cast<TreeFolderNode<NE> &>(parentNode);
          succeeded = parentFolderNode.insertChild(row, childNode);
-         qDebug() << Q_FUNC_INFO << "parentFolderNode:" << static_cast<void *>(&parentFolderNode) << ", parentNode:" << static_cast<void *>(&parentNode);
       } else {
          Q_ASSERT(TreeNodeType::NodeClassifier == TreeNodeClassifier::PrimaryItem);
          auto & parentItemNode = static_cast<TreeItemNode<NE> &>(parentNode);
          succeeded = parentItemNode.insertChild(row, childNode);
       }
-
-      // Normally leave this commented out as it generates a fair bit of logging
-      qDebug() <<
-         Q_FUNC_INFO << "succeeded:" << succeeded << "@" << static_cast<void *>(&parentNode) << ", parentNode:" << parentNode << ", parentNode.childCount():" <<
-         parentNode.childCount() << ", childNode:" << *childNode << ", childNode->underlyingItem():" <<
-         childNode->underlyingItem();
 
       // It's a coding error if the parent node into which we just inserted a child doesn't now have at least one child!
       Q_ASSERT(parentNode.childCount() >= 1);
@@ -917,7 +919,7 @@ private:
          auto newFolder = std::make_shared<Folder>();
          newFolder->setfullPath(folderPath);
 
-         auto newFolderNode = std::make_shared<TreeFolderNode<NE>>(parentNode, newFolder);
+         auto newFolderNode = std::make_shared<TreeFolderNode<NE>>(this->derived(), parentNode, newFolder);
          int const numChildren = parentNode->childCount();
 
          parentNode->insertChild(numChildren, newFolderNode);
@@ -1002,7 +1004,7 @@ protected:
 
       TreeFolderNode<NE> * folderNode = static_cast<TreeFolderNode<NE> *>(folderIndex.internalPointer());
       int const numChildren = folderNode->childCount();
-      auto childNode = std::make_shared<TreeItemNode<NE>>(folderNode, element);
+      auto childNode = std::make_shared<TreeItemNode<NE>>(this->derived(), folderNode, element);
       folderNode->insertChild(numChildren, childNode);
 
       //
@@ -1050,7 +1052,7 @@ protected:
          return;
       }
 
-      int breadth = this->derived().rowCount(parentIndex);
+      int breadth = this->doRowCount(parentIndex);
 ///      if (!this->derived().insertRow(breadth, parentIndex, element.get())) {
       if (!this->insertChild(parentIndex, breadth, element)) {
          return;
@@ -1502,8 +1504,6 @@ protected:
                                 int column,                                                 \
                                 QModelIndex const & parent = QModelIndex()) const override; \
       virtual QModelIndex parent(QModelIndex const & index) const override;                 \
-      virtual bool lessThan(QModelIndex const & left,                                       \
-                            QModelIndex const & right) const override;                      \
       virtual QStringList mimeTypes() const override;                                       \
       virtual QMimeData * mimeData(QModelIndexList const & indexes) const override;         \
       virtual bool dropMimeData(QMimeData const * data,                                     \
@@ -1572,10 +1572,6 @@ protected:
       return this->doIndex(row, column, parent);                                                             \
    }                                                                                                         \
    QModelIndex NeName##TreeModel::parent(QModelIndex const & index) const { return this->doParent(index); }  \
-   bool NeName##TreeModel::lessThan(QModelIndex const & left,          \
-                                    QModelIndex const & right) const { \
-      return this->doLessThan(left, right);                            \
-   }                                                                   \
    QStringList NeName##TreeModel::mimeTypes() const {                  \
       return this->doMimeTypes();                                      \
    }                                                                   \

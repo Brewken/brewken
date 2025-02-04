@@ -1056,6 +1056,14 @@ Log file may contain more details.</source>
         <source>Equipments</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Preboil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BoilTime</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>EquipmentEditor</name>
@@ -1235,6 +1243,10 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Fermentables</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1503,6 +1515,18 @@ Log file may contain more details.</source>
     <message>
         <source>Hops</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Beta</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Formulario</translation>
     </message>
 </context>
 <context>
@@ -3531,6 +3555,30 @@ The final volume in the primary is %1.</source>
         <source>Recipes</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>unknown style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Cor</translation>
+    </message>
+    <message>
+        <source>IBU</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -4160,39 +4208,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Category</source>
-        <translation>Categoría</translation>
-    </message>
-    <message>
-        <source>Code</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Categoría</translation>
     </message>
     <message>
         <source>Guide</source>
-        <translation>Guía</translation>
-    </message>
-    <message>
-        <source>BoilTime</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Beta</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lab</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Attenuation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Id</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Flocculation</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Guía</translation>
     </message>
     <message>
         <source>Miscs</source>
@@ -4225,30 +4245,6 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Recipe</source>
         <translation type="unfinished">Receita</translation>
-    </message>
-    <message>
-        <source>Ca</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Na</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add During</source>
@@ -4524,6 +4520,14 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Styles</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Tipo</translation>
     </message>
 </context>
 <context>
@@ -4947,6 +4951,14 @@ The final volume in the primary is %1.</source>
         <source>Waters</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WaterDialog</name>
@@ -5200,6 +5212,22 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Yeasts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flocculation</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

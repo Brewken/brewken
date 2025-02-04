@@ -1185,6 +1185,14 @@ Log file may contain more details.</source>
         <source>Equipments</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Preboil</source>
+        <translation type="unfinished">Перед кипячением</translation>
+    </message>
+    <message>
+        <source>BoilTime</source>
+        <translation type="unfinished">Время кипячения</translation>
+    </message>
 </context>
 <context>
     <name>EquipmentEditor</name>
@@ -1532,6 +1540,10 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Fermentables</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1926,6 +1938,18 @@ Log file may contain more details.</source>
     <message>
         <source>Hops</source>
         <translation type="unfinished">Хмель</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Альфа</translation>
+    </message>
+    <message>
+        <source>Beta</source>
+        <translation type="unfinished">Бета</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Форма</translation>
     </message>
 </context>
 <context>
@@ -4614,6 +4638,30 @@ The final volume in the primary is %1.</source>
         <source>Recipes</source>
         <translation type="unfinished">Рецепты</translation>
     </message>
+    <message>
+        <source>unknown style</source>
+        <translation type="unfinished">неизвестный стиль</translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished">недоступно</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Цвет</translation>
+    </message>
+    <message>
+        <source>IBU</source>
+        <translation type="unfinished">Горечь IBU</translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -5283,39 +5331,35 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Category</source>
-        <translation>Категория</translation>
+        <translation type="vanished">Категория</translation>
     </message>
     <message>
         <source>Code</source>
-        <translation>Код</translation>
+        <translation type="vanished">Код</translation>
     </message>
     <message>
         <source>Guide</source>
-        <translation>Руководство</translation>
+        <translation type="vanished">Руководство</translation>
     </message>
     <message>
         <source>BoilTime</source>
-        <translation>Время кипячения</translation>
+        <translation type="vanished">Время кипячения</translation>
     </message>
     <message>
         <source>Beta</source>
-        <translation>Бета</translation>
+        <translation type="vanished">Бета</translation>
     </message>
     <message>
         <source>Lab</source>
-        <translation>Лаборатория</translation>
-    </message>
-    <message>
-        <source>Attenuation</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Лаборатория</translation>
     </message>
     <message>
         <source>Id</source>
-        <translation>Идентификатор</translation>
+        <translation type="vanished">Идентификатор</translation>
     </message>
     <message>
         <source>Flocculation</source>
-        <translation>Флоккуляция</translation>
+        <translation type="vanished">Флоккуляция</translation>
     </message>
     <message>
         <source>Miscs</source>
@@ -5348,30 +5392,6 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Recipe</source>
         <translation type="unfinished">Рецепт</translation>
-    </message>
-    <message>
-        <source>Ca</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Na</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add During</source>
@@ -5669,6 +5689,14 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Styles</source>
         <translation type="unfinished">Стили</translation>
+    </message>
+    <message>
+        <source>Code</source>
+        <translation type="unfinished">Код</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Тип</translation>
     </message>
 </context>
 <context>
@@ -6155,6 +6183,14 @@ The final volume in the primary is %1.</source>
         <source>Waters</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WaterDialog</name>
@@ -6417,6 +6453,22 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Yeasts</source>
         <translation type="unfinished">Дрожжи</translation>
+    </message>
+    <message>
+        <source>Lab</source>
+        <translation type="unfinished">Лаборатория</translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Id</source>
+        <translation type="unfinished">Идентификатор</translation>
+    </message>
+    <message>
+        <source>Flocculation</source>
+        <translation type="unfinished">Флоккуляция</translation>
     </message>
 </context>
 <context>

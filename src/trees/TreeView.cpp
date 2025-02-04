@@ -226,7 +226,7 @@ void TreeView::importFiles() {
 void TreeView::mousePressEvent(QMouseEvent * event) {
    if (event->button() == Qt::LeftButton) {
       this->dragStart = event->pos();
-      this->doubleClick = false;
+      this->m_doubleClick = false;
    }
 
    // Send the event on its way up to the parent
@@ -236,9 +236,9 @@ void TreeView::mousePressEvent(QMouseEvent * event) {
 void TreeView::mouseDoubleClickEvent(QMouseEvent * event) {
 
    if (event->button() == Qt::LeftButton) {
-      this->doubleClick = true;
+      this->m_doubleClick = true;
    } else {
-      this->doubleClick = false;
+      this->m_doubleClick = false;
    }
 
    // Send the event on its way up to the parent
@@ -257,13 +257,18 @@ void TreeView::mouseMoveEvent(QMouseEvent * event) {
       return;
    }
 
-   if (this->doubleClick) {
+   if (this->m_doubleClick) {
       return;
    }
 
-   QDrag * drag = new QDrag(this);
-   QMimeData * data = this->model().mimeData(this->selectionModel()->selectedRows());
+   //
+   // Note that the call to model() here gets our QSortFilterProxyModel, which, via its mimeData() member function,
+   // handles mapping selected rows in the view to the corresponding rows in the source model (ie TreeModel subclass)
+   // before calling TreeModel::mimeData().
+   //
+   QMimeData * data = this->model()->mimeData(this->selectionModel()->selectedRows());
 
+   QDrag * drag = new QDrag(this);
    drag->setMimeData(data);
    drag->exec(Qt::CopyAction);
 

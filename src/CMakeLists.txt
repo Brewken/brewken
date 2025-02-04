@@ -237,10 +237,11 @@ set(filesToCompile_cpp
     ${repoDir}/src/serialization/xml/XmlRecord.cpp
     ${repoDir}/src/serialization/xml/XmlRecordDefinition.cpp
     ${repoDir}/src/trees/NamedEntityTreeModel.cpp
+    ${repoDir}/src/trees/NamedEntityTreeSortFilterProxyModel.cpp
     ${repoDir}/src/trees/NamedEntityTreeView.cpp
     ${repoDir}/src/trees/RecipeTreeModel.cpp
+    ${repoDir}/src/trees/RecipeTreeSortFilterProxyModel.cpp
     ${repoDir}/src/trees/RecipeTreeView.cpp
-    ${repoDir}/src/trees/TreeFilterProxyModel.cpp
     ${repoDir}/src/trees/TreeModel.cpp
     ${repoDir}/src/trees/TreeNode.cpp
     ${repoDir}/src/trees/TreeView.cpp

@@ -2913,7 +2913,7 @@ void MainWindow::exportSelected() {
 
       // This is all a bit clunky, but extending the trees to include mashes, boils and fermentations mean it's going to
       // be rewritten soon
-      TreeNode const * node = activeTreeView->model().treeNode(selection);
+      TreeNode const * node = activeTreeView->treeNode(selection);
       if (!node) {
          qWarning() << Q_FUNC_INFO << "No node at index" << selection;
       } else {

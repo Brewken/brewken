@@ -1177,6 +1177,14 @@ Log file may contain more details.</source>
         <source>Equipments</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Preboil</source>
+        <translation type="unfinished">Forralást megelőző</translation>
+    </message>
+    <message>
+        <source>BoilTime</source>
+        <translation type="unfinished">Forralásiidő</translation>
+    </message>
 </context>
 <context>
     <name>EquipmentEditor</name>
@@ -1525,6 +1533,10 @@ Log file may contain more details.</source>
     <message>
         <source>Fermentables</source>
         <translation type="unfinished">Erjesztető anyagok</translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1934,6 +1946,18 @@ Log file may contain more details.</source>
     <message>
         <source>Hops</source>
         <translation type="unfinished">Komló</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Alfasav</translation>
+    </message>
+    <message>
+        <source>Beta</source>
+        <translation type="unfinished">Béta</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Forma</translation>
     </message>
 </context>
 <context>
@@ -4626,6 +4650,30 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <source>Recipes</source>
         <translation type="unfinished">Receptek</translation>
     </message>
+    <message>
+        <source>unknown style</source>
+        <translation type="unfinished">ismeretlen stílus</translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished">N/A</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="unfinished">kezdeti fajsúly (OG)</translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation type="unfinished">végleges fajsúly (FG)</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Szín</translation>
+    </message>
+    <message>
+        <source>IBU</source>
+        <translation type="unfinished">Keserűség (IBU)</translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -5283,39 +5331,39 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation>Kategória</translation>
+        <translation type="vanished">Kategória</translation>
     </message>
     <message>
         <source>Code</source>
-        <translation>Kód</translation>
+        <translation type="vanished">Kód</translation>
     </message>
     <message>
         <source>Guide</source>
-        <translation>Útmutató</translation>
+        <translation type="vanished">Útmutató</translation>
     </message>
     <message>
         <source>BoilTime</source>
-        <translation>Forralásiidő</translation>
+        <translation type="vanished">Forralásiidő</translation>
     </message>
     <message>
         <source>Beta</source>
-        <translation>Béta</translation>
+        <translation type="vanished">Béta</translation>
     </message>
     <message>
         <source>Lab</source>
-        <translation>Labor</translation>
+        <translation type="vanished">Labor</translation>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation>erjesztési hatékonyság</translation>
+        <translation type="vanished">erjesztési hatékonyság</translation>
     </message>
     <message>
         <source>Id</source>
-        <translation>Sorszám</translation>
+        <translation type="vanished">Sorszám</translation>
     </message>
     <message>
         <source>Flocculation</source>
-        <translation>ülepedés</translation>
+        <translation type="vanished">ülepedés</translation>
     </message>
     <message>
         <source>Miscs</source>
@@ -5348,30 +5396,6 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Recipe</source>
         <translation type="unfinished">Recept</translation>
-    </message>
-    <message>
-        <source>Ca</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Na</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add During</source>
@@ -5673,6 +5697,14 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Styles</source>
         <translation type="unfinished">Stílusok</translation>
+    </message>
+    <message>
+        <source>Code</source>
+        <translation type="unfinished">Kód</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6135,6 +6167,14 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <source>Waters</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WaterDialog</name>
@@ -6401,6 +6441,22 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Yeasts</source>
         <translation type="unfinished">Élesztők</translation>
+    </message>
+    <message>
+        <source>Lab</source>
+        <translation type="unfinished">Labor</translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="unfinished">erjesztési hatékonyság</translation>
+    </message>
+    <message>
+        <source>Id</source>
+        <translation type="unfinished">Sorszám</translation>
+    </message>
+    <message>
+        <source>Flocculation</source>
+        <translation type="unfinished">ülepedés</translation>
     </message>
 </context>
 <context>

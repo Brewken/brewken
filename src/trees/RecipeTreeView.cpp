@@ -65,7 +65,7 @@ QMenu * RecipeTreeView::doGetContextMenu(QModelIndex const & selectedViewIndex) 
       // TBD: Right at the top of the tree, it's possible to click on something that is neither a folder nor a recipe, so
       // we might have to check for that here.
       auto recipe = recipeNode.underlyingItem();
-      QModelIndex translated = this->m_sortFilterProxy.mapToSource(selectedViewIndex);
+      QModelIndex translated = this->m_treeSortFilterProxy.mapToSource(selectedViewIndex);
 
       // you can not delete a locked recipe
       this->enableDelete(!recipe->locked());
@@ -106,7 +106,7 @@ QMenu * RecipeTreeView::doGetContextMenu(QModelIndex const & selectedViewIndex) 
 }
 
 bool RecipeTreeView::ancestorsAreShowing(QModelIndex ndx) {
-   QModelIndex translated = m_sortFilterProxy.mapToSource(ndx);
+   QModelIndex translated = m_treeSortFilterProxy.mapToSource(ndx);
    return this->m_model.showChild(translated);
 }
 
@@ -123,35 +123,35 @@ void RecipeTreeView::versionedRecipe(Recipe * descendant) {
 
 void RecipeTreeView::showAncestors() {
    for (QModelIndex selected : this->selectionModel()->selectedRows()) {
-      this->m_model.showAncestors(this->m_sortFilterProxy.mapToSource(selected));
+      this->m_model.showAncestors(this->m_treeSortFilterProxy.mapToSource(selected));
    }
    return;
 }
 
 void RecipeTreeView::hideAncestors() {
    for (QModelIndex selected : this->selectionModel()->selectedRows()) {
-      this->m_model.hideAncestors(this->m_sortFilterProxy.mapToSource(selected));
+      this->m_model.hideAncestors(this->m_treeSortFilterProxy.mapToSource(selected));
    }
    return;
 }
 
 void RecipeTreeView::revertRecipeToPreviousVersion() {
    for (QModelIndex selected : this->selectionModel()->selectedRows()) {
-      this->m_model.revertRecipeToPreviousVersion(this->m_sortFilterProxy.mapToSource(selected));
+      this->m_model.revertRecipeToPreviousVersion(this->m_treeSortFilterProxy.mapToSource(selected));
    }
    return;
 }
 
 void RecipeTreeView::orphanRecipe() {
    for (QModelIndex selected : this->selectionModel()->selectedRows()) {
-      this->m_model.orphanRecipe(this->m_sortFilterProxy.mapToSource(selected));
+      this->m_model.orphanRecipe(this->m_treeSortFilterProxy.mapToSource(selected));
    }
    return;
 }
 
 void RecipeTreeView::spawnRecipe() {
    for (QModelIndex selected : this->selectionModel()->selectedRows()) {
-      this->m_model.spawnRecipe(this->m_sortFilterProxy.mapToSource(selected));
+      this->m_model.spawnRecipe(this->m_treeSortFilterProxy.mapToSource(selected));
    }
    return;
 }

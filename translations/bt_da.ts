@@ -1092,6 +1092,14 @@ Logfil indeholder måske flere detaljer.</translation>
         <source>Equipments</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Preboil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BoilTime</source>
+        <translation type="unfinished">Kogetid</translation>
+    </message>
 </context>
 <context>
     <name>EquipmentEditor</name>
@@ -1316,6 +1324,10 @@ Logfil indeholder måske flere detaljer.</translation>
     <message>
         <source>Fermentables</source>
         <translation type="unfinished">Gærbare ingredienser</translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
+        <translation type="unfinished">Udbytte af ekstrakt fra finmalet malt (DBFG)</translation>
     </message>
 </context>
 <context>
@@ -1654,6 +1666,18 @@ Logfil indeholder måske flere detaljer.</translation>
     <message>
         <source>Hops</source>
         <translation type="unfinished">Humle</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Alfa</translation>
+    </message>
+    <message>
+        <source>Beta</source>
+        <translation type="unfinished">Beta</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4106,6 +4130,30 @@ The final volume in the primary is %1.</source>
         <source>Recipes</source>
         <translation type="unfinished">Opskrifter</translation>
     </message>
+    <message>
+        <source>unknown style</source>
+        <translation type="unfinished">ukendt stilart</translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished">Ikke tilgængelig</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation type="unfinished">Slutmassefylde (FG)</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IBU</source>
+        <translation type="unfinished">IBU</translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -4719,39 +4767,39 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Category</source>
-        <translation>Kategori</translation>
+        <translation type="vanished">Kategori</translation>
     </message>
     <message>
         <source>Code</source>
-        <translation>Kode</translation>
+        <translation type="vanished">Kode</translation>
     </message>
     <message>
         <source>Guide</source>
-        <translation>Guide</translation>
+        <translation type="vanished">Guide</translation>
     </message>
     <message>
         <source>BoilTime</source>
-        <translation>Kogetid</translation>
+        <translation type="vanished">Kogetid</translation>
     </message>
     <message>
         <source>Beta</source>
-        <translation>Beta</translation>
+        <translation type="vanished">Beta</translation>
     </message>
     <message>
         <source>Lab</source>
-        <translation>Producent</translation>
+        <translation type="vanished">Producent</translation>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation>Forgæringsgrad</translation>
+        <translation type="vanished">Forgæringsgrad</translation>
     </message>
     <message>
         <source>Id</source>
-        <translation>Id</translation>
+        <translation type="vanished">Id</translation>
     </message>
     <message>
         <source>Flocculation</source>
-        <translation>Flokkulering</translation>
+        <translation type="vanished">Flokkulering</translation>
     </message>
     <message>
         <source>Miscs</source>
@@ -4795,27 +4843,27 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Ca</source>
-        <translation>Ca</translation>
+        <translation type="vanished">Ca</translation>
     </message>
     <message>
         <source>Mg</source>
-        <translation>Mg</translation>
+        <translation type="vanished">Mg</translation>
     </message>
     <message>
         <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation>SO&lt;sub&gt;4&lt;/sub&gt;</translation>
+        <translation type="vanished">SO&lt;sub&gt;4&lt;/sub&gt;</translation>
     </message>
     <message>
         <source>Na</source>
-        <translation>Na</translation>
+        <translation type="vanished">Na</translation>
     </message>
     <message>
         <source>Cl</source>
-        <translation>Cl</translation>
+        <translation type="vanished">Cl</translation>
     </message>
     <message>
         <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation>HCO&lt;sub&gt;3&lt;/sub&gt;</translation>
+        <translation type="vanished">HCO&lt;sub&gt;3&lt;/sub&gt;</translation>
     </message>
 </context>
 <context>
@@ -5090,6 +5138,14 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Styles</source>
         <translation type="unfinished">Stilarter</translation>
+    </message>
+    <message>
+        <source>Code</source>
+        <translation type="unfinished">Kode</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5513,6 +5569,14 @@ The final volume in the primary is %1.</source>
         <source>Waters</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WaterDialog</name>
@@ -5775,6 +5839,22 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Yeasts</source>
         <translation type="unfinished">Gær</translation>
+    </message>
+    <message>
+        <source>Lab</source>
+        <translation type="unfinished">Producent</translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Id</source>
+        <translation type="unfinished">Id</translation>
+    </message>
+    <message>
+        <source>Flocculation</source>
+        <translation type="unfinished">Flokkulering</translation>
     </message>
 </context>
 <context>

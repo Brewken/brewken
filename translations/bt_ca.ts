@@ -1185,6 +1185,14 @@ Log file may contain more details.</source>
         <source>Equipments</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Preboil</source>
+        <translation type="unfinished">Abans de bullir</translation>
+    </message>
+    <message>
+        <source>BoilTime</source>
+        <translation type="unfinished">Temps d&apos;ebullició</translation>
+    </message>
 </context>
 <context>
     <name>EquipmentEditor</name>
@@ -1545,6 +1553,10 @@ Log file may contain more details.</source>
     <message>
         <source>Fermentables</source>
         <translation type="unfinished">Fermentables</translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1966,6 +1978,18 @@ Log file may contain more details.</source>
     <message>
         <source>Hops</source>
         <translation type="unfinished">Llúpols</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Alfa</translation>
+    </message>
+    <message>
+        <source>Beta</source>
+        <translation type="unfinished">Beta</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Format</translation>
     </message>
 </context>
 <context>
@@ -4674,6 +4698,30 @@ El volum final al primari és de %1.</translation>
         <source>Recipes</source>
         <translation type="unfinished">Receptes</translation>
     </message>
+    <message>
+        <source>unknown style</source>
+        <translation type="unfinished">estil desconegut</translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished">N/D</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="unfinished">DI</translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation type="unfinished">DF</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Color</translation>
+    </message>
+    <message>
+        <source>IBU</source>
+        <translation type="unfinished">IBU</translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -5331,39 +5379,39 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation>Categoria</translation>
+        <translation type="vanished">Categoria</translation>
     </message>
     <message>
         <source>Code</source>
-        <translation>Codi</translation>
+        <translation type="vanished">Codi</translation>
     </message>
     <message>
         <source>Guide</source>
-        <translation>Guia</translation>
+        <translation type="vanished">Guia</translation>
     </message>
     <message>
         <source>BoilTime</source>
-        <translation>Temps d&apos;ebullició</translation>
+        <translation type="vanished">Temps d&apos;ebullició</translation>
     </message>
     <message>
         <source>Beta</source>
-        <translation>Beta</translation>
+        <translation type="vanished">Beta</translation>
     </message>
     <message>
         <source>Lab</source>
-        <translation>Laboratori</translation>
+        <translation type="vanished">Laboratori</translation>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation>Atenuació</translation>
+        <translation type="vanished">Atenuació</translation>
     </message>
     <message>
         <source>Id</source>
-        <translation>Id</translation>
+        <translation type="vanished">Id</translation>
     </message>
     <message>
         <source>Flocculation</source>
-        <translation>Floculació</translation>
+        <translation type="vanished">Floculació</translation>
     </message>
     <message>
         <source>Miscs</source>
@@ -5396,30 +5444,6 @@ El volum final al primari és de %1.</translation>
     <message>
         <source>Recipe</source>
         <translation type="unfinished">Recepta</translation>
-    </message>
-    <message>
-        <source>Ca</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Na</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add During</source>
@@ -5721,6 +5745,14 @@ El volum final al primari és de %1.</translation>
     <message>
         <source>Styles</source>
         <translation type="unfinished">Estils</translation>
+    </message>
+    <message>
+        <source>Code</source>
+        <translation type="unfinished">Codi</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Tipus</translation>
     </message>
 </context>
 <context>
@@ -6207,6 +6239,14 @@ El volum final al primari és de %1.</translation>
         <source>Waters</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WaterDialog</name>
@@ -6473,6 +6513,22 @@ El volum final al primari és de %1.</translation>
     <message>
         <source>Yeasts</source>
         <translation type="unfinished">Llevats</translation>
+    </message>
+    <message>
+        <source>Lab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="unfinished">Atenuació</translation>
+    </message>
+    <message>
+        <source>Id</source>
+        <translation type="unfinished">Id</translation>
+    </message>
+    <message>
+        <source>Flocculation</source>
+        <translation type="unfinished">Floculació</translation>
     </message>
 </context>
 <context>

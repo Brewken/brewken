@@ -1169,6 +1169,14 @@ Log file may contain more details.</source>
         <source>Equipments</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Preboil</source>
+        <translation type="unfinished">Vorkochen</translation>
+    </message>
+    <message>
+        <source>BoilTime</source>
+        <translation type="unfinished">Kochzeit</translation>
+    </message>
 </context>
 <context>
     <name>EquipmentEditor</name>
@@ -1512,6 +1520,10 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Fermentables</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1918,6 +1930,18 @@ Log file may contain more details.</source>
     <message>
         <source>Hops</source>
         <translation type="unfinished">Hopfen</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Alpha</translation>
+    </message>
+    <message>
+        <source>Beta</source>
+        <translation type="unfinished">Beta</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4610,6 +4634,30 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <source>Recipes</source>
         <translation type="unfinished">Rezepte</translation>
     </message>
+    <message>
+        <source>unknown style</source>
+        <translation type="unfinished">unbekannte Art</translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished">nicht anwendbar</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation type="unfinished">FG</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Farbe</translation>
+    </message>
+    <message>
+        <source>IBU</source>
+        <translation type="unfinished">IBU</translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -5263,39 +5311,39 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation>Kategorie</translation>
+        <translation type="vanished">Kategorie</translation>
     </message>
     <message>
         <source>Code</source>
-        <translation>Code</translation>
+        <translation type="vanished">Code</translation>
     </message>
     <message>
         <source>Guide</source>
-        <translation>Richtlinie</translation>
+        <translation type="vanished">Richtlinie</translation>
     </message>
     <message>
         <source>BoilTime</source>
-        <translation>Kochzeit</translation>
+        <translation type="vanished">Kochzeit</translation>
     </message>
     <message>
         <source>Beta</source>
-        <translation>Beta</translation>
+        <translation type="vanished">Beta</translation>
     </message>
     <message>
         <source>Lab</source>
-        <translation>Labor</translation>
+        <translation type="vanished">Labor</translation>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation>Vergärungsgrad</translation>
+        <translation type="vanished">Vergärungsgrad</translation>
     </message>
     <message>
         <source>Id</source>
-        <translation>ID</translation>
+        <translation type="vanished">ID</translation>
     </message>
     <message>
         <source>Flocculation</source>
-        <translation>Ausflockung</translation>
+        <translation type="vanished">Ausflockung</translation>
     </message>
     <message>
         <source>Miscs</source>
@@ -5328,30 +5376,6 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     <message>
         <source>Recipe</source>
         <translation type="unfinished">Rezept</translation>
-    </message>
-    <message>
-        <source>Ca</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Na</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add During</source>
@@ -5653,6 +5677,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     <message>
         <source>Styles</source>
         <translation type="unfinished">Stile</translation>
+    </message>
+    <message>
+        <source>Code</source>
+        <translation type="unfinished">Code</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Typ</translation>
     </message>
 </context>
 <context>
@@ -6108,6 +6140,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <source>Waters</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WaterDialog</name>
@@ -6370,6 +6410,22 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     <message>
         <source>Yeasts</source>
         <translation type="unfinished">Hefen</translation>
+    </message>
+    <message>
+        <source>Lab</source>
+        <translation type="unfinished">Labor</translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="unfinished">Vergärungsgrad</translation>
+    </message>
+    <message>
+        <source>Id</source>
+        <translation type="unfinished">ID</translation>
+    </message>
+    <message>
+        <source>Flocculation</source>
+        <translation type="unfinished">Ausflockung</translation>
     </message>
 </context>
 <context>

@@ -1205,6 +1205,14 @@ Log file may contain more details.</source>
         <source>Equipments</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Preboil</source>
+        <translation type="unfinished">Voor het koken</translation>
+    </message>
+    <message>
+        <source>BoilTime</source>
+        <translation type="unfinished">Kook Tijd</translation>
+    </message>
 </context>
 <context>
     <name>EquipmentEditor</name>
@@ -1541,6 +1549,10 @@ Log file may contain more details.</source>
     <message>
         <source>Fermentables</source>
         <translation type="unfinished">Vergistbaren</translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1954,6 +1966,18 @@ Log file may contain more details.</source>
     <message>
         <source>Hops</source>
         <translation type="unfinished">Hop</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Alpha</translation>
+    </message>
+    <message>
+        <source>Beta</source>
+        <translation type="unfinished">Beta</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4696,6 +4720,30 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <source>Recipes</source>
         <translation type="unfinished">Recepten</translation>
     </message>
+    <message>
+        <source>unknown style</source>
+        <translation type="unfinished">onbekende stijl</translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished">Niet beschikbaar</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Kleur</translation>
+    </message>
+    <message>
+        <source>IBU</source>
+        <translation type="unfinished">IBU</translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -5353,39 +5401,39 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation>Categorie</translation>
+        <translation type="vanished">Categorie</translation>
     </message>
     <message>
         <source>Code</source>
-        <translation>Code</translation>
+        <translation type="vanished">Code</translation>
     </message>
     <message>
         <source>Guide</source>
-        <translation>Handleiding</translation>
+        <translation type="vanished">Handleiding</translation>
     </message>
     <message>
         <source>BoilTime</source>
-        <translation>Kook Tijd</translation>
+        <translation type="vanished">Kook Tijd</translation>
     </message>
     <message>
         <source>Beta</source>
-        <translation>Beta</translation>
+        <translation type="vanished">Beta</translation>
     </message>
     <message>
         <source>Lab</source>
-        <translation>Lab</translation>
+        <translation type="vanished">Lab</translation>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation>Vergisting</translation>
+        <translation type="vanished">Vergisting</translation>
     </message>
     <message>
         <source>Id</source>
-        <translation>Id</translation>
+        <translation type="vanished">Id</translation>
     </message>
     <message>
         <source>Flocculation</source>
-        <translation>Flocculatie</translation>
+        <translation type="vanished">Flocculatie</translation>
     </message>
     <message>
         <source>Miscs</source>
@@ -5442,30 +5490,6 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Recipe</source>
         <translation>Recept</translation>
-    </message>
-    <message>
-        <source>Ca</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Na</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add During</source>
@@ -5763,6 +5787,14 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Styles</source>
         <translation type="unfinished">Stijlen</translation>
+    </message>
+    <message>
+        <source>Code</source>
+        <translation type="unfinished">Code</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Type</translation>
     </message>
 </context>
 <context>
@@ -6225,6 +6257,14 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <source>Waters</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WaterDialog</name>
@@ -6491,6 +6531,22 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Yeasts</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lab</source>
+        <translation type="unfinished">Lab</translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="unfinished">Vergisting</translation>
+    </message>
+    <message>
+        <source>Id</source>
+        <translation type="unfinished">Id</translation>
+    </message>
+    <message>
+        <source>Flocculation</source>
+        <translation type="unfinished">Flocculatie</translation>
     </message>
 </context>
 <context>

@@ -17,7 +17,6 @@
 #define TREES_NAMEDENTITYTREEVIEW_H
 #pragma once
 
-
 #include "editors/EquipmentEditor.h"
 #include "editors/FermentableEditor.h"
 #include "editors/HopEditor.h"
@@ -35,6 +34,7 @@
 #include "model/Water.h"
 #include "model/Yeast.h"
 #include "trees/NamedEntityTreeModel.h"
+#include "trees/NamedEntityTreeSortFilterProxyModel.h"
 #include "trees/TreeView.h"
 #include "trees/TreeViewBase.h"
 #include "trees/TreeModelBase.h"
@@ -46,7 +46,7 @@
 class EquipmentTreeView : public TreeView,
                           public TreeViewBase<EquipmentTreeView,
                                               EquipmentTreeModel,
-                                              EquipmentSortFilterProxyModel,
+                                              EquipmentTreeSortFilterProxyModel,
                                               EquipmentEditor,
                                               Equipment> {
    Q_OBJECT
@@ -56,7 +56,7 @@ class EquipmentTreeView : public TreeView,
 class FermentableTreeView : public TreeView,
                             public TreeViewBase<FermentableTreeView,
                                                 FermentableTreeModel,
-                                                FermentableSortFilterProxyModel,
+                                                FermentableTreeSortFilterProxyModel,
                                                 FermentableEditor,
                                                 Fermentable> {
    Q_OBJECT
@@ -66,7 +66,7 @@ class FermentableTreeView : public TreeView,
 class HopTreeView : public TreeView,
                     public TreeViewBase<HopTreeView,
                                         HopTreeModel,
-                                        HopSortFilterProxyModel,
+                                        HopTreeSortFilterProxyModel,
                                         HopEditor,
                                         Hop> {
    Q_OBJECT
@@ -76,7 +76,7 @@ class HopTreeView : public TreeView,
 class MiscTreeView : public TreeView,
                      public TreeViewBase<MiscTreeView,
                                          MiscTreeModel,
-                                         MiscSortFilterProxyModel,
+                                         MiscTreeSortFilterProxyModel,
                                          MiscEditor,
                                          Misc> {
    Q_OBJECT
@@ -86,7 +86,7 @@ class MiscTreeView : public TreeView,
 class StyleTreeView : public TreeView,
                       public TreeViewBase<StyleTreeView,
                                           StyleTreeModel,
-                                          StyleSortFilterProxyModel,
+                                          StyleTreeSortFilterProxyModel,
                                           StyleEditor,
                                           Style> {
    Q_OBJECT
@@ -96,7 +96,7 @@ class StyleTreeView : public TreeView,
 class WaterTreeView : public TreeView,
                       public TreeViewBase<WaterTreeView,
                                           WaterTreeModel,
-                                          WaterSortFilterProxyModel,
+                                          WaterTreeSortFilterProxyModel,
                                           WaterEditor,
                                           Water> {
    Q_OBJECT
@@ -106,7 +106,7 @@ class WaterTreeView : public TreeView,
 class YeastTreeView : public TreeView,
                       public TreeViewBase<YeastTreeView,
                                           YeastTreeModel,
-                                          YeastSortFilterProxyModel,
+                                          YeastTreeSortFilterProxyModel,
                                           YeastEditor,
                                           Yeast> {
    Q_OBJECT

@@ -1201,6 +1201,14 @@ Log file may contain more details.</source>
         <source>Equipments</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Preboil</source>
+        <translation type="unfinished">Före kokning</translation>
+    </message>
+    <message>
+        <source>BoilTime</source>
+        <translation type="unfinished">Koktid</translation>
+    </message>
 </context>
 <context>
     <name>EquipmentEditor</name>
@@ -1541,6 +1549,10 @@ Log file may contain more details.</source>
     <message>
         <source>Fermentables</source>
         <translation type="unfinished">Jäsbart</translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1954,6 +1966,18 @@ Log file may contain more details.</source>
     <message>
         <source>Hops</source>
         <translation type="unfinished">Humle</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Alfa</translation>
+    </message>
+    <message>
+        <source>Beta</source>
+        <translation type="unfinished">Beta</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Formulär</translation>
     </message>
 </context>
 <context>
@@ -4675,6 +4699,30 @@ Primärens slutgiltiga volym är %1.</translation>
         <source>Recipes</source>
         <translation type="unfinished">Recept</translation>
     </message>
+    <message>
+        <source>unknown style</source>
+        <translation type="unfinished">Okänd stil</translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished">Ej tillämplig</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="unfinished">OG</translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation type="unfinished">FG</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Färg</translation>
+    </message>
+    <message>
+        <source>IBU</source>
+        <translation type="unfinished">IBU</translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -5336,39 +5384,39 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation>Kategori</translation>
+        <translation type="vanished">Kategori</translation>
     </message>
     <message>
         <source>Code</source>
-        <translation>Kod</translation>
+        <translation type="vanished">Kod</translation>
     </message>
     <message>
         <source>Guide</source>
-        <translation>Guide</translation>
+        <translation type="vanished">Guide</translation>
     </message>
     <message>
         <source>BoilTime</source>
-        <translation>Koktid</translation>
+        <translation type="vanished">Koktid</translation>
     </message>
     <message>
         <source>Beta</source>
-        <translation>Beta</translation>
+        <translation type="vanished">Beta</translation>
     </message>
     <message>
         <source>Lab</source>
-        <translation>Lab</translation>
+        <translation type="vanished">Lab</translation>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation>Förjäsningsgrad</translation>
+        <translation type="vanished">Förjäsningsgrad</translation>
     </message>
     <message>
         <source>Id</source>
-        <translation>Id</translation>
+        <translation type="vanished">Id</translation>
     </message>
     <message>
         <source>Flocculation</source>
-        <translation>Flockulering</translation>
+        <translation type="vanished">Flockulering</translation>
     </message>
     <message>
         <source>Miscs</source>
@@ -5425,30 +5473,6 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>Recipe</source>
         <translation type="unfinished">Recept</translation>
-    </message>
-    <message>
-        <source>Ca</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Na</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add During</source>
@@ -5739,6 +5763,14 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>Styles</source>
         <translation type="unfinished">Stilar</translation>
+    </message>
+    <message>
+        <source>Code</source>
+        <translation type="unfinished">Kod</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6201,6 +6233,14 @@ Primärens slutgiltiga volym är %1.</translation>
         <source>Waters</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WaterDialog</name>
@@ -6467,6 +6507,22 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>Yeasts</source>
         <translation type="unfinished">Jäst</translation>
+    </message>
+    <message>
+        <source>Lab</source>
+        <translation type="unfinished">Lab</translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="unfinished">Förjäsningsgrad</translation>
+    </message>
+    <message>
+        <source>Id</source>
+        <translation type="unfinished">Id</translation>
+    </message>
+    <message>
+        <source>Flocculation</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -31,14 +31,15 @@
 #include <QWidget>
 
 #include "utils/CuriouslyRecurringTemplateBase.h"
+#include "trees/NamedEntityTreeSortFilterProxyModel.h"
 
 /**
  * \brief CRTP base for \c TreeView subclasses.  See comment on \c TreeView class for more info.
  *
  * \param Derived - The derived class
  * \param NeTreeModel - The corresponding sub-class of \c TreeModel and \c TreeModelBase (eg \c RecipeTreeModel)
- * \param NeSortFilterProxyModel - The corresponding sub-class of \c QSortFilterProxyModel and
- *                                 \c SortFilterProxyModelBase (eg \c RecipeSortFilterProxyModel)
+ * \param NeTreeSortFilterProxyModel - The corresponding sub-class of \c QSortFilterProxyModel and
+ *                                 \c TreeSortFilterProxyModelBase (eg \c RecipeTreeSortFilterProxyModel)
  * \param NeEditor - The corresponding subclass of \c EditorBase for creating/editing \c NE item, \b unless \c NE is
  *                   \c Recipe (for which no separate editor exists), in which case this type should be \c MainWindow.
  * \param NE - The primary \c NamedEntity subclass (besides \c Folder) shown in this tree (eg \c Recipe for
@@ -53,7 +54,7 @@
 template<class Derived> class TreeViewPhantom;
 template<class Derived,
          class NeTreeModel,
-         class NeSortFilterProxyModel,
+         class NeTreeSortFilterProxyModel,
          class NeEditor,
          class NE,
          typename SNE = void>
@@ -63,16 +64,17 @@ private:
    /**
     * \brief Constructor
     *
-    *        Note that we pass nullptr as parent to m_model and m_sortFilterProxy constructors because they are value
+    *        Note that we pass nullptr as parent to m_model and m_treeSortFilterProxy constructors because they are value
     *        members of this class and we do not want them put in the QObject tree (which would try to call their
     *        destructors when parent is destroyed).
     */
    TreeViewBase() :
       m_model          {nullptr},
-      m_sortFilterProxy{nullptr, true, &m_model} {
-      this->m_sortFilterProxy.setDynamicSortFilter(true);
-      this->m_sortFilterProxy.setFilterKeyColumn(1);
-      this->derived().setModel(&this->m_sortFilterProxy);
+      m_treeSortFilterProxy{nullptr} {
+      this->m_treeSortFilterProxy.setSourceModel(&this->m_model);
+      this->m_treeSortFilterProxy.setDynamicSortFilter(true);
+      this->m_treeSortFilterProxy.setFilterKeyColumn(1);
+      this->derived().setModel(&this->m_treeSortFilterProxy);
       this->derived().connect(&this->m_model, &NeTreeModel::expandFolder, &this->derived(), &Derived::expandFolder);
 
       this->derived().setAllColumnsShowFocus(true);
@@ -119,12 +121,17 @@ public:
    }
 
 protected:
-   TreeModel & doModel() {
+   TreeModel & doTreeModel() {
       return this->m_model;
    }
 
+   TreeNode * doTreeNode(QModelIndex const & viewIndex) const {
+      QModelIndex const modelIndex = this->m_treeSortFilterProxy.mapToSource(viewIndex);
+      return this->m_model.treeNode(modelIndex);
+   }
+
    void doActivated(QModelIndex const & viewIndex) {
-      TreeNode * node = this->m_model.treeNode(this->m_sortFilterProxy.mapToSource(viewIndex));
+      TreeNode * node = this->m_model.treeNode(this->m_treeSortFilterProxy.mapToSource(viewIndex));
       if (!node) {
          qWarning() << Q_FUNC_INFO << "No node at viewIndex" << viewIndex;
          return;
@@ -165,7 +172,7 @@ public:
       if (!viewIndex.isValid()) {
          return nullptr;
       }
-      QModelIndex const modelIndex = this->m_sortFilterProxy.mapToSource(viewIndex);
+      QModelIndex const modelIndex = this->m_treeSortFilterProxy.mapToSource(viewIndex);
       TreeNode * treeNode = this->m_model.treeNode(modelIndex);
       if (treeNode->classifier() == TreeNodeClassifier::Folder) {
          return nullptr;
@@ -190,20 +197,23 @@ public:
       if (!viewIndex.isValid()) {
          return QModelIndex();
       }
-      QModelIndex const modelIndex = this->m_sortFilterProxy.mapToSource(viewIndex);
+      QModelIndex const modelIndex = this->m_treeSortFilterProxy.mapToSource(viewIndex);
       if (modelIndex.isValid()) {
-         return this->m_sortFilterProxy.mapFromSource(this->m_model.parent(modelIndex));
+         qDebug() << Q_FUNC_INFO << "modelIndex:" << modelIndex;
+         return this->m_treeSortFilterProxy.mapFromSource(this->m_model.parent(modelIndex));
       }
 
       return QModelIndex();
    }
 
    QModelIndex findElement(std::shared_ptr<NE> const ne) {
-      return this->m_sortFilterProxy.mapFromSource(this->m_model.findElement(ne));
+      qDebug() << Q_FUNC_INFO << ne;
+      return this->m_treeSortFilterProxy.mapFromSource(this->m_model.findElement(ne));
    }
 
    QModelIndex findElement(std::shared_ptr<SNE> const sne) requires (!IsVoid<SNE>) {
-      return this->m_sortFilterProxy.mapFromSource(this->m_model.findElement(sne));
+      qDebug() << Q_FUNC_INFO << sne;
+      return this->m_treeSortFilterProxy.mapFromSource(this->m_model.findElement(sne));
    }
 
    /**
@@ -235,7 +245,7 @@ public:
    void doSetSelected(QModelIndex const & viewIndex) {
       QModelIndex parentIndex = this->parentIndex(viewIndex);
       this->derived().setCurrentIndex(viewIndex);
-      QModelIndex modelIndex = this->m_sortFilterProxy.mapToSource(viewIndex);
+      QModelIndex modelIndex = this->m_treeSortFilterProxy.mapToSource(viewIndex);
       TreeNode * treeNode = this->m_model.treeNode(modelIndex);
       if (treeNode->classifier() == TreeNodeClassifier::Folder && !this->derived().isExpanded(parentIndex)) {
          this->derived().setExpanded(parentIndex, true);
@@ -255,7 +265,7 @@ public:
       QList<std::pair<QModelIndex, QString>> modelIndexToNewName;
 
       for (QModelIndex viewIndex : selectedViewIndexes) {
-         QModelIndex modelIndex = this->m_sortFilterProxy.mapToSource(viewIndex);
+         QModelIndex modelIndex = this->m_treeSortFilterProxy.mapToSource(viewIndex);
          TreeNode * treeNode = this->m_model.treeNode(modelIndex);
          if (treeNode->classifier() != TreeNodeClassifier::PrimaryItem) {
             // Only support copying primary items, so skip any secondary ones or folders
@@ -303,7 +313,7 @@ public:
 
       // Time to lay down the boogie
       for (QModelIndex viewIndex : selectedViewIndexes) {
-         QModelIndex modelIndex = m_sortFilterProxy.mapToSource(viewIndex);
+         QModelIndex modelIndex = m_treeSortFilterProxy.mapToSource(viewIndex);
          TreeNode * treeNode = this->m_model.treeNode(modelIndex);
          if (!treeNode->rawParent()) {
             // You can't delete the root element
@@ -355,9 +365,9 @@ public:
       // Doesn't feel like that logic belongs here.  Would be better to create TreeView::firstNonFolder() or similar.
       //
       //
-      QModelIndex newSelectediewIndex = this->m_sortFilterProxy.index(firstRowToDelete, firstColToDelete);
+      QModelIndex newSelectediewIndex = this->m_treeSortFilterProxy.index(firstRowToDelete, firstColToDelete);
       if (!newSelectediewIndex.isValid()) {
-         newSelectediewIndex = this->m_sortFilterProxy.index(0, 0);
+         newSelectediewIndex = this->m_treeSortFilterProxy.index(0, 0);
       }
       return newSelectediewIndex;
    }
@@ -450,7 +460,7 @@ public:
    }
 
    QString doFolderName(QModelIndex const & viewIndex) const {
-      QModelIndex const modelIndex{this->m_sortFilterProxy.mapToSource(viewIndex)};
+      QModelIndex const modelIndex{this->m_treeSortFilterProxy.mapToSource(viewIndex)};
       return this->m_model.folderPath(modelIndex);
    }
 
@@ -501,7 +511,8 @@ public:
       }
 
       if (index.isValid()) {
-         QModelIndex const translatedIndex{this->m_sortFilterProxy.mapFromSource(index)};
+         qDebug() << Q_FUNC_INFO << "index:" << index;
+         QModelIndex const translatedIndex{this->m_treeSortFilterProxy.mapFromSource(index)};
          if (translatedIndex.isValid() && !this->derived().isExpanded(translatedIndex)) {
             this->derived().expand(translatedIndex);
          }
@@ -533,7 +544,7 @@ public:
    }
 
    std::pair<QMenu *, TreeNode *> getContextMenuPair(QModelIndex const & selectedViewIndex) {
-      QModelIndex const selectedModelIndex{this->m_sortFilterProxy.mapToSource(selectedViewIndex)};
+      QModelIndex const selectedModelIndex{this->m_treeSortFilterProxy.mapToSource(selectedViewIndex)};
       TreeNode * selectedNode = this->m_model.treeNode(selectedModelIndex);
       if constexpr (!IsVoid<SNE>) {
          if (selectedNode->classifier() == TreeNodeClassifier::SecondaryItem) {
@@ -555,7 +566,7 @@ public:
 
    //================================================ Member Variables =================================================
    NeTreeModel            m_model;
-   NeSortFilterProxyModel m_sortFilterProxy;
+   NeTreeSortFilterProxyModel m_treeSortFilterProxy;
    NeEditor             * m_editor = nullptr;
    // These are the common parts of the right-click menu, initialised in doInit()
    QMenu   m_contextMenu     = QMenu{};
@@ -585,7 +596,7 @@ using RecipeEditor = MainWindow;
    /* This allows TableViewBase to call protected and private members of Derived */   \
    friend class TreeViewBase<NeName##TreeView,                                        \
                              NeName##TreeModel,                                       \
-                             NeName##SortFilterProxyModel,                            \
+                             NeName##TreeSortFilterProxyModel,                        \
                              NeName##Editor,                                          \
                              NeName __VA_OPT__(, __VA_ARGS__)>;                       \
                                                                                       \
@@ -595,7 +606,8 @@ using RecipeEditor = MainWindow;
                                                                                       \
       virtual void setSelected(QModelIndex const & index) override;                   \
       virtual QMenu * getContextMenu(QModelIndex const & selectedViewIndex) override; \
-      virtual TreeModel & model() override;                                           \
+      virtual TreeModel & treeModel() override;                                       \
+      virtual TreeNode * treeNode(QModelIndex const & index) const override;          \
       virtual void activated(QModelIndex const & viewIndex) override;                 \
       virtual void copy(QModelIndexList const & selectedViewIndexes) override;        \
       virtual std::optional<QModelIndex> deleteItems(QModelIndexList const & selectedViewIndexes) override; \
@@ -623,7 +635,7 @@ using RecipeEditor = MainWindow;
       TreeView{parent},                                                              \
       TreeViewBase<NeName##TreeView,                                                 \
                    NeName##TreeModel,                                                \
-                   NeName##SortFilterProxyModel,                                     \
+                   NeName##TreeSortFilterProxyModel,                                 \
                    NeName##Editor,                                                   \
                    NeName __VA_OPT__(, __VA_ARGS__)>{} {                             \
          /*this->connectSignalsAndSlots();*/                                         \
@@ -638,7 +650,10 @@ using RecipeEditor = MainWindow;
    QMenu * NeName##TreeView::getContextMenu(QModelIndex const & selectedViewIndex) { \
       return this->doGetContextMenu(selectedViewIndex);                              \
    }                                                                                 \
-   TreeModel & NeName##TreeView::model() { return this->doModel(); }                 \
+   TreeModel & NeName##TreeView::treeModel() { return this->doTreeModel(); }         \
+   TreeNode * NeName##TreeView::treeNode(QModelIndex const & index) const {          \
+      return this->doTreeNode(index);                                                \
+   }                                                                                 \
    void NeName##TreeView::activated(QModelIndex const & viewIndex) {                 \
       this->doActivated(viewIndex);                                                  \
       return;                                                                        \

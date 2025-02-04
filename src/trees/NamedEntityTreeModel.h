@@ -26,19 +26,10 @@
 #include "model/Style.h"
 #include "model/Water.h"
 #include "model/Yeast.h"
-#include "qtModels/sortFilterProxyModels/EquipmentSortFilterProxyModel.h"
-#include "qtModels/sortFilterProxyModels/FermentableSortFilterProxyModel.h"
-#include "qtModels/sortFilterProxyModels/HopSortFilterProxyModel.h"
-#include "qtModels/sortFilterProxyModels/MashSortFilterProxyModel.h"
-#include "qtModels/sortFilterProxyModels/MiscSortFilterProxyModel.h"
-#include "qtModels/sortFilterProxyModels/StyleSortFilterProxyModel.h"
-#include "qtModels/sortFilterProxyModels/WaterSortFilterProxyModel.h"
-#include "qtModels/sortFilterProxyModels/YeastSortFilterProxyModel.h"
 #include "trees/TreeModel.h"
 #include "trees/TreeModelBase.h"
 
 // See comment in trees/NamedEntityTreeView.h for why we can't remove the repetition below with a macro
-
 
 class EquipmentTreeModel : public TreeModel,
                            public TreeModelBase<EquipmentTreeModel, Equipment> {
@@ -47,37 +38,37 @@ class EquipmentTreeModel : public TreeModel,
 };
 
 class FermentableTreeModel : public TreeModel,
-                           public TreeModelBase<FermentableTreeModel, Fermentable> {
+                             public TreeModelBase<FermentableTreeModel, Fermentable> {
    Q_OBJECT
    TREE_MODEL_COMMON_DECL(Fermentable)
 };
 
 class HopTreeModel : public TreeModel,
-                           public TreeModelBase<HopTreeModel, Hop> {
+                     public TreeModelBase<HopTreeModel, Hop> {
    Q_OBJECT
    TREE_MODEL_COMMON_DECL(Hop)
 };
 
 class MiscTreeModel : public TreeModel,
-                           public TreeModelBase<MiscTreeModel, Misc> {
+                      public TreeModelBase<MiscTreeModel, Misc> {
    Q_OBJECT
    TREE_MODEL_COMMON_DECL(Misc)
 };
 
 class StyleTreeModel : public TreeModel,
-                           public TreeModelBase<StyleTreeModel, Style> {
+                       public TreeModelBase<StyleTreeModel, Style> {
    Q_OBJECT
    TREE_MODEL_COMMON_DECL(Style)
 };
 
 class WaterTreeModel : public TreeModel,
-                           public TreeModelBase<WaterTreeModel, Water> {
+                       public TreeModelBase<WaterTreeModel, Water> {
    Q_OBJECT
    TREE_MODEL_COMMON_DECL(Water)
 };
 
 class YeastTreeModel : public TreeModel,
-                           public TreeModelBase<YeastTreeModel, Yeast> {
+                       public TreeModelBase<YeastTreeModel, Yeast> {
    Q_OBJECT
    TREE_MODEL_COMMON_DECL(Yeast)
 };

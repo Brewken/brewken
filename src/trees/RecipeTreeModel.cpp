@@ -50,7 +50,7 @@ void RecipeTreeModel::addBrewNoteSubTree(Recipe & recipe, int childNumber, TreeN
    // ...so this cast should be safe.
    auto & recipeNode = static_cast<TreeItemNode<Recipe> &>(*recipeNodeRaw);
 
-   QModelIndex recipeNodeIndex = this->createIndex(childNumber, 0, &recipeNode);
+   QModelIndex recipeNodeIndex = this->createIndex(childNumber, 0, recipeNodeRaw);
 
    int jj = 0;
 
