@@ -123,18 +123,35 @@ template<> EnumStringMapping const TreeFolderNode<Hop>::columnDisplayNames {
    {TreeFolderNode<Hop>::ColumnIndex::FullPath, Folder::tr("FULLPATH")},
 };
 
-template<> bool TreeItemNode<Recipe>::isLessThan(TreeModel const & model,
-                                                 QModelIndex const & left,
-                                                 QModelIndex const & right,
-                                                 TreeNodeTraits<Recipe>::ColumnIndex section,
-                                                 Recipe const & lhs,
-                                                 Recipe const & rhs) {
-   RecipeTreeModel const & recipeTreeModel = static_cast<RecipeTreeModel const &>(model);
-   if (recipeTreeModel.showChild(left) && recipeTreeModel.showChild(right)) {
+///template<> bool TreeItemNode<Recipe>::isLessThan(TreeModel const & model,
+///                                                 QModelIndex const & left,
+///                                                 QModelIndex const & right,
+///                                                 TreeNodeTraits<Recipe>::ColumnIndex section,
+///                                                 Recipe const & lhs,
+///                                                 Recipe const & rhs) {
+template<> bool TreeItemNode<Recipe>::columnIsLessThan(TreeItemNode<Recipe> const & other,
+                                                       TreeNodeTraits<Recipe>::ColumnIndex column) const {
+///   RecipeTreeModel const & recipeTreeModel = static_cast<RecipeTreeModel const &>(model);
+///   if (recipeTreeModel.showChild(left) && recipeTreeModel.showChild(right)) {
+///      return lhs.key() > rhs.key();
+///   }
+
+   auto const & lhs = *this->m_underlyingItem;
+   auto const & rhs = *other.m_underlyingItem;
+
+   //
+   // If two ancestor recipes share the same parent, we show them in reverse order of creation, regardless of what
+   // column we are sorting by.
+   //
+   // We are safe to dereference rawParent() here because the root node is always a Folder and never a Recipe
+   //
+   if (this->rawParent() == other.rawParent() &&
+       this->rawParent()->classifier() == TreeNodeClassifier::PrimaryItem) {
+///   if (this->showMe() && other.showMe()) {
       return lhs.key() > rhs.key();
    }
 
-   switch (section) {
+   switch (column) {
       case TreeItemNode<Recipe>::ColumnIndex::Name:
          return lhs.name() < rhs.name();
 
@@ -157,13 +174,17 @@ template<> bool TreeItemNode<Recipe>::isLessThan(TreeModel const & model,
    std::unreachable();
 }
 
-template<> bool TreeItemNode<BrewNote>::isLessThan([[maybe_unused]] TreeModel const & model,
-                                                    [[maybe_unused]] QModelIndex const & left,
-                                                    [[maybe_unused]] QModelIndex const & right,
-                                                    TreeNodeTraits<BrewNote, Recipe>::ColumnIndex section,
-                                                    BrewNote const & lhs,
-                                                    BrewNote const & rhs) {
-   switch (section) {
+///template<> bool TreeItemNode<BrewNote>::isLessThan([[maybe_unused]] TreeModel const & model,
+///                                                    [[maybe_unused]] QModelIndex const & left,
+///                                                    [[maybe_unused]] QModelIndex const & right,
+///                                                    TreeNodeTraits<BrewNote, Recipe>::ColumnIndex section,
+///                                                    BrewNote const & lhs,
+///                                                    BrewNote const & rhs) {
+template<> bool TreeItemNode<BrewNote>::columnIsLessThan(TreeItemNode<BrewNote> const & other,
+                                                         TreeNodeTraits<BrewNote, Recipe>::ColumnIndex column) const {
+   auto const & lhs = *this->m_underlyingItem;
+   auto const & rhs = *other.m_underlyingItem;
+   switch (column) {
       case TreeItemNode<BrewNote>::ColumnIndex::BrewDate:
          return lhs.brewDate() < rhs.brewDate();
    }
@@ -171,30 +192,39 @@ template<> bool TreeItemNode<BrewNote>::isLessThan([[maybe_unused]] TreeModel co
    std::unreachable();
 }
 
-template<> bool TreeItemNode<Equipment>::isLessThan([[maybe_unused]] TreeModel const & model,
-                                                    [[maybe_unused]] QModelIndex const & left,
-                                                    [[maybe_unused]] QModelIndex const & right,
-                                                    TreeNodeTraits<Equipment>::ColumnIndex section,
-                                                    Equipment const & lhs,
-                                                    Equipment const & rhs) {
-   switch (section) {
+///template<> bool TreeItemNode<Equipment>::isLessThan([[maybe_unused]] TreeModel const & model,
+///                                                    [[maybe_unused]] QModelIndex const & left,
+///                                                    [[maybe_unused]] QModelIndex const & right,
+///                                                    TreeNodeTraits<Equipment>::ColumnIndex section,
+///                                                    Equipment const & lhs,
+///                                                    Equipment const & rhs) {
+template<> bool TreeItemNode<Equipment>::columnIsLessThan(TreeItemNode<Equipment> const & other,
+                                                          TreeNodeTraits<Equipment>::ColumnIndex column) const {
+   auto const & lhs = *this->m_underlyingItem;
+   auto const & rhs = *other.m_underlyingItem;
+   switch (column) {
       case TreeItemNode<Equipment>::ColumnIndex::Name:
          return lhs.name() < rhs.name();
 
       case TreeItemNode<Equipment>::ColumnIndex::BoilTime:
-         return lhs.boilTime_min().value_or(Equipment::default_boilTime_mins) < rhs.boilTime_min().value_or(Equipment::default_boilTime_mins);
+         return lhs.boilTime_min().value_or(Equipment::default_boilTime_mins) <
+                rhs.boilTime_min().value_or(Equipment::default_boilTime_mins);
    }
 
    std::unreachable();
 }
 
-template<> bool TreeItemNode<Fermentable>::isLessThan([[maybe_unused]] TreeModel const & model,
-                                                      [[maybe_unused]] QModelIndex const & left,
-                                                      [[maybe_unused]] QModelIndex const & right,
-                                                      TreeNodeTraits<Fermentable>::ColumnIndex section,
-                                                      Fermentable const & lhs,
-                                                      Fermentable const & rhs) {
-   switch (section) {
+///template<> bool TreeItemNode<Fermentable>::isLessThan([[maybe_unused]] TreeModel const & model,
+///                                                      [[maybe_unused]] QModelIndex const & left,
+///                                                      [[maybe_unused]] QModelIndex const & right,
+///                                                      TreeNodeTraits<Fermentable>::ColumnIndex section,
+///                                                      Fermentable const & lhs,
+///                                                      Fermentable const & rhs) {
+template<> bool TreeItemNode<Fermentable>::columnIsLessThan(TreeItemNode<Fermentable> const & other,
+                                                            TreeNodeTraits<Fermentable>::ColumnIndex column) const {
+   auto const & lhs = *this->m_underlyingItem;
+   auto const & rhs = *other.m_underlyingItem;
+   switch (column) {
       case TreeItemNode<Fermentable>::ColumnIndex::Name : return lhs.name()      < rhs.name();
       case TreeItemNode<Fermentable>::ColumnIndex::Type : return lhs.type()      < rhs.type();
       case TreeItemNode<Fermentable>::ColumnIndex::Color: return lhs.color_srm() < rhs.color_srm();
@@ -202,13 +232,17 @@ template<> bool TreeItemNode<Fermentable>::isLessThan([[maybe_unused]] TreeModel
    return lhs.name() < rhs.name();
 }
 
-template<> bool TreeItemNode<Hop>::isLessThan([[maybe_unused]] TreeModel const & model,
-                                              [[maybe_unused]] QModelIndex const & left,
-                                              [[maybe_unused]] QModelIndex const & right,
-                                              TreeNodeTraits<Hop>::ColumnIndex section,
-                                              Hop const & lhs,
-                                              Hop const & rhs) {
-   switch (section) {
+///template<> bool TreeItemNode<Hop>::isLessThan([[maybe_unused]] TreeModel const & model,
+///                                              [[maybe_unused]] QModelIndex const & left,
+///                                              [[maybe_unused]] QModelIndex const & right,
+///                                              TreeNodeTraits<Hop>::ColumnIndex section,
+///                                              Hop const & lhs,
+///                                              Hop const & rhs) {
+template<> bool TreeItemNode<Hop>::columnIsLessThan(TreeItemNode<Hop> const & other,
+                                                    TreeNodeTraits<Hop>::ColumnIndex column) const {
+   auto const & lhs = *this->m_underlyingItem;
+   auto const & rhs = *other.m_underlyingItem;
+   switch (column) {
       case TreeItemNode<Hop>::ColumnIndex::Name    : return lhs.name()      < rhs.name();
       case TreeItemNode<Hop>::ColumnIndex::Form    : return lhs.form()      < rhs.form();
       case TreeItemNode<Hop>::ColumnIndex::AlphaPct: return lhs.alpha_pct() < rhs.alpha_pct();
@@ -217,26 +251,34 @@ template<> bool TreeItemNode<Hop>::isLessThan([[maybe_unused]] TreeModel const &
    return lhs.name() < rhs.name();
 }
 
-template<> bool TreeItemNode<Misc>::isLessThan([[maybe_unused]] TreeModel const & model,
-                                               [[maybe_unused]] QModelIndex const & left,
-                                               [[maybe_unused]] QModelIndex const & right,
-                                               TreeNodeTraits<Misc>::ColumnIndex section,
-                                               Misc const & lhs,
-                                               Misc const & rhs) {
-   switch (section) {
+///template<> bool TreeItemNode<Misc>::isLessThan([[maybe_unused]] TreeModel const & model,
+///                                               [[maybe_unused]] QModelIndex const & left,
+///                                               [[maybe_unused]] QModelIndex const & right,
+///                                               TreeNodeTraits<Misc>::ColumnIndex section,
+///                                               Misc const & lhs,
+///                                               Misc const & rhs) {
+template<> bool TreeItemNode<Misc>::columnIsLessThan(TreeItemNode<Misc> const & other,
+                                                     TreeNodeTraits<Misc>::ColumnIndex column) const {
+   auto const & lhs = *this->m_underlyingItem;
+   auto const & rhs = *other.m_underlyingItem;
+   switch (column) {
       case TreeItemNode<Misc>::ColumnIndex::Name: return lhs.name() < rhs.name();
       case TreeItemNode<Misc>::ColumnIndex::Type: return lhs.type() < rhs.type();
    }
    return lhs.name() < rhs.name();
 }
 
-template<> bool TreeItemNode<Style>::isLessThan([[maybe_unused]] TreeModel const & model,
-                                                [[maybe_unused]] QModelIndex const & left,
-                                                [[maybe_unused]] QModelIndex const & right,
-                                                TreeNodeTraits<Style>::ColumnIndex section,
-                                                Style const & lhs,
-                                                Style const & rhs) {
-   switch (section) {
+///template<> bool TreeItemNode<Style>::isLessThan([[maybe_unused]] TreeModel const & model,
+///                                                [[maybe_unused]] QModelIndex const & left,
+///                                                [[maybe_unused]] QModelIndex const & right,
+///                                                TreeNodeTraits<Style>::ColumnIndex section,
+///                                                Style const & lhs,
+///                                                Style const & rhs) {
+template<> bool TreeItemNode<Style>::columnIsLessThan(TreeItemNode<Style> const & other,
+                                                      TreeNodeTraits<Style>::ColumnIndex column) const {
+   auto const & lhs = *this->m_underlyingItem;
+   auto const & rhs = *other.m_underlyingItem;
+   switch (column) {
       case TreeItemNode<Style>::ColumnIndex::Name          : return lhs.name()           < rhs.name();
       case TreeItemNode<Style>::ColumnIndex::Category      : return lhs.category()       < rhs.category();
       case TreeItemNode<Style>::ColumnIndex::CategoryNumber: return lhs.categoryNumber() < rhs.categoryNumber();
@@ -246,13 +288,17 @@ template<> bool TreeItemNode<Style>::isLessThan([[maybe_unused]] TreeModel const
    return lhs.name() < rhs.name();
 }
 
-template<> bool TreeItemNode<Yeast>::isLessThan([[maybe_unused]] TreeModel const & model,
-                                                [[maybe_unused]] QModelIndex const & left,
-                                                [[maybe_unused]] QModelIndex const & right,
-                                                TreeNodeTraits<Yeast>::ColumnIndex section,
-                                                Yeast const & lhs,
-                                                Yeast const & rhs) {
-   switch (section) {
+///template<> bool TreeItemNode<Yeast>::isLessThan([[maybe_unused]] TreeModel const & model,
+///                                                [[maybe_unused]] QModelIndex const & left,
+///                                                [[maybe_unused]] QModelIndex const & right,
+///                                                TreeNodeTraits<Yeast>::ColumnIndex section,
+///                                                Yeast const & lhs,
+///                                                Yeast const & rhs) {
+template<> bool TreeItemNode<Yeast>::columnIsLessThan(TreeItemNode<Yeast> const & other,
+                                                      TreeNodeTraits<Yeast>::ColumnIndex column) const {
+   auto const & lhs = *this->m_underlyingItem;
+   auto const & rhs = *other.m_underlyingItem;
+   switch (column) {
       case TreeItemNode<Yeast>::ColumnIndex::Name      : return lhs.name()       < rhs.name();
       case TreeItemNode<Yeast>::ColumnIndex::Laboratory: return lhs.laboratory() < rhs.laboratory();
       case TreeItemNode<Yeast>::ColumnIndex::ProductId : return lhs.productId()  < rhs.productId();
@@ -262,13 +308,17 @@ template<> bool TreeItemNode<Yeast>::isLessThan([[maybe_unused]] TreeModel const
    return lhs.name() < rhs.name();
 }
 
-template<> bool TreeItemNode<Water>::isLessThan([[maybe_unused]] TreeModel const & model,
-                                                [[maybe_unused]] QModelIndex const & left,
-                                                [[maybe_unused]] QModelIndex const & right,
-                                                TreeNodeTraits<Water>::ColumnIndex section,
-                                                Water const & lhs,
-                                                Water const & rhs) {
-   switch (section) {
+///template<> bool TreeItemNode<Water>::isLessThan([[maybe_unused]] TreeModel const & model,
+///                                                [[maybe_unused]] QModelIndex const & left,
+///                                                [[maybe_unused]] QModelIndex const & right,
+///                                                TreeNodeTraits<Water>::ColumnIndex section,
+///                                                Water const & lhs,
+///                                                Water const & rhs) {
+template<> bool TreeItemNode<Water>::columnIsLessThan(TreeItemNode<Water> const & other,
+                                                      TreeNodeTraits<Water>::ColumnIndex column) const {
+   auto const & lhs = *this->m_underlyingItem;
+   auto const & rhs = *other.m_underlyingItem;
+   switch (column) {
       case TreeItemNode<Water>::ColumnIndex::Name       : return lhs.name()            < rhs.name();
       case TreeItemNode<Water>::ColumnIndex::pH         : return lhs.ph()              < rhs.ph();
       case TreeItemNode<Water>::ColumnIndex::Bicarbonate: return lhs.bicarbonate_ppm() < rhs.bicarbonate_ppm();

@@ -709,21 +709,21 @@ public:
       return QVariant(Derived::columnDisplayNames[section]);
    }
 
-   static bool lessThan(TreeModel const & model,
-                        QModelIndex const & left,
-                        QModelIndex const & right,
-                        NE const & lhs,
-                        NE const & rhs) {
-      return Derived::isLessThan(model, left, right, static_cast<ColumnIndex>(left.column()), lhs, rhs);
-   }
-
-   static bool lessThan(TreeModel const & model,
-                        QModelIndex const & left,
-                        QModelIndex const & right,
-                        Derived const & lhs,
-                        Derived const & rhs) {
-      return lessThan(model, left, right, *lhs.underlyingItem(), *rhs.underlyingItem());
-   }
+///   static bool lessThan(TreeModel const & model,
+///                        QModelIndex const & left,
+///                        QModelIndex const & right,
+///                        NE const & lhs,
+///                        NE const & rhs) {
+///      return Derived::isLessThan(model, left, right, static_cast<ColumnIndex>(left.column()), lhs, rhs);
+///   }
+///
+///   static bool lessThan(TreeModel const & model,
+///                        QModelIndex const & left,
+///                        QModelIndex const & right,
+///                        Derived const & lhs,
+///                        Derived const & rhs) {
+///      return lessThan(model, left, right, *lhs.underlyingItem(), *rhs.underlyingItem());
+///   }
 
    /**
     * \brief returns item's parent
@@ -960,13 +960,23 @@ public:
    ~TreeFolderNode() = default;
 
    static EnumStringMapping const columnDisplayNames;
-   static bool isLessThan([[maybe_unused]] TreeModel const & model,
-                          [[maybe_unused]] QModelIndex const & left,
-                          [[maybe_unused]] QModelIndex const & right,
-                          TreeNodeTraits<Folder, NE>::ColumnIndex section,
-                          Folder const & lhs,
-                          Folder const & rhs) {
-      switch (section) {
+///   static bool isLessThan([[maybe_unused]] TreeModel const & model,
+///                          [[maybe_unused]] QModelIndex const & left,
+///                          [[maybe_unused]] QModelIndex const & right,
+///                          TreeNodeTraits<Folder, NE>::ColumnIndex section,
+///                          Folder const & lhs,
+///                          Folder const & rhs) {
+///      switch (section) {
+///         case TreeNodeTraits<Folder, NE>::ColumnIndex::Name     : return lhs.name    () < rhs.name    ();
+///         case TreeNodeTraits<Folder, NE>::ColumnIndex::Path     : return lhs.path    () < rhs.path    ();
+///         case TreeNodeTraits<Folder, NE>::ColumnIndex::FullPath : return lhs.fullPath() < rhs.fullPath();
+///      }
+///      std::unreachable();
+///   }
+   bool columnIsLessThan(TreeFolderNode<NE> const & other, TreeNodeTraits<Folder, NE>::ColumnIndex column) const {
+      auto const & lhs = *this->m_underlyingItem;
+      auto const & rhs = *other.m_underlyingItem;
+      switch (column) {
          case TreeNodeTraits<Folder, NE>::ColumnIndex::Name     : return lhs.name    () < rhs.name    ();
          case TreeNodeTraits<Folder, NE>::ColumnIndex::Path     : return lhs.path    () < rhs.path    ();
          case TreeNodeTraits<Folder, NE>::ColumnIndex::FullPath : return lhs.fullPath() < rhs.fullPath();
@@ -994,12 +1004,14 @@ public:
    virtual ~TreeItemNode() = default;
 
    static EnumStringMapping const columnDisplayNames;
-   static bool isLessThan(TreeModel const & model,
-                          QModelIndex const & left,
-                          QModelIndex const & right,
-                          TreeNodeTraits<NE, typename TreeTypeDeducer<NE>::TreeType>::ColumnIndex section,
-                          NE const & lhs,
-                          NE const & rhs);
+///   static bool isLessThan(TreeModel const & model,
+///                          QModelIndex const & left,
+///                          QModelIndex const & right,
+///                          TreeNodeTraits<NE, typename TreeTypeDeducer<NE>::TreeType>::ColumnIndex section,
+///                          NE const & lhs,
+///                          NE const & rhs);
+   bool columnIsLessThan(TreeItemNode<NE> const & other,
+                         TreeNodeTraits<NE, typename TreeTypeDeducer<NE>::TreeType>::ColumnIndex column) const;
 
    QString getToolTip() const;
 

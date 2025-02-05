@@ -59,34 +59,53 @@ protected:
       // TreeNode.cpp
       if (lhs->classifier() == TreeNodeClassifier::Folder &&
           rhs->classifier() == TreeNodeClassifier::Folder) {
-         return TreeFolderNode<NE>::lessThan(*treeModel,
-                                             left,
-                                             right,
-                                             static_cast<TreeFolderNode<NE> const &>(*lhs),
-                                             static_cast<TreeFolderNode<NE> const &>(*rhs));
+///         return TreeFolderNode<NE>::lessThan(*treeModel,
+///                                             left,
+///                                             right,
+///                                             static_cast<TreeFolderNode<NE> const &>(*lhs),
+///                                             static_cast<TreeFolderNode<NE> const &>(*rhs));
+         auto const & lhsFolder = static_cast<TreeFolderNode<NE> const &>(*lhs);
+         auto const & rhsFolder = static_cast<TreeFolderNode<NE> const &>(*rhs);
+         auto const      column = static_cast<TreeFolderNode<NE>::ColumnIndex>(left.column());
+         return lhsFolder.columnIsLessThan(rhsFolder, column);
       }
 
       if (lhs->classifier() == TreeNodeClassifier::PrimaryItem &&
           rhs->classifier() == TreeNodeClassifier::PrimaryItem) {
-         return TreeItemNode<NE>::lessThan(*treeModel,
-                                           left,
-                                           right,
-                                           static_cast<TreeItemNode<NE> const &>(*lhs),
-                                           static_cast<TreeItemNode<NE> const &>(*rhs));
+///         return TreeItemNode<NE>::lessThan(*treeModel,
+///                                           left,
+///                                           right,
+///                                           static_cast<TreeItemNode<NE> const &>(*lhs),
+///                                           static_cast<TreeItemNode<NE> const &>(*rhs));
+         auto const & lhsNode = static_cast<TreeItemNode<NE> const &>(*lhs);
+         auto const & rhsNode = static_cast<TreeItemNode<NE> const &>(*rhs);
+         auto const    column = static_cast<TreeItemNode<NE>::ColumnIndex>(left.column());
+         return lhsNode.columnIsLessThan(rhsNode, column);
       }
 
       if constexpr (!IsVoid<SNE>) {
          if (lhs->classifier() == TreeNodeClassifier::SecondaryItem &&
              rhs->classifier() == TreeNodeClassifier::SecondaryItem) {
-            return TreeItemNode<SNE>::lessThan(*treeModel,
-                                               left,
-                                               right,
-                                               static_cast<TreeItemNode<SNE> const &>(*lhs),
-                                               static_cast<TreeItemNode<SNE> const &>(*rhs));
+///            return TreeItemNode<SNE>::lessThan(*treeModel,
+///                                               left,
+///                                               right,
+///                                               static_cast<TreeItemNode<SNE> const &>(*lhs),
+///                                               static_cast<TreeItemNode<SNE> const &>(*rhs));
+         auto const & lhsNode = static_cast<TreeItemNode<SNE> const &>(*lhs);
+         auto const & rhsNode = static_cast<TreeItemNode<SNE> const &>(*rhs);
+         auto const    column = static_cast<TreeItemNode<SNE>::ColumnIndex>(left.column());
+         return lhsNode.columnIsLessThan(rhsNode, column);
          }
       }
 
-      // If the node types are different, then the only meaningful comparison we can do is on the name
+      // If the node types are different, then we want folders before items.  Beyond that, the only meaningful
+      // comparison we can do is on the name.
+      if (lhs->classifier() == TreeNodeClassifier::Folder) {
+         return true;
+      }
+      if (rhs->classifier() == TreeNodeClassifier::Folder) {
+         return false;
+      }
       return lhs->name() < rhs->name();
    }
 
@@ -100,7 +119,7 @@ protected:
     */
    bool doFilterAcceptsRow(int row, QModelIndex const & parent) const {
       if (!parent.isValid()) {
-         // If the parent is invalid, it means we're being asked about the root node
+         // If the parent is invalid, it means we're being asked about the root node.  We always want to show this.
          return true;
       }
 
