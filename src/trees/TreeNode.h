@@ -228,8 +228,6 @@ template <class NE> struct TreeNodeTraits<Folder, NE> {
    using ChildPtrTypes = std::variant<std::shared_ptr<TreeFolderNode<NE>>, std::shared_ptr<TreeItemNode<NE>>>;
    static constexpr char const * DragNDropMimeType = DEF_CONFIG_MIME_PREFIX "-folder";
 
-///   static QString getRootName();
-
    static QVariant data(Folder const & folder, ColumnIndex const column) {
       switch (column) {
          case ColumnIndex::Name:
@@ -595,7 +593,6 @@ public:
    // and unsigned types by sticking to int ourselves.
    static constexpr int                NumberOfColumns = TreeNodeTraits<NE, TreeType>::NumberOfColumns;
    static constexpr TreeNodeClassifier NodeClassifier  = TreeNodeTraits<NE, TreeType>::NodeClassifier;
-///   using TreeType           = typename TreeNodeTraits<NE, TreeType>::TreeType;
    using ParentPtrTypes     = typename TreeNodeTraits<NE, TreeType>::ParentPtrTypes;
    using ChildPtrTypes      = typename TreeNodeTraits<NE, TreeType>::ChildPtrTypes;
    static constexpr char const *       DragNDropMimeType = TreeNodeTraits<NE, TreeType>::DragNDropMimeType;
@@ -708,22 +705,6 @@ public:
       }
       return QVariant(Derived::columnDisplayNames[section]);
    }
-
-///   static bool lessThan(TreeModel const & model,
-///                        QModelIndex const & left,
-///                        QModelIndex const & right,
-///                        NE const & lhs,
-///                        NE const & rhs) {
-///      return Derived::isLessThan(model, left, right, static_cast<ColumnIndex>(left.column()), lhs, rhs);
-///   }
-///
-///   static bool lessThan(TreeModel const & model,
-///                        QModelIndex const & left,
-///                        QModelIndex const & right,
-///                        Derived const & lhs,
-///                        Derived const & rhs) {
-///      return lessThan(model, left, right, *lhs.underlyingItem(), *rhs.underlyingItem());
-///   }
 
    /**
     * \brief returns item's parent
@@ -960,19 +941,6 @@ public:
    ~TreeFolderNode() = default;
 
    static EnumStringMapping const columnDisplayNames;
-///   static bool isLessThan([[maybe_unused]] TreeModel const & model,
-///                          [[maybe_unused]] QModelIndex const & left,
-///                          [[maybe_unused]] QModelIndex const & right,
-///                          TreeNodeTraits<Folder, NE>::ColumnIndex section,
-///                          Folder const & lhs,
-///                          Folder const & rhs) {
-///      switch (section) {
-///         case TreeNodeTraits<Folder, NE>::ColumnIndex::Name     : return lhs.name    () < rhs.name    ();
-///         case TreeNodeTraits<Folder, NE>::ColumnIndex::Path     : return lhs.path    () < rhs.path    ();
-///         case TreeNodeTraits<Folder, NE>::ColumnIndex::FullPath : return lhs.fullPath() < rhs.fullPath();
-///      }
-///      std::unreachable();
-///   }
    bool columnIsLessThan(TreeFolderNode<NE> const & other, TreeNodeTraits<Folder, NE>::ColumnIndex column) const {
       auto const & lhs = *this->m_underlyingItem;
       auto const & rhs = *other.m_underlyingItem;
@@ -1004,12 +972,6 @@ public:
    virtual ~TreeItemNode() = default;
 
    static EnumStringMapping const columnDisplayNames;
-///   static bool isLessThan(TreeModel const & model,
-///                          QModelIndex const & left,
-///                          QModelIndex const & right,
-///                          TreeNodeTraits<NE, typename TreeTypeDeducer<NE>::TreeType>::ColumnIndex section,
-///                          NE const & lhs,
-///                          NE const & rhs);
    bool columnIsLessThan(TreeItemNode<NE> const & other,
                          TreeNodeTraits<NE, typename TreeTypeDeducer<NE>::TreeType>::ColumnIndex column) const;
 
@@ -1041,121 +1003,5 @@ public:
 static_assert(IsSubstantiveVariant<TreeFolderNode<Equipment>::ChildPtrTypes>);
 static_assert(IsSubstantiveVariant<TreeFolderNode<Style>::ChildPtrTypes>);
 static_assert(IsNullVariant<TreeItemNode<Equipment>::ChildPtrTypes>);
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////*!
-/// * \class TreeNode
-/// *
-/// * \brief Model for an item in a tree.
-/// *
-/// * This provides a generic item from which the trees are built. Since most of
-/// * the actions required are the same regardless of the item being stored (e.g.
-/// * hop or equipment), this class considers them all the same.
-/// *
-/// * It does assume that everything being stored can be cast into a QObject.
-/// */
-///class TreeNode {
-///
-///public:
-///
-///   /*!
-///    * This enum lists the different things that we can store in an item
-///    */
-///   enum class Type {
-///      Recipe,
-///      Equipment,
-///      Fermentable,
-///      Hop,
-///      Misc,
-///      Yeast,
-///      BrewNote,
-///      Style,
-///      Folder,
-///      Water
-///   };
-///
-///   /**
-///    * \brief This templated function will convert a class to its \c TreeNode::Type. Eg \c typeOf<Hop>() returns
-///    *        \c TreeNode::Type::Hop
-///    */
-///   template<class T>
-///   static TreeNode::Type typeOf();
-///
-///   friend bool operator==(TreeNode & lhs, TreeNode & rhs);
-///
-///   //! \brief A constructor that sets the \c type of the TreeNode and
-///   // the \c parent
-///   TreeNode(TreeNode::Type nodeType = TreeNode::Type::Folder, TreeNode * parent = nullptr);
-///   virtual ~TreeNode();
-///
-///   //! \brief returns the child at \c number
-///   TreeNode * child(int number);
-///   //! \brief returns item's parent
-///   TreeNode * parent();
-///
-///   //! \brief returns item's type
-///   TreeNode::Type type() const;
-///   //! \brief returns the number of the item's children
-///   int childCount() const;
-///   //! \brief returns number of columns associated with the item's \c type
-///   int columnCount(TreeNode::Type nodeType) const;
-///   //! \brief returns the data of the item of \c type at \c column
-///   QVariant data(/*TreeNode::Type nodeType, */int column);
-///   //! \brief returns the index of the item in it's parents list
-///   int childNumber() const;
-///
-///   //! \brief sets the \c t type of the object and the \c d data
-///   void setData(TreeNode::Type t, QObject * d);
-///
-///   //! \brief returns the data as a T
-///   template<class T> T * getData();
-///
-///   //! \brief returns the data as a NamedEntity
-///   NamedEntity * thing();
-///
-///   //! \brief inserts \c count new items of \c type, starting at \c position
-///   bool insertChildren(int position, int count, TreeNode::Type nodeType = TreeNode::Type::Recipe);
-///   //! \brief removes \c count items starting at \c position
-///   bool removeChildren(int position, int count);
-///
-///   //! \brief returns the name.
-///   QString name();
-///   //! \brief flag this node to override display() or not
-///   void setShowMe(bool val);
-///   //! \brief does the node want to be shown regardless of display()
-///   bool showMe() const;
-///
-///private:
-///   /*!  Keep a pointer to the parent tree item. */
-///   TreeNode * parentItem;
-///   /*!  The list of children associated with this item */
-///   QList<TreeNode *> childItems;
-///
-///   /*! the type of this item */
-///   TreeNode::Type nodeType;
-///
-///   /*! the data associated with this item */
-///   QObject * m_thing;
-///   //! \b overrides the display()
-///   bool m_showMe;
-///
-///   /*! helper functions to get the information from the item */
-///   QVariant dataRecipe(int column);
-///   QVariant dataEquipment(int column);
-///   QVariant dataFermentable(int column);
-///   QVariant dataHop(int column);
-///   QVariant dataMisc(int column);
-///   QVariant dataYeast(int column);
-///   QVariant dataBrewNote(int column);
-///   QVariant dataStyle(int column);
-///   QVariant dataFolder(int column);
-///   QVariant dataWater(int column);
-///};
-///
-////**
-/// * \brief Convenience function for logging
-/// */
-///template<class S>
-///S & operator<<(S & stream, TreeNode::Type const treeNodeType);
 
 #endif

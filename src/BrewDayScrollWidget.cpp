@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BrewDayScrollWidget.cpp is part of Brewken, and is copyright the following authors 2009-2024:
+ * BrewDayScrollWidget.cpp is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Carles Muñoz Gorriz <carlesmu@internautas.org>
  *   • Daniel Pettersson <pettson81@gmail.com>
@@ -31,7 +31,6 @@
 
 #include "database/ObjectStoreWrapper.h"
 #include "Html.h"
-///#include "InstructionWidget.h"
 #include "measurement/Measurement.h"
 #include "measurement/UnitSystem.h"
 #include "model/Equipment.h"

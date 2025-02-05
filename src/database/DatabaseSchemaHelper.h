@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/DatabaseSchemaHelper.h is part of Brewken, and is copyright the following authors 2009-2024:
+ * database/DatabaseSchemaHelper.h is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Jonatan Pålsson <jonatan.p@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -55,13 +55,6 @@ namespace DatabaseSchemaHelper {
 
    //! \brief does the heavy lifting to copy the contents from one db to the next
    bool copyToNewDatabase(Database & newDatabase, QSqlDatabase & connectionNew);
-
-   /**
-    * \brief Populates (or updates) default Recipes, Hops, Styles, etc in the DB
-    *
-    * \return \c true if succeeded, \c false otherwise
-    */
-///   bool updateDatabase(QTextStream & userMessage);
 }
 
 #endif

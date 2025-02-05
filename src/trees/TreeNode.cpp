@@ -123,19 +123,8 @@ template<> EnumStringMapping const TreeFolderNode<Hop>::columnDisplayNames {
    {TreeFolderNode<Hop>::ColumnIndex::FullPath, Folder::tr("FULLPATH")},
 };
 
-///template<> bool TreeItemNode<Recipe>::isLessThan(TreeModel const & model,
-///                                                 QModelIndex const & left,
-///                                                 QModelIndex const & right,
-///                                                 TreeNodeTraits<Recipe>::ColumnIndex section,
-///                                                 Recipe const & lhs,
-///                                                 Recipe const & rhs) {
 template<> bool TreeItemNode<Recipe>::columnIsLessThan(TreeItemNode<Recipe> const & other,
                                                        TreeNodeTraits<Recipe>::ColumnIndex column) const {
-///   RecipeTreeModel const & recipeTreeModel = static_cast<RecipeTreeModel const &>(model);
-///   if (recipeTreeModel.showChild(left) && recipeTreeModel.showChild(right)) {
-///      return lhs.key() > rhs.key();
-///   }
-
    auto const & lhs = *this->m_underlyingItem;
    auto const & rhs = *other.m_underlyingItem;
 
@@ -147,7 +136,6 @@ template<> bool TreeItemNode<Recipe>::columnIsLessThan(TreeItemNode<Recipe> cons
    //
    if (this->rawParent() == other.rawParent() &&
        this->rawParent()->classifier() == TreeNodeClassifier::PrimaryItem) {
-///   if (this->showMe() && other.showMe()) {
       return lhs.key() > rhs.key();
    }
 
@@ -174,12 +162,6 @@ template<> bool TreeItemNode<Recipe>::columnIsLessThan(TreeItemNode<Recipe> cons
    std::unreachable();
 }
 
-///template<> bool TreeItemNode<BrewNote>::isLessThan([[maybe_unused]] TreeModel const & model,
-///                                                    [[maybe_unused]] QModelIndex const & left,
-///                                                    [[maybe_unused]] QModelIndex const & right,
-///                                                    TreeNodeTraits<BrewNote, Recipe>::ColumnIndex section,
-///                                                    BrewNote const & lhs,
-///                                                    BrewNote const & rhs) {
 template<> bool TreeItemNode<BrewNote>::columnIsLessThan(TreeItemNode<BrewNote> const & other,
                                                          TreeNodeTraits<BrewNote, Recipe>::ColumnIndex column) const {
    auto const & lhs = *this->m_underlyingItem;
@@ -192,12 +174,6 @@ template<> bool TreeItemNode<BrewNote>::columnIsLessThan(TreeItemNode<BrewNote> 
    std::unreachable();
 }
 
-///template<> bool TreeItemNode<Equipment>::isLessThan([[maybe_unused]] TreeModel const & model,
-///                                                    [[maybe_unused]] QModelIndex const & left,
-///                                                    [[maybe_unused]] QModelIndex const & right,
-///                                                    TreeNodeTraits<Equipment>::ColumnIndex section,
-///                                                    Equipment const & lhs,
-///                                                    Equipment const & rhs) {
 template<> bool TreeItemNode<Equipment>::columnIsLessThan(TreeItemNode<Equipment> const & other,
                                                           TreeNodeTraits<Equipment>::ColumnIndex column) const {
    auto const & lhs = *this->m_underlyingItem;
@@ -214,12 +190,6 @@ template<> bool TreeItemNode<Equipment>::columnIsLessThan(TreeItemNode<Equipment
    std::unreachable();
 }
 
-///template<> bool TreeItemNode<Fermentable>::isLessThan([[maybe_unused]] TreeModel const & model,
-///                                                      [[maybe_unused]] QModelIndex const & left,
-///                                                      [[maybe_unused]] QModelIndex const & right,
-///                                                      TreeNodeTraits<Fermentable>::ColumnIndex section,
-///                                                      Fermentable const & lhs,
-///                                                      Fermentable const & rhs) {
 template<> bool TreeItemNode<Fermentable>::columnIsLessThan(TreeItemNode<Fermentable> const & other,
                                                             TreeNodeTraits<Fermentable>::ColumnIndex column) const {
    auto const & lhs = *this->m_underlyingItem;
@@ -232,12 +202,6 @@ template<> bool TreeItemNode<Fermentable>::columnIsLessThan(TreeItemNode<Ferment
    return lhs.name() < rhs.name();
 }
 
-///template<> bool TreeItemNode<Hop>::isLessThan([[maybe_unused]] TreeModel const & model,
-///                                              [[maybe_unused]] QModelIndex const & left,
-///                                              [[maybe_unused]] QModelIndex const & right,
-///                                              TreeNodeTraits<Hop>::ColumnIndex section,
-///                                              Hop const & lhs,
-///                                              Hop const & rhs) {
 template<> bool TreeItemNode<Hop>::columnIsLessThan(TreeItemNode<Hop> const & other,
                                                     TreeNodeTraits<Hop>::ColumnIndex column) const {
    auto const & lhs = *this->m_underlyingItem;
@@ -251,12 +215,6 @@ template<> bool TreeItemNode<Hop>::columnIsLessThan(TreeItemNode<Hop> const & ot
    return lhs.name() < rhs.name();
 }
 
-///template<> bool TreeItemNode<Misc>::isLessThan([[maybe_unused]] TreeModel const & model,
-///                                               [[maybe_unused]] QModelIndex const & left,
-///                                               [[maybe_unused]] QModelIndex const & right,
-///                                               TreeNodeTraits<Misc>::ColumnIndex section,
-///                                               Misc const & lhs,
-///                                               Misc const & rhs) {
 template<> bool TreeItemNode<Misc>::columnIsLessThan(TreeItemNode<Misc> const & other,
                                                      TreeNodeTraits<Misc>::ColumnIndex column) const {
    auto const & lhs = *this->m_underlyingItem;
@@ -268,12 +226,6 @@ template<> bool TreeItemNode<Misc>::columnIsLessThan(TreeItemNode<Misc> const & 
    return lhs.name() < rhs.name();
 }
 
-///template<> bool TreeItemNode<Style>::isLessThan([[maybe_unused]] TreeModel const & model,
-///                                                [[maybe_unused]] QModelIndex const & left,
-///                                                [[maybe_unused]] QModelIndex const & right,
-///                                                TreeNodeTraits<Style>::ColumnIndex section,
-///                                                Style const & lhs,
-///                                                Style const & rhs) {
 template<> bool TreeItemNode<Style>::columnIsLessThan(TreeItemNode<Style> const & other,
                                                       TreeNodeTraits<Style>::ColumnIndex column) const {
    auto const & lhs = *this->m_underlyingItem;
@@ -288,12 +240,6 @@ template<> bool TreeItemNode<Style>::columnIsLessThan(TreeItemNode<Style> const 
    return lhs.name() < rhs.name();
 }
 
-///template<> bool TreeItemNode<Yeast>::isLessThan([[maybe_unused]] TreeModel const & model,
-///                                                [[maybe_unused]] QModelIndex const & left,
-///                                                [[maybe_unused]] QModelIndex const & right,
-///                                                TreeNodeTraits<Yeast>::ColumnIndex section,
-///                                                Yeast const & lhs,
-///                                                Yeast const & rhs) {
 template<> bool TreeItemNode<Yeast>::columnIsLessThan(TreeItemNode<Yeast> const & other,
                                                       TreeNodeTraits<Yeast>::ColumnIndex column) const {
    auto const & lhs = *this->m_underlyingItem;
@@ -308,12 +254,6 @@ template<> bool TreeItemNode<Yeast>::columnIsLessThan(TreeItemNode<Yeast> const 
    return lhs.name() < rhs.name();
 }
 
-///template<> bool TreeItemNode<Water>::isLessThan([[maybe_unused]] TreeModel const & model,
-///                                                [[maybe_unused]] QModelIndex const & left,
-///                                                [[maybe_unused]] QModelIndex const & right,
-///                                                TreeNodeTraits<Water>::ColumnIndex section,
-///                                                Water const & lhs,
-///                                                Water const & rhs) {
 template<> bool TreeItemNode<Water>::columnIsLessThan(TreeItemNode<Water> const & other,
                                                       TreeNodeTraits<Water>::ColumnIndex column) const {
    auto const & lhs = *this->m_underlyingItem;
@@ -527,9 +467,6 @@ template<> QString TreeItemNode<Misc>::getToolTip() const {
    body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
            .arg(Misc::tr("Type"))
            .arg(Misc::typeDisplayNames[this->m_underlyingItem->type()]);
-///   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-///           .arg(Misc::tr("Use"))
-///           .arg(Misc::useDisplayNames[misc->use()]);
 
    body += "</table></body></html>";
 
@@ -614,475 +551,3 @@ template<> QString TreeItemNode<Water>::getToolTip() const {
 
    return header + body;
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///namespace {
-///   EnumStringMapping const itemTypeToName {
-///      {TreeNode::Type::Recipe     , "Recipe"     },
-///      {TreeNode::Type::Equipment  , "Equipment"  },
-///      {TreeNode::Type::Fermentable, "Fermentable"},
-///      {TreeNode::Type::Hop        , "Hop"        },
-///      {TreeNode::Type::Misc       , "Misc"       },
-///      {TreeNode::Type::Yeast      , "Yeast"      },
-///      {TreeNode::Type::BrewNote   , "BrewNote"   },
-///      {TreeNode::Type::Style      , "Style"      },
-///      {TreeNode::Type::Folder     , "Folder"     },
-///      {TreeNode::Type::Water      , "Water"      },
-///   };
-///}
-///
-///template<> TreeNode::Type TreeNode::typeOf<Recipe>()      { return TreeNode::Type::Recipe;      }
-///template<> TreeNode::Type TreeNode::typeOf<Equipment>()   { return TreeNode::Type::Equipment;   }
-///template<> TreeNode::Type TreeNode::typeOf<Fermentable>() { return TreeNode::Type::Fermentable; }
-///template<> TreeNode::Type TreeNode::typeOf<Hop>()         { return TreeNode::Type::Hop;         }
-///template<> TreeNode::Type TreeNode::typeOf<Misc>()        { return TreeNode::Type::Misc;        }
-///template<> TreeNode::Type TreeNode::typeOf<Yeast>()       { return TreeNode::Type::Yeast;       }
-///template<> TreeNode::Type TreeNode::typeOf<BrewNote>()    { return TreeNode::Type::BrewNote;    }
-///template<> TreeNode::Type TreeNode::typeOf<Style>()       { return TreeNode::Type::Style;       }
-///template<> TreeNode::Type TreeNode::typeOf<Folder>()    { return TreeNode::Type::Folder;      }
-///template<> TreeNode::Type TreeNode::typeOf<Water>()       { return TreeNode::Type::Water;       }
-
-
-///bool operator==(TreeNode & lhs, TreeNode & rhs) {
-///   // Things of different types are not equal
-///   if (lhs.nodeType != rhs.nodeType) {
-///      return false;
-///   }
-///
-///   return lhs.data(0) == rhs.data(0);
-///}
-///
-///TreeNode::TreeNode(TreeNode::Type nodeType, TreeNode * parent) :
-///   parentItem{parent},
-///   nodeType{nodeType},
-///   m_thing{nullptr},
-///   m_showMe{false} {
-///   return;
-///}
-///
-///TreeNode::~TreeNode() {
-///   qDeleteAll(this->childItems);
-///}
-///
-///TreeNode * TreeNode::child(int number) {
-///   if (number < this->childItems.count()) {
-///      return this->childItems.value(number);
-///   }
-///
-///   return nullptr;
-///}
-///
-///TreeNode * TreeNode::parent() {
-///   return parentItem;
-///}
-///
-///TreeNode::Type TreeNode::type() const {
-///   return this->nodeType;
-///}
-///
-///int TreeNode::childCount() const {
-///   return this->childItems.count();
-///}
-///
-///int TreeNode::columnCount(TreeNode::Type nodeType) const {
-///   switch (nodeType) {
-///      case TreeNode::Type::Recipe:      return TreeItemNode<     Recipe>::NumberOfColumns;
-///      case TreeNode::Type::Equipment:   return TreeItemNode<  Equipment>::NumberOfColumns;
-///      case TreeNode::Type::Fermentable: return TreeItemNode<Fermentable>::NumberOfColumns;
-///      case TreeNode::Type::Hop:         return TreeItemNode<        Hop>::NumberOfColumns;
-///      case TreeNode::Type::Misc:        return TreeItemNode<       Misc>::NumberOfColumns;
-///      case TreeNode::Type::Yeast:       return TreeItemNode<      Yeast>::NumberOfColumns;
-///      case TreeNode::Type::Style:       return TreeItemNode<      Style>::NumberOfColumns;
-///      case TreeNode::Type::BrewNote:    return TreeItemNode<   BrewNote>::NumberOfColumns;
-///      // All folders have the same columns, so it's a bit arbitrary which one we use here
-///      case TreeNode::Type::Folder:      return TreeFolderNode<      Hop>::NumberOfColumns;
-///      case TreeNode::Type::Water:       return TreeItemNode<      Water>::NumberOfColumns;
-///      default:
-///         qWarning() << Q_FUNC_INFO << "Bad column:" << static_cast<int>(nodeType);
-///         return 0;
-///   }
-///}
-///
-///QVariant TreeNode::data(/*TreeNode::Type nodeType, */int column) {
-///
-///   switch (this->nodeType) {
-///      case TreeNode::Type::Recipe:      return dataRecipe     (column);
-///      case TreeNode::Type::Equipment:   return dataEquipment  (column);
-///      case TreeNode::Type::Fermentable: return dataFermentable(column);
-///      case TreeNode::Type::Hop:         return dataHop        (column);
-///      case TreeNode::Type::Misc:        return dataMisc       (column);
-///      case TreeNode::Type::Yeast:       return dataYeast      (column);
-///      case TreeNode::Type::Style:       return dataStyle      (column);
-///      case TreeNode::Type::BrewNote:    return dataBrewNote   (column);
-///      case TreeNode::Type::Folder:      return dataFolder     (column);
-///      case TreeNode::Type::Water:       return dataWater      (column);
-///      default:
-///         qWarning() << Q_FUNC_INFO << "Bad column:" << static_cast<int>(nodeType);
-///         return QVariant();
-///   }
-///}
-///
-///int TreeNode::childNumber() const {
-///   if (this->parentItem) {
-///      return parentItem->childItems.indexOf(const_cast<TreeNode *>(this));
-///   }
-///   return 0;
-///}
-///
-///void TreeNode::setData(TreeNode::Type t, QObject * d) {
-///   this->m_thing = d;
-///   this->nodeType = t;
-///}
-///
-///bool TreeNode::insertChildren(int position, int count, TreeNode::Type nodeType) {
-/////   qDebug() <<
-/////      Q_FUNC_INFO << "Inserting" << count << "children of type" << nodeType << "(" <<
-/////      this->itemTypeToString(static_cast<TreeNode::Type>(nodeType)) << ") at position" << position;
-///   if (position < 0  || position > this->childItems.size()) {
-///      qWarning() << Q_FUNC_INFO << "Position" << position << "outside range (0, " << this->childItems.size() << ")";
-///      return false;
-///   }
-///
-///   for (int row = 0; row < count; ++row) {
-///      TreeNode * newItem = new TreeNode(nodeType, this);
-///      this->childItems.insert(position + row, newItem);
-///   }
-///
-///   return true;
-///}
-///
-///bool TreeNode::removeChildren(int position, int count) {
-///   if (position < 0 || position + count > this->childItems.count()) {
-///      return false;
-///   }
-///
-///   for (int row = 0; row < count; ++row) {
-///      delete this->childItems.takeAt(position);
-///   }
-///   // FIXME: memory leak here. With delete, it's a concurrency/memory
-///   // access error, due to the fact that these pointers are floating around.
-///   //childItems.takeAt(position);
-///
-///   return true;
-///}
-///
-///QVariant TreeNode::dataRecipe(int column) {
-///   Recipe * recipe = qobject_cast<Recipe *>(this->m_thing);
-///   switch (static_cast<TreeItemNode<Recipe>::ColumnIndex>(column)) {
-///      case TreeItemNode<Recipe>::ColumnIndex::Name:
-///         if (!this->m_thing) {
-///            return QVariant(QObject::tr("Recipes"));
-///         } else {
-///            return QVariant(recipe->name());
-///         }
-///      case TreeItemNode<Recipe>::ColumnIndex::NumberOfAncestors:
-///         if (recipe) {
-///            return QVariant(recipe->ancestors().size());
-///         }
-///         break;
-///      case TreeItemNode<Recipe>::ColumnIndex::BrewDate:
-///         if (recipe && recipe->date()) {
-///            return Localization::displayDateUserFormated(*recipe->date());
-///         }
-///         break;
-///      case TreeItemNode<Recipe>::ColumnIndex::Style:
-///         if (recipe && recipe->style()) {
-///            return QVariant(recipe->style()->name());
-///         }
-///         break;
-///      default :
-///         qWarning() << QString("TreeNode::dataRecipe Bad column: %1").arg(column);
-///   }
-///   return QVariant();
-///}
-///
-///QVariant TreeNode::dataEquipment(int column) {
-///   Equipment * kit = qobject_cast<Equipment *>(this->m_thing);
-///   switch (static_cast<TreeItemNode<Equipment>::ColumnIndex>(column)) {
-///      case TreeItemNode<Equipment>::ColumnIndex::Name:
-///         if (! kit) {
-///            return QVariant(QObject::tr("Equipment"));
-///         } else {
-///            return QVariant(kit->name());
-///         }
-///      case TreeItemNode<Equipment>::ColumnIndex::BoilTime:
-///         if (kit) {
-///            return QVariant::fromValue(kit->boilTime_min());
-///         }
-///         break;
-///      default :
-///         qWarning() << QString("TreeNode::dataEquipment Bad column: %1").arg(column);
-///   }
-///   return QVariant();
-///}
-///
-///QVariant TreeNode::dataFermentable(int column) {
-///   Fermentable * ferm = qobject_cast<Fermentable *>(this->m_thing);
-///
-///   switch (static_cast<TreeItemNode<Fermentable>::ColumnIndex>(column)) {
-///      case TreeItemNode<Fermentable>::ColumnIndex::Name:
-///         if (ferm) {
-///            return QVariant(ferm->name());
-///         } else {
-///            return QVariant(QObject::tr("Fermentables"));
-///         }
-///      case TreeItemNode<Fermentable>::ColumnIndex::Type:
-///         if (ferm) {
-///            return QVariant(Fermentable::typeDisplayNames[ferm->type()]);
-///         }
-///         break;
-///      case TreeItemNode<Fermentable>::ColumnIndex::Color:
-///         if (ferm) {
-///            return QVariant(Measurement::displayAmount(Measurement::Amount{ferm->color_srm(),
-///                                                                           Measurement::Units::srm}, 0));
-///         }
-///         break;
-///      default :
-///         qWarning() << Q_FUNC_INFO << "Bad column:" << column;
-///         break;
-///   }
-///   return QVariant();
-///}
-///
-///QVariant TreeNode::dataHop(int column) {
-///   Hop * hop = qobject_cast<Hop *>(this->m_thing);
-///   switch (static_cast<TreeItemNode<Hop>::ColumnIndex>(column)) {
-///      case TreeItemNode<Hop>::ColumnIndex::Name:
-///         if (! hop) {
-///            return QVariant(QObject::tr("Hops"));
-///         } else {
-///            return QVariant(hop->name());
-///         }
-///      case TreeItemNode<Hop>::ColumnIndex::Form:
-///         if (hop) {
-///            return QVariant(Hop::formDisplayNames[hop->form()]);
-///         }
-///         break;
-///      case TreeItemNode<Hop>::ColumnIndex::AlphaPct:
-///         if (hop) {
-///            return QVariant(hop->alpha_pct());
-///         }
-///         break;
-///      case TreeItemNode<Hop>::ColumnIndex::Origin:
-///         if (hop) {
-///            return QVariant(hop->origin());
-///         }
-///         break;
-///      default :
-///         qWarning() << Q_FUNC_INFO << "Bad column:" << column;
-///   }
-///   return QVariant();
-///}
-///
-///QVariant TreeNode::dataMisc(int column) {
-///   Misc * misc = qobject_cast<Misc *>(this->m_thing);
-///   switch (static_cast<TreeItemNode<Misc>::ColumnIndex>(column)) {
-///      case TreeItemNode<Misc>::ColumnIndex::Name:
-///         if (! misc) {
-///            return QVariant(QObject::tr("Miscellaneous"));
-///         } else {
-///            return QVariant(misc->name());
-///         }
-///      case TreeItemNode<Misc>::ColumnIndex::Type:
-///         if (misc) {
-///            return QVariant(Misc::typeDisplayNames[misc->type()]);
-///         }
-///         break;
-//////      case MISCUSECOL:
-//////         if (misc) {
-//////            // Note that EnumStringMapping::operator[] already handles returning blank string for unset optional enums
-//////            return QVariant(Misc::useDisplayNames[misc->use()]);
-//////         }
-//////         break;
-///      default :
-///         qWarning() << QString("TreeNode::dataMisc Bad column: %1").arg(column);
-///   }
-///   return QVariant();
-///}
-///
-///QVariant TreeNode::dataYeast(int column) {
-///   Yeast * yeast = qobject_cast<Yeast *>(this->m_thing);
-///   switch (static_cast<TreeItemNode<Yeast>::ColumnIndex>(column)) {
-///      case TreeItemNode<Yeast>::ColumnIndex::Name:
-///         if (! yeast) {
-///            return QVariant(QObject::tr("Yeast"));
-///         } else {
-///            return QVariant(yeast->name());
-///         }
-///      case TreeItemNode<Yeast>::ColumnIndex::Laboratory:
-///         if (yeast) {
-///            return QVariant(yeast->laboratory());
-///         }
-///         break;
-///      case TreeItemNode<Yeast>::ColumnIndex::ProductId:
-///         if (yeast) {
-///            return QVariant(yeast->productId());
-///         }
-///         break;
-///      case TreeItemNode<Yeast>::ColumnIndex::Type:
-///         if (yeast) {
-///            return QVariant(Yeast::typeDisplayNames[yeast->type()]);
-///         }
-///         break;
-///      case TreeItemNode<Yeast>::ColumnIndex::Form:
-///         if (yeast) {
-///            return QVariant(Yeast::formDisplayNames[yeast->form()]);
-///         }
-///         break;
-///      default :
-///         qWarning() << QString("TreeNode::dataYeast Bad column: %1").arg(column);
-///   }
-///   return QVariant();
-///}
-///
-///QVariant TreeNode::dataBrewNote([[maybe_unused]] int column) {
-///   if (!this->m_thing) {
-///      return QVariant();
-///   }
-///
-///   BrewNote * bNote = qobject_cast<BrewNote *>(this->m_thing);
-///
-///   return bNote->brewDate_short();
-///}
-///
-///QVariant TreeNode::dataStyle(int column) {
-///   Style * style = qobject_cast<Style *>(this->m_thing);
-///
-///   if (! style && static_cast<TreeItemNode<Style>::ColumnIndex>(column) == TreeItemNode<Style>::ColumnIndex::Name) {
-///      return QVariant(QObject::tr("Style"));
-///   }
-///   if (style) {
-///      switch (static_cast<TreeItemNode<Style>::ColumnIndex>(column)) {
-///         case TreeItemNode<Style>::ColumnIndex::Name:
-///            return QVariant(style->name());
-///         case TreeItemNode<Style>::ColumnIndex::Category:
-///            return QVariant(style->category());
-///         case TreeItemNode<Style>::ColumnIndex::CategoryNumber:
-///            return QVariant(style->categoryNumber());
-///         case TreeItemNode<Style>::ColumnIndex::CategoryLetter:
-///            return QVariant(style->styleLetter());
-///         case TreeItemNode<Style>::ColumnIndex::StyleGuide:
-///            return QVariant(style->styleGuide());
-///         default :
-///            qWarning() << QString("TreeNode::dataStyle Bad column: %1").arg(column);
-///      }
-///   }
-///   return QVariant();
-///}
-///
-///QVariant TreeNode::dataFolder(int column) {
-///   Folder * folder = qobject_cast<Folder *>(this->m_thing);
-///
-///   // All folders have the same columns, so it's a bit arbitrary which one we use here
-///   if (! folder && static_cast<TreeFolderNode<Hop>::ColumnIndex>(column) == TreeFolderNode<Hop>::ColumnIndex::Name) {
-///      return QVariant(QObject::tr("Folder"));
-///   }
-///
-///   if (! folder) {
-///      return QVariant(QObject::tr("Folder"));
-///   }
-///   if (static_cast<TreeFolderNode<Hop>::ColumnIndex>(column) == TreeFolderNode<Hop>::ColumnIndex::Name) {
-///      return QVariant(folder->name());
-///   }
-///
-///   return QVariant();
-///}
-///
-///QVariant TreeNode::dataWater(int column) {
-///   Water * water = qobject_cast<Water *>(this->m_thing);
-///
-///   if (water == nullptr && static_cast<TreeItemNode<Water>::ColumnIndex>(column) == TreeItemNode<Water>::ColumnIndex::Name) {
-///      return QVariant(QObject::tr("Water"));
-///   }
-///   if (water) {
-///      switch (static_cast<TreeItemNode<Water>::ColumnIndex>(column)) {
-///         case TreeItemNode<Water>::ColumnIndex::Name:
-///            return QVariant(water->name());
-///         case TreeItemNode<Water>::ColumnIndex::Calcium:
-///            return QVariant(water->calcium_ppm());
-///         case TreeItemNode<Water>::ColumnIndex::Bicarbonate:
-///            return QVariant(water->bicarbonate_ppm());
-///         case TreeItemNode<Water>::ColumnIndex::Sulfate:
-///            return QVariant(water->sulfate_ppm());
-///         case TreeItemNode<Water>::ColumnIndex::Chloride:
-///            return QVariant(water->chloride_ppm());
-///         case TreeItemNode<Water>::ColumnIndex::Sodium:
-///            return QVariant(water->sodium_ppm());
-///         case TreeItemNode<Water>::ColumnIndex::Magnesium:
-///            return QVariant(water->magnesium_ppm());
-///         case TreeItemNode<Water>::ColumnIndex::pH:
-///            return water->ph() ? QVariant(*water->ph()) : QVariant();
-///         default :
-///            qWarning() << QString("TreeNode::dataWater Bad column: %1").arg(column);
-///      }
-///   }
-///
-///   return QVariant();
-///}
-///
-///
-///template<class T>
-///T * TreeNode::getData() {
-///   if (this->nodeType == TreeNode::typeOf<T>() && this->m_thing) {
-///      return qobject_cast<T *>(this->m_thing);
-///   }
-///
-///   return nullptr;
-///}
-/////
-///// Instantiate the above template function for the types that are going to use it
-/////
-///template Recipe      * TreeNode::getData<Recipe     >();
-///template Equipment   * TreeNode::getData<Equipment  >();
-///template Fermentable * TreeNode::getData<Fermentable>();
-///template Hop         * TreeNode::getData<Hop        >();
-///template Misc        * TreeNode::getData<Misc       >();
-///template Yeast       * TreeNode::getData<Yeast      >();
-///template BrewNote    * TreeNode::getData<BrewNote   >();
-///template Style       * TreeNode::getData<Style      >();
-///template Folder    * TreeNode::getData<Folder   >();
-///template Water       * TreeNode::getData<Water      >();
-///
-///NamedEntity * TreeNode::thing() {
-///   if (m_thing) {
-///      return qobject_cast<NamedEntity *>(this->m_thing);
-///   }
-///
-///   return nullptr;
-///}
-///
-///QString TreeNode::name() {
-///   NamedEntity * tmp;
-///   if (! m_thing) {
-///      return QString();
-///   }
-///   tmp = qobject_cast<NamedEntity *>(this->m_thing);
-///   return tmp->name();
-///}
-///
-///bool TreeNode::showMe() const {
-///   return m_showMe;
-///}
-///void TreeNode::setShowMe(bool val) {
-///   m_showMe = val;
-///}
-///
-///template<class S>
-///S & operator<<(S & stream, TreeNode::Type const treeItemType) {
-///   std::optional<QString> itemTypeAsString = itemTypeToName.enumToString(treeItemType);
-///   if (itemTypeAsString) {
-///      stream << *itemTypeAsString;
-///   } else {
-///      // This is a coding error
-///      stream << "Unrecognised tree item type: " << static_cast<int>(treeItemType);
-///   }
-///   return stream;
-///}
-///
-/////
-///// Instantiate the above template function for the types that are going to use it
-///// (This is all just a trick to allow the template definition to be here in the .cpp file and not in the header.)
-/////
-///template QDebug & operator<<(QDebug & stream, TreeNode::Type const treeItemType);
-///template QTextStream & operator<<(QTextStream & stream, TreeNode::Type const treeItemType);

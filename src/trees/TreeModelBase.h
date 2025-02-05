@@ -118,7 +118,6 @@ public:
    QModelIndex doFirst() const {
       // get the first item in the list, which is the place holder
       if (this->m_rootNode->childCount() > 0) {
-///         return this->derived().createIndex(0, 0, this->m_rootNode->rawChild(0));
          return this->derived().createIndex(0, 0, this->m_rootNode.get());
       }
 
@@ -200,45 +199,6 @@ public:
       return folder->path();
    }
 
-///   bool doLessThan(QModelIndex const & left, QModelIndex const & right) const {
-///      TreeNode const * lhs = this->doTreeNode(left );
-///      TreeNode const * rhs = this->doTreeNode(right);
-///
-///      // If the two node types are the same then we can leave the comparison to the overloaded functions in TreeNode.h /
-///      // TreeNode.cpp
-///      if (lhs->classifier() == TreeNodeClassifier::Folder &&
-///          rhs->classifier() == TreeNodeClassifier::Folder) {
-///         return TreeFolderNode<NE>::lessThan(this->derived(),
-///                                             left,
-///                                             right,
-///                                             static_cast<TreeFolderNode<NE> const &>(*lhs),
-///                                             static_cast<TreeFolderNode<NE> const &>(*rhs));
-///      }
-///
-///      if (lhs->classifier() == TreeNodeClassifier::PrimaryItem &&
-///          rhs->classifier() == TreeNodeClassifier::PrimaryItem) {
-///         return TreeItemNode<NE>::lessThan(this->derived(),
-///                                           left,
-///                                           right,
-///                                           static_cast<TreeItemNode<NE> const &>(*lhs),
-///                                           static_cast<TreeItemNode<NE> const &>(*rhs));
-///      }
-///
-///      if constexpr (!IsVoid<SNE>) {
-///         if (lhs->classifier() == TreeNodeClassifier::SecondaryItem &&
-///             rhs->classifier() == TreeNodeClassifier::SecondaryItem) {
-///            return TreeItemNode<SNE>::lessThan(this->derived(),
-///                                               left,
-///                                               right,
-///                                               static_cast<TreeItemNode<SNE> const &>(*lhs),
-///                                               static_cast<TreeItemNode<SNE> const &>(*rhs));
-///         }
-///      }
-///
-///      // If the node types are different, then the only meaningful comparison we can do is on the name
-///      return lhs->name() < rhs->name();
-///   }
-
    /**
     * \brief Returns "the list of allowed MIME types", which is to say the MIME types that can be dropped on this model
     */
@@ -270,7 +230,6 @@ public:
          if (!modelIndex.isValid()) {
             continue;
          }
-///         QModelIndex const modelIndex{this->m_sortFilterProxy.mapToSource(viewIndex)};
 
          //
          // Note below that we have to be careful about character encoding.  If, eg, we write
@@ -715,76 +674,6 @@ public:
       return QModelIndex();
    }
 
-///   QModelIndex findFolder(QString name, TreeNode * parentNode, bool create) {
-///      if (!parentNode) {
-///         parentNode = this->m_rootNode->rawChild(0);
-///      }
-///
-///      // Upstream interfaces should handle this for me, but I like belt and suspenders
-///      name = name.simplified();
-///      // I am assuming asking me to find an empty name means find the root of the tree.
-///      if (name.isEmpty()) {
-///         return createIndex(0, 0, parentNode);
-///      }
-///
-///      // Prepare all the variables for the first loop
-///      QStringList dirs = name.split("/", Qt::SkipEmptyParts);
-///      if (dirs.isEmpty()) {
-///         return QModelIndex();
-///      }
-///
-///      QString current = dirs.takeFirst();
-///      QString fullPath = "/";
-///      QString targetPath = fullPath % current;
-///
-///      int ii = 0;
-///
-///      // Time to get funky with no recursion!
-///      while (ii < parentNode->childCount()) {
-///         TreeNode * kid = parentNode->child(ii);
-///         // The kid is a folder
-///         if (kid->type() == TreeNode::Type::Folder) {
-///            // The folder name matches the part we are looking at
-///            if (kid->getData<Folder>()->isFolder(targetPath)) {
-///               // If there are no more subtrees to look for, we found it
-///               if (dirs.isEmpty()) {
-///                  return createIndex(ii, 0, kid);
-///               }
-///               // Otherwise, we found a parent folder in our path
-///               else {
-///                  // get the next folder in the path
-///                  current = dirs.takeFirst();
-///                  // append that to the fullPath we are looking for
-///                  fullPath = targetPath;
-///                  targetPath = fullPath % "/" % current;
-///
-///                  // Set the parent to the folder
-///                  parentNode = kid;
-///                  // Reset the counter
-///                  ii = 0;
-///                  // And do the time warp again!
-///                  continue;
-///               }
-///            }
-///         }
-///         // If we got this far, it wasn't a folder or it wasn't a match.
-///         ii++;
-///      }
-///      // If we get here, we found no match.
-///
-///      // If we are supposed to create something, then lets get busy
-///      if (create) {
-///         // push the current dir back on the stack
-///         dirs.prepend(current);
-///         // And start with the madness
-///         return createFolderTree(dirs, parentNode, fullPath);
-///      }
-///
-///      // If we weren't supposed to create, we drop to here and return an empty
-///      // index.
-///      return QModelIndex();
-///   }
-
    auto makeNode(TreeNode * parentNode, std::shared_ptr<NE> element) {
       return std::make_shared<TreeItemNode<NE>>(this->derived(), parentNode, element);
    }
@@ -936,47 +825,6 @@ private:
       return newIndex;
    }
 
-
-///   QModelIndex createFolderTree(QStringList dirs, TreeFolderNode<NE> * parentNode, QString parentPath) {
-///      // Start the loop. We are going to return modelIndex at the end,
-///      // so we need to declare and initialize outside of the loop
-///      QModelIndex modelIndex = this->derived().createIndex(parentNode->childCount(), 0, parentNode);
-///
-///      // Need to call this because we are adding different things with different
-///      // column counts. Just using the rowsAboutToBeAdded throws ugly errors and
-///      // then a sigsegv
-///      emit this->derived().layoutAboutToBeChanged();
-///      for (QString cur : dirs) {
-///         auto newFolder = std::make_shared<Folder>();
-///
-///         QString folderPath;
-///         // If the parent item is a folder, use its full path
-///         if (parentNode->classifier() == TreeNodeClassifier::Folder) {
-///            folderPath = parentNode->getData<Folder>()->fullPath() % "/" % cur;
-///         } else {
-///            folderPath = parentPath % "/" % cur;   // If it isn't we need the parent path
-///         }
-///
-///         folderPath.replace(QRegularExpression("//"), "/");
-///
-///         // Set the full path, which will set the name and the path
-///         newFolder->setfullPath(folderPath);
-///         int const ii = parentNode->childCount();
-///
-///         parentNode->insertChild(ii, newFolder);
-///
-///         // Set the parent item to point to the newly created tree
-///         parentNode = parentNode->rawChild(ii);
-///
-///         // And this for the return
-///         modelIndex = this->derived().createIndex(parentNode->childCount(), 0, parentNode);
-///      }
-///      emit this->derived().layoutChanged();
-///
-///      // May K&R have mercy on my soul
-///      return modelIndex;
-///   }
-
 protected:
    void doElementAdded(int elementId) {
       auto element = ObjectStoreWrapper::getById<NE>(elementId);
@@ -991,16 +839,6 @@ protected:
       if (!folderIndex.isValid()) {
          return;
       }
-
-///      QModelIndex const pIdx = this->derived().createIndex(0, 0, this->m_rootNode.get());
-///      if (!pIdx.isValid()) {
-///         return;
-///      }
-
-///      int breadth = this->derived().rowCount(pIdx);
-///      if (!this->derived().insertRow(breadth, pIdx, element.get())) {
-///         return;
-///      }
 
       TreeFolderNode<NE> * folderNode = static_cast<TreeFolderNode<NE> *>(folderIndex.internalPointer());
       int const numChildren = folderNode->childCount();
@@ -1025,7 +863,6 @@ protected:
             QModelIndex parentIndex = this->findElement(element);
             int row = 0;
             for (auto secondary : secondaries) {
-///               this->derived().insertRow(row++, parentIndex, secondary.get());
                this->insertChild(parentIndex, row++, secondary);
             }
          }
@@ -1053,7 +890,6 @@ protected:
       }
 
       int breadth = this->doRowCount(parentIndex);
-///      if (!this->derived().insertRow(breadth, parentIndex, element.get())) {
       if (!this->insertChild(parentIndex, breadth, element)) {
          return;
       }

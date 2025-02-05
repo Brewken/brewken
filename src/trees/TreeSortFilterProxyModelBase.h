@@ -59,11 +59,6 @@ protected:
       // TreeNode.cpp
       if (lhs->classifier() == TreeNodeClassifier::Folder &&
           rhs->classifier() == TreeNodeClassifier::Folder) {
-///         return TreeFolderNode<NE>::lessThan(*treeModel,
-///                                             left,
-///                                             right,
-///                                             static_cast<TreeFolderNode<NE> const &>(*lhs),
-///                                             static_cast<TreeFolderNode<NE> const &>(*rhs));
          auto const & lhsFolder = static_cast<TreeFolderNode<NE> const &>(*lhs);
          auto const & rhsFolder = static_cast<TreeFolderNode<NE> const &>(*rhs);
          auto const      column = static_cast<TreeFolderNode<NE>::ColumnIndex>(left.column());
@@ -72,11 +67,6 @@ protected:
 
       if (lhs->classifier() == TreeNodeClassifier::PrimaryItem &&
           rhs->classifier() == TreeNodeClassifier::PrimaryItem) {
-///         return TreeItemNode<NE>::lessThan(*treeModel,
-///                                           left,
-///                                           right,
-///                                           static_cast<TreeItemNode<NE> const &>(*lhs),
-///                                           static_cast<TreeItemNode<NE> const &>(*rhs));
          auto const & lhsNode = static_cast<TreeItemNode<NE> const &>(*lhs);
          auto const & rhsNode = static_cast<TreeItemNode<NE> const &>(*rhs);
          auto const    column = static_cast<TreeItemNode<NE>::ColumnIndex>(left.column());
@@ -86,15 +76,10 @@ protected:
       if constexpr (!IsVoid<SNE>) {
          if (lhs->classifier() == TreeNodeClassifier::SecondaryItem &&
              rhs->classifier() == TreeNodeClassifier::SecondaryItem) {
-///            return TreeItemNode<SNE>::lessThan(*treeModel,
-///                                               left,
-///                                               right,
-///                                               static_cast<TreeItemNode<SNE> const &>(*lhs),
-///                                               static_cast<TreeItemNode<SNE> const &>(*rhs));
-         auto const & lhsNode = static_cast<TreeItemNode<SNE> const &>(*lhs);
-         auto const & rhsNode = static_cast<TreeItemNode<SNE> const &>(*rhs);
-         auto const    column = static_cast<TreeItemNode<SNE>::ColumnIndex>(left.column());
-         return lhsNode.columnIsLessThan(rhsNode, column);
+            auto const & lhsNode = static_cast<TreeItemNode<SNE> const &>(*lhs);
+            auto const & rhsNode = static_cast<TreeItemNode<SNE> const &>(*rhs);
+            auto const    column = static_cast<TreeItemNode<SNE>::ColumnIndex>(left.column());
+            return lhsNode.columnIsLessThan(rhsNode, column);
          }
       }
 
