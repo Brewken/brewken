@@ -372,28 +372,29 @@ public:
       m_self.treeView_equip ->init(*this->m_equipEditor      );
       m_self.treeView_ferm  ->init(*this->m_fermentableEditor);
       m_self.treeView_hops  ->init(*this->m_hopEditor        );
+      m_self.treeView_mash  ->init(*this->m_mashEditor       );
       m_self.treeView_misc  ->init(*this->m_miscEditor       );
       m_self.treeView_yeast ->init(*this->m_yeastEditor      );
       m_self.treeView_water ->init(*this->m_waterEditor      );
 
       // TreeView for clicks, both double and right
       connect(m_self.treeView_recipe, &RecipeTreeView::recipeSpawn        , &m_self, &MainWindow::versionedRecipe);
-      connect(m_self.treeView_recipe, &QAbstractItemView::doubleClicked   , &m_self, &MainWindow::treeActivated  );
-      connect(m_self.treeView_style , &QAbstractItemView::doubleClicked   , &m_self, &MainWindow::treeActivated  );
-      connect(m_self.treeView_equip , &QAbstractItemView::doubleClicked   , &m_self, &MainWindow::treeActivated  );
-      connect(m_self.treeView_ferm  , &QAbstractItemView::doubleClicked   , &m_self, &MainWindow::treeActivated  );
-      connect(m_self.treeView_hops  , &QAbstractItemView::doubleClicked   , &m_self, &MainWindow::treeActivated  );
-      connect(m_self.treeView_misc  , &QAbstractItemView::doubleClicked   , &m_self, &MainWindow::treeActivated  );
-      connect(m_self.treeView_yeast , &QAbstractItemView::doubleClicked   , &m_self, &MainWindow::treeActivated  );
-      connect(m_self.treeView_water , &QAbstractItemView::doubleClicked   , &m_self, &MainWindow::treeActivated  );
-      connect(m_self.treeView_recipe, &QWidget::customContextMenuRequested, &m_self, &MainWindow::contextMenu    );
-      connect(m_self.treeView_style , &QWidget::customContextMenuRequested, &m_self, &MainWindow::contextMenu    );
-      connect(m_self.treeView_equip , &QWidget::customContextMenuRequested, &m_self, &MainWindow::contextMenu    );
-      connect(m_self.treeView_ferm  , &QWidget::customContextMenuRequested, &m_self, &MainWindow::contextMenu    );
-      connect(m_self.treeView_hops  , &QWidget::customContextMenuRequested, &m_self, &MainWindow::contextMenu    );
-      connect(m_self.treeView_misc  , &QWidget::customContextMenuRequested, &m_self, &MainWindow::contextMenu    );
-      connect(m_self.treeView_yeast , &QWidget::customContextMenuRequested, &m_self, &MainWindow::contextMenu    );
-      connect(m_self.treeView_water , &QWidget::customContextMenuRequested, &m_self, &MainWindow::contextMenu    );
+///      connect(m_self.treeView_recipe, &QAbstractItemView::doubleClicked   , &m_self, &MainWindow::treeActivated  );
+///      connect(m_self.treeView_style , &QAbstractItemView::doubleClicked   , &m_self, &MainWindow::treeActivated  );
+///      connect(m_self.treeView_equip , &QAbstractItemView::doubleClicked   , &m_self, &MainWindow::treeActivated  );
+///      connect(m_self.treeView_ferm  , &QAbstractItemView::doubleClicked   , &m_self, &MainWindow::treeActivated  );
+///      connect(m_self.treeView_hops  , &QAbstractItemView::doubleClicked   , &m_self, &MainWindow::treeActivated  );
+///      connect(m_self.treeView_misc  , &QAbstractItemView::doubleClicked   , &m_self, &MainWindow::treeActivated  );
+///      connect(m_self.treeView_yeast , &QAbstractItemView::doubleClicked   , &m_self, &MainWindow::treeActivated  );
+///      connect(m_self.treeView_water , &QAbstractItemView::doubleClicked   , &m_self, &MainWindow::treeActivated  );
+///      connect(m_self.treeView_recipe, &QWidget::customContextMenuRequested, &m_self, &MainWindow::contextMenu    );
+///      connect(m_self.treeView_style , &QWidget::customContextMenuRequested, &m_self, &MainWindow::contextMenu    );
+///      connect(m_self.treeView_equip , &QWidget::customContextMenuRequested, &m_self, &MainWindow::contextMenu    );
+///      connect(m_self.treeView_ferm  , &QWidget::customContextMenuRequested, &m_self, &MainWindow::contextMenu    );
+///      connect(m_self.treeView_hops  , &QWidget::customContextMenuRequested, &m_self, &MainWindow::contextMenu    );
+///      connect(m_self.treeView_misc  , &QWidget::customContextMenuRequested, &m_self, &MainWindow::contextMenu    );
+///      connect(m_self.treeView_yeast , &QWidget::customContextMenuRequested, &m_self, &MainWindow::contextMenu    );
+///      connect(m_self.treeView_water , &QWidget::customContextMenuRequested, &m_self, &MainWindow::contextMenu    );
       return;
    }
 
@@ -1564,18 +1565,18 @@ void MainWindow::deleteSelected() {
    return;
 }
 
-void MainWindow::treeActivated(QModelIndex const & index) {
-   QObject* calledBy = this->sender();
-   TreeView * activeTreeView = qobject_cast<TreeView*>(calledBy);
-   // If the sender cannot be morphed into a TreeView object
-   if (!activeTreeView) {
-      qWarning() << Q_FUNC_INFO << "Unrecognised sender" << calledBy->metaObject()->className();
-      return;
-   }
-
-   activeTreeView->activated(index);
-   return;
-}
+///void MainWindow::treeActivated(QModelIndex const & index) {
+///   QObject* calledBy = this->sender();
+///   TreeView * activeTreeView = qobject_cast<TreeView*>(calledBy);
+///   // If the sender cannot be morphed into a TreeView object
+///   if (!activeTreeView) {
+///      qWarning() << Q_FUNC_INFO << "Unrecognised sender" << calledBy->metaObject()->className();
+///      return;
+///   }
+///
+///   activeTreeView->activated(index);
+///   return;
+///}
 
 void MainWindow::setAncestor() {
    Recipe * recipe = this->pimpl->m_recipeObs;
@@ -1650,7 +1651,7 @@ void MainWindow::setRecipe(Recipe* recipe) {
       this->pimpl->m_styleEditor->setEditItem(recipe->style());
    }
 
-   this->pimpl->m_mashEditor->setMash(recipe->mash());
+   this->pimpl->m_mashEditor->setEditItem(recipe->mash());
    this->pimpl->m_mashEditor->setRecipe(recipe);
    this->mashButton->setMash(recipe->mash());
    this->mashComboBox->setItem(recipe->mash());
@@ -2846,24 +2847,24 @@ void MainWindow::saveMash() {
    return;
 }
 
-// We build the menus at start up time.  This just needs to exec the proper menu.
-void MainWindow::contextMenu(QPoint const & point) {
-   TreeView * activeTreeView = qobject_cast<TreeView *>(this->sender());
-   if (!activeTreeView) {
-      return;
-   }
-
-   QModelIndex selectedViewIndex = activeTreeView->indexAt(point);
-   if (!selectedViewIndex.isValid()) {
-      return;
-   }
-
-   QMenu * tempMenu = activeTreeView->getContextMenu(selectedViewIndex);
-   if (tempMenu) {
-      tempMenu->exec(activeTreeView->mapToGlobal(point));
-   }
-   return;
-}
+///// We build the menus at start up time.  This just needs to exec the proper menu.
+///void MainWindow::contextMenu(QPoint const & point) {
+///   TreeView * activeTreeView = qobject_cast<TreeView *>(this->sender());
+///   if (!activeTreeView) {
+///      return;
+///   }
+///
+///   QModelIndex selectedViewIndex = activeTreeView->indexAt(point);
+///   if (!selectedViewIndex.isValid()) {
+///      return;
+///   }
+///
+///   QMenu * tempMenu = activeTreeView->getContextMenu(selectedViewIndex);
+///   if (tempMenu) {
+///      tempMenu->exec(activeTreeView->mapToGlobal(point));
+///   }
+///   return;
+///}
 
 TreeView * MainWindow::getActiveTreeView() const {
    TreeView * activeTreeView = qobject_cast<TreeView *>(this->tabWidget_Trees->currentWidget()->focusWidget());

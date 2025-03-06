@@ -44,6 +44,13 @@ class HopTreeSortFilterProxyModel :
    TREE_SORT_FILTER_PROXY_MODEL_COMMON_DECL(Hop)
 };
 
+class MashTreeSortFilterProxyModel :
+   public QSortFilterProxyModel,
+   public TreeSortFilterProxyModelBase<MashTreeSortFilterProxyModel, MashTreeModel, Mash> {
+   Q_OBJECT
+   TREE_SORT_FILTER_PROXY_MODEL_COMMON_DECL(Mash)
+};
+
 class MiscTreeSortFilterProxyModel :
    public QSortFilterProxyModel,
    public TreeSortFilterProxyModelBase<MiscTreeSortFilterProxyModel, MiscTreeModel, Misc> {

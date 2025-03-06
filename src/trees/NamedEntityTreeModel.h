@@ -17,7 +17,6 @@
 #define TREES_NAMEDENTITYTREEMODEL_H
 #pragma once
 
-
 #include "model/Equipment.h"
 #include "model/Fermentable.h"
 #include "model/Hop.h"
@@ -31,44 +30,42 @@
 
 // See comment in trees/NamedEntityTreeView.h for why we can't remove the repetition below with a macro
 
-class EquipmentTreeModel : public TreeModel,
-                           public TreeModelBase<EquipmentTreeModel, Equipment> {
+class EquipmentTreeModel : public TreeModel, public TreeModelBase<EquipmentTreeModel, Equipment> {
    Q_OBJECT
    TREE_MODEL_COMMON_DECL(Equipment)
 };
 
-class FermentableTreeModel : public TreeModel,
-                             public TreeModelBase<FermentableTreeModel, Fermentable> {
+class FermentableTreeModel : public TreeModel, public TreeModelBase<FermentableTreeModel, Fermentable> {
    Q_OBJECT
    TREE_MODEL_COMMON_DECL(Fermentable)
 };
 
-class HopTreeModel : public TreeModel,
-                     public TreeModelBase<HopTreeModel, Hop> {
+class HopTreeModel : public TreeModel, public TreeModelBase<HopTreeModel, Hop> {
    Q_OBJECT
    TREE_MODEL_COMMON_DECL(Hop)
 };
 
-class MiscTreeModel : public TreeModel,
-                      public TreeModelBase<MiscTreeModel, Misc> {
+class MashTreeModel : public TreeModel, public TreeModelBase<MashTreeModel, Mash> {
+   Q_OBJECT
+   TREE_MODEL_COMMON_DECL(Mash)
+};
+
+class MiscTreeModel : public TreeModel, public TreeModelBase<MiscTreeModel, Misc> {
    Q_OBJECT
    TREE_MODEL_COMMON_DECL(Misc)
 };
 
-class StyleTreeModel : public TreeModel,
-                       public TreeModelBase<StyleTreeModel, Style> {
+class StyleTreeModel : public TreeModel, public TreeModelBase<StyleTreeModel, Style> {
    Q_OBJECT
    TREE_MODEL_COMMON_DECL(Style)
 };
 
-class WaterTreeModel : public TreeModel,
-                       public TreeModelBase<WaterTreeModel, Water> {
+class WaterTreeModel : public TreeModel, public TreeModelBase<WaterTreeModel, Water> {
    Q_OBJECT
    TREE_MODEL_COMMON_DECL(Water)
 };
 
-class YeastTreeModel : public TreeModel,
-                       public TreeModelBase<YeastTreeModel, Yeast> {
+class YeastTreeModel : public TreeModel, public TreeModelBase<YeastTreeModel, Yeast> {
    Q_OBJECT
    TREE_MODEL_COMMON_DECL(Yeast)
 };

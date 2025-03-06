@@ -73,6 +73,16 @@ class HopTreeView : public TreeView,
    TREE_VIEW_COMMON_DECL(Hop)
 };
 
+class MashTreeView : public TreeView,
+                     public TreeViewBase<MashTreeView,
+                                         MashTreeModel,
+                                         MashTreeSortFilterProxyModel,
+                                         MashEditor,
+                                         Mash> {
+   Q_OBJECT
+   TREE_VIEW_COMMON_DECL(Mash)
+};
+
 class MiscTreeView : public TreeView,
                      public TreeViewBase<MiscTreeView,
                                          MiscTreeModel,

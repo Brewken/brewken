@@ -15,9 +15,21 @@
  =====================================================================================================================*/
 #include "trees/NamedEntityTreeSortFilterProxyModel.h"
 
+#include "model/Equipment.h"
+#include "model/Fermentable.h"
+#include "model/Hop.h"
+#include "model/Mash.h"
+#include "model/Misc.h"
+#include "model/Style.h"
+#include "model/Water.h"
+#include "model/Yeast.h"
+#include "trees/TreeModel.h"
+#include "trees/TreeModelBase.h"
+
 TREE_SORT_FILTER_PROXY_MODEL_COMMON_CODE(Equipment  )
 TREE_SORT_FILTER_PROXY_MODEL_COMMON_CODE(Fermentable)
 TREE_SORT_FILTER_PROXY_MODEL_COMMON_CODE(Hop        )
+TREE_SORT_FILTER_PROXY_MODEL_COMMON_CODE(Mash       )
 TREE_SORT_FILTER_PROXY_MODEL_COMMON_CODE(Misc       )
 TREE_SORT_FILTER_PROXY_MODEL_COMMON_CODE(Yeast      )
 TREE_SORT_FILTER_PROXY_MODEL_COMMON_CODE(Style      )

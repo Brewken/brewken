@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MainWindow.h is part of Brewken, and is copyright the following authors 2009-2024:
+ * MainWindow.h is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
@@ -113,7 +113,7 @@ public slots:
    //! \brief Accepts Recipe changes, and takes appropriate action to show the changes.
    void changed(QMetaProperty,QVariant);
 
-   void treeActivated(const QModelIndex &index);
+///   void treeActivated(const QModelIndex &index);
    //! \brief View the given recipe.
    void setRecipe(Recipe* recipe);
 
@@ -234,8 +234,8 @@ public slots:
    //! \brief makes sure we can do water chemistry before we show the window
    void showWaterChemistryTool();
 
-   //! \brief draws a context menu, the exact nature of which depends on which tree is focused
-   void contextMenu(const QPoint &point);
+///   //! \brief draws a context menu, the exact nature of which depends on which tree is focused
+///   void contextMenu(const QPoint &point);
    //! \brief creates a new brewnote
    void newBrewNote();
    //! \brief copies an existing brewnote to a new brewday

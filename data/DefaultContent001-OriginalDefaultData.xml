@@ -10221,7 +10221,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>20</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>23</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>75</ATTENUATION>
         <NOTES>This yeast is famous for its clean flavors, balance and ability to be used in almost any style ale. It accentuates the hop flavors and is extremely versatile.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -10637,7 +10636,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>20</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>23</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>75</ATTENUATION>
         <NOTES>This yeast is famous for its clean flavors, balance and ability to be used in almost any style ale. It accentuates the hop flavors and is extremely versatile.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -10991,7 +10989,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>20</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>23</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>75</ATTENUATION>
         <NOTES>This yeast is famous for its clean flavors, balance and ability to be used in almost any style ale. It accentuates the hop flavors and is extremely versatile.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -11363,7 +11360,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>20</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>23</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>75</ATTENUATION>
         <NOTES>This yeast is famous for its clean flavors, balance and ability to be used in almost any style ale. It accentuates the hop flavors and is extremely versatile.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -11720,7 +11716,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>20</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>23</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>75</ATTENUATION>
         <NOTES>This yeast is famous for its clean flavors, balance and ability to be used in almost any style ale. It accentuates the hop flavors and is extremely versatile.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -12117,7 +12112,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>20</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>23</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>75</ATTENUATION>
         <NOTES>This yeast is famous for its clean flavors, balance and ability to be used in almost any style ale. It accentuates the hop flavors and is extremely versatile.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -12392,7 +12386,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>18</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>22</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>77</ATTENUATION>
         <NOTES>From one of the few remaining Trappist breweries remaining in the world, this yeast produces the distinctive fruitiness and plum characteristics. Excellent yeast for high gravity beers, Belgian ales, dubbels and trippels.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -12691,7 +12684,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>18</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>22</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>77</ATTENUATION>
         <NOTES>From one of the few remaining Trappist breweries remaining in the world, this yeast produces the distinctive fruitiness and plum characteristics. Excellent yeast for high gravity beers, Belgian ales, dubbels and trippels.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -12924,7 +12916,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>20</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>22</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>75</ATTENUATION>
         <NOTES>A blend of traditional German Weizen yeast and Lactobacillus to create a subtle, tart, drinkable beer. Can take several months to develop tart character. Perfect for traditional Berliner Weisse.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -13177,7 +13168,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>20</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>22</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>75</ATTENUATION>
         <NOTES>A blend of traditional German Weizen yeast and Lactobacillus to create a subtle, tart, drinkable beer. Can take several months to develop tart character. Perfect for traditional Berliner Weisse.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -13411,7 +13401,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>20</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>23</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>75</ATTENUATION>
         <NOTES>This yeast is famous for its clean flavors, balance and ability to be used in almost any style ale. It accentuates the hop flavors and is extremely versatile.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -13664,7 +13653,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>20</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>23</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>75</ATTENUATION>
         <NOTES>This yeast is famous for its clean flavors, balance and ability to be used in almost any style ale. It accentuates the hop flavors and is extremely versatile.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -14015,7 +14003,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>14</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>18</MAX_TEMPERATURE>
         <FLOCCULATION>High</FLOCCULATION>
-        <ATTENUATION>67</ATTENUATION>
         <NOTES>This yeast is used to produce the &quot;California Common&quot; style beer. A unique lager strain which has the ability to ferment up to 65 degrees while retaining lager characteristics. Can also be fermented down to 50 degrees for production of marzens, pilsners and other style lagers.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -14384,7 +14371,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>14</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>18</MAX_TEMPERATURE>
         <FLOCCULATION>High</FLOCCULATION>
-        <ATTENUATION>67</ATTENUATION>
         <NOTES>This yeast is used to produce the &quot;California Common&quot; style beer. A unique lager strain which has the ability to ferment up to 65 degrees while retaining lager characteristics. Can also be fermented down to 50 degrees for production of marzens, pilsners and other style lagers.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -14661,7 +14647,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>18</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>20</MAX_TEMPERATURE>
         <FLOCCULATION>Very High</FLOCCULATION>
-        <ATTENUATION>66</ATTENUATION>
         <NOTES>A classic ESB strain from one of England's largest independent breweries. This yeast is best suited for English style ales including milds, bitters, porters, and English style stouts. This yeast will leave a beer very clear, and will leave some residual sweetness.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -14961,7 +14946,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>18</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>20</MAX_TEMPERATURE>
         <FLOCCULATION>Very High</FLOCCULATION>
-        <ATTENUATION>66</ATTENUATION>
         <NOTES>A classic ESB strain from one of England's largest independent breweries. This yeast is best suited for English style ales including milds, bitters, porters, and English style stouts. This yeast will leave a beer very clear, and will leave some residual sweetness.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -15282,7 +15266,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>19</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>22</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>71</ATTENUATION>
         <NOTES>Dry, malty ale yeast. Provides a complex, oakey ester character to your beer. Hop bitterness comes through well. This yeast is well suited for classic British pale ales, bitters, and stouts. Does not flocculate as much as WLP002 and WLP005.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -15626,7 +15609,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>19</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>22</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>71</ATTENUATION>
         <NOTES>Dry, malty ale yeast. Provides a complex, oakey ester character to your beer. Hop bitterness comes through well. This yeast is well suited for classic British pale ales, bitters, and stouts. Does not flocculate as much as WLP002 and WLP005.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -15944,7 +15926,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>18</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>20</MAX_TEMPERATURE>
         <FLOCCULATION>Very High</FLOCCULATION>
-        <ATTENUATION>66</ATTENUATION>
         <NOTES>A classic ESB strain from one of England's largest independent breweries. This yeast is best suited for English style ales including milds, bitters, porters, and English style stouts. This yeast will leave a beer very clear, and will leave some residual sweetness.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -16285,7 +16266,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>18</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>20</MAX_TEMPERATURE>
         <FLOCCULATION>Very High</FLOCCULATION>
-        <ATTENUATION>66</ATTENUATION>
         <NOTES>A classic ESB strain from one of England's largest independent breweries. This yeast is best suited for English style ales including milds, bitters, porters, and English style stouts. This yeast will leave a beer very clear, and will leave some residual sweetness.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -16630,7 +16610,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>10</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>13</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>76</ATTENUATION>
         <NOTES>This yeast is one of the most widely used lager yeasts in the world. Very malty and clean, great for all German lagers, Pilsner, Oktoberfest, and Marzen.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -17007,7 +16986,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>20</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>23</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>75</ATTENUATION>
         <NOTES>This yeast is famous for its clean flavors, balance and ability to be used in almost any style ale. It accentuates the hop flavors and is extremely versatile.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -17376,7 +17354,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>20</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>23</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>75</ATTENUATION>
         <NOTES>This yeast is famous for its clean flavors, balance and ability to be used in almost any style ale. It accentuates the hop flavors and is extremely versatile.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -17677,7 +17654,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>20</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>24</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>70</ATTENUATION>
         <NOTES>Classic Saison yeast from Wallonia. It produces earthy, peppery, and spicy notes. Slightly sweet. With high gravity Saisons, brewers may wish to dry the beer with an alternate yeast added after 75% fermentation.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -18021,7 +17997,6 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
         <MIN_TEMPERATURE>20</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>24</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>70</ATTENUATION>
         <NOTES>Classic Saison yeast from Wallonia. It produces earthy, peppery, and spicy notes. Slightly sweet. With high gravity Saisons, brewers may wish to dry the beer with an alternate yeast added after 75% fermentation.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -18341,7 +18316,6 @@ Intensely sweet - adds a sweet malty flavor sometimes associated with honey. </N
         <MIN_TEMPERATURE>18</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>21</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>72</ATTENUATION>
         <NOTES>Scotland is famous for its malty, strong ales. This yeast can reproduce complex, flavorful Scottish style ales. This yeast can be an everyday strain, similar to WLP001. Hop character is not muted with this strain, as it is with WLP002.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -18683,7 +18657,6 @@ Intensely sweet - adds a sweet malty flavor sometimes associated with honey. </N
         <MIN_TEMPERATURE>18</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>21</MAX_TEMPERATURE>
         <FLOCCULATION>Medium</FLOCCULATION>
-        <ATTENUATION>72</ATTENUATION>
         <NOTES>Scotland is famous for its malty, strong ales. This yeast can reproduce complex, flavorful Scottish style ales. This yeast can be an everyday strain, similar to WLP001. Hop character is not muted with this strain, as it is with WLP002.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -18914,7 +18887,6 @@ Intensely sweet - adds a sweet malty flavor sometimes associated with honey. </N
         <MIN_TEMPERATURE>20</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>22</MAX_TEMPERATURE>
         <FLOCCULATION>Low</FLOCCULATION>
-        <ATTENUATION>74</ATTENUATION>
         <NOTES>This famous German yeast is a strain used in the production of traditional, authentic wheat beers. It produces the banana and clove nose traditionally associated with German wheat beers and leaves the desired cloudy look of traditional German wheat beers.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>
@@ -19145,7 +19117,6 @@ Intensely sweet - adds a sweet malty flavor sometimes associated with honey. </N
         <MIN_TEMPERATURE>20</MIN_TEMPERATURE>
         <MAX_TEMPERATURE>22</MAX_TEMPERATURE>
         <FLOCCULATION>Low</FLOCCULATION>
-        <ATTENUATION>74</ATTENUATION>
         <NOTES>This famous German yeast is a strain used in the production of traditional, authentic wheat beers. It produces the banana and clove nose traditionally associated with German wheat beers and leaves the desired cloudy look of traditional German wheat beers.</NOTES>
         <BEST_FOR></BEST_FOR>
         <MAX_REUSE>10</MAX_REUSE>

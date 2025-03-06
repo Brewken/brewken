@@ -32,6 +32,7 @@
 #-----------------------------------------------------------------------------------------------------------------------
 import argparse
 import datetime
+import getpass
 import glob
 import logging
 import os
@@ -1203,10 +1204,6 @@ def installDependencies():
          # Boost 1.76 (from April 2021) and we need at least Boost 1.79.  Installing 'boost181' gives us Boost 1.81
          # (from December 2022) which seems to be the newest version available in MacPorts.
          #
-         # Note too that, as of 2024-11-12, the xercesc3 and xalanc ports will not install.  This seems to be related to
-         # the fact that the xercesc3 port got updated from v3.2.4 to v3.3.0.  See
-         # https://trac.macports.org/ticket/71304.
-         #
          installListPort = [
                             'llvm-19',
                             'cmake',
@@ -1218,8 +1215,8 @@ def installDependencies():
 #                            'tree',
 #                            'dylibbundler',
                             'pandoc',
-#                            'xercesc3',
-#                            'xalanc',
+                            'xercesc3',
+                            'xalanc',
                             'qt6',
                             'qt6-qttranslations'
                             ]
@@ -1358,7 +1355,19 @@ def installDependencies():
          # As always, we have to remember to explicitly do things that would be done for us automatically by the
          # shell (eg expansion of '~').
          #
-         with open(os.path.expanduser('~/.bash_profile'), 'a+') as bashProfile:
+         # Also, although you might think it is a reasonable assumption that ~/.bash_profile is owned by the current
+         # user, it turns out this is not always the case.  In 2025 we started seeing the script fail here on the
+         # GithHub actions because ~/.bash_profile was owned by root and not writable by the current user ("runner").
+         # So we force the ownership back to what it should be before attempting to open the file for writing.
+         #
+         bashProfilePath = os.path.expanduser('~/.bash_profile')
+         log.debug('Adding Qt Bin Dir ' + qtBinDir + ' to PATH in ' + bashProfilePath)
+         btUtils.abortOnRunFail(subprocess.run(['ls', '-l', bashProfilePath], capture_output=False))
+         currentUser = getpass.getuser()
+         btUtils.abortOnRunFail(subprocess.run(['sudo', 'chown', currentUser, bashProfilePath], capture_output=False))
+         btUtils.abortOnRunFail(subprocess.run(['sudo', 'chmod', 'u+w', bashProfilePath], capture_output=False))
+         btUtils.abortOnRunFail(subprocess.run(['ls', '-l', bashProfilePath], capture_output=False))
+         with open(bashProfilePath, 'a+') as bashProfile:
             bashProfile.write('export PATH="' + qtBinDir + os.pathsep + ':$PATH"')
          #
          # Another way to "permanently" add something to PATH on MacOS, is by either appending to the /etc/paths file or

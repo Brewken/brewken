@@ -58,6 +58,9 @@ bool TreeNode::showMe() const {
    return this->m_showMe;
 }
 
+// NOTE: Each TreeItemNode<XYZ>::columnDisplayNames definition below should correspond with the columns defined in
+//       TreeNodeTraits<XYZ, PQR>::ColumnIndex in trees/TreeNodeTraits.h.
+
 template<> EnumStringMapping const TreeItemNode<Recipe>::columnDisplayNames {
    {TreeItemNode<Recipe>::ColumnIndex::Name             , Recipe::tr("Name"     )},
    {TreeItemNode<Recipe>::ColumnIndex::NumberOfAncestors, Recipe::tr("Snapshots")},
@@ -81,6 +84,12 @@ template<> EnumStringMapping const TreeItemNode<Hop>::columnDisplayNames {
    {TreeItemNode<Hop>::ColumnIndex::Form    , Hop::tr("Type"   )},
    {TreeItemNode<Hop>::ColumnIndex::AlphaPct, Hop::tr("% Alpha")},
    {TreeItemNode<Hop>::ColumnIndex::Origin  , Hop::tr("Origin" )},
+};
+
+template<> EnumStringMapping const TreeItemNode<Mash>::columnDisplayNames {
+   {TreeItemNode<Mash>::ColumnIndex::Name      , Mash::tr("Name"       )},
+   {TreeItemNode<Mash>::ColumnIndex::TotalWater, Mash::tr("Total Water")},
+   {TreeItemNode<Mash>::ColumnIndex::TotalTime , Mash::tr("Total Time" )},
 };
 
 template<> EnumStringMapping const TreeItemNode<Misc>::columnDisplayNames {
@@ -211,6 +220,18 @@ template<> bool TreeItemNode<Hop>::columnIsLessThan(TreeItemNode<Hop> const & ot
       case TreeItemNode<Hop>::ColumnIndex::Form    : return lhs.form()      < rhs.form();
       case TreeItemNode<Hop>::ColumnIndex::AlphaPct: return lhs.alpha_pct() < rhs.alpha_pct();
       case TreeItemNode<Hop>::ColumnIndex::Origin  : return lhs.origin()    < rhs.origin();
+   }
+   return lhs.name() < rhs.name();
+}
+
+template<> bool TreeItemNode<Mash>::columnIsLessThan(TreeItemNode<Mash> const & other,
+                                                     TreeNodeTraits<Mash>::ColumnIndex column) const {
+   auto const & lhs = *this->m_underlyingItem;
+   auto const & rhs = *other.m_underlyingItem;
+   switch (column) {
+      case TreeItemNode<Mash>::ColumnIndex::Name      : return lhs.name() < rhs.name();
+      case TreeItemNode<Mash>::ColumnIndex::TotalWater: return lhs.totalMashWater_l() < rhs.totalMashWater_l();
+      case TreeItemNode<Mash>::ColumnIndex::TotalTime : return lhs.totalTime_mins()   < rhs.totalTime_mins();
    }
    return lhs.name() < rhs.name();
 }
@@ -446,6 +467,28 @@ template<> QString TreeItemNode<Hop>::getToolTip() const {
             .arg(Hop::typeDisplayNames[*this->m_underlyingItem->type()]);
    }
    body += QString("</tr>");
+   body += "</table></body></html>";
+
+   return header + body;
+}
+
+template<> QString TreeItemNode<Mash>::getToolTip() const {
+   // Do the style sheet first
+   QString header = "<html><head><style type=\"text/css\">";
+   header += Html::getCss(":/css/tooltip.css");
+   header += "</style></head>";
+
+   QString body   = "<body>";
+
+   body += QString("<div id=\"headerdiv\">");
+   body += QString("<table id=\"tooltip\">");
+   body += QString("<caption>%1</caption>")
+         .arg( this->m_underlyingItem->name() );
+   // First row -- total time
+   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
+           .arg(Mash::tr("Total time (mins)"))
+           .arg(Measurement::displayAmount(Measurement::Amount{this->m_underlyingItem->totalTime_mins(), Measurement::Units::minutes}) );
+
    body += "</table></body></html>";
 
    return header + body;

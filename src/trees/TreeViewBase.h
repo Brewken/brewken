@@ -117,6 +117,9 @@ public:
       this->m_contextMenu.addMenu(&this->m_exportMenu);
       this->m_contextMenu.addAction(Derived::tr("Import"), &this->derived(), &Derived::importFiles);
 
+      this->derived().connect(&this->derived(), &QAbstractItemView::doubleClicked   , &this->derived(), &Derived::activated  );
+      this->derived().connect(&this->derived(), &QWidget::customContextMenuRequested, &this->derived(), &Derived::contextMenu);
+
       return;
    }
 
@@ -165,6 +168,19 @@ protected:
       return;
    }
 
+   void doContextMenu(QPoint const & point) {
+      QModelIndex selectedViewIndex = this->derived().indexAt(point);
+      if (!selectedViewIndex.isValid()) {
+         return;
+      }
+
+      QMenu * tempMenu = this->derived().getContextMenu(selectedViewIndex);
+      if (tempMenu) {
+         tempMenu->exec(this->derived().mapToGlobal(point));
+      }
+      return;
+
+   }
 
 public:
    template<class T>
@@ -608,7 +624,6 @@ using RecipeEditor = MainWindow;
       virtual QMenu * getContextMenu(QModelIndex const & selectedViewIndex) override; \
       virtual TreeModel & treeModel() override;                                       \
       virtual TreeNode * treeNode(QModelIndex const & index) const override;          \
-      virtual void activated(QModelIndex const & viewIndex) override;                 \
       virtual void copy(QModelIndexList const & selectedViewIndexes) override;        \
       virtual std::optional<QModelIndex> deleteItems(QModelIndexList const & selectedViewIndexes) override; \
       virtual void   copySelected() override;                                         \
@@ -616,6 +631,10 @@ using RecipeEditor = MainWindow;
       virtual void renameSelected() override;                                         \
       virtual void addFolder(QString const & folder) override;                        \
       virtual QString folderName(QModelIndex const & viewIndex) const override;       \
+                                                                                      \
+   public slots:                                                                      \
+      virtual void activated(QModelIndex const & viewIndex) override;                 \
+      void contextMenu(QPoint const & point);                                         \
                                                                                       \
    private slots:                                                                     \
       void newFolder();                                                               \
@@ -654,28 +673,33 @@ using RecipeEditor = MainWindow;
    TreeNode * NeName##TreeView::treeNode(QModelIndex const & index) const {          \
       return this->doTreeNode(index);                                                \
    }                                                                                 \
-   void NeName##TreeView::activated(QModelIndex const & viewIndex) {                 \
-      this->doActivated(viewIndex);                                                  \
-      return;                                                                        \
-   }                                                                                 \
    void NeName##TreeView::copy(QModelIndexList const & selectedViewIndexes) {        \
       this->doCopy(selectedViewIndexes);                                             \
       return;                                                                        \
    }                                                                                 \
    std::optional<QModelIndex> NeName##TreeView::deleteItems(QModelIndexList const & selectedViewIndexes) {  \
-      return this->doDeleteItems(selectedViewIndexes);                                     \
-   }                                                                                       \
-   void NeName##TreeView::  copySelected() { this->  doCopySelected(); return; }           \
-   void NeName##TreeView::deleteSelected() { this->doDeleteSelected(); return; }           \
-   void NeName##TreeView::renameSelected() { this->doRenameSelected(); return; }           \
-   void NeName##TreeView::addFolder(QString const & folder) {                              \
-      this->doAddFolder(folder);                                                           \
-      return;                                                                              \
-      }                                                                                    \
-   QString NeName##TreeView::folderName(QModelIndex const & viewIndex) const {             \
-      return this->doFolderName(viewIndex);                                                \
-   }                                                                                       \
-                                                                                           \
+      return this->doDeleteItems(selectedViewIndexes);                               \
+   }                                                                                 \
+   void NeName##TreeView::  copySelected() { this->  doCopySelected(); return; }     \
+   void NeName##TreeView::deleteSelected() { this->doDeleteSelected(); return; }     \
+   void NeName##TreeView::renameSelected() { this->doRenameSelected(); return; }     \
+   void NeName##TreeView::addFolder(QString const & folder) {                        \
+      this->doAddFolder(folder);                                                     \
+      return;                                                                        \
+      }                                                                              \
+   QString NeName##TreeView::folderName(QModelIndex const & viewIndex) const {       \
+      return this->doFolderName(viewIndex);                                          \
+   }                                                                                 \
+                                                                                     \
+   void NeName##TreeView::activated(QModelIndex const & viewIndex) {                 \
+      this->doActivated(viewIndex);                                                  \
+      return;                                                                        \
+   }                                                                                 \
+   void NeName##TreeView::contextMenu(QPoint const & point) {                        \
+      this->doContextMenu(point);                                                    \
+      return;                                                                        \
+   }                                                                                 \
+                                                                                     \
    void NeName##TreeView::newFolder() {                                                    \
       this->doNewFolder();                                                                 \
       return;                                                                              \

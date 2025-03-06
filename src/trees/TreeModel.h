@@ -26,7 +26,7 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 
-#include "trees/TreeNode.h"
+#include "trees/TreeNodeBase.h"
 #include "utils/NoCopy.h"
 
 // Forward declarations

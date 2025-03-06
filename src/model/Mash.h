@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Mash.h is part of Brewken, and is copyright the following authors 2009-2024:
+ * model/Mash.h is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -50,7 +50,7 @@ AddPropertyName(notes                    )
 AddPropertyName(ph                       )
 AddPropertyName(spargeTemp_c             )
 AddPropertyName(totalMashWater_l         )
-AddPropertyName(totalTime                )
+AddPropertyName(totalTime_mins           )
 AddPropertyName(tunTemp_c                )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
@@ -115,7 +115,7 @@ public:
    //! \brief The total water that went into the mash (ie all the mash water, sparge and strike) in liters. Calculated.
    Q_PROPERTY(double                totalMashWater_l          READ totalMashWater_l  STORED false )
    //! \brief The total mash time in minutes. Calculated.
-   Q_PROPERTY(double                totalTime                 READ totalTime  STORED false )
+   Q_PROPERTY(double                totalTime_mins            READ totalTime_mins    STORED false )
 
    // ⮜⮜⮜ BeerJSON support does not require any additional properties on this class! ⮞⮞⮞
 
@@ -146,7 +146,7 @@ public:
    double totalInfusionAmount_l() const;
    //! \brief all the sparge water
    double totalSpargeAmount_l() const;
-   double totalTime();
+   double totalTime_mins() const;
 
    bool hasSparge() const;
 
