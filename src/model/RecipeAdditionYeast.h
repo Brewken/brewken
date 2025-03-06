@@ -28,7 +28,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::RecipeAdditionYeast { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::RecipeAdditionYeast { inline BtStringConst const property{#property}; }
 AddPropertyName(addToSecondary   )  // Deprecated - retained only for BeerXML
 AddPropertyName(attenuation_pct  )
 AddPropertyName(yeast            )
@@ -104,13 +104,11 @@ public:
    void setCellCountBillions(std::optional<int   > const val);
    void setAddToSecondary   (std::optional<bool  > const val);
 
-///   virtual Recipe * getOwningRecipe() const;
-
-   virtual NamedEntity * ensureExists(BtStringConst const & property);
+   virtual NamedEntity * ensureExists(BtStringConst const & property) override;
 
 protected:
    // Note that we don't override isEqualTo, as we don't have any non-inherited member variables
-   virtual ObjectStore & getObjectStoreTypedInstance() const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const override;
 
 private:
    std::optional<double> m_attenuation_pct  ;
@@ -118,8 +116,6 @@ private:
    std::optional<int   > m_cellCountBillions;
 };
 
-Q_DECLARE_METATYPE(Yeast)
-Q_DECLARE_METATYPE(Yeast *)
 BT_DECLARE_METATYPES(RecipeAdditionYeast)
 
 #endif

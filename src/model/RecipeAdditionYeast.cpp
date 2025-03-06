@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/RecipeAdditionYeast.cpp is part of Brewken, and is copyright the following authors 2023-2024:
+ * model/RecipeAdditionYeast.cpp is part of Brewken, and is copyright the following authors 2023-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -18,6 +18,11 @@
 #include "database/ObjectStoreTyped.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/NamedParameterBundle.h"
+
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_RecipeAdditionYeast.cpp"
+#endif
 
 QString RecipeAdditionYeast::localisedName() { return tr("Yeast Addition"); }
 
@@ -74,7 +79,6 @@ RecipeAdditionYeast::RecipeAdditionYeast(NamedParameterBundle const & namedParam
    //
    m_stage = namedParameterBundle.val<RecipeAddition::Stage>(PropertyNames::RecipeAddition::stage,
                                                              RecipeAddition::Stage::Fermentation);
-///   qDebug() << Q_FUNC_INFO << "RecipeAdditionYeast #" << this->key() << ": Recipe #" << this->m_recipeId << ", Yeast #" << this->m_ingredientId;
 
    CONSTRUCTOR_END
    return;
@@ -104,7 +108,6 @@ Yeast * RecipeAdditionYeast::yeast() const {
       return nullptr;
    }
 
-///   qDebug() << Q_FUNC_INFO << "RecipeAdditionYeast #" << this->key() << ": Recipe #" << this->m_recipeId << ", Yeast #" << this->m_ingredientId << "@" << ObjectStoreWrapper::getByIdRaw<Yeast>(this->m_ingredientId);
    return ObjectStoreWrapper::getByIdRaw<Yeast>(this->m_ingredientId);
 }
 
@@ -117,10 +120,6 @@ std::optional<bool>   RecipeAdditionYeast::addToSecondary   () const {
    }
    return true;
 }
-
-///Recipe * RecipeAdditionYeast::getOwningRecipe() const {
-///   return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
-///}
 
 NamedEntity * RecipeAdditionYeast::ensureExists(BtStringConst const & property) {
    if (property == PropertyNames::RecipeAdditionYeast::yeast) {

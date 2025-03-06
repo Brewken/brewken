@@ -135,6 +135,8 @@ namespace PersistentSettings {
     */
    void initialise(QString customUserDataDir = "");
 
+   [[nodiscard]] bool isInitialised();
+
    /**
     * \return the config directory
     */

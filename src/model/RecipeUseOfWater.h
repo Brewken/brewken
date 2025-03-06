@@ -26,7 +26,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::RecipeUseOfWater { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::RecipeUseOfWater { inline BtStringConst const property{#property}; }
 AddPropertyName(recipeId    )
 AddPropertyName(water       )
 AddPropertyName(volume_l    )
@@ -89,16 +89,14 @@ public:
    void setVolume_l    (double  const val);
 
 protected:
-   virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual ObjectStore & getObjectStoreTypedInstance() const;
+   virtual bool isEqualTo(NamedEntity const & other) const override;
+   virtual ObjectStore & getObjectStoreTypedInstance() const override;
 
 protected:
    double m_volume_l;
 
 };
 
-Q_DECLARE_METATYPE(Water)
-Q_DECLARE_METATYPE(Water *)
 BT_DECLARE_METATYPES(RecipeUseOfWater)
 
 #endif

@@ -176,6 +176,17 @@
     </message>
 </context>
 <context>
+    <name>BoilTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nom</translation>
+    </message>
+    <message>
+        <source>Pre-Boil Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BrewDayFormatter</name>
     <message>
         <source>Brewday</source>
@@ -391,6 +402,14 @@
     <message>
         <source>Brewday</source>
         <translation type="unfinished">Dia d&apos;elaboració</translation>
+    </message>
+    <message>
+        <source>Overwrite Existing Instructions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generating instructions will overwrite the existing ones.  This is not undoable.  Do you want to proceed?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1074,6 +1093,81 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Derived</name>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation type="unfinished">Carpeta</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation type="unfinished">Copia</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">Suprimeix</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="unfinished">Exporta</translation>
+    </message>
+    <message>
+        <source>To File (BeerXML or BeerJSON)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation type="unfinished">Importa</translation>
+    </message>
+    <message>
+        <source>Copy %1</source>
+        <translation type="unfinished">Copia %1</translation>
+    </message>
+    <message>
+        <source>Enter a unique name for the copy of %1.</source>
+        <translation type="unfinished">Entri un nom únic per a la copia de %1.</translation>
+    </message>
+    <message>
+        <source>An empty name will skip copying this %1.</source>
+        <translation type="unfinished">Un nom en blanc farà que no es copiï «%1».</translation>
+    </message>
+    <message>
+        <source>Cancel All</source>
+        <translation type="unfinished">Cancel·la-ho tot</translation>
+    </message>
+    <message>
+        <source>Delete %1</source>
+        <translation type="unfinished">Suprimeix %1</translation>
+    </message>
+    <message>
+        <source>Delete %1 %2?</source>
+        <translation type="unfinished">Suprimeix %1 %2?</translation>
+    </message>
+    <message>
+        <source>Folder name</source>
+        <translation type="unfinished">Nom de carpeta</translation>
+    </message>
+    <message>
+        <source>Folder name:</source>
+        <translation type="unfinished">Nom de la carpeta:</translation>
+    </message>
+    <message>
+        <source>Bad Name</source>
+        <translation type="unfinished">Nom incorrecte</translation>
+    </message>
+    <message>
+        <source>A folder name must have at least one non-whitespace character in it</source>
+        <translation type="unfinished">Un nom de carpeta ha de tenir almenys un caràcter diferent a l&apos;espai</translation>
+    </message>
+    <message>
+        <source>A folder name must have at least one non-/ character in it</source>
+        <translation type="unfinished">Un nom de carpeta ha de tenir al menys un caràcter diferent a «/»</translation>
+    </message>
+</context>
+<context>
     <name>Equipment</name>
     <message>
         <source>Equipment</source>
@@ -1085,6 +1179,18 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Boil Time</source>
+        <translation type="unfinished">Temps d&apos;ebullició</translation>
+    </message>
+    <message>
+        <source>Equipments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preboil</source>
+        <translation type="unfinished">Abans de bullir</translation>
+    </message>
+    <message>
+        <source>BoilTime</source>
         <translation type="unfinished">Temps d&apos;ebullició</translation>
     </message>
 </context>
@@ -1444,6 +1550,14 @@ Log file may contain more details.</source>
         <source>Color</source>
         <translation type="unfinished">Color</translation>
     </message>
+    <message>
+        <source>Fermentables</source>
+        <translation type="unfinished">Fermentables</translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FermentableDialog</name>
@@ -1679,6 +1793,17 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>FermentationTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nom</translation>
+    </message>
+    <message>
+        <source>Number of Steps</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Folder</name>
     <message>
         <source>Name</source>
@@ -1691,6 +1816,10 @@ Log file may contain more details.</source>
     <message>
         <source>FULLPATH</source>
         <translation type="unfinished">Camí sencer</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation type="unfinished">Carpeta</translation>
     </message>
 </context>
 <context>
@@ -1845,6 +1974,22 @@ Log file may contain more details.</source>
     <message>
         <source>Origin</source>
         <translation type="unfinished">Origen</translation>
+    </message>
+    <message>
+        <source>Hops</source>
+        <translation type="unfinished">Llúpols</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Alfa</translation>
+    </message>
+    <message>
+        <source>Beta</source>
+        <translation type="unfinished">Beta</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Format</translation>
     </message>
 </context>
 <context>
@@ -2267,11 +2412,11 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Copy Recipe</source>
-        <translation>Copia la recepta</translation>
+        <translation type="vanished">Copia la recepta</translation>
     </message>
     <message>
         <source>Enter a unique name for the copy.</source>
-        <translation>Introdueixi un nom únic per a la còpia.</translation>
+        <translation type="vanished">Introdueixi un nom únic per a la còpia.</translation>
     </message>
     <message>
         <source>Please give your mash a name before saving.</source>
@@ -2323,23 +2468,23 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Folder name</source>
-        <translation>Nom de carpeta</translation>
+        <translation type="vanished">Nom de carpeta</translation>
     </message>
     <message>
         <source>Folder name:</source>
-        <translation>Nom de la carpeta:</translation>
+        <translation type="vanished">Nom de la carpeta:</translation>
     </message>
     <message>
         <source>Bad Name</source>
-        <translation>Nom incorrecte</translation>
+        <translation type="vanished">Nom incorrecte</translation>
     </message>
     <message>
         <source>A folder name must have at least one non-whitespace character in it</source>
-        <translation>Un nom de carpeta ha de tenir almenys un caràcter diferent a l&apos;espai</translation>
+        <translation type="vanished">Un nom de carpeta ha de tenir almenys un caràcter diferent a l&apos;espai</translation>
     </message>
     <message>
         <source>A folder name must have at least one non-/ character in it</source>
-        <translation>Un nom de carpeta ha de tenir al menys un caràcter diferent a «/»</translation>
+        <translation type="vanished">Un nom de carpeta ha de tenir al menys un caràcter diferent a «/»</translation>
     </message>
     <message>
         <source>An error was returned while creating %1</source>
@@ -2469,6 +2614,14 @@ If you need help, please open an issue at %1</source>
         <source>Automatically-created Fermentation for %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Change Recipe Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Recipe Equipment</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -2522,10 +2675,6 @@ If you need help, please open an issue at %1</source>
 </context>
 <context>
     <name>MashStep</name>
-    <message>
-        <source>Unnamed Mash Step</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Infusion</source>
         <translation type="unfinished">Infusió</translation>
@@ -2596,6 +2745,25 @@ If you need help, please open an issue at %1</source>
     <message>
         <source>Time</source>
         <translation>Temps</translation>
+    </message>
+</context>
+<context>
+    <name>MashTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nom</translation>
+    </message>
+    <message>
+        <source>Initial Grain Temperature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total Mash Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total Time</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2898,6 +3066,10 @@ If you need help, please open an issue at %1</source>
         <source>Change %1 %2</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Unnamed %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NamedEntity</name>
@@ -2937,55 +3109,55 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Catalan</source>
-        <translation>Català</translation>
+        <translation type="vanished">Català</translation>
     </message>
     <message>
         <source>Czech</source>
-        <translation>txec</translation>
+        <translation type="vanished">txec</translation>
     </message>
     <message>
         <source>German</source>
-        <translation>Alemany</translation>
+        <translation type="vanished">Alemany</translation>
     </message>
     <message>
         <source>English</source>
-        <translation>Anglès</translation>
+        <translation type="vanished">Anglès</translation>
     </message>
     <message>
         <source>Greek</source>
-        <translation>Grec</translation>
+        <translation type="vanished">Grec</translation>
     </message>
     <message>
         <source>Spanish</source>
-        <translation>Espanyol</translation>
+        <translation type="vanished">Espanyol</translation>
     </message>
     <message>
         <source>French</source>
-        <translation>Francès</translation>
+        <translation type="vanished">Francès</translation>
     </message>
     <message>
         <source>Italian</source>
-        <translation>Italià</translation>
+        <translation type="vanished">Italià</translation>
     </message>
     <message>
         <source>Dutch</source>
-        <translation>Holandès</translation>
+        <translation type="vanished">Holandès</translation>
     </message>
     <message>
         <source>Polish</source>
-        <translation>Polonès</translation>
+        <translation type="vanished">Polonès</translation>
     </message>
     <message>
         <source>Portuguese</source>
-        <translation>Portuguès</translation>
+        <translation type="vanished">Portuguès</translation>
     </message>
     <message>
         <source>Russian</source>
-        <translation>Rus</translation>
+        <translation type="vanished">Rus</translation>
     </message>
     <message>
         <source>Chinese</source>
-        <translation>Xinès</translation>
+        <translation type="vanished">Xinès</translation>
     </message>
     <message>
         <source>US traditional units</source>
@@ -3061,46 +3233,6 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>PostgreSQL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Danish</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Estonian</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Basque</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Galician</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hungarian</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Latvian</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Norwegian Bokmål</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Serbian</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Swedish</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Turkish</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3374,11 +3506,11 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Recipes</source>
-        <translation>Receptes</translation>
+        <translation type="vanished">Receptes</translation>
     </message>
     <message>
         <source>Equipment</source>
-        <translation>Equip</translation>
+        <translation type="vanished">Equip</translation>
     </message>
     <message>
         <source>Fermentables</source>
@@ -3398,11 +3530,11 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Style</source>
-        <translation>Estil</translation>
+        <translation type="vanished">Estil</translation>
     </message>
     <message>
         <source>Folder</source>
-        <translation>Carpeta</translation>
+        <translation type="vanished">Carpeta</translation>
     </message>
     <message>
         <source>Failed to update the database</source>
@@ -4063,10 +4195,6 @@ Program will now exit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Water</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Tinseth</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4142,6 +4270,106 @@ Program will now exit.</source>
         <source>Tertiary Fermentation Step for %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Basque</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Catalan</source>
+        <translation type="unfinished">Català</translation>
+    </message>
+    <message>
+        <source>Chinese</source>
+        <translation type="unfinished">Xinès</translation>
+    </message>
+    <message>
+        <source>Czech</source>
+        <translation type="unfinished">txec</translation>
+    </message>
+    <message>
+        <source>Danish</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dutch</source>
+        <translation type="unfinished">Holandès</translation>
+    </message>
+    <message>
+        <source>English</source>
+        <translation type="unfinished">Anglès</translation>
+    </message>
+    <message>
+        <source>Estonian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>French</source>
+        <translation type="unfinished">Francès</translation>
+    </message>
+    <message>
+        <source>Galician</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>German</source>
+        <translation type="unfinished">Alemany</translation>
+    </message>
+    <message>
+        <source>Greek</source>
+        <translation type="unfinished">Grec</translation>
+    </message>
+    <message>
+        <source>Hungarian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Italian</source>
+        <translation type="unfinished">Italià</translation>
+    </message>
+    <message>
+        <source>Latvian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Norwegian Bokmål</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Polish</source>
+        <translation type="unfinished">Polonès</translation>
+    </message>
+    <message>
+        <source>Portuguese</source>
+        <translation type="unfinished">Portuguès</translation>
+    </message>
+    <message>
+        <source>Russian</source>
+        <translation type="unfinished">Rus</translation>
+    </message>
+    <message>
+        <source>Serbian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Spanish</source>
+        <translation type="unfinished">Espanyol</translation>
+    </message>
+    <message>
+        <source>Swedish</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turkish</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 step to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RaIngrd</name>
@@ -4174,7 +4402,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 water to %2, </source>
-        <translation>%1 d&apos;aigua a %2, </translation>
+        <translation type="vanished">%1 d&apos;aigua a %2, </translation>
     </message>
     <message>
         <source>for upcoming infusions.</source>
@@ -4376,7 +4604,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>%1 water to %2 </source>
-        <translation>%1 d&apos;aigua a %2 </translation>
+        <translation type="vanished">%1 d&apos;aigua a %2 </translation>
     </message>
     <message>
         <source>mash</source>
@@ -4465,6 +4693,34 @@ El volum final al primari és de %1.</translation>
     <message>
         <source>Style</source>
         <translation type="unfinished">Estil</translation>
+    </message>
+    <message>
+        <source>Recipes</source>
+        <translation type="unfinished">Receptes</translation>
+    </message>
+    <message>
+        <source>unknown style</source>
+        <translation type="unfinished">estil desconegut</translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished">N/D</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="unfinished">DI</translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation type="unfinished">DF</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Color</translation>
+    </message>
+    <message>
+        <source>IBU</source>
+        <translation type="unfinished">IBU</translation>
     </message>
 </context>
 <context>
@@ -4788,6 +5044,10 @@ El volum final al primari és de %1.</translation>
     <message>
         <source>Attenuation</source>
         <translation type="unfinished">Atenuació</translation>
+    </message>
+    <message>
+        <source>Times Cultured</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5119,39 +5379,39 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation>Categoria</translation>
+        <translation type="vanished">Categoria</translation>
     </message>
     <message>
         <source>Code</source>
-        <translation>Codi</translation>
+        <translation type="vanished">Codi</translation>
     </message>
     <message>
         <source>Guide</source>
-        <translation>Guia</translation>
+        <translation type="vanished">Guia</translation>
     </message>
     <message>
         <source>BoilTime</source>
-        <translation>Temps d&apos;ebullició</translation>
+        <translation type="vanished">Temps d&apos;ebullició</translation>
     </message>
     <message>
         <source>Beta</source>
-        <translation>Beta</translation>
+        <translation type="vanished">Beta</translation>
     </message>
     <message>
         <source>Lab</source>
-        <translation>Laboratori</translation>
+        <translation type="vanished">Laboratori</translation>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation>Atenuació</translation>
+        <translation type="vanished">Atenuació</translation>
     </message>
     <message>
         <source>Id</source>
-        <translation>Id</translation>
+        <translation type="vanished">Id</translation>
     </message>
     <message>
         <source>Flocculation</source>
-        <translation>Floculació</translation>
+        <translation type="vanished">Floculació</translation>
     </message>
     <message>
         <source>Miscs</source>
@@ -5186,36 +5446,62 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished">Recepta</translation>
     </message>
     <message>
-        <source>Ca</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Na</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add During</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nom</translation>
+    </message>
+</context>
+<context>
+    <name>RecipeTreeView</name>
+    <message>
+        <source>Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detach Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snapshot Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew It!</source>
+        <translation type="unfinished">Elabora-la!</translation>
+    </message>
+    <message>
+        <source>Brew Again</source>
+        <translation type="unfinished">Elabora-la un altre cop</translation>
+    </message>
+    <message>
+        <source>Change date</source>
+        <translation type="unfinished">Canvia la data</translation>
+    </message>
+    <message>
+        <source>Recalculate eff</source>
+        <translation type="unfinished">Torna a calcula efic.</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">Suprimeix</translation>
     </message>
 </context>
 <context>
@@ -5396,13 +5682,6 @@ El volum final al primari és de %1.</translation>
     </message>
 </context>
 <context>
-    <name>StepClass</name>
-    <message>
-        <source>Add %1 step to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>StepExtended</name>
     <message>
         <source>Extended Step</source>
@@ -5462,6 +5741,18 @@ El volum final al primari és de %1.</translation>
     <message>
         <source>Guide</source>
         <translation type="unfinished">Guia</translation>
+    </message>
+    <message>
+        <source>Styles</source>
+        <translation type="unfinished">Estils</translation>
+    </message>
+    <message>
+        <source>Code</source>
+        <translation type="unfinished">Codi</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Tipus</translation>
     </message>
 </context>
 <context>
@@ -5772,136 +6063,96 @@ El volum final al primari és de %1.</translation>
         <source>FULLPATH</source>
         <translation type="obsolete">Camí sencer</translation>
     </message>
-    <message>
-        <source>Could not copy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>There was an unexpected error creating %1</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>TreeView</name>
     <message>
         <source>New</source>
-        <translation type="unfinished">Nou</translation>
+        <translation type="obsolete">Nou</translation>
     </message>
     <message>
         <source>Recipe</source>
-        <translation type="unfinished">Recepta</translation>
-    </message>
-    <message>
-        <source>Show Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Detach Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Snapshot Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Recepta</translation>
     </message>
     <message>
         <source>Brew It!</source>
-        <translation type="unfinished">Elabora-la!</translation>
+        <translation type="obsolete">Elabora-la!</translation>
     </message>
     <message>
         <source>Brew Again</source>
-        <translation type="unfinished">Elabora-la un altre cop</translation>
+        <translation type="obsolete">Elabora-la un altre cop</translation>
     </message>
     <message>
         <source>Change date</source>
-        <translation type="unfinished">Canvia la data</translation>
+        <translation type="obsolete">Canvia la data</translation>
     </message>
     <message>
         <source>Recalculate eff</source>
-        <translation type="unfinished">Torna a calcula efic.</translation>
+        <translation type="obsolete">Torna a calcula efic.</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Suprimeix</translation>
-    </message>
-    <message>
-        <source>Equipment</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Suprimeix</translation>
     </message>
     <message>
         <source>Fermentable</source>
-        <translation type="unfinished">Fermentable</translation>
+        <translation type="obsolete">Fermentable</translation>
     </message>
     <message>
         <source>Hop</source>
-        <translation type="unfinished">Llúpol</translation>
-    </message>
-    <message>
-        <source>Misc</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Llúpol</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished">Estil</translation>
+        <translation type="obsolete">Estil</translation>
     </message>
     <message>
         <source>Yeast</source>
-        <translation type="unfinished">Llevat</translation>
-    </message>
-    <message>
-        <source>Water</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Llevat</translation>
     </message>
     <message>
         <source>Folder</source>
-        <translation type="unfinished">Carpeta</translation>
+        <translation type="obsolete">Carpeta</translation>
     </message>
     <message>
         <source>Copy</source>
-        <translation type="unfinished">Copia</translation>
+        <translation type="obsolete">Copia</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="unfinished">Exporta</translation>
-    </message>
-    <message>
-        <source>To File (BeerXML or BeerJSON)</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Exporta</translation>
     </message>
     <message>
         <source>Import</source>
-        <translation type="unfinished">Importa</translation>
+        <translation type="obsolete">Importa</translation>
     </message>
     <message>
         <source>Cancel All</source>
-        <translation type="unfinished">Cancel·la-ho tot</translation>
+        <translation type="obsolete">Cancel·la-ho tot</translation>
     </message>
     <message>
         <source>Copy %1</source>
-        <translation type="unfinished">Copia %1</translation>
+        <translation type="obsolete">Copia %1</translation>
     </message>
     <message>
         <source>Enter a unique name for the copy of %1.</source>
-        <translation type="unfinished">Entri un nom únic per a la copia de %1.</translation>
+        <translation type="obsolete">Entri un nom únic per a la copia de %1.</translation>
     </message>
     <message>
         <source>An empty name will skip copying this %1.</source>
-        <translation type="unfinished">Un nom en blanc farà que no es copiï «%1».</translation>
+        <translation type="obsolete">Un nom en blanc farà que no es copiï «%1».</translation>
     </message>
     <message>
         <source>Delete %1</source>
-        <translation type="unfinished">Suprimeix %1</translation>
+        <translation type="obsolete">Suprimeix %1</translation>
     </message>
     <message>
         <source>Delete %1 %2?</source>
-        <translation type="unfinished">Suprimeix %1 %2?</translation>
+        <translation type="obsolete">Suprimeix %1 %2?</translation>
     </message>
     <message>
         <source>BrewNote</source>
-        <translation type="unfinished">Notes d&apos;elaboració</translation>
+        <translation type="obsolete">Notes d&apos;elaboració</translation>
     </message>
 </context>
 <context>
@@ -5982,6 +6233,18 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>pH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Waters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6247,6 +6510,26 @@ El volum final al primari és de %1.</translation>
         <source>Product ID</source>
         <translation type="unfinished">ID del producte</translation>
     </message>
+    <message>
+        <source>Yeasts</source>
+        <translation type="unfinished">Llevats</translation>
+    </message>
+    <message>
+        <source>Lab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="unfinished">Atenuació</translation>
+    </message>
+    <message>
+        <source>Id</source>
+        <translation type="unfinished">Id</translation>
+    </message>
+    <message>
+        <source>Flocculation</source>
+        <translation type="unfinished">Floculació</translation>
+    </message>
 </context>
 <context>
     <name>YeastDialog</name>
@@ -6430,16 +6713,28 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished">Notes</translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
     </message>
 </context>
 <context>
@@ -7135,6 +7430,34 @@ El volum final al primari és de %1.</translation>
         <source>This is also known as the batch size.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Internal Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>fermentableEditor</name>
@@ -7446,6 +7769,18 @@ El volum final al primari és de %1.</translation>
         <source>Grain Group</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7470,16 +7805,28 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished">Notes</translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
     </message>
 </context>
 <context>
@@ -7931,28 +8278,40 @@ El volum final al primari és de %1.</translation>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
+    </message>
 </context>
 <context>
     <name>instructionWidget</name>
     <message>
         <source>Form</source>
-        <translation>Format</translation>
+        <translation type="vanished">Format</translation>
     </message>
     <message>
         <source>Show a timer</source>
-        <translation>Mostra un temporitzador</translation>
+        <translation type="vanished">Mostra un temporitzador</translation>
     </message>
     <message>
         <source>Show timer</source>
-        <translation>Mostra un temporitzador</translation>
+        <translation type="vanished">Mostra un temporitzador</translation>
     </message>
     <message>
         <source>Mark this step completed</source>
-        <translation>Marcar aquest pas com a complert</translation>
+        <translation type="vanished">Marcar aquest pas com a complert</translation>
     </message>
     <message>
         <source>Step completed</source>
-        <translation>Pas complet</translation>
+        <translation type="vanished">Pas complet</translation>
     </message>
 </context>
 <context>
@@ -8327,7 +8686,7 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>&amp;Copy Recipe</source>
-        <translation>&amp;Copia la recepta</translation>
+        <translation type="vanished">&amp;Copia la recepta</translation>
     </message>
     <message>
         <source>Pr&amp;iming Calculator</source>
@@ -8634,7 +8993,11 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>(See Boil tab below)</source>
+        <source>See Boil tab below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Copy Selected Item(s)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9069,10 +9432,6 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished">Notes</translation>
     </message>
     <message>
-        <source>New misc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9103,6 +9462,18 @@ El volum final al primari és de %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
     </message>
 </context>
 <context>
@@ -10155,15 +10526,15 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="vanished">Nou</translation>
+        <translation>Nou</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="vanished">Desa</translation>
+        <translation>Desa</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Cancel·lar</translation>
+        <translation>Cancel·lar</translation>
     </message>
     <message>
         <source>Main</source>
@@ -10207,6 +10578,14 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Overall Impression</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10390,16 +10769,28 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
     </message>
 </context>
 <context>
@@ -10530,11 +10921,11 @@ El volum final al primari és de %1.</translation>
     </message>
     <message>
         <source>Times Recultured</source>
-        <translation>Nombre de cultius</translation>
+        <translation type="vanished">Nombre de cultius</translation>
     </message>
     <message>
         <source>Times this yeast has been recultured</source>
-        <translation>Cops que aquest llevats s&apos;ha tornat a cultivar</translation>
+        <translation type="vanished">Cops que aquest llevats s&apos;ha tornat a cultivar</translation>
     </message>
     <message>
         <source>Max Recultures</source>
@@ -10703,6 +11094,18 @@ El volum final al primari és de %1.</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Nou</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Desa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel·lar</translation>
     </message>
 </context>
 </TS>

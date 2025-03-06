@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * Algorithms.cpp is part of Brewken, and is copyright the following authors 2009-2023:
+ * Algorithms.cpp is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Eric Tamme <etamme@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -357,7 +357,6 @@ double Algorithms::SgAt20CToBrix(double sg) {
       "Specific gravity",
       "Brix"
    );
-
 }
 
 double Algorithms::BrixToSgAt20C(double brix) {
@@ -408,9 +407,16 @@ double Algorithms::BrixToSgAt20C(double brix) {
 }
 
 double Algorithms::getPlato(double sugar_kg, double wort_l) {
-   double water_kg = wort_l - sugar_kg/PhysicalConstants::sucroseDensity_kgL; // Assumes sucrose vol and water vol add to wort vol.
+   double const water_kg = wort_l - sugar_kg/PhysicalConstants::sucroseDensity_kgL; // Assumes sucrose vol and water vol add to wort vol.
+   double const totalMass_kg = sugar_kg + water_kg;
 
-   return sugar_kg/(sugar_kg+water_kg) * 100.0;
+   // It's not hugely meaningful to call this function with zero values for sugar and wort.  In those circumstances,
+   // rather than return not-a-number (because of dividing by zero), we return the °Plato value of water: 0.0.
+   if (0.0 == totalMass_kg) {
+      return 0.0;
+   }
+
+   return sugar_kg/totalMass_kg * 100.0;
 }
 
 double Algorithms::getWaterDensity_kgL(double celsius) {
@@ -476,6 +482,12 @@ double Algorithms::abvFromOgAndFg(double og, double fg) {
    Q_ASSERT(og >= fg);
 
    //
+   // Previously, in different places in the code, we either used a very rough rule of thumb:
+   //
+   //    double calculatedABV_pct = (og - fg) * 130
+   //
+   // or we used the FALLBACK METHOD described below.
+   //
    // The current calculation method we use comes from the UK Laboratory of the Government Chemist.  It is what HM
    // Revenue and Customs (HMRC) encourage UK microbreweries to use to calculate ABV if they have "no or minimal
    // laboratory facilities" and is described here:
@@ -526,7 +538,7 @@ double Algorithms::abvFromOgAndFg(double og, double fg) {
    );
 
    //
-   // OLD METHOD, which is also the fallback
+   // FALLBACK METHOD
    //
    // From http://www.brewersfriend.com/2011/06/16/alcohol-by-volume-calculator-updated/:
    //    "[This] formula, and variations on it, comes from Ritchie Products Ltd, (Zymurgy, Summer 1995, vol. 18, no. 2)
@@ -536,31 +548,31 @@ double Algorithms::abvFromOgAndFg(double og, double fg) {
    //    The relationship between the change in gravity, and the change in ABV is not linear. All these equations are
    //    approximations."
    //
-   double abvByOldMethod = (76.08 * (og - fg) / (1.775 - og)) * (fg / 0.794);
+   double const abvByFallbackMethod = (76.08 * (og - fg) / (1.775 - og)) * (fg / 0.794);
 
    if (matchingGravityDifferenceRec == gravityDifferenceFactors.cend()) {
       qCritical() <<
          Q_FUNC_INFO << "Could not find gravity difference record for difference of " <<
          (excessGravityDiffx10 / 10.0) << "so using fallback method";
-      return abvByOldMethod;
+      return abvByFallbackMethod;
    }
 
-   double abvByNewMethod = excessGravityDiff * matchingGravityDifferenceRec->factorToUse;
+   double const abvByHmrcMethod = excessGravityDiff * matchingGravityDifferenceRec->factorToUse;
 
    qDebug() <<
-      Q_FUNC_INFO << "ABV old method:" << abvByOldMethod << "% , new method:" << abvByNewMethod << "% (used factor" <<
+      Q_FUNC_INFO << "ABV old method:" << abvByFallbackMethod << "% , new method:" << abvByHmrcMethod << "% (used factor" <<
       matchingGravityDifferenceRec->factorToUse << "and should be in range" <<
       matchingGravityDifferenceRec->pctAbv_Min << "% -" << matchingGravityDifferenceRec->pctAbv_Max << "%)";
 
    // The tables from UK HMRC have some sanity-check data, so let's use it!
-   if (abvByNewMethod < matchingGravityDifferenceRec->pctAbv_Min ||
-       abvByNewMethod > matchingGravityDifferenceRec->pctAbv_Max) {
+   if (abvByHmrcMethod < matchingGravityDifferenceRec->pctAbv_Min ||
+       abvByHmrcMethod > matchingGravityDifferenceRec->pctAbv_Max) {
       qWarning() <<
-         Q_FUNC_INFO << "Calculated ABV of" << abvByNewMethod << "% is outside expected range (" <<
+         Q_FUNC_INFO << "Calculated ABV of" << abvByHmrcMethod << "% is outside expected range (" <<
          matchingGravityDifferenceRec->pctAbv_Min << "% -" << matchingGravityDifferenceRec->pctAbv_Max << "%)";
    }
 
-   return abvByNewMethod;
+   return abvByHmrcMethod;
 }
 
 double Algorithms::correctSgForTemperature(double measuredSg, double readingTempInC, double calibrationTempInC) {

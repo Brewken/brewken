@@ -28,7 +28,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::RecipeAdjustmentSalt { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::RecipeAdjustmentSalt { inline BtStringConst const property{#property}; }
 AddPropertyName(salt     )
 AddPropertyName(whenToAdd)
 #undef AddPropertyName
@@ -114,18 +114,16 @@ public:
    void setSalt          (Salt *               const val);
    void setWhenToAdd     (RecipeAdjustmentSalt::WhenToAdd val);
 
-   virtual NamedEntity * ensureExists(BtStringConst const & property);
+   virtual NamedEntity * ensureExists(BtStringConst const & property) override;
 
 protected:
    // Note that we don't override isEqualTo, as we don't have any non-inherited member variables
-   virtual ObjectStore & getObjectStoreTypedInstance() const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const override;
 
 private:
    WhenToAdd m_whenToAdd;
 };
 
-Q_DECLARE_METATYPE(Salt)
-//Q_DECLARE_METATYPE(Salt *)
 BT_DECLARE_METATYPES(RecipeAdjustmentSalt)
 
 #endif

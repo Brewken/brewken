@@ -27,7 +27,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::BoilStep { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::BoilStep { inline BtStringConst const property{#property}; }
 AddPropertyName(chillingType)
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
@@ -46,6 +46,14 @@ class BoilStep : public StepExtended, public StepBase<BoilStep, Boil, BoilStepOp
    Q_OBJECT
 
    STEP_COMMON_DECL(Boil, BoilStepOptions)
+   // See model/EnumeratedBase.h for info, getters and setters for these properties
+   Q_PROPERTY(int ownerId      READ ownerId      WRITE setOwnerId   )
+   Q_PROPERTY(int stepNumber   READ stepNumber   WRITE setStepNumber)
+   // See model/StepBase.h for info, getters and setters for these properties
+   Q_PROPERTY(std::optional<double> stepTime_mins   READ stepTime_mins   WRITE setStepTime_mins)
+   Q_PROPERTY(std::optional<double> stepTime_days   READ stepTime_days   WRITE setStepTime_days)
+   Q_PROPERTY(std::optional<double> startTemp_c     READ startTemp_c     WRITE setStartTemp_c  )
+   Q_PROPERTY(std::optional<double> rampTime_mins   READ rampTime_mins   WRITE setRampTime_mins)
 
 public:
    /**
@@ -114,12 +122,23 @@ public:
 signals:
 
 protected:
-   virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual bool isEqualTo(NamedEntity const & other) const override;
 
 private:
    std::optional<ChillingType> m_chillingType;
-
 };
+
+/**
+ * \brief Because \c BoilStep inherits from multiple bases, more than one of which has a match for \c operator<<, we
+ *        need to provide an overload of \c operator<< that combines the output of those for all the base classes.
+ */
+template<class S>
+S & operator<<(S & stream, BoilStep const & boilStep) {
+   stream <<
+      static_cast<StepExtended const &>(boilStep) << " " <<
+      static_cast<StepBase<BoilStep, Boil, BoilStepOptions> const &>(boilStep);
+   return stream;
+}
 
 BT_DECLARE_METATYPES(BoilStep)
 

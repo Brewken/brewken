@@ -25,7 +25,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::RecipeAddition { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::RecipeAddition { inline BtStringConst const property{#property}; }
 AddPropertyName(stage          )
 AddPropertyName(step           )
 AddPropertyName(addAtTime_mins )
@@ -130,7 +130,9 @@ public:
    virtual ~RecipeAddition();
 
    /**
-    * \brief This function is used (as a parameter to std::sort) for sorting in the recipe formatter
+    * \brief This function is used (as a parameter to std::sort) for sorting in the recipe formatter.
+    *
+    *        See also \c RecipeAdditionBase::doSpaceship
     */
    [[nodiscard]] static bool lessThanByTime(RecipeAddition const & lhs, RecipeAddition const & rhs);
 
@@ -209,7 +211,7 @@ public:
    void setDuration_mins  (std::optional<double> const val);
 
 protected:
-   virtual bool isEqualTo(NamedEntity const & other) const;
+   virtual bool isEqualTo(NamedEntity const & other) const override;
 
 protected:
    Stage                 m_stage          ;

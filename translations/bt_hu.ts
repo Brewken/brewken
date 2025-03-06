@@ -176,6 +176,17 @@
     </message>
 </context>
 <context>
+    <name>BoilTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Név</translation>
+    </message>
+    <message>
+        <source>Pre-Boil Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BrewDayFormatter</name>
     <message>
         <source>Brewday</source>
@@ -391,6 +402,14 @@
     <message>
         <source>Brewday</source>
         <translation type="unfinished">Főzés napja</translation>
+    </message>
+    <message>
+        <source>Overwrite Existing Instructions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generating instructions will overwrite the existing ones.  This is not undoable.  Do you want to proceed?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1066,6 +1085,81 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>Derived</name>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Új</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation type="unfinished">Mappa</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation type="unfinished">Másolás</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">Törlés</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="unfinished">Exportálás</translation>
+    </message>
+    <message>
+        <source>To File (BeerXML or BeerJSON)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation type="unfinished">Importálás</translation>
+    </message>
+    <message>
+        <source>Copy %1</source>
+        <translation type="unfinished">Másolás %1</translation>
+    </message>
+    <message>
+        <source>Enter a unique name for the copy of %1.</source>
+        <translation type="unfinished">A következő fájl másolatának adj egyedi nevet %1</translation>
+    </message>
+    <message>
+        <source>An empty name will skip copying this %1.</source>
+        <translation type="unfinished">Üres név esetén %1 nem lesz lemásolva.</translation>
+    </message>
+    <message>
+        <source>Cancel All</source>
+        <translation type="unfinished">Összes Visszavonása</translation>
+    </message>
+    <message>
+        <source>Delete %1</source>
+        <translation type="unfinished">Törlés %1</translation>
+    </message>
+    <message>
+        <source>Delete %1 %2?</source>
+        <translation type="unfinished">Törlés °%1 %2?</translation>
+    </message>
+    <message>
+        <source>Folder name</source>
+        <translation type="unfinished">Mappa neve</translation>
+    </message>
+    <message>
+        <source>Folder name:</source>
+        <translation type="unfinished">Mappa neve:</translation>
+    </message>
+    <message>
+        <source>Bad Name</source>
+        <translation type="unfinished">rossz név</translation>
+    </message>
+    <message>
+        <source>A folder name must have at least one non-whitespace character in it</source>
+        <translation type="unfinished">A mappa neve legalább 8 karaktert kell tartalmazzon (szóköz nélkül)</translation>
+    </message>
+    <message>
+        <source>A folder name must have at least one non-/ character in it</source>
+        <translation type="unfinished">A mappa nevének tartalmaznia kell egy számot vagy írásjelet</translation>
+    </message>
+</context>
+<context>
     <name>Equipment</name>
     <message>
         <source>Equipment</source>
@@ -1078,6 +1172,18 @@ Log file may contain more details.</source>
     <message>
         <source>Boil Time</source>
         <translation type="unfinished">Forralási idő</translation>
+    </message>
+    <message>
+        <source>Equipments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preboil</source>
+        <translation type="unfinished">Forralást megelőző</translation>
+    </message>
+    <message>
+        <source>BoilTime</source>
+        <translation type="unfinished">Forralásiidő</translation>
     </message>
 </context>
 <context>
@@ -1424,6 +1530,14 @@ Log file may contain more details.</source>
         <source>Color</source>
         <translation type="unfinished">Szín</translation>
     </message>
+    <message>
+        <source>Fermentables</source>
+        <translation type="unfinished">Erjesztető anyagok</translation>
+    </message>
+    <message>
+        <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FermentableDialog</name>
@@ -1647,6 +1761,17 @@ Log file may contain more details.</source>
     </message>
 </context>
 <context>
+    <name>FermentationTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Név</translation>
+    </message>
+    <message>
+        <source>Number of Steps</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Folder</name>
     <message>
         <source>Name</source>
@@ -1659,6 +1784,10 @@ Log file may contain more details.</source>
     <message>
         <source>FULLPATH</source>
         <translation type="unfinished">Teljes útvonal</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation type="unfinished">Mappa</translation>
     </message>
 </context>
 <context>
@@ -1813,6 +1942,22 @@ Log file may contain more details.</source>
     <message>
         <source>Origin</source>
         <translation type="unfinished">Eredet</translation>
+    </message>
+    <message>
+        <source>Hops</source>
+        <translation type="unfinished">Komló</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Alfasav</translation>
+    </message>
+    <message>
+        <source>Beta</source>
+        <translation type="unfinished">Béta</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Forma</translation>
     </message>
 </context>
 <context>
@@ -2239,11 +2384,11 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Copy Recipe</source>
-        <translation>Recept másolás</translation>
+        <translation type="vanished">Recept másolás</translation>
     </message>
     <message>
         <source>Enter a unique name for the copy.</source>
-        <translation>A másolatnak adj egyedi nevet.</translation>
+        <translation type="vanished">A másolatnak adj egyedi nevet.</translation>
     </message>
     <message>
         <source>Please give your mash a name before saving.</source>
@@ -2295,23 +2440,23 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Folder name</source>
-        <translation>Mappa neve</translation>
+        <translation type="vanished">Mappa neve</translation>
     </message>
     <message>
         <source>Folder name:</source>
-        <translation>Mappa neve:</translation>
+        <translation type="vanished">Mappa neve:</translation>
     </message>
     <message>
         <source>Bad Name</source>
-        <translation>rossz név</translation>
+        <translation type="vanished">rossz név</translation>
     </message>
     <message>
         <source>A folder name must have at least one non-whitespace character in it</source>
-        <translation>A mappa neve legalább 8 karaktert kell tartalmazzon (szóköz nélkül)</translation>
+        <translation type="vanished">A mappa neve legalább 8 karaktert kell tartalmazzon (szóköz nélkül)</translation>
     </message>
     <message>
         <source>A folder name must have at least one non-/ character in it</source>
-        <translation>A mappa nevének tartalmaznia kell egy számot vagy írásjelet</translation>
+        <translation type="vanished">A mappa nevének tartalmaznia kell egy számot vagy írásjelet</translation>
     </message>
     <message>
         <source>An error was returned while creating %1</source>
@@ -2441,6 +2586,14 @@ If you need help, please open an issue at %1</source>
         <source>Automatically-created Fermentation for %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Change Recipe Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Recipe Equipment</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -2494,10 +2647,6 @@ If you need help, please open an issue at %1</source>
 </context>
 <context>
     <name>MashStep</name>
-    <message>
-        <source>Unnamed Mash Step</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Infusion</source>
         <translation type="unfinished"></translation>
@@ -2568,6 +2717,25 @@ If you need help, please open an issue at %1</source>
     <message>
         <source>Time</source>
         <translation>Idõ</translation>
+    </message>
+</context>
+<context>
+    <name>MashTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Név</translation>
+    </message>
+    <message>
+        <source>Initial Grain Temperature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total Mash Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total Time</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2866,6 +3034,10 @@ If you need help, please open an issue at %1</source>
         <source>Change %1 %2</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Unnamed %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NamedEntity</name>
@@ -2905,55 +3077,55 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Catalan</source>
-        <translation>katalán</translation>
+        <translation type="vanished">katalán</translation>
     </message>
     <message>
         <source>Czech</source>
-        <translation>cseh</translation>
+        <translation type="vanished">cseh</translation>
     </message>
     <message>
         <source>German</source>
-        <translation>német</translation>
+        <translation type="vanished">német</translation>
     </message>
     <message>
         <source>English</source>
-        <translation>angol</translation>
+        <translation type="vanished">angol</translation>
     </message>
     <message>
         <source>Greek</source>
-        <translation>görög</translation>
+        <translation type="vanished">görög</translation>
     </message>
     <message>
         <source>Spanish</source>
-        <translation>spanyol</translation>
+        <translation type="vanished">spanyol</translation>
     </message>
     <message>
         <source>French</source>
-        <translation>francia</translation>
+        <translation type="vanished">francia</translation>
     </message>
     <message>
         <source>Italian</source>
-        <translation>olasz</translation>
+        <translation type="vanished">olasz</translation>
     </message>
     <message>
         <source>Dutch</source>
-        <translation>holland</translation>
+        <translation type="vanished">holland</translation>
     </message>
     <message>
         <source>Polish</source>
-        <translation>lengyel</translation>
+        <translation type="vanished">lengyel</translation>
     </message>
     <message>
         <source>Portuguese</source>
-        <translation>portugál</translation>
+        <translation type="vanished">portugál</translation>
     </message>
     <message>
         <source>Russian</source>
-        <translation>orosz</translation>
+        <translation type="vanished">orosz</translation>
     </message>
     <message>
         <source>Chinese</source>
-        <translation>kínai</translation>
+        <translation type="vanished">kínai</translation>
     </message>
     <message>
         <source>US traditional units</source>
@@ -3029,46 +3201,6 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>PostgreSQL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Danish</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Estonian</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Basque</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Galician</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hungarian</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Latvian</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Norwegian Bokmål</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Serbian</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Swedish</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Turkish</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3342,11 +3474,11 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Recipes</source>
-        <translation>Receptek</translation>
+        <translation type="vanished">Receptek</translation>
     </message>
     <message>
         <source>Equipment</source>
-        <translation>Felszerelés</translation>
+        <translation type="vanished">Felszerelés</translation>
     </message>
     <message>
         <source>Fermentables</source>
@@ -3366,11 +3498,11 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Style</source>
-        <translation>Stílus</translation>
+        <translation type="vanished">Stílus</translation>
     </message>
     <message>
         <source>Folder</source>
-        <translation>Mappa</translation>
+        <translation type="vanished">Mappa</translation>
     </message>
     <message>
         <source>Error attempting to create directory &quot;%1&quot;</source>
@@ -4015,10 +4147,6 @@ Program will now exit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Water</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Tinseth</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4094,6 +4222,106 @@ Program will now exit.</source>
         <source>Tertiary Fermentation Step for %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Basque</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Catalan</source>
+        <translation type="unfinished">katalán</translation>
+    </message>
+    <message>
+        <source>Chinese</source>
+        <translation type="unfinished">kínai</translation>
+    </message>
+    <message>
+        <source>Czech</source>
+        <translation type="unfinished">cseh</translation>
+    </message>
+    <message>
+        <source>Danish</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dutch</source>
+        <translation type="unfinished">holland</translation>
+    </message>
+    <message>
+        <source>English</source>
+        <translation type="unfinished">angol</translation>
+    </message>
+    <message>
+        <source>Estonian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>French</source>
+        <translation type="unfinished">francia</translation>
+    </message>
+    <message>
+        <source>Galician</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>German</source>
+        <translation type="unfinished">német</translation>
+    </message>
+    <message>
+        <source>Greek</source>
+        <translation type="unfinished">görög</translation>
+    </message>
+    <message>
+        <source>Hungarian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Italian</source>
+        <translation type="unfinished">olasz</translation>
+    </message>
+    <message>
+        <source>Latvian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Norwegian Bokmål</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Polish</source>
+        <translation type="unfinished">lengyel</translation>
+    </message>
+    <message>
+        <source>Portuguese</source>
+        <translation type="unfinished">portugál</translation>
+    </message>
+    <message>
+        <source>Russian</source>
+        <translation type="unfinished">orosz</translation>
+    </message>
+    <message>
+        <source>Serbian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Spanish</source>
+        <translation type="unfinished">spanyol</translation>
+    </message>
+    <message>
+        <source>Swedish</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turkish</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 step to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RaIngrd</name>
@@ -4126,7 +4354,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>%1 water to %2, </source>
-        <translation>%1 víz %2. </translation>
+        <translation type="vanished">%1 víz %2. </translation>
     </message>
     <message>
         <source>for upcoming infusions.</source>
@@ -4328,7 +4556,7 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>%1 water to %2 </source>
-        <translation>%1 vizet a %2 </translation>
+        <translation type="vanished">%1 vizet a %2 </translation>
     </message>
     <message>
         <source>mash</source>
@@ -4417,6 +4645,34 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Style</source>
         <translation type="unfinished">Stílus</translation>
+    </message>
+    <message>
+        <source>Recipes</source>
+        <translation type="unfinished">Receptek</translation>
+    </message>
+    <message>
+        <source>unknown style</source>
+        <translation type="unfinished">ismeretlen stílus</translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished">N/A</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="unfinished">kezdeti fajsúly (OG)</translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation type="unfinished">végleges fajsúly (FG)</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Szín</translation>
+    </message>
+    <message>
+        <source>IBU</source>
+        <translation type="unfinished">Keserűség (IBU)</translation>
     </message>
 </context>
 <context>
@@ -4740,6 +4996,10 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Attenuation</source>
         <translation type="unfinished">erjesztési hatékonyság</translation>
+    </message>
+    <message>
+        <source>Times Cultured</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5071,39 +5331,39 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation>Kategória</translation>
+        <translation type="vanished">Kategória</translation>
     </message>
     <message>
         <source>Code</source>
-        <translation>Kód</translation>
+        <translation type="vanished">Kód</translation>
     </message>
     <message>
         <source>Guide</source>
-        <translation>Útmutató</translation>
+        <translation type="vanished">Útmutató</translation>
     </message>
     <message>
         <source>BoilTime</source>
-        <translation>Forralásiidő</translation>
+        <translation type="vanished">Forralásiidő</translation>
     </message>
     <message>
         <source>Beta</source>
-        <translation>Béta</translation>
+        <translation type="vanished">Béta</translation>
     </message>
     <message>
         <source>Lab</source>
-        <translation>Labor</translation>
+        <translation type="vanished">Labor</translation>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation>erjesztési hatékonyság</translation>
+        <translation type="vanished">erjesztési hatékonyság</translation>
     </message>
     <message>
         <source>Id</source>
-        <translation>Sorszám</translation>
+        <translation type="vanished">Sorszám</translation>
     </message>
     <message>
         <source>Flocculation</source>
-        <translation>ülepedés</translation>
+        <translation type="vanished">ülepedés</translation>
     </message>
     <message>
         <source>Miscs</source>
@@ -5138,36 +5398,62 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="unfinished">Recept</translation>
     </message>
     <message>
-        <source>Ca</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Na</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add During</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecipeTableModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Név</translation>
+    </message>
+</context>
+<context>
+    <name>RecipeTreeView</name>
+    <message>
+        <source>Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detach Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snapshot Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew It!</source>
+        <translation type="unfinished">Kezdődjön a főzés!</translation>
+    </message>
+    <message>
+        <source>Brew Again</source>
+        <translation type="unfinished">Ismét főzni</translation>
+    </message>
+    <message>
+        <source>Change date</source>
+        <translation type="unfinished">Változtatás időpontja</translation>
+    </message>
+    <message>
+        <source>Recalculate eff</source>
+        <translation type="unfinished">Hatékonyság újraszámolása</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">Törlés</translation>
     </message>
 </context>
 <context>
@@ -5348,13 +5634,6 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
 </context>
 <context>
-    <name>StepClass</name>
-    <message>
-        <source>Add %1 step to recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>StepExtended</name>
     <message>
         <source>Extended Step</source>
@@ -5414,6 +5693,18 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Guide</source>
         <translation type="unfinished">Útmutató</translation>
+    </message>
+    <message>
+        <source>Styles</source>
+        <translation type="unfinished">Stílusok</translation>
+    </message>
+    <message>
+        <source>Code</source>
+        <translation type="unfinished">Kód</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5696,136 +5987,100 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <source>FULLPATH</source>
         <translation type="obsolete">Teljes útvonal</translation>
     </message>
-    <message>
-        <source>Could not copy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>There was an unexpected error creating %1</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>TreeView</name>
     <message>
         <source>New</source>
-        <translation type="unfinished">Új</translation>
+        <translation type="obsolete">Új</translation>
     </message>
     <message>
         <source>Recipe</source>
-        <translation type="unfinished">Recept</translation>
-    </message>
-    <message>
-        <source>Show Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Detach Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Snapshot Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Recept</translation>
     </message>
     <message>
         <source>Brew It!</source>
-        <translation type="unfinished">Kezdődjön a főzés!</translation>
+        <translation type="obsolete">Kezdődjön a főzés!</translation>
     </message>
     <message>
         <source>Brew Again</source>
-        <translation type="unfinished">Ismét főzni</translation>
+        <translation type="obsolete">Ismét főzni</translation>
     </message>
     <message>
         <source>Change date</source>
-        <translation type="unfinished">Változtatás időpontja</translation>
+        <translation type="obsolete">Változtatás időpontja</translation>
     </message>
     <message>
         <source>Recalculate eff</source>
-        <translation type="unfinished">Hatékonyság újraszámolása</translation>
+        <translation type="obsolete">Hatékonyság újraszámolása</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Törlés</translation>
+        <translation type="obsolete">Törlés</translation>
     </message>
     <message>
         <source>Equipment</source>
-        <translation type="unfinished">Felszerelés</translation>
+        <translation type="obsolete">Felszerelés</translation>
     </message>
     <message>
         <source>Fermentable</source>
-        <translation type="unfinished">Erjeszthető alapanyag</translation>
+        <translation type="obsolete">Erjeszthető alapanyag</translation>
     </message>
     <message>
         <source>Hop</source>
-        <translation type="unfinished">Komló</translation>
+        <translation type="obsolete">Komló</translation>
     </message>
     <message>
         <source>Misc</source>
-        <translation type="unfinished">Egyéb</translation>
+        <translation type="obsolete">Egyéb</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished">Stílus</translation>
-    </message>
-    <message>
-        <source>Yeast</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Water</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Stílus</translation>
     </message>
     <message>
         <source>Folder</source>
-        <translation type="unfinished">Mappa</translation>
+        <translation type="obsolete">Mappa</translation>
     </message>
     <message>
         <source>Copy</source>
-        <translation type="unfinished">Másolás</translation>
+        <translation type="obsolete">Másolás</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="unfinished">Exportálás</translation>
-    </message>
-    <message>
-        <source>To File (BeerXML or BeerJSON)</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Exportálás</translation>
     </message>
     <message>
         <source>Import</source>
-        <translation type="unfinished">Importálás</translation>
+        <translation type="obsolete">Importálás</translation>
     </message>
     <message>
         <source>Cancel All</source>
-        <translation type="unfinished">Összes Visszavonása</translation>
+        <translation type="obsolete">Összes Visszavonása</translation>
     </message>
     <message>
         <source>Copy %1</source>
-        <translation type="unfinished">Másolás %1</translation>
+        <translation type="obsolete">Másolás %1</translation>
     </message>
     <message>
         <source>Enter a unique name for the copy of %1.</source>
-        <translation type="unfinished">A következő fájl másolatának adj egyedi nevet %1</translation>
+        <translation type="obsolete">A következő fájl másolatának adj egyedi nevet %1</translation>
     </message>
     <message>
         <source>An empty name will skip copying this %1.</source>
-        <translation type="unfinished">Üres név esetén %1 nem lesz lemásolva.</translation>
+        <translation type="obsolete">Üres név esetén %1 nem lesz lemásolva.</translation>
     </message>
     <message>
         <source>Delete %1</source>
-        <translation type="unfinished">Törlés %1</translation>
+        <translation type="obsolete">Törlés %1</translation>
     </message>
     <message>
         <source>Delete %1 %2?</source>
-        <translation type="unfinished">Törlés °%1 %2?</translation>
+        <translation type="obsolete">Törlés °%1 %2?</translation>
     </message>
     <message>
         <source>BrewNote</source>
-        <translation type="unfinished">Megjegyzés</translation>
+        <translation type="obsolete">Megjegyzés</translation>
     </message>
 </context>
 <context>
@@ -5906,6 +6161,18 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>pH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Waters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6171,6 +6438,26 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <source>Product ID</source>
         <translation type="unfinished">Termékazonosító</translation>
     </message>
+    <message>
+        <source>Yeasts</source>
+        <translation type="unfinished">Élesztők</translation>
+    </message>
+    <message>
+        <source>Lab</source>
+        <translation type="unfinished">Labor</translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="unfinished">erjesztési hatékonyság</translation>
+    </message>
+    <message>
+        <source>Id</source>
+        <translation type="unfinished">Sorszám</translation>
+    </message>
+    <message>
+        <source>Flocculation</source>
+        <translation type="unfinished">ülepedés</translation>
+    </message>
 </context>
 <context>
     <name>YeastDialog</name>
@@ -6350,16 +6637,28 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="unfinished">Megjegyzések</translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Új</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Mentés</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Mégsem</translation>
     </message>
 </context>
 <context>
@@ -7059,6 +7358,34 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <source>This is also known as the batch size.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Internal Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening Diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Új</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Mentés</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Mégsem</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>fermentableEditor</name>
@@ -7366,6 +7693,18 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <source>Grain Group</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Új</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Mentés</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Mégsem</translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -7390,16 +7729,28 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="unfinished">Megjegyzések</translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Új</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Mentés</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Mégsem</translation>
     </message>
 </context>
 <context>
@@ -7835,28 +8186,40 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Új</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Mentés</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Mégsem</translation>
+    </message>
 </context>
 <context>
     <name>instructionWidget</name>
     <message>
         <source>Form</source>
-        <translation>Forma</translation>
+        <translation type="vanished">Forma</translation>
     </message>
     <message>
         <source>Show a timer</source>
-        <translation>Időzítő megjelenítése</translation>
+        <translation type="vanished">Időzítő megjelenítése</translation>
     </message>
     <message>
         <source>Show timer</source>
-        <translation>Időzítő megjelenítése</translation>
+        <translation type="vanished">Időzítő megjelenítése</translation>
     </message>
     <message>
         <source>Mark this step completed</source>
-        <translation>Befejezett lépés</translation>
+        <translation type="vanished">Befejezett lépés</translation>
     </message>
     <message>
         <source>Step completed</source>
-        <translation>Befejezett lépés</translation>
+        <translation type="vanished">Befejezett lépés</translation>
     </message>
 </context>
 <context>
@@ -8231,7 +8594,7 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>&amp;Copy Recipe</source>
-        <translation>&amp;Recept másolás</translation>
+        <translation type="vanished">&amp;Recept másolás</translation>
     </message>
     <message>
         <source>Pr&amp;iming Calculator</source>
@@ -8538,7 +8901,11 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>(See Boil tab below)</source>
+        <source>See Boil tab below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Copy Selected Item(s)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8953,10 +9320,6 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="unfinished">Megjegyzések</translation>
     </message>
     <message>
-        <source>New misc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8987,6 +9350,18 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Új</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Mentés</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Mégsem</translation>
     </message>
 </context>
 <context>
@@ -9883,15 +10258,15 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="vanished">Új</translation>
+        <translation>Új</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="vanished">Mentés</translation>
+        <translation>Mentés</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Mégsem</translation>
+        <translation>Mégsem</translation>
     </message>
     <message>
         <source>Main</source>
@@ -9935,6 +10310,14 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Overall Impression</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10114,16 +10497,28 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New hop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discard and close</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Új</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Mentés</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Mégsem</translation>
     </message>
 </context>
 <context>
@@ -10231,14 +10626,6 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Very High</source>
         <translation type="vanished">Nagyon magas</translation>
-    </message>
-    <message>
-        <source>Times Recultured</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Times this yeast has been recultured</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Max Recultures</source>
@@ -10387,6 +10774,18 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Új</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Mentés</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Mégsem</translation>
     </message>
 </context>
 </TS>

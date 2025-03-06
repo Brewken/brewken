@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * undoRedo/UndoableAddOrRemove.h is part of Brewken, and is copyright the following authors 2020-2022:
+ * undoRedo/UndoableAddOrRemove.h is part of Brewken, and is copyright the following authors 2020-2024:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef UNDOABLE_ADD_OR_REMOVE_H
-#define UNDOABLE_ADD_OR_REMOVE_H
+#ifndef UNDOREDO_UNDOABLEADDORREMOVE_H
+#define UNDOREDO_UNDOABLEADDORREMOVE_H
 #pragma once
 
 #include <memory>
@@ -27,6 +27,7 @@
 #include <QUndoCommand>
 
 #include "database/ObjectStoreWrapper.h"
+#include "Logging.h"
 
 class MainWindow;
 
@@ -148,6 +149,8 @@ private:
             Q_FUNC_INFO << (this->everDone ? "Redo" : "Do" ) << this->text() << "for " <<
             this->whatToAddOrRemove->metaObject()->className() << "#" << this->whatToAddOrRemove->key() << "(" <<
             this->whatToAddOrRemove->name() << ")";
+         // Normally leave the next line commented out as it generates a lot of logging
+//         qDebug().noquote() << Q_FUNC_INFO << Logging::getStackTrace();
 
          this->whatToAddOrRemove = (this->updatee.*(this->doer))(this->whatToAddOrRemove);
          qDebug() <<

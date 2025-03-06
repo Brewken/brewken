@@ -28,7 +28,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::RecipeAdditionHop { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::RecipeAdditionHop { inline BtStringConst const property{#property}; }
 AddPropertyName(hop)
 AddPropertyName(use) // Deprecated - retained only for BeerXML
 
@@ -132,18 +132,14 @@ public:
     */
    bool isAroma() const;
 
-///   virtual Recipe * getOwningRecipe() const;
-
-   virtual NamedEntity * ensureExists(BtStringConst const & property);
+   virtual NamedEntity * ensureExists(BtStringConst const & property) override;
 
 protected:
    // Note that we don't override isEqualTo, as we don't have any non-inherited member variables
-   virtual ObjectStore & getObjectStoreTypedInstance() const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const override;
 
 };
 
-Q_DECLARE_METATYPE(Hop)
-Q_DECLARE_METATYPE(Hop *)
 BT_DECLARE_METATYPES(RecipeAdditionHop)
 
 #endif

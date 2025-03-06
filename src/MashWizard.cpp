@@ -37,6 +37,11 @@
 #include "model/MashStep.h"
 #include "PhysicalConstants.h"
 
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_MashWizard.cpp"
+#endif
+
 MashWizard::MashWizard(QWidget* parent) :
    QDialog(parent),
    m_recObs{nullptr},
@@ -193,7 +198,7 @@ void MashWizard::wizardry() {
    // Find any batch sparges and remove them
    for (auto step : steps) {
       if (step->isSparge()) {
-         mash->removeStep(step);
+         mash->remove(step);
       } else {
          tmp.append(step);
       }

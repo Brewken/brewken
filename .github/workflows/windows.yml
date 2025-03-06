@@ -48,7 +48,6 @@ jobs:
           # As of January 2024, some of the 32-bit MSYS2 packages/groups we were previously relying on previously are no
           # longer available.  So now, we only build 64-bit packages (x86_64 architecture) on Windows.
           { msystem: MINGW64, arch: x86_64 },
-          #{ msystem: MINGW32, arch: i686 }
         ]
     steps:
 
@@ -115,6 +114,8 @@ jobs:
       #       python get-pip.py
       #       python -m pip install -U --force-reinstall pip
       #    See https://stackoverflow.com/questions/48087004/installing-pip-on-msys for more discussion on this.
+      #    HOWEVER, as of 2024-11-08, this gives an error that "This environment is externally managed" and we're
+      #    directed to use pacman.
       #
       - name: Install Frameworks and Libraries, and set up Meson build environment
         shell: msys2 {0}
@@ -128,10 +129,11 @@ jobs:
           echo "Installed pip is:"
           which pip
           pip --version
-          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-          python get-pip.py
-          python -m pip install -U --force-reinstall pip
-          pip --version
+          #curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          #python get-pip.py
+          #python -m pip install -U --force-reinstall pip
+          #pip --version
+          echo $PATH
           echo "Locale:"
           locale
           export PYTHONIOENCODING=utf8

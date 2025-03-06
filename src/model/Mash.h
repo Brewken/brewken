@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Mash.h is part of Brewken, and is copyright the following authors 2009-2024:
+ * model/Mash.h is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Kregg Kemper <gigatropolis@yahoo.com>
@@ -34,30 +34,27 @@
 
 #include "model/FolderBase.h"
 #include "model/NamedEntity.h"
+#include "model/MashStep.h"
 #include "model/StepOwnerBase.h"
 
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::Mash { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::Mash { inline BtStringConst const property{#property}; }
 AddPropertyName(equipAdjust              )
 AddPropertyName(grainTemp_c              )
-AddPropertyName(mashSteps                )
+///AddPropertyName(mashSteps                )
 AddPropertyName(mashTunSpecificHeat_calGC)
 AddPropertyName(mashTunWeight_kg         )
 AddPropertyName(notes                    )
 AddPropertyName(ph                       )
 AddPropertyName(spargeTemp_c             )
 AddPropertyName(totalMashWater_l         )
-AddPropertyName(totalTime                )
+AddPropertyName(totalTime_mins           )
 AddPropertyName(tunTemp_c                )
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
 //======================================================================================================================
-
-
-// Forward declarations.
-class MashStep;
 
 /*!
  * \class Mash
@@ -73,6 +70,11 @@ class Mash : public NamedEntity,
    Q_OBJECT
    FOLDER_BASE_DECL(Mash)
    STEP_OWNER_COMMON_DECL(Mash, mash)
+   // See model/FolderBase.h for info, getters and setters for these properties
+   Q_PROPERTY(QString folderPath        READ folderPath        WRITE setFolderPath)
+   // See model/StepOwnerBase.h for info, getters and setters for these properties
+   Q_PROPERTY(QList<std::shared_ptr<MashStep>> steps   READ steps   WRITE setSteps   STORED false)
+   Q_PROPERTY(unsigned int numSteps   READ numSteps   STORED false)
 
 public:
    /**
@@ -94,8 +96,6 @@ public:
    virtual ~Mash();
 
    //=================================================== PROPERTIES ====================================================
-   //! \brief Folder.  See model/FolderBase for implementation of the getter & setter.
-   Q_PROPERTY(QString folder READ folder WRITE setFolder)
    //! \brief The initial grain temp in Celsius.
    Q_PROPERTY(double                grainTemp_c               READ grainTemp_c               WRITE setGrainTemp_c  )
    //! \brief The notes.
@@ -115,9 +115,7 @@ public:
    //! \brief The total water that went into the mash (ie all the mash water, sparge and strike) in liters. Calculated.
    Q_PROPERTY(double                totalMashWater_l          READ totalMashWater_l  STORED false )
    //! \brief The total mash time in minutes. Calculated.
-   Q_PROPERTY(double                totalTime                 READ totalTime  STORED false )
-   //! \brief The individual mash steps.
-   Q_PROPERTY(QList<std::shared_ptr<MashStep>>    mashSteps         READ mashSteps         WRITE setMashSteps         STORED false )
+   Q_PROPERTY(double                totalTime_mins            READ totalTime_mins    STORED false )
 
    // ⮜⮜⮜ BeerJSON support does not require any additional properties on this class! ⮞⮞⮞
 
@@ -142,13 +140,13 @@ public:
    void setEquipAdjust              (bool                  const   val);
 
    // Calculated getters
-   unsigned int numMashSteps() const;
+///   unsigned int numMashSteps() const;
    double totalMashWater_l() const;
    //! \brief all the infusion water, excluding sparge
    double totalInfusionAmount_l() const;
    //! \brief all the sparge water
    double totalSpargeAmount_l() const;
-   double totalTime();
+   double totalTime_mins() const;
 
    bool hasSparge() const;
 
@@ -160,8 +158,8 @@ signals:
    void stepsChanged();
 
 protected:
-   virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual ObjectStore & getObjectStoreTypedInstance() const;
+   virtual bool isEqualTo(NamedEntity const & other) const override;
+   virtual ObjectStore & getObjectStoreTypedInstance() const override;
 
 private:
    double                m_grainTemp_c              ;

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Folder.cpp is part of Brewken, and is copyright the following authors 2009-2024:
+ * model/Folder.cpp is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -20,7 +20,16 @@
 #include <QDebug>
 #include <QString>
 
-Folder::Folder() : QObject() {
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_Folder.cpp"
+#endif
+
+QString Folder::localisedName() { return tr("Folder"); }
+
+Folder::Folder(QString const & fullPath) :
+   QObject{},
+   m_fullPath{fullPath} {
    setObjectName("Folder");
    return;
 }
@@ -56,11 +65,7 @@ void Folder::setPath(QString var) {
 
 // changing the full path necessarily changes the name and the path
 void Folder::setfullPath(QString var) {
-#if QT_VERSION < QT_VERSION_CHECK(5,15,0)
-   QStringList pieces = var.split("/", QString::SkipEmptyParts);
-#else
    QStringList pieces = var.split("/", Qt::SkipEmptyParts);
-#endif
 
    if (!pieces.isEmpty()) {
       m_name = pieces.last();

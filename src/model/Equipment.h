@@ -33,7 +33,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::Equipment { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::Equipment { inline BtStringConst const property{#property}; }
 AddPropertyName(agingVesselLoss_l          )
 AddPropertyName(agingVesselNotes           )
 AddPropertyName(agingVesselType            )
@@ -125,6 +125,8 @@ class Equipment : public NamedEntity,
                   public FolderBase<Equipment> {
    Q_OBJECT
    FOLDER_BASE_DECL(Equipment)
+   // See model/FolderBase.h for info, getters and setters for these properties
+   Q_PROPERTY(QString folderPath        READ folderPath        WRITE setFolderPath)
 
 public:
    /**
@@ -160,8 +162,6 @@ public:
    //! @}
 
    //=================================================== PROPERTIES ====================================================
-   //! \brief Folder.  See model/FolderBase for implementation of the getter & setter.
-   Q_PROPERTY(QString folder READ folder WRITE setFolder)
    /**
     * \brief The boil size in liters: the pre-boil volume used in this particular instance for this equipment setup.
     *        Note that this may be a calculated value depending on the calcBoilVolume property.
@@ -199,7 +199,8 @@ public:
     *        The amount of top up water normally added just prior to starting fermentation.  Usually used for extract
     *        brewing.
     *
-    *        Note this is not stored in BeerJSON.  .:TBD.JSON:. Does this become part of the Recipe?
+    *        Note this is not stored in BeerJSON.  Instead, all water top-ups are part of the Recipe to which they
+    *        relate.  See \c RecipeUseOfWater
     */
    Q_PROPERTY(std::optional<double> topUpWater_l          READ topUpWater_l          WRITE setTopUpWater_l          )
    /**
@@ -255,6 +256,9 @@ public:
    /**
     * \brief The kettle top up in liters.                                       ⮜⮜⮜ Optional in BeerXML.  Not supported in BeerJSON. ⮞⮞⮞
     *        Amount normally added to the boil kettle before the boil.
+    *
+    *        Note this is not stored in BeerJSON.  Instead, all water top-ups are part of the Recipe to which they
+    *        relate.  See \c RecipeUseOfWater
     */
    Q_PROPERTY(std::optional<double>  topUpKettle_l         READ topUpKettle_l         WRITE setTopUpKettle_l         )
    /**
@@ -457,13 +461,11 @@ public:
    //! \brief Calculate how much wort is left immediately at knockout.
    double wortEndOfBoil_l( double kettleWort_l ) const;
 
-///   virtual Recipe * getOwningRecipe() const;
-
 signals:
 
 protected:
-   virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual ObjectStore & getObjectStoreTypedInstance() const;
+   virtual bool isEqualTo(NamedEntity const & other) const override;
+   virtual ObjectStore & getObjectStoreTypedInstance() const override;
 
 private:
    double                m_kettleBoilSize_l          ;
@@ -515,9 +517,6 @@ private:
    QString               m_fermenterNotes             ;
    QString               m_agingVesselNotes           ;
    QString               m_packagingVesselNotes       ;
-
-
-
 
    // Calculate the boil size.
    void doCalculations();

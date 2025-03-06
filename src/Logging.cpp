@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * Logging.cpp is part of Brewken, and is copyright the following authors 2009-2024:
+ * Logging.cpp is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
@@ -20,6 +20,7 @@
 
 #include <sstream>      // For std::ostringstream
 
+//#include <stacktrace>
 #include <boost/stacktrace.hpp>
 
 #include <QApplication>
@@ -34,13 +35,6 @@
 
 #include "config.h"
 #include "PersistentSettings.h"
-
-// Qt has changed how you do endl in writing to a QTextStream
-#if QT_VERSION < QT_VERSION_CHECK(5,14,0)
-#define END_OF_LINE endl
-#else
-#define END_OF_LINE Qt::endl
-#endif
 
 //
 // Anonymous namespace for constants, global variables and functions used only in this file
@@ -131,8 +125,8 @@ namespace {
                                                      .arg(message);
       QMutexLocker locker(&mutex);
       if (isLoggingToStderr ||
-          forceStderrLogging) { errStream << logEntry << END_OF_LINE; }
-      if (stream)             {   *stream << logEntry << END_OF_LINE; }
+          forceStderrLogging) { errStream << logEntry << Qt::endl; }
+      if (stream)             {   *stream << logEntry << Qt::endl; }
       return;
    }
 
@@ -201,7 +195,7 @@ namespace {
          if (!renameLogFileWithTimestamp(logDirectory)) {
             errStream <<
                "Could not rename the log file " << logFileFullName() << " in directory " <<
-               logDirectory.absolutePath() << END_OF_LINE;
+               logDirectory.absolutePath() << Qt::endl;
          }
       }
 
@@ -476,14 +470,14 @@ bool Logging::setDirectory(std::optional<QDir> newDirectory, Logging::PersistNew
             if (!renameLogFileWithTimestamp(logDirectory)) {
                errStream <<
                   Q_FUNC_INFO << "Unable to rename " << fileName << " in directory " << logDirectory.absolutePath() <<
-                  END_OF_LINE;
+                  Qt::endl;
                return false;
             }
          }
          if (!logFile.rename(logDirectory.filePath(fileName))) {
             errStream <<
                Q_FUNC_INFO << "Unable to move " << fileName << " from " << oldDirectory.absolutePath() << " to " <<
-               logDirectory.absolutePath() << END_OF_LINE;
+               logDirectory.absolutePath() << Qt::endl;
             return false;
          }
       }
@@ -527,11 +521,17 @@ QString Logging::getStackTrace() {
    //
    // TBD: Once all our compilers have full C++23 support, we should look at switching to <stacktrace> in the standard
    //      library.
+   //      As at 2024-11-19, according to https://en.cppreference.com/w/cpp/compiler_support, Clang and Apple Clang do
+   //      not have support for <stacktrace> (and GCC needs to be version 14 to have support enabled by default.
    //
    std::ostringstream stacktrace;
    stacktrace << boost::stacktrace::stacktrace();
    QString returnValue;
    QTextStream returnValueAsStream(&returnValue);
+   // What we'd like to be able to write:
+//   returnValueAsStream << "\nStacktrace:\n" << QString::fromStdString( std::to_string(std::stacktrace::current()));
+   // What we use in the meantime:
    returnValueAsStream << "\nStacktrace:\n" << QString::fromStdString(stacktrace.str());
+
    return returnValue;
 }

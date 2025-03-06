@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * AncestorDialog.cpp is part of Brewken, and is copyright the following authors 2021-2023:
+ * AncestorDialog.cpp is part of Brewken, and is copyright the following authors 2021-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@fastmail.com>
  *
@@ -37,6 +37,11 @@
 #include "model/NamedEntity.h"
 #include "model/Recipe.h"
 
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_AncestorDialog.cpp"
+#endif
+
 AncestorDialog::AncestorDialog(QWidget * parent) : QDialog(parent) {
 
    setupUi(this);
@@ -70,7 +75,7 @@ void AncestorDialog::buildAncestorBox() {
    QList<Recipe *> recipes = ObjectStoreWrapper::getAllRaw<Recipe>();
    std::sort(recipes.begin(), recipes.end(), AncestorDialog::recipeLessThan);
 
-   foreach (Recipe * recipe, recipes) {
+   for (auto recipe : recipes) {
       if (recipe->display()) {
          comboBox_ancestor->addItem(recipe->name(), recipe->key());
       }
@@ -84,7 +89,7 @@ void AncestorDialog::buildDescendantBox(Recipe * ignore) {
    std::sort(recipes.begin(), recipes.end(), recipeLessThan);
 
    //  The rules of what can be a target are complex
-   foreach (Recipe * recipe, recipes) {
+   for (auto recipe : recipes) {
       // if we are ignoring the recipe, skip
       if (recipe == ignore) {
          continue;

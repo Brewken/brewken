@@ -25,6 +25,12 @@
 #include "database/ObjectStoreWrapper.h"
 #include "model/NamedParameterBundle.h"
 #include "PhysicalConstants.h"
+#include "utils/AutoCompare.h"
+
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_MashStep.cpp"
+#endif
 
 QString MashStep::localisedName() { return tr("Mash Step"); }
 
@@ -50,15 +56,18 @@ EnumStringMapping const MashStep::typeDisplayNames {
 
 
 bool MashStep::isEqualTo(NamedEntity const & other) const {
-   // Base class (NamedEntity) will have ensured this cast is valid
+   // NamedEntity::operator==() will have ensured this cast is valid
    MashStep const & rhs = static_cast<MashStep const &>(other);
    // Base class will already have ensured names are equal
    return (
-      this->m_type         == rhs.m_type         &&
-      this->m_amount_l     == rhs.m_amount_l     &&
-      this->m_infuseTemp_c == rhs.m_infuseTemp_c &&
+      AUTO_LOG_COMPARE(this, rhs, m_type        ) &&
+      AUTO_LOG_COMPARE(this, rhs, m_amount_l    ) &&
+      AUTO_LOG_COMPARE(this, rhs, m_infuseTemp_c) &&
       // Parent classes have to be equal too
-      this->Step::isEqualTo(other)
+      this->Step::isEqualTo(rhs) &&
+      this->StepBase<MashStep,
+                     Mash,
+                     MashStepOptions>::doIsEqualTo(rhs)
    );
 }
 
@@ -74,7 +83,8 @@ TypeLookup const MashStep::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::MashStep::liquorToGristRatio_lKg, MashStep::m_liquorToGristRatio_lKg, Measurement::PhysicalQuantity::SpecificVolume),
    },
    // Parent class lookup.  NB: Step not NamedEntity!
-   {&Step::typeLookup}
+   {&Step::typeLookup,
+    std::addressof(StepBase<MashStep, Mash, MashStepOptions>::typeLookup)}
 };
 static_assert(std::is_base_of<Step, MashStep>::value);
 
@@ -179,6 +189,9 @@ bool MashStep::isTemperature() const {
 bool MashStep::isDecoction() const {
    return (m_type == MashStep::Type::Decoction);
 }
+
+// Check that IsBaseClassTemplateOf is working
+static_assert(IsBaseClassTemplateOf<EnumeratedBase, MashStep>);
 
 // Insert boiler-plate wrapper functions that call down to StepBase
 STEP_COMMON_CODE(Mash)

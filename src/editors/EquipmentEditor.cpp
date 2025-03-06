@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/EquipmentEditor.cpp is part of Brewken, and is copyright the following authors 2009-2024:
+ * editors/EquipmentEditor.cpp is part of Brewken, and is copyright the following authors 2009-2025:
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • David Grundberg <individ@acc.umu.se>
@@ -41,6 +41,11 @@
 #include "PersistentSettings.h"
 #include "PhysicalConstants.h"
 
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_EquipmentEditor.cpp"
+#endif
+
 //
 // TODO: According to https://www.engineersedge.com/materials/specific_heat_capacity_of_metals_13259.htm, the specific
 // heat capacity of 304 grade stainless steel is 502.416 J/kg·K = 0.120080 c/g·C.  Would be nice to have a way for the
@@ -53,60 +58,71 @@ EquipmentEditor::EquipmentEditor(QWidget* parent, QString const editorName) :
    this->setupUi(this);
    this->tabWidget_editor->tabBar()->setStyle(new BtHorizontalTabs);
    this->postSetupUiInit({
-      EDITOR_FIELD_NORM(Equipment, label_name                    , lineEdit_name                    , NamedEntity::name                     ),
-      EDITOR_FIELD_NORM(Equipment, label_mashTunSpecificHeat     , lineEdit_mashTunSpecificHeat     , Equipment::mashTunSpecificHeat_calGC  ),
-      EDITOR_FIELD_NORM(Equipment, label_mashTunGrainAbsorption  , lineEdit_mashTunGrainAbsorption  , Equipment::mashTunGrainAbsorption_LKg ),
-      EDITOR_FIELD_NORM(Equipment, label_hopUtilization          , lineEdit_hopUtilization          , Equipment::hopUtilization_pct      , 0),
-      EDITOR_FIELD_NORM(Equipment, label_mashTunWeight           , lineEdit_mashTunWeight           , Equipment::mashTunWeight_kg           ),
-      EDITOR_FIELD_NORM(Equipment, label_boilingPoint            , lineEdit_boilingPoint            , Equipment::boilingPoint_c          , 1),
-      EDITOR_FIELD_NORM(Equipment, label_boilTime                , lineEdit_boilTime                , Equipment::boilTime_min               ),
-      EDITOR_FIELD_NORM(Equipment, label_fermenterBatchSize      , lineEdit_fermenterBatchSize      , Equipment::fermenterBatchSize_l       ),
-      EDITOR_FIELD_NORM(Equipment, label_kettleBoilSize          , lineEdit_kettleBoilSize          , Equipment::kettleBoilSize_l           ),
-      EDITOR_FIELD_NORM(Equipment, label_kettleEvaporationPerHour, lineEdit_kettleEvaporationPerHour, Equipment::kettleEvaporationPerHour_l ),
-      EDITOR_FIELD_NORM(Equipment, label_lauterTunDeadspaceLoss  , lineEdit_lauterTunDeadspaceLoss  , Equipment::lauterTunDeadspaceLoss_l   ),
-      EDITOR_FIELD_NORM(Equipment, label_topUpKettle             , lineEdit_topUpKettle             , Equipment::topUpKettle_l              ),
-      EDITOR_FIELD_NORM(Equipment, label_topUpWater              , lineEdit_topUpWater              , Equipment::topUpWater_l               ),
-      EDITOR_FIELD_NORM(Equipment, label_kettleTrubChillerLoss   , lineEdit_kettleTrubChillerLoss   , Equipment::kettleTrubChillerLoss_l    ),
-      EDITOR_FIELD_NORM(Equipment, label_mashTunVolume           , lineEdit_mashTunVolume           , Equipment::mashTunVolume_l            ),
+      EDITOR_FIELD_NORM(Equipment, label_name                    , lineEdit_name                    , NamedEntity::name                      ),
+      EDITOR_FIELD_NORM(Equipment, label_mashTunSpecificHeat     , lineEdit_mashTunSpecificHeat     , Equipment::mashTunSpecificHeat_calGC   ),
+      EDITOR_FIELD_NORM(Equipment, label_mashTunGrainAbsorption  , lineEdit_mashTunGrainAbsorption  , Equipment::mashTunGrainAbsorption_LKg  ),
+      EDITOR_FIELD_NORM(Equipment, label_hopUtilization          , lineEdit_hopUtilization          , Equipment::hopUtilization_pct       , 0),
+      EDITOR_FIELD_NORM(Equipment, label_mashTunWeight           , lineEdit_mashTunWeight           , Equipment::mashTunWeight_kg            ),
+      EDITOR_FIELD_NORM(Equipment, label_boilingPoint            , lineEdit_boilingPoint            , Equipment::boilingPoint_c           , 1),
+      EDITOR_FIELD_NORM(Equipment, label_boilTime                , lineEdit_boilTime                , Equipment::boilTime_min                ),
+      EDITOR_FIELD_NORM(Equipment, label_fermenterBatchSize      , lineEdit_fermenterBatchSize      , Equipment::fermenterBatchSize_l        ),
+      EDITOR_FIELD_NORM(Equipment, label_kettleBoilSize          , lineEdit_kettleBoilSize          , Equipment::kettleBoilSize_l            ),
+      EDITOR_FIELD_NORM(Equipment, label_kettleEvaporationPerHour, lineEdit_kettleEvaporationPerHour, Equipment::kettleEvaporationPerHour_l  ),
+      EDITOR_FIELD_NORM(Equipment, label_lauterTunDeadspaceLoss  , lineEdit_lauterTunDeadspaceLoss  , Equipment::lauterTunDeadspaceLoss_l    ),
+      EDITOR_FIELD_NORM(Equipment, label_topUpKettle             , lineEdit_topUpKettle             , Equipment::topUpKettle_l               ),
+      EDITOR_FIELD_NORM(Equipment, label_topUpWater              , lineEdit_topUpWater              , Equipment::topUpWater_l                ),
+      EDITOR_FIELD_NORM(Equipment, label_kettleTrubChillerLoss   , lineEdit_kettleTrubChillerLoss   , Equipment::kettleTrubChillerLoss_l     ),
+      EDITOR_FIELD_NORM(Equipment, label_mashTunVolume           , lineEdit_mashTunVolume           , Equipment::mashTunVolume_l             ),
       // ⮜⮜⮜ All below added for BeerJSON support ⮞⮞⮞
-      EDITOR_FIELD_NORM(Equipment, label_hltType                 , lineEdit_hltType                 , Equipment::hltType                    ),
-      EDITOR_FIELD_NORM(Equipment, label_mashTunType             , lineEdit_mashTunType             , Equipment::mashTunType                ),
-      EDITOR_FIELD_NORM(Equipment, label_lauterTunType           , lineEdit_lauterTunType           , Equipment::lauterTunType              ),
-      EDITOR_FIELD_NORM(Equipment, label_kettleType              , lineEdit_kettleType              , Equipment::kettleType                 ),
-      EDITOR_FIELD_NORM(Equipment, label_fermenterType           , lineEdit_fermenterType           , Equipment::fermenterType              ),
-      EDITOR_FIELD_NORM(Equipment, label_agingVesselType         , lineEdit_agingVesselType         , Equipment::agingVesselType            ),
-      EDITOR_FIELD_NORM(Equipment, label_packagingVesselType     , lineEdit_packagingVesselType     , Equipment::packagingVesselType        ),
-      EDITOR_FIELD_NORM(Equipment, label_hltVolume               , lineEdit_hltVolume               , Equipment::hltVolume_l                ),
-      EDITOR_FIELD_NORM(Equipment, label_lauterTunVolume         , lineEdit_lauterTunVolume         , Equipment::lauterTunVolume_l          ),
-      EDITOR_FIELD_NORM(Equipment, label_agingVesselVolume       , lineEdit_agingVesselVolume       , Equipment::agingVesselVolume_l        ),
-      EDITOR_FIELD_NORM(Equipment, label_packagingVesselVolume   , lineEdit_packagingVesselVolume   , Equipment::packagingVesselVolume_l    ),
-      EDITOR_FIELD_NORM(Equipment, label_hltLoss                 , lineEdit_hltLoss                 , Equipment::hltLoss_l                  ),
-      EDITOR_FIELD_NORM(Equipment, label_mashTunLoss             , lineEdit_mashTunLoss             , Equipment::mashTunLoss_l              ),
-      EDITOR_FIELD_NORM(Equipment, label_fermenterLoss           , lineEdit_fermenterLoss           , Equipment::fermenterLoss_l            ),
-      EDITOR_FIELD_NORM(Equipment, label_agingVesselLoss         , lineEdit_agingVesselLoss         , Equipment::agingVesselLoss_l          ),
-      EDITOR_FIELD_NORM(Equipment, label_packagingVesselLoss     , lineEdit_packagingVesselLoss     , Equipment::packagingVesselLoss_l      ),
-      EDITOR_FIELD_NORM(Equipment, label_kettleOutflowPerMinute  , lineEdit_kettleOutflowPerMinute  , Equipment::kettleOutflowPerMinute_l   ),
-      EDITOR_FIELD_NORM(Equipment, label_hltWeight               , lineEdit_hltWeight               , Equipment::hltWeight_kg               ),
-      EDITOR_FIELD_NORM(Equipment, label_lauterTunWeight         , lineEdit_lauterTunWeight         , Equipment::lauterTunWeight_kg         ),
-      EDITOR_FIELD_NORM(Equipment, label_kettleWeight            , lineEdit_kettleWeight            , Equipment::kettleWeight_kg            ),
-      EDITOR_FIELD_NORM(Equipment, label_hltSpecificHeat         , lineEdit_hltSpecificHeat         , Equipment::hltSpecificHeat_calGC      ),
-      EDITOR_FIELD_NORM(Equipment, label_lauterTunSpecificHeat   , lineEdit_lauterTunSpecificHeat   , Equipment::lauterTunSpecificHeat_calGC),
-      EDITOR_FIELD_NORM(Equipment, label_kettleSpecificHeat      , lineEdit_kettleSpecificHeat      , Equipment::kettleSpecificHeat_calGC   ),
+      EDITOR_FIELD_NORM(Equipment, label_hltType                 , lineEdit_hltType                 , Equipment::hltType                     ),
+      EDITOR_FIELD_NORM(Equipment, label_mashTunType             , lineEdit_mashTunType             , Equipment::mashTunType                 ),
+      EDITOR_FIELD_NORM(Equipment, label_lauterTunType           , lineEdit_lauterTunType           , Equipment::lauterTunType               ),
+      EDITOR_FIELD_NORM(Equipment, label_kettleType              , lineEdit_kettleType              , Equipment::kettleType                  ),
+      EDITOR_FIELD_NORM(Equipment, label_fermenterType           , lineEdit_fermenterType           , Equipment::fermenterType               ),
+      EDITOR_FIELD_NORM(Equipment, label_agingVesselType         , lineEdit_agingVesselType         , Equipment::agingVesselType             ),
+      EDITOR_FIELD_NORM(Equipment, label_packagingVesselType     , lineEdit_packagingVesselType     , Equipment::packagingVesselType         ),
+      EDITOR_FIELD_NORM(Equipment, label_hltVolume               , lineEdit_hltVolume               , Equipment::hltVolume_l                 ),
+      EDITOR_FIELD_NORM(Equipment, label_lauterTunVolume         , lineEdit_lauterTunVolume         , Equipment::lauterTunVolume_l           ),
+      EDITOR_FIELD_NORM(Equipment, label_agingVesselVolume       , lineEdit_agingVesselVolume       , Equipment::agingVesselVolume_l         ),
+      EDITOR_FIELD_NORM(Equipment, label_packagingVesselVolume   , lineEdit_packagingVesselVolume   , Equipment::packagingVesselVolume_l     ),
+      EDITOR_FIELD_NORM(Equipment, label_hltLoss                 , lineEdit_hltLoss                 , Equipment::hltLoss_l                   ),
+      EDITOR_FIELD_NORM(Equipment, label_mashTunLoss             , lineEdit_mashTunLoss             , Equipment::mashTunLoss_l               ),
+      EDITOR_FIELD_NORM(Equipment, label_fermenterLoss           , lineEdit_fermenterLoss           , Equipment::fermenterLoss_l             ),
+      EDITOR_FIELD_NORM(Equipment, label_agingVesselLoss         , lineEdit_agingVesselLoss         , Equipment::agingVesselLoss_l           ),
+      EDITOR_FIELD_NORM(Equipment, label_packagingVesselLoss     , lineEdit_packagingVesselLoss     , Equipment::packagingVesselLoss_l       ),
+      EDITOR_FIELD_NORM(Equipment, label_kettleOutflowPerMinute  , lineEdit_kettleOutflowPerMinute  , Equipment::kettleOutflowPerMinute_l    ),
+      EDITOR_FIELD_NORM(Equipment, label_kettleInternalDiameter  , lineEdit_kettleInternalDiameter  , Equipment::kettleInternalDiameter_cm, 1),
+      EDITOR_FIELD_NORM(Equipment, label_kettleOpeningDiameter   , lineEdit_kettleOpeningDiameter   , Equipment::kettleOpeningDiameter_cm , 1),
+      EDITOR_FIELD_NORM(Equipment, label_hltWeight               , lineEdit_hltWeight               , Equipment::hltWeight_kg                ),
+      EDITOR_FIELD_NORM(Equipment, label_lauterTunWeight         , lineEdit_lauterTunWeight         , Equipment::lauterTunWeight_kg          ),
+      EDITOR_FIELD_NORM(Equipment, label_kettleWeight            , lineEdit_kettleWeight            , Equipment::kettleWeight_kg             ),
+      EDITOR_FIELD_NORM(Equipment, label_hltSpecificHeat         , lineEdit_hltSpecificHeat         , Equipment::hltSpecificHeat_calGC       ),
+      EDITOR_FIELD_NORM(Equipment, label_lauterTunSpecificHeat   , lineEdit_lauterTunSpecificHeat   , Equipment::lauterTunSpecificHeat_calGC ),
+      EDITOR_FIELD_NORM(Equipment, label_kettleSpecificHeat      , lineEdit_kettleSpecificHeat      , Equipment::kettleSpecificHeat_calGC    ),
    });
 
    // Connect all the boxen
-   connect(this->checkBox_showHlt                  , &QCheckBox::stateChanged    , this, &EquipmentEditor::hideOrShowOptionalVessels);
-   connect(this->checkBox_showLauterTun            , &QCheckBox::stateChanged    , this, &EquipmentEditor::hideOrShowOptionalVessels);
-   connect(this->checkBox_showAgingVessel          , &QCheckBox::stateChanged    , this, &EquipmentEditor::hideOrShowOptionalVessels);
-   connect(this->checkBox_showPackagingVessel      , &QCheckBox::stateChanged    , this, &EquipmentEditor::hideOrShowOptionalVessels);
-   connect(this->checkBox_defaultEquipment         , &QCheckBox::stateChanged    , this, &EquipmentEditor::updateDefaultEquipment   );
-   connect(this->checkBox_calcBoilVolume           , &QCheckBox::stateChanged    , this, &EquipmentEditor::updateCalcBoilVolume     );
-   connect(this->lineEdit_boilTime                 , &SmartLineEdit::textModified, this, &EquipmentEditor::updateCalcBoilVolume     );
-   connect(this->lineEdit_kettleEvaporationPerHour , &SmartLineEdit::textModified, this, &EquipmentEditor::updateCalcBoilVolume     );
-   connect(this->lineEdit_topUpWater               , &SmartLineEdit::textModified, this, &EquipmentEditor::updateCalcBoilVolume     );
-   connect(this->lineEdit_kettleTrubChillerLoss    , &SmartLineEdit::textModified, this, &EquipmentEditor::updateCalcBoilVolume     );
-   connect(this->lineEdit_fermenterBatchSize       , &SmartLineEdit::textModified, this, &EquipmentEditor::updateCalcBoilVolume     );
-   connect(this->pushButton_absorption             , &QAbstractButton::clicked   , this, &EquipmentEditor::resetAbsorption          );
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+   connect(this->checkBox_showHlt                  , &QCheckBox::checkStateChanged, this, &EquipmentEditor::hideOrShowOptionalVessels);
+   connect(this->checkBox_showLauterTun            , &QCheckBox::checkStateChanged, this, &EquipmentEditor::hideOrShowOptionalVessels);
+   connect(this->checkBox_showAgingVessel          , &QCheckBox::checkStateChanged, this, &EquipmentEditor::hideOrShowOptionalVessels);
+   connect(this->checkBox_showPackagingVessel      , &QCheckBox::checkStateChanged, this, &EquipmentEditor::hideOrShowOptionalVessels);
+   connect(this->checkBox_defaultEquipment         , &QCheckBox::checkStateChanged, this, &EquipmentEditor::updateDefaultEquipment   );
+   connect(this->checkBox_calcBoilVolume           , &QCheckBox::checkStateChanged, this, &EquipmentEditor::updateCalcBoilVolume     );
+#else
+   connect(this->checkBox_showHlt                  , &QCheckBox::stateChanged     , this, &EquipmentEditor::hideOrShowOptionalVessels);
+   connect(this->checkBox_showLauterTun            , &QCheckBox::stateChanged     , this, &EquipmentEditor::hideOrShowOptionalVessels);
+   connect(this->checkBox_showAgingVessel          , &QCheckBox::stateChanged     , this, &EquipmentEditor::hideOrShowOptionalVessels);
+   connect(this->checkBox_showPackagingVessel      , &QCheckBox::stateChanged     , this, &EquipmentEditor::hideOrShowOptionalVessels);
+   connect(this->checkBox_defaultEquipment         , &QCheckBox::stateChanged     , this, &EquipmentEditor::updateDefaultEquipment   );
+   connect(this->checkBox_calcBoilVolume           , &QCheckBox::stateChanged     , this, &EquipmentEditor::updateCalcBoilVolume     );
+#endif
+   connect(this->lineEdit_boilTime                 , &SmartLineEdit::textModified , this, &EquipmentEditor::updateCalcBoilVolume     );
+   connect(this->lineEdit_kettleEvaporationPerHour , &SmartLineEdit::textModified , this, &EquipmentEditor::updateCalcBoilVolume     );
+   connect(this->lineEdit_topUpWater               , &SmartLineEdit::textModified , this, &EquipmentEditor::updateCalcBoilVolume     );
+   connect(this->lineEdit_kettleTrubChillerLoss    , &SmartLineEdit::textModified , this, &EquipmentEditor::updateCalcBoilVolume     );
+   connect(this->lineEdit_fermenterBatchSize       , &SmartLineEdit::textModified , this, &EquipmentEditor::updateCalcBoilVolume     );
+   connect(this->pushButton_absorption             , &QAbstractButton::clicked    , this, &EquipmentEditor::resetAbsorption          );
 
    return;
 }
@@ -244,23 +260,26 @@ void EquipmentEditor::postReadFieldsFromEditItem([[maybe_unused]] std::optional<
 
 void EquipmentEditor::hideOrShowOptionalVessels() {
    QObject * sender = this->sender();
-   // Believe it or not, QTabWidget::setTabVisible was only introduced in Qt 5.15.  There were various ghastly
-   // workarounds prior to that - eg removing and re-adding the tab you want to hide/show.  But, since it's only Ubuntu
-   // 20.04 LTS running a too-old version of Qt (5.12.8), and we won't be supporting that forever, I'm just going to
-   // disable the tab instead (which greys out its contents) if Qt is too old.  It's not quite as good, but it's not
-   // hideous either IMHO.
-#if QT_VERSION < QT_VERSION_CHECK(5,15,0)
-   if (!sender || sender == this->checkBox_showHlt            ) { this->tab_hlt            ->setEnabled(this->checkBox_showHlt            ->isChecked()); if (sender) { return; } }
-   if (!sender || sender == this->checkBox_showLauterTun      ) { this->tab_lauterTun      ->setEnabled(this->checkBox_showLauterTun      ->isChecked()); if (sender) { return; } }
-   if (!sender || sender == this->checkBox_showAgingVessel    ) { this->tab_agingVessel    ->setEnabled(this->checkBox_showAgingVessel    ->isChecked()); if (sender) { return; } }
-   if (!sender || sender == this->checkBox_showPackagingVessel) { this->tab_packagingVessel->setEnabled(this->checkBox_showPackagingVessel->isChecked()); if (sender) { return; } }
-#else
-   if (!sender || sender == this->checkBox_showHlt            ) { this->tabWidget_editor->setTabVisible(this->tabWidget_editor->indexOf(this->tab_hlt            ), this->checkBox_showHlt            ->isChecked()); if (sender) { return; } }
-   if (!sender || sender == this->checkBox_showLauterTun      ) { this->tabWidget_editor->setTabVisible(this->tabWidget_editor->indexOf(this->tab_lauterTun      ), this->checkBox_showLauterTun      ->isChecked()); if (sender) { return; } }
-   if (!sender || sender == this->checkBox_showAgingVessel    ) { this->tabWidget_editor->setTabVisible(this->tabWidget_editor->indexOf(this->tab_agingVessel    ), this->checkBox_showAgingVessel    ->isChecked()); if (sender) { return; } }
-   if (!sender || sender == this->checkBox_showPackagingVessel) { this->tabWidget_editor->setTabVisible(this->tabWidget_editor->indexOf(this->tab_packagingVessel), this->checkBox_showPackagingVessel->isChecked()); if (sender) { return; } }
-#endif
-
+   if (!sender || sender == this->checkBox_showHlt            ) {
+      this->tabWidget_editor->setTabVisible(this->tabWidget_editor->indexOf(this->tab_hlt            ),
+                                            this->checkBox_showHlt            ->isChecked());
+      if (sender) { return; }
+   }
+   if (!sender || sender == this->checkBox_showLauterTun      ) {
+      this->tabWidget_editor->setTabVisible(this->tabWidget_editor->indexOf(this->tab_lauterTun      ),
+                                            this->checkBox_showLauterTun      ->isChecked());
+      if (sender) { return; }
+   }
+   if (!sender || sender == this->checkBox_showAgingVessel    ) {
+      this->tabWidget_editor->setTabVisible(this->tabWidget_editor->indexOf(this->tab_agingVessel    ),
+                                            this->checkBox_showAgingVessel    ->isChecked());
+      if (sender) { return; }
+   }
+   if (!sender || sender == this->checkBox_showPackagingVessel) {
+      this->tabWidget_editor->setTabVisible(this->tabWidget_editor->indexOf(this->tab_packagingVessel),
+                                            this->checkBox_showPackagingVessel->isChecked());
+      if (sender) { return; }
+   }
    return;
 }
 

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/RecipeAdditionFermentable.cpp is part of Brewken, and is copyright the following authors 2023-2024:
+ * model/RecipeAdditionFermentable.cpp is part of Brewken, and is copyright the following authors 2023-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -20,6 +20,11 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Boil.h"
 #include "model/BoilStep.h"
+
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_RecipeAdditionFermentable.cpp"
+#endif
 
 QString RecipeAdditionFermentable::localisedName() { return tr("Fermentable Addition"); }
 
@@ -65,7 +70,6 @@ RecipeAdditionFermentable::RecipeAdditionFermentable(NamedParameterBundle const 
    //
    m_stage = namedParameterBundle.val<RecipeAddition::Stage>(PropertyNames::RecipeAddition::stage,
                                                              RecipeAddition::Stage::Boil);
-///   qDebug() << Q_FUNC_INFO << "RecipeAdditionFermentable #" << this->key() << ": Recipe #" << this->m_recipeId << ", Fermentable #" << this->m_ingredientId;
 
    CONSTRUCTOR_END
    return;
@@ -92,13 +96,8 @@ Fermentable * RecipeAdditionFermentable::fermentable() const {
       return nullptr;
    }
 
-///   qDebug() << Q_FUNC_INFO << "RecipeAdditionFermentable #" << this->key() << ": Recipe #" << this->m_recipeId << ", Fermentable #" << this->m_ingredientId << "@" << ObjectStoreWrapper::getByIdRaw<Fermentable>(this->m_ingredientId);
    return ObjectStoreWrapper::getByIdRaw<Fermentable>(this->m_ingredientId);
 }
-
-///Recipe * RecipeAdditionFermentable::getOwningRecipe() const {
-///   return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
-///}
 
 NamedEntity * RecipeAdditionFermentable::ensureExists(BtStringConst const & property) {
    if (property == PropertyNames::RecipeAdditionFermentable::fermentable) {
@@ -163,6 +162,9 @@ double RecipeAdditionFermentable::equivSucrose_kg() const {
    }
    return ret;
 }
+
+// We rely on this being true in serialization/NamedEntityRecordBase.h, so let's check it at compile-time here
+static_assert(std::is_base_of<OwnedByRecipe, RecipeAdditionFermentable>::value);
 
 // Boilerplate code for IngredientAmount and RecipeAddition
 INGREDIENT_AMOUNT_COMMON_CODE(RecipeAdditionFermentable, Fermentable)

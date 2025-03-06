@@ -52,6 +52,11 @@
 #include "measurement/UnitSystem.h"
 #include "PersistentSettings.h"
 
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_OptionDialog.cpp"
+#endif
+
 //
 // Anonymous namespace for constants, global variables and functions used only in this file
 //
@@ -62,14 +67,6 @@ namespace {
       NEEDS_TEST,
       TEST_FAILED,
       TEST_PASSED
-   };
-
-   struct LanguageInfo {
-      QString            iso639_1Code;       // What we need to pass to Localization::setLanguage()
-      QIcon              countryFlag;        // Yes, we know some languages are spoken in more than one country...
-      char const    *    nameInEnglish;
-      QString            nameInCurrentLang;  // Don't strictly need to store this, but having the hard-coded tr() calls
-                                             // in the initialisation flag up what language names need translating
    };
 
    /**
@@ -112,59 +109,32 @@ public:
    /**
     * Constructor
     */
-   impl(OptionDialog & optionDialog) :
-      qFileDialog                {&optionDialog},
-      label_pgHostname           {optionDialog.groupBox_dbConfig},
-      input_pgHostname           {optionDialog.groupBox_dbConfig},
-      label_pgPortNum            {optionDialog.groupBox_dbConfig},
-      input_pgPortNum            {optionDialog.groupBox_dbConfig},
-      label_pgSchema             {optionDialog.groupBox_dbConfig},
-      input_pgSchema             {optionDialog.groupBox_dbConfig},
-      label_pgDbName             {optionDialog.groupBox_dbConfig},
-      input_pgDbName             {optionDialog.groupBox_dbConfig},
-      label_pgUsername           {optionDialog.groupBox_dbConfig},
-      input_pgUsername           {optionDialog.groupBox_dbConfig},
-      label_pgPassword           {optionDialog.groupBox_dbConfig},
-      input_pgPassword           {optionDialog.groupBox_dbConfig},
-      checkBox_savePgPassword    {optionDialog.groupBox_dbConfig},
-      label_userDataDir          {optionDialog.groupBox_dbConfig},
-      input_userDataDir          {optionDialog.groupBox_dbConfig},
-      pushButton_browseDataDir   {optionDialog.groupBox_dbConfig},
-      label_backupDir            {optionDialog.groupBox_dbConfig},
-      input_backupDir            {optionDialog.groupBox_dbConfig},
-      pushButton_browseBackupDir {optionDialog.groupBox_dbConfig},
-      label_numBackups           {optionDialog.groupBox_dbConfig},
-      spinBox_numBackups         {optionDialog.groupBox_dbConfig},
-      label_frequency            {optionDialog.groupBox_dbConfig},
-      spinBox_frequency          {optionDialog.groupBox_dbConfig},
-      languageInfo {
-         //
-         // See also CmakeLists.txt for list of translation source files (in ../translations directory)
-         //
-         {"ca", QIcon(":images/flagCatalonia.svg"),   "Catalan",          tr("Catalan")          },
-         {"cs", QIcon(":images/flagCzech.svg"),       "Czech",            tr("Czech")            },
-         {"da", QIcon(":images/flagDenmark.svg"),     "Danish",           tr("Danish")           },
-         {"de", QIcon(":images/flagGermany.svg"),     "German",           tr("German")           },
-         {"el", QIcon(":images/flagGreece.svg"),      "Greek",            tr("Greek")            },
-         {"en", QIcon(":images/flagUK.svg"),          "English",          tr("English")          },
-         {"es", QIcon(":images/flagSpain.svg"),       "Spanish",          tr("Spanish")          },
-         {"et", QIcon(":images/flagEstonia.svg"),     "Estonian",         tr("Estonian")         },
-         {"eu", QIcon(":images/flagBasque.svg"),      "Basque",           tr("Basque")           },
-         {"fr", QIcon(":images/flagFrance.svg"),      "French",           tr("French")           },
-         {"gl", QIcon(":images/flagGalicia.svg"),     "Galician",         tr("Galician")         },
-         {"hu", QIcon(":images/flagHungary.svg"),     "Hungarian",        tr("Hungarian")        },
-         {"it", QIcon(":images/flagItaly.svg"),       "Italian",          tr("Italian")          },
-         {"lv", QIcon(":images/flagLatvia.svg"),      "Latvian",          tr("Latvian")          },
-         {"nb", QIcon(":images/flagNorway.svg"),      "Norwegian Bokmål", tr("Norwegian Bokmål") },
-         {"nl", QIcon(":images/flagNetherlands.svg"), "Dutch",            tr("Dutch")            },
-         {"pl", QIcon(":images/flagPoland.svg"),      "Polish",           tr("Polish")           },
-         {"pt", QIcon(":images/flagBrazil.svg"),      "Portuguese",       tr("Portuguese")       },
-         {"ru", QIcon(":images/flagRussia.svg"),      "Russian",          tr("Russian")          },
-         {"sr", QIcon(":images/flagSerbia.svg"),      "Serbian",          tr("Serbian")          },
-         {"sv", QIcon(":images/flagSweden.svg"),      "Swedish",          tr("Swedish")          },
-         {"tr", QIcon(":images/flagTurkey.svg"),      "Turkish",          tr("Turkish")          },
-         {"zh", QIcon(":images/flagChina.svg"),       "Chinese",          tr("Chinese")          }
-      } {
+   impl(OptionDialog & self) :
+      m_self                     {self},
+      qFileDialog                {&self},
+      label_pgHostname           {self.groupBox_dbConfig},
+      input_pgHostname           {self.groupBox_dbConfig},
+      label_pgPortNum            {self.groupBox_dbConfig},
+      input_pgPortNum            {self.groupBox_dbConfig},
+      label_pgSchema             {self.groupBox_dbConfig},
+      input_pgSchema             {self.groupBox_dbConfig},
+      label_pgDbName             {self.groupBox_dbConfig},
+      input_pgDbName             {self.groupBox_dbConfig},
+      label_pgUsername           {self.groupBox_dbConfig},
+      input_pgUsername           {self.groupBox_dbConfig},
+      label_pgPassword           {self.groupBox_dbConfig},
+      input_pgPassword           {self.groupBox_dbConfig},
+      checkBox_savePgPassword    {self.groupBox_dbConfig},
+      label_userDataDir          {self.groupBox_dbConfig},
+      input_userDataDir          {self.groupBox_dbConfig},
+      pushButton_browseDataDir   {self.groupBox_dbConfig},
+      label_backupDir            {self.groupBox_dbConfig},
+      input_backupDir            {self.groupBox_dbConfig},
+      pushButton_browseBackupDir {self.groupBox_dbConfig},
+      label_numBackups           {self.groupBox_dbConfig},
+      spinBox_numBackups         {self.groupBox_dbConfig},
+      label_frequency            {self.groupBox_dbConfig},
+      spinBox_frequency          {self.groupBox_dbConfig} {
       //
       // Optimise the select file dialog to select directories
       //
@@ -214,10 +184,20 @@ public:
       return;
    }
 
-   void initLangs(OptionDialog & optionDialog) {
+   void retranslateLanguageComboBox() {
+      QVector<Localization::LanguageInfo> const & languageInfos {Localization::languageInfo()};
+      for (int ii = 0; ii < languageInfos.size(); ++ii) {
+         QString nameInCurrentLang = tr(languageInfos[ii].nameInEnglish);
+         this->m_self.comboBox_lang->setItemText(ii, nameInCurrentLang);
+      }
+      return;
+   }
 
-      for (auto langInfo : this->languageInfo) {
-         optionDialog.comboBox_lang->addItem(langInfo.countryFlag, langInfo.nameInCurrentLang, langInfo.iso639_1Code);
+   void initLangs() {
+      QVector<Localization::LanguageInfo> const & languageInfos {Localization::languageInfo()};
+      for (auto langInfo : languageInfos) {
+         QString nameInCurrentLang = tr(langInfo.nameInEnglish);
+         this->m_self.comboBox_lang->addItem(langInfo.countryFlag, nameInCurrentLang, langInfo.iso639_1Code);
       }
 
       //
@@ -230,7 +210,7 @@ public:
       // RangedSlider.cpp.  But in the meantime, hopefully 36 wide × 24 high is an OK compromise for the various
       // different screen resolutions commonly in use.
       //
-      optionDialog.comboBox_lang->setIconSize(QSize(36, 24));
+      this->m_self.comboBox_lang->setIconSize(QSize(36, 24));
 
       return;
    }
@@ -240,7 +220,7 @@ public:
     */
    ~impl() = default;
 
-   void postgresVisible(bool canSee) {
+   void postgresVisible(bool const canSee) {
       this->label_pgHostname.setVisible(canSee);
       this->input_pgHostname.setVisible(canSee);
       this->label_pgPortNum.setVisible(canSee);
@@ -258,7 +238,7 @@ public:
       return;
    }
 
-   void sqliteVisible(bool canSee) {
+   void sqliteVisible(bool const canSee) {
       this->label_userDataDir.setVisible(canSee);
       this->input_userDataDir.setVisible(canSee);
       this->pushButton_browseDataDir.setVisible(canSee);
@@ -272,14 +252,13 @@ public:
       return;
    }
 
-
    /**
     *
     */
-   void clearLayout(OptionDialog & optionDialog) {
+   void clearLayout() {
       QLayoutItem * child;
-      while ((child = optionDialog.gridLayout->takeAt(0)) != nullptr) {
-         optionDialog.gridLayout->removeItem(child);
+      while ((child = this->m_self.gridLayout->takeAt(0)) != nullptr) {
+         this->m_self.gridLayout->removeItem(child);
       }
       return;
    }
@@ -287,58 +266,57 @@ public:
    /**
     * Determine which set of DB config params to show, based on whether PostgresSQL or SQLite is selected
     */
-   void setDbDialog(OptionDialog & optionDialog, Database::DbType db) {
+   void setDbDialog(Database::DbType db) {
       qDebug() <<
          Q_FUNC_INFO << "Set " << (db == Database::DbType::PGSQL ? "PostgresSQL" : "SQLite") << " config params visible";
-      optionDialog.groupBox_dbConfig->setVisible(false);
+      this->m_self.groupBox_dbConfig->setVisible(false);
 
-      this->clearLayout(optionDialog);
+      this->clearLayout();
       if (db == Database::DbType::PGSQL) {
          this->postgresVisible(true);
          this->sqliteVisible(false);
 
-         optionDialog.gridLayout->addWidget(&this->label_pgHostname, 0, 0);
-         optionDialog.gridLayout->addWidget(&this->input_pgHostname, 0, 1, 1, 2);
+         this->m_self.gridLayout->addWidget(&this->label_pgHostname, 0, 0);
+         this->m_self.gridLayout->addWidget(&this->input_pgHostname, 0, 1, 1, 2);
 
-         optionDialog.gridLayout->addWidget(&this->label_pgPortNum, 0, 3);
-         optionDialog.gridLayout->addWidget(&this->input_pgPortNum, 0, 4);
+         this->m_self.gridLayout->addWidget(&this->label_pgPortNum, 0, 3);
+         this->m_self.gridLayout->addWidget(&this->input_pgPortNum, 0, 4);
 
-         optionDialog.gridLayout->addWidget(&this->label_pgSchema, 1, 0);
-         optionDialog.gridLayout->addWidget(&this->input_pgSchema, 1, 1);
+         this->m_self.gridLayout->addWidget(&this->label_pgSchema, 1, 0);
+         this->m_self.gridLayout->addWidget(&this->input_pgSchema, 1, 1);
 
-         optionDialog.gridLayout->addWidget(&this->label_pgDbName, 2, 0);
-         optionDialog.gridLayout->addWidget(&this->input_pgDbName, 2, 1);
+         this->m_self.gridLayout->addWidget(&this->label_pgDbName, 2, 0);
+         this->m_self.gridLayout->addWidget(&this->input_pgDbName, 2, 1);
 
-         optionDialog.gridLayout->addWidget(&this->label_pgUsername, 3, 0);
-         optionDialog.gridLayout->addWidget(&this->input_pgUsername, 3, 1);
+         this->m_self.gridLayout->addWidget(&this->label_pgUsername, 3, 0);
+         this->m_self.gridLayout->addWidget(&this->input_pgUsername, 3, 1);
 
-         optionDialog.gridLayout->addWidget(&this->label_pgPassword, 4, 0);
-         optionDialog.gridLayout->addWidget(&this->input_pgPassword, 4, 1);
+         this->m_self.gridLayout->addWidget(&this->label_pgPassword, 4, 0);
+         this->m_self.gridLayout->addWidget(&this->input_pgPassword, 4, 1);
 
-         optionDialog.gridLayout->addWidget(&this->checkBox_savePgPassword, 4, 4);
+         this->m_self.gridLayout->addWidget(&this->checkBox_savePgPassword, 4, 4);
 
       } else {
          this->postgresVisible(false);
          this->sqliteVisible(true);
 
-         optionDialog.gridLayout->addWidget(&this->label_userDataDir, 0, 0);
-         optionDialog.gridLayout->addWidget(&this->input_userDataDir, 0, 1, 1, 2);
-         optionDialog.gridLayout->addWidget(&this->pushButton_browseDataDir, 0, 3);
+         this->m_self.gridLayout->addWidget(&this->label_userDataDir, 0, 0);
+         this->m_self.gridLayout->addWidget(&this->input_userDataDir, 0, 1, 1, 2);
+         this->m_self.gridLayout->addWidget(&this->pushButton_browseDataDir, 0, 3);
 
-         optionDialog.gridLayout->addWidget(&this->label_backupDir, 1, 0);
-         optionDialog.gridLayout->addWidget(&this->input_backupDir, 1, 1, 1, 2);
-         optionDialog.gridLayout->addWidget(&this->pushButton_browseBackupDir, 1, 3);
+         this->m_self.gridLayout->addWidget(&this->label_backupDir, 1, 0);
+         this->m_self.gridLayout->addWidget(&this->input_backupDir, 1, 1, 1, 2);
+         this->m_self.gridLayout->addWidget(&this->pushButton_browseBackupDir, 1, 3);
 
-         optionDialog.gridLayout->addWidget(&this->label_numBackups, 3, 0);
-         optionDialog.gridLayout->addWidget(&this->spinBox_numBackups, 3, 1);
+         this->m_self.gridLayout->addWidget(&this->label_numBackups, 3, 0);
+         this->m_self.gridLayout->addWidget(&this->spinBox_numBackups, 3, 1);
 
-         optionDialog.gridLayout->addWidget(&this->label_frequency, 4, 0);
-         optionDialog.gridLayout->addWidget(&this->spinBox_frequency, 4, 1);
+         this->m_self.gridLayout->addWidget(&this->label_frequency, 4, 0);
+         this->m_self.gridLayout->addWidget(&this->spinBox_frequency, 4, 1);
       }
-      optionDialog.groupBox_dbConfig->setVisible(true);
+      this->m_self.groupBox_dbConfig->setVisible(true);
       return;
    }
-
 
    void retranslateDbDialog() {
       //PostgreSQL stuff
@@ -384,20 +362,17 @@ public:
    /**
     * \brief Update UI strings according to current language.
     */
-   void retranslate(OptionDialog & optionDialog) {
+   void retranslate() {
       // Let the Ui take care of its business
-      optionDialog.retranslateUi(&optionDialog);
+      this->m_self.retranslateUi(&this->m_self);
       this->retranslateDbDialog();
 
-      // Retranslate the language combobox.
-      for (int ii = 0; ii < this->languageInfo.size(); ++ii) {
-         this->languageInfo[ii].nameInCurrentLang = tr(this->languageInfo[ii].nameInEnglish);
-         optionDialog.comboBox_lang->setItemText(ii, this->languageInfo[ii].nameInCurrentLang);
-      }
+      this->retranslateLanguageComboBox();
+
       return;
    }
 
-   void changeColors(OptionDialog & optionDialog) {
+   void changeColors() {
       // Yellow when the test is needed
       // Red when the test failed
       // Green when the test passed
@@ -405,73 +380,75 @@ public:
 
       switch (dbConnectionTestState) {
          case NEEDS_TEST:
-            optionDialog.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-            optionDialog.pushButton_testConnection->setEnabled(true);
-            optionDialog.pushButton_testConnection->setStyleSheet("color:rgb(240,225,25)");
+            this->m_self.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+            this->m_self.pushButton_testConnection->setEnabled(true);
+            this->m_self.pushButton_testConnection->setStyleSheet("color:rgb(240,225,25)");
             break;
          case TEST_FAILED:
-            optionDialog.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-            optionDialog.pushButton_testConnection->setStyleSheet("color:red");
+            this->m_self.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+            this->m_self.pushButton_testConnection->setStyleSheet("color:red");
             break;
          case TEST_PASSED:
-            optionDialog.pushButton_testConnection->setStyleSheet("color:green");
-            optionDialog.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
-            optionDialog.pushButton_testConnection->setEnabled(false);
+            this->m_self.pushButton_testConnection->setStyleSheet("color:green");
+            this->m_self.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+            this->m_self.pushButton_testConnection->setEnabled(false);
             break;
          case NO_CHANGE:
-            optionDialog.pushButton_testConnection->setStyleSheet("color:grey");
-            optionDialog.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
-            optionDialog.pushButton_testConnection->setEnabled(false);
+            this->m_self.pushButton_testConnection->setStyleSheet("color:grey");
+            this->m_self.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+            this->m_self.pushButton_testConnection->setEnabled(false);
             break;
       }
       return;
    }
 
-   // Update dialog with current options.
-   void showChanges(OptionDialog & optionDialog) {
+   /**
+    * \brief Update dialog with current options.
+    */
+   void showChanges() {
       // Set the right language
-      int index = optionDialog.comboBox_lang->findData(Localization::getCurrentLanguage());
+      int index = this->m_self.comboBox_lang->findData(Localization::getCurrentLanguage());
       if (index >= 0) {
-         optionDialog.comboBox_lang->setCurrentIndex(index);
+         this->m_self.comboBox_lang->setCurrentIndex(index);
       }
 
-      optionDialog.weightComboBox->setCurrentIndex(
-         optionDialog.weightComboBox->findData(
+      this->m_self.weightComboBox->setCurrentIndex(
+         this->m_self.weightComboBox->findData(
             Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Mass).uniqueName
          )
       );
-      optionDialog.temperatureComboBox->setCurrentIndex(
-         optionDialog.temperatureComboBox->findData(
+      this->m_self.temperatureComboBox->setCurrentIndex(
+         this->m_self.temperatureComboBox->findData(
             Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Temperature).uniqueName
          )
       );
-      optionDialog.volumeComboBox->setCurrentIndex(
-         optionDialog.volumeComboBox->findData(
+      this->m_self.volumeComboBox->setCurrentIndex(
+         this->m_self.volumeComboBox->findData(
             Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Volume).uniqueName
          )
       );
-      optionDialog.gravityComboBox->setCurrentIndex(
-         optionDialog.gravityComboBox->findData(
+      this->m_self.gravityComboBox->setCurrentIndex(
+         this->m_self.gravityComboBox->findData(
             Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Density).uniqueName
          )
       );
-      optionDialog.dateComboBox->setCurrentIndex(optionDialog.dateComboBox->findData(Localization::getDateFormat()));
-      optionDialog.colorComboBox->setCurrentIndex(
-         optionDialog.colorComboBox->findData(
+      this->m_self.dateComboBox->setCurrentIndex(this->m_self.dateComboBox->findData(Localization::getDateFormat()));
+      this->m_self.colorComboBox->setCurrentIndex(
+         this->m_self.colorComboBox->findData(
             Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::Color).uniqueName
          )
       );
-      optionDialog.diastaticPowerComboBox->setCurrentIndex(
-         optionDialog.diastaticPowerComboBox->findData(
+      this->m_self.diastaticPowerComboBox->setCurrentIndex(
+         this->m_self.diastaticPowerComboBox->findData(
             Measurement::getDisplayUnitSystem(Measurement::PhysicalQuantity::DiastaticPower).uniqueName
          )
       );
 
-      optionDialog.colorFormulaComboBox->setCurrentIndex(
-         optionDialog.colorFormulaComboBox->findData(ColorMethods::colorFormula)
+      this->m_self.colorFormulaComboBox->setCurrentIndex(
+         this->m_self.colorFormulaComboBox->findData(ColorMethods::colorFormula)
       );
-      optionDialog.ibuFormulaComboBox->setCurrentIndex(
-         optionDialog.ibuFormulaComboBox->findData(static_cast<int>(IbuMethods::ibuFormula))
+      this->m_self.ibuFormulaComboBox->setCurrentIndex(
+         this->m_self.ibuFormulaComboBox->findData(static_cast<int>(IbuMethods::ibuFormula))
       );
 
       // User data directory
@@ -494,19 +471,19 @@ public:
          PersistentSettings::value(PersistentSettings::Names::mashHopAdjustment, 0).toString(),
          Q_FUNC_INFO
       );
-      optionDialog.ibuAdjustmentMashHopDoubleSpinBox->setValue(amt * 100);
+      this->m_self.ibuAdjustmentMashHopDoubleSpinBox->setValue(amt * 100);
 
       amt = Localization::toDouble(
          PersistentSettings::value(PersistentSettings::Names::firstWortHopAdjustment, 1.1).toString(),
          Q_FUNC_INFO
       );
-      optionDialog.ibuAdjustmentFirstWortDoubleSpinBox->setValue(amt * 100);
+      this->m_self.ibuAdjustmentFirstWortDoubleSpinBox->setValue(amt * 100);
 
       // Database stuff -- this looks weird, but trust me. We want SQLITE to be
       // the default for this field
       int tmp = PersistentSettings::value(PersistentSettings::Names::dbType,
                                           static_cast<int>(Database::DbType::SQLITE)).toInt() - 1;
-      optionDialog.comboBox_engine->setCurrentIndex(tmp);
+      this->m_self.comboBox_engine->setCurrentIndex(tmp);
 
       this->input_pgHostname.setText(PersistentSettings::value(PersistentSettings::Names::dbHostname, "localhost").toString());
       this->input_pgPortNum.setText(PersistentSettings::value(PersistentSettings::Names::dbPortnum, "5432").toString());
@@ -517,32 +494,35 @@ public:
       this->checkBox_savePgPassword.setChecked(PersistentSettings::contains(PersistentSettings::Names::dbPassword));
 
       this->dbConnectionTestState = NO_CHANGE;
-      this->changeColors(optionDialog);
+      this->changeColors();
 
       if (RecipeHelper::getAutomaticVersioningEnabled()) {
-         optionDialog.checkBox_versioning->setCheckState(Qt::Checked);
-         optionDialog.groupBox_deleteBehavior->setEnabled(true);
+         this->m_self.checkBox_versioning->setCheckState(Qt::Checked);
+         this->m_self.groupBox_deleteBehavior->setEnabled(true);
          switch (PersistentSettings::value(PersistentSettings::Names::deletewhat, Recipe::DESCENDANT).toInt()) {
             case Recipe::ANCESTOR:
-               optionDialog.radioButton_deleteAncestor->setChecked(true);
+               this->m_self.radioButton_deleteAncestor->setChecked(true);
                break;
             default:
-               optionDialog.radioButton_deleteDescendant->setChecked(true);
+               this->m_self.radioButton_deleteDescendant->setChecked(true);
                break;
          }
       } else {
-         optionDialog.checkBox_versioning->setCheckState(Qt::Unchecked);
-         optionDialog.groupBox_deleteBehavior->setEnabled(false);
+         this->m_self.checkBox_versioning->setCheckState(Qt::Unchecked);
+         this->m_self.groupBox_deleteBehavior->setEnabled(false);
       }
 
       if (PersistentSettings::value(PersistentSettings::Names::showsnapshots, false).toBool()) {
-         optionDialog.checkBox_alwaysShowSnaps->setCheckState(Qt::Checked);
+         this->m_self.checkBox_alwaysShowSnaps->setCheckState(Qt::Checked);
       } else {
-         optionDialog.checkBox_alwaysShowSnaps->setCheckState(Qt::Unchecked);
+         this->m_self.checkBox_alwaysShowSnaps->setCheckState(Qt::Unchecked);
       }
 
       return;
    }
+
+   // =========================================== Member variables for impl ============================================
+   OptionDialog & m_self;
 
    // Used for selecting directories
    QFileDialog qFileDialog;
@@ -576,8 +556,6 @@ public:
 
    DbConnectionTestStates dbConnectionTestState;
 
-   QVector<LanguageInfo> languageInfo;
-
 };
 
 OptionDialog::OptionDialog(QWidget * parent) : QDialog{},
@@ -589,7 +567,7 @@ OptionDialog::OptionDialog(QWidget * parent) : QDialog{},
    // think it will end up biting my ...
    // anyway. It isn't pretty
    this->setupUi(this);
-   this->pimpl->initLangs(*this);
+   this->pimpl->initLangs();
 
    if (parent != nullptr) {
       setWindowIcon(parent->windowIcon());
@@ -611,7 +589,7 @@ OptionDialog::OptionDialog(QWidget * parent) : QDialog{},
    // figure out which database we have
    int idx = comboBox_engine->findData(PersistentSettings::value(PersistentSettings::Names::dbType,
                                                                  static_cast<int>(Database::DbType::SQLITE)).toInt());
-   this->pimpl->setDbDialog(*this, static_cast<Database::DbType>(idx));
+   this->pimpl->setDbDialog(static_cast<Database::DbType>(idx));
 
    // connect all the signals
    connect_signals();
@@ -690,7 +668,7 @@ void OptionDialog::connect_signals() {
    // figure out which database we have
    int idx = comboBox_engine->findData(PersistentSettings::value(PersistentSettings::Names::dbType,
                                                                  static_cast<int>(Database::DbType::SQLITE)).toInt());
-   this->pimpl->setDbDialog(*this, static_cast<Database::DbType>(idx));
+   this->pimpl->setDbDialog(static_cast<Database::DbType>(idx));
 
    // Set the signals
    connect(&this->pimpl->checkBox_savePgPassword, &QAbstractButton::clicked, this, &OptionDialog::savePassword);
@@ -713,7 +691,7 @@ void OptionDialog::connect_signals() {
    connect(checkBox_alwaysShowSnaps, &QAbstractButton::clicked, this, &OptionDialog::signalAncestors);
 
    // Call this here to set up translatable strings.
-   this->pimpl->retranslate(*this);
+   this->pimpl->retranslate();
    return;
 }
 
@@ -727,7 +705,7 @@ OptionDialog::~OptionDialog() = default;
 
 
 void OptionDialog::show() {
-   this->pimpl->showChanges(*this);
+   this->pimpl->showChanges();
    this->setVisible(true);
    return;
 }
@@ -787,7 +765,7 @@ void OptionDialog::cancel() {
 void OptionDialog::changeEvent(QEvent * e) {
    switch (e->type()) {
       case QEvent::LanguageChange:
-         this->pimpl->retranslate(*this);
+         this->pimpl->retranslate();
          e->accept();
          break;
       default:
@@ -802,7 +780,7 @@ void OptionDialog::setEngine([[maybe_unused]] int selected) {
    QVariant data = comboBox_engine->currentData();
    Database::DbType newEngine = static_cast<Database::DbType>(data.toInt());
 
-   this->pimpl->setDbDialog(*this, newEngine);
+   this->pimpl->setDbDialog(newEngine);
    this->testRequired();
    return;
 }
@@ -843,13 +821,13 @@ void OptionDialog::testConnection() {
       // Database::testConnection already popped the dialog
       this->pimpl->dbConnectionTestState = TEST_FAILED;
    }
-   this->pimpl->changeColors(*this);
+   this->pimpl->changeColors();
    return;
 }
 
 void OptionDialog::testRequired() {
    this->pimpl->dbConnectionTestState = NEEDS_TEST;
-   this->pimpl->changeColors(*this);
+   this->pimpl->changeColors();
    return;
 }
 

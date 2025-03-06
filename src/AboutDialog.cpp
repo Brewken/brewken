@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * AboutDialog.cpp is part of Brewken, and is copyright the following authors 2009-2022:
+ * AboutDialog.cpp is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -26,6 +26,11 @@
 #include <QWidget>
 
 #include "config.h"
+
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_AboutDialog.cpp"
+#endif
 
 AboutDialog::AboutDialog(QWidget * parent) :
    QDialog(parent),
@@ -139,7 +144,7 @@ AboutDialog::AboutDialog(QWidget * parent) :
          "  <li>2015      Markus Mårtensson &lt;mackan.90@gmail.com&gt;</li>"
          "  <li>2017      Matt Anderson &lt;matt.anderson@is4s.com&gt;</li>" // Commit is "andersonm <matt.anderson@is4s.com>", but second name clear from email
          "  <li>2020-2022 Mattias Måhl &lt;mattias@kejsarsten.com&gt;</li>"
-         "  <li>2020-2024 Matt Young &lt;mfsy@yahoo.com&gt;</li>"
+         "  <li>2020-2025 Matt Young &lt;mfsy@yahoo.com&gt;</li>"
          "  <li>2014-2017 Maxime Lavigne &lt;duguigne@gmail.com&gt;</li>"
          "  <li>2018      Medic Momcilo &lt;medicmomcilo@gmail.com&gt;</li>"
          "  <li>2016      Mike Evans &lt;mikee@saxicola.co.uk&gt;</li>"
@@ -164,14 +169,20 @@ AboutDialog::AboutDialog(QWidget * parent) :
          //     2013      U-CHIMCHIM\mik <mik@chimchim.(none)>               // Incomplete name and email
          " </ul>"
          ""
-         // **********************************************************************************************************
-         // * Note that the HTML source indentation here is different than above so that we don't pick up testers as *
-         // * copyright holders in the awk command above!                                                            *
-         // **********************************************************************************************************
-         " <p>The following people have made notable contributions with testing and bug reports:</p>"
+         // ***********************************************************************************************************
+         // * Note that the HTML source indentation here is different than above so that we don't pick up translators *
+         // * as software copyright holders in the awk command above!                                                 *
+         // *                                                                                                         *
+         // * This list is currently somewhat incomplete, partly as I haven't yet found a record of who did all the   *
+         // * original translations, and partly as some GitHub users do not have their name in their profile.         *
+         // ***********************************************************************************************************
+         " <p>The following people are amongst those who have provided translations:</p>"
          " <ul>"
-         "  <li>Mik Firestone &lt;mikfire@gmail.com&gt;</li>"
-         "  <li>Nikolas &quot;Jazzbeerman&quot; </li>"
+         "  <li>André Rodrigues (Brazilian Portuguese)</li>"
+         "  <li>Orla Valbjørn Møller (Danish)</li>"
+         "  <li>Marcel Koek (Dutch)</li>"
+         "  <li>Mattias Måhl (Swedish)</li>"
+         "  <li>Mikhail Gorbunov (Russian)</li>"
          " </ul>"
          ""
          " <h2>License (GPLv3)</h2>"

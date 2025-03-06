@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MainWindow.h is part of Brewken, and is copyright the following authors 2009-2024:
+ * MainWindow.h is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • Dan Cavanagh <dan@dancavanagh.com>
  *   • Daniel Pettersson <pettson81@gmail.com>
@@ -35,6 +35,7 @@
 #include <QMainWindow>
 #include <QString>
 #include <QVariant>
+#include <QVersionNumber>
 #include <QWidget>
 
 #include "ui_mainWindow.h"
@@ -58,18 +59,18 @@ public:
    MainWindow(QWidget* parent=nullptr);
    virtual ~MainWindow();
 
-   //
-   // This is a short-term trick to save me adding .get() to lots of calls
-   //
-   using QObject::connect;
-   template<typename A, typename B, typename C, typename D>
-   void connect(std::unique_ptr<A> & a, B b, C c, D d) {
-      this->connect(a.get(), b, c, d);
-   }
-   template<typename A, typename B, typename C, typename D>
-   void connect(A a, B b, std::unique_ptr<C> & c, D d) {
-      this->connect(a, b, c.get(), d);
-   }
+///   //
+///   // This is a short-term trick to save me adding .get() to lots of calls
+///   //
+///   using QObject::connect;
+///   template<typename A, typename B, typename C, typename D>
+///   void connect(std::unique_ptr<A> & a, B b, C c, D d) {
+///      this->connect(a.get(), b, c, d);
+///   }
+///   template<typename A, typename B, typename C, typename D>
+///   void connect(A a, B b, std::unique_ptr<C> & c, D d) {
+///      this->connect(a, b, c.get(), d);
+///   }
 
    //! \brief Accessor to obtain \c MainWindow singleton
    static MainWindow & instance();
@@ -86,38 +87,15 @@ public:
     *        code that calls Application::mainWindow() which returns a pointer to the MainWindow and therefore needs the
     *        MainWindow constructor to have returned!
     */
-   void init();
+   void initialiseAndMakeVisible();
 
    //! \brief Get the currently observed recipe.
    Recipe* currentRecipe();
 
-public:
-   //! \brief Doing updates via this method makes them undoable (and redoable).  This is the simplified version
-   //         which suffices for modifications to most individual non-relational attributes.
-   template<typename T>
-   void doOrRedoUpdate(NamedEntity & updatee,
-                       TypeInfo const & typeInfo,
-                       T newValue,
-                       QString const & description,
-                       [[maybe_unused]] QUndoCommand * parent = nullptr) {
-      this->doOrRedoUpdate(new SimpleUndoableUpdate(updatee, typeInfo, newValue, description));
-      return;
-   }
+   //! \brief Set whether undo / redo commands are enabled
+   void setUndoRedoEnable();
 
-   /**
-    * \brief This version of \c doOrRedoUpdate is needed when updating a property that has (or might have) a non-trivial
-    *        \c PropertyPath
-    */
-   template<typename T>
-   void doOrRedoUpdate(NamedEntity & updatee,
-                       PropertyPath const & propertyPath,
-                       TypeInfo const & typeInfo,
-                       T newValue,
-                       QString const & description,
-                       [[maybe_unused]] QUndoCommand * parent = nullptr) {
-      this->doOrRedoUpdate(new SimpleUndoableUpdate(updatee, propertyPath, typeInfo, newValue, description));
-      return;
-   }
+public:
 
    /**
     * \brief Add given \c Fermentable / \c Hop / \c Misc / \c Yeast to the Recipe
@@ -126,11 +104,6 @@ public:
     */
    template<class NE> void addIngredientToRecipe(NE & ne);
 
-   //! \brief Actually add the new mash step to (the mash of) the recipe (in an undoable way).
-   template<class StepOwnerClass, class StepClass>
-   void addStepToStepOwner(StepOwnerClass & stepOwner, std::shared_ptr<StepClass> step);
-   template<class StepOwnerClass, class StepClass>
-   void addStepToStepOwner(std::shared_ptr<StepOwnerClass> stepOwner, std::shared_ptr<StepClass> step);
    void addStepToStepOwner(std::shared_ptr<MashStep        > step);
    void addStepToStepOwner(std::shared_ptr<BoilStep        > step);
    void addStepToStepOwner(std::shared_ptr<FermentationStep> step);
@@ -140,7 +113,7 @@ public slots:
    //! \brief Accepts Recipe changes, and takes appropriate action to show the changes.
    void changed(QMetaProperty,QVariant);
 
-   void treeActivated(const QModelIndex &index);
+///   void treeActivated(const QModelIndex &index);
    //! \brief View the given recipe.
    void setRecipe(Recipe* recipe);
 
@@ -168,6 +141,8 @@ public slots:
 
    //! \brief Close a brewnote tab if we must (because of the BrewNote being deleted)
    void closeBrewNote(int brewNoteId, std::shared_ptr<QObject> object);
+
+   void setBrewNoteByIndex(QModelIndex const & index);
 
    //! \brief Remove selected Fermentable(s) from the Recipe.
    void removeSelectedFermentableAddition();
@@ -229,22 +204,23 @@ public slots:
    void removeMash();
 
    //! \brief Create a new recipe in the database.
-   void newRecipe();
+   std::shared_ptr<Recipe> newRecipe();
+   void newRecipeInFolder(QString folderPath);
    //! \brief Export current recipe to BeerXML or BeerJSON.
    void exportRecipe();
    //! \brief Display file selection dialog and import BeerXML/BeerJSON files.
    void importFiles();
-   //! \brief Create a duplicate of the current recipe.
-   void copyRecipe();
 
    //! \brief Implements "> Edit > Undo"
    void editUndo();
    //! \brief Implements "> Edit > Redo"
    void editRedo();
 
-   //! \brief Create a new folder
-   void newFolder();
+///   //! \brief Create a new folder
+///   void newFolder();
    void renameFolder();
+
+   TreeView * getActiveTreeView() const;
 
    void deleteSelected();
    void copySelected();
@@ -258,8 +234,8 @@ public slots:
    //! \brief makes sure we can do water chemistry before we show the window
    void showWaterChemistryTool();
 
-   //! \brief draws a context menu, the exact nature of which depends on which tree is focused
-   void contextMenu(const QPoint &point);
+///   //! \brief draws a context menu, the exact nature of which depends on which tree is focused
+///   void contextMenu(const QPoint &point);
    //! \brief creates a new brewnote
    void newBrewNote();
    //! \brief copies an existing brewnote to a new brewday
@@ -275,7 +251,7 @@ public slots:
    void showEquipmentEditor();
    void showStyleEditor();
 
-   void updateEquipmentButton();
+   void updateEquipmentSelector();
 
    //! \brief Set all the things based on a drop event
    void droppedRecipeEquipment(Equipment *kit);
@@ -287,14 +263,21 @@ public slots:
 
    void versionedRecipe(Recipe* descendant);
 
-   //! \brief Doing updates via this method makes them undoable (and redoable).  This is the most generic version
-   //         which requires the caller to construct a QUndoCommand.
-   void doOrRedoUpdate(QUndoCommand * update);
-
     //! \brief to lock or not was never the question before now.
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+   void lockRecipe(Qt::CheckState state);
+#else
    void lockRecipe(int state);
+#endif
    //! \brief prepopulate the ancestorDialog when the menu is selected
    void setAncestor();
+
+   /**
+    * \brief This is called to tell us the version number of the latest release of the program in its main GitHub
+    *        repository.  It's just a wrapper around \c Application::checkAgainstLatestRelease.  See comments in
+    *        \c Application.cpp for why.
+    */
+   void checkAgainstLatestRelease(QVersionNumber const latestRelease);
 
 public:
    /*!
@@ -309,11 +292,17 @@ public:
    void showChanges(QMetaProperty* prop = nullptr);
 
 protected:
-   virtual void closeEvent(QCloseEvent* event);
+   //! \brief Overrides \c QWidget::closeEvent
+   virtual void closeEvent(QCloseEvent* event) override;
 
-private slots:
-   //! \brief Set whether undo / redo commands are enabled
-   void setUndoRedoEnable();
+signals:
+   /**
+    * \brief Emitted when \c MainWindow object is initialised (at end of \c MainWindow::initialiseAndMakeVisible).
+    *
+    *        For the moment, we use this to trigger the background thread that checks to see whether a new version of
+    *        the software is available.
+    */
+   void initialisedAndVisible();
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
@@ -335,8 +324,6 @@ private:
 
    //! \brief Set the keyboard shortcuts.
    void setupShortCuts();
-   //! \brief Set the TreeView context menus.
-   void setupContextMenu();
    //! \brief Create the CSS strings
    void setupCSS();
    //! \brief Configure the range sliders

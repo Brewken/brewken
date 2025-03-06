@@ -30,6 +30,11 @@
 #include "model/Recipe.h"
 #include "utils/AutoCompare.h"
 
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_Mash.cpp"
+#endif
+
 QString Mash::localisedName() { return tr("Mash"); }
 
 bool Mash::isEqualTo(NamedEntity const & other) const {
@@ -37,13 +42,15 @@ bool Mash::isEqualTo(NamedEntity const & other) const {
    Mash const & rhs = static_cast<Mash const &>(other);
    // Base class will already have ensured names are equal
    return (
-      Utils::AutoCompare(this->m_grainTemp_c              , rhs.m_grainTemp_c              ) &&
-      Utils::AutoCompare(this->m_tunTemp_c                , rhs.m_tunTemp_c                ) &&
-      Utils::AutoCompare(this->m_spargeTemp_c             , rhs.m_spargeTemp_c             ) &&
-      Utils::AutoCompare(this->m_ph                       , rhs.m_ph                       ) &&
-      Utils::AutoCompare(this->m_mashTunWeight_kg         , rhs.m_mashTunWeight_kg         ) &&
-      Utils::AutoCompare(this->m_mashTunSpecificHeat_calGC, rhs.m_mashTunSpecificHeat_calGC)
-      // .:TBD:. Should we check MashSteps too?
+      AUTO_LOG_COMPARE(this, rhs, m_grainTemp_c              ) &&
+      AUTO_LOG_COMPARE(this, rhs, m_tunTemp_c                ) &&
+      AUTO_LOG_COMPARE(this, rhs, m_spargeTemp_c             ) &&
+      AUTO_LOG_COMPARE(this, rhs, m_ph                       ) &&
+      AUTO_LOG_COMPARE(this, rhs, m_mashTunWeight_kg         ) &&
+      AUTO_LOG_COMPARE(this, rhs, m_mashTunSpecificHeat_calGC) &&
+      // Parent classes have to be equal too
+      this->FolderBase<Mash>::doIsEqualTo(rhs) &&
+      this->StepOwnerBase<Mash, MashStep>::doIsEqualTo(rhs)
    );
 }
 
@@ -64,12 +71,11 @@ TypeLookup const Mash::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::mashTunSpecificHeat_calGC, Mash::m_mashTunSpecificHeat_calGC, Measurement::PhysicalQuantity::SpecificHeatCapacity),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::tunTemp_c            , Mash::m_tunTemp_c            , Measurement::PhysicalQuantity::Temperature         ),
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Mash::mashTunWeight_kg     , Mash::m_mashTunWeight_kg     , Measurement::PhysicalQuantity::Mass                ),
-
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Mash::mashSteps        , Mash::mashSteps        ),
    },
    // Parent classes lookup
    {&NamedEntity::typeLookup,
-    std::addressof(FolderBase<Mash>::typeLookup)}
+    std::addressof(FolderBase<Mash>::typeLookup),
+    std::addressof(StepOwnerBase<Mash, MashStep>::typeLookup)}
 };
 static_assert(std::is_base_of<FolderBase<Mash>, Mash>::value);
 
@@ -128,20 +134,6 @@ Mash::Mash(Mash const & other) :
 
 Mash::~Mash() = default;
 
-///void Mash::connectSignals() {
-///   for (auto mash : ObjectStoreTyped<Mash>::getInstance().getAllRaw()) {
-///      for (auto mashStep : mash->mashSteps()) {
-///         connect(mashStep.get(), &NamedEntity::changed, mash, &Mash::acceptStepChange);
-///      }
-///   }
-///   return;
-///}
-///
-///void Mash::setKey(int key) {
-///   this->doSetKey(key);
-///   return;
-///}
-
 //============================================= "GETTER" MEMBER FUNCTIONS ==============================================
 double                Mash::grainTemp_c              () const { return this->m_grainTemp_c              ; }
 QString               Mash::notes                    () const { return this->m_notes                    ; }
@@ -190,7 +182,7 @@ double Mash::totalInfusionAmount_l() const {
 double Mash::totalSpargeAmount_l() const {
    double waterAdded_l = 0.0;
 
-   for (auto step : this-> mashSteps()) {
+   for (auto step : this->mashSteps()) {
       if (step->isSparge()) {
          waterAdded_l += step->amount_l();
       }
@@ -199,16 +191,16 @@ double Mash::totalSpargeAmount_l() const {
    return waterAdded_l;
 }
 
-double Mash::totalTime() {
+double Mash::totalTime_mins() const {
    double totalTime = 0.0;
-   for (auto step : this-> mashSteps()) {
+   for (auto step : this->mashSteps()) {
       totalTime += step->stepTime_mins().value_or(0.0);
    }
    return totalTime;
 }
 
 bool Mash::hasSparge() const {
-   for (auto step : this-> mashSteps()) {
+   for (auto step : this->mashSteps()) {
       if (step->isSparge()) {
          return true;
       }
@@ -216,19 +208,10 @@ bool Mash::hasSparge() const {
    return false;
 }
 
-void Mash::acceptStepChange([[maybe_unused]] QMetaProperty prop,
-                            [[maybe_unused]] QVariant      val) {
-   MashStep * stepSender = qobject_cast<MashStep*>(sender());
-   if (!stepSender) {
-      return;
-   }
-
-   // If one of our mash steps changed, our calculated properties may also change, so we need to emit some signals
-   if (stepSender->ownerId() == this->key()) {
-      emit changed(metaProperty(*PropertyNames::Mash::totalMashWater_l), QVariant());
-      emit changed(metaProperty(*PropertyNames::Mash::totalTime       ), QVariant());
-   }
-
+void Mash::acceptStepChange(QMetaProperty prop, QVariant val) {
+   // TBD I don't think anything listens for changes to totalMashWater_l or totalTime
+   this->doAcceptStepChange(this->sender(), prop, val, {&PropertyNames::Mash::totalMashWater_l,
+                                                        &PropertyNames::Mash::totalTime_mins  });
    return;
 }
 

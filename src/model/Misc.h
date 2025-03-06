@@ -38,7 +38,7 @@ class RecipeAdditionMisc;
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::Misc { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::Misc { inline BtStringConst const property{#property}; }
 AddPropertyName(notes    )
 AddPropertyName(producer )
 AddPropertyName(productId)
@@ -148,8 +148,8 @@ public:
 signals:
 
 protected:
-   virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual ObjectStore & getObjectStoreTypedInstance() const;
+   virtual bool isEqualTo(NamedEntity const & other) const override;
+   virtual ObjectStore & getObjectStoreTypedInstance() const override;
 
 private:
    Type    m_type     ;

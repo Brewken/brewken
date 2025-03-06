@@ -27,7 +27,7 @@ class NamedParameterBundle;
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::Ingredient { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::Ingredient { inline BtStringConst const property{#property}; }
 AddPropertyName(totalInventory)
 #undef AddPropertyName
 //=========================================== End of property name constants ===========================================
@@ -43,6 +43,8 @@ class Ingredient : public OutlineableNamedEntity,
                    public FolderBase<Ingredient> {
    Q_OBJECT
    FOLDER_BASE_DECL(Ingredient)
+   // See model/FolderBase.h for info, getters and setters for these properties
+   Q_PROPERTY(QString folderPath        READ folderPath        WRITE setFolderPath)
 
 public:
    /**
@@ -63,8 +65,6 @@ public:
    virtual ~Ingredient();
 
    //=================================================== PROPERTIES ====================================================
-   //! \brief Folder.  See model/FolderBase for implementation of the getter & setter.
-   Q_PROPERTY(QString folder READ folder WRITE setFolder)
    /**
     * \brief For the moment, we have a single "total amount" inventory for a given \c Ingredient instance (eg \c Hop etc
     *        instance).  This property and its associated accessors allow the total to be read and modified without

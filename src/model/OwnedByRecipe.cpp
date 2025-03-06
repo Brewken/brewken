@@ -17,14 +17,24 @@
 
 #include "model/Recipe.h"
 
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_OwnedByRecipe.cpp"
+#endif
+
 QString OwnedByRecipe::localisedName() { return tr("Owned By Recipe"); }
 
 bool OwnedByRecipe::isEqualTo(NamedEntity const & other) const {
    // Base class (NamedEntity) will have ensured this cast is valid
-   OwnedByRecipe const & rhs = static_cast<OwnedByRecipe const &>(other);
+//   OwnedByRecipe const & rhs = static_cast<OwnedByRecipe const &>(other);
    // Base class will already have ensured names are equal
    return (
-      this->m_recipeId == rhs.m_recipeId
+      //
+      // Note that we do _not_ compare m_recipeId.  We need to be able to compare classes with different owners.  Eg,
+      // as part of comparing whether two Recipe objects objects are equal, we need, amongst other things, to check
+      // whether their owned objects are equal.
+      //
+      true
    );
 }
 
@@ -73,11 +83,17 @@ std::shared_ptr<Recipe> OwnedByRecipe::recipe() const {
    return ObjectStoreWrapper::getById<Recipe>(this->m_recipeId);
 }
 
-std::shared_ptr<Recipe> OwnedByRecipe::owningRecipe() const {
+std::shared_ptr<Recipe> OwnedByRecipe::owner() const {
    if (ObjectStoreWrapper::contains<Recipe>(this->m_recipeId)) {
       return ObjectStoreWrapper::getById<Recipe>(this->m_recipeId);
    }
    return nullptr;
+}
+
+std::shared_ptr<Recipe> OwnedByRecipe::owningRecipe() const {
+   // See comment in model/NamedEntity.h.  This function is virtual (runtime polymorphic) but we implement it with by
+   // calling the compile-time polymorphic function whose signature we share with BoilStep, MashStep, FermentationStep.
+   return this->owner();
 }
 
 void OwnedByRecipe::setRecipeId(int const val) { SET_AND_NOTIFY(PropertyNames::OwnedByRecipe::recipeId, this->m_recipeId, val); return; }

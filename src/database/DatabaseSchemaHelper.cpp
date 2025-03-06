@@ -36,7 +36,7 @@
 #include "database/DbTransaction.h"
 #include "database/ObjectStoreTyped.h"
 
-int constexpr DatabaseSchemaHelper::latestVersion = 13;
+int constexpr DatabaseSchemaHelper::latestVersion = 14;
 
 // Default namespace hides functions from everything outside this file.
 namespace {
@@ -1073,6 +1073,59 @@ namespace {
                   "WHERE reversed_step_number = 1 "
                   "AND recipe.mash_id = last_mash_step.mash_id"
          ), {QVariant{false}, QVariant{true}}},
+         //
+         // But wait, we're not done on pre-boil step.  We also need to handle the case where a recipe has a mash that
+         // does not have any mash steps.  Eg the supplied "Extract" recipes are like this.
+         //
+         // It may be there is a way to combine this with the SQL query above, but I think it's simpler not to and just
+         // live with some horrible copy-and-paste here in a query that just creates a (hopefully sane) pre-boil step
+         // for any recipes that don't have one.  We make a heroic assumption that the start temperature is 15°C (ie
+         // about 60 °F) which is about what you might expect tap water temperature to be a lot of the time in a lot of
+         // places.
+         //
+         {QString("INSERT INTO boil_step ("
+                     "name            , "
+                     "deleted         , "
+                     "display         , "
+                     "step_time_mins  , "
+                     "end_temp_c      , "
+                     "ramp_time_mins  , "
+                     "step_number     , "
+                     "boil_id         , "
+                     "description     , "
+                     "start_acidity_ph, "
+                     "end_acidity_ph  , "
+                     "start_temp_c    , "
+                     "start_gravity_sg, "
+                     "end_gravity_sg  , "
+                     "chilling_type     "
+                  ") SELECT "
+                     "'Pre-boil for ' || recipe.name, "                              // name
+                     "?, "                                                           // deleted
+                     "?, "                                                           // display
+                     "NULL, "                                                        // step_time_mins
+                     "100.0, "                                                       // end_temp_c
+                     "NULL, "                                                        // ramp_time_mins
+                     "1, "                                                           // step_number
+                     "recipe.boil_id, "                                              // boil_id
+                     "'Automatically-generated pre-boil step for ' || recipe.name, " // description
+                     "NULL, "                                                        // start_acidity_ph
+                     "NULL, "                                                        // end_acidity_ph
+                     "15, "                                                          // start_temp_c
+                     "NULL, "                                                        // start_gravity_sg
+                     "NULL, "                                                        // end_gravity_sg
+                     "NULL "                                                         // chilling_type
+                  "FROM recipe "
+                  "WHERE recipe.boil_id in ( "
+                     "SELECT boil_id "
+                     "FROM boil "
+                     "WHERE boil_id NOT IN ( "
+                        "SELECT boil_id "
+                        "FROM boil_step "
+                        "WHERE step_number = 1 "
+                     ")"
+                  ")"
+         ), {QVariant{false}, QVariant{true}}},
          // Adding the second step for the actual boil itself is easier
          {QString("INSERT INTO boil_step ("
                      "name            , "
@@ -1439,7 +1492,7 @@ namespace {
          //    3 == Ratio  == Add at mash and sparge, pro rata to the amounts of water (I think!)
          //    4 == Equal  == Add at mash and sparge, equal amounts (I think!)
          //
-         // We ditch the "Never" value and store in when_to_add as a string.
+         // We skip the "Never" value (see below) and store in when_to_add as a string.
          //
          {QString("UPDATE salt_in_recipe "
                   "SET quantity    = s.amount, "
@@ -1465,6 +1518,34 @@ namespace {
                   ") AS s "
                   "WHERE salt_in_recipe.salt_id = s.id "
                   "AND s.addTo != 0")},
+         //
+         // Now we have to do something with the salts marked as "do not add".  Since salt is not mentioned in either
+         // BeerXML or BeerJSON, we don't have a lot of guidance here.  AFAICT the "Never" value was just a convenience
+         // in the UI for when you created a salt addition but hadn't yet set all its properties.  I _think_ we could
+         // safely just delete Salts with addTo == 0.  However, rather than risk losing data, we will instead mark them
+         // as deleted.  We have to set some valid value for when_to_add, so we arbitrarily choose "Equal", but make
+         // clear in the Name that original value was "Never".
+         //
+         {QString("UPDATE salt_in_recipe "
+                  "SET quantity    = s.amount, "
+                      "unit        = s.unit, "
+                      "name = 'Deleted addition of \"Never add\" ' || s.name, "
+                      "display = ?, "
+                      "deleted = ?, "
+                      "when_to_add = 'Equal' "
+                  "FROM ("
+                     "SELECT id, "
+                            "name, "
+                            "amount, "
+                            "addTo, "
+                            "CASE "
+                               "WHEN amount_is_weight THEN 'kilograms' "
+                               "ELSE 'liters' "
+                            "END AS unit "
+                     "FROM salt"
+                  ") AS s "
+                  "WHERE salt_in_recipe.salt_id = s.id "
+                  "AND s.addTo == 0"), {QVariant{false}, QVariant{true}}},
          //
          // For water both the source and target are volume in liters
          //
@@ -2142,6 +2223,93 @@ namespace {
       return executeSqlQueries(q, migrationQueries);
    }
 
+   /**
+    * \brief Correct flouride to fluoride on water table
+    *        Fix Instructions to be stored the same way as BrewNotes, RecipeAdditions etc
+    *           // TODO: On next DB update, correct water.flouride_ppm to water.fluoride_ppm
+.
+    */
+   bool migrate_to_14([[maybe_unused]] Database & db, BtSqlQuery & q) {
+      //
+      // See below for why we create a new version of the instruction table here.  While we're at it, we make the
+      // column names snake_case, and add units, to be more consistent with the rest of the DB schema.
+      //
+      // NOTE I am not convinced that has_timer, timer_value and completed columns are actually used
+      //
+      QString createNewInstructionsSql;
+      QTextStream createNewInstructionsSqlStream(&createNewInstructionsSql);
+      createNewInstructionsSqlStream <<
+         "CREATE TABLE new_instruction ("
+            "id"              " " << db.getDbNativePrimaryKeyDeclaration() << ", "
+            "name"            " " << db.getDbNativeTypeName<QString>()     << ", "
+            "display"         " " << db.getDbNativeTypeName<bool>()        << ", "
+            "deleted"         " " << db.getDbNativeTypeName<bool>()        << ", "
+            "recipe_id"       " " << db.getDbNativeTypeName<int>()         << ", "
+            "step_number"     " " << db.getDbNativeTypeName<int>()         << ", "
+            "directions"      " " << db.getDbNativeTypeName<QString>()     << ", "
+            "has_timer"       " " << db.getDbNativeTypeName<bool>()        << ", "
+            "timer_value"     " " << db.getDbNativeTypeName<QString>()     << ", "
+            "completed"       " " << db.getDbNativeTypeName<bool>()        << ", "
+            "interval_mins"   " " << db.getDbNativeTypeName<double>()      << ", "
+            "FOREIGN KEY(recipe_id) REFERENCES recipe(id) "
+         ");";
+
+      QVector<QueryAndParameters> const migrationQueries{
+         //
+         // This is a naming error in BeerJSON that we copied-and-pasted into the code.  BeerJSON will get a fix at some
+         // point -- see https://github.com/beerjson/beerjson/issues/214.  But we can fix our DB column name in the
+         // meantime.
+         //
+         {QString("ALTER TABLE water RENAME COLUMN flouride_ppm TO fluoride_ppm")},
+         //
+         // The existence of the instruction_in_recipe table implies that Instruction objects can be shared between
+         // multiple Recipe objects.  However, since they are only managed inside each Recipe, and are often
+         // automatically generated, it doesn't make a whole lot of sense for an Instruction to have a separate
+         // existence outside of Recipe.  So we try to make them more like BrewNotes here.
+         //
+         // At the risk of being overly cautious, we assume it is at least conceivable there could be some user
+         // databases where instructions are shared between recipes (even though this should not happen).   To avoid any
+         // potential data loss, we therefore allow for the possibility that we might need to create copies of existing
+         // "shared" instructions (since, after the schema update it will be impossible for one instruction row to
+         // related to more than one recipe row).  This being the case, it seems simpler to create a new table rather
+         // than fill in the blanks on the existing one.
+         //
+         {createNewInstructionsSql},
+         {QString("INSERT INTO new_instruction ( "
+            "name       , "
+            "display    , "
+            "deleted    , "
+            "recipe_id  , "
+            "step_number, "
+            "directions , "
+            "has_timer  , "
+            "timer_value, "
+            "completed  , "
+            "interval_mins "
+          ") "
+          "SELECT ii.name              , "
+                 "ii.display           , "
+                 "ii.deleted           , "
+                 "jj.recipe_id         , "
+                 "jj.instruction_number, "
+                 "ii.directions        , "
+                 "ii.hasTimer          , " // NB: hasTimer -> has_timer
+                 "ii.timerValue        , " // NB: timerValue -> timer_value
+                 "ii.completed         , "
+                 "ii.interval "            // NB: interval -> interval_mins
+          "FROM instruction AS ii, "
+               "instruction_in_recipe AS jj "
+          "WHERE jj.instruction_id = ii.id")},
+         // Now we've copied all the data to the new table, we can safely throw the old tables away
+         {QString("DROP TABLE instruction_in_recipe")},
+         {QString("DROP TABLE instruction")},
+         // And finally we can rename the new table replace the old one
+         {QString("ALTER TABLE new_instruction RENAME TO instruction")},
+
+      };
+      return executeSqlQueries(q, migrationQueries);
+   }
+
    /*!
     * \brief Migrate from version \c oldVersion to \c oldVersion+1
     */
@@ -2188,7 +2356,9 @@ namespace {
          case 12:
             ret &= migrate_to_13(database, sqlQuery);
             break;
-         // TODO: On next DB update, correct water.flouride_ppm to water.fluoride_ppm
+         case 13:
+            ret &= migrate_to_14(database, sqlQuery);
+            break;
          default:
             qCritical() << QString("Unknown version %1").arg(oldVersion);
             return false;
@@ -2252,7 +2422,7 @@ bool DatabaseSchemaHelper::create(Database & database, QSqlDatabase connection) 
    // Start transaction
    // By the magic of RAII, this will abort if we exit this function (including by throwing an exception) without
    // having called dbTransaction.commit().
-   DbTransaction dbTransaction{database, connection};
+   DbTransaction dbTransaction{database, connection, "DatabaseSchemaHelper::create"};
 
    qDebug() << Q_FUNC_INFO;
    if (!CreateAllDatabaseTables(database, connection)) {

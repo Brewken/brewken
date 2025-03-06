@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * BtSplashScreen.h is part of Brewken, and is copyright the following authors 2009-2015:
+ * BtSplashScreen.h is part of Brewken, and is copyright the following authors 2009-2025:
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -18,28 +19,21 @@
 #define BTSPLASHSCREEN_H
 #pragma once
 
-#include <QWidget>
 #include <QSplashScreen>
 #include <QString>
-#include <QLabel>
 
 /*!
  * \class BtSplashScreen
  *
  * \brief A class for showing the application splash screen on startup.
  */
-class BtSplashScreen : public QSplashScreen
-{
+class BtSplashScreen : public QSplashScreen {
    Q_OBJECT
 
 public:
-#if QT_VERSION < QT_VERSION_CHECK(5,15,0)
-   BtSplashScreen(QWidget* parent=nullptr);
-#else
-   BtSplashScreen(QScreen* parent=nullptr);
-#endif
+   BtSplashScreen(QScreen * parent = nullptr);
 
-   void showMessage(QString const& message);
+   void showMessage(QString const & message);
 };
 
 #endif

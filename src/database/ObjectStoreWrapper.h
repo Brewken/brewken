@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/ObjectStoreWrapper.h is part of Brewken, and is copyright the following authors 2021-2022:
+ * database/ObjectStoreWrapper.h is part of Brewken, and is copyright the following authors 2021-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -72,6 +72,7 @@ namespace ObjectStoreWrapper {
       return ObjectStoreTyped<NE>::getInstance().getAll();
    }
 
+   //! \brief Raw pointer version
    template<class NE> QList<NE *> getAllRaw() {
       return ObjectStoreTyped<NE>::getInstance().getAllRaw();
    }
@@ -82,6 +83,13 @@ namespace ObjectStoreWrapper {
     *          - not marked deleted
     *          - do not have a parent (ie are not "an instance of use of"
     */
+   template<class NE> QList<std::shared_ptr<NE>> getAllDisplayable() {
+      return ObjectStoreTyped<NE>::getInstance().findAllMatching(
+         [](std::shared_ptr<NE> ne) { return (ne->display() && !ne->deleted() && ne->getParentKey() <= 0); }
+      );
+   }
+
+   //! \brief Raw pointer version
    template<class NE> QList<NE *> getAllDisplayableRaw() {
       return ObjectStoreTyped<NE>::getInstance().findAllMatching(
          [](NE const * ne) { return (ne->display() && !ne->deleted() && ne->getParentKey() <= 0); }
@@ -108,6 +116,11 @@ namespace ObjectStoreWrapper {
          Q_FUNC_INFO << "Creating new shared_ptr for unstored" << ne->metaObject()->className() << "#" << id << " :" <<
          ne->name() << ".  This may be a bug - eg if a shared_ptr already exists for this object!";
       return std::shared_ptr<NE>{ne};
+   }
+
+   template<class NE> std::shared_ptr<NE> getShared(NE const & ne) {
+      ObjectStoreTyped<NE> & objectStore = ObjectStoreTyped<NE>::getInstance();
+      return objectStore.getById(ne.key());
    }
 
    /**

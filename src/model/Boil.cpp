@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Boil.cpp is part of Brewken, and is copyright the following authors 2023-2024:
+ * model/Boil.cpp is part of Brewken, and is copyright the following authors 2023-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -17,12 +17,18 @@
 
 #include <algorithm>
 
+#include "database/ObjectStoreWrapper.h"
 #include "model/Fermentation.h"
 #include "model/FermentationStep.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/NamedParameterBundle.h"
 #include "utils/AutoCompare.h"
+
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_Boil.cpp"
+#endif
 
 QString Boil::localisedName() { return tr("Boil"); }
 
@@ -33,8 +39,10 @@ bool Boil::isEqualTo(NamedEntity const & other) const {
    return (
       Utils::AutoCompare(this->m_description  , rhs.m_description  )   &&
       Utils::AutoCompare(this->m_notes        , rhs.m_notes        ) &&
-      Utils::AutoCompare(this->m_preBoilSize_l, rhs.m_preBoilSize_l)
-      // .:TBD:. Should we check BoilSteps too?
+      Utils::AutoCompare(this->m_preBoilSize_l, rhs.m_preBoilSize_l) &&
+      // Parent classes have to be equal too
+      this->FolderBase<Boil>::doIsEqualTo(rhs) &&
+      this->StepOwnerBase<Boil, BoilStep>::doIsEqualTo(rhs)
    );
 }
 
@@ -50,11 +58,11 @@ TypeLookup const Boil::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(PropertyNames::Boil::preBoilSize_l, Boil::m_preBoilSize_l, Measurement::PhysicalQuantity::Volume),
 
       PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Boil::boilTime_mins, Boil::boilTime_mins, Measurement::PhysicalQuantity::Time),
-      PROPERTY_TYPE_LOOKUP_ENTRY_NO_MV(PropertyNames::Boil::boilSteps, Boil::boilSteps),
    },
    // Parent classes lookup
    {&NamedEntity::typeLookup,
-    std::addressof(FolderBase<Boil>::typeLookup)}
+    std::addressof(FolderBase<Boil>::typeLookup),
+    std::addressof(StepOwnerBase<Boil, BoilStep>::typeLookup)}
 };
 static_assert(std::is_base_of<FolderBase<Boil>, Boil>::value);
 
@@ -75,7 +83,7 @@ Boil::Boil(QString name) :
 Boil::Boil(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity     {namedParameterBundle},
    FolderBase<Boil>{namedParameterBundle},
-   StepOwnerBase<Boil, BoilStep>{},
+   StepOwnerBase<Boil, BoilStep>{namedParameterBundle},
    SET_REGULAR_FROM_NPB (m_description  , namedParameterBundle, PropertyNames::Boil::description  ),
    SET_REGULAR_FROM_NPB (m_notes        , namedParameterBundle, PropertyNames::Boil::notes        ),
    SET_REGULAR_FROM_NPB (m_preBoilSize_l, namedParameterBundle, PropertyNames::Boil::preBoilSize_l) {
@@ -150,19 +158,9 @@ void Boil::setBoilTime_mins(double const val) {
    return;
 }
 
-void Boil::acceptStepChange([[maybe_unused]] QMetaProperty prop,
-                            [[maybe_unused]] QVariant      val) {
-   BoilStep * stepSender = qobject_cast<BoilStep*>(sender());
-   if (!stepSender) {
-      return;
-   }
-
-   // If one of our steps changed, our pseudo properties may also change, so we need to emit some signals
-   if (stepSender->ownerId() == this->key()) {
-      emit changed(metaProperty(*PropertyNames::Boil::boilTime_mins), QVariant());
-      emit changed(metaProperty(*PropertyNames::Boil::boilSteps    ), QVariant());
-   }
-
+void Boil::acceptStepChange(QMetaProperty prop, QVariant val) {
+   // TBD I don't think anything listens for changes to boilTime_mins
+   this->doAcceptStepChange(this->sender(), prop, val, {&PropertyNames::Boil::boilTime_mins});
    return;
 }
 
@@ -173,16 +171,22 @@ void Boil::ensureStandardProfile() {
    // post-boil).  If it turns out that there are recipes with more complicated boil profiles then we might need to
    // revisit this.
    //
-   auto recipe = this->getOwningRecipe();
+   // We are sort of assuming that, if this function needs to do anything then probably the Boil is only used by one
+   // Recipe -- because we're typically doing this when we're creating a new Boil for a Recipe being read in from a
+   // BeerXML file.  That said, I don't think anything would break too horribly if in the event the Boil were used by
+   // more than one Recipe.
+   //
+   auto recipe = ObjectStoreWrapper::findFirstMatching<Recipe>([this](Recipe * rec) {return rec->uses(*this);});
+   QString const recipeStrippedName = recipe ? recipe->strippedName() : tr("a recipe");
 
    auto boilSteps = this->steps();
    if (boilSteps.size() == 0 || boilSteps.at(0)->startTemp_c().value_or(100.0) > Boil::minimumBoilTemperature_c) {
       // We need to add a ramp-up (aka pre-boil) step
-      auto preBoil = std::make_shared<BoilStep>(tr("Pre-boil for %1").arg(recipe->name()));
-      preBoil->setDescription(tr("Automatically-generated pre-boil step for %1").arg(recipe->name()));
+      auto preBoil = std::make_shared<BoilStep>(tr("Pre-boil for %1").arg(recipeStrippedName));
+      preBoil->setDescription(tr("Automatically-generated pre-boil step for %1").arg(recipeStrippedName));
       // Get the starting temperature for the ramp-up from the end temperature of the mash
       double startingTemp = Boil::minimumBoilTemperature_c - 1.0;
-      if (recipe->mash()) {
+      if (recipe && recipe->mash()) {
          auto mashSteps = recipe->mash()->steps();
          if (!mashSteps.isEmpty()) {
             auto lastMashStep = mashSteps.last();
@@ -192,24 +196,24 @@ void Boil::ensureStandardProfile() {
       }
       preBoil->setStartTemp_c(startingTemp);
       preBoil->setEndTemp_c(100.0);
-      this->insertStep(preBoil, 1);
+      this->insert(preBoil, 1);
    }
 
    if (boilSteps.size() < 2 || boilSteps.at(1)->startTemp_c().value_or(0.0) < Boil::minimumBoilTemperature_c) {
       // We need to add a main (aka boil proper) step
-      auto mainBoil = std::make_shared<BoilStep>(tr("Main boil for %1").arg(recipe->name()));
-      mainBoil->setDescription(tr("Automatically-generated boil proper step for %1").arg(recipe->name()));
+      auto mainBoil = std::make_shared<BoilStep>(tr("Main boil for %1").arg(recipeStrippedName));
+      mainBoil->setDescription(tr("Automatically-generated boil proper step for %1").arg(recipeStrippedName));
       mainBoil->setStartTemp_c(100.0);
       mainBoil->setEndTemp_c(100.0);
-      this->insertStep(mainBoil, 2);
+      this->insert(mainBoil, 2);
    }
 
    if (boilSteps.size() < 3 || boilSteps.at(2)->endTemp_c().value_or(100.0) > Boil::minimumBoilTemperature_c) {
       // We need to add a post-boil step
-      auto postBoil = std::make_shared<BoilStep>(tr("Post-boil for %1").arg(recipe->name()));
-      postBoil->setDescription(tr("Automatically-generated post-boil step for %1").arg(recipe->name()));
+      auto postBoil = std::make_shared<BoilStep>(tr("Post-boil for %1").arg(recipeStrippedName));
+      postBoil->setDescription(tr("Automatically-generated post-boil step for %1").arg(recipeStrippedName));
       double endingTemp = 30.0;
-      if (recipe->fermentation()) {
+      if (recipe && recipe->fermentation()) {
          auto fs = recipe->fermentation()->fermentationSteps();
          if (!fs.isEmpty()) {
             auto firstFermentationStep = fs.first();
@@ -218,7 +222,7 @@ void Boil::ensureStandardProfile() {
       }
       postBoil->setStartTemp_c(100.0);
       postBoil->setEndTemp_c(endingTemp);
-      this->insertStep(postBoil, 3);
+      this->insert(postBoil, 3);
    }
 
    return;

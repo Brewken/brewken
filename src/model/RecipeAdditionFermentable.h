@@ -28,7 +28,7 @@
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::RecipeAdditionFermentable { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::RecipeAdditionFermentable { inline BtStringConst const property{#property}; }
 AddPropertyName(fermentable)
 AddPropertyName(use) // Deprecated - retained only for BeerXML
 
@@ -91,18 +91,14 @@ public:
    //! \brief The maximum kg of equivalent glucose that will come from this Fermentable addition.
    double equivSucrose_kg() const;
 
-///   virtual Recipe * getOwningRecipe() const;
-
-   virtual NamedEntity * ensureExists(BtStringConst const & property);
+   virtual NamedEntity * ensureExists(BtStringConst const & property) override;
 
 protected:
    // Note that we don't override isEqualTo, as we don't have any non-inherited member variables
-   virtual ObjectStore & getObjectStoreTypedInstance() const;
+   virtual ObjectStore & getObjectStoreTypedInstance() const override;
 
 };
 
-Q_DECLARE_METATYPE(Fermentable)
-Q_DECLARE_METATYPE(Fermentable *)
 BT_DECLARE_METATYPES(RecipeAdditionFermentable)
 
 #endif

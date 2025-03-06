@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * unitTests/Testing.cpp is part of Brewken, and is copyright the following authors 2009-2024:
+ * unitTests/Testing.cpp is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -258,11 +258,7 @@ namespace {
 
       QString randSTR;
       for (int i = 0; i < randomcharLength; i++) {
-#if QT_VERSION < QT_VERSION_CHECK(5,10,0)
-         int index = qrand() % posChars.length();
-#else
          int index = QRandomGenerator().generate64() % posChars.length();
-#endif
          QChar nChar = posChars.at(index);
          randSTR.append(nChar);
       }
@@ -468,8 +464,8 @@ void Testing::initTestCase() {
 
       //
       // Application::initialize() will initialise a bunch of things, including creating a default database in
-      // this->pimpl->m_tempDir courtesy of the call to PersistentSettings::initialise() above.  If there is a problem creating the DB,
-      // it will return false.
+      // this->pimpl->m_tempDir courtesy of the call to PersistentSettings::initialise() above.  If there is a problem
+      // creating the DB, it will return false.
       //
       QVERIFY(Application::initialize());
 
@@ -532,7 +528,7 @@ void Testing::recipeCalcTest_allGrain() {
    singleConversion_convert->setName("Conversion");
    singleConversion_convert->setType(MashStep::Type::Infusion);
    singleConversion_convert->setAmount_l(conversion_l);
-   singleConversion->addStep(singleConversion_convert);
+   singleConversion->add(singleConversion_convert);
    auto singleConversion_sparge = std::make_shared<MashStep>();
    singleConversion_sparge->setName("Sparge");
    singleConversion_sparge->setType(MashStep::Type::Infusion);
@@ -541,7 +537,7 @@ void Testing::recipeCalcTest_allGrain() {
       + this->pimpl->m_equipFiveGalNoLoss->mashTunGrainAbsorption_LKg().value_or(Equipment::default_mashTunGrainAbsorption_LKg) * grain_kg // Grain absorption
       - conversion_l // Water we already added
    );
-   singleConversion->addStep(singleConversion_sparge);
+   singleConversion->add(singleConversion_sparge);
 
    // Add equipment
    rec->setEquipment(this->pimpl->m_equipFiveGalNoLoss);
@@ -662,7 +658,7 @@ void Testing::postBoilLossOgTest() {
    auto singleConversion_convert = std::make_shared<MashStep>();
    singleConversion_convert->setName("Conversion");
    singleConversion_convert->setType(MashStep::Type::Infusion);
-   singleConversion->addStep(singleConversion_convert);
+   singleConversion->add(singleConversion_convert);
 
    // Infusion for recNoLoss
    singleConversion_convert->setAmount_l(mashWaterNoLoss_l);
@@ -875,11 +871,10 @@ void Testing::testLogRotation() {
    // Put logging back to normal
    Logging::setLoggingToStderr(true);
 
-
    QFileInfoList fileList = Logging::getLogFileList();
    qDebug() << Q_FUNC_INFO << "Logging::getLogFileList() has" << fileList.size() << "entries";
    qDebug() << Q_FUNC_INFO << "Logging::logFileCount =" << Logging::logFileCount;
-   //There is always a "logFileCount" number of old files + 1 current file
+   // There is always a "logFileCount" number of old files + 1 current file
    QCOMPARE(fileList.size(), Logging::logFileCount + 1);
 
    qDebug() << Q_FUNC_INFO << "Logging::logFileSize =" << Logging::logFileSize;
@@ -895,7 +890,7 @@ void Testing::testLogRotation() {
 void Testing::cleanupTestCase() {
    Application::cleanup();
    Logging::terminateLogging();
-   //Clean up the gibberish logs from disk by removing the
+   // Clean up the gibberish logs from disk by removing the
    QFileInfoList fileList = Logging::getLogFileList();
    for (int i = 0; i < fileList.size(); i++) {
       QFile(QString(fileList.at(i).canonicalFilePath())).remove();

@@ -40,7 +40,7 @@ class RecipeAdditionHop;
 //======================================================================================================================
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
-#define AddPropertyName(property) namespace PropertyNames::Hop { BtStringConst const property{#property}; }
+#define AddPropertyName(property) namespace PropertyNames::Hop { inline BtStringConst const property{#property}; }
 AddPropertyName(alpha_pct         )
 AddPropertyName(beta_pct          )
 AddPropertyName(bPinene_pct       )
@@ -301,8 +301,8 @@ public:
    void setYear              (QString               const   val);
 
 protected:
-   virtual bool isEqualTo(NamedEntity const & other) const;
-   virtual ObjectStore & getObjectStoreTypedInstance() const;
+   virtual bool isEqualTo(NamedEntity const & other) const override;
+   virtual ObjectStore & getObjectStoreTypedInstance() const override;
 
 private:
    double                m_alpha_pct         ;

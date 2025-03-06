@@ -32,6 +32,11 @@
 #include "model/Fermentable.h"
 #include "PhysicalConstants.h"
 
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_MashDesigner.cpp"
+#endif
+
 MashDesigner::MashDesigner(QWidget * parent) : QDialog       {parent},
                                                m_recObs      {nullptr},
                                                m_mash        {nullptr},
@@ -173,8 +178,8 @@ void MashDesigner::saveStep() {
       this->m_mashStep->setInfuseTemp_c(this->selectedTemp_c());
    }
 
-   // Mash::addStep() will ensure the m_mash step is stored in the DB and has the correct m_mash ID etc
-   this->m_mash->addStep(this->m_mashStep);
+   // This call will ensure the m_mash step is stored in the DB and has the correct m_mash ID etc
+   this->m_mash->add(this->m_mashStep);
    return;
 }
 

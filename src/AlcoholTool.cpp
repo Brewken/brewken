@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * AlcoholTool.cpp is is part of Brewken, and is copyright the following authors 2009-2023:
+ * AlcoholTool.cpp is is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Ryan Hoobler <rhoob@yahoo.com>
  *
@@ -33,6 +33,11 @@
 #include "PersistentSettings.h"
 #include "measurement/SystemOfMeasurement.h"
 #include "widgets/ToggleSwitch.h"
+
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_AlcoholTool.cpp"
+#endif
 
 // Settings we only use in this file under the PersistentSettings::Sections::alcoholTool section
 #define AddSettingName(name) namespace { BtStringConst const name{#name}; }
@@ -95,10 +100,7 @@ public:
 
    void doLayout() {
       this->input_og->setMinimumSize(QSize(80, 0));
-///      this->input_og->setForcedSystemOfMeasurement(Measurement::SystemOfMeasurement::SpecificGravity);
-
       this->input_fg->setMinimumSize(QSize(80, 0));
-///      this->input_fg->setForcedSystemOfMeasurement(Measurement::SystemOfMeasurement::SpecificGravity);
 
       this->label_result->setObjectName(QStringLiteral("label_results"));
       this->label_result->setContextMenuPolicy(Qt::CustomContextMenu);

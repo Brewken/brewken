@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/ToggleSwitch.cpp is is part of Brewken, and is copyright the following authors 2018-2022:
+ * widgets/ToggleSwitch.cpp is is part of Brewken, and is copyright the following authors 2018-2025:
  *   • Iman Ahmadvand <iman72411@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -17,6 +17,11 @@
 #include "widgets/ToggleSwitch.h"
 
 #include <QtCore/qeasingcurve.h>
+
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_ToggleSwitch.cpp"
+#endif
 
 Q_DECL_IMPORT void qt_blurImage(QPainter * p, QImage & blurImage, qreal radius, bool quality, bool alphaOnly,
                                 int transposed = 0); // src/widgets/effects/qpixmapfilter.cpp
@@ -124,14 +129,7 @@ QRect ToggleSwitch::textRect() {
 
 QSize ToggleSwitch::sizeHint() const {
    auto h = style.height;
-   // Note that QFontMetrics::width(QString const &) is deprecated in newer versions of Qt, and
-   // QFontMetrics::horizontalAdvance is the recommended replacement (fortunately with the same signature).
-   // HOWEVER, QFontMetrics::horizontalAdvance is only available since Qt 5.11
-#if QT_VERSION < QT_VERSION_CHECK(5,11,0)
-   auto w = style.indicatorMargin.left() + style.height + style.indicatorMargin.right() + fontMetrics().width(text());
-#else
    auto w = style.indicatorMargin.left() + style.height + style.indicatorMargin.right() + fontMetrics().horizontalAdvance(text());
-#endif
    return QSize(w, h);
 }
 

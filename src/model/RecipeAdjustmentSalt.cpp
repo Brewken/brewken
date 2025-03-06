@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/RecipeAdjustmentSalt.cpp is part of Brewken, and is copyright the following authors 2024:
+ * model/RecipeAdjustmentSalt.cpp is part of Brewken, and is copyright the following authors 2024-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -20,6 +20,11 @@
 #include "model/NamedParameterBundle.h"
 #include "model/Boil.h"
 #include "model/BoilStep.h"
+
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_RecipeAdjustmentSalt.cpp"
+#endif
 
 QString RecipeAdjustmentSalt::localisedName() { return tr("Salt Addition"); }
 
@@ -104,13 +109,8 @@ Salt * RecipeAdjustmentSalt::salt() const {
       return nullptr;
    }
 
-///   qDebug() << Q_FUNC_INFO << "RecipeAdjustmentSalt #" << this->key() << ": Recipe #" << this->m_recipeId << ", Salt #" << this->m_ingredientId << "@" << ObjectStoreWrapper::getByIdRaw<Salt>(this->m_ingredientId);
    return ObjectStoreWrapper::getByIdRaw<Salt>(this->m_ingredientId);
 }
-
-///Recipe * RecipeAdjustmentSalt::getOwningRecipe() const {
-///   return ObjectStoreWrapper::getByIdRaw<Recipe>(this->m_recipeId);
-///}
 
 NamedEntity * RecipeAdjustmentSalt::ensureExists(BtStringConst const & property) {
    if (property == PropertyNames::RecipeAdjustmentSalt::salt) {

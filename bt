@@ -31,14 +31,13 @@
 #                                need to be for a local install).  Then creates a distributable package, making use
 #                                of various build variables passed back from Meson.
 #
-# NOTE: This tool, used in conjunction with Meson, is now the official way to build and package the software.  We
-#       continue to support CMake for local compiles and installs, but not for packaging.
+# NOTE: This tool, used in conjunction with Meson, is now the official way to build and package the software.  We will
+#       continue to support CMake indefinitely for local compiles and installs, since it is such a widespread and
+#       familiar build system for C++ projects.  However, we no longer attempt to support packaging via CPack.
 #
 # .:TODO:. At some point we should be able to retire:
 #    configure
 #    setupgit.sh
-#    CMakeLists.txt
-#    src/CMakeLists.txt
 #
 # **********************************************************************************************************************
 # *
@@ -123,9 +122,18 @@
 #
 topDir=$(dirname $0)
 
+#
+# It's worth knowing exactly which instance of Python we're running as, eg, on MSYS2 on Windows there can be multiple
+# versions installed
+#
+export exe_python=$(which python3)
+echo "${exe_python} --version"
+${exe_python} --version
+
 # This first Python script, run using the system-wide Python interpreter, will install a few bare necessities and
 # (re)create the Python venv
-python3 ${topDir}/scripts/btInit.py
+echo "${exe_python} ${topDir}/scripts/btInit.py"
+${exe_python} ${topDir}/scripts/btInit.py
 if [ $? -ne 0 ]; then
    exit $?
 fi
@@ -134,7 +142,15 @@ fi
 # Now we can switch to the venv
 #
 pwd
+echo "source ${topDir}/.venv/bin/activate"
 source ${topDir}/.venv/bin/activate
+
+#
+# And let's reassure ourselves that, with the changed paths of the venve, we're still running the same version of Python
+#
+export exe_python=$(which python3)
+echo "${exe_python} --version"
+${exe_python} --version
 
 #
 # Uncomment the following to show exported environment variables for debugging.
@@ -148,4 +164,5 @@ source ${topDir}/.venv/bin/activate
 #env
 
 # Run the main script, passing in all the command line arguments we received
-python3 ${topDir}/scripts/buildTool.py $@
+echo "${exe_python} ${topDir}/scripts/buildTool.py $@"
+${exe_python} ${topDir}/scripts/buildTool.py $@

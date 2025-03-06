@@ -58,6 +58,11 @@
 #include "model/Yeast.h"
 #include "PersistentSettings.h"
 
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_RecipeFormatter.cpp"
+#endif
+
 namespace {
    //! Get the maximum number of characters in a list of strings.
    unsigned int getMaxLength(QStringList & list) {
@@ -924,7 +929,7 @@ public:
          return "";
       }
 
-      QList<Instruction*> instructions = this->rec->instructions();
+      auto instructions = this->rec->instructions();
       int size = instructions.size();
       if ( size < 1 ) {
          return "";
@@ -934,7 +939,7 @@ public:
       itable += "<ol id=\"instruction\">";
 
       for (int ii = 0; ii < size; ++ii) {
-         Instruction* ins = instructions[ii];
+         auto ins = instructions[ii];
          itable += QString("<li>%1</li>").arg( ins->directions());
       }
 
@@ -952,12 +957,11 @@ public:
 
       QStringList num, text;
 
-      QList<Instruction*> instructions = rec->instructions();
+      auto instructions = rec->instructions();
       int size = instructions.size();
       if ( size > 0 ) {
-         Instruction* ins;
          for (int ii = 0; ii < size; ++ii) {
-            ins = instructions[ii];
+            auto ins = instructions[ii];
             num.append(QString("%1").arg(ii));
             //Wrap instruction text to 75 ( 80 (text separator length) - 5 (num colunm lenght) )
             text.append(QString("- %1").arg(wrapText(ins->directions(), 75)));
@@ -989,14 +993,14 @@ public:
       }
 
       QString bnTable = "";
-      QList<BrewNote*> brewNotes = rec->brewNotes();
+      auto const brewNotes = rec->brewNotes();
       int size = brewNotes.size();
       if ( size < 1 ) {
          return bnTable;
       }
 
       for(int ii = 0; ii < size; ++ii) {
-         BrewNote* note = brewNotes[ii];
+         auto note = brewNotes[ii];
 
          bnTable += QString("<h2>%1 %2</h2>").arg(tr("Brew Date")).arg(note->brewDate_short());
 
@@ -1102,12 +1106,12 @@ QString RecipeFormatter::getHtmlFormat(QList<Recipe*> recipes) {
 
    // build a toc -- why do I do this to myself?
    hDoc += "<ul>";
-   foreach ( Recipe* foo, recipes ) {
+   for (auto foo : recipes) {
        hDoc += QString("<li><a href=\"#%1\">%1</a></li>").arg(foo->name());
    }
    hDoc += "</ul>";
 
-   foreach (Recipe* foo, recipes) {
+   for (auto foo : recipes) {
       this->pimpl->rec = foo;
       hDoc += QString("<a name=\"%1\"></a>").arg(foo->name());
       hDoc += this->pimpl->buildStatTableHtml();
@@ -1204,324 +1208,13 @@ QString RecipeFormatter::getBBCodeFormat() {
    return ret;
 }
 
-QString RecipeFormatter::getToolTip(Recipe* rec) {
-   if (rec == nullptr) {
-      return "";
-   }
-
-   auto style = rec->style();
-
-   // Do the style sheet first
-   QString header = "<html><head><style type=\"text/css\">";
-   header += Html::getCss(":/css/tooltip.css");
-   header += "</style></head>";
-
-   QString body   = "<body>";
-   //body += QString("<h1>%1</h1>").arg(rec->getName()());
-   body += QString("<div id=\"headerdiv\">");
-   body += QString("<table id=\"tooltip\">");
-   body += QString("<caption>%1 (%2%3)</caption>")
-         .arg( style ? style->name() : tr("unknown style"))
-         .arg( style ? style->categoryNumber() : tr("N/A") )
-         .arg( style ? style->styleLetter() : "" );
-
-   // Third row: OG and FG
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-           .arg(tr("OG"))
-           .arg(Measurement::displayAmount(Measurement::Amount{rec->og(), Measurement::Units::specificGravity}, 3));
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-           .arg(tr("FG"))
-           .arg(Measurement::displayAmount(Measurement::Amount{rec->fg(), Measurement::Units::specificGravity}, 3));
-
-   // Fourth row: Color and Bitterness.
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2 (%3)</td>")
-           .arg(tr("Color"))
-           .arg(Measurement::displayAmount(Measurement::Amount{rec->color_srm(), Measurement::Units::srm}, 1))
-           .arg(ColorMethods::colorFormulaName());
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2 (%3)</td></tr>")
-           .arg(tr("IBU"))
-           .arg(Measurement::displayQuantity(rec->IBU(), 1))
-           .arg(IbuMethods::ibuFormulaName() );
-
-   body += "</table></body></html>";
-
-   return header + body;
-}
-
-QString RecipeFormatter::getToolTip(Style* style) {
-   if (style == nullptr) {
-      return "";
-   }
-
-   // Do the style sheet first
-   QString header = "<html><head><style type=\"text/css\">";
-   header += Html::getCss(":/css/tooltip.css");
-   header += "</style></head>";
-
-   QString body   = "<body>";
-
-   body += QString("<div id=\"headerdiv\">");
-   body += QString("<table id=\"tooltip\">");
-   body += QString("<caption>%1</caption>")
-         .arg( style->name() );
-
-   // First row -- category and number (letter)
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-           .arg(tr("Category"))
-           .arg(style->category());
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2%3</td></tr>")
-           .arg(tr("Code"))
-           .arg(style->categoryNumber())
-           .arg(style->styleLetter());
-
-   // Second row: guide and type
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-           .arg(tr("Guide"))
-           .arg(style->styleGuide());
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-           .arg(tr("Type"))
-           .arg(Style::typeDisplayNames[style->type()]);
-
-   body += "</table></body></html>";
-
-   return header + body;
-}
-
-QString RecipeFormatter::getToolTip(Equipment* kit) {
-   if (kit == nullptr) {
-      return "";
-   }
-
-   // Do the style sheet first
-   QString header = "<html><head><style type=\"text/css\">";
-   header += Html::getCss(":/css/tooltip.css");
-   header += "</style></head>";
-
-   QString body   = "<body>";
-
-   body += QString("<div id=\"headerdiv\">");
-   body += QString("<table id=\"tooltip\">");
-   body += QString("<caption>%1</caption>")
-         .arg( kit->name() );
-
-   // First row -- batchsize and boil time
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-           .arg(tr("Preboil"))
-           .arg(Measurement::displayAmount(Measurement::Amount{kit->kettleBoilSize_l(), Measurement::Units::liters}) );
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-           .arg(tr("BoilTime"))
-           .arg(Measurement::displayAmount(Measurement::Amount{kit->boilTime_min().value_or(Equipment::default_boilTime_mins), Measurement::Units::minutes}) );
-
-   body += "</table></body></html>";
-
-   return header + body;
-}
-
-// Once we do inventory, this needs to be fixed to show amount on hand
-QString RecipeFormatter::getToolTip(Fermentable* fermentable) {
-   if (fermentable == nullptr) {
-      return "";
-   }
-
-   // Do the style sheet first
-   QString header = "<html><head><style type=\"text/css\">";
-   header += Html::getCss(":/css/tooltip.css");
-   header += "</style></head>";
-
-   QString body   = "<body>";
-
-   body += QString("<div id=\"headerdiv\">");
-   body += QString("<table id=\"tooltip\">");
-   body += QString("<caption>%1</caption>")
-         .arg( fermentable->name() );
-
-   // First row -- type and color
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-           .arg(tr("Type"))
-           .arg(Fermentable::typeDisplayNames[fermentable->type()]);
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-           .arg(tr("Color"))
-           .arg(Measurement::displayAmount(Measurement::Amount{fermentable->color_srm(), Measurement::Units::srm}, 1));
-   // Second row -- isMashed and yield?
-//   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-//           .arg(tr("Mashed"))
-//           .arg( fermentable->stage() == RecipeAddition::Stage::Mash ? tr("Yes") : tr("No") );
-   body += QString("<tr><td class=\"left\">.</td><td class=\"value\">.</td>");
-   auto const yield = fermentable->fineGrindYield_pct();
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-           .arg(tr("Extract Yield Dry Basis Fine Grind (DBFG)"))
-           .arg(yield ? Measurement::displayQuantity(*yield, 3) : "?");
-
-   body += "</table></body></html>";
-
-   return header + body;
-}
-
-QString RecipeFormatter::getToolTip(Hop* hop) {
-   if (hop == nullptr) {
-      return "";
-   }
-
-   // Do the style sheet first
-   QString header = "<html><head><style type=\"text/css\">";
-   header += Html::getCss(":/css/tooltip.css");
-   header += "</style></head>";
-
-   QString body   = "<body>";
-
-   body += QString("<div id=\"headerdiv\">");
-   body += QString("<table id=\"tooltip\">");
-   body += QString("<caption>%1</caption>")
-         .arg( hop->name() );
-
-   // First row -- alpha and beta
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-           .arg(tr("Alpha"))
-           .arg(Measurement::displayQuantity(hop->alpha_pct(), 3));
-   if (hop->beta_pct()) {
-      body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td>")
-            .arg(tr("Beta"))
-            .arg(Measurement::displayQuantity(*hop->beta_pct(), 3));
-   }
-   body += QString("</tr>");
-
-   // Second row -- form and type
-   body += QString("<tr>");
-   if (hop->form()) {
-      body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-            .arg(tr("Form"))
-            .arg(Hop::formDisplayNames[*hop->form()]);
-   }
-   if (hop->type()) {
-      body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-            .arg(tr("Type"))
-            .arg(Hop::typeDisplayNames[*hop->type()]);
-   }
-   body += QString("</tr>");
-   body += "</table></body></html>";
-
-   return header + body;
-}
-
-QString RecipeFormatter::getToolTip(Misc* misc) {
-   if (misc == nullptr) {
-      return "";
-   }
-
-   // Do the style sheet first
-   QString header = "<html><head><style type=\"text/css\">";
-   header += Html::getCss(":/css/tooltip.css");
-   header += "</style></head>";
-
-   QString body   = "<body>";
-
-   body += QString("<div id=\"headerdiv\">");
-   body += QString("<table id=\"tooltip\">");
-   body += QString("<caption>%1</caption>")
-         .arg( misc->name() );
-   // First row -- type and use
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-           .arg(tr("Type"))
-           .arg(Misc::typeDisplayNames[misc->type()]);
-///   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-///           .arg(tr("Use"))
-///           .arg(Misc::useDisplayNames[misc->use()]);
-
-   body += "</table></body></html>";
-
-   return header + body;
-}
-
-QString RecipeFormatter::getToolTip(Yeast* yeast) {
-   if (yeast == nullptr) {
-      return "";
-   }
-
-   // Do the style sheet first
-   QString header = "<html><head><style type=\"text/css\">";
-   header += Html::getCss(":/css/tooltip.css");
-   header += "</style></head>";
-
-   QString body   = "<body>";
-
-   body += QString("<div id=\"headerdiv\">");
-   body += QString("<table id=\"tooltip\">");
-   body += QString("<caption>%1</caption>")
-         .arg( yeast->name() );
-
-   // First row -- type and form
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-           .arg(tr("Type"))
-           .arg(Yeast::typeDisplayNames[yeast->type()]);
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-           .arg(tr("Form"))
-           .arg(Yeast::formDisplayNames[yeast->form()]);
-   // Second row -- lab and attenuation
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-           .arg(tr("Lab"))
-           .arg(yeast->laboratory());
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2 %</td></tr>")
-           .arg(tr("Attenuation"))
-           .arg(Measurement::displayQuantity(yeast->attenuationTypical_pct(), 0));
-
-   // Third row -- prod id and flocculation
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-           .arg(tr("Id"))
-           .arg(yeast->productId());
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-           .arg(tr("Flocculation"))
-           .arg(Yeast::flocculationDisplayNames[yeast->flocculation()]);
-
-
-   body += "</table></body></html>";
-
-   return header + body;
-}
-
-QString RecipeFormatter::getToolTip(Water* water) {
-   if (water == nullptr) {
-      return "";
-   }
-
-   // Do the style sheet first
-   QString header = "<html><head><style type=\"text/css\">";
-   header += Html::getCss(":/css/tooltip.css");
-   header += "</style></head>";
-
-   QString body   = "<body>";
-
-   body += QString("<div id=\"headerdiv\">");
-   body += QString("<table id=\"tooltip\">");
-   body += QString("<caption>%1</caption>")
-         .arg( water->name() );
-
-   // First row -- Ca and Mg
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-           .arg(tr("Ca"))
-           .arg(water->calcium_ppm());
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-           .arg(tr("Mg"))
-           .arg(water->magnesium_ppm());
-   // Second row -- SO4 and Na
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-           .arg(tr("SO<sub>4</sub>"))
-           .arg(water->sulfate_ppm());
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-           .arg(tr("Na"))
-           .arg(water->sodium_ppm());
-   // third row -- Cl and HCO3
-   body += QString("<tr><td class=\"left\">%1</td><td class=\"value\">%2</td>")
-           .arg(tr("Cl"))
-           .arg(water->chloride_ppm());
-   body += QString("<td class=\"left\">%1</td><td class=\"value\">%2</td></tr>")
-           .arg(tr("HCO<sub>3</sub>"))
-           .arg( water->bicarbonate_ppm());
-
-
-   body += "</table></body></html>";
-
-   return header + body;
-}
+/**
+ * \brief For any class where we haven't got a better thing to show (via the specialisations below), we'll just show
+ *        the object name.
+ */
+///template<class NE> static QString getToolTip(NE const & ne) {
+///   return ne.name();
+///}
 
 void RecipeFormatter::toTextClipboard() {
    QApplication::clipboard()->setText(this->pimpl->getTextFormat());
