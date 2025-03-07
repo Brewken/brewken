@@ -750,7 +750,7 @@ public:
       }
 
       // All cases should be covered in switch above
-      std::unreachable();
+//      std::unreachable();
    }
 
    template<std::derived_from<TreeNode> TreeNodeType>
@@ -797,10 +797,9 @@ private:
       for (QString cur : dirs) {
 
          // If we have a parent folder, use its full path.  Otherwise, use the parent path
-         QString folderPath {
-            parentNode->underlyingItem() ? parentNode->underlyingItem()->fullPath() % "/" % cur :
-                    parentPath % "/" % cur
-         };
+         QString folderPath =
+            parentNode->underlyingItem() ? QString{parentNode->underlyingItem()->fullPath() % "/" % cur} :
+                                           QString{parentPath % "/" % cur};
 
          folderPath.replace(QRegularExpression("//"), "/");
 
@@ -1202,7 +1201,9 @@ protected:
 
       } else {
          // It's a coding error for the function to be called when there is no secondary element
-         static_assert(false);
+         // Static assert would be best here, but need to wait until we're not supporting Ubuntu 22.04
+//         static_assert(false);
+         Q_ASSERT(false);
       }
       return;
    }

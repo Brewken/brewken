@@ -168,7 +168,7 @@ template<> bool TreeItemNode<Recipe>::columnIsLessThan(TreeItemNode<Recipe> cons
          return lhs.ancestors().length() < rhs.ancestors().length();
    }
 
-   std::unreachable();
+//   std::unreachable();
 }
 
 template<> bool TreeItemNode<BrewNote>::columnIsLessThan(TreeItemNode<BrewNote> const & other,
@@ -180,7 +180,7 @@ template<> bool TreeItemNode<BrewNote>::columnIsLessThan(TreeItemNode<BrewNote> 
          return lhs.brewDate() < rhs.brewDate();
    }
 
-   std::unreachable();
+//   std::unreachable();
 }
 
 template<> bool TreeItemNode<Equipment>::columnIsLessThan(TreeItemNode<Equipment> const & other,
@@ -196,7 +196,7 @@ template<> bool TreeItemNode<Equipment>::columnIsLessThan(TreeItemNode<Equipment
                 rhs.boilTime_min().value_or(Equipment::default_boilTime_mins);
    }
 
-   std::unreachable();
+//   std::unreachable();
 }
 
 template<> bool TreeItemNode<Fermentable>::columnIsLessThan(TreeItemNode<Fermentable> const & other,

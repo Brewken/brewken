@@ -80,7 +80,7 @@ template <class NE> struct TreeNodeTraits<Folder, NE> {
          case ColumnIndex::FullPath:
             return QVariant(folder.fullPath());
       }
-      std::unreachable();
+//      std::unreachable();
    }
 };
 
@@ -103,7 +103,7 @@ template<> struct TreeNodeTraits<BrewNote, Recipe> {
          case ColumnIndex::BrewDate:
             return QVariant(brewNote.brewDate_short());
       }
-      std::unreachable();
+//      std::unreachable();
    }
 };
 
@@ -134,7 +134,7 @@ template<> struct TreeNodeTraits<Recipe, Recipe> {
          case ColumnIndex::Style:
             return recipe.style() ? QVariant(recipe.style()->name()) : QVariant();
       }
-      std::unreachable();
+//      std::unreachable();
    }
 };
 
@@ -163,7 +163,7 @@ template<> struct TreeNodeTraits<Equipment, Equipment> {
          case ColumnIndex::BoilTime:
             return QVariant::fromValue(equipment.boilTime_min());
       }
-      std::unreachable();
+//      std::unreachable();
    }
 };
 
@@ -193,7 +193,7 @@ template<> struct TreeNodeTraits<Fermentable, Fermentable> {
             return QVariant(Measurement::displayAmount(Measurement::Amount{fermentable.color_srm(),
                                                                            Measurement::Units::srm}, 0));
       }
-      std::unreachable();
+//      std::unreachable();
    }
 
 };
@@ -225,7 +225,7 @@ template<> struct TreeNodeTraits<Hop, Hop> {
          case ColumnIndex::Origin:
             return QVariant(hop.origin());
       }
-      std::unreachable();
+//      std::unreachable();
    }
 };
 
@@ -255,7 +255,7 @@ template<> struct TreeNodeTraits<Mash, Mash> {
          case ColumnIndex::TotalTime:
             return QVariant::fromValue(mash.totalTime_mins());
       }
-      std::unreachable();
+//      std::unreachable();
    }
 };
 
@@ -280,7 +280,7 @@ template<> struct TreeNodeTraits<Misc, Misc> {
          case ColumnIndex::Type:
             return QVariant(Misc::typeDisplayNames[misc.type()]);
       }
-      std::unreachable();
+//      std::unreachable();
    }
 };
 
@@ -316,7 +316,7 @@ template<> struct TreeNodeTraits<Yeast, Yeast> {
          case ColumnIndex::Form:
             return QVariant(Yeast::formDisplayNames[yeast.form()]);
       }
-      std::unreachable();
+//      std::unreachable();
    }
 };
 
@@ -350,7 +350,7 @@ template<> struct TreeNodeTraits<Style, Style> {
          case ColumnIndex::StyleGuide:
             return QVariant(style.styleGuide());
       }
-      std::unreachable();
+//      std::unreachable();
    }
 };
 
@@ -393,7 +393,7 @@ template<> struct TreeNodeTraits<Water, Water> {
          case ColumnIndex::pH:
             return water.ph() ? QVariant(*water.ph()) : QVariant();
       }
-      std::unreachable();
+//      std::unreachable();
    }
 };
 
