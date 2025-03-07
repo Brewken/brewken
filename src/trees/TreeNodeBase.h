@@ -446,7 +446,7 @@ public:
          case TreeNodeTraits<Folder, NE>::ColumnIndex::Path     : return lhs.path    () < rhs.path    ();
          case TreeNodeTraits<Folder, NE>::ColumnIndex::FullPath : return lhs.fullPath() < rhs.fullPath();
       }
-      std::unreachable();
+//      std::unreachable();
    }
 
    // Have to override the version in \c TreeNodeBase as that will give Folder::staticMetaObject.className() rather

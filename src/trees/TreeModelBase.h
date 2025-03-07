@@ -750,7 +750,7 @@ public:
       }
 
       // All cases should be covered in switch above
-      std::unreachable();
+//      std::unreachable();
    }
 
    template<std::derived_from<TreeNode> TreeNodeType>
@@ -797,10 +797,9 @@ private:
       for (QString cur : dirs) {
 
          // If we have a parent folder, use its full path.  Otherwise, use the parent path
-         QString folderPath {
-            parentNode->underlyingItem() ? parentNode->underlyingItem()->fullPath() % "/" % cur :
-                    parentPath % "/" % cur
-         };
+         QString folderPath =
+            parentNode->underlyingItem() ? QString{parentNode->underlyingItem()->fullPath() % "/" % cur} :
+                                           QString{parentPath % "/" % cur};
 
          folderPath.replace(QRegularExpression("//"), "/");
 
