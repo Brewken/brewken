@@ -1201,7 +1201,9 @@ protected:
 
       } else {
          // It's a coding error for the function to be called when there is no secondary element
-         static_assert(false);
+         // Static assert would be best here, but need to wait until we're not supporting Ubuntu 22.04
+//         static_assert(false);
+         Q_ASSERT(false);
       }
       return;
    }
