@@ -1,6 +1,6 @@
 /*======================================================================================================================
- * qtModels/sortFilterProxyModels/RecipeAdditionMiscSortFilterProxyModel.h is part of Brewken, and is copyright the following
- * authors 2009-2025:
+ * qtModels/sortFilterProxyModels/RecipeAdjustmentSaltSortFilterProxyModel.h is part of Brewken, and is copyright the following
+ * authors 2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -14,28 +14,26 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef SORTFILTERPROXYMODELS_RECIPEADDITIONMISCSORTFILTERPROXYMODEL_H
-#define SORTFILTERPROXYMODELS_RECIPEADDITIONMISCSORTFILTERPROXYMODEL_H
+#ifndef SORTFILTERPROXYMODELS_RECIPEADJUSTMENTSALTSORTFILTERPROXYMODEL_H
+#define SORTFILTERPROXYMODELS_RECIPEADJUSTMENTSALTSORTFILTERPROXYMODEL_H
 #pragma once
 
 #include <QSortFilterProxyModel>
 
 #include "qtModels/sortFilterProxyModels/SortFilterProxyModelBase.h"
-#include "qtModels/tableModels/RecipeAdditionMiscTableModel.h"
-#include "qtModels/listModels/RecipeAdditionMiscListModel.h"
+#include "qtModels/tableModels/RecipeAdjustmentSaltTableModel.h"
+#include "qtModels/listModels/RecipeAdjustmentSaltListModel.h"
 
 /*!
- * \class RecipeAdditionMiscSortFilterProxyModel
- *
- * \brief Proxy model for sorting/filtering recipe misc additions
+ * \class RecipeAdjustmentSaltSortFilterProxyModel
  */
-class RecipeAdditionMiscSortFilterProxyModel : public QSortFilterProxyModel,
-                                               public SortFilterProxyModelBase<RecipeAdditionMiscSortFilterProxyModel,
-                                                                               RecipeAdditionMiscTableModel,
-                                                                               RecipeAdditionMiscListModel> {
+class RecipeAdjustmentSaltSortFilterProxyModel : public QSortFilterProxyModel,
+                                               public SortFilterProxyModelBase<RecipeAdjustmentSaltSortFilterProxyModel,
+                                                                               RecipeAdjustmentSaltTableModel,
+                                                                               RecipeAdjustmentSaltListModel> {
    Q_OBJECT
 
-   SORT_FILTER_PROXY_MODEL_COMMON_DECL(RecipeAdditionMisc)
+   SORT_FILTER_PROXY_MODEL_COMMON_DECL(RecipeAdjustmentSalt)
 };
 
 #endif

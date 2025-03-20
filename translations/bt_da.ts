@@ -97,6 +97,10 @@
         <source>Automatically-generated post-boil step for %1</source>
         <translation>Automatisk genereret efterkogningstrin for %1</translation>
     </message>
+    <message>
+        <source>a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BoilStep</name>
@@ -2203,12 +2207,36 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
         <source>Change Recipe Equipment</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Drop salt(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
     <message>
         <source>Mash</source>
         <translation>Mæskning</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total time (mins)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mashes</source>
+        <translation type="unfinished">Mæskninger</translation>
     </message>
 </context>
 <context>
@@ -3809,6 +3837,10 @@ Logfil indeholder evt. flere detaljer.</translation>
         <source>Add %1 step to recipe</source>
         <translation type="unfinished">Føj %1 trin til opskrift</translation>
     </message>
+    <message>
+        <source>pt</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RaIngrd</name>
@@ -4974,7 +5006,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Lactic Acid</source>
-        <translation>Mælkesyre</translation>
+        <translation type="vanished">Mælkesyre</translation>
     </message>
     <message>
         <source>H3PO4 (Phosphoric acid)</source>
@@ -4983,6 +5015,30 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Acidulated Malt</source>
         <translation>Sur (acidulated) malt</translation>
+    </message>
+    <message>
+        <source>Lactic Acid (C3H6O3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Salts</source>
+        <translation type="unfinished">Salte</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IsAcid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PercentAcid</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5002,6 +5058,10 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Amount Type</source>
         <translation>Mængdeangivelse</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7893,6 +7953,26 @@ The final volume in the primary is %1.</source>
         <source>&amp;Copy Selected Item(s)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Salts</source>
+        <translation type="unfinished">Salte</translation>
+    </message>
+    <message>
+        <source>Add salt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected salt</source>
+        <translation type="unfinished">Fjern et salt</translation>
+    </message>
+    <message>
+        <source>Edit selected salt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>S&amp;alts</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>mashDesigner</name>
@@ -8005,7 +8085,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Tun</source>
-        <translation>Beholder</translation>
+        <translation type="vanished">Beholder</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
@@ -8025,11 +8105,51 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Tun sp. heat</source>
-        <translation>Beholder specifik varmefylde</translation>
+        <translation type="vanished">Beholder specifik varmefylde</translation>
     </message>
     <message>
         <source>Tun specific heat (cal/(g*K))</source>
         <translation>Beholder specifiik varmefylde (cal/(kg·K))</translation>
+    </message>
+    <message>
+        <source>Main</source>
+        <translation type="unfinished">Hoved</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
+    <message>
+        <source>Use for</source>
+        <translation type="unfinished">Anvend til</translation>
+    </message>
+    <message>
+        <source>Tun specific heat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuller</translation>
     </message>
 </context>
 <context>
@@ -9022,6 +9142,73 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Current measured plato</source>
         <translation>Aktuel målt værdi Plato</translation>
+    </message>
+</context>
+<context>
+    <name>saltEditor</name>
+    <message>
+        <source>Salt Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount in Inventory</source>
+        <translation type="unfinished">Mængde på lager</translation>
+    </message>
+    <message>
+        <source>Amount in inventory</source>
+        <translation type="unfinished">Mængde på lager</translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Producer</source>
+        <translation type="obsolete">Producent</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuller</translation>
+    </message>
+    <message>
+        <source>Percent Acid</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

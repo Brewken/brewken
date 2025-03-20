@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * trees/NamedEntityTreeModel.cpp is part of Brewken, and is copyright the following authors 2024-2025:
+ * catalogs/SaltCatalog.cpp is part of Brewken, and is copyright the following authors 2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,14 +13,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "trees/NamedEntityTreeModel.h"
+#include "catalogs/SaltCatalog.h"
 
-TREE_MODEL_COMMON_CODE(Equipment  )
-TREE_MODEL_COMMON_CODE(Fermentable)
-TREE_MODEL_COMMON_CODE(Hop        )
-TREE_MODEL_COMMON_CODE(Mash       )
-TREE_MODEL_COMMON_CODE(Misc       )
-TREE_MODEL_COMMON_CODE(Yeast      )
-TREE_MODEL_COMMON_CODE(Salt       )
-TREE_MODEL_COMMON_CODE(Style      )
-TREE_MODEL_COMMON_CODE(Water      )
+#include "qtModels/sortFilterProxyModels/SaltSortFilterProxyModel.h"
+
+#ifdef BUILDING_WITH_CMAKE
+   // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
+   #include "moc_SaltCatalog.cpp"
+#endif
+
+// Insert the boiler-plate stuff that we cannot do in CatalogBase
+CATALOG_COMMON_CODE(Salt)

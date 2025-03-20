@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtTabWidget.h is part of Brewken, and is copyright the following authors 2009-2024:
+ * BtTabWidget.h is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -24,6 +24,7 @@
 #include "model/Fermentable.h"
 #include "model/Hop.h"
 #include "model/Misc.h"
+#include "model/Salt.h"
 #include "model/Yeast.h"
 
 class Equipment;
@@ -51,12 +52,13 @@ public:
 
 signals:
    void setRecipe(Recipe* rec);
-   void setEquipment(Equipment* kit);
-   void setStyle(Style* kit);
-   void setFermentables(QList<Fermentable*>ferms);
-   void setHops(QList<Hop*>hops);
-   void setMiscs(QList<Misc*>miscs);
-   void setYeasts(QList<Yeast*>yeasts);
+   void setEquipment(Equipment * equipment);
+   void setStyle    (Style     * style    );
+   void setFermentables(QList<Fermentable *> ferms );
+   void setHops        (QList<Hop         *> hops  );
+   void setMiscs       (QList<Misc        *> miscs );
+   void setYeasts      (QList<Yeast       *> yeasts);
+   void setSalts       (QList<Salt        *> salts );
 
 private:
    template<class NE, void (BtTabWidget::*signalSender)(NE *)>

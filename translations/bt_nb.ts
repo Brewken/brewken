@@ -112,6 +112,10 @@
         <source>Automatically-generated post-boil step for %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BoilStep</name>
@@ -2515,12 +2519,36 @@ If you need help, please open an issue at %1</source>
         <source>Change Recipe Equipment</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Drop salt(s) on a recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
     <message>
         <source>Mash</source>
         <translation type="unfinished">Mesk</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Navn</translation>
+    </message>
+    <message>
+        <source>Total Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total time (mins)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mashes</source>
+        <translation type="unfinished">Mesker</translation>
     </message>
 </context>
 <context>
@@ -4255,6 +4283,10 @@ Program will now exit.</source>
         <source>Add %1 step to recipe</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>pt</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RaIngrd</name>
@@ -5434,10 +5466,6 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Lactic Acid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>H3PO4 (Phosphoric acid)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5451,6 +5479,30 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Salt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lactic Acid (C3H6O3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Salts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Navn</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Type</translation>
+    </message>
+    <message>
+        <source>IsAcid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PercentAcid</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5482,6 +5534,10 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     <message>
         <source>Amount Type</source>
         <translation type="unfinished">Enhetstype</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Type</translation>
     </message>
 </context>
 <context>
@@ -8874,6 +8930,26 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <source>&amp;Copy Selected Item(s)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Salts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add salt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected salt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit selected salt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>S&amp;alts</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>mashDesigner</name>
@@ -8994,7 +9070,7 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Tun</source>
-        <translation>Kar</translation>
+        <translation type="vanished">Kar</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
@@ -9014,11 +9090,51 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Tun sp. heat</source>
-        <translation>Karets spesifikk varme</translation>
+        <translation type="vanished">Karets spesifikk varme</translation>
     </message>
     <message>
         <source>Tun specific heat (cal/(g*K))</source>
         <translation>Karets spesifikk varme (cal/(g*K))</translation>
+    </message>
+    <message>
+        <source>Main</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use for</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tun specific heat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Lagre</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
     </message>
 </context>
 <context>
@@ -10193,6 +10309,69 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Current measured plato</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>saltEditor</name>
+    <message>
+        <source>Salt Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Navn</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Type</translation>
+    </message>
+    <message>
+        <source>Amount in Inventory</source>
+        <translation type="unfinished">Mengde i varebeholdning</translation>
+    </message>
+    <message>
+        <source>Amount in inventory</source>
+        <translation type="unfinished">Mengde i varebeholdning</translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Enhetstype</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Lagre</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
+    </message>
+    <message>
+        <source>Percent Acid</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
