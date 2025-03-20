@@ -196,7 +196,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/qtModels/sortFilterProxyModels/RecipeAdditionHopSortFilterProxyModel.cpp
     ${repoDir}/src/qtModels/sortFilterProxyModels/RecipeAdditionMiscSortFilterProxyModel.cpp
     ${repoDir}/src/qtModels/sortFilterProxyModels/RecipeAdditionYeastSortFilterProxyModel.cpp
-    ${repoDir}/src/qtModels/sortFilterProxyModels/RecipeAdjustmentSaltTableModel.cpp
+    ${repoDir}/src/qtModels/sortFilterProxyModels/RecipeAdjustmentSaltSortFilterProxyModel.cpp
     ${repoDir}/src/qtModels/sortFilterProxyModels/SaltSortFilterProxyModel.cpp
     ${repoDir}/src/qtModels/sortFilterProxyModels/StyleSortFilterProxyModel.cpp
     ${repoDir}/src/qtModels/sortFilterProxyModels/WaterSortFilterProxyModel.cpp
