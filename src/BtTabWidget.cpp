@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtTabWidget.cpp is part of Brewken, and is copyright the following authors 2009-2024:
+ * BtTabWidget.cpp is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -103,6 +103,7 @@ void BtTabWidget::dropEvent(QDropEvent *event) {
    QList<Hop         *> hops        ;
    QList<Misc        *> miscs       ;
    QList<Yeast       *> yeasts      ;
+   QList<Salt        *> salts       ;
 
    //
    // Drag-and-drop is potentially a very broad operation, because you can drag something from one program to another.
@@ -135,6 +136,7 @@ void BtTabWidget::dropEvent(QDropEvent *event) {
       if (this->appendItemIfMatch<Hop        >(itemClassName, id, hops        )) { continue; }
       if (this->appendItemIfMatch<Misc       >(itemClassName, id, miscs       )) { continue; }
       if (this->appendItemIfMatch<Yeast      >(itemClassName, id, yeasts      )) { continue; }
+      if (this->appendItemIfMatch<Salt       >(itemClassName, id, salts       )) { continue; }
 
       qWarning() << Q_FUNC_INFO << "Unexpected item type" << itemClassName << "/" << id << "/" << name;
    }
@@ -144,6 +146,7 @@ void BtTabWidget::dropEvent(QDropEvent *event) {
    if (hops        .size() > 0) { emit setHops        (hops        ); acceptedDrop = true; }
    if (miscs       .size() > 0) { emit setMiscs       (miscs       ); acceptedDrop = true; }
    if (yeasts      .size() > 0) { emit setYeasts      (yeasts      ); acceptedDrop = true; }
+   if (salts       .size() > 0) { emit setSalts       (salts       ); acceptedDrop = true; }
 
    if (acceptedDrop) {
       event->acceptProposedAction();

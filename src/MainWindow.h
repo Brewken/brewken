@@ -59,19 +59,6 @@ public:
    MainWindow(QWidget* parent=nullptr);
    virtual ~MainWindow();
 
-///   //
-///   // This is a short-term trick to save me adding .get() to lots of calls
-///   //
-///   using QObject::connect;
-///   template<typename A, typename B, typename C, typename D>
-///   void connect(std::unique_ptr<A> & a, B b, C c, D d) {
-///      this->connect(a.get(), b, c, d);
-///   }
-///   template<typename A, typename B, typename C, typename D>
-///   void connect(A a, B b, std::unique_ptr<C> & c, D d) {
-///      this->connect(a, b, c.get(), d);
-///   }
-
    //! \brief Accessor to obtain \c MainWindow singleton
    static MainWindow & instance();
 
@@ -113,7 +100,6 @@ public slots:
    //! \brief Accepts Recipe changes, and takes appropriate action to show the changes.
    void changed(QMetaProperty,QVariant);
 
-///   void treeActivated(const QModelIndex &index);
    //! \brief View the given recipe.
    void setRecipe(Recipe* recipe);
 
@@ -127,10 +113,6 @@ public slots:
    void updateRecipeEquipment();
    //! \brief Update Recipe batch size to that given by the relevant widget.
    void updateRecipeBatchSize();
-   //! \brief Update Recipe boil size to that given by the relevant widget.
-///   void updateRecipeBoilSize();
-   //! \brief Update Recipe boil time to that given by the relevant widget.
-///   void updateRecipeBoilTime();
    //! \brief Update Recipe efficiency to that given by the relevant widget.
    void updateRecipeEfficiency();
    //! \brief Update Recipe's mash
@@ -174,6 +156,11 @@ public slots:
    //! \brief Edit the Yeast in the selected Yeast addition.
    void editYeastOfSelectedYeastAddition();
 
+   //! \brief Remove selected Salt addition(s) from the Recipe.
+   void removeSelectedSaltAddition();
+   //! \brief Edit the Salt in the selected Salt addition.
+   void editSaltOfSelectedSaltAddition();
+
    //! \brief Invoke the pop-up Window to add a new mash step to (the mash of) the recipe.
    void addMashStep();
    void addBoilStep();
@@ -216,10 +203,6 @@ public slots:
    //! \brief Implements "> Edit > Redo"
    void editRedo();
 
-///   //! \brief Create a new folder
-///   void newFolder();
-   void renameFolder();
-
    TreeView * getActiveTreeView() const;
 
    void deleteSelected();
@@ -234,8 +217,6 @@ public slots:
    //! \brief makes sure we can do water chemistry before we show the window
    void showWaterChemistryTool();
 
-///   //! \brief draws a context menu, the exact nature of which depends on which tree is focused
-///   void contextMenu(const QPoint &point);
    //! \brief creates a new brewnote
    void newBrewNote();
    //! \brief copies an existing brewnote to a new brewday
@@ -254,12 +235,13 @@ public slots:
    void updateEquipmentSelector();
 
    //! \brief Set all the things based on a drop event
-   void droppedRecipeEquipment(Equipment *kit);
-   void droppedRecipeStyle(Style *style);
-   void droppedRecipeFermentable(QList<Fermentable*>ferms);
-   void droppedRecipeHop(QList<Hop*>hops);
-   void droppedRecipeMisc(QList<Misc*>miscs);
-   void droppedRecipeYeast(QList<Yeast*>yeasts);
+   void droppedRecipeEquipment(Equipment * kit  );
+   void droppedRecipeStyle    (Style     * style);
+   void droppedRecipeFermentable(QList<Fermentable *> ferms );
+   void droppedRecipeHop        (QList<Hop         *> hops  );
+   void droppedRecipeMisc       (QList<Misc        *> miscs );
+   void droppedRecipeYeast      (QList<Yeast       *> yeasts);
+   void droppedRecipeSalt       (QList<Salt        *> miscs );
 
    void versionedRecipe(Recipe* descendant);
 
