@@ -37,7 +37,6 @@
 #include "Localization.h"
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
-#include "NamedEntitySortProxyModel.h"
 #include "PersistentSettings.h"
 #include "PhysicalConstants.h"
 

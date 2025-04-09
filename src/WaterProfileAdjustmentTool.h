@@ -1,10 +1,9 @@
 /*======================================================================================================================
- * RecipeFormatter.h is part of Brewken, and is copyright the following authors 2009-2024:
- *   • Mark de Wever <koraq@xs4all.nl>
+ * WaterProfileAdjustmentTool.h is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Matt Young <mfsy@yahoo.com>
+ *   • Maxime Lavigne <duguigne@gmail.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
- *   • Théophane Martin <theophane.m@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -17,53 +16,46 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef RECIPE_FORMATTER_H
-#define RECIPE_FORMATTER_H
+#ifndef WATERPROFILEADJUSTMENTTOOL_H
+#define WATERPROFILEADJUSTMENTTOOL_H
 #pragma once
 
 #include <memory> // For PImpl
 
-#include <QList>
-#include <QObject>
+#include <QDialog>
+#include <QWidget>
 
-#include "model/Recipe.h"
+#include "ui_waterProfileAdjustmentTool.h"
 
-class Style      ;
-class Equipment  ;
-class Fermentable;
-class Hop        ;
-class Misc       ;
-class Yeast      ;
-class Water      ;
+#include "model/Salt.h"
 
 /*!
- * \class RecipeFormatter
+ * \class WaterProfileAdjustmentTool
  *
- * \brief View class that creates various text versions of a recipe.
+ * \brief Helps you work out what salts etc to add to water of one profile to make it closer to another profile.
  */
-class RecipeFormatter : public QObject {
+class WaterProfileAdjustmentTool : public QDialog, public Ui::waterProfileAdjustmentTool {
    Q_OBJECT
 
 public:
-   RecipeFormatter(QWidget * parent = nullptr);
-   virtual ~RecipeFormatter();
+   WaterProfileAdjustmentTool(QWidget * parent = nullptr);
+   ~WaterProfileAdjustmentTool();
 
-   //! Set the recipe to view.
-   void setRecipe(Recipe* recipe);
-
-   //! Get a whole mess of html views
-   QString getHtmlFormat(QList<Recipe*> recipes);
-
-   QString getHtmlFormat();
-   QString buildHtmlHeader();
-   QString buildHtmlFooter();
-
-   //! Get a BBCode view. Why is this here?
-   QString getBBCodeFormat();
+   void setRecipe(Recipe * rec);
 
 public slots:
-   //! Put the plaintext view onto the clipboard.
-   void toTextClipboard();
+   void update_baseProfile(int selected);
+   void update_targetProfile(int selected);
+   void newTotals();
+   void removeSalts();
+   void setMashRO(int val);
+   void setSpargeRO(int val);
+   void saveAndClose();
+   void clearAndClose();
+
+signals:
+   void newSalt(Salt * drop);
+   void newSalts(QList<Salt *> drops);
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/

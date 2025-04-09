@@ -2296,10 +2296,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Remove %1 from recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error Loading Data</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4400,6 +4396,10 @@ The final volume in the primary is %1.</source>
         <source>IBU</source>
         <translation type="unfinished">IBU</translation>
     </message>
+    <message>
+        <source>Remove %1 from recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -5873,33 +5873,6 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
-    <name>WaterDialog</name>
-    <message>
-        <source>Too low for target profile.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>In range for target profile.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Too high for target profile.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Minimum expected concentration is %1 ppm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Maximum expected concentration is %1 ppm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use of %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>WaterEditor</name>
     <message>
         <source>PPM</source>
@@ -5943,6 +5916,29 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>HCO3</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WaterProfileAdjustmentTool</name>
+    <message>
+        <source>Too low for target profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In range for target profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Too high for target profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Minimum expected concentration is %1 ppm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maximum expected concentration is %1 ppm</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8118,10 +8114,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Water &amp;Chemistry</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8255,6 +8247,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>S&amp;alts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water &amp;Profile Adjustment Tool</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9780,9 +9776,56 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
-    <name>waterDialog</name>
+    <name>waterEditor</name>
     <message>
-        <source>Water Chemistry</source>
+        <source>Name</source>
+        <translation>Назив</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation>Белешке</translation>
+    </message>
+    <message>
+        <source>Edit Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alkalinity measured as</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Нов</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Сачувај</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>waterProfileAdjustmentTool</name>
+    <message>
+        <source>Water Profile Adjustment Tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9879,53 +9922,6 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Remove selected salt</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>waterEditor</name>
-    <message>
-        <source>Name</source>
-        <translation>Назив</translation>
-    </message>
-    <message>
-        <source>Notes</source>
-        <translation>Белешке</translation>
-    </message>
-    <message>
-        <source>Edit Water</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Alkalinity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Alkalinity measured as</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save and close</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Discard and close</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New water</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation type="unfinished">Нов</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation type="unfinished">Сачувај</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

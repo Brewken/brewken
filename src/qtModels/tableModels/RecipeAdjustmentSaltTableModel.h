@@ -76,21 +76,21 @@ public:
    double total_Na()   const;
    double total_SO4()  const;
 
-   double total(Water::Ion ion) const;
-   double total(Salt::Type type) const;
+   double total(Water::Ion const ion) const;
+   Measurement::Amount total(Salt::Type const type) const;
    double totalAcidWeight(Salt::Type type) const;
 
    void saveAndClose();
 
 public slots:
-   void catchSalt();
+///   void catchSalt();
 
 signals:
    void newTotals();
 
 private:
 ///   double spargePct;
-   double multiplier(RecipeAdjustmentSalt & salt) const;
+   double multiplier(RecipeAdjustmentSalt const & salt, bool const convertKilogramsToGrams = true) const;
 };
 
 //======================================= CLASS RecipeAdjustmentSaltItemDelegate =======================================
