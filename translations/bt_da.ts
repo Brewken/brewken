@@ -2073,7 +2073,7 @@ Logfil indeholder måske flere detaljer.</translation>
     </message>
     <message>
         <source>Remove %1 from recipe</source>
-        <translation>Fjern %1 fra opskrift</translation>
+        <translation type="vanished">Fjern %1 fra opskrift</translation>
     </message>
     <message>
         <source>Add %1 step to recipe</source>
@@ -4186,6 +4186,10 @@ The final volume in the primary is %1.</source>
         <source>IBU</source>
         <translation type="unfinished">IBU</translation>
     </message>
+    <message>
+        <source>Remove %1 from recipe</source>
+        <translation type="unfinished">Fjern %1 fra opskrift</translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -5642,27 +5646,27 @@ The final volume in the primary is %1.</source>
     <name>WaterDialog</name>
     <message>
         <source>Too low for target profile.</source>
-        <translation>For lav til anvendt profil.</translation>
+        <translation type="vanished">For lav til anvendt profil.</translation>
     </message>
     <message>
         <source>In range for target profile.</source>
-        <translation>Passende til anvendt profil.</translation>
+        <translation type="vanished">Passende til anvendt profil.</translation>
     </message>
     <message>
         <source>Too high for target profile.</source>
-        <translation>For høj til anvendt profil.</translation>
+        <translation type="vanished">For høj til anvendt profil.</translation>
     </message>
     <message>
         <source>Minimum expected concentration is %1 ppm</source>
-        <translation>Minimum forventet koncentration er %1 ppm</translation>
+        <translation type="vanished">Minimum forventet koncentration er %1 ppm</translation>
     </message>
     <message>
         <source>Maximum expected concentration is %1 ppm</source>
-        <translation>Maksimum forventet koncentration er %1 ppm</translation>
+        <translation type="vanished">Maksimum forventet koncentration er %1 ppm</translation>
     </message>
     <message>
         <source>Use of %1</source>
-        <translation>Anvendelse af %1</translation>
+        <translation type="vanished">Anvendelse af %1</translation>
     </message>
 </context>
 <context>
@@ -5710,6 +5714,33 @@ The final volume in the primary is %1.</source>
     <message>
         <source>HCO3</source>
         <translation>HCO₃</translation>
+    </message>
+</context>
+<context>
+    <name>WaterProfileAdjustmentTool</name>
+    <message>
+        <source>Too low for target profile.</source>
+        <translation type="unfinished">For lav til anvendt profil.</translation>
+    </message>
+    <message>
+        <source>In range for target profile.</source>
+        <translation type="unfinished">Passende til anvendt profil.</translation>
+    </message>
+    <message>
+        <source>Too high for target profile.</source>
+        <translation type="unfinished">For høj til anvendt profil.</translation>
+    </message>
+    <message>
+        <source>Minimum expected concentration is %1 ppm</source>
+        <translation type="unfinished">Minimum forventet koncentration er %1 ppm</translation>
+    </message>
+    <message>
+        <source>Maximum expected concentration is %1 ppm</source>
+        <translation type="unfinished">Maksimum forventet koncentration er %1 ppm</translation>
+    </message>
+    <message>
+        <source>Use of %1</source>
+        <translation type="obsolete">Anvendelse af %1</translation>
     </message>
 </context>
 <context>
@@ -7927,7 +7958,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Water &amp;Chemistry</source>
-        <translation>Vand&amp;kemi</translation>
+        <translation type="vanished">Vand&amp;kemi</translation>
     </message>
     <message>
         <source>Undo</source>
@@ -7971,6 +8002,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>S&amp;alts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water &amp;Profile Adjustment Tool</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9471,103 +9506,103 @@ The final volume in the primary is %1.</source>
     <name>waterDialog</name>
     <message>
         <source>Water Chemistry</source>
-        <translation>Vandkemi</translation>
+        <translation type="vanished">Vandkemi</translation>
     </message>
     <message>
         <source>Profiles</source>
-        <translation>Profiler</translation>
+        <translation type="vanished">Profiler</translation>
     </message>
     <message>
         <source>% RO in Mash</source>
-        <translation>% vand fra omvendt osmose i mæsk</translation>
+        <translation type="vanished">% vand fra omvendt osmose i mæsk</translation>
     </message>
     <message>
         <source>Target Profile</source>
-        <translation>Anvendt profil</translation>
+        <translation type="vanished">Anvendt profil</translation>
     </message>
     <message>
         <source>PushButton</source>
-        <translation>Trykknap</translation>
+        <translation type="vanished">Trykknap</translation>
     </message>
     <message>
         <source>Base Profile</source>
-        <translation>Basisprofil</translation>
+        <translation type="vanished">Basisprofil</translation>
     </message>
     <message>
         <source>% RO in Sparge</source>
-        <translation>% vand fra omvendt osmose i eftergydning</translation>
+        <translation type="vanished">% vand fra omvendt osmose i eftergydning</translation>
     </message>
     <message>
         <source>PPM</source>
-        <translation>ppm</translation>
+        <translation type="vanished">ppm</translation>
     </message>
     <message>
         <source>Ca</source>
-        <translation>Ca</translation>
+        <translation type="vanished">Ca</translation>
     </message>
     <message>
         <source>Mg</source>
-        <translation>Mg</translation>
+        <translation type="vanished">Mg</translation>
     </message>
     <message>
         <source>pH</source>
-        <translation>pH</translation>
+        <translation type="vanished">pH</translation>
     </message>
     <message>
         <source>Na</source>
-        <translation>Na</translation>
+        <translation type="vanished">Na</translation>
     </message>
     <message>
         <source>Cl</source>
-        <translation>Cl</translation>
+        <translation type="vanished">Cl</translation>
     </message>
     <message>
         <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation>SO₄</translation>
+        <translation type="vanished">SO₄</translation>
     </message>
     <message>
         <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation>HCO₃</translation>
+        <translation type="vanished">HCO₃</translation>
     </message>
     <message>
         <source>Total Salts</source>
-        <translation>Total salte</translation>
+        <translation type="vanished">Total salte</translation>
     </message>
     <message>
         <source>CaCl&lt;sub&gt;2&lt;/sub&gt;</source>
-        <translation>CaCl₂</translation>
+        <translation type="vanished">CaCl₂</translation>
     </message>
     <message>
         <source>MgSO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation>MgSO₄</translation>
+        <translation type="vanished">MgSO₄</translation>
     </message>
     <message>
         <source>CaCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation>CaCO₃</translation>
+        <translation type="vanished">CaCO₃</translation>
     </message>
     <message>
         <source>NaCl</source>
-        <translation>NaCl</translation>
+        <translation type="vanished">NaCl</translation>
     </message>
     <message>
         <source>CaSO&lt;sub&gt;4&lt;?sub&gt;</source>
-        <translation>CaSO₄</translation>
+        <translation type="vanished">CaSO₄</translation>
     </message>
     <message>
         <source>NaHCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation>NaHCO₃</translation>
+        <translation type="vanished">NaHCO₃</translation>
     </message>
     <message>
         <source>Salts</source>
-        <translation>Salte</translation>
+        <translation type="vanished">Salte</translation>
     </message>
     <message>
         <source>Add a salt</source>
-        <translation>Tilføj et salt</translation>
+        <translation type="vanished">Tilføj et salt</translation>
     </message>
     <message>
         <source>Remove selected salt</source>
-        <translation>Fjern et salt</translation>
+        <translation type="vanished">Fjern et salt</translation>
     </message>
 </context>
 <context>
@@ -9619,6 +9654,109 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Cancel</source>
         <translation type="unfinished">Annuller</translation>
+    </message>
+</context>
+<context>
+    <name>waterProfileAdjustmentTool</name>
+    <message>
+        <source>Water Profile Adjustment Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Profiles</source>
+        <translation type="unfinished">Profiler</translation>
+    </message>
+    <message>
+        <source>% RO in Mash</source>
+        <translation type="unfinished">% vand fra omvendt osmose i mæsk</translation>
+    </message>
+    <message>
+        <source>Target Profile</source>
+        <translation type="unfinished">Anvendt profil</translation>
+    </message>
+    <message>
+        <source>PushButton</source>
+        <translation type="unfinished">Trykknap</translation>
+    </message>
+    <message>
+        <source>Base Profile</source>
+        <translation type="unfinished">Basisprofil</translation>
+    </message>
+    <message>
+        <source>% RO in Sparge</source>
+        <translation type="unfinished">% vand fra omvendt osmose i eftergydning</translation>
+    </message>
+    <message>
+        <source>PPM</source>
+        <translation type="unfinished">ppm</translation>
+    </message>
+    <message>
+        <source>Ca</source>
+        <translation type="unfinished">Ca</translation>
+    </message>
+    <message>
+        <source>Mg</source>
+        <translation type="unfinished">Mg</translation>
+    </message>
+    <message>
+        <source>pH</source>
+        <translation type="unfinished">pH</translation>
+    </message>
+    <message>
+        <source>Na</source>
+        <translation type="unfinished">Na</translation>
+    </message>
+    <message>
+        <source>Cl</source>
+        <translation type="unfinished">Cl</translation>
+    </message>
+    <message>
+        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total Salts</source>
+        <translation type="unfinished">Total salte</translation>
+    </message>
+    <message>
+        <source>CaCl&lt;sub&gt;2&lt;/sub&gt;</source>
+        <translation type="unfinished">CaCl₂</translation>
+    </message>
+    <message>
+        <source>MgSO&lt;sub&gt;4&lt;/sub&gt;</source>
+        <translation type="unfinished">MgSO₄</translation>
+    </message>
+    <message>
+        <source>CaCO&lt;sub&gt;3&lt;/sub&gt;</source>
+        <translation type="unfinished">CaCO₃</translation>
+    </message>
+    <message>
+        <source>NaCl</source>
+        <translation type="unfinished">NaCl</translation>
+    </message>
+    <message>
+        <source>CaSO&lt;sub&gt;4&lt;?sub&gt;</source>
+        <translation type="unfinished">CaSO₄</translation>
+    </message>
+    <message>
+        <source>NaHCO&lt;sub&gt;3&lt;/sub&gt;</source>
+        <translation type="unfinished">NaHCO₃</translation>
+    </message>
+    <message>
+        <source>Salts</source>
+        <translation type="unfinished">Salte</translation>
+    </message>
+    <message>
+        <source>Add a salt</source>
+        <translation type="unfinished">Tilføj et salt</translation>
+    </message>
+    <message>
+        <source>Remove selected salt</source>
+        <translation type="unfinished">Fjern et salt</translation>
     </message>
 </context>
 <context>
