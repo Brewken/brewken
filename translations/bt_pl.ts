@@ -8823,6 +8823,18 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
         <source>Water &amp;Profile Adjustment Tool</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Mash Profiles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil Profiles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentation Profiles</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>mashDesigner</name>
