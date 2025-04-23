@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/BtComboBoxEnum.cpp is part of Brewken, and is copyright the following authors 2023-2024:
+ * widgets/BtComboBoxEnum.cpp is part of Brewken, and is copyright the following authors 2023-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -92,6 +92,10 @@ void BtComboBoxEnum::init(char const * const        editorName        ,
    this->pimpl->m_displayNameMapping = &displayNameMapping;
    this->pimpl->m_typeInfo           = &typeInfo          ;
    this->pimpl->m_controlledField    =  controlledField   ;
+
+   // It's a coding error if we already have any items in the combo box.  (This could eg happen if any were defined in
+   // the .ui file.)
+   Q_ASSERT(0 == this->count());
 
    // If this is an optional enum, then we need a blank value
    if (typeInfo.isOptional()) {
