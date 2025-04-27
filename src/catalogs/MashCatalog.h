@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * catalogs/EquipmentCatalog.h is part of Brewken, and is copyright the following authors 2023-2025:
+ * catalogs/MashCatalog.h is part of Brewken, and is copyright the following authors 2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,37 +13,38 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef CATALOGS_EQUIPMENTCATALOG_H
-#define CATALOGS_EQUIPMENTCATALOG_H
+#ifndef CATALOGS_MASHCATALOG_H
+#define CATALOGS_MASHCATALOG_H
 #pragma once
 
 #include <QDialog>
 #include <QEvent>
 
-#include "editors/EquipmentEditor.h"
-#include "model/Equipment.h"
-#include "qtModels/sortFilterProxyModels/EquipmentSortFilterProxyModel.h"
-#include "qtModels/tableModels/EquipmentTableModel.h"
+#include "editors/MashEditor.h"
+#include "model/Mash.h"
+#include "qtModels/sortFilterProxyModels/MashSortFilterProxyModel.h"
+#include "qtModels/tableModels/MashTableModel.h"
 
 // This needs to be the last include.  (I know, I know...)
 #include "catalogs/CatalogBase.h"
 
-#define EquipmentCatalogOptions CatalogBaseOptions{ }
+#define MashCatalogOptions CatalogBaseOptions{ }
 
 /*!
- * \class EquipmentCatalog
+ * \class MashCatalog
  *
- * \brief View/controller class for showing/editing the list of equipment records in the database.
+ * \brief View/controller class for showing/editing the list of salts in the database.
  */
-class EquipmentCatalog : public QDialog, public CatalogBase<EquipmentCatalog,
-                                                            Equipment,
-                                                            EquipmentTableModel,
-                                                            EquipmentSortFilterProxyModel,
-                                                            EquipmentEditor,
-                                                            EquipmentCatalogOptions> {
+class MashCatalog : public QDialog, public CatalogBase<MashCatalog,
+                                                       Mash,
+                                                       MashTableModel,
+                                                       MashSortFilterProxyModel,
+                                                       MashEditor,
+                                                       MashCatalogOptions> {
    Q_OBJECT
 
-   CATALOG_COMMON_DECL(Equipment)
+   CATALOG_COMMON_DECL(Mash)
+
 };
 
 #endif

@@ -38,6 +38,20 @@
 // list of all things.  Propose it should become consistent!
 
 /**
+ * \brief This is used as a template parameter to turn on and off various \b small features in \c CatalogBase (in
+ *        conjunction with the concepts defined below).
+ *
+ * \sa CatalogBase
+ */
+struct CatalogBaseOptions {
+   /**
+    * \brief This should be enabled for things such as Mash, Style, Equipment, where there is only one per Recipe (so
+    *        it makes sense to show "Use in recipe" rather than "Add to recipe").
+    */
+   bool onePerRecipe = false;
+};
+
+/**
  * \class CatalogBase
  *
  * \brief This is one of the base classes for \c HopCatalog, \c FermentableCatalog, etc.  Essentially each of these
@@ -90,7 +104,12 @@
  *        † Not the greatest name, but `new` is a reserved word and `create` is already taken by QWidget
  */
 template<class Derived> class CatalogPhantom;
-template<class Derived, class NE, class NeTableModel, class NeSortFilterProxyModel, class NeEditor>
+template<class Derived,
+         class NE,
+         class NeTableModel,
+         class NeSortFilterProxyModel,
+         class NeEditor,
+         CatalogBaseOptions catalogBaseOptions>
 class CatalogBase : public CuriouslyRecurringTemplateBase<CatalogPhantom, Derived> {
 public:
 
@@ -196,6 +215,11 @@ public:
    void retranslateUi() {
       this->derived().setWindowTitle(QString(QObject::tr("%1 Catalog / Database")).arg(NE::localisedName()));
       if (this->m_pushButton_addToRecipe) {
+         //
+         // We say "add to recipe" for things like hops, fermentables, etc, where there can be more than one in a
+         // recipe.  We say "use in recipe" for things like equipment, style, mash, etc where there is only one per
+         // recipe.
+         //
          this->m_pushButton_addToRecipe->setText(QString(QObject::tr("Add to Recipe")));
       }
       this->m_pushButton_new   ->setText(QString(QObject::tr("New")));
@@ -399,7 +423,8 @@ public:
                             NeName,                                                \
                             NeName##TableModel,                                    \
                             NeName##SortFilterProxyModel,                          \
-                            NeName##Editor>;                                       \
+                            NeName##Editor,                                        \
+                            NeName##CatalogOptions>;                               \
                                                                                    \
    public:                                                                         \
       NeName##Catalog(MainWindow * parent);                                        \
@@ -429,7 +454,8 @@ public:
                   NeName,                                 \
                   NeName##TableModel,                     \
                   NeName##SortFilterProxyModel,           \
-                  NeName##Editor>(parent) {               \
+                  NeName##Editor,                         \
+                  NeName##CatalogOptions>(parent) {       \
       return;                                             \
    }                                                      \
                                                           \

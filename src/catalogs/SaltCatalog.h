@@ -28,6 +28,8 @@
 // This needs to be the last include.  (I know, I know...)
 #include "catalogs/CatalogBase.h"
 
+#define SaltCatalogOptions CatalogBaseOptions{ }
+
 /*!
  * \class SaltCatalog
  *
@@ -37,7 +39,8 @@ class SaltCatalog : public QDialog, public CatalogBase<SaltCatalog,
                                                        Salt,
                                                        SaltTableModel,
                                                        SaltSortFilterProxyModel,
-                                                       SaltEditor> {
+                                                       SaltEditor,
+                                                       SaltCatalogOptions> {
    Q_OBJECT
 
    CATALOG_COMMON_DECL(Salt)

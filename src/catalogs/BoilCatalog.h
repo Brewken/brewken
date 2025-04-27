@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * catalogs/EquipmentCatalog.h is part of Brewken, and is copyright the following authors 2023-2025:
+ * catalogs/BoilCatalog.h is part of Brewken, and is copyright the following authors 2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,37 +13,38 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef CATALOGS_EQUIPMENTCATALOG_H
-#define CATALOGS_EQUIPMENTCATALOG_H
+#ifndef CATALOGS_BOILCATALOG_H
+#define CATALOGS_BOILCATALOG_H
 #pragma once
 
 #include <QDialog>
 #include <QEvent>
 
-#include "editors/EquipmentEditor.h"
-#include "model/Equipment.h"
-#include "qtModels/sortFilterProxyModels/EquipmentSortFilterProxyModel.h"
-#include "qtModels/tableModels/EquipmentTableModel.h"
+#include "editors/BoilEditor.h"
+#include "model/Boil.h"
+#include "qtModels/sortFilterProxyModels/BoilSortFilterProxyModel.h"
+#include "qtModels/tableModels/BoilTableModel.h"
 
 // This needs to be the last include.  (I know, I know...)
 #include "catalogs/CatalogBase.h"
 
-#define EquipmentCatalogOptions CatalogBaseOptions{ }
+#define BoilCatalogOptions CatalogBaseOptions{ }
 
 /*!
- * \class EquipmentCatalog
+ * \class BoilCatalog
  *
- * \brief View/controller class for showing/editing the list of equipment records in the database.
+ * \brief View/controller class for showing/editing the list of salts in the database.
  */
-class EquipmentCatalog : public QDialog, public CatalogBase<EquipmentCatalog,
-                                                            Equipment,
-                                                            EquipmentTableModel,
-                                                            EquipmentSortFilterProxyModel,
-                                                            EquipmentEditor,
-                                                            EquipmentCatalogOptions> {
+class BoilCatalog : public QDialog, public CatalogBase<BoilCatalog,
+                                                       Boil,
+                                                       BoilTableModel,
+                                                       BoilSortFilterProxyModel,
+                                                       BoilEditor,
+                                                       BoilCatalogOptions> {
    Q_OBJECT
 
-   CATALOG_COMMON_DECL(Equipment)
+   CATALOG_COMMON_DECL(Boil)
+
 };
 
 #endif

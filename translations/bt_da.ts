@@ -101,6 +101,26 @@
         <source>a recipe</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pre-Boil Size</source>
+        <translation type="unfinished">Forkogning volumen</translation>
+    </message>
+    <message>
+        <source>Time At Boiling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil time (mins)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil Profiles</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BoilStep</name>
@@ -1425,6 +1445,22 @@ Logfil indeholder måske flere detaljer.</translation>
         <source>Fermentation</source>
         <translation>Gæring</translation>
     </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished">Beskrivelse</translation>
+    </message>
+    <message>
+        <source>Total time (mins)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentation Profiles</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FermentationStep</name>
@@ -2211,6 +2247,14 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
         <source>Drop salt(s) on a recipe</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Wrote recipe to file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error writing recipe to file</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -2236,7 +2280,11 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>Mashes</source>
-        <translation type="unfinished">Mæskninger</translation>
+        <translation type="obsolete">Mæskninger</translation>
+    </message>
+    <message>
+        <source>Mash Profiles</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7758,7 +7806,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>&amp;Mashs</source>
-        <translation>&amp;Mæskninger</translation>
+        <translation type="vanished">&amp;Mæskninger</translation>
     </message>
     <message>
         <source>Mashes</source>
@@ -8018,6 +8066,18 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Fermentation Profiles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Mash Profiles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Boil Profiles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Fermentation Profiles</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
