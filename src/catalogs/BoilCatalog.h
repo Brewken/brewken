@@ -28,7 +28,7 @@
 // This needs to be the last include.  (I know, I know...)
 #include "catalogs/CatalogBase.h"
 
-#define BoilCatalogOptions CatalogBaseOptions{ }
+#define BoilCatalogOptions CatalogBaseOptions{ .onePerRecipe = true }
 
 /*!
  * \class BoilCatalog

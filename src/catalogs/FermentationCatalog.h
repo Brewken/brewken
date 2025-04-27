@@ -28,7 +28,7 @@
 // This needs to be the last include.  (I know, I know...)
 #include "catalogs/CatalogBase.h"
 
-#define FermentationCatalogOptions CatalogBaseOptions{ }
+#define FermentationCatalogOptions CatalogBaseOptions{ .onePerRecipe = true }
 
 /*!
  * \class FermentationCatalog

@@ -47,9 +47,15 @@ struct CatalogBaseOptions {
    /**
     * \brief This should be enabled for things such as Mash, Style, Equipment, where there is only one per Recipe (so
     *        it makes sense to show "Use in recipe" rather than "Add to recipe").
+    *
+    *        We could probably deduce this in another way, eg by seeing if \c NE inherits from \c Ingredient.  But this
+    *        is simpler and more direct, without adding much extra code.
     */
    bool onePerRecipe = false;
 };
+template <CatalogBaseOptions cb> struct is_OnePerRecipe : public std::integral_constant<bool, cb.onePerRecipe>{};
+// See comment in utils/TypeTraits.h for definition of CONCEPT_FIX_UP (and why, for now, we need it)
+template <CatalogBaseOptions cb> concept CONCEPT_FIX_UP IsOnePerRecipe = is_OnePerRecipe<cb>::value;
 
 /**
  * \class CatalogBase
@@ -220,7 +226,11 @@ public:
          // recipe.  We say "use in recipe" for things like equipment, style, mash, etc where there is only one per
          // recipe.
          //
-         this->m_pushButton_addToRecipe->setText(QString(QObject::tr("Add to Recipe")));
+         if constexpr (IsOnePerRecipe<catalogBaseOptions>) {
+            this->m_pushButton_addToRecipe->setText(QString(QObject::tr("Set for Recipe")));
+         } else {
+            this->m_pushButton_addToRecipe->setText(QString(QObject::tr("Add to Recipe")));
+         }
       }
       this->m_pushButton_new   ->setText(QString(QObject::tr("New")));
       this->m_pushButton_edit  ->setText(QString());
