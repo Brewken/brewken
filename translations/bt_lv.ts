@@ -97,6 +97,26 @@
         <source>a recipe</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nosaukums</translation>
+    </message>
+    <message>
+        <source>Pre-Boil Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Time At Boiling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil time (mins)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil Profiles</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BoilStep</name>
@@ -1147,6 +1167,22 @@ Log file may contain more details.</source>
         <source>Fermentation</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nosaukums</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total time (mins)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentation Profiles</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FermentationStep</name>
@@ -1764,6 +1800,14 @@ If you need help, please open an issue at %1</source>
         <source>Drop salt(s) on a recipe</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Wrote recipe to file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error writing recipe to file</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -1788,7 +1832,7 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Mashes</source>
+        <source>Mash Profiles</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6769,10 +6813,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Mashs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mashes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7026,6 +7066,18 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Fermentation Profiles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Mash Profiles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Boil Profiles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Fermentation Profiles</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

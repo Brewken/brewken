@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * catalogs/StyleCatalog.h is part of Brewken, and is copyright the following authors 2023-2025:
+ * catalogs/BoilCatalog.h is part of Brewken, and is copyright the following authors 2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,37 +13,38 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef CATALOGS_STYLECATALOG_H
-#define CATALOGS_STYLECATALOG_H
+#ifndef CATALOGS_BOILCATALOG_H
+#define CATALOGS_BOILCATALOG_H
 #pragma once
 
 #include <QDialog>
 #include <QEvent>
 
-#include "editors/StyleEditor.h"
-#include "model/Style.h"
-#include "qtModels/sortFilterProxyModels/StyleSortFilterProxyModel.h"
-#include "qtModels/tableModels/StyleTableModel.h"
+#include "editors/BoilEditor.h"
+#include "model/Boil.h"
+#include "qtModels/sortFilterProxyModels/BoilSortFilterProxyModel.h"
+#include "qtModels/tableModels/BoilTableModel.h"
 
 // This needs to be the last include.  (I know, I know...)
 #include "catalogs/CatalogBase.h"
 
-#define StyleCatalogOptions CatalogBaseOptions{ .onePerRecipe = true }
+#define BoilCatalogOptions CatalogBaseOptions{ .onePerRecipe = true }
 
 /*!
- * \class StyleCatalog
+ * \class BoilCatalog
  *
- * \brief View/controller class for showing/editing the list of styles in the database.
+ * \brief View/controller class for showing/editing the list of salts in the database.
  */
-class StyleCatalog : public QDialog, public CatalogBase<StyleCatalog,
-                                                        Style,
-                                                        StyleTableModel,
-                                                        StyleSortFilterProxyModel,
-                                                        StyleEditor,
-                                                        StyleCatalogOptions> {
+class BoilCatalog : public QDialog, public CatalogBase<BoilCatalog,
+                                                       Boil,
+                                                       BoilTableModel,
+                                                       BoilSortFilterProxyModel,
+                                                       BoilEditor,
+                                                       BoilCatalogOptions> {
    Q_OBJECT
 
-   CATALOG_COMMON_DECL(Style)
+   CATALOG_COMMON_DECL(Boil)
+
 };
 
 #endif
