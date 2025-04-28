@@ -38,7 +38,9 @@ TreeView::TreeView(QWidget * parent) :
    // Set some global properties that all the kids will use.
    this->setAllColumnsShowFocus(true);
    this->setContextMenuPolicy(Qt::CustomContextMenu);
-   this->setRootIsDecorated(false);
+
+   // This shows the little arrow next to folders so you can see whether they are expanded or not
+   this->setRootIsDecorated(true);
 
    this->setDragEnabled(true);
    this->setAcceptDrops(true);
