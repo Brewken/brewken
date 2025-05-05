@@ -1097,6 +1097,18 @@ Logfil indeholder måske flere detaljer.</translation>
         <source>A folder name must have at least one non-/ character in it</source>
         <translation type="unfinished">Et mappenavn skal indeholde mindst et tegn ud over bogstaver</translation>
     </message>
+    <message>
+        <source>Edit «%1»</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit «%1» %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove %1</source>
+        <translation type="unfinished">Fjern %1</translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -2029,7 +2041,7 @@ Logfil indeholder måske flere detaljer.</translation>
     </message>
     <message>
         <source>Please give your mash a name before saving.</source>
-        <translation>Giv din mæsk et navn før du gemmer.</translation>
+        <translation type="vanished">Giv din mæsk et navn før du gemmer.</translation>
     </message>
     <message>
         <source>Restart</source>
@@ -2117,7 +2129,7 @@ Logfil indeholder måske flere detaljer.</translation>
     </message>
     <message>
         <source>Remove %1</source>
-        <translation>Fjern %1</translation>
+        <translation type="vanished">Fjern %1</translation>
     </message>
     <message>
         <source>Error Loading Data</source>
@@ -2236,10 +2248,6 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
         <translation>Automatisk genereret gæring for %1</translation>
     </message>
     <message>
-        <source>Change Recipe Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Recipe Equipment</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2253,6 +2261,18 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>Error writing recipe to file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change recipe&apos;s mash profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change recipe&apos;s boil profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change recipe&apos;s fermentation profile</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2706,6 +2726,26 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>Unnamed %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected %1 step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move selected %1 step up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move selected %1 step down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit selected %1 step</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3883,10 +3923,18 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>Add %1 step to recipe</source>
-        <translation type="unfinished">Føj %1 trin til opskrift</translation>
+        <translation type="obsolete">Føj %1 trin til opskrift</translation>
     </message>
     <message>
         <source>pt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set for Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add step to %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7602,27 +7650,27 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>Tilføj mæsketrin</translation>
+        <translation type="vanished">Tilføj mæsketrin</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>Fjern markeret mæsketrin</translation>
+        <translation type="vanished">Fjern markeret mæsketrin</translation>
     </message>
     <message>
         <source>Edit selected mash step</source>
-        <translation>Rediger markeret mæsketrin</translation>
+        <translation type="vanished">Rediger markeret mæsketrin</translation>
     </message>
     <message>
         <source>Edit mash properties</source>
-        <translation>Rediger mæskeegenskaber</translation>
+        <translation type="vanished">Rediger mæskeegenskaber</translation>
     </message>
     <message>
         <source>Edit mash</source>
-        <translation>Rediger mæskning</translation>
+        <translation type="vanished">Rediger mæskning</translation>
     </message>
     <message>
         <source>Mash Des</source>
-        <translation>Mæskning design</translation>
+        <translation type="vanished">Mæskning design</translation>
     </message>
     <message>
         <source>Invoke the mash wizard</source>
@@ -7630,27 +7678,27 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Mash wiz</source>
-        <translation>Mæskningsguide</translation>
+        <translation type="vanished">Mæskningsguide</translation>
     </message>
     <message>
         <source>Mashs</source>
-        <translation>Mæskninger</translation>
+        <translation type="vanished">Mæskninger</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>Mæskning trin op</translation>
+        <translation type="vanished">Mæskning trin op</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>Mæskning trin ned</translation>
+        <translation type="vanished">Mæskning trin ned</translation>
     </message>
     <message>
         <source>Save this mash profile</source>
-        <translation>Gem denne mæskeprofil</translation>
+        <translation type="vanished">Gem denne mæskeprofil</translation>
     </message>
     <message>
         <source>Save Mash</source>
-        <translation>Gem mæskning</translation>
+        <translation type="vanished">Gem mæskning</translation>
     </message>
     <message>
         <source>&amp;About</source>
@@ -7870,23 +7918,23 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Add boil step</source>
-        <translation>Tilføj trin i kogning</translation>
+        <translation type="vanished">Tilføj trin i kogning</translation>
     </message>
     <message>
         <source>Remove selected boil step</source>
-        <translation>Fjern markeret trin i kogning</translation>
+        <translation type="vanished">Fjern markeret trin i kogning</translation>
     </message>
     <message>
         <source>Edit selected boil step</source>
-        <translation>Rediger markeret trin i kogning</translation>
+        <translation type="vanished">Rediger markeret trin i kogning</translation>
     </message>
     <message>
         <source>Edit boil properties</source>
-        <translation>Rediger egenskaber for kogning</translation>
+        <translation type="vanished">Rediger egenskaber for kogning</translation>
     </message>
     <message>
         <source>Edit boil</source>
-        <translation>Rediger kogning</translation>
+        <translation type="vanished">Rediger kogning</translation>
     </message>
     <message>
         <source>Boils</source>
@@ -7894,19 +7942,19 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Boil step up</source>
-        <translation>Trin i kogning en plads op</translation>
+        <translation type="vanished">Trin i kogning en plads op</translation>
     </message>
     <message>
         <source>Boil step down</source>
-        <translation>Trin i kogning en plads ned</translation>
+        <translation type="vanished">Trin i kogning en plads ned</translation>
     </message>
     <message>
         <source>Save this boil profile</source>
-        <translation>Gem denne kogningsprofil</translation>
+        <translation type="vanished">Gem denne kogningsprofil</translation>
     </message>
     <message>
         <source>Save Boil</source>
-        <translation>Gem kogning</translation>
+        <translation type="vanished">Gem kogning</translation>
     </message>
     <message>
         <source>Fermentation</source>
@@ -7914,23 +7962,23 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Add fermentation step</source>
-        <translation>Tilføj gæringstrin</translation>
+        <translation type="vanished">Tilføj gæringstrin</translation>
     </message>
     <message>
         <source>Remove selected fermentation step</source>
-        <translation>Fjern markeret gæringstrin</translation>
+        <translation type="vanished">Fjern markeret gæringstrin</translation>
     </message>
     <message>
         <source>Edit selected fermentation step</source>
-        <translation>Rediger markeret gæringstrin</translation>
+        <translation type="vanished">Rediger markeret gæringstrin</translation>
     </message>
     <message>
         <source>Edit fermentation properties</source>
-        <translation>Rediger gæringsegenskaber</translation>
+        <translation type="vanished">Rediger gæringsegenskaber</translation>
     </message>
     <message>
         <source>Edit fermentation</source>
-        <translation>Rediger gæring</translation>
+        <translation type="vanished">Rediger gæring</translation>
     </message>
     <message>
         <source>Fermentations</source>
@@ -7938,19 +7986,19 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Fermentation step up</source>
-        <translation>Gæringstrin en plads op</translation>
+        <translation type="vanished">Gæringstrin en plads op</translation>
     </message>
     <message>
         <source>Fermentation step down</source>
-        <translation>Gæringstrin en plads ned</translation>
+        <translation type="vanished">Gæringstrin en plads ned</translation>
     </message>
     <message>
         <source>Save this fermentation profile</source>
-        <translation>Gem denne gæringsprofil</translation>
+        <translation type="vanished">Gem denne gæringsprofil</translation>
     </message>
     <message>
         <source>Save Fermentation</source>
-        <translation>Gem gæring</translation>
+        <translation type="vanished">Gem gæring</translation>
     </message>
     <message>
         <source>Edit</source>
@@ -8079,6 +8127,14 @@ The final volume in the primary is %1.</source>
     <message>
         <source>&amp;Fermentation Profiles</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash Designer</source>
+        <translation type="unfinished">Mæskningsdesigner</translation>
+    </message>
+    <message>
+        <source>Mash Wizard</source>
+        <translation type="unfinished">Mæskningsguide</translation>
     </message>
 </context>
 <context>

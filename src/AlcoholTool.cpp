@@ -18,7 +18,6 @@
 
 #include <QEvent>
 #include <QGridLayout>
-#include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>

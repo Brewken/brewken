@@ -34,8 +34,6 @@
  * \class MashEditor
  *
  * \brief View/controller dialog for editing a mash.
- *
- *        See also \c NamedMashEditor
  */
 class MashEditor : public QDialog,
                    public Ui::mashEditor,

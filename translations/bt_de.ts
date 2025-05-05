@@ -1174,6 +1174,18 @@ Log file may contain more details.</source>
         <source>A folder name must have at least one non-/ character in it</source>
         <translation type="unfinished">Ein Ordnername muss mindestens ein Zeichen enthalten, welches kein &quot;/&quot; ist.</translation>
     </message>
+    <message>
+        <source>Edit «%1»</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit «%1» %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -2408,7 +2420,7 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Please give your mash a name before saving.</source>
-        <translation>Bitte benenne Sie ihre Maische vor dem Speichern.</translation>
+        <translation type="vanished">Bitte benenne Sie ihre Maische vor dem Speichern.</translation>
     </message>
     <message>
         <source>Restart</source>
@@ -2579,10 +2591,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Remove %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>About %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2599,10 +2607,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Recipe Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Recipe Equipment</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2616,6 +2620,18 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Error writing recipe to file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change recipe&apos;s mash profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change recipe&apos;s boil profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change recipe&apos;s fermentation profile</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3088,6 +3104,26 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Unnamed %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected %1 step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move selected %1 step up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move selected %1 step down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit selected %1 step</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4375,11 +4411,15 @@ Program will now exit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add %1 step to recipe</source>
+        <source>pt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>pt</source>
+        <source>Set for Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add step to %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8491,27 +8531,27 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>Maischschritt zufügen</translation>
+        <translation type="vanished">Maischschritt zufügen</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>ausgewählten Maischschritt entfernen</translation>
+        <translation type="vanished">ausgewählten Maischschritt entfernen</translation>
     </message>
     <message>
         <source>Edit selected mash step</source>
-        <translation>ausgewählten Maischschritt bearbeiten</translation>
+        <translation type="vanished">ausgewählten Maischschritt bearbeiten</translation>
     </message>
     <message>
         <source>Edit mash properties</source>
-        <translation>Bearbeite Maisch-Eigenschaften</translation>
+        <translation type="vanished">Bearbeite Maisch-Eigenschaften</translation>
     </message>
     <message>
         <source>Edit mash</source>
-        <translation>Maische bearbeiten</translation>
+        <translation type="vanished">Maische bearbeiten</translation>
     </message>
     <message>
         <source>Mash Des</source>
-        <translation>Maisch Designer</translation>
+        <translation type="vanished">Maisch Designer</translation>
     </message>
     <message>
         <source>Invoke the mash wizard</source>
@@ -8519,27 +8559,27 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Mash wiz</source>
-        <translation>Maische-Assistent</translation>
+        <translation type="vanished">Maische-Assistent</translation>
     </message>
     <message>
         <source>Mashs</source>
-        <translation>Maischen</translation>
+        <translation type="vanished">Maischen</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>Maischschritt hoch</translation>
+        <translation type="vanished">Maischschritt hoch</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>Maischschritt runter</translation>
+        <translation type="vanished">Maischschritt runter</translation>
     </message>
     <message>
         <source>Save this mash profile</source>
-        <translation>Dieses Maische-Profil speichern</translation>
+        <translation type="vanished">Dieses Maische-Profil speichern</translation>
     </message>
     <message>
         <source>Save Mash</source>
-        <translation>Maische speichern</translation>
+        <translation type="vanished">Maische speichern</translation>
     </message>
     <message>
         <source>&amp;About</source>
@@ -8898,43 +8938,7 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add boil step</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected boil step</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit selected boil step</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit boil properties</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Boils</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Boil step up</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Boil step down</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save this boil profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save Boil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8942,43 +8946,7 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add fermentation step</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected fermentation step</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit selected fermentation step</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit fermentation properties</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit fermentation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Fermentations</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermentation step up</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermentation step down</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save this fermentation profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save Fermentation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9036,6 +9004,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     <message>
         <source>&amp;Fermentation Profiles</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash Designer</source>
+        <translation type="unfinished">Maischedesigner</translation>
+    </message>
+    <message>
+        <source>Mash Wizard</source>
+        <translation type="unfinished">Maische-Assistent</translation>
     </message>
 </context>
 <context>
