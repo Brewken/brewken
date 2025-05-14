@@ -1147,6 +1147,10 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -9511,79 +9515,79 @@ The final volume in the primary is %1.</source>
     <name>namedMashEditor</name>
     <message>
         <source>Named Mash Editor</source>
-        <translation>Named Mash Editor</translation>
+        <translation type="vanished">Named Mash Editor</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Σακχαροποίηση</translation>
+        <translation type="vanished">Σακχαροποίηση</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>Διέγραψε το επιλεγμένο στυλ</translation>
+        <translation type="vanished">Διέγραψε το επιλεγμένο στυλ</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Ονομασία</translation>
+        <translation type="vanished">Ονομασία</translation>
     </message>
     <message>
         <source>Initial grain temp</source>
-        <translation>Αρχική θερμοκρασία σιτηρών</translation>
+        <translation type="vanished">Αρχική θερμοκρασία σιτηρών</translation>
     </message>
     <message>
         <source>Sparge temp</source>
-        <translation>Θερμοκρασία ψεκασμού</translation>
+        <translation type="vanished">Θερμοκρασία ψεκασμού</translation>
     </message>
     <message>
         <source>Sparge temp target</source>
-        <translation>Επιθυμητή θερμοκρασία ψεκασμού</translation>
+        <translation type="vanished">Επιθυμητή θερμοκρασία ψεκασμού</translation>
     </message>
     <message>
         <source>Sparge pH</source>
-        <translation>PH ψεκασμού</translation>
+        <translation type="vanished">PH ψεκασμού</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Σημειώσεις</translation>
+        <translation type="vanished">Σημειώσεις</translation>
     </message>
     <message>
         <source>Tun</source>
-        <translation>σκεύος σακχ/σης</translation>
+        <translation type="vanished">σκεύος σακχ/σης</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
-        <translation>Αρχική θερμοκρασία σκεύους</translation>
+        <translation type="vanished">Αρχική θερμοκρασία σκεύους</translation>
     </message>
     <message>
         <source>From Equipment</source>
-        <translation>Από τον εξοπλισμό</translation>
+        <translation type="vanished">Από τον εξοπλισμό</translation>
     </message>
     <message>
         <source>Tun mass</source>
-        <translation>μάζα σκεύους</translation>
+        <translation type="vanished">μάζα σκεύους</translation>
     </message>
     <message>
         <source>Tun sp. heat</source>
-        <translation>Συγκ. Θερμ. σκ.</translation>
+        <translation type="vanished">Συγκ. Θερμ. σκ.</translation>
     </message>
     <message>
         <source>Tun specific heat (cal/(g*K))</source>
-        <translation>Συγκεκριμένη θερμοκρασία σκεύους (cal/(g*K))</translation>
+        <translation type="vanished">Συγκεκριμένη θερμοκρασία σκεύους (cal/(g*K))</translation>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>Νέο βήμα σακχ/σης</translation>
+        <translation type="vanished">Νέο βήμα σακχ/σης</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>Αφαιρέστε το επιλεγμένο βήμα σακχ/σης</translation>
+        <translation type="vanished">Αφαιρέστε το επιλεγμένο βήμα σακχ/σης</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>Βήμα σακχ/σης πάνω</translation>
+        <translation type="vanished">Βήμα σακχ/σης πάνω</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>βήμα σακχ/σης  κάτω</translation>
+        <translation type="vanished">βήμα σακχ/σης  κάτω</translation>
     </message>
 </context>
 <context>

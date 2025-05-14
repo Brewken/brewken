@@ -1127,6 +1127,10 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -9453,79 +9457,79 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <name>namedMashEditor</name>
     <message>
         <source>Named Mash Editor</source>
-        <translation>Editor pojmenovaných rmutovacích schémat</translation>
+        <translation type="vanished">Editor pojmenovaných rmutovacích schémat</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Rmutovací schéma</translation>
+        <translation type="vanished">Rmutovací schéma</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>Odstranit vybraný styl</translation>
+        <translation type="vanished">Odstranit vybraný styl</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Název</translation>
+        <translation type="vanished">Název</translation>
     </message>
     <message>
         <source>Initial grain temp</source>
-        <translation>Počáteční teplota sladu</translation>
+        <translation type="vanished">Počáteční teplota sladu</translation>
     </message>
     <message>
         <source>Sparge temp</source>
-        <translation>Teplota vyslazovací vody</translation>
+        <translation type="vanished">Teplota vyslazovací vody</translation>
     </message>
     <message>
         <source>Sparge temp target</source>
-        <translation>Cílová teplota vyslazovací vody</translation>
+        <translation type="vanished">Cílová teplota vyslazovací vody</translation>
     </message>
     <message>
         <source>Sparge pH</source>
-        <translation>pH sladiny</translation>
+        <translation type="vanished">pH sladiny</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Poznámky</translation>
+        <translation type="vanished">Poznámky</translation>
     </message>
     <message>
         <source>Tun</source>
-        <translation>Káď</translation>
+        <translation type="vanished">Káď</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
-        <translation>Počáteční teplota kádě</translation>
+        <translation type="vanished">Počáteční teplota kádě</translation>
     </message>
     <message>
         <source>From Equipment</source>
-        <translation>Z vybavení</translation>
+        <translation type="vanished">Z vybavení</translation>
     </message>
     <message>
         <source>Tun mass</source>
-        <translation>Hmotnost kádě</translation>
+        <translation type="vanished">Hmotnost kádě</translation>
     </message>
     <message>
         <source>Tun sp. heat</source>
-        <translation>Spec. teplo kádě</translation>
+        <translation type="vanished">Spec. teplo kádě</translation>
     </message>
     <message>
         <source>Tun specific heat (cal/(g*K))</source>
-        <translation>Specifické teplo kádě (kalorií/(g*K))</translation>
+        <translation type="vanished">Specifické teplo kádě (kalorií/(g*K))</translation>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>Přidat rmutovací krok</translation>
+        <translation type="vanished">Přidat rmutovací krok</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>Odebrat zvolený rmutovací krok</translation>
+        <translation type="vanished">Odebrat zvolený rmutovací krok</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>Krok nahoru</translation>
+        <translation type="vanished">Krok nahoru</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>Krok dolů</translation>
+        <translation type="vanished">Krok dolů</translation>
     </message>
 </context>
 <context>

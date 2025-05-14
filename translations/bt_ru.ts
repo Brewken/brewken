@@ -1202,6 +1202,10 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -9583,80 +9587,76 @@ The final volume in the primary is %1.</source>
 <context>
     <name>namedMashEditor</name>
     <message>
-        <source>Named Mash Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mash</source>
-        <translation>Затор</translation>
+        <translation type="vanished">Затор</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>Удалить выбранный сорт</translation>
+        <translation type="vanished">Удалить выбранный сорт</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Название</translation>
+        <translation type="vanished">Название</translation>
     </message>
     <message>
         <source>Initial grain temp</source>
-        <translation>Начальная температура солода</translation>
+        <translation type="vanished">Начальная температура солода</translation>
     </message>
     <message>
         <source>Sparge temp</source>
-        <translation>Температура промывки</translation>
+        <translation type="vanished">Температура промывки</translation>
     </message>
     <message>
         <source>Sparge temp target</source>
-        <translation>Нужная температура промывки</translation>
+        <translation type="vanished">Нужная температура промывки</translation>
     </message>
     <message>
         <source>Sparge pH</source>
-        <translation>pH промывки</translation>
+        <translation type="vanished">pH промывки</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Заметки</translation>
+        <translation type="vanished">Заметки</translation>
     </message>
     <message>
         <source>Tun</source>
-        <translation>Заторник</translation>
+        <translation type="vanished">Заторник</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
-        <translation>Начальная температура в заторнике</translation>
+        <translation type="vanished">Начальная температура в заторнике</translation>
     </message>
     <message>
         <source>From Equipment</source>
-        <translation>С Оборудования</translation>
+        <translation type="vanished">С Оборудования</translation>
     </message>
     <message>
         <source>Tun mass</source>
-        <translation>Масса Заторника</translation>
+        <translation type="vanished">Масса Заторника</translation>
     </message>
     <message>
         <source>Tun sp. heat</source>
-        <translation>Теплоемк. Заторника</translation>
+        <translation type="vanished">Теплоемк. Заторника</translation>
     </message>
     <message>
         <source>Tun specific heat (cal/(g*K))</source>
-        <translation>Теплоемкость Заторника (кал/(гр*С))</translation>
+        <translation type="vanished">Теплоемкость Заторника (кал/(гр*С))</translation>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>Добавить этап сусловарения</translation>
+        <translation type="vanished">Добавить этап сусловарения</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>Удалить выбранный этап сусловарения</translation>
+        <translation type="vanished">Удалить выбранный этап сусловарения</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>Этап затирания выше</translation>
+        <translation type="vanished">Этап затирания выше</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>Предыдущий этап сусловарения</translation>
+        <translation type="vanished">Предыдущий этап сусловарения</translation>
     </message>
 </context>
 <context>

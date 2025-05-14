@@ -1206,6 +1206,10 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -9600,80 +9604,76 @@ Il Volume finale del primo è %1.</translation>
 <context>
     <name>namedMashEditor</name>
     <message>
-        <source>Named Mash Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mash</source>
-        <translation>Ammostatura</translation>
+        <translation type="vanished">Ammostatura</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>Elimina stile selezionato</translation>
+        <translation type="vanished">Elimina stile selezionato</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nome</translation>
+        <translation type="vanished">Nome</translation>
     </message>
     <message>
         <source>Initial grain temp</source>
-        <translation>Temp iniziale chicchi</translation>
+        <translation type="vanished">Temp iniziale chicchi</translation>
     </message>
     <message>
         <source>Sparge temp</source>
-        <translation>Temperatura di Sparge</translation>
+        <translation type="vanished">Temperatura di Sparge</translation>
     </message>
     <message>
         <source>Sparge temp target</source>
-        <translation>Obiettivo Temepratuta di Saprge</translation>
+        <translation type="vanished">Obiettivo Temepratuta di Saprge</translation>
     </message>
     <message>
         <source>Sparge pH</source>
-        <translation>pH di Sparge</translation>
+        <translation type="vanished">pH di Sparge</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Note</translation>
+        <translation type="vanished">Note</translation>
     </message>
     <message>
         <source>Tun</source>
-        <translation>Tino</translation>
+        <translation type="vanished">Tino</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
-        <translation>Temp iniziale botte</translation>
+        <translation type="vanished">Temp iniziale botte</translation>
     </message>
     <message>
         <source>From Equipment</source>
-        <translation>Dall&apos;attrezzatura</translation>
+        <translation type="vanished">Dall&apos;attrezzatura</translation>
     </message>
     <message>
         <source>Tun mass</source>
-        <translation>Massa Botte</translation>
+        <translation type="vanished">Massa Botte</translation>
     </message>
     <message>
         <source>Tun sp. heat</source>
-        <translation>Tun sp.Calore</translation>
+        <translation type="vanished">Tun sp.Calore</translation>
     </message>
     <message>
         <source>Tun specific heat (cal/(g*K))</source>
-        <translation>Calore specifico botte (cal/g*K))</translation>
+        <translation type="vanished">Calore specifico botte (cal/g*K))</translation>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>Aggiungi step mash</translation>
+        <translation type="vanished">Aggiungi step mash</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>Rimuovi mash step selezionato</translation>
+        <translation type="vanished">Rimuovi mash step selezionato</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>Procedi con l&apos;ammostamento</translation>
+        <translation type="vanished">Procedi con l&apos;ammostamento</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>Regredisci Ammostamento</translation>
+        <translation type="vanished">Regredisci Ammostamento</translation>
     </message>
 </context>
 <context>

@@ -1055,6 +1055,10 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -9116,79 +9120,79 @@ The final volume in the primary is %1.</source>
     <name>namedMashEditor</name>
     <message>
         <source>Named Mash Editor</source>
-        <translation>命名混搭编辑器Named Mash Editor</translation>
+        <translation type="vanished">命名混搭编辑器Named Mash Editor</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>糖化Mash</translation>
+        <translation type="vanished">糖化Mash</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>删除选定的风格</translation>
+        <translation type="vanished">删除选定的风格</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>名Name</translation>
+        <translation type="vanished">名Name</translation>
     </message>
     <message>
         <source>Initial grain temp</source>
-        <translation>初始晶粒温度</translation>
+        <translation type="vanished">初始晶粒温度</translation>
     </message>
     <message>
         <source>Sparge temp</source>
-        <translation>吹扫温度Sparge temp</translation>
+        <translation type="vanished">吹扫温度Sparge temp</translation>
     </message>
     <message>
         <source>Sparge temp target</source>
-        <translation>吹扫温度目标Sparge temp target</translation>
+        <translation type="vanished">吹扫温度目标Sparge temp target</translation>
     </message>
     <message>
         <source>Sparge pH</source>
-        <translation>喷雾pHSparge pH</translation>
+        <translation type="vanished">喷雾pHSparge pH</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>说明Notes</translation>
+        <translation type="vanished">说明Notes</translation>
     </message>
     <message>
         <source>Tun</source>
-        <translation>桶Tun</translation>
+        <translation type="vanished">桶Tun</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
-        <translation>初始桶温度Initial tun temp</translation>
+        <translation type="vanished">初始桶温度Initial tun temp</translation>
     </message>
     <message>
         <source>From Equipment</source>
-        <translation>设备From Equipment</translation>
+        <translation type="vanished">设备From Equipment</translation>
     </message>
     <message>
         <source>Tun mass</source>
-        <translation>桶质量Tun mass</translation>
+        <translation type="vanished">桶质量Tun mass</translation>
     </message>
     <message>
         <source>Tun sp. heat</source>
-        <translation>桶sp热Tun sp. heat</translation>
+        <translation type="vanished">桶sp热Tun sp. heat</translation>
     </message>
     <message>
         <source>Tun specific heat (cal/(g*K))</source>
-        <translation>桶比热(cal /(g * K))Tun specific heat (cal/(g*K))</translation>
+        <translation type="vanished">桶比热(cal /(g * K))Tun specific heat (cal/(g*K))</translation>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>添加醪步骤“Add mash step</translation>
+        <translation type="vanished">添加醪步骤“Add mash step</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>删除选定的醪步骤</translation>
+        <translation type="vanished">删除选定的醪步骤</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>糖化加强Mash step up</translation>
+        <translation type="vanished">糖化加强Mash step up</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>糖化下台下台醪Mash step down</translation>
+        <translation type="vanished">糖化下台下台醪Mash step down</translation>
     </message>
 </context>
 <context>

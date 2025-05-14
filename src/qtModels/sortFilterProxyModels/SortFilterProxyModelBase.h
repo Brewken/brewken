@@ -84,8 +84,8 @@ protected:
             // No filter, so we accept
             return true;
          }
-         if (!tableModel->getRow(source_row)->display()) {
-            // Row not displayed, so reject
+         if (tableModel->getRow(source_row)->deleted()) {
+            // Row deleted, so reject
             return false;
          }
 
@@ -104,7 +104,7 @@ protected:
             return true;
          }
 
-         return listItem->display() && !listItem->deleted();
+         return !listItem->deleted();
       }
 
       qWarning() << Q_FUNC_INFO << "Unrecognised source model";

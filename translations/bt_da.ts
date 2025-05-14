@@ -1109,6 +1109,10 @@ Logfil indeholder måske flere detaljer.</translation>
         <source>Remove %1</source>
         <translation type="unfinished">Fjern %1</translation>
     </message>
+    <message>
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -8560,79 +8564,79 @@ The final volume in the primary is %1.</source>
     <name>namedMashEditor</name>
     <message>
         <source>Named Mash Editor</source>
-        <translation>Navngiven mæskningseditor</translation>
+        <translation type="vanished">Navngiven mæskningseditor</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Mæskning</translation>
+        <translation type="vanished">Mæskning</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>Slet markeret stilart</translation>
+        <translation type="vanished">Slet markeret stilart</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Navn</translation>
+        <translation type="vanished">Navn</translation>
     </message>
     <message>
         <source>Initial grain temp</source>
-        <translation>Starttemperatur af malt</translation>
+        <translation type="vanished">Starttemperatur af malt</translation>
     </message>
     <message>
         <source>Sparge temp</source>
-        <translation>Eftergydningstemperatur</translation>
+        <translation type="vanished">Eftergydningstemperatur</translation>
     </message>
     <message>
         <source>Sparge temp target</source>
-        <translation>Tilsigtet temp. for eftergydningsvand</translation>
+        <translation type="vanished">Tilsigtet temp. for eftergydningsvand</translation>
     </message>
     <message>
         <source>Sparge pH</source>
-        <translation>pH af eftergydningsvand</translation>
+        <translation type="vanished">pH af eftergydningsvand</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Notater</translation>
+        <translation type="vanished">Notater</translation>
     </message>
     <message>
         <source>Tun</source>
-        <translation>Beholder</translation>
+        <translation type="vanished">Beholder</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
-        <translation>Starttemperatur af beholder</translation>
+        <translation type="vanished">Starttemperatur af beholder</translation>
     </message>
     <message>
         <source>From Equipment</source>
-        <translation>Fra udstyr</translation>
+        <translation type="vanished">Fra udstyr</translation>
     </message>
     <message>
         <source>Tun mass</source>
-        <translation>Beholder masse</translation>
+        <translation type="vanished">Beholder masse</translation>
     </message>
     <message>
         <source>Tun sp. heat</source>
-        <translation>Beholder specifik varmefylde</translation>
+        <translation type="vanished">Beholder specifik varmefylde</translation>
     </message>
     <message>
         <source>Tun specific heat (cal/(g*K))</source>
-        <translation>Beholder specifiik varmefylde (cal/(kg·K))</translation>
+        <translation type="vanished">Beholder specifiik varmefylde (cal/(kg·K))</translation>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>Tilføj mæsketrin</translation>
+        <translation type="vanished">Tilføj mæsketrin</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>Fjern markeret mæsketrin</translation>
+        <translation type="vanished">Fjern markeret mæsketrin</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>Mæskning en plads op</translation>
+        <translation type="vanished">Mæskning en plads op</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>Mæskning plads ned</translation>
+        <translation type="vanished">Mæskning plads ned</translation>
     </message>
 </context>
 <context>

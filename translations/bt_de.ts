@@ -1186,6 +1186,10 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -9528,80 +9532,76 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
 <context>
     <name>namedMashEditor</name>
     <message>
-        <source>Named Mash Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mash</source>
-        <translation>Maische</translation>
+        <translation type="vanished">Maische</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>Ausgewählten Stil entfernen</translation>
+        <translation type="vanished">Ausgewählten Stil entfernen</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation type="vanished">Name</translation>
     </message>
     <message>
         <source>Initial grain temp</source>
-        <translation>Anfängliche Getreidetemp.</translation>
+        <translation type="vanished">Anfängliche Getreidetemp.</translation>
     </message>
     <message>
         <source>Sparge temp</source>
-        <translation>Anschwänztemp.</translation>
+        <translation type="vanished">Anschwänztemp.</translation>
     </message>
     <message>
         <source>Sparge temp target</source>
-        <translation>Geplante Anschwänztemp.</translation>
+        <translation type="vanished">Geplante Anschwänztemp.</translation>
     </message>
     <message>
         <source>Sparge pH</source>
-        <translation>Anschwänz pH</translation>
+        <translation type="vanished">Anschwänz pH</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Notizen</translation>
+        <translation type="vanished">Notizen</translation>
     </message>
     <message>
         <source>Tun</source>
-        <translation>Bottich</translation>
+        <translation type="vanished">Bottich</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
-        <translation>Anfängliche Bottichtemp.</translation>
+        <translation type="vanished">Anfängliche Bottichtemp.</translation>
     </message>
     <message>
         <source>From Equipment</source>
-        <translation>Von Ausrüstung</translation>
+        <translation type="vanished">Von Ausrüstung</translation>
     </message>
     <message>
         <source>Tun mass</source>
-        <translation>Bottichmasse</translation>
+        <translation type="vanished">Bottichmasse</translation>
     </message>
     <message>
         <source>Tun sp. heat</source>
-        <translation>Maischbottich sp. Wärme</translation>
+        <translation type="vanished">Maischbottich sp. Wärme</translation>
     </message>
     <message>
         <source>Tun specific heat (cal/(g*K))</source>
-        <translation>Maischbottich spez. Wärme (cal/(g*K))</translation>
+        <translation type="vanished">Maischbottich spez. Wärme (cal/(g*K))</translation>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>Maischschritt hinzufügen</translation>
+        <translation type="vanished">Maischschritt hinzufügen</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>ausgewählten Maischschritt entfernen</translation>
+        <translation type="vanished">ausgewählten Maischschritt entfernen</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>Maischschritt hoch</translation>
+        <translation type="vanished">Maischschritt hoch</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>Maischschritt runter</translation>
+        <translation type="vanished">Maischschritt runter</translation>
     </message>
 </context>
 <context>

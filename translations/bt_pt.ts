@@ -1178,6 +1178,10 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -9536,79 +9540,79 @@ O volume final do fermentador primário é %1.</translation>
     <name>namedMashEditor</name>
     <message>
         <source>Named Mash Editor</source>
-        <translation>Editor de Brassagem Nomeado</translation>
+        <translation type="vanished">Editor de Brassagem Nomeado</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Mosto</translation>
+        <translation type="vanished">Mosto</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>Excluir estilo selecionado</translation>
+        <translation type="vanished">Excluir estilo selecionado</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nome</translation>
+        <translation type="vanished">Nome</translation>
     </message>
     <message>
         <source>Initial grain temp</source>
-        <translation>Temperatura inicial dos grãos</translation>
+        <translation type="vanished">Temperatura inicial dos grãos</translation>
     </message>
     <message>
         <source>Sparge temp</source>
-        <translation>Temperatura de aspersão</translation>
+        <translation type="vanished">Temperatura de aspersão</translation>
     </message>
     <message>
         <source>Sparge temp target</source>
-        <translation>meta da temperatura de aspersão</translation>
+        <translation type="vanished">meta da temperatura de aspersão</translation>
     </message>
     <message>
         <source>Sparge pH</source>
-        <translation>pH de aspersão</translation>
+        <translation type="vanished">pH de aspersão</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Anotações</translation>
+        <translation type="vanished">Anotações</translation>
     </message>
     <message>
         <source>Tun</source>
-        <translation>Tina</translation>
+        <translation type="vanished">Tina</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
-        <translation>Temperatura inicial de tina</translation>
+        <translation type="vanished">Temperatura inicial de tina</translation>
     </message>
     <message>
         <source>From Equipment</source>
-        <translation>Do Equipamento</translation>
+        <translation type="vanished">Do Equipamento</translation>
     </message>
     <message>
         <source>Tun mass</source>
-        <translation>Massa da tina</translation>
+        <translation type="vanished">Massa da tina</translation>
     </message>
     <message>
         <source>Tun sp. heat</source>
-        <translation>Calor específico da tina</translation>
+        <translation type="vanished">Calor específico da tina</translation>
     </message>
     <message>
         <source>Tun specific heat (cal/(g*K))</source>
-        <translation>Calor específico da tina (cal/(g*K))</translation>
+        <translation type="vanished">Calor específico da tina (cal/(g*K))</translation>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>Adicionar passo de Mosturação</translation>
+        <translation type="vanished">Adicionar passo de Mosturação</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>Remover passo de Mosturação Selecionado</translation>
+        <translation type="vanished">Remover passo de Mosturação Selecionado</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>Acelerar Mosturação</translation>
+        <translation type="vanished">Acelerar Mosturação</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>Atrasar Mosturação</translation>
+        <translation type="vanished">Atrasar Mosturação</translation>
     </message>
 </context>
 <context>

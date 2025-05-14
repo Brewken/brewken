@@ -1194,6 +1194,10 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -9515,80 +9519,48 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
 <context>
     <name>namedMashEditor</name>
     <message>
-        <source>Named Mash Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mash</source>
-        <translation>Cefre</translation>
-    </message>
-    <message>
-        <source>Delete selected style</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Cefre</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Név</translation>
+        <translation type="vanished">Név</translation>
     </message>
     <message>
         <source>Initial grain temp</source>
-        <translation>Dara kezdeti hőmérséklet</translation>
+        <translation type="vanished">Dara kezdeti hőmérséklet</translation>
     </message>
     <message>
         <source>Sparge temp</source>
-        <translation>Máslás hőmérséklete</translation>
+        <translation type="vanished">Máslás hőmérséklete</translation>
     </message>
     <message>
         <source>Sparge temp target</source>
-        <translation>Máslás megcélzott hőmérséklete</translation>
+        <translation type="vanished">Máslás megcélzott hőmérséklete</translation>
     </message>
     <message>
         <source>Sparge pH</source>
-        <translation>Máslási pH</translation>
+        <translation type="vanished">Máslási pH</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Megjegyzések</translation>
-    </message>
-    <message>
-        <source>Tun</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Initial tun temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>From Equipment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tun mass</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tun sp. heat</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tun specific heat (cal/(g*K))</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Megjegyzések</translation>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>Cefrézési lépés hozzáadása</translation>
+        <translation type="vanished">Cefrézési lépés hozzáadása</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>Kiválasztott cefrézési lépcső eltávolítása</translation>
+        <translation type="vanished">Kiválasztott cefrézési lépcső eltávolítása</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>Cefrézési lépés fel</translation>
+        <translation type="vanished">Cefrézési lépés fel</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>Cefrézési lépés le</translation>
+        <translation type="vanished">Cefrézési lépés le</translation>
     </message>
 </context>
 <context>

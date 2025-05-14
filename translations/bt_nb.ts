@@ -1143,6 +1143,10 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -9514,79 +9518,79 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     <name>namedMashEditor</name>
     <message>
         <source>Named Mash Editor</source>
-        <translation>Navngitt meskeredigerer</translation>
+        <translation type="vanished">Navngitt meskeredigerer</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Mesk</translation>
+        <translation type="vanished">Mesk</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>Slett valgt stil</translation>
+        <translation type="vanished">Slett valgt stil</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Navn</translation>
+        <translation type="vanished">Navn</translation>
     </message>
     <message>
         <source>Initial grain temp</source>
-        <translation>Temperatur malt</translation>
+        <translation type="vanished">Temperatur malt</translation>
     </message>
     <message>
         <source>Sparge temp</source>
-        <translation>Temepratur meskevann</translation>
+        <translation type="vanished">Temepratur meskevann</translation>
     </message>
     <message>
         <source>Sparge temp target</source>
-        <translation>Måltemperatur meskevann</translation>
+        <translation type="vanished">Måltemperatur meskevann</translation>
     </message>
     <message>
         <source>Sparge pH</source>
-        <translation>Meskevannets pH</translation>
+        <translation type="vanished">Meskevannets pH</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Notater</translation>
+        <translation type="vanished">Notater</translation>
     </message>
     <message>
         <source>Tun</source>
-        <translation>Kar</translation>
+        <translation type="vanished">Kar</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
-        <translation>Temperatur kar</translation>
+        <translation type="vanished">Temperatur kar</translation>
     </message>
     <message>
         <source>From Equipment</source>
-        <translation>Fra utstyr</translation>
+        <translation type="vanished">Fra utstyr</translation>
     </message>
     <message>
         <source>Tun mass</source>
-        <translation>Karets masse</translation>
+        <translation type="vanished">Karets masse</translation>
     </message>
     <message>
         <source>Tun sp. heat</source>
-        <translation>Karets spesifikk varme</translation>
+        <translation type="vanished">Karets spesifikk varme</translation>
     </message>
     <message>
         <source>Tun specific heat (cal/(g*K))</source>
-        <translation>Karets spesifikk varme (cal/(g*K))</translation>
+        <translation type="vanished">Karets spesifikk varme (cal/(g*K))</translation>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>Legg til meskefase</translation>
+        <translation type="vanished">Legg til meskefase</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>Fjern valgt meskefase</translation>
+        <translation type="vanished">Fjern valgt meskefase</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>Meskeopptrinn</translation>
+        <translation type="vanished">Meskeopptrinn</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>Meskenedtrinn</translation>
+        <translation type="vanished">Meskenedtrinn</translation>
     </message>
 </context>
 <context>
