@@ -1202,6 +1202,10 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -9640,79 +9644,79 @@ El volum final al primari és de %1.</translation>
     <name>namedMashEditor</name>
     <message>
         <source>Named Mash Editor</source>
-        <translation>Editor de maceracions amb nom</translation>
+        <translation type="vanished">Editor de maceracions amb nom</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Maceració</translation>
+        <translation type="vanished">Maceració</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>Elimina estil seleccionat</translation>
+        <translation type="vanished">Elimina estil seleccionat</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nom</translation>
+        <translation type="vanished">Nom</translation>
     </message>
     <message>
         <source>Initial grain temp</source>
-        <translation>Temp. inicial del gra</translation>
+        <translation type="vanished">Temp. inicial del gra</translation>
     </message>
     <message>
         <source>Sparge temp</source>
-        <translation>Temp. de rentat</translation>
+        <translation type="vanished">Temp. de rentat</translation>
     </message>
     <message>
         <source>Sparge temp target</source>
-        <translation>Temp. desitjada del rentat</translation>
+        <translation type="vanished">Temp. desitjada del rentat</translation>
     </message>
     <message>
         <source>Sparge pH</source>
-        <translation>pH del rentat</translation>
+        <translation type="vanished">pH del rentat</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Notes</translation>
+        <translation type="vanished">Notes</translation>
     </message>
     <message>
         <source>Tun</source>
-        <translation>Macerador</translation>
+        <translation type="vanished">Macerador</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
-        <translation>Temp. inicial macerador</translation>
+        <translation type="vanished">Temp. inicial macerador</translation>
     </message>
     <message>
         <source>From Equipment</source>
-        <translation>De l&apos;equip</translation>
+        <translation type="vanished">De l&apos;equip</translation>
     </message>
     <message>
         <source>Tun mass</source>
-        <translation>Macerador</translation>
+        <translation type="vanished">Macerador</translation>
     </message>
     <message>
         <source>Tun sp. heat</source>
-        <translation>Macer. calor específic</translation>
+        <translation type="vanished">Macer. calor específic</translation>
     </message>
     <message>
         <source>Tun specific heat (cal/(g*K))</source>
-        <translation>Calor específic del macerador (cal/(g*K))</translation>
+        <translation type="vanished">Calor específic del macerador (cal/(g*K))</translation>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>Afegieix una fase a la maceració</translation>
+        <translation type="vanished">Afegieix una fase a la maceració</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>Elimina la fase seleccionada</translation>
+        <translation type="vanished">Elimina la fase seleccionada</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>Mou cap a dalt la fase de maceració</translation>
+        <translation type="vanished">Mou cap a dalt la fase de maceració</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>Mou cap abaix la fase de maceració</translation>
+        <translation type="vanished">Mou cap abaix la fase de maceració</translation>
     </message>
 </context>
 <context>

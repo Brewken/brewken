@@ -1222,6 +1222,10 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -9622,79 +9626,79 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <name>namedMashEditor</name>
     <message>
         <source>Named Mash Editor</source>
-        <translation>Opgeslagen Maisch Bewerker</translation>
+        <translation type="vanished">Opgeslagen Maisch Bewerker</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Maisch</translation>
+        <translation type="vanished">Maisch</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>Verwijder geselecteerde stijl</translation>
+        <translation type="vanished">Verwijder geselecteerde stijl</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Naam</translation>
+        <translation type="vanished">Naam</translation>
     </message>
     <message>
         <source>Initial grain temp</source>
-        <translation>Initiële graan temp</translation>
+        <translation type="vanished">Initiële graan temp</translation>
     </message>
     <message>
         <source>Sparge temp</source>
-        <translation>Spoel temp</translation>
+        <translation type="vanished">Spoel temp</translation>
     </message>
     <message>
         <source>Sparge temp target</source>
-        <translation>Beoogde Spoel temp</translation>
+        <translation type="vanished">Beoogde Spoel temp</translation>
     </message>
     <message>
         <source>Sparge pH</source>
-        <translation>Spoel pH</translation>
+        <translation type="vanished">Spoel pH</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Aantekeningen</translation>
+        <translation type="vanished">Aantekeningen</translation>
     </message>
     <message>
         <source>Tun</source>
-        <translation>Vat</translation>
+        <translation type="vanished">Vat</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
-        <translation>Initiële vat temp</translation>
+        <translation type="vanished">Initiële vat temp</translation>
     </message>
     <message>
         <source>From Equipment</source>
-        <translation>Van Apparatuur</translation>
+        <translation type="vanished">Van Apparatuur</translation>
     </message>
     <message>
         <source>Tun mass</source>
-        <translation>Vat massa</translation>
+        <translation type="vanished">Vat massa</translation>
     </message>
     <message>
         <source>Tun sp. heat</source>
-        <translation>Vat spec. hitte</translation>
+        <translation type="vanished">Vat spec. hitte</translation>
     </message>
     <message>
         <source>Tun specific heat (cal/(g*K))</source>
-        <translation>Vat specifieke hitte (cal/g*K)</translation>
+        <translation type="vanished">Vat specifieke hitte (cal/g*K)</translation>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>Voeg maisch stap toe</translation>
+        <translation type="vanished">Voeg maisch stap toe</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>Verwijder geselecteerde maisch stap</translation>
+        <translation type="vanished">Verwijder geselecteerde maisch stap</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>Maisch stap omhoog</translation>
+        <translation type="vanished">Maisch stap omhoog</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>Maisch stap omlaag</translation>
+        <translation type="vanished">Maisch stap omlaag</translation>
     </message>
 </context>
 <context>

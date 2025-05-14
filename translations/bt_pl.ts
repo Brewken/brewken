@@ -1143,6 +1143,10 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -9391,79 +9395,79 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     <name>namedMashEditor</name>
     <message>
         <source>Named Mash Editor</source>
-        <translation>Edytor schematów zacierania</translation>
+        <translation type="vanished">Edytor schematów zacierania</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Zacieranie</translation>
+        <translation type="vanished">Zacieranie</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>Usuń wybrany styl</translation>
+        <translation type="vanished">Usuń wybrany styl</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nazwa</translation>
+        <translation type="vanished">Nazwa</translation>
     </message>
     <message>
         <source>Initial grain temp</source>
-        <translation>Początkowa temperatura słodu</translation>
+        <translation type="vanished">Początkowa temperatura słodu</translation>
     </message>
     <message>
         <source>Sparge temp</source>
-        <translation>Temperatura wysładzania</translation>
+        <translation type="vanished">Temperatura wysładzania</translation>
     </message>
     <message>
         <source>Sparge temp target</source>
-        <translation>Docelowa temperatura wysładzania</translation>
+        <translation type="vanished">Docelowa temperatura wysładzania</translation>
     </message>
     <message>
         <source>Sparge pH</source>
-        <translation>pH wysładzania</translation>
+        <translation type="vanished">pH wysładzania</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Notatki</translation>
+        <translation type="vanished">Notatki</translation>
     </message>
     <message>
         <source>Tun</source>
-        <translation>Kadź zacierna</translation>
+        <translation type="vanished">Kadź zacierna</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
-        <translation>Początkowa temperatura kadzi</translation>
+        <translation type="vanished">Początkowa temperatura kadzi</translation>
     </message>
     <message>
         <source>From Equipment</source>
-        <translation>Pobierz z ustawień sprzętu</translation>
+        <translation type="vanished">Pobierz z ustawień sprzętu</translation>
     </message>
     <message>
         <source>Tun mass</source>
-        <translation>Masa kadzi</translation>
+        <translation type="vanished">Masa kadzi</translation>
     </message>
     <message>
         <source>Tun sp. heat</source>
-        <translation>Ciepło właściwe kadzi</translation>
+        <translation type="vanished">Ciepło właściwe kadzi</translation>
     </message>
     <message>
         <source>Tun specific heat (cal/(g*K))</source>
-        <translation>Ciepło właściwe kadzi (cal/(g*K))</translation>
+        <translation type="vanished">Ciepło właściwe kadzi (cal/(g*K))</translation>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>Dodaj krok zacierania</translation>
+        <translation type="vanished">Dodaj krok zacierania</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>Usuń wybrany krok zacierania</translation>
+        <translation type="vanished">Usuń wybrany krok zacierania</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>Nastepna przerwa</translation>
+        <translation type="vanished">Nastepna przerwa</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>Poprzednia przerwa</translation>
+        <translation type="vanished">Poprzednia przerwa</translation>
     </message>
 </context>
 <context>

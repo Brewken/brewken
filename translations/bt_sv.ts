@@ -1218,6 +1218,10 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -9646,79 +9650,79 @@ Primärens slutgiltiga volym är %1.</translation>
     <name>namedMashEditor</name>
     <message>
         <source>Named Mash Editor</source>
-        <translation>Namngiben Mäsk Redigerare</translation>
+        <translation type="vanished">Namngiben Mäsk Redigerare</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Mäsk</translation>
+        <translation type="vanished">Mäsk</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>Ta bort vald Stil</translation>
+        <translation type="vanished">Ta bort vald Stil</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Namn</translation>
+        <translation type="vanished">Namn</translation>
     </message>
     <message>
         <source>Initial grain temp</source>
-        <translation>Initial korntemperatur</translation>
+        <translation type="vanished">Initial korntemperatur</translation>
     </message>
     <message>
         <source>Sparge temp</source>
-        <translation>Sparge temp</translation>
+        <translation type="vanished">Sparge temp</translation>
     </message>
     <message>
         <source>Sparge temp target</source>
-        <translation>Sparge Måltemperatur</translation>
+        <translation type="vanished">Sparge Måltemperatur</translation>
     </message>
     <message>
         <source>Sparge pH</source>
-        <translation>Sparge pH</translation>
+        <translation type="vanished">Sparge pH</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Anteckningar</translation>
+        <translation type="vanished">Anteckningar</translation>
     </message>
     <message>
         <source>Tun</source>
-        <translation>Tun</translation>
+        <translation type="vanished">Tun</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
-        <translation>Initial tun temp</translation>
+        <translation type="vanished">Initial tun temp</translation>
     </message>
     <message>
         <source>From Equipment</source>
-        <translation>Från utrustning</translation>
+        <translation type="vanished">Från utrustning</translation>
     </message>
     <message>
         <source>Tun mass</source>
-        <translation>Tun mass</translation>
+        <translation type="vanished">Tun mass</translation>
     </message>
     <message>
         <source>Tun sp. heat</source>
-        <translation>Tun sp. värme</translation>
+        <translation type="vanished">Tun sp. värme</translation>
     </message>
     <message>
         <source>Tun specific heat (cal/(g*K))</source>
-        <translation>Tun specifik värme (cal/(g*K))</translation>
+        <translation type="vanished">Tun specifik värme (cal/(g*K))</translation>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>Lägg till Mäsk-steg</translation>
+        <translation type="vanished">Lägg till Mäsk-steg</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>Ta bort valt Mäsk-steg</translation>
+        <translation type="vanished">Ta bort valt Mäsk-steg</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>Mäskning steg upp</translation>
+        <translation type="vanished">Mäskning steg upp</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>Mäskning steg ner</translation>
+        <translation type="vanished">Mäskning steg ner</translation>
     </message>
 </context>
 <context>

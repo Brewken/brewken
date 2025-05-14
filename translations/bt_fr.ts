@@ -1202,6 +1202,10 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -9670,79 +9674,79 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     <name>namedMashEditor</name>
     <message>
         <source>Named Mash Editor</source>
-        <translation>Éditeur de profil d&apos;empâtage</translation>
+        <translation type="vanished">Éditeur de profil d&apos;empâtage</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Empâtage</translation>
+        <translation type="vanished">Empâtage</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>Supprimer le style sélectionné</translation>
+        <translation type="vanished">Supprimer le style sélectionné</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nom</translation>
+        <translation type="vanished">Nom</translation>
     </message>
     <message>
         <source>Initial grain temp</source>
-        <translation>Température initiale du grain</translation>
+        <translation type="vanished">Température initiale du grain</translation>
     </message>
     <message>
         <source>Sparge temp</source>
-        <translation>Température de rinçage</translation>
+        <translation type="vanished">Température de rinçage</translation>
     </message>
     <message>
         <source>Sparge temp target</source>
-        <translation>Température de rinçage ciblée</translation>
+        <translation type="vanished">Température de rinçage ciblée</translation>
     </message>
     <message>
         <source>Sparge pH</source>
-        <translation>pH eau de rinçage</translation>
+        <translation type="vanished">pH eau de rinçage</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Notes</translation>
+        <translation type="vanished">Notes</translation>
     </message>
     <message>
         <source>Tun</source>
-        <translation>Cuve matière</translation>
+        <translation type="vanished">Cuve matière</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
-        <translation>Température initiale</translation>
+        <translation type="vanished">Température initiale</translation>
     </message>
     <message>
         <source>From Equipment</source>
-        <translation>Valeurs de l&apos;équipement</translation>
+        <translation type="vanished">Valeurs de l&apos;équipement</translation>
     </message>
     <message>
         <source>Tun mass</source>
-        <translation>Poids</translation>
+        <translation type="vanished">Poids</translation>
     </message>
     <message>
         <source>Tun sp. heat</source>
-        <translation>Chaleur spécifique</translation>
+        <translation type="vanished">Chaleur spécifique</translation>
     </message>
     <message>
         <source>Tun specific heat (cal/(g*K))</source>
-        <translation>Chaleur spécifique de la cuve matière (cal/(g*K))</translation>
+        <translation type="vanished">Chaleur spécifique de la cuve matière (cal/(g*K))</translation>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>Ajouter un palier d&apos;empâtage</translation>
+        <translation type="vanished">Ajouter un palier d&apos;empâtage</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>Supprimer le palier d&apos;empâtage sélectionné</translation>
+        <translation type="vanished">Supprimer le palier d&apos;empâtage sélectionné</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>Monter le palier</translation>
+        <translation type="vanished">Monter le palier</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>Descendre le palier</translation>
+        <translation type="vanished">Descendre le palier</translation>
     </message>
 </context>
 <context>

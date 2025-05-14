@@ -750,6 +750,10 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -7012,85 +7016,6 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>namedMashEditor</name>
-    <message>
-        <source>Named Mash Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete selected style</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Initial grain temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sparge temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sparge temp target</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sparge pH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Notes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tun</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Initial tun temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>From Equipment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tun mass</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tun sp. heat</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tun specific heat (cal/(g*K))</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add mash step</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected mash step</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mash step up</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mash step down</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

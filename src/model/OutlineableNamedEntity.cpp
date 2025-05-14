@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/OutlineableNamedEntity.cpp is part of Brewken, and is copyright the following authors 2024:
+ * model/OutlineableNamedEntity.cpp is part of Brewken, and is copyright the following authors 2024-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -35,7 +35,7 @@ TypeLookup const OutlineableNamedEntity::typeLookup {
 };
 
 OutlineableNamedEntity::OutlineableNamedEntity(QString name) :
-   NamedEntity{name, true},
+   NamedEntity{name},
    m_outline{false} {
 
    CONSTRUCTOR_END

@@ -1194,6 +1194,10 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -9528,79 +9532,79 @@ El volumen final en el primario es %1.</translation>
     <name>namedMashEditor</name>
     <message>
         <source>Named Mash Editor</source>
-        <translation>Editor de Macerados</translation>
+        <translation type="vanished">Editor de Macerados</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Maceración</translation>
+        <translation type="vanished">Maceración</translation>
     </message>
     <message>
         <source>Delete selected style</source>
-        <translation>Eliminar el estilo seleccionado</translation>
+        <translation type="vanished">Eliminar el estilo seleccionado</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nombre</translation>
+        <translation type="vanished">Nombre</translation>
     </message>
     <message>
         <source>Initial grain temp</source>
-        <translation>Temp. inicial del grano</translation>
+        <translation type="vanished">Temp. inicial del grano</translation>
     </message>
     <message>
         <source>Sparge temp</source>
-        <translation>Temp. del lavado</translation>
+        <translation type="vanished">Temp. del lavado</translation>
     </message>
     <message>
         <source>Sparge temp target</source>
-        <translation>Temp. deseado del lavado</translation>
+        <translation type="vanished">Temp. deseado del lavado</translation>
     </message>
     <message>
         <source>Sparge pH</source>
-        <translation>pH del lavado</translation>
+        <translation type="vanished">pH del lavado</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Notas</translation>
+        <translation type="vanished">Notas</translation>
     </message>
     <message>
         <source>Tun</source>
-        <translation>Cuba</translation>
+        <translation type="vanished">Cuba</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
-        <translation>Temp. inicial de la cuba</translation>
+        <translation type="vanished">Temp. inicial de la cuba</translation>
     </message>
     <message>
         <source>From Equipment</source>
-        <translation>Desde Equipo</translation>
+        <translation type="vanished">Desde Equipo</translation>
     </message>
     <message>
         <source>Tun mass</source>
-        <translation>Masa del Macerador</translation>
+        <translation type="vanished">Masa del Macerador</translation>
     </message>
     <message>
         <source>Tun sp. heat</source>
-        <translation>Calor específico</translation>
+        <translation type="vanished">Calor específico</translation>
     </message>
     <message>
         <source>Tun specific heat (cal/(g*K))</source>
-        <translation>Calor específico de la cuba (cal/(g*K))</translation>
+        <translation type="vanished">Calor específico de la cuba (cal/(g*K))</translation>
     </message>
     <message>
         <source>Add mash step</source>
-        <translation>Agregar paso de maceración</translation>
+        <translation type="vanished">Agregar paso de maceración</translation>
     </message>
     <message>
         <source>Remove selected mash step</source>
-        <translation>Remover paso seleccionado</translation>
+        <translation type="vanished">Remover paso seleccionado</translation>
     </message>
     <message>
         <source>Mash step up</source>
-        <translation>Subir Paso</translation>
+        <translation type="vanished">Subir Paso</translation>
     </message>
     <message>
         <source>Mash step down</source>
-        <translation>Bajar Paso</translation>
+        <translation type="vanished">Bajar Paso</translation>
     </message>
 </context>
 <context>
