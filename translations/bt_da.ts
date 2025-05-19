@@ -1109,9 +1109,12 @@ Logfil indeholder måske flere detaljer.</translation>
         <source>Remove %1</source>
         <translation type="unfinished">Fjern %1</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <source>Used in %n recipe(s)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -4290,6 +4293,10 @@ The final volume in the primary is %1.</source>
         <source>Remove %1 from recipe</source>
         <translation type="unfinished">Fjern %1 fra opskrift</translation>
     </message>
+    <message>
+        <source>ID in DB</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -6164,6 +6171,14 @@ The final volume in the primary is %1.</source>
         <source>Cancel</source>
         <translation type="unfinished">Annuller</translation>
     </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
 </context>
 <context>
     <name>boilStepEditor</name>
@@ -7091,6 +7106,14 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Cancel</source>
         <translation type="unfinished">Annuller</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
     </message>
 </context>
 <context>
@@ -8252,7 +8275,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Tun</source>
-        <translation type="vanished">Beholder</translation>
+        <translation>Beholder</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
@@ -8260,11 +8283,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Get following parameters from the recipe&apos;s equipment.</source>
-        <translation>Hent følgende parametre fra opskriftens udstyr</translation>
+        <translation type="vanished">Hent følgende parametre fra opskriftens udstyr</translation>
     </message>
     <message>
         <source>From Equipment</source>
-        <translation>Fra udstyr</translation>
+        <translation type="vanished">Fra udstyr</translation>
     </message>
     <message>
         <source>Tun mass</source>
@@ -8292,7 +8315,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Use for</source>
-        <translation type="unfinished">Anvend til</translation>
+        <translation type="obsolete">Anvend til</translation>
     </message>
     <message>
         <source>Tun specific heat</source>
@@ -8424,6 +8447,10 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Cancel</source>
         <translation>Annuller</translation>
+    </message>
+    <message>
+        <source>Step Number</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9786,6 +9813,14 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Cancel</source>
         <translation type="unfinished">Annuller</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
     </message>
 </context>
 <context>
