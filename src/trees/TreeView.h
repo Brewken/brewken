@@ -98,6 +98,15 @@ public:
    //! \brief Overrides \c QTreeView::keyPressEvent.  Catches a key stroke in a tree
    virtual void keyPressEvent(QKeyEvent * event) override;
 
+protected slots:
+   /**
+    * \brief Override \c QTreeView::rowsInserted so we can add logging
+    *
+    *        You might think we could do a similar thing for \c QTreeView::rowsRemoved.  However, that function is not
+    *        virtual, so we cannot.
+    */
+   virtual void rowsInserted(QModelIndex const & parent, int start, int end) override;
+
 protected:
    QPoint dragStart;
 
