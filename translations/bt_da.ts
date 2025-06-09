@@ -136,6 +136,14 @@
         <source>Inline</source>
         <translation>I rækkefølge</translation>
     </message>
+    <message>
+        <source>Step time (mins)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 mins</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BoilStepTableModel</name>
@@ -1473,10 +1481,6 @@ Logfil indeholder måske flere detaljer.</translation>
         <translation type="unfinished">Beskrivelse</translation>
     </message>
     <message>
-        <source>Total time (mins)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Fermentation Profiles</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1486,6 +1490,14 @@ Logfil indeholder måske flere detaljer.</translation>
     <message>
         <source>Fermentation Step</source>
         <translation>Gæringstrin</translation>
+    </message>
+    <message>
+        <source>Step time (days)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 days</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2394,6 +2406,14 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     <message>
         <source>Unnamed Mash Step</source>
         <translation type="vanished">Unavngivet mæskningstrin</translation>
+    </message>
+    <message>
+        <source>Step time (mins)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 mins</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8275,7 +8295,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Tun</source>
-        <translation>Beholder</translation>
+        <translation type="vanished">Beholder</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
@@ -8340,6 +8360,10 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Cancel</source>
         <translation type="unfinished">Annuller</translation>
+    </message>
+    <message>
+        <source>Total Mash Water</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -143,6 +143,14 @@
         <source>Inline</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Step time (mins)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 mins</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BoilStepTableModel</name>
@@ -1593,10 +1601,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Total time (mins)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Fermentation Profiles</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1605,6 +1609,14 @@ Log file may contain more details.</source>
     <name>FermentationStep</name>
     <message>
         <source>Fermentation Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step time (days)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 days</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2541,6 +2553,14 @@ If you need help, please open an issue at %1</source>
     <message>
         <source>Step</source>
         <translation type="obsolete">步驟</translation>
+    </message>
+    <message>
+        <source>Step time (mins)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 mins</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8746,7 +8766,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Tun</source>
-        <translation>桶Tun</translation>
+        <translation type="vanished">桶Tun</translation>
     </message>
     <message>
         <source>Initial tun temp</source>
@@ -8807,6 +8827,10 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Cancel</source>
         <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <source>Total Mash Water</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
