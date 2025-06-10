@@ -9314,6 +9314,10 @@ Il Volume finale del primo è %1.</translation>
         <source>Total Mash Water</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Total Time</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>mashStepEditor</name>
