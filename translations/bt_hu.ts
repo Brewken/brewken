@@ -1168,7 +1168,7 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Delete %1 %2?</source>
-        <translation type="unfinished">Törlés °%1 %2?</translation>
+        <translation type="obsolete">Törlés °%1 %2?</translation>
     </message>
     <message>
         <source>Folder name</source>
@@ -1202,11 +1202,9 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
-    <message numerus="yes">
-        <source>Used in %n recipe(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
+    <message>
+        <source>Delete %1 #%2 &quot;%3&quot;?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4823,6 +4821,15 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>ID in DB</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Recipe::T</name>
+    <message numerus="yes">
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>

@@ -800,10 +800,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Delete %1 %2?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Folder name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -835,12 +831,9 @@ Log file may contain more details.</source>
         <source>Remove %1</source>
         <translation type="unfinished"></translation>
     </message>
-    <message numerus="yes">
-        <source>Used in %n recipe(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
+    <message>
+        <source>Delete %1 #%2 &quot;%3&quot;?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3426,6 +3419,16 @@ The final volume in the primary is %1.</source>
     <message>
         <source>ID in DB</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Recipe::T</name>
+    <message numerus="yes">
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
