@@ -1108,6 +1108,17 @@ If you didn&apos;t yet do this, click Abort.</source>
 Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>ERROR: Unsupported Database Schema</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attempting to read a v%1 database, but %2 %3 only supports databases up to v%4.
+
+Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DefaultContentLoader</name>
@@ -3273,27 +3284,19 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Tinseth&apos;s approximation</source>
-        <translation type="unfinished">Aproximación Tinseth</translation>
+        <translation type="obsolete">Aproximación Tinseth</translation>
     </message>
     <message>
         <source>Rager&apos;s approximation</source>
-        <translation type="unfinished">Aproximación Rager</translation>
-    </message>
-    <message>
-        <source>Noonan&apos;s approximation</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Aproximación Rager</translation>
     </message>
     <message>
         <source>Mosher&apos;s approximation</source>
-        <translation type="unfinished">Aproximación Mosher</translation>
-    </message>
-    <message>
-        <source>Daniel&apos;s approximation</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Aproximación Mosher</translation>
     </message>
     <message>
         <source>Morey&apos;s approximation</source>
-        <translation type="unfinished">Aproximación Morey</translation>
+        <translation type="obsolete">Aproximación Morey</translation>
     </message>
     <message>
         <source>SQLite (default)</source>
@@ -3414,7 +3417,7 @@ Press OK to quit.</source>
     <name>QObject</name>
     <message>
         <source>Invalid color formula type: %1</source>
-        <translation>Tipo de fórmula de color inválido: %1</translation>
+        <translation type="vanished">Tipo de fórmula de color inválido: %1</translation>
     </message>
     <message>
         <source>Unrecognized IBU formula type. %1</source>
@@ -4247,23 +4250,7 @@ Program will now exit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Tinseth</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Rager</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Noonan</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>mIBU</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SMPH</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4428,6 +4415,30 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Add step to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mosher&apos;s approximation</source>
+        <translation type="unfinished">Aproximación Mosher</translation>
+    </message>
+    <message>
+        <source>Daniel&apos;s approximation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Morey&apos;s approximation</source>
+        <translation type="unfinished">Aproximación Morey</translation>
+    </message>
+    <message>
+        <source>Tinseth&apos;s approximation</source>
+        <translation type="unfinished">Aproximación Tinseth</translation>
+    </message>
+    <message>
+        <source>Rager&apos;s approximation</source>
+        <translation type="unfinished">Aproximación Rager</translation>
+    </message>
+    <message>
+        <source>Noonan&apos;s approximation</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9061,6 +9072,10 @@ El volumen final en el primario es %1.</translation>
     <message>
         <source>Mash Wizard</source>
         <translation type="unfinished">Asistente de la maceración</translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Inventario</translation>
     </message>
 </context>
 <context>

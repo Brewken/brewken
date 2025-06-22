@@ -1132,6 +1132,17 @@ If you didn&apos;t yet do this, click Abort.</source>
 Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>ERROR: Unsupported Database Schema</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attempting to read a v%1 database, but %2 %3 only supports databases up to v%4.
+
+Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DefaultContentLoader</name>
@@ -3330,27 +3341,27 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Tinseth&apos;s approximation</source>
-        <translation>Tinseths metod</translation>
+        <translation type="vanished">Tinseths metod</translation>
     </message>
     <message>
         <source>Rager&apos;s approximation</source>
-        <translation>Ragers metod</translation>
+        <translation type="vanished">Ragers metod</translation>
     </message>
     <message>
         <source>Noonan&apos;s approximation</source>
-        <translation>Nonnans metod</translation>
+        <translation type="vanished">Nonnans metod</translation>
     </message>
     <message>
         <source>Mosher&apos;s approximation</source>
-        <translation>Moshers metod</translation>
+        <translation type="vanished">Moshers metod</translation>
     </message>
     <message>
         <source>Daniel&apos;s approximation</source>
-        <translation>Daniels metod</translation>
+        <translation type="vanished">Daniels metod</translation>
     </message>
     <message>
         <source>Morey&apos;s approximation</source>
-        <translation>Moreys metod</translation>
+        <translation type="vanished">Moreys metod</translation>
     </message>
     <message>
         <source>SQLite (default)</source>
@@ -3523,7 +3534,7 @@ Press OK to quit.</source>
     <name>QObject</name>
     <message>
         <source>Invalid color formula type: %1</source>
-        <translation>Ogiltig typ för färgformel:%1</translation>
+        <translation type="vanished">Ogiltig typ för färgformel:%1</translation>
     </message>
     <message>
         <source>Unrecognized IBU formula type. %1</source>
@@ -4328,23 +4339,7 @@ Program will now exit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Tinseth</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Rager</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Noonan</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>mIBU</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SMPH</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4510,6 +4505,30 @@ Program will now exit.</source>
     <message>
         <source>Add step to %1</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mosher&apos;s approximation</source>
+        <translation type="unfinished">Moshers metod</translation>
+    </message>
+    <message>
+        <source>Daniel&apos;s approximation</source>
+        <translation type="unfinished">Daniels metod</translation>
+    </message>
+    <message>
+        <source>Morey&apos;s approximation</source>
+        <translation type="unfinished">Moreys metod</translation>
+    </message>
+    <message>
+        <source>Tinseth&apos;s approximation</source>
+        <translation type="unfinished">Tinseths metod</translation>
+    </message>
+    <message>
+        <source>Rager&apos;s approximation</source>
+        <translation type="unfinished">Ragers metod</translation>
+    </message>
+    <message>
+        <source>Noonan&apos;s approximation</source>
+        <translation type="unfinished">Nonnans metod</translation>
     </message>
 </context>
 <context>
@@ -9195,6 +9214,10 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>Mash Wizard</source>
         <translation type="unfinished">Mäsk Guide</translation>
+    </message>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

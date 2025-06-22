@@ -5,14 +5,14 @@
   <property name="enabled">
    <bool>true</bool>
   </property>
-  <property name="geometry">
+  <!--property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>498</width>
     <height>320</height>
    </rect>
-  </property>
+  </property-->
   <property name="windowTitle">
    <string>Options</string>
   </property>
