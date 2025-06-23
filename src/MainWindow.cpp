@@ -83,6 +83,7 @@
 #include "Html.h"
 #include "HydrometerTool.h"
 #include "InventoryFormatter.h"
+#include "InventoryWindow.h"
 #include "MashDesigner.h"
 #include "MashWizard.h"
 #include "OgAdjuster.h"
@@ -334,6 +335,7 @@ public:
       m_miscCatalog                = std::make_unique<MiscCatalog               >(&m_self);
       m_miscEditor                 = std::make_unique<MiscEditor                >(&m_self);
       m_saltCatalog                = std::make_unique<SaltCatalog               >(&m_self);
+      m_inventoryWindow            = std::make_unique<InventoryWindow           >(&m_self);
       m_saltEditor                 = std::make_unique<SaltEditor                >(&m_self);
       m_styleCatalog               = std::make_unique<StyleCatalog              >(&m_self);
       m_styleEditor                = std::make_unique<StyleEditor               >(&m_self);
@@ -650,6 +652,7 @@ public:
    std::unique_ptr<ScaleRecipeTool           > m_recipeScaler          ;
    std::unique_ptr<StrikeWaterDialog         > m_strikeWaterDialog     ;
    std::unique_ptr<SaltCatalog               > m_saltCatalog           ;
+   std::unique_ptr<InventoryWindow           > m_inventoryWindow       ;
    std::unique_ptr<SaltEditor                > m_saltEditor            ;
    std::unique_ptr<StyleCatalog              > m_styleCatalog          ;
    std::unique_ptr<StyleEditor               > m_styleEditor           ;
@@ -1114,6 +1117,7 @@ void MainWindow::setupTriggers() {
    connect(actionMiscs                     , &QAction::triggered, this->pimpl->m_miscCatalog.get()          , &QWidget::show                     ); // > View > Miscs
    connect(actionYeasts                    , &QAction::triggered, this->pimpl->m_yeastCatalog.get()         , &QWidget::show                     ); // > View > Yeasts
    connect(actionSalts                     , &QAction::triggered, this->pimpl->m_saltCatalog.get()          , &QWidget::show                     ); // > View > Salts
+   connect(actionInventory                 , &QAction::triggered, this->pimpl->m_inventoryWindow.get()      , &QWidget::show                     ); // > View > Inventory
    connect(actionOptions                   , &QAction::triggered, this->pimpl->m_optionDialog.get()         , &OptionDialog::show                ); // > Tools > Options
 //   connect( actionManual, &QAction::triggered, this, &MainWindow::openManual);                                               // > About > Manual
    connect(actionScale_Recipe              , &QAction::triggered, this->pimpl->m_recipeScaler.get()         , &QWidget::show                     ); // > Tools > Scale Recipe
@@ -2212,6 +2216,8 @@ void MainWindow::newBrewNote() {
       QModelIndex brewNoteIndex = treeView_recipe->findElement(brewNote.get());
       if (brewNoteIndex.isValid()) {
          this->setTreeSelection(brewNoteIndex);
+      } else {
+         qWarning() << Q_FUNC_INFO << "Unable to find newly created BrewNote in Recipe tree";
       }
    }
    return;

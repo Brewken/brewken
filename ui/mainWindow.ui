@@ -1714,6 +1714,8 @@
     <addaction name="actionYeasts"/>
     <addaction name="separator"/>
     <addaction name="actionSalts"/>
+    <addaction name="separator"/>
+    <addaction name="actionInventory"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -1756,7 +1758,7 @@
   <widget class="QToolBar" name="toolBar">
    <property name="font">
     <font>
-     <weight>75</weight>
+     <weight>100</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -1782,6 +1784,9 @@
    <addaction name="actionHops"/>
    <addaction name="actionMiscs"/>
    <addaction name="actionYeasts"/>
+   <addaction name="actionSalts"/>
+   <addaction name="separator"/>
+   <addaction name="actionInventory"/>
    <addaction name="separator"/>
    <addaction name="actionTimers"/>
    <addaction name="action_recipeToTextClipboard"/>
@@ -2220,12 +2225,26 @@
      <normaloff>:/images/grain2glass.svg</normaloff>:/images/grain2glass.svg</iconset>
    </property>
    <property name="text">
-    <string/>
+    <string>Brew It!</string>
    </property>
    <property name="toolTip">
     <string>Brew It!</string>
    </property>
   </action>
+
+  <action name="actionInventory">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/iconInventory.svg</normaloff>:/images/iconInventory.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Inventory</string>
+   </property>
+   <property name="toolTip">
+    <string>Inventory</string>
+   </property>
+  </action>
+
  </widget>
  <customwidgets>
   <customwidget>

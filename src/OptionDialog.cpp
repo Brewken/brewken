@@ -598,7 +598,8 @@ public:
 
 };
 
-OptionDialog::OptionDialog(QWidget * parent) : QDialog{},
+OptionDialog::OptionDialog(QWidget * parent) :
+   QDialog{},
    Ui::optionsDialog{},
    pimpl{std::make_unique<impl>(*this)} {
 
@@ -609,8 +610,8 @@ OptionDialog::OptionDialog(QWidget * parent) : QDialog{},
    this->setupUi(this);
    this->pimpl->initLangs();
 
-   if (parent != nullptr) {
-      setWindowIcon(parent->windowIcon());
+   if (parent) {
+      this->setWindowIcon(parent->windowIcon());
    }
 
    // populate the combo boxes on the units tab
@@ -638,7 +639,12 @@ OptionDialog::OptionDialog(QWidget * parent) : QDialog{},
    connect_signals();
 
    pushButton_testConnection->setEnabled(false);
+   return;
 }
+
+// See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the
+// header file)
+OptionDialog::~OptionDialog() = default;
 
 void OptionDialog::connect_signals() {
    connect(buttonBox, &QDialogButtonBox::accepted, this, &OptionDialog::saveAndClose);
@@ -682,10 +688,6 @@ void OptionDialog::connect_signals() {
 void OptionDialog::signalAncestors() {
    emit showAllAncestors(checkBox_alwaysShowSnaps->checkState() == Qt::Checked);
 }
-
-// See https://herbsutter.com/gotw/_100/ for why we need to explicitly define the destructor here (and not in the
-// header file)
-OptionDialog::~OptionDialog() = default;
 
 
 void OptionDialog::show() {
