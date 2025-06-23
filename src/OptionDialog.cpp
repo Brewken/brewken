@@ -558,6 +558,31 @@ public:
          this->m_self.checkBox_alwaysShowSnaps->setCheckState(Qt::Unchecked);
       }
 
+      //
+      // These default values used to be hard-coded in MainWindow::newRecipe, but we now let users override them
+      //
+      this->m_self.lineEdit_defaultBatchSize_l->setQuantity(
+         PersistentSettings::value(PersistentSettings::Names::defaultBatchSize_l,
+                                   QVariant::fromValue(18.93)).toDouble()  // 5 gallons
+      );
+      this->m_self.lineEdit_defaultPreBoilSize_l->setQuantity(
+         PersistentSettings::value(PersistentSettings::Names::defaultPreBoilSize_l,
+                                   QVariant::fromValue(23.47)).toDouble()  // 6.2 gallons
+      );
+      this->m_self.lineEdit_defaultEfficiency->setQuantity(
+         PersistentSettings::value(PersistentSettings::Names::defaultEfficiency, QVariant::fromValue(70.0)).toDouble()
+      );
+
+      return;
+   }
+
+   void saveDefaults() {
+      PersistentSettings::insert(PersistentSettings::Names::defaultBatchSize_l,
+                                 this->m_self.lineEdit_defaultBatchSize_l->getNonOptCanonicalAmt().quantity);
+      PersistentSettings::insert(PersistentSettings::Names::defaultPreBoilSize_l,
+                                 this->m_self.lineEdit_defaultPreBoilSize_l->getNonOptCanonicalAmt().quantity);
+      PersistentSettings::insert(PersistentSettings::Names::defaultEfficiency,
+                                 this->m_self.lineEdit_defaultEfficiency->getNonOptValue<double>());
       return;
    }
 
@@ -617,9 +642,13 @@ OptionDialog::OptionDialog(QWidget * parent) :
    // populate the combo boxes on the units tab
    this->pimpl->configure_unitCombos();
 
-   // populate the combo boxes on the formulas tab
+   // Populate the combo boxes on the formulas tab
    BT_COMBO_BOX_INIT(OptionDialog, colorFormulaComboBox, ColorMethods, formula);
    BT_COMBO_BOX_INIT(OptionDialog,   ibuFormulaComboBox,   IbuMethods, formula);
+   // Set up other smart fields
+   SMART_FIELD_INIT_FS(OptionDialog, label_defaultBatchSize_l  , lineEdit_defaultBatchSize_l  , double, Measurement::PhysicalQuantity::Volume, 2);
+   SMART_FIELD_INIT_FS(OptionDialog, label_defaultPreBoilSize_l, lineEdit_defaultPreBoilSize_l, double, Measurement::PhysicalQuantity::Volume, 2);
+   SMART_FIELD_INIT_FS(OptionDialog, label_defaultEfficiency   , lineEdit_defaultEfficiency   , double, NonPhysicalQuantity::Percentage      , 1);
 
    this->pimpl->configure_formulaCombos();
 
@@ -846,11 +875,13 @@ void OptionDialog::saveAndClose() {
    saveFormulae();
    saveLoggingSettings();
    saveVersioningSettings();
+   this->pimpl->saveDefaults();
 
    // Set the right language.
    Localization::setLanguage(this->comboBox_lang->currentData().toString());
 
    setVisible(false);
+   return;
 }
 
 bool OptionDialog::saveDefaultUnits() {
@@ -874,6 +905,7 @@ void OptionDialog::saveFormulae() {
 
    PersistentSettings::insert(PersistentSettings::Names::mashHopAdjustment, ibuAdjustmentMashHopDoubleSpinBox->value() / 100);
    PersistentSettings::insert(PersistentSettings::Names::firstWortHopAdjustment, ibuAdjustmentFirstWortDoubleSpinBox->value() / 100);
+   return;
 }
 
 void OptionDialog::saveLoggingSettings() {
