@@ -2085,9 +2085,9 @@ std::shared_ptr<Recipe>  MainWindow::newRecipe() {
 
    // Set the following stuff so everything appears nice
    // and the calculations don't divide by zero... things like that.
-   newRec->setBatchSize_l(18.93); // 5 gallons
-   newBoil->setPreBoilSize_l(23.47);  // 6.2 gallons
-   newRec->setEfficiency_pct(70.0);
+   newRec ->setBatchSize_l   (PersistentSettings::value(PersistentSettings::Names::defaultBatchSize_l  , 18.93).toDouble());
+   newBoil->setPreBoilSize_l (PersistentSettings::value(PersistentSettings::Names::defaultPreBoilSize_l, 23.47).toDouble());
+   newRec ->setEfficiency_pct(PersistentSettings::value(PersistentSettings::Names::defaultEfficiency   , 70.0 ).toDouble());
 
    // We need a valid key, so insert the recipe before we add equipment
    QVariant const defEquipKey = PersistentSettings::value(PersistentSettings::Names::defaultEquipmentKey, -1);
