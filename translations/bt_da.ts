@@ -522,6 +522,10 @@
         <source>Brew Note</source>
         <translation>Brygnotat</translation>
     </message>
+    <message>
+        <source>Brew Note #%1 for brew on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Brewtarget</name>
@@ -1838,6 +1842,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <message>
         <source>Amount Type</source>
         <translation>Mængdeangivelse</translation>
+    </message>
+    <message>
+        <source>N° Recipes</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7580,6 +7588,13 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
+    <name>inventoryWindow</name>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Lager</translation>
+    </message>
+</context>
+<context>
     <name>mainWindow</name>
     <message>
         <source>Recipes</source>
@@ -9085,6 +9100,34 @@ The final volume in the primary is %1.</source>
   &lt;a href=&quot;https://github.com/Brewken/brewken/wiki/Translations&quot;&gt;
   provide a translation&lt;/a&gt; so that your friends can use Brewken!
 &lt;/qt&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default Values</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Batch Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default batch size to set on new recipes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pre-Boil Size</source>
+        <translation type="unfinished">Forkogning volumen</translation>
+    </message>
+    <message>
+        <source>Default pre-boil size to set on new recipes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Efficiency</source>
+        <translation type="unfinished">Effektivitet</translation>
+    </message>
+    <message>
+        <source>Default efficiency to set on new recipes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

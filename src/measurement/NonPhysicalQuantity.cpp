@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * BtFieldType.cpp is part of Brewken, and is copyright the following authors 2022-2025:
+ * measurement/NonPhysicalQuantity.cpp is part of Brewken, and is copyright the following authors 2022-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,11 +13,9 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "BtFieldType.h"
+#include "measurement/NonPhysicalQuantity.h"
 
 #include <QDebug>
-
-#include "utils/EnumStringMapping.h"
 
 QString GetLoggableName(NonPhysicalQuantity nonPhysicalQuantity) {
    // See comment in measurement/PhysicalQuantity.cpp for why we use a switch and not an EnumStringMapping here
@@ -28,6 +26,7 @@ QString GetLoggableName(NonPhysicalQuantity nonPhysicalQuantity) {
       case NonPhysicalQuantity::Bool           : return "Bool"          ;
       case NonPhysicalQuantity::Enum           : return "Enum"          ;
       case NonPhysicalQuantity::OrdinalNumeral : return "OrdinalNumeral";
+      case NonPhysicalQuantity::CardinalNumber : return "CardinalNumber";
       case NonPhysicalQuantity::Dimensionless  : return "Dimensionless" ;
       // In C++23, we'd add:
       // default: std::unreachable();
@@ -36,38 +35,4 @@ QString GetLoggableName(NonPhysicalQuantity nonPhysicalQuantity) {
    // std::unreachable()
    // It's a coding error if we get here!
    Q_ASSERT(false);
-}
-
-bool IsValid(BtFieldType const & fieldType, Measurement::PhysicalQuantity const physicalQuantity) {
-   // It's a coding error to call this function if fieldType holds NonPhysicalQuantity
-   Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(fieldType));
-
-   if (std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(fieldType)) {
-      auto const choiceOfPhysicalQuantity = std::get<Measurement::ChoiceOfPhysicalQuantity>(fieldType);
-      return Measurement::isValid(choiceOfPhysicalQuantity, physicalQuantity);
-   }
-
-   // Only one possibility left
-   Q_ASSERT(std::holds_alternative<Measurement::PhysicalQuantity>(fieldType));
-   return physicalQuantity == std::get<Measurement::PhysicalQuantity>(fieldType);
-}
-
-Measurement::PhysicalQuantities ConvertToPhysicalQuantities(BtFieldType const & fieldType) {
-   // It's a coding error to call this function if fieldType holds NonPhysicalQuantity
-   Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(fieldType));
-
-   if (std::holds_alternative<Measurement::PhysicalQuantity>(fieldType)) {
-      return std::get<Measurement::PhysicalQuantity>(fieldType);
-   }
-
-   Q_ASSERT(std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(fieldType));
-   return std::get<Measurement::ChoiceOfPhysicalQuantity>(fieldType);
-}
-
-BtFieldType ConvertToBtFieldType(Measurement::PhysicalQuantities const & physicalQuantities) {
-   if (std::holds_alternative<Measurement::PhysicalQuantity>(physicalQuantities)) {
-      return std::get<Measurement::PhysicalQuantity>(physicalQuantities);
-   }
-
-   return std::get<Measurement::ChoiceOfPhysicalQuantity>(physicalQuantities);
 }
