@@ -537,6 +537,10 @@
         <source>Brew Note</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Brew Note #%1 for brew on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Brewken</name>
@@ -2148,6 +2152,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>N° Recipes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8394,6 +8402,13 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
 </context>
 <context>
+    <name>inventoryWindow</name>
+    <message>
+        <source>Inventory</source>
+        <translation type="unfinished">Lagerbeholdning</translation>
+    </message>
+</context>
+<context>
     <name>mainWindow</name>
     <message>
         <source>Recipes</source>
@@ -10078,6 +10093,34 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>How many times %1 needs to be run to trigger another backup: 1 means always backup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default Values</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Batch Size</source>
+        <translation type="unfinished">Bryggevolum</translation>
+    </message>
+    <message>
+        <source>Default batch size to set on new recipes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pre-Boil Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default pre-boil size to set on new recipes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Efficiency</source>
+        <translation type="unfinished">Effektivitet</translation>
+    </message>
+    <message>
+        <source>Default efficiency to set on new recipes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
