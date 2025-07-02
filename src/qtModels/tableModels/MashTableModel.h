@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * qtModels/tableModels/MashTableModel.h is part of Brewken, and is copyright the following authors 2024:
+ * qtModels/tableModels/MashTableModel.h is part of Brewken, and is copyright the following authors 2024-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -24,10 +24,12 @@
 #include "qtModels/tableModels/ItemDelegate.h"
 #include "qtModels/tableModels/TableModelBase.h"
 
+// Define the columns on this table
 TABLE_MODEL_TRAITS(Mash, Name,
                          InitialGrainTemp,
                          TotalMashWater  ,
-                         TotalTime       ,)
+                         TotalTime       ,
+                         NumRecipesUsedIn,)
 
 /*!
  * \class MashTableModel

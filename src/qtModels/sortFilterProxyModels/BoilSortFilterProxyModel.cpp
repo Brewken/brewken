@@ -1,5 +1,6 @@
 /*======================================================================================================================
- * qtModels/sortFilterProxyModels/BoilSortFilterProxyModel.cpp is part of Brewken, and is copyright the following authors 2024:
+ * qtModels/sortFilterProxyModels/BoilSortFilterProxyModel.cpp is part of Brewken, and is copyright the following
+ * authors 2024-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -33,6 +34,9 @@ bool BoilSortFilterProxyModel::isLessThan(BoilTableModel::ColumnIndex const colu
       case BoilTableModel::ColumnIndex::PreBoilSize:
          return Measurement::qStringToSI( leftItem.toString(), Measurement::PhysicalQuantity::Volume) <
                 Measurement::qStringToSI(rightItem.toString(), Measurement::PhysicalQuantity::Volume);
+
+      case BoilTableModel::ColumnIndex::NumRecipesUsedIn:
+         return leftItem.toInt() < rightItem.toInt();
 
       // No default case as we want the compiler to warn us if we missed one
    }
