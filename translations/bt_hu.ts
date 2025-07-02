@@ -217,6 +217,10 @@
         <source>Pre-Boil Size</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>N° Recipes</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrewDayFormatter</name>
@@ -1221,6 +1225,20 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Delete %1 #%2 &quot;%3&quot;?</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>%1 in use</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>Cannot delete this %1, as it is used in %n recipe(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Delete %1 #%2 &quot;%3&quot;? (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -1502,6 +1520,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Fermenter Volume</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>N° Recipes</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Fermentable</name>
@@ -1757,6 +1779,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Yield (DBFG) %</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>N° Recipes</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Fermentation</name>
@@ -1851,6 +1877,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Number of Steps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>N° Recipes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2868,6 +2898,10 @@ If you need help, please open an issue at %1</source>
         <source>Total Time</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>N° Recipes</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MashWizard</name>
@@ -3157,6 +3191,10 @@ If you need help, please open an issue at %1</source>
     <message>
         <source>Weight</source>
         <translation type="obsolete">Súly</translation>
+    </message>
+    <message>
+        <source>N° Recipes</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4827,15 +4865,6 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
 </context>
 <context>
-    <name>Recipe::T</name>
-    <message numerus="yes">
-        <source>Used in %n recipe(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
-    </message>
-</context>
-<context>
     <name>RecipeAddition</name>
     <message>
         <source>Recipe Addition</source>
@@ -5746,6 +5775,10 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>N° Recipes</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ScaleRecipeEquipmentPage</name>
@@ -5927,6 +5960,19 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Style Guide</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>N° Recipes</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>T</name>
+    <message numerus="yes">
+        <source>Used in %n recipe(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -6472,6 +6518,10 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <source>Magnesium (ppm)</source>
         <translation>Magnézium (ppm)</translation>
     </message>
+    <message>
+        <source>N° Recipes</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>XmlCoding</name>
@@ -6765,6 +6815,10 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Amount Type</source>
         <translation type="unfinished">Mennyiségi egység</translation>
+    </message>
+    <message>
+        <source>N° Recipes</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
