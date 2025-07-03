@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/Water.cpp is part of Brewken, and is copyright the following authors 2009-2024:
+ * model/Water.cpp is part of Brewken, and is copyright the following authors 2009-2025:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -350,6 +350,9 @@ double Water::ppm(Water::Ion const ion) const {
    // Should be unreachable
    return 0.0;
 }
+
+// This class supports NamedEntity::numRecipesUsedIn
+IMPLEMENT_NUM_RECIPES_USED_IN(Water)
 
 // Boilerplate code for FolderBase
 FOLDER_BASE_COMMON_CODE(Water)
