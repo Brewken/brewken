@@ -1174,8 +1174,11 @@ def installDependencies():
          # Just because we have MacPorts installed, doesn't mean its list of software etc will be up-to-date.  So fix
          # that first.
          #
+         # If there is an error, MacPorts tells you to run again with the -v option to find out why, so we just run with
+         # that from the outset.
+         #
          log.debug('First run of MacPorts selfupdate')
-         btUtils.abortOnRunFail(subprocess.run(['sudo', 'port', 'selfupdate']))
+         btUtils.abortOnRunFail(subprocess.run(['sudo', 'port', '-v', 'selfupdate']))
 
          #
          # Sometimes you need to run selfupdate twice, because MacPorts itself was too out of date to update the ports
@@ -1190,9 +1193,8 @@ def installDependencies():
 
          # Per https://guide.macports.org/#using.port.diagnose this will tell us about "common issues in the user's
          # environment".
-# 2025-02-26 TODO Commented out pending fix for https://trac.macports.org/ticket/72087
-#         log.debug('Check environment is OK')
-#         btUtils.abortOnRunFail(subprocess.run(['sudo', 'port', 'diagnose', '--quiet']))
+         log.debug('Check environment is OK')
+         btUtils.abortOnRunFail(subprocess.run(['sudo', 'port', 'diagnose', '--quiet']))
 
          # Per https://guide.macports.org/#using.port.installed, this tells us what ports are already installed
          log.debug('List ports already installed')
