@@ -1259,7 +1259,7 @@ def installDependencies():
          if ([] == qtInstalledBy):
             log.error('Did not understand how Qt was installed!')
 
-         if (len(qtInstalledBy)):
+         if (len(qtInstalledBy) > 1):
             log.error('Qt installed twice!')
 
          qtBaseDir = ''
