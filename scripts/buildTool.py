@@ -1175,10 +1175,11 @@ def installDependencies():
          # that first.
          #
          # If there is an error, MacPorts tells you to run again with the -v option to find out why, so we just run with
-         # that from the outset.
+         # that from the outset, and live with the fact that it generates a lot of logging.
          #
-         log.debug('First run of MacPorts selfupdate')
-         btUtils.abortOnRunFail(subprocess.run(['sudo', 'port', '-v', 'selfupdate']))
+# Commented pending fix for https://trac.macports.org/ticket/72802
+#         log.debug('First run of MacPorts selfupdate')
+#         btUtils.abortOnRunFail(subprocess.run(['sudo', 'port', '-v', 'selfupdate']))
 
          #
          # Sometimes you need to run selfupdate twice, because MacPorts itself was too out of date to update the ports
@@ -1188,8 +1189,9 @@ def installDependencies():
          # Rather than try to detect this, we just always run selfupdate twice.  If the second time is a no-op then no
          # harm is done.
          #
-         log.debug('Second run of MacPorts selfupdate')
-         btUtils.abortOnRunFail(subprocess.run(['sudo', 'port', 'selfupdate']))
+# Commented pending fix for https://trac.macports.org/ticket/72802
+#         log.debug('Second run of MacPorts selfupdate')
+#         btUtils.abortOnRunFail(subprocess.run(['sudo', 'port', 'selfupdate']))
 
          # Per https://guide.macports.org/#using.port.diagnose this will tell us about "common issues in the user's
          # environment".
