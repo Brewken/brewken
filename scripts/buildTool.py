@@ -1107,7 +1107,7 @@ def installDependencies():
 #                            'pandoc',
                             'tree',
                             'dylibbundler',
-#                            'qt@6',
+                            'qt@6',
                             'openssl@3', # OpenSSL headers and library
 #                            'xalan-c',
                             'xerces-c'
@@ -1223,7 +1223,7 @@ def installDependencies():
                             'pandoc',
                             'xercesc3',
                             'xalanc',
-                            'qt6',
+#                            'qt6',
                             'qt6-qttranslations'
                             ]
          for packageToInstall in installListPort:
