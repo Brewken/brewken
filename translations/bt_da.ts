@@ -1155,6 +1155,14 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Delete %1 #%2 &quot;%3&quot;? (%1)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Addition of %1</source>
+        <translation type="unfinished">Tilsætning af %1</translation>
+    </message>
+    <message>
+        <source>Invalid!</source>
+        <translation type="unfinished">Ugyldig!</translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -2341,6 +2349,14 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
         <source>Change recipe&apos;s fermentation profile</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Brew Note #%1 for brew on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Notes from brew day on %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -2581,7 +2597,7 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>You have too much wort from the mash for your boil size. I suggest increasing the boil size by increasing the boil time, or reducing your mash thickness.</source>
-        <translation>Du har for meget urt fra mæskningen til dit kogevolumen. Det foreslås at øge kogevolumen ved at øge kogetiden eller reducere, hvor tyktflydende din mæsk er.</translation>
+        <translation type="vanished">Du har for meget urt fra mæskningen til dit kogevolumen. Det foreslås at øge kogevolumen ved at øge kogetiden eller reducere, hvor tyktflydende din mæsk er.</translation>
     </message>
     <message>
         <source>Batch Sparge %1</source>
@@ -2598,6 +2614,10 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     <message>
         <source>In order to hit your target temp on the final step, the infusion water must be above boiling. Lower your initial infusion volume.</source>
         <translation>For at ramme din sluttemperatur i sluttrinnet, skal infusionsvandet være over kogepunktet. Nedsæt dit startvolumen for infusionen.</translation>
+    </message>
+    <message>
+        <source>You have too much wort from the mash for your boil size.  I suggest increasing the boil size by increasing the boil time, or reducing your mash thickness.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4045,13 +4065,6 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
 </context>
 <context>
-    <name>RaIngrd</name>
-    <message>
-        <source>Add %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Recipe</name>
     <message>
         <source>Add grains</source>
@@ -4428,11 +4441,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Addition of %1</source>
-        <translation>Tilsætning af %1</translation>
+        <translation type="vanished">Tilsætning af %1</translation>
     </message>
     <message>
         <source>Invalid!</source>
-        <translation>Ugyldig!</translation>
+        <translation type="vanished">Ugyldig!</translation>
+    </message>
+    <message>
+        <source>Addition of %1 fermentable</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4502,11 +4519,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Addition of %1</source>
-        <translation>Tilsætning af %1</translation>
+        <translation type="vanished">Tilsætning af %1</translation>
     </message>
     <message>
         <source>Invalid!</source>
-        <translation>Ugyldig!</translation>
+        <translation type="vanished">Ugyldig!</translation>
+    </message>
+    <message>
+        <source>Addition of %1 hop</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4580,7 +4601,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Invalid!</source>
-        <translation>Ugyldig!</translation>
+        <translation type="vanished">Ugyldig!</translation>
     </message>
 </context>
 <context>
@@ -4622,11 +4643,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Addition of %1</source>
-        <translation>Tilsætning af %1</translation>
+        <translation type="vanished">Tilsætning af %1</translation>
     </message>
     <message>
         <source>Invalid!</source>
-        <translation>Ugyldig!</translation>
+        <translation type="vanished">Ugyldig!</translation>
+    </message>
+    <message>
+        <source>Addition of %1 yeast</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4708,7 +4733,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Invalid!</source>
-        <translation>Ugyldig!</translation>
+        <translation type="vanished">Ugyldig!</translation>
     </message>
 </context>
 <context>
@@ -5166,11 +5191,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Use of %1</source>
-        <translation>Anvendelse af %1</translation>
+        <translation type="vanished">Anvendelse af %1</translation>
     </message>
     <message>
         <source>Invalid!</source>
-        <translation>Ugyldig!</translation>
+        <translation type="vanished">Ugyldig!</translation>
+    </message>
+    <message>
+        <source>Use of %1 water</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6562,7 +6591,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>brewNote</source>
-        <translation>Bryggenotat</translation>
+        <translation type="vanished">Bryggenotat</translation>
     </message>
     <message>
         <source>yyyy-dd-MM</source>
@@ -6607,6 +6636,10 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Measured yeast attenuation</source>
         <translation>Målt forgæringsgrad</translation>
+    </message>
+    <message>
+        <source>Brew Note</source>
+        <translation type="unfinished">Brygnotat</translation>
     </message>
 </context>
 <context>
@@ -8298,6 +8331,10 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Inventory</source>
         <translation type="unfinished">Lager</translation>
+    </message>
+    <message>
+        <source>Step-by-step instructions for brew day</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

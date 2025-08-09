@@ -579,6 +579,21 @@ namespace Measurement::UnitSystems {
                                               "specificHeatCapacity_Btus",
                                               Measurement::SystemOfMeasurement::SpecificHeatCapacityBtus};
 
+   UnitSystem const heatCapacity_Kilocalories{PhysicalQuantity::HeatCapacity,
+                                              &Measurement::Units::kilocaloriesPerCelsius,
+                                              "heatCapacity_Kilocalories",
+                                              Measurement::SystemOfMeasurement::HeatCapacityKilocalories};
+
+   UnitSystem const heatCapacity_Joules{PhysicalQuantity::HeatCapacity,
+                                        &Measurement::Units::joulesPerKelvin,
+                                        "heatCapacity_Joules",
+                                        Measurement::SystemOfMeasurement::HeatCapacityJoules};
+
+   UnitSystem const heatCapacity_Btus{PhysicalQuantity::HeatCapacity,
+                                      &Measurement::Units::btuPerFahrenheit,
+                                      "heatCapacity_Btus",
+                                      Measurement::SystemOfMeasurement::HeatCapacityBtus};
+
    UnitSystem const specificVolume_Metric{PhysicalQuantity::SpecificVolume,
                                           &Measurement::Units::litresPerKilogram,
                                           "specificVolume_Metric",
