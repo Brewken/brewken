@@ -1096,6 +1096,14 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Delete %1 #%2 &quot;%3&quot;? (%1)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Addition of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid!</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -2484,6 +2492,14 @@ If you need help, please open an issue at %1</source>
         <source>Change recipe&apos;s fermentation profile</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Brew Note #%1 for brew on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Notes from brew day on %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -2724,7 +2740,7 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>You have too much wort from the mash for your boil size. I suggest increasing the boil size by increasing the boil time, or reducing your mash thickness.</source>
-        <translation>你有太多的麦汁从熬大小醪。我建议增加熬熬时间，通过增加或减少您的醪厚度尺寸。</translation>
+        <translation type="vanished">你有太多的麦汁从熬大小醪。我建议增加熬熬时间，通过增加或减少您的醪厚度尺寸。</translation>
     </message>
     <message>
         <source>Batch Sparge %1</source>
@@ -2740,6 +2756,10 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>In order to hit your target temp on the final step, the infusion water must be above boiling. Lower your initial infusion volume.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You have too much wort from the mash for your boil size.  I suggest increasing the boil size by increasing the boil time, or reducing your mash thickness.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4199,13 +4219,6 @@ Program will now exit.</source>
     </message>
 </context>
 <context>
-    <name>RaIngrd</name>
-    <message>
-        <source>Add %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Recipe</name>
     <message>
         <source>Add grains</source>
@@ -4588,11 +4601,7 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Addition of %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid!</source>
+        <source>Addition of %1 fermentable</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4670,11 +4679,7 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Addition of %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid!</source>
+        <source>Addition of %1 hop</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4744,10 +4749,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Primary</source>
         <translation type="unfinished">主要</translation>
     </message>
@@ -4810,11 +4811,7 @@ The final volume in the primary is %1.</source>
         <translation type="obsolete">干酵母Dry Yeast</translation>
     </message>
     <message>
-        <source>Addition of %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid!</source>
+        <source>Addition of %1 yeast</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4901,10 +4898,6 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Addition of %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5314,11 +5307,7 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Use of %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid!</source>
+        <source>Use of %1 water</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6831,10 +6820,6 @@ The final volume in the primary is %1.</source>
         <translation>说明Notes</translation>
     </message>
     <message>
-        <source>brewNote</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>yyyy-dd-MM</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6876,6 +6861,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Measured yeast attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Note</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8731,6 +8720,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step-by-step instructions for brew day</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
