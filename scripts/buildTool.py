@@ -1224,7 +1224,7 @@ def installDependencies():
                             'xercesc3',
                             'xalanc',
 #                            'qt6',
-                            'qt6-qttranslations'
+#                            'qt6-qttranslations'
                             ]
          for packageToInstall in installListPort:
             log.debug('Installing ' + packageToInstall + ' via MacPorts')
