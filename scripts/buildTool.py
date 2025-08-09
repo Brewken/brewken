@@ -1277,9 +1277,18 @@ def installDependencies():
             # /usr/local/lib directories".
             #
             btUtils.abortOnRunFail(subprocess.run(['brew', 'link', '--force', 'qt6']))
+
             qtBaseDir = btUtils.abortOnRunFail(
                subprocess.run(['brew', '--prefix', 'qt@6'], capture_output=True)
             ).stdout.decode('UTF-8').rstrip()
+
+            qmakePath = findFirstMatchingFile('qmake', qtBaseDir)
+            if ('' == qmakePath):
+               log.error('Unable to write to find qmake under ' + qtBaseDir)
+            else:
+               log.debug('Found qmake at ' + qmakePath)
+
+            qtBinDir = os.path.dirname(qmakePath)
 
             #
             # Further notes from when we did this for Qt5:
