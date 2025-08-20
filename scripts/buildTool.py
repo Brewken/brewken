@@ -1170,10 +1170,13 @@ def installDependencies():
          # scripted.
          #
          log.debug('Installing MacPorts from binary')
+         btUtils.abortOnRunFail(subprocess.run(['pwd']))
+         btUtils.abortOnRunFail(subprocess.run(['ls', '-l']))
          macPortsPackage = macPortsName + '-' + macOsVersion + '-' + macOsReleaseName + '.pkg'
          downloadUrl = 'https://github.com/macports/macports-base/releases/download/v' + macPortsVersion + '/' + macPortsPackage
          btUtils.abortOnRunFail(subprocess.run(['curl', '-L', '-O', downloadUrl]))
          btUtils.abortOnRunFail(subprocess.run(['sudo', 'installer', '-package', macPortsPackage, '-target', '/']))
+         btUtils.abortOnRunFail(subprocess.run(['ls', '-l']))
 
          #
          # Instructions for source install are at https://guide.macports.org/#installing.macports.source.
