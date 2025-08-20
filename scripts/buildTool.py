@@ -1149,25 +1149,66 @@ def installDependencies():
          # The instructions at https://guide.macports.org/#installing say that we probably don't need to install Xcode
          # as only a few ports need it.  So, for now, we haven't tried to install that.
          #
-         # Instructions for source install are at https://guide.macports.org/#installing.macports.source.  I tried the
-         # following but the configure script complained about the lack of /usr/local/.//mkspecs/macx-clang
+         # We can install from binary or source.  Code for both is here as have hit various problems in the past.
          #
-         #    log.debug('Installing MacPorts')
-         #    btUtils.abortOnRunFail(subprocess.run(['curl', '-O', 'https://distfiles.macports.org/MacPorts/MacPorts-2.10.2.tar.bz2']))
-         #    btUtils.abortOnRunFail(subprocess.run(['tar', 'xf', 'MacPorts-2.10.2.tar.bz2']))
-         #    btUtils.abortOnRunFail(subprocess.run(['cd', 'MacPorts-2.10.2/']))
-         #    btUtils.abortOnRunFail(subprocess.run(['./configure']))
-         #    btUtils.abortOnRunFail(subprocess.run(['make']))
-         #    btUtils.abortOnRunFail(subprocess.run(['sudo', 'make', 'install']))
-         #    btUtils.abortOnRunFail(subprocess.run(['export', 'PATH=/opt/local/bin:/opt/local/sbin:$PATH']))
-         #
-         # For a binary install we need the version of MacPorts we're downloading and both the version and release name
-         # of MacOS.
+         # In both cases, curl options are:
+         #    -L = If the server reports that the requested page has moved to a different location (indicated with a
+         #         Location: header and a 3XX  response  code),  this option makes curl redo the request on the new
+         #         place.
+         #    -O = Write output to a local file named like the remote file we get. (Only the file part of the remote
+         #         file is used, the path is cut off.)  The file is saved in the current working directory.
          #
          # TBD: For the moment we hard-code the version of MacPorts, but we should probably find it out from GitHub in
          #      a similar way that we check our own latest releases in the C++ code.
          #
-         downloadUrl = 'https://github.com/macports/macports-base/releases/download/' + 'v2.10.4/MacPorts-2.10.4-' + macOsVersion + '-' + macOsReleaseName + '.pkg'
+         macPortsVersion = '2.11.5'
+         macPortsName = 'MacPorts-' + macPortsVersion
+         #
+         # The instructions for binary install at https://guide.macports.org/#installing.macports.binary require user
+         # interaction ("Double-click the downloaded package installer"), but, with a little research, the steps can be
+         # scripted.
+         #
+         log.debug('Installing MacPorts from binary')
+         macPortsPackage = macPortsName + '-' + macOsVersion + '-' + macOsReleaseName + '.pkg'
+         downloadUrl = 'https://github.com/macports/macports-base/releases/download/v' + macPortsVersion + '/' + macPortsPackage
+         btUtils.abortOnRunFail(subprocess.run(['curl', '-L', '-O', downloadUrl]))
+         btUtils.abortOnRunFail(subprocess.run(['sudo', 'installer', '-package', macPortsPackage, '-target', '/']))
+
+         #
+         # Instructions for source install are at https://guide.macports.org/#installing.macports.source.
+         #
+         log.debug('Installing MacPorts from source')
+         btUtils.abortOnRunFail(subprocess.run(['curl', '-L', '-O', 'https://distfiles.macports.org/MacPorts/' + macPortsName + '.tar.bz2']))
+         btUtils.abortOnRunFail(subprocess.run(['tar', 'xf', macPortsName + '.tar.bz2']))
+         btUtils.abortOnRunFail(subprocess.run(['cd', macPortsName]))
+         btUtils.abortOnRunFail(subprocess.run(['./configure']))
+         btUtils.abortOnRunFail(subprocess.run(['make']))
+         btUtils.abortOnRunFail(subprocess.run(['sudo', 'make', 'install']))
+         btUtils.abortOnRunFail(subprocess.run(['export', 'PATH=/opt/local/bin:/opt/local/sbin:$PATH']))
+         btUtils.abortOnRunFail(subprocess.run(['cd', '..']))
+         btUtils.abortOnRunFail(subprocess.run(['pwd']))
+         btUtils.abortOnRunFail(subprocess.run(['ls', '-l']))
+
+###         #
+###         # Instructions for source install are at https://guide.macports.org/#installing.macports.source.  I tried the
+###         # following but the configure script complained about the lack of /usr/local/.//mkspecs/macx-clang
+###         #
+###         #    log.debug('Installing MacPorts')
+###         #    btUtils.abortOnRunFail(subprocess.run(['curl', '-O', 'https://distfiles.macports.org/MacPorts/MacPorts-2.10.2.tar.bz2']))
+###         #    btUtils.abortOnRunFail(subprocess.run(['tar', 'xf', 'MacPorts-2.10.2.tar.bz2']))
+###         #    btUtils.abortOnRunFail(subprocess.run(['cd', 'MacPorts-2.10.2/']))
+###         #    btUtils.abortOnRunFail(subprocess.run(['./configure']))
+###         #    btUtils.abortOnRunFail(subprocess.run(['make']))
+###         #    btUtils.abortOnRunFail(subprocess.run(['sudo', 'make', 'install']))
+###         #    btUtils.abortOnRunFail(subprocess.run(['export', 'PATH=/opt/local/bin:/opt/local/sbin:$PATH']))
+###         #
+###         # For a binary install we need the version of MacPorts we're downloading and both the version and release name
+###         # of MacOS.
+###         #
+###         # TBD: For the moment we hard-code the version of MacPorts, but we should probably find it out from GitHub in
+###         #      a similar way that we check our own latest releases in the C++ code.
+###         #
+
          # TODO: Need to finish this.  For now, we  install MacPorts for GitHub actions via the mac.yml script.
 
          #

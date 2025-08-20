@@ -43,7 +43,7 @@ jobs:
       # Tried to install MacPorts from the bt script, but get errors running its configure script, so trying from GitHub
       # actions.
       #
-      - uses: melusina-org/setup-macports@v1
+      #- uses: melusina-org/setup-macports@v1
 
       #
       # The `brew doctor` command just checks that Homebrew (https://brew.sh/) is installed OK (expected output is "Your
