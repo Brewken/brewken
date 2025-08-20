@@ -1195,7 +1195,7 @@ def installDependencies():
          #
          # Neither binary nor source install automatically adds the port command to the path, so we do it here
          #
-         btUtils.abortOnRunFail(subprocess.run(['export', 'PATH=/opt/local/bin:/opt/local/sbin:$PATH']))
+         os.environ["PATH"] = '/opt/local/bin' + os.pathsep + '/opt/local/sbin' + os.pathsep + os.environ["PATH"]
 
          #
          # Just because we have MacPorts installed, doesn't mean its list of software etc will be up-to-date.  So fix
