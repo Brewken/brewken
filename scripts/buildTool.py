@@ -1149,8 +1149,8 @@ def installDependencies():
          # The instructions at https://guide.macports.org/#installing say that we probably don't need to install Xcode
          # as only a few ports need it.  So, for now, we haven't tried to install that.
          #
-         # We can install from binary or source.  Code for both is here as have hit various problems in the past.
-         # Obviously only one method needs to be uncommented at a time.
+         # Code to install both from binary and from source is below, as we have hit various problems in the past.
+         # Obviously only one block needs to be uncommented at a time.
          #
          # In both cases, curl options are:
          #    -L = If the server reports that the requested page has moved to a different location (indicated with a
@@ -1185,11 +1185,14 @@ def installDependencies():
 #         btUtils.abortOnRunFail(subprocess.run(['./configure']))
 #         btUtils.abortOnRunFail(subprocess.run(['make']))
 #         btUtils.abortOnRunFail(subprocess.run(['sudo', 'make', 'install']))
-#         btUtils.abortOnRunFail(subprocess.run(['export', 'PATH=/opt/local/bin:/opt/local/sbin:$PATH']))
 #         btUtils.abortOnRunFail(subprocess.run(['cd', '..']))
 #         btUtils.abortOnRunFail(subprocess.run(['pwd']))
 #         btUtils.abortOnRunFail(subprocess.run(['ls', '-l']))
 
+         #
+         # Neither binary nor source install automatically adds the port command to the path, so we do it here
+         #
+         btUtils.abortOnRunFail(subprocess.run(['export', 'PATH=/opt/local/bin:/opt/local/sbin:$PATH']))
 
          #
          # Just because we have MacPorts installed, doesn't mean its list of software etc will be up-to-date.  So fix
