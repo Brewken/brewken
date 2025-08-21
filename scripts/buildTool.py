@@ -1194,18 +1194,19 @@ def installDependencies():
 
          #
          # Neither binary nor source install automatically adds the port command to the path, so we do it here
-         #
-         log.debug('Before fix-up, PATH=' + os.environ["PATH"])
-         os.environ["PATH"] = '/opt/local/bin' + os.pathsep + '/opt/local/sbin' + os.pathsep + os.environ["PATH"]
-         log.debug('After fix-up, PATH=' + os.environ["PATH"])
-         #
          # As below, we want these additional paths to show up permanently
          #
-         btUtils.abortOnRunFail(subprocess.run(['sudo', 'touch', '/etc/paths.d/01-macPortsPaths']))
-         btUtils.abortOnRunFail(subprocess.run(['sudo', 'chmod', 'a+rw', '/etc/paths.d/01-macPortsPaths']))
-         with open('/etc/paths.d/01-macPortsPaths', 'a+') as qtToolPaths:
-            qtToolPaths.write('/opt/local/bin')
-            qtToolPaths.write('/opt/local/sbin')
+         log.debug('Before fix-up, PATH=' + os.environ["PATH"])
+         macPortsPrefix = '/opt/local'
+         macPortsDirFile = '/etc/paths.d/90-macPortsPaths'
+         btUtils.abortOnRunFail(subprocess.run(['sudo', 'touch'              , macPortsDirFile]))
+         btUtils.abortOnRunFail(subprocess.run(['sudo', 'chown', 'root:wheel', macPortsDirFile]))
+         btUtils.abortOnRunFail(subprocess.run(['sudo', 'chmod', 'a+rw'      , macPortsDirFile]))
+         with open(macPortsDirFile, 'a+') as macPortsDirPaths:
+            macPortsDirPaths.write(macPortsPrefix + '/bin' + '\n')
+            macPortsDirPaths.write(macPortsPrefix + '/sbin'+ '\n')
+         os.environ["PATH"] = macPortsPrefix + '/bin' + os.pathsep + macPortsPrefix + '/sbin' + os.pathsep + os.environ["PATH"]
+         log.debug('After fix-up, PATH=' + os.environ["PATH"])
 
          #
          # Just because we have MacPorts installed, doesn't mean its list of software etc will be up-to-date.  So fix
