@@ -1198,6 +1198,14 @@ def installDependencies():
          log.debug('Before fix-up, PATH=' + os.environ["PATH"])
          os.environ["PATH"] = '/opt/local/bin' + os.pathsep + '/opt/local/sbin' + os.pathsep + os.environ["PATH"]
          log.debug('After fix-up, PATH=' + os.environ["PATH"])
+         #
+         # As below, we want these additional paths to show up permanently
+         #
+         btUtils.abortOnRunFail(subprocess.run(['sudo', 'touch', '/etc/paths.d/01-macPortsPaths']))
+         btUtils.abortOnRunFail(subprocess.run(['sudo', 'chmod', 'a+rw', '/etc/paths.d/01-macPortsPaths']))
+         with open('/etc/paths.d/01-macPortsPaths', 'a+') as qtToolPaths:
+            qtToolPaths.write('/opt/local/bin')
+            qtToolPaths.write('/opt/local/sbin')
 
          #
          # Just because we have MacPorts installed, doesn't mean its list of software etc will be up-to-date.  So fix
