@@ -68,6 +68,7 @@ jobs:
         run: |
            cd mbuild
            pwd
+           echo $PATH
            meson compile
 
       #

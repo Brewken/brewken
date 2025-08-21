@@ -1195,7 +1195,9 @@ def installDependencies():
          #
          # Neither binary nor source install automatically adds the port command to the path, so we do it here
          #
+         log.debug('Before fix-up, PATH=' + os.environ["PATH"])
          os.environ["PATH"] = '/opt/local/bin' + os.pathsep + '/opt/local/sbin' + os.pathsep + os.environ["PATH"]
+         log.debug('After fix-up, PATH=' + os.environ["PATH"])
 
          #
          # Just because we have MacPorts installed, doesn't mean its list of software etc will be up-to-date.  So fix
@@ -1204,7 +1206,6 @@ def installDependencies():
          # If there is an error, MacPorts tells you to run again with the -v option to find out why, so we just run with
          # that from the outset, and live with the fact that it generates a lot of logging.
          #
-# Commented pending fix for https://trac.macports.org/ticket/72802
          log.debug('First run of MacPorts selfupdate')
          btUtils.abortOnRunFail(subprocess.run(['sudo', 'port', '-v', 'selfupdate']))
 
@@ -1216,15 +1217,13 @@ def installDependencies():
          # Rather than try to detect this, we just always run selfupdate twice.  If the second time is a no-op then no
          # harm is done.
          #
-# Commented pending fix for https://trac.macports.org/ticket/72802
-#         log.debug('Second run of MacPorts selfupdate')
-#         btUtils.abortOnRunFail(subprocess.run(['sudo', 'port', 'selfupdate']))
+         log.debug('Second run of MacPorts selfupdate')
+         btUtils.abortOnRunFail(subprocess.run(['sudo', 'port', 'selfupdate']))
 
          # Per https://guide.macports.org/#using.port.diagnose this will tell us about "common issues in the user's
          # environment".
-# Commented pending fix for https://trac.macports.org/ticket/72802
-#         log.debug('Check environment is OK')
-#         btUtils.abortOnRunFail(subprocess.run(['sudo', 'port', 'diagnose', '--quiet']))
+         log.debug('Check environment is OK')
+         btUtils.abortOnRunFail(subprocess.run(['sudo', 'port', 'diagnose', '--quiet']))
 
          # Per https://guide.macports.org/#using.port.installed, this tells us what ports are already installed
          log.debug('List ports already installed')
@@ -1607,6 +1606,7 @@ def doSetup(setupOption):
    if (warnAboutCurrentDirectory):
       print("❗❗❗ Your current directory has been deleted!  You need to run 'cd ../mbuild' ❗❗❗")
    log.debug('Setup done')
+   log.debug('PATH=' + os.environ["PATH"])
    print()
    print('You can now build, test, install and run ' + capitalisedProjectName + ' with the following commands:')
    print('   cd ' + os.path.relpath(dir_build))
