@@ -1207,6 +1207,15 @@ def installDependencies():
             macPortsDirPaths.write(macPortsPrefix + '/sbin'+ '\n')
          os.environ["PATH"] = macPortsPrefix + '/bin' + os.pathsep + macPortsPrefix + '/sbin' + os.pathsep + os.environ["PATH"]
          log.debug('After fix-up, PATH=' + os.environ["PATH"])
+         #
+         # For GitHub actions, this is the official way to add something to the path for subsequent steps
+         #
+         githubPathFile = os.environ["GITHUB_PATH"]
+         log.debug('GITHUB_PATH=' + githubPathFile)
+         if githubPathFile:
+            with open(githubPathFile, 'a+') as githubPaths:
+               githubPaths.write(macPortsPrefix + '/bin' + '\n')
+               githubPaths.write(macPortsPrefix + '/sbin'+ '\n')
 
          #
          # Just because we have MacPorts installed, doesn't mean its list of software etc will be up-to-date.  So fix
