@@ -1150,7 +1150,7 @@ def installDependencies():
          # as only a few ports need it.  So, for now, we haven't tried to install that.
          #
          # Code to install both from binary and from source is below, as we have hit various problems in the past.
-         # Obviously only one block needs to be uncommented at a time.
+         # *** Obviously only one block needs to be uncommented at a time. ***
          #
          # In both cases, curl options are:
          #    -L = If the server reports that the requested page has moved to a different location (indicated with a
@@ -1193,11 +1193,14 @@ def installDependencies():
 #         btUtils.abortOnRunFail(subprocess.run(['ls', '-l']))
 
          #
-         # Neither binary nor source install automatically adds the port command to the path, so we do it here
-         # As below, we want these additional paths to show up permanently
+         # Neither binary nor source install automatically adds the port command to the path, so we do it here.
+         # As below, we want these additional paths to show up permanently.  Using a file in /etc/paths.d/ should work
+         # for someone doing this set-up locally...
          #
-         log.debug('Before fix-up, PATH=' + os.environ["PATH"])
          macPortsPrefix = '/opt/local'
+         log.debug('Before fix-up, PATH=' + os.environ["PATH"])
+         os.environ["PATH"] = macPortsPrefix + '/bin' + os.pathsep + macPortsPrefix + '/sbin' + os.pathsep + os.environ["PATH"]
+         log.debug('After fix-up, PATH=' + os.environ["PATH"])
          macPortsDirFile = '/etc/paths.d/90-macPortsPaths'
          btUtils.abortOnRunFail(subprocess.run(['sudo', 'touch'              , macPortsDirFile]))
          btUtils.abortOnRunFail(subprocess.run(['sudo', 'chown', 'root:wheel', macPortsDirFile]))
@@ -1205,10 +1208,9 @@ def installDependencies():
          with open(macPortsDirFile, 'a+') as macPortsDirPaths:
             macPortsDirPaths.write(macPortsPrefix + '/bin' + '\n')
             macPortsDirPaths.write(macPortsPrefix + '/sbin'+ '\n')
-         os.environ["PATH"] = macPortsPrefix + '/bin' + os.pathsep + macPortsPrefix + '/sbin' + os.pathsep + os.environ["PATH"]
-         log.debug('After fix-up, PATH=' + os.environ["PATH"])
          #
-         # For GitHub actions, this is the official way to add something to the path for subsequent steps
+         # ...but, for GitHub actions, writing to the file in the GITHUB_PATH environment variable is the supported way
+         # to add something to the path for subsequent steps.
          #
          githubPathFile = os.environ["GITHUB_PATH"]
          log.debug('GITHUB_PATH=' + githubPathFile)
@@ -1470,12 +1472,8 @@ def installDependencies():
 #         btUtils.abortOnRunFail(subprocess.run(['pip3', 'install', 'dmgbuild[badge_icons]']))
 
          #
-         # TBD: For the moment, it seems that we are somehow getting Xerces and Xalan ports "for free" (when we list
-         #      what ports are already installed before we install the ones in 'installListPort').  Commented code here
-         #      is a first stab at Plan C -- building from source ourselves.
-         #
-         # Since we can't install Xalan-C++ via Homebrew (no longer available) or MacPorts (broken), we must build it
-         # from source ourselves, per the instructions at https://apache.github.io/xalan-c/build.html
+         # TBD: If, in future, we have further problems installing Xerces and/or Xalan-C++ from ports, the commented
+         #      code here is a first stab at Plan C -- building from source ourselves.
          #
 #         xalanCSourceUrl = 'https://github.com/apache/xalan-c/releases/download/Xalan-C_1_12_0/xalan_c-1.12.tar.gz'
 #         log.debug('Downloading Xalan-C++ source from ' + xalanCSourceUrl)
