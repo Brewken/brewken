@@ -2370,8 +2370,8 @@ namespace {
       // What we want to do here is merge all the duplicate "child" records in the equipment and style tables - ie find
       // all "child" records that are still identical to their "parent" record, replace references to the child with
       // references to the parent, then remove the child.  We do this in two rather laborious queries for each table.
-      // (Although it would be more concise to load everything into memory and use Equipment::isEqualTo,
-      // Style::isEqualTo, etc, I think it's cleaner that we do these schema updates in the DB in pure SQL before we
+      // (Although it would be more concise to load everything into memory and use Equipment::compareWith,
+      // Style::compareWith, etc, I think it's cleaner that we do these schema updates in the DB in pure SQL before we
       // load data into memory.  These are one-off queries, so it's not a huge bother that they are somewhat inelegant.
       // What we can do however, is reduce the amount of copy-and-paste with a couple of string constants.)
       //
