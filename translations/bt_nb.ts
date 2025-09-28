@@ -1433,6 +1433,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Steps</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Ingredient ID</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -2123,6 +2127,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Viscosity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>InventoryFermentables</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2991,17 +2999,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
 </context>
 <context>
-    <name>IngredientInRecipe</name>
-    <message>
-        <source>Ingredient In Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ingredient ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Instruction</name>
     <message>
         <source>Instruction</source>
@@ -3043,7 +3040,70 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished">Lagerbeholdning</translation>
     </message>
     <message>
-        <source>Ingredient ID</source>
+        <source>Date Ordered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Received</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Best Before Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Supplier</source>
+        <translation type="unfinished">Leverandør</translation>
+    </message>
+    <message>
+        <source>Quantity Ordered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Purchase Price</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Purchase Tax</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shipping Cost</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quantity Remaining</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ingredient</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>InventoryFermentable</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Navn</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">Type</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="obsolete">Farge</translation>
+    </message>
+    <message>
+        <source>Date Ordered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Received</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Remaining</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3572,6 +3632,26 @@ If you need help, please open an issue at %1</source>
     <message>
         <source>Time</source>
         <translation>Tid</translation>
+    </message>
+    <message>
+        <source>End Temp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ramp Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start pH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End pH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water:Grain</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5359,6 +5439,18 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Formula</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Did not recognise file extension on &quot;%1&quot; so nothing written.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not open &quot;%1&quot; for writing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Did not recognise file extension on &quot;%1&quot; so nothing read.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9934,10 +10026,105 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
 </context>
 <context>
+    <name>inventoryFermentableEditor</name>
+    <message>
+        <source>Fermentable Inventory Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Main</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Navn</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="obsolete">Type</translation>
+    </message>
+    <message>
+        <source>Amount in Inventory</source>
+        <translation type="obsolete">Mengde i varebeholdning</translation>
+    </message>
+    <message>
+        <source>Amount in inventory</source>
+        <translation type="obsolete">Mengde i varebeholdning</translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="obsolete">Enhetstype</translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation type="obsolete">Produkt-ID</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="obsolete">Notater</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Lagre</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Avbryt</translation>
+    </message>
+    <message>
+        <source>Date Ordered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="unfinished">dd MMM yyyy</translation>
+    </message>
+</context>
+<context>
     <name>inventoryWindow</name>
     <message>
         <source>Inventory</source>
         <translation type="unfinished">Lagerbeholdning</translation>
+    </message>
+    <message>
+        <source>Fermentables</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hops</source>
+        <translation type="unfinished">Humle</translation>
+    </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">Diverse</translation>
+    </message>
+    <message>
+        <source>Yeasts</source>
+        <translation type="unfinished">Gjær</translation>
+    </message>
+    <message>
+        <source>Salts</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10806,6 +10993,30 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Total Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Legacy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>These are old settings that still work but might be retired in a future version of the software as there are now other ways to achieve the same same result.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Initial temperature of the mash tun.  Used in the Mash Wizard and the Mash Designer.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Used in the Mash Wizard.  It is better to set this on the sparge step itself.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It is better to set this on the sparge step itself.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It is better to set this directly on the Equipment.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

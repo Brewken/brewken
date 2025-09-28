@@ -21,6 +21,8 @@
 #include "trees/TreeNodeTraits.h"
 #include "utils/CuriouslyRecurringTemplateBase.h"
 
+#include <qglobal.h> // For Q_ASSERT and Q_UNREACHABLE
+
 /**
  * \class TreeNodeBase Curiously Recurring Template Base for NewTreeNode subclasses
  *
@@ -464,7 +466,7 @@ public:
          case TreeNodeTraits<Folder, NE>::ColumnIndex::Path     : return lhs.path    () < rhs.path    ();
          case TreeNodeTraits<Folder, NE>::ColumnIndex::FullPath : return lhs.fullPath() < rhs.fullPath();
       }
-//      std::unreachable();
+      Q_UNREACHABLE(); // We should never get here
    }
 
    // Have to override the version in \c TreeNodeBase as that will give Folder::staticMetaObject.className() rather
@@ -495,12 +497,21 @@ public:
    virtual std::shared_ptr<Folder> folder() const override {
 
       if constexpr (TreeNodeTraits<NE, typename TreeTypeDeducer<NE>::TreeType>::NodeClassifier == TreeNodeClassifier::PrimaryItem) {
-         //
-         // We are assuming here that all PrimaryItem nodes hold subclasses of NamedEntity that also inherit from
-         // FolderBase.  This saves us chasing up the node tree to try to find a TreeFolderNode.
-         //
-         // TODO: This is a temporary hack to return a Folder object!
-         return std::make_shared<Folder>(this->underlyingItem()->folderPath());
+         if constexpr (HasNoFolder<NE>) {
+            //
+            // For elements that don't support folders (eg Inventory) we just want the root folder, which will also be
+            // the parent node.
+            //
+            return this->rawParent()->folder();
+         } else {
+            //
+            // It's quicker to get the folder directly than chase up the node tree to try to find a TreeFolderNode.
+            //
+            // TODO: This is a temporary hack to return a Folder object!
+            return std::make_shared<Folder>(this->underlyingItem()->folderPath());
+         }
+
+
       } else {
          //
          // For a SecondaryItem node, it must, by definition, have a parent node, so we just defer to that.

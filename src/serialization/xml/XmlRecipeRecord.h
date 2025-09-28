@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * serialization/xml/XmlRecipeRecord.h is part of Brewken, and is copyright the following authors 2020-2023:
+ * serialization/xml/XmlRecipeRecord.h is part of Brewken, and is copyright the following authors 2020-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -55,7 +55,7 @@ protected:
                                NamedEntity const & namedEntityToExport,
                                QTextStream & out,
                                int indentLevel,
-                               char const * const indentString) const;
+                               char const * const indentString) const override;
 
 private:
    /**
@@ -71,15 +71,6 @@ private:
    /**
     * \brief If the supplied property names match, write all the corresponding type to XML
     */
-///   template<typename CNE>
-///   bool childrenToXml(XmlRecordDefinition::FieldDefinition const & fieldDefinition,
-///                      XmlRecord const & subRecord,
-///                      Recipe const & recipe,
-///                      QTextStream & out,
-///                      int indentLevel,
-///                      char const * const indentString,
-///                      BtStringConst const & propertyNameForGetter,
-///                      RecipeChildGetterRaw<CNE> getter) const;
    template<typename RecipeChildGetter>
    bool childrenToXml(XmlRecordDefinition::FieldDefinition const & fieldDefinition,
                       XmlRecord const & subRecord,

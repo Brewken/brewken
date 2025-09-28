@@ -27,6 +27,7 @@
 #include <Qt>
 #include <QVariant>
 #include <QVector>
+#include <qglobal.h> // For Q_ASSERT and Q_UNREACHABLE
 
 #include "Html.h"
 #include "Localization.h"
@@ -39,6 +40,7 @@
 #include "model/Fermentable.h"
 #include "model/Folder.h"
 #include "model/Hop.h"
+#include "model/InventoryFermentable.h"
 #include "model/Misc.h"
 #include "model/Recipe.h"
 #include "model/Style.h"
@@ -202,6 +204,14 @@ template<> EnumStringMapping const TreeItemNode<Hop>::columnDisplayNames {
    {TreeItemNode<Hop>::ColumnIndex::Origin  , Hop::tr("Origin" )},
 };
 
+template<> EnumStringMapping const TreeItemNode<InventoryFermentable>::columnDisplayNames {
+   {TreeItemNode<InventoryFermentable>::ColumnIndex::Name           , InventoryFermentable::tr("Name"            )},
+   {TreeItemNode<InventoryFermentable>::ColumnIndex::DateOrdered    , InventoryFermentable::tr("Date Ordered"    )},
+   {TreeItemNode<InventoryFermentable>::ColumnIndex::Type           , InventoryFermentable::tr("Type"            )},
+   {TreeItemNode<InventoryFermentable>::ColumnIndex::AmountReceived , InventoryFermentable::tr("Amount Received" )},
+   {TreeItemNode<InventoryFermentable>::ColumnIndex::AmountRemaining, InventoryFermentable::tr("Amount Remaining")},
+};
+
 template<> EnumStringMapping const TreeItemNode<Misc>::columnDisplayNames {
    {TreeItemNode<Misc>::ColumnIndex::Name, Misc::tr("Name")},
    {TreeItemNode<Misc>::ColumnIndex::Type, Misc::tr("Type")},
@@ -285,7 +295,7 @@ template<> bool TreeItemNode<Recipe>::columnIsLessThan(TreeItemNode<Recipe> cons
          return lhs.ancestors().length() < rhs.ancestors().length();
    }
 
-//   std::unreachable();
+   Q_UNREACHABLE();
    return lhs.name() < rhs.name();
 }
 
@@ -298,7 +308,7 @@ template<> bool TreeItemNode<BrewNote>::columnIsLessThan(TreeItemNode<BrewNote> 
          return lhs.brewDate() < rhs.brewDate();
    }
 
-//   std::unreachable();
+   Q_UNREACHABLE();
    return lhs.name() < rhs.name();
 }
 
@@ -315,7 +325,7 @@ template<> bool TreeItemNode<Equipment>::columnIsLessThan(TreeItemNode<Equipment
                 rhs.boilTime_min().value_or(Equipment::default_boilTime_mins);
    }
 
-//   std::unreachable();
+   Q_UNREACHABLE();
    return lhs.name() < rhs.name();
 }
 
@@ -328,7 +338,7 @@ template<> bool TreeItemNode<Mash>::columnIsLessThan(TreeItemNode<Mash> const & 
       case TreeItemNode<Mash>::ColumnIndex::TotalWater: return lhs.totalMashWater_l() < rhs.totalMashWater_l();
       case TreeItemNode<Mash>::ColumnIndex::TotalTime : return lhs.totalTime_mins()   < rhs.totalTime_mins();
    }
-//   std::unreachable();
+   Q_UNREACHABLE();
    return lhs.name() < rhs.name();
 }
 
@@ -363,6 +373,20 @@ template<> bool TreeItemNode<Fermentable>::columnIsLessThan(TreeItemNode<Ferment
       case TreeItemNode<Fermentable>::ColumnIndex::Name : return lhs.name()      < rhs.name();
       case TreeItemNode<Fermentable>::ColumnIndex::Type : return lhs.type()      < rhs.type();
       case TreeItemNode<Fermentable>::ColumnIndex::Color: return lhs.color_srm() < rhs.color_srm();
+   }
+   return lhs.name() < rhs.name();
+}
+
+template<> bool TreeItemNode<InventoryFermentable>::columnIsLessThan(TreeItemNode<InventoryFermentable> const & other,
+                                                                     TreeNodeTraits<InventoryFermentable>::ColumnIndex column) const {
+   auto const & lhs = *this->m_underlyingItem;
+   auto const & rhs = *other.m_underlyingItem;
+   switch (column) {
+      case TreeItemNode<InventoryFermentable>::ColumnIndex::Name           : return lhs.ingredient()->name() < rhs.ingredient()->name();
+      case TreeItemNode<InventoryFermentable>::ColumnIndex::DateOrdered    : return lhs.dateOrdered()        < rhs.dateOrdered();
+      case TreeItemNode<InventoryFermentable>::ColumnIndex::Type           : return lhs.ingredient()->type() < rhs.ingredient()->type();
+      case TreeItemNode<InventoryFermentable>::ColumnIndex::AmountReceived : return lhs.amountReceived()     < rhs.amountReceived();
+      case TreeItemNode<InventoryFermentable>::ColumnIndex::AmountRemaining: return lhs.amountRemaining()    < rhs.amountRemaining();
    }
    return lhs.name() < rhs.name();
 }
@@ -699,6 +723,20 @@ template<> QString TreeItemNode<Fermentable>::getToolTip() const {
            .arg(Fermentable::tr("Extract Yield Dry Basis Fine Grind (DBFG)"))
            .arg(yield ? Measurement::displayQuantity(*yield, 3) : "?");
 
+   body += "</table></body></html>";
+
+   return header + body;
+}
+
+template<> QString TreeItemNode<InventoryFermentable>::getToolTip() const {
+   // TODO: This is placeholder
+   QString const header = getHeader();
+
+   QString body   = "<body>";
+   body += QString("<div id=\"headerdiv\">");
+   body += QString("<table id=\"tooltip\">");
+   body += QString("<caption>%1</caption>")
+         .arg( this->m_underlyingItem->name() );
    body += "</table></body></html>";
 
    return header + body;

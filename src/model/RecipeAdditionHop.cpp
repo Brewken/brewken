@@ -21,6 +21,8 @@
 #include "model/Boil.h"
 #include "model/BoilStep.h"
 
+#include <qglobal.h> // For Q_ASSERT and Q_UNREACHABLE
+
 #ifdef BUILDING_WITH_CMAKE
    // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
    #include "moc_RecipeAdditionHop.cpp"
@@ -52,6 +54,18 @@ ObjectStore & RecipeAdditionHop::getObjectStoreTypedInstance() const {
    return ObjectStoreTyped<RecipeAdditionHop>::getInstance();
 }
 
+bool RecipeAdditionHop::compareWith(NamedEntity const & other,
+                                    QList<BtStringConst const *> * propertiesThatDiffer) const {
+   // Base class (NamedEntity) will have ensured this cast is valid
+   RecipeAdditionHop const & rhs = static_cast<RecipeAdditionHop const &>(other);
+   return (
+      // Parent classes have to be equal
+      this->RecipeAddition    ::compareWith  (rhs, propertiesThatDiffer) &&
+      this->RecipeAdditionBase::compareWith  (rhs, propertiesThatDiffer) &&
+      this->IngredientAmount  ::doCompareWith(rhs, propertiesThatDiffer)
+   );
+}
+
 TypeLookup const RecipeAdditionHop::typeLookup {
    "RecipeAdditionHop",
    {
@@ -74,9 +88,9 @@ static_assert(!HasTypeLookup<QString>);
 
 
 RecipeAdditionHop::RecipeAdditionHop(QString name, int const recipeId, int const ingredientId) :
-   RecipeAddition{name, recipeId, ingredientId},
+   RecipeAddition{name, recipeId},
    RecipeAdditionBase<RecipeAdditionHop, Hop>{},
-   IngredientAmount<RecipeAdditionHop, Hop>{} {
+   IngredientAmount<RecipeAdditionHop, Hop>{ingredientId} {
 
    //
    // RecipeAddition constructor will have set default stage to RecipeAddition::Stage::Mash, but, per comment below, for
@@ -136,9 +150,7 @@ RecipeAdditionHop::Use RecipeAdditionHop::use() const {
 
       // No default case as we want the compiler to warn us if we missed a case above
    }
-
-   // This should be unreachable, but putting a return statement here prevents compiler warnings
-   return RecipeAdditionHop::Use::Boil;
+   Q_UNREACHABLE(); // We should never get here
 }
 
 bool RecipeAdditionHop::isFirstWort() const {
