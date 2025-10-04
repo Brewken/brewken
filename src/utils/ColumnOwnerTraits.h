@@ -42,6 +42,10 @@ struct ColumnOwnerTraits {
    /**
     * \brief We're using a \c std::vector here because it's easier for constant lists.  (With \c QVector, at least in
     *        Qt 5, the items stored even in a const instance still need to be default constructable and copyable.)
+    *
+    *        Ideally we'd have a \c constexpr static member variable here that is instantiated in the template
+    *        specialisations.
+    *        However,
     */
    static std::vector<ColumnInfo> const columnInfos;
 
