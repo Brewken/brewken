@@ -22,6 +22,7 @@
 #include <QDate>
 #include <QDebug>
 #include <QMetaType>
+#include <qglobal.h> // For Q_ASSERT and Q_UNREACHABLE
 
 #include "serialization/json/JsonCoding.h"
 #include "serialization/json/JsonRecordDefinition.h"
@@ -525,7 +526,7 @@ SerializationRecordDefinition const & JsonRecord::recordDefinition() const {
                   // This should be unreachable as we dealt with these cases separately above, but having case
                   // statements for them eliminates a compiler warning whilst still retaining the useful warning if we
                   // have ever omitted processing for another field type.
-                  Q_ASSERT(false);
+                  Q_UNREACHABLE();
                   break;
 
                case JsonRecordDefinition::FieldType::MeasurementWithUnits:
@@ -819,7 +820,7 @@ void JsonRecord::insertValue(JsonRecordDefinition::FieldDefinition const & field
          // returned as std::optional<int> when accessed via the Qt property system.
          if (Optional::removeOptionalWrapperIfPresent<int>(value, propertyIsOptional)) {
             auto match =
-               std::get<EnumStringMapping const *>(fieldDefinition.valueDecoder)->enumAsIntToString(value.toInt());
+               std::get<EnumStringMapping const *>(fieldDefinition.valueDecoder)->enumAsIntToValue(value.toInt());
             // It's a coding error if we couldn't find a string representation for the enum
             Q_ASSERT(match);
             recordDataAsObject.emplace(key, match->toStdString());
@@ -831,7 +832,7 @@ void JsonRecord::insertValue(JsonRecordDefinition::FieldDefinition const & field
          // This should be unreachable as JsonRecord::toJson dealt with these cases separately before calling this
          // function, but having an case statement for it eliminates a compiler warning whilst still retaining the
          // useful warning if we have ever omitted processing for another field type.
-         Q_ASSERT(false);
+         Q_UNREACHABLE();
          break;
 
       case JsonRecordDefinition::FieldType::MeasurementWithUnits:

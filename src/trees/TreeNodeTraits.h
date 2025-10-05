@@ -26,6 +26,7 @@
 #include "model/FermentationStep.h"
 #include "model/Folder.h"
 #include "model/Hop.h"
+#include "model/InventoryFermentable.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Misc.h"
@@ -33,6 +34,8 @@
 #include "model/Style.h"
 #include "model/Water.h"
 #include "model/Yeast.h"
+
+#include <qglobal.h> // For Q_ASSERT and Q_UNREACHABLE
 
 namespace {
    /**
@@ -62,8 +65,8 @@ namespace {
 }
 
 /**
- * \brief See comment in qtModels/tableModels/TableModelBase.h for why we use a traits class to allow the following attributes
- *        from each \c Derived class to be accessible in \c TreeNodeBase:
+ * \brief See comment in qtModels/tableModels/TableModelBase.h for why we use a traits class to allow the following
+ *        attributes from each \c Derived class to be accessible in \c TreeNodeBase:
  *           - \c ColumnIndex        = class enum for the columns of this node type
  *           - \c NumberOfColumns    = number of entries in the above.  (Yes, it is a bit frustrating that we cannot
  *                                     easily deduce the number of values of a class enum.  Hopefully this will change
@@ -114,8 +117,7 @@ template <class NE> struct TreeNodeTraits<Folder, NE> {
          case ColumnIndex::FullPath:
             return QVariant(folder.fullPath());
       }
-      // Once we stop supporting Ubuntu 22.04, we'll be on new enough compiler versions to use:
-      //      std::unreachable();
+      Q_UNREACHABLE();
    }
 };
 
@@ -138,7 +140,7 @@ template<> struct TreeNodeTraits<BrewNote, Recipe> {
          case ColumnIndex::BrewDate:
             return QVariant(brewNote.brewDate_short());
       }
-//      std::unreachable();
+      Q_UNREACHABLE();
    }
 };
 
@@ -169,14 +171,15 @@ template<> struct TreeNodeTraits<Recipe, Recipe> {
          case ColumnIndex::Style:
             return recipe.style() ? QVariant(recipe.style()->name()) : QVariant();
       }
-//      std::unreachable();
+      Q_UNREACHABLE();
    }
 };
 
 template<> struct TreeNodeTraits<Equipment, Equipment> {
    enum class ColumnIndex {
-      Name    ,
-      BoilTime,
+      Name     ,
+      BoilSize ,
+      BatchSize,
    };
    static constexpr size_t NumberOfColumns = 2;
    static constexpr TreeNodeClassifier NodeClassifier = TreeNodeClassifier::PrimaryItem;
@@ -195,10 +198,13 @@ template<> struct TreeNodeTraits<Equipment, Equipment> {
       switch (column) {
          case ColumnIndex::Name:
             return QVariant(equipment.name());
-         case ColumnIndex::BoilTime:
-            return QVariant::fromValue(equipment.boilTime_min());
+         case ColumnIndex::BoilSize :
+         case ColumnIndex::BatchSize:
+            return QVariant();
+///         case ColumnIndex::BoilTime:
+///            return QVariant::fromValue(equipment.boilTime_min());
       }
-//      std::unreachable();
+      Q_UNREACHABLE();
    }
 };
 
@@ -228,7 +234,7 @@ template<> struct TreeNodeTraits<Fermentable, Fermentable> {
             return QVariant(Measurement::displayAmount(Measurement::Amount{fermentable.color_srm(),
                                                                            Measurement::Units::srm}, 0));
       }
-//      std::unreachable();
+      Q_UNREACHABLE();
    }
 
 };
@@ -260,8 +266,45 @@ template<> struct TreeNodeTraits<Hop, Hop> {
          case ColumnIndex::Origin:
             return QVariant(hop.origin());
       }
-//      std::unreachable();
+      Q_UNREACHABLE();
    }
+};
+
+template<> struct TreeNodeTraits<InventoryFermentable, InventoryFermentable> {
+   enum class ColumnIndex {
+      Name           ,
+      DateOrdered    ,
+      Type           ,
+      AmountReceived ,
+      AmountRemaining,
+   };
+   static constexpr size_t NumberOfColumns = 5;
+   static constexpr TreeNodeClassifier NodeClassifier = TreeNodeClassifier::PrimaryItem;
+   using TreeType = InventoryFermentable;
+   // We have to support folder node for the root node
+   using ParentPtrTypes = std::variant<TreeFolderNode<InventoryFermentable> *>;
+   using ChildPtrTypes = std::variant<std::monostate>;
+   // InventoryFermentables and other ingredients can be dropped on MainWindow::tabWidget_ingredients
+   static constexpr char const * DragNDropMimeType = DEF_CONFIG_MIME_PREFIX "-ingredient";
+
+   static QString getRootName() { return Fermentable::tr("InventoryFermentables"); }
+
+   static QVariant data(InventoryFermentable const & inventoryFermentable, ColumnIndex const column) {
+      switch (column) {
+         case ColumnIndex::Name:
+            return QVariant::fromValue(inventoryFermentable.ingredient()->name());
+         case ColumnIndex::DateOrdered:
+            return QVariant::fromValue(inventoryFermentable.dateOrdered());
+         case ColumnIndex::Type:
+            return QVariant::fromValue(Fermentable::typeDisplayNames[inventoryFermentable.ingredient()->type()]);
+         case ColumnIndex::AmountReceived:
+            return QVariant::fromValue(inventoryFermentable.amountReceived());
+         case ColumnIndex::AmountRemaining:
+            return QVariant::fromValue(inventoryFermentable.amountRemaining());
+      }
+      Q_UNREACHABLE();
+   }
+
 };
 
 template<> struct TreeNodeTraits<MashStep, Mash> {
@@ -290,7 +333,7 @@ template<> struct TreeNodeTraits<MashStep, Mash> {
 //         case ColumnIndex::InfusionTemp: return QVariant(mashStep.infuseTemp_c ());
 //         case ColumnIndex::TargetTemp  : return QVariant(mashStep.startTemp_c  ());
       }
-//      std::unreachable();
+      Q_UNREACHABLE();
    }
 };
 
@@ -319,7 +362,7 @@ template<> struct TreeNodeTraits<Mash, Mash> {
          case ColumnIndex::TotalTime:
             return MashStep::tr("%1 mins").arg(mash.totalTime_mins());
       }
-//      std::unreachable();
+      Q_UNREACHABLE();
    }
 };
 
@@ -359,7 +402,7 @@ template<> struct TreeNodeTraits<BoilStep, Boil> {
 //         case ColumnIndex::EndGravity  : return QVariant::fromValue(boilStep.  endGravity_sg());
 //         case ColumnIndex::ChillingType: return QVariant::fromValue(BoilStep::chillingTypeDisplayNames[boilStep.chillingType   ()]);
       }
-//      std::unreachable();
+      Q_UNREACHABLE();
    }
 };
 
@@ -394,7 +437,7 @@ template<> struct TreeNodeTraits<Boil, Boil> {
          case ColumnIndex::LengthOfBoilProper:
             return QVariant::fromValue(boil.boilTime_mins());
       }
-//      std::unreachable();
+      Q_UNREACHABLE();
    }
 };
 
@@ -422,7 +465,7 @@ template<> struct TreeNodeTraits<FermentationStep, Fermentation> {
 //         case ColumnIndex::StartTemp    : return QVariant(fermentationStep.startTemp_c         ());
 //         case ColumnIndex::EndTemp      : return QVariant(fermentationStep.endTemp_c     ());
       }
-//      std::unreachable();
+      Q_UNREACHABLE();
    }
 };
 
@@ -447,7 +490,7 @@ template<> struct TreeNodeTraits<Fermentation, Fermentation> {
          case ColumnIndex::Description:
             return QVariant::fromValue(fermentation.description());
       }
-//      std::unreachable();
+      Q_UNREACHABLE();
    }
 };
 
@@ -472,7 +515,7 @@ template<> struct TreeNodeTraits<Misc, Misc> {
          case ColumnIndex::Type:
             return QVariant(Misc::typeDisplayNames[misc.type()]);
       }
-//      std::unreachable();
+      Q_UNREACHABLE();
    }
 };
 
@@ -508,7 +551,7 @@ template<> struct TreeNodeTraits<Yeast, Yeast> {
          case ColumnIndex::Form:
             return QVariant(Yeast::formDisplayNames[yeast.form()]);
       }
-//      std::unreachable();
+      Q_UNREACHABLE();
    }
 };
 
@@ -539,7 +582,7 @@ template<> struct TreeNodeTraits<Salt, Salt> {
          case ColumnIndex::PercentAcid:
             return qVariantFromOptional(salt.percentAcid());
       }
-//      std::unreachable();
+      Q_UNREACHABLE();
    }
 };
 
@@ -573,7 +616,7 @@ template<> struct TreeNodeTraits<Style, Style> {
          case ColumnIndex::StyleGuide:
             return QVariant(style.styleGuide());
       }
-//      std::unreachable();
+      Q_UNREACHABLE();
    }
 };
 
@@ -616,7 +659,7 @@ template<> struct TreeNodeTraits<Water, Water> {
          case ColumnIndex::pH:
             return water.ph() ? QVariant(*water.ph()) : QVariant();
       }
-//      std::unreachable();
+      Q_UNREACHABLE();
    }
 };
 

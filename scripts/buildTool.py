@@ -299,6 +299,52 @@ def downloadFile(url):
    return
 
 #-----------------------------------------------------------------------------------------------------------------------
+# Helper function for finding and copying extra libraries
+#
+# This is used in both the Windows and Mac packaging
+#
+#    pathsToSearch    = array of paths to search
+#    extraLibs        = array of base names of libraries to search for
+#    libExtension     = 'dll' on Windows, 'dylib' on MacOS
+#    libRegex         = '-?[0-9]*.dll' on Windows, '.*.dylib' on MacOS
+#    targetDirectory  = where to copy found libraries to
+#-----------------------------------------------------------------------------------------------------------------------
+def findAndCopyLibs(pathsToSearch, extraLibs, libExtension, libRegex, targetDirectory):
+   for extraLib in extraLibs:
+      found = False
+      for searchDir in pathsToSearch:
+         # We do a glob match to get approximate matches and then filter it with a regular expression for exact
+         # ones
+         matches = []
+         globMatches = glob.glob(extraLib + '*.' + libExtension, root_dir=searchDir, recursive=False)
+         for globMatch in globMatches:
+            # We need to remove the first part of the glob match before doing a regexp match because we don't want
+            # the first part of the filename to be treated as a regular expression.  In particular, this would be
+            # a problem for 'libstdc++'!
+            suffixOfGlobMatch = globMatch.removeprefix(extraLib)
+            # On Python 3.11 or later, we would write flags=re.NOFLAG instead of flags=0
+            if re.fullmatch(re.compile(libRegex), suffixOfGlobMatch, flags=0):
+               matches.append(globMatch)
+         numMatches = len(matches)
+         if (numMatches > 0):
+            log.debug('Found ' + str(numMatches) + ' match(es) for ' + extraLib + ' in ' + searchDir)
+            if (numMatches > 1):
+               log.warning('Found more matches than expected (' + str(numMatches) + ' ' +
+                           'instead of 1) when searching for library "' + extraLib + '".  This is not an ' +
+                           'error, but means we are possibly shipping additional shared libraries that we '+
+                           'don\'t need to.')
+            for match in matches:
+               fullPathOfMatch = pathlib.Path(searchDir).joinpath(match)
+               log.debug('Copying ' + fullPathOfMatch.as_posix() + ' to ' + targetDirectory.as_posix())
+               shutil.copy2(fullPathOfMatch, targetDirectory)
+            found = True
+            break;
+      if (not found):
+         log.critical('Could not find '+ extraLib + ' library in any of the following directories: ' + ', '.join(pathsToSearch))
+         exit(1)
+   return
+
+#-----------------------------------------------------------------------------------------------------------------------
 # Set global variables exe_git and exe_meson with the locations of the git and meson executables plus mesonVersion with
 # the version of meson installed
 #
@@ -1107,10 +1153,10 @@ def installDependencies():
 #                            'pandoc',
                             'tree',
                             'dylibbundler',
-                            'qt@6',
+#                            'qt@6',
                             'openssl@3', # OpenSSL headers and library
 #                            'xalan-c',
-                            'xerces-c'
+#                            'xerces-c'
                             ]
          for packageToInstall in installListBrew:
             #
@@ -1206,18 +1252,21 @@ def installDependencies():
          btUtils.abortOnRunFail(subprocess.run(['sudo', 'chown', 'root:wheel', macPortsDirFile]))
          btUtils.abortOnRunFail(subprocess.run(['sudo', 'chmod', 'a+rw'      , macPortsDirFile]))
          with open(macPortsDirFile, 'a+') as macPortsDirPaths:
-            macPortsDirPaths.write(macPortsPrefix + '/bin' + '\n')
-            macPortsDirPaths.write(macPortsPrefix + '/sbin'+ '\n')
+            macPortsDirPaths.write(macPortsPrefix + '/bin'  + '\n')
+            macPortsDirPaths.write(macPortsPrefix + '/sbin' + '\n')
+            macPortsDirPaths.write(macPortsPrefix + '/lib'  + '\n')
          #
          # ...but, for GitHub actions, writing to the file in the GITHUB_PATH environment variable is the supported way
          # to add something to the path for subsequent steps.
          #
-         githubPathFile = os.environ["GITHUB_PATH"]
-         log.debug('GITHUB_PATH=' + githubPathFile)
-         if githubPathFile:
-            with open(githubPathFile, 'a+') as githubPaths:
-               githubPaths.write(macPortsPrefix + '/bin' + '\n')
-               githubPaths.write(macPortsPrefix + '/sbin'+ '\n')
+         if 'GITHUB_PATH' in os.environ:
+            githubPathFile = os.environ['GITHUB_PATH']
+            log.debug('GITHUB_PATH=' + githubPathFile)
+            if githubPathFile:
+               with open(githubPathFile, 'a+') as githubPaths:
+                  githubPaths.write(macPortsPrefix + '/bin'  + '\n')
+                  githubPaths.write(macPortsPrefix + '/sbin' + '\n')
+                  githubPaths.write(macPortsPrefix + '/lib'  + '\n')
 
          #
          # Just because we have MacPorts installed, doesn't mean its list of software etc will be up-to-date.  So fix
@@ -1269,8 +1318,9 @@ def installDependencies():
                             'pandoc',
                             'xercesc3',
                             'xalanc',
-#                            'qt6',
-#                            'qt6-qttranslations'
+                            'qt6',
+                            'qt6-qttranslations',
+                            'dbus'
                             ]
          for packageToInstall in installListPort:
             log.debug('Installing ' + packageToInstall + ' via MacPorts')
@@ -1409,6 +1459,12 @@ def installDependencies():
          log.debug('Qt Base Dir: ' + qtBaseDir + ', Bin Dir: ' + qtBinDir)
          os.environ["PATH"] = qtBinDir + os.pathsep + os.environ["PATH"]
          #
+         # Equally, the Qt lib directory is something we need in the path for packaging
+         #
+         qtLibDir = os.path.normpath(os.path.join(qtBaseDir, "lib"))
+         log.debug('Qt Lib Dir: ' + qtLibDir)
+
+         #
          # See
          # https://stackoverflow.com/questions/1466000/difference-between-modes-a-a-w-w-and-r-in-built-in-open-function
          # for a good summary (clearer than the Python official docs) of the mode flag on open.
@@ -1422,18 +1478,18 @@ def installDependencies():
          # So we force the ownership back to what it should be before attempting to open the file for writing.
          #
          bashProfilePath = os.path.expanduser('~/.bash_profile')
-         log.debug('Adding Qt Bin Dir ' + qtBinDir + ' to PATH in ' + bashProfilePath)
+         log.debug('Adding Qt Bin and Lib Dirs ' + qtBinDir + '; ' + qtLibDir + ' to PATH in ' + bashProfilePath)
          btUtils.abortOnRunFail(subprocess.run(['ls', '-l', bashProfilePath], capture_output=False))
          currentUser = getpass.getuser()
          btUtils.abortOnRunFail(subprocess.run(['sudo', 'chown', currentUser, bashProfilePath], capture_output=False))
          btUtils.abortOnRunFail(subprocess.run(['sudo', 'chmod', 'u+w', bashProfilePath], capture_output=False))
          btUtils.abortOnRunFail(subprocess.run(['ls', '-l', bashProfilePath], capture_output=False))
          with open(bashProfilePath, 'a+') as bashProfile:
-            bashProfile.write('export PATH="' + qtBinDir + os.pathsep + ':$PATH"')
+            bashProfile.write('export PATH="' + qtBinDir + os.pathsep + qtLibDir + os.pathsep + '$PATH"')
          #
          # Another way to "permanently" add something to PATH on MacOS, is by either appending to the /etc/paths file or
          # creating a file in the /etc/paths.d directory.  We do the latter, as (a) it's best practice and (b) it allows
-         # us to explicitly read it in again later (eg on a subsequent invocation of this script).
+         # us to explicitly read it in again later (eg on a subsequent invocation of this script to do packaging).
          #
          # The contents of the files in the /etc/paths.d directory get added to PATH by /usr/libexec/path_helper, which
          # gets run from /etc/profile.  We have some belt-and-braces code below in the Mac packaging section to read
@@ -1445,7 +1501,19 @@ def installDependencies():
          btUtils.abortOnRunFail(subprocess.run(['sudo', 'touch', '/etc/paths.d/01-qtToolPaths']))
          btUtils.abortOnRunFail(subprocess.run(['sudo', 'chmod', 'a+rw', '/etc/paths.d/01-qtToolPaths']))
          with open('/etc/paths.d/01-qtToolPaths', 'a+') as qtToolPaths:
-            qtToolPaths.write(qtBinDir)
+            qtToolPaths.write(qtBinDir + '\n')
+            qtToolPaths.write(qtLibDir + '\n')
+         #
+         # ...but, for GitHub actions, writing to the file in the GITHUB_PATH environment variable is the supported way
+         # to add something to the path for subsequent steps.
+         #
+         if 'GITHUB_PATH' in os.environ:
+            githubPathFile = os.environ['GITHUB_PATH']
+            log.debug('GITHUB_PATH=' + githubPathFile)
+            if githubPathFile:
+               with open(githubPathFile, 'a+') as githubPaths:
+                  githubPaths.write(qtBinDir + '\n')
+                  githubPaths.write(qtLibDir + '\n')
 
          os.environ['LDFLAGS'] = '-L' + qtBaseDir + '/lib'
          os.environ['CPPFLAGS'] = '-I' + qtBaseDir + '/include'
@@ -2438,7 +2506,7 @@ def doPackage():
          # project.
          #
          pathsToSearch = os.environ['PATH'].split(os.pathsep)
-         for extraLib in [
+         extraLibs = [
             #
             # Following should have been handled automatically by windeployqt
             #
@@ -2494,38 +2562,8 @@ def doPackage():
             'libxerces-c-3',
             'libzstd'      , # ZStandard (aka zstd) = fast lossless compression algorithm
             'zlib'         , # ZLib compression library
-         ]:
-            found = False
-            for searchDir in pathsToSearch:
-               # We do a glob match to get approximate matches and then filter it with a regular expression for exact
-               # ones
-               matches = []
-               globMatches = glob.glob(extraLib + '*.dll', root_dir=searchDir, recursive=False)
-               for globMatch in globMatches:
-                  # We need to remove the first part of the glob match before doing a regexp match because we don't want
-                  # the first part of the filename to be treated as a regular expression.  In particular, this would be
-                  # a problem for 'libstdc++'!
-                  suffixOfGlobMatch = globMatch.removeprefix(extraLib)
-                  # On Python 3.11 or later, we would write flags=re.NOFLAG instead of flags=0
-                  if re.fullmatch(re.compile('-?[0-9]*.dll'), suffixOfGlobMatch, flags=0):
-                     matches.append(globMatch)
-               numMatches = len(matches)
-               if (numMatches > 0):
-                  log.debug('Found ' + str(numMatches) + ' match(es) for ' + extraLib + ' in ' + searchDir)
-                  if (numMatches > 1):
-                     log.warning('Found more matches than expected (' + str(numMatches) + ' ' +
-                                 'instead of 1) when searching for library "' + extraLib + '".  This is not an ' +
-                                 'error, but means we are possibly shipping additional shared libraries that we '+
-                                 'don\'t need to.')
-                  for match in matches:
-                     fullPathOfMatch = pathlib.Path(searchDir).joinpath(match)
-                     log.debug('Copying ' + fullPathOfMatch.as_posix() + ' to ' + dir_packages_win_bin.as_posix())
-                     shutil.copy2(fullPathOfMatch, dir_packages_win_bin)
-                  found = True
-                  break;
-            if (not found):
-               log.critical('Could not find '+ extraLib + ' library in PATH ' + os.environ['PATH'])
-               exit(1)
+         ]
+         findAndCopyLibs(pathsToSearch, extraLibs, 'dll', '-?[0-9]*.dll', dir_packages_win_bin)
 
          # Copy the NSIS installer script to where it belongs
          shutil.copy2(dir_build.joinpath('NsisInstallerScript.nsi'), dir_packages_platform)
@@ -2582,8 +2620,9 @@ def doPackage():
          # is the "official" Apple info about the directory structure.
          #
          # To create a Mac app bundle , we create the following directory structure, where items marked ✅ are copied as
-         # is from the tree generated by meson install with --destdir option, those marked 🟢 are handled by
-         # `macdeployqt`, and those marked ❇ are ones we need to relocate, generate or modify ourselves.
+         # is from the tree generated by meson install with --destdir option, those marked 🟢 are (mostly) handled by
+         # `macdeployqt`, and those marked ❇ are ones we need to relocate, generate or modify ourselves.  (We have to
+         # some additional work to address shortcomings and bugs in macdeployqt.)
          #
          # (When working on this bit, use ❌ for things that are generated automatically but not actually needed, and ✴
          # for things we still need to add.)
@@ -2775,20 +2814,18 @@ def doPackage():
          #    - libxalanMsg -- a library that libxalan-c uses (so an indirect rather than direct dependency)
          #    - libqsqlpsql.dylib -- which would be needed for any user that wants to use PostgreSQL instead of SQLite
          #
-
+         # Note per https://www.unix.com/man_page/osx/1/dyld/ that the dynamic link editor (dyld), which is what loads
+         # shared libraries etc, recognises the following variables:
          #
-         # Since moving to Qt6, we also have to do some extra things to avoid the following errors:
-         #    - Library not loaded: @rpath/QtDBus.framework/Versions/A/QtDBus
-         #    - Library not loaded: @rpath/QtNetwork.framework/Versions/A/QtNetwork
-         # I _think_ the problem with these is that they are not direct dependencies of our application (eg, as shown
-         # below, they do not appear in the output from otool), but rather dependencies of other Qt libraries.  The
-         # detailed error messages imply it is QtGui that needs QtDBus and QtMultimedia that needs QtNetwork.
+         #    @executable_path -- the path to the directory containing the main executable for the process
          #
-         #    - libdbus-1 library -- as explained at https://doc.qt.io/qt-6/macos-issues.html#d-bus-and-macos
+         #    @loader_path     -- the path to the directory containing the mach-o binary which contains the load command
+         #                        using @loader_path.  Thus, in every binary, @loader_path resolves to a different path,
+         #                        whereas @executable_path always resolves to the same path
          #
-         # TODO: Still working this bit out!
-         #
-         # See https://github.com/orgs/Homebrew/discussions/2823 for problems using macdeployqt with homebrew installation of Qt
+         #    @rpath           -- Dyld maintains a current stack of paths called the run path list.  When @rpath is
+         #                        encountered it is substituted with each path in the run path list until a loadable
+         #                        dylib if found.
          #
          previousWorkingDirectory = pathlib.Path.cwd().as_posix()
          log.debug('Running otool before macdeployqt')
@@ -2799,7 +2836,7 @@ def doPackage():
                             capitalisedProjectName],
                            capture_output=True)
          ).stdout.decode('UTF-8')
-         log.debug('Output of `otool -L' + capitalisedProjectName + '`: ' + otoolOutputExe)
+         log.debug('Output of `otool -L ' + capitalisedProjectName + '`: ' + otoolOutputExe)
          #
          # The output from otool at this stage will be along the following lines:
          #
@@ -2891,7 +2928,7 @@ def doPackage():
                             xalanDir + xalanLibName],
                            capture_output=True)
          ).stdout.decode('UTF-8')
-         log.debug('Output of `otool -L' + xalanDir + xalanLibName + '`: ' + otoolOutputXalan)
+         log.debug('Output of `otool -L ' + xalanDir + xalanLibName + '`: ' + otoolOutputXalan)
          xalanMsgLibName = ''
          xalanMsgMatch =  re.search(r'^\s*(\S+/)(libxalanMsg\S*.dylib)', otoolOutputXalan, re.MULTILINE)
          if (xalanMsgMatch):
@@ -2929,6 +2966,190 @@ def doPackage():
                capture_output=False
             )
          )
+
+         #
+         # Since moving to Qt6, we also have to do some extra things to avoid the following errors:
+         #    - Library not loaded: @rpath/QtDBus.framework/Versions/A/QtDBus
+         #    - Library not loaded: @rpath/QtNetwork.framework/Versions/A/QtNetwork
+         #
+         # I _think_ the problem with these is that they are not direct dependencies of our application (eg, as shown
+         # below, they do not appear in the output from otool), but rather dependencies of other Qt libraries.  The
+         # detailed error messages imply it is QtGui that needs QtDBus and QtMultimedia that needs QtNetwork.  However,
+         # running `otool -L` on /opt/homebrew/opt/qt/lib/QtGui.framework/Versions/A/QtGui does not yield any dbus
+         # dependency.
+         #
+         # The first thing is to manually add in any missing frameworks.  Eg, since we know QtMultimedia requires
+         # QtNetwork, we look to see if QtMultimedia is one of our dependencies and, if it is, we copy the QtNetwork
+         # framework into our package.  (In this example, the QtMultimedia itself will get copied in by macdeployqt.)
+         #
+         qtFrameworksDir = ''
+         extraFrameworkDependencies = {
+            "QtMultimedia": ["QtNetwork", ],
+            "QtGui"       : ["QtDBus"   , ],
+         }
+         for framework, dependencies in extraFrameworkDependencies.items():
+            #
+            # Eg to see if we depend on QtMultimedia, we are looking for something along the following lines in the
+            # otool output from earlier:
+            #    /opt/homebrew/opt/qt/lib/QtMultimedia.framework/Versions/A/QtMultimedia
+            #
+            # We want to change QtMultimedia to QtNetwork and then copy the whole of the .framework directory:
+            #    /opt/homebrew/opt/qt/lib/QtNetwork.framework
+            #
+            frameworkMatch = re.search(r'^\s*(/\S+/' + framework + '.framework)', otoolOutputExe, re.MULTILINE)
+            if (frameworkMatch):
+               frameworkPath = frameworkMatch[1]
+               log.debug('Doing extra dependencies for ' + frameworkPath)
+
+               # Capture where the frameworks live, so we can tell macdeployqt below
+               if (not qtFrameworksDir):
+                  qtFrameworksDir = os.path.dirname(frameworkPath)
+
+               for dependency in dependencies:
+                  #
+                  # We assume the dependency path takes the same form as the framework that requires it.  Eg
+                  # QtMultimedia -> QtNetwork means we transform
+                  #    /opt/homebrew/opt/qt/lib/QtMultimedia.framework/Versions/A/QtMultimedia
+                  # to:
+                  #    /opt/homebrew/opt/qt/lib/QtNetwork.framework/Versions/A/QtNetwork
+                  #
+                  dependencyPath = frameworkPath.replace(framework, dependency)
+                  dependencyTarget = dir_packages_mac_frm.joinpath(dependency + '.framework')
+                  #
+                  # It seems there are problems when we copy the framework trees.  Users trying to install the app who
+                  # run `codesign` get an error "bundle format is ambiguous (could be app or framework)".  We suspect
+                  # this may be related to the way we handle symlinks when we copy the tree, so this diagnostic is to
+                  # list in detail all the files in the tree before we copy it.
+                  #
+                  # Looks like symlinks are all relative and point inside the tree we are copying, so it's safe to copy
+                  # them _as_ symlinks below.
+                  #
+                  btUtils.abortOnRunFail(
+                     subprocess.run(
+                        ['find', dependencyPath, '-exec', 'ls', '-ld', '{}', '+'],
+                        capture_output=False
+                     )
+                  )
+                  log.debug('Copying tree ' + dependencyPath + ' to ' + dependencyTarget.as_posix())
+                  shutil.copytree(dependencyPath, dependencyTarget.as_posix(), symlinks=True)
+                  #
+                  # It is not enough to just copy, eg, QtDBus framework into the app bundle.  We need to fix its
+                  # dependencies to point inside the bundle.  Eg after we copy
+                  # /opt/homebrew/opt/qt/lib/QtDBus.framework/ to
+                  # [projectName]_[versionNumber]_MacOS.app/Contents/Frameworks/QtDBus.framework/, the other Qt
+                  # dependencies of the library inside that framework directory will still be on the "system" paths (eg
+                  # /opt/homebrew/opt/qt/lib/QtCore.framework/ etc).  We need to change them to point inside the app
+                  # bundle (eg [projectName]_[versionNumber]_MacOS.app/Contents/Frameworks/QtCore.framework/ etc).
+                  #
+                  # The variable names risk getting a bit confusing here because we are talking about dependencies of
+                  # dependency.  Hence why we start referring to dependency as copiedLibrary.
+                  #
+                  copiedLibrary = dependencyTarget.joinpath('Versions', 'Current', dependency)
+                  log.debug('Fixing absolute dependencies for ' + dependency + ' (at' + copiedLibrary.as_posix() + ')')
+
+                  otoolOutputCopiedLibrary = btUtils.abortOnRunFail(
+                     subprocess.run(['otool',
+                                    '-L',
+                                    copiedLibrary.as_posix()],
+                                    capture_output=True)
+                  ).stdout.decode('UTF-8')
+                  log.debug('Output of `otool -L ' + copiedLibrary.as_posix() + '`: ' + otoolOutputCopiedLibrary)
+
+                  for outputLine in otoolOutputCopiedLibrary.splitlines():
+                     #
+                     # If we find a dependency of the form:
+                     #    /opt/local/libexec/qt6/lib/QtCore.framework/Versions/A/QtCore
+                     # we want to change it to the form:
+                     #    @executable_path/../Frameworks/QtCore.framework/Versions/A/QtCore
+                     #
+                     qtAbsoluteDependencyMatch = re.search(r'^\s*(/\S+/qt\S+/lib/)(Qt\S+) ', outputLine, re.MULTILINE)
+                     if (qtAbsoluteDependencyMatch):
+                        qtDepAbsPrefix = qtAbsoluteDependencyMatch[1]
+                        qtDepFramework = qtAbsoluteDependencyMatch[2]
+                        qtDepRelPrefix = '@executable_path/../Frameworks/'
+                        qtDepAbsPath = '' + qtDepAbsPrefix + qtDepFramework
+                        qtDepRelPath = '' + qtDepRelPrefix + qtDepFramework
+                        #
+                        # Per https://www.unix.com/man_page/osx/1/install_name_tool/, "install_name_tool changes the
+                        # dynamic shared library install names and or adds, changes or deletes the rpaths recorded in a
+                        # Mach-O binary".
+                        #
+                        # Specifically:
+                        #
+                        #    -id name
+                        #          Changes the shared library identification name of a dynamic shared library to name
+                        #
+                        #    -change old new
+                        #          Changes the dependent shared library install name old to new in the specified Mach-O
+                        #          binary.
+                        #
+                        # We need the -id option to change the path the shared library thinks it lives in (which is the
+                        # first line of output of otool -L).
+                        #
+                        # We need the -change option to change where the shared library looks for other shared libraries
+                        # on which it depends.
+                        #
+                        # We rely here on the different library names being sufficiently different that none contains
+                        # the name of another -- ie there is no library name (eg QtFoo) that is contained in another (eg
+                        # QtFooQtBar).
+                        #
+                        if (qtDepFramework == dependency):
+                           log.debug(
+                              'Running install_name_tool -id ' + qtDepRelPath + ' ' + copiedLibrary.as_posix()
+                           )
+
+                           btUtils.abortOnRunFail(
+                              subprocess.run(
+                                 ['install_name_tool',
+                                 '-id',
+                                 qtDepRelPath,
+                                 copiedLibrary.as_posix()],
+                                 capture_output=False
+                              )
+                           )
+                        else:
+                           log.debug(
+                              'Running install_name_tool -change ' + qtDepAbsPath + ' ' + qtDepRelPath + ' ' +
+                              copiedLibrary.as_posix()
+                           )
+
+                           btUtils.abortOnRunFail(
+                              subprocess.run(
+                                 ['install_name_tool',
+                                 '-change',
+                                 qtDepAbsPath,
+                                 qtDepRelPath,
+                                 copiedLibrary.as_posix()],
+                                 capture_output=False
+                              )
+                           )
+
+                  otoolOutputCopiedLibrary = btUtils.abortOnRunFail(
+                     subprocess.run(['otool',
+                                    '-L',
+                                    copiedLibrary],
+                                    capture_output=True)
+                  ).stdout.decode('UTF-8')
+                  log.debug('Output of `otool -L ' + copiedLibrary.as_posix() + '`: ' + otoolOutputCopiedLibrary)
+
+         #
+         # From https://doc.qt.io/qt-6/macos-issues.html#d-bus-and-macos, we know we need to ship:
+         #
+         #    - libdbus-1 library
+         #
+         # See https://github.com/orgs/Homebrew/discussions/2823 for problems using macdeployqt with homebrew
+         # installation of Qt
+         #
+         # Various links online talk about LD_LIBRARY_PATH and DYLD_LIBRARY_PATH, but neither of these environment
+         # variables seems to be set in GitHub MacOS actions.
+         #
+         log.debug('PATH=' + os.environ['PATH'])
+
+         pathsToSearch = os.environ['PATH'].split(os.pathsep)
+         extraLibs = [
+            'libdbus'  , # Eg libdbus-1.3.dylib
+         ]
+         findAndCopyLibs(pathsToSearch, extraLibs, 'dylib', '.*.dylib', dir_packages_mac_bin)
 
          #
          # Before we try to run macdeployqt, we need to make sure its directory is in the PATH.  (Depending on how Qt
@@ -2997,6 +3218,7 @@ def doPackage():
          #         ❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄❄
          #
          log.debug('Running macdeployqt (PATH=' + os.environ['PATH'] + ')')
+         log.debug('qtFrameworksDir=' + qtFrameworksDir)
          os.chdir(dir_packages_platform)
          btUtils.abortOnRunFail(
             #
@@ -3010,6 +3232,7 @@ def doPackage():
             #
             subprocess.run(['macdeployqt',
                             macBundleDirName,
+                            '-libpath=' + qtFrameworksDir,
                             '-verbose=2',        # 0 = no output, 1 = error/warning (default), 2 = normal, 3 = debug
                             '-executable=' + macBundleDirName + '/Contents/MacOS/' + capitalisedProjectName,
                             '-dmg'],
@@ -3023,6 +3246,10 @@ def doPackage():
          btUtils.abortOnRunFail(subprocess.run(['tree', '-sh'], capture_output=False))
          dmgFileName = macBundleDirName.replace('.app', '.dmg')
 
+         #
+         # otool -l = Display the load commands
+         # otool -L = Display the names and version numbers of the shared libraries that the object file uses
+         #
          log.debug('Running otool on ' + capitalisedProjectName + ' executable after macdeployqt')
          os.chdir(dir_packages_mac_bin)
          btUtils.abortOnRunFail(subprocess.run(['otool', '-L', capitalisedProjectName], capture_output=False))

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/NamedParameterBundle.cpp is part of Brewken, and is copyright the following authors 2021-2024:
+ * model/NamedParameterBundle.cpp is part of Brewken, and is copyright the following authors 2021-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #include <QDebug>
 #include <QString>
 #include <QTextStream>
+#include <qglobal.h> // For Q_ASSERT and Q_UNREACHABLE
 
 NamedParameterBundle::NamedParameterBundle(NamedParameterBundle::OperationMode mode) :
    m_parameters{},
@@ -81,8 +82,7 @@ bool NamedParameterBundle::contains(PropertyPath const & propertyPath) const {
       }
       bundle = &bundle->m_containedBundles.at(**property);
    }
-   // This should actually be unreachable
-   return false;
+   Q_UNREACHABLE(); // We should never get here
 }
 
 template<typename P>
