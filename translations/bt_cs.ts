@@ -122,14 +122,10 @@
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Time At Boiling</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -172,10 +168,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 mins</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Chilling Type</source>
         <translation type="unfinished"></translation>
     </message>
@@ -184,58 +176,14 @@
     <name>BoilStepTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
-    </message>
-    <message>
-        <source>Step Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ramp Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Acidity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Acidity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Gravity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Gravity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Chilling Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Název</translation>
     </message>
 </context>
 <context>
     <name>BoilTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
-    </message>
-    <message>
-        <source>Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Název</translation>
     </message>
 </context>
 <context>
@@ -1424,6 +1372,18 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Ingredient ID</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Amount Ordered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Received</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Remaining</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -1433,7 +1393,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Boil Time</source>
@@ -1883,23 +1843,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>EquipmentTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
-    </message>
-    <message>
-        <source>Mash Tun Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Kettle Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Název</translation>
     </message>
 </context>
 <context>
@@ -1978,7 +1922,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Type</source>
@@ -2214,11 +2158,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Name</source>
-        <translation>Název</translation>
+        <translation type="vanished">Název</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>Druh</translation>
+        <translation type="vanished">Druh</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -2230,15 +2174,15 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Inventory</source>
-        <translation>Sklad</translation>
+        <translation type="vanished">Sklad</translation>
     </message>
     <message>
         <source>Color</source>
-        <translation>Barva</translation>
+        <translation type="vanished">Barva</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Druh množství</translation>
+        <translation type="obsolete">Druh množství</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -2256,14 +2200,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Late</source>
         <translation type="obsolete">Pozdní</translation>
     </message>
-    <message>
-        <source>Yield (DBFG) %</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>Fermentation</name>
@@ -2273,7 +2209,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Description</source>
@@ -2311,10 +2247,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 days</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Free Rise</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2335,43 +2267,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>FermentationStepTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
-    </message>
-    <message>
-        <source>Step Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Acidity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Acidity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Gravity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Gravity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Free Rise</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Vessel</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>No</source>
@@ -2386,34 +2282,26 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>FermentationTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
-    </message>
-    <message>
-        <source>Number of Steps</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Název</translation>
     </message>
 </context>
 <context>
     <name>Folder</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
-    </message>
-    <message>
-        <source>PATH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>FULLPATH</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Folder</source>
         <translation type="unfinished">Adresář</translation>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Full Path</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2555,15 +2443,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Type</source>
         <translation type="unfinished">Druh</translation>
-    </message>
-    <message>
-        <source>% Alpha</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Origin</source>
@@ -2814,11 +2698,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>HopTableModel</name>
     <message>
         <source>Name</source>
-        <translation>Název</translation>
+        <translation type="vanished">Název</translation>
     </message>
     <message>
         <source>Alpha %</source>
-        <translation>Alfa %</translation>
+        <translation type="vanished">Alfa %</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -2834,15 +2718,15 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Form</source>
-        <translation>Forma</translation>
+        <translation type="vanished">Forma</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation>Sklad</translation>
+        <translation type="vanished">Sklad</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Druh množství</translation>
+        <translation type="obsolete">Druh množství</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -2851,14 +2735,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <message>
         <source>Weight</source>
         <translation type="obsolete">Hmotnost</translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3075,27 +2951,15 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>InventoryFermentable</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Druh</translation>
+        <translation type="obsolete">Druh</translation>
     </message>
     <message>
         <source>Color</source>
         <translation type="obsolete">Barva</translation>
-    </message>
-    <message>
-        <source>Date Ordered</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Amount Received</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Amount Remaining</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3409,11 +3273,7 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
-    </message>
-    <message>
-        <source>Total Water</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Total Time</source>
@@ -3562,10 +3422,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 mins</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount</source>
         <translation type="unfinished">Množství</translation>
     </message>
@@ -3602,70 +3458,34 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Name</source>
-        <translation>Název</translation>
+        <translation type="vanished">Název</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>Druh</translation>
+        <translation type="vanished">Druh</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Množství</translation>
+        <translation type="vanished">Množství</translation>
     </message>
     <message>
         <source>Infusion Temp</source>
-        <translation>Teplota infuze</translation>
+        <translation type="vanished">Teplota infuze</translation>
     </message>
     <message>
         <source>Target Temp</source>
-        <translation>Cílová teplota</translation>
+        <translation type="vanished">Cílová teplota</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Čas</translation>
-    </message>
-    <message>
-        <source>End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ramp Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start pH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End pH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Water:Grain</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Čas</translation>
     </message>
 </context>
 <context>
     <name>MashTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
-    </message>
-    <message>
-        <source>Initial Grain Temperature</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Total Mash Water</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Total Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Název</translation>
     </message>
 </context>
 <context>
@@ -3843,7 +3663,7 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Type</source>
@@ -3975,11 +3795,11 @@ If you need help, please open an issue at %1</source>
     <name>MiscTableModel</name>
     <message>
         <source>Name</source>
-        <translation>Název</translation>
+        <translation type="vanished">Název</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>Druh</translation>
+        <translation type="vanished">Druh</translation>
     </message>
     <message>
         <source>Use</source>
@@ -3995,11 +3815,11 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation>Druh množství</translation>
+        <translation type="vanished">Druh množství</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation>Sklad</translation>
+        <translation type="vanished">Sklad</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -4008,10 +3828,6 @@ If you need help, please open an issue at %1</source>
     <message>
         <source>Weight</source>
         <translation type="obsolete">Hmotnost</translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4046,6 +3862,18 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Change %1 on %2 Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Název</translation>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Full Path</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4305,6 +4133,13 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Recipe ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Owner</name>
+    <message>
+        <source>Items</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5739,15 +5574,11 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
-    </message>
-    <message>
-        <source>Snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Brew Date</source>
-        <translation type="unfinished">Datum vaření</translation>
+        <translation type="obsolete">Datum vaření</translation>
     </message>
     <message>
         <source>Style</source>
@@ -6009,6 +5840,10 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <source>Yes</source>
         <translation type="unfinished">Ano</translation>
     </message>
+    <message>
+        <source>Number of Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -6076,7 +5911,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <name>RecipeAdditionFermentableTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Alpha %</source>
@@ -6084,35 +5919,35 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished">Množství</translation>
+        <translation type="obsolete">Množství</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Druh množství</translation>
+        <translation type="obsolete">Druh množství</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Sklad</translation>
+        <translation type="obsolete">Sklad</translation>
     </message>
     <message>
         <source>Stage</source>
-        <translation type="unfinished">Etapa</translation>
+        <translation type="obsolete">Etapa</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished">Čas</translation>
+        <translation type="obsolete">Čas</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Druh</translation>
+        <translation type="obsolete">Druh</translation>
     </message>
     <message>
         <source>Yield</source>
-        <translation type="unfinished">Výtěžnost</translation>
+        <translation type="obsolete">Výtěžnost</translation>
     </message>
     <message>
         <source>Color</source>
-        <translation type="unfinished">Barva</translation>
+        <translation type="obsolete">Barva</translation>
     </message>
 </context>
 <context>
@@ -6158,27 +5993,23 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <name>RecipeAdditionHopTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Alpha %</source>
-        <translation type="unfinished">Alfa %</translation>
+        <translation type="obsolete">Alfa %</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished">Množství</translation>
+        <translation type="obsolete">Množství</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Sklad</translation>
+        <translation type="obsolete">Sklad</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Druh množství</translation>
+        <translation type="obsolete">Druh množství</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -6194,15 +6025,11 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished">Čas</translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Čas</translation>
     </message>
     <message>
         <source>Stage</source>
-        <translation type="unfinished">Etapa</translation>
+        <translation type="obsolete">Etapa</translation>
     </message>
 </context>
 <context>
@@ -6248,7 +6075,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <name>RecipeAdditionMiscTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Alpha %</source>
@@ -6256,27 +6083,27 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished">Množství</translation>
+        <translation type="obsolete">Množství</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Druh množství</translation>
+        <translation type="obsolete">Druh množství</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Sklad</translation>
+        <translation type="obsolete">Sklad</translation>
     </message>
     <message>
         <source>Stage</source>
-        <translation type="unfinished">Etapa</translation>
+        <translation type="obsolete">Etapa</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished">Čas</translation>
+        <translation type="obsolete">Čas</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Druh</translation>
+        <translation type="obsolete">Druh</translation>
     </message>
 </context>
 <context>
@@ -6330,11 +6157,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <name>RecipeAdditionYeastTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Alpha %</source>
@@ -6342,19 +6165,19 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished">Množství</translation>
+        <translation type="obsolete">Množství</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Druh množství</translation>
+        <translation type="obsolete">Druh množství</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Sklad</translation>
+        <translation type="obsolete">Sklad</translation>
     </message>
     <message>
         <source>Stage</source>
-        <translation type="unfinished">Etapa</translation>
+        <translation type="obsolete">Etapa</translation>
     </message>
     <message>
         <source>Time</source>
@@ -6362,27 +6185,23 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Laboratory</source>
-        <translation type="unfinished">Laboratoř</translation>
+        <translation type="obsolete">Laboratoř</translation>
     </message>
     <message>
         <source>Product ID</source>
-        <translation type="unfinished">ID produktu</translation>
+        <translation type="obsolete">ID produktu</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Druh</translation>
+        <translation type="obsolete">Druh</translation>
     </message>
     <message>
         <source>Step</source>
-        <translation type="unfinished">Krok</translation>
+        <translation type="obsolete">Krok</translation>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation type="unfinished">Prokvašení</translation>
-    </message>
-    <message>
-        <source>Times Cultured</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Prokvašení</translation>
     </message>
 </context>
 <context>
@@ -6424,31 +6243,23 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <name>RecipeAdjustmentSaltTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
-    </message>
-    <message>
-        <source>% Acid</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Sklad</translation>
+        <translation type="obsolete">Sklad</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Druh množství</translation>
+        <translation type="obsolete">Druh množství</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished">Množství</translation>
+        <translation type="obsolete">Množství</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Druh</translation>
-    </message>
-    <message>
-        <source>Added To</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Druh</translation>
     </message>
 </context>
 <context>
@@ -6789,7 +6600,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <name>RecipeTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation type="obsolete">Název</translation>
     </message>
 </context>
 <context>
@@ -6917,19 +6728,11 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Type</source>
         <translation type="unfinished">Druh</translation>
-    </message>
-    <message>
-        <source>IsAcid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PercentAcid</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Is Acid</source>
@@ -6952,15 +6755,11 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <name>SaltTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Amount</source>
         <translation type="obsolete">Množství</translation>
-    </message>
-    <message>
-        <source>% Acid</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Bad column: %1</source>
@@ -6968,19 +6767,15 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Sklad</translation>
+        <translation type="obsolete">Sklad</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Druh množství</translation>
+        <translation type="obsolete">Druh množství</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Druh</translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Druh</translation>
     </message>
 </context>
 <context>
@@ -7113,7 +6908,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Category</source>
@@ -7121,11 +6916,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Number</source>
-        <translation type="unfinished">Číslo</translation>
-    </message>
-    <message>
-        <source>Letter</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Číslo</translation>
     </message>
     <message>
         <source>Guide</source>
@@ -7255,31 +7046,15 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <name>StyleTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Druh</translation>
+        <translation type="obsolete">Druh</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation type="unfinished">Kategorie</translation>
-    </message>
-    <message>
-        <source>Category Number</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Style Letter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Style Guide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Kategorie</translation>
     </message>
 </context>
 <context>
@@ -7685,14 +7460,10 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Ca</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SO4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7882,11 +7653,11 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Bad column: %1</source>
-        <translation>Chybný sloupec: %1</translation>
+        <translation type="vanished">Chybný sloupec: %1</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Název</translation>
+        <translation type="vanished">Název</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -7894,31 +7665,27 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Calcium (ppm)</source>
-        <translation>Vápník (ppm)</translation>
+        <translation type="vanished">Vápník (ppm)</translation>
     </message>
     <message>
         <source>Bicarbonate (ppm)</source>
-        <translation>Uhličitany (ppm)</translation>
+        <translation type="vanished">Uhličitany (ppm)</translation>
     </message>
     <message>
         <source>Sulfate (ppm)</source>
-        <translation>Sírany (ppm)</translation>
+        <translation type="vanished">Sírany (ppm)</translation>
     </message>
     <message>
         <source>Chloride (ppm)</source>
-        <translation>Chloridy (ppm)</translation>
+        <translation type="vanished">Chloridy (ppm)</translation>
     </message>
     <message>
         <source>Sodium (ppm)</source>
-        <translation>Sodík (ppm)</translation>
+        <translation type="vanished">Sodík (ppm)</translation>
     </message>
     <message>
         <source>Magnesium (ppm)</source>
-        <translation>Hořčík (ppm)</translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Hořčík (ppm)</translation>
     </message>
 </context>
 <context>
@@ -8052,7 +7819,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation type="obsolete">Název</translation>
     </message>
     <message>
         <source>Type</source>
@@ -8260,15 +8027,15 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Název</translation>
+        <translation type="vanished">Název</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>Druh</translation>
+        <translation type="vanished">Druh</translation>
     </message>
     <message>
         <source>Form</source>
-        <translation>Forma</translation>
+        <translation type="vanished">Forma</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -8276,23 +8043,19 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Laboratory</source>
-        <translation>Laboratoř</translation>
+        <translation type="vanished">Laboratoř</translation>
     </message>
     <message>
         <source>Product ID</source>
-        <translation>ID produktu</translation>
+        <translation type="vanished">ID produktu</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation>Sklad</translation>
+        <translation type="vanished">Sklad</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Druh množství</translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Druh množství</translation>
     </message>
 </context>
 <context>

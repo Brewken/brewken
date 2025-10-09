@@ -109,15 +109,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Time At Boiling</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -160,69 +152,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 mins</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Chilling Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>BoilStepTableModel</name>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Step Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ramp Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Acidity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Acidity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Gravity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Gravity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Chilling Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>BoilTableModel</name>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1342,16 +1272,24 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Ingredient ID</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Amount Ordered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Received</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Remaining</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
     <message>
         <source>Equipment</source>
         <translation type="unfinished">设备Equipment</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Boil Time</source>
@@ -1798,29 +1736,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
 </context>
 <context>
-    <name>EquipmentTableModel</name>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mash Tun Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Kettle Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Fermentable</name>
     <message>
         <source>Mashed</source>
@@ -1892,10 +1807,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Fermentable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2132,11 +2043,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Name</source>
-        <translation>名Name</translation>
+        <translation type="vanished">名Name</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>类型Type</translation>
+        <translation type="vanished">类型Type</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -2147,16 +2058,12 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="vanished">率％</translation>
     </message>
     <message>
-        <source>Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Color</source>
-        <translation>颜色Color</translation>
+        <translation type="vanished">颜色Color</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">金额类型MiscTableModel |</translation>
+        <translation type="obsolete">金额类型MiscTableModel |</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -2170,23 +2077,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Late</source>
         <translation type="obsolete">晚Late</translation>
     </message>
-    <message>
-        <source>Yield (DBFG) %</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>Fermentation</name>
     <message>
         <source>Fermentation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2225,10 +2120,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 days</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Free Rise</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2248,46 +2139,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
 <context>
     <name>FermentationStepTableModel</name>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Step Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Acidity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Acidity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Gravity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Gravity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Free Rise</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Vessel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>No</source>
         <translation type="obsolete">否</translation>
     </message>
@@ -2297,36 +2148,17 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
 </context>
 <context>
-    <name>FermentationTableModel</name>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Number of Steps</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Folder</name>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PATH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>FULLPATH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Full Path</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2468,15 +2300,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>% Alpha</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2692,11 +2516,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>HopTableModel</name>
     <message>
         <source>Name</source>
-        <translation>名Name</translation>
+        <translation type="vanished">名Name</translation>
     </message>
     <message>
         <source>Alpha %</source>
-        <translation>阿尔法Alpha %</translation>
+        <translation type="vanished">阿尔法Alpha %</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -2712,27 +2536,15 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Form</source>
-        <translation>形式Form</translation>
+        <translation type="vanished">形式Form</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">金额类型MiscTableModel |</translation>
+        <translation type="obsolete">金额类型MiscTableModel |</translation>
     </message>
     <message>
         <source>Weight</source>
         <translation type="obsolete">重量</translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2944,28 +2756,8 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
 <context>
     <name>InventoryFermentable</name>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Color</source>
         <translation type="obsolete">颜色Color</translation>
-    </message>
-    <message>
-        <source>Date Ordered</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Amount Received</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Amount Remaining</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3254,14 +3046,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Total Water</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Total Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3408,10 +3192,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 mins</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3448,70 +3228,27 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Name</source>
-        <translation>名</translation>
+        <translation type="vanished">名</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>类型</translation>
+        <translation type="vanished">类型</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation>量Amount</translation>
+        <translation type="vanished">量Amount</translation>
     </message>
     <message>
         <source>Infusion Temp</source>
-        <translation>灌注温度Infusion Temp</translation>
+        <translation type="vanished">灌注温度Infusion Temp</translation>
     </message>
     <message>
         <source>Target Temp</source>
-        <translation>目标温度Target Temp</translation>
+        <translation type="vanished">目标温度Target Temp</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>时间Time</translation>
-    </message>
-    <message>
-        <source>End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ramp Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start pH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End pH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Water:Grain</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>MashTableModel</name>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Initial Grain Temperature</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Total Mash Water</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Total Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">时间Time</translation>
     </message>
 </context>
 <context>
@@ -3680,10 +3417,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished">杂项Miscellaneous</translation>
     </message>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3809,11 +3542,11 @@ If you need help, please open an issue at %1</source>
     <name>MiscTableModel</name>
     <message>
         <source>Name</source>
-        <translation>名Name</translation>
+        <translation type="vanished">名Name</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>类型Type</translation>
+        <translation type="vanished">类型Type</translation>
     </message>
     <message>
         <source>Use</source>
@@ -3829,19 +3562,11 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation>金额类型MiscTableModel |</translation>
-    </message>
-    <message>
-        <source>Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">金额类型MiscTableModel |</translation>
     </message>
     <message>
         <source>Weight</source>
         <translation type="obsolete">重量</translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3876,6 +3601,18 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Change %1 on %2 Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Full Path</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4076,6 +3813,13 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Recipe ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Owner</name>
+    <message>
+        <source>Items</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5497,16 +5241,8 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Brew Date</source>
-        <translation type="unfinished">酿造日期</translation>
+        <translation type="obsolete">酿造日期</translation>
     </message>
     <message>
         <source>Style</source>
@@ -5768,6 +5504,10 @@ The final volume in the primary is %1.</source>
         <source>Yes</source>
         <translation type="unfinished">是</translation>
     </message>
+    <message>
+        <source>Number of Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -5834,10 +5574,6 @@ The final volume in the primary is %1.</source>
 <context>
     <name>RecipeAdditionFermentableTableModel</name>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Form</source>
         <translation type="obsolete">形式Form</translation>
     </message>
@@ -5846,36 +5582,24 @@ The final volume in the primary is %1.</source>
         <translation type="obsolete">阿尔法Alpha %</translation>
     </message>
     <message>
-        <source>Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount Type</source>
-        <translation type="unfinished">金额类型MiscTableModel |</translation>
-    </message>
-    <message>
-        <source>Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">金额类型MiscTableModel |</translation>
     </message>
     <message>
         <source>Stage</source>
-        <translation type="unfinished">舞台Stage</translation>
+        <translation type="obsolete">舞台Stage</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished">时间Time</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">时间Time</translation>
     </message>
     <message>
         <source>Yield</source>
-        <translation type="unfinished">产量Yield</translation>
+        <translation type="obsolete">产量Yield</translation>
     </message>
     <message>
         <source>Color</source>
-        <translation type="unfinished">颜色Color</translation>
+        <translation type="obsolete">颜色Color</translation>
     </message>
 </context>
 <context>
@@ -5920,24 +5644,16 @@ The final volume in the primary is %1.</source>
 <context>
     <name>RecipeAdditionHopTableModel</name>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Form</source>
-        <translation type="unfinished">形式Form</translation>
+        <translation type="obsolete">形式Form</translation>
     </message>
     <message>
         <source>Alpha %</source>
-        <translation type="unfinished">阿尔法Alpha %</translation>
-    </message>
-    <message>
-        <source>Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">阿尔法Alpha %</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">金额类型MiscTableModel |</translation>
+        <translation type="obsolete">金额类型MiscTableModel |</translation>
     </message>
     <message>
         <source>Weight</source>
@@ -5949,19 +5665,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished">时间Time</translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">时间Time</translation>
     </message>
     <message>
         <source>Stage</source>
-        <translation type="unfinished">舞台Stage</translation>
-    </message>
-    <message>
-        <source>Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">舞台Stage</translation>
     </message>
 </context>
 <context>
@@ -6006,10 +5714,6 @@ The final volume in the primary is %1.</source>
 <context>
     <name>RecipeAdditionMiscTableModel</name>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Form</source>
         <translation type="obsolete">形式Form</translation>
     </message>
@@ -6018,28 +5722,16 @@ The final volume in the primary is %1.</source>
         <translation type="obsolete">阿尔法Alpha %</translation>
     </message>
     <message>
-        <source>Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount Type</source>
-        <translation type="unfinished">金额类型MiscTableModel |</translation>
-    </message>
-    <message>
-        <source>Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">金额类型MiscTableModel |</translation>
     </message>
     <message>
         <source>Stage</source>
-        <translation type="unfinished">舞台Stage</translation>
+        <translation type="obsolete">舞台Stage</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished">时间Time</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">时间Time</translation>
     </message>
 </context>
 <context>
@@ -6088,32 +5780,20 @@ The final volume in the primary is %1.</source>
 <context>
     <name>RecipeAdditionYeastTableModel</name>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Form</source>
-        <translation type="unfinished">形式Form</translation>
+        <translation type="obsolete">形式Form</translation>
     </message>
     <message>
         <source>Alpha %</source>
         <translation type="obsolete">阿尔法Alpha %</translation>
     </message>
     <message>
-        <source>Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount Type</source>
-        <translation type="unfinished">金额类型MiscTableModel |</translation>
-    </message>
-    <message>
-        <source>Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">金额类型MiscTableModel |</translation>
     </message>
     <message>
         <source>Stage</source>
-        <translation type="unfinished">舞台Stage</translation>
+        <translation type="obsolete">舞台Stage</translation>
     </message>
     <message>
         <source>Time</source>
@@ -6121,27 +5801,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Laboratory</source>
-        <translation type="unfinished">实验室Laboratory</translation>
+        <translation type="obsolete">实验室Laboratory</translation>
     </message>
     <message>
         <source>Product ID</source>
-        <translation type="unfinished">产品IDProduct ID</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">产品IDProduct ID</translation>
     </message>
     <message>
         <source>Step</source>
-        <translation type="unfinished">步驟</translation>
-    </message>
-    <message>
-        <source>Attenuation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Times Cultured</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">步驟</translation>
     </message>
 </context>
 <context>
@@ -6182,32 +5850,8 @@ The final volume in the primary is %1.</source>
 <context>
     <name>RecipeAdjustmentSaltTableModel</name>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>% Acid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount Type</source>
-        <translation type="unfinished">金额类型MiscTableModel |</translation>
-    </message>
-    <message>
-        <source>Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Added To</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">金额类型MiscTableModel |</translation>
     </message>
 </context>
 <context>
@@ -6529,13 +6173,6 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
-    <name>RecipeTableModel</name>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>RecipeTreeView</name>
     <message>
         <source>Snapshots</source>
@@ -6659,19 +6296,7 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>IsAcid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PercentAcid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6694,28 +6319,8 @@ The final volume in the primary is %1.</source>
 <context>
     <name>SaltTableModel</name>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>% Acid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount Type</source>
-        <translation type="unfinished">金额类型MiscTableModel |</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">金额类型MiscTableModel |</translation>
     </message>
 </context>
 <context>
@@ -6847,20 +6452,8 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished">样式Style</translation>
     </message>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Category</source>
         <translation type="unfinished">类别</translation>
-    </message>
-    <message>
-        <source>Number</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Letter</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Guide</source>
@@ -6989,32 +6582,8 @@ The final volume in the primary is %1.</source>
 <context>
     <name>StyleTableModel</name>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Category</source>
-        <translation type="unfinished">类别</translation>
-    </message>
-    <message>
-        <source>Category Number</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Style Letter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Style Guide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">类别</translation>
     </message>
 </context>
 <context>
@@ -7357,15 +6926,7 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Ca</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SO4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7555,11 +7116,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Bad column: %1</source>
-        <translation>坏列：％1Bad column: %1</translation>
+        <translation type="vanished">坏列：％1Bad column: %1</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>名Name</translation>
+        <translation type="vanished">名Name</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -7567,31 +7128,27 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Calcium (ppm)</source>
-        <translation>钙（PPM）Calcium (ppm)</translation>
+        <translation type="vanished">钙（PPM）Calcium (ppm)</translation>
     </message>
     <message>
         <source>Bicarbonate (ppm)</source>
-        <translation>碳酸氢钠（PPM）Bicarbonate (ppm)</translation>
+        <translation type="vanished">碳酸氢钠（PPM）Bicarbonate (ppm)</translation>
     </message>
     <message>
         <source>Sulfate (ppm)</source>
-        <translation>硫酸（PPM）Sulfate (ppm)</translation>
+        <translation type="vanished">硫酸（PPM）Sulfate (ppm)</translation>
     </message>
     <message>
         <source>Chloride (ppm)</source>
-        <translation>氯化物（PPM）Chloride (ppm)</translation>
+        <translation type="vanished">氯化物（PPM）Chloride (ppm)</translation>
     </message>
     <message>
         <source>Sodium (ppm)</source>
-        <translation>钠（PPM）Sodium (ppm)</translation>
+        <translation type="vanished">钠（PPM）Sodium (ppm)</translation>
     </message>
     <message>
         <source>Magnesium (ppm)</source>
-        <translation>镁Magnesium (ppm)</translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">镁Magnesium (ppm)</translation>
     </message>
 </context>
 <context>
@@ -7722,10 +7279,6 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Laboratory</source>
         <translation type="unfinished">实验室Laboratory</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Type</source>
@@ -7933,15 +7486,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation>名Name</translation>
+        <translation type="vanished">名Name</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>类型Type</translation>
+        <translation type="vanished">类型Type</translation>
     </message>
     <message>
         <source>Form</source>
-        <translation>形式Form</translation>
+        <translation type="vanished">形式Form</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -7949,23 +7502,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Laboratory</source>
-        <translation>实验室Laboratory</translation>
+        <translation type="vanished">实验室Laboratory</translation>
     </message>
     <message>
         <source>Product ID</source>
-        <translation>产品IDProduct ID</translation>
-    </message>
-    <message>
-        <source>Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">产品IDProduct ID</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">金额类型MiscTableModel |</translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">金额类型MiscTableModel |</translation>
     </message>
 </context>
 <context>
