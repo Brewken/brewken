@@ -192,9 +192,6 @@ public slots:
    void editRecipeBoil();
    void editRecipeFermentation();
 
-///   //! \brief Save the current recipe's mash to be used in other recipes.
-///   void saveMash();
-
    //! \brief Create a new recipe in the database.
    std::shared_ptr<Recipe> newRecipe();
    void newRecipeInFolder(QString folderPath);

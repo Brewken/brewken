@@ -118,14 +118,10 @@
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Time At Boiling</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -168,10 +164,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 mins</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Chilling Type</source>
         <translation type="unfinished"></translation>
     </message>
@@ -180,58 +172,14 @@
     <name>BoilStepTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
-    </message>
-    <message>
-        <source>Step Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ramp Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Acidity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Acidity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Gravity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Gravity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Chilling Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nome</translation>
     </message>
 </context>
 <context>
     <name>BoilTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
-    </message>
-    <message>
-        <source>Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nome</translation>
     </message>
 </context>
 <context>
@@ -1500,6 +1448,18 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Ingredient ID</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Amount Ordered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Received</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Remaining</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Equipment</name>
@@ -1509,7 +1469,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Boil Time</source>
@@ -1959,23 +1919,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>EquipmentTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
-    </message>
-    <message>
-        <source>Mash Tun Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Kettle Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nome</translation>
     </message>
 </context>
 <context>
@@ -2066,7 +2010,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Type</source>
@@ -2314,11 +2258,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Name</source>
-        <translation>Nome</translation>
+        <translation type="vanished">Nome</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>Tipologia</translation>
+        <translation type="vanished">Tipologia</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -2330,11 +2274,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Inventory</source>
-        <translation>Magazzino</translation>
+        <translation type="vanished">Magazzino</translation>
     </message>
     <message>
         <source>Color</source>
-        <translation>Colore</translation>
+        <translation type="vanished">Colore</translation>
     </message>
     <message>
         <source>Method</source>
@@ -2346,7 +2290,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Tipo di Quantità</translation>
+        <translation type="obsolete">Tipo di Quantità</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -2364,14 +2308,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Late</source>
         <translation type="obsolete">Tardivo</translation>
     </message>
-    <message>
-        <source>Yield (DBFG) %</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>Fermentation</name>
@@ -2381,7 +2317,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Description</source>
@@ -2419,10 +2355,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 days</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Free Rise</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2443,43 +2375,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>FermentationStepTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
-    </message>
-    <message>
-        <source>Step Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Acidity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Acidity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Gravity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End Gravity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Free Rise</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Vessel</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>No</source>
@@ -2494,34 +2390,34 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>FermentationTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
-    </message>
-    <message>
-        <source>Number of Steps</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nome</translation>
     </message>
 </context>
 <context>
     <name>Folder</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>PATH</source>
-        <translation type="unfinished">Percorso</translation>
+        <translation type="obsolete">Percorso</translation>
     </message>
     <message>
         <source>FULLPATH</source>
-        <translation type="unfinished">Percorso Completo</translation>
+        <translation type="obsolete">Percorso Completo</translation>
     </message>
     <message>
         <source>Folder</source>
         <translation type="unfinished">Cartella</translation>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Full Path</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2663,15 +2559,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Type</source>
         <translation type="unfinished">Tipologia</translation>
-    </message>
-    <message>
-        <source>% Alpha</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Origin</source>
@@ -2914,11 +2806,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>HopTableModel</name>
     <message>
         <source>Name</source>
-        <translation>Nome</translation>
+        <translation type="vanished">Nome</translation>
     </message>
     <message>
         <source>Alpha %</source>
-        <translation>Alpha %</translation>
+        <translation type="vanished">Alpha %</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -2934,27 +2826,19 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Form</source>
-        <translation>Forma</translation>
+        <translation type="vanished">Forma</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation>Magazzino</translation>
+        <translation type="vanished">Magazzino</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Tipo di Quantità</translation>
+        <translation type="obsolete">Tipo di Quantità</translation>
     </message>
     <message>
         <source>Volume</source>
         <translation type="obsolete">Volume</translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3171,27 +3055,15 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>InventoryFermentable</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Tipologia</translation>
+        <translation type="obsolete">Tipologia</translation>
     </message>
     <message>
         <source>Color</source>
         <translation type="obsolete">Colore</translation>
-    </message>
-    <message>
-        <source>Date Ordered</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Amount Received</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Amount Remaining</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3505,11 +3377,7 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
-    </message>
-    <message>
-        <source>Total Water</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Total Time</source>
@@ -3658,10 +3526,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 mins</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount</source>
         <translation type="unfinished">Ammontare</translation>
     </message>
@@ -3698,70 +3562,34 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nome</translation>
+        <translation type="vanished">Nome</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>Tipologia</translation>
+        <translation type="vanished">Tipologia</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation>Ammontare</translation>
+        <translation type="vanished">Ammontare</translation>
     </message>
     <message>
         <source>Infusion Temp</source>
-        <translation>Temperatura di infusione</translation>
+        <translation type="vanished">Temperatura di infusione</translation>
     </message>
     <message>
         <source>Target Temp</source>
-        <translation>Temperatura Obiettivo</translation>
+        <translation type="vanished">Temperatura Obiettivo</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Tempo</translation>
-    </message>
-    <message>
-        <source>End Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ramp Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start pH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End pH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Water:Grain</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Tempo</translation>
     </message>
 </context>
 <context>
     <name>MashTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
-    </message>
-    <message>
-        <source>Initial Grain Temperature</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Total Mash Water</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Total Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nome</translation>
     </message>
 </context>
 <context>
@@ -3943,7 +3771,7 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Type</source>
@@ -4075,11 +3903,11 @@ If you need help, please open an issue at %1</source>
     <name>MiscTableModel</name>
     <message>
         <source>Name</source>
-        <translation>Nome</translation>
+        <translation type="vanished">Nome</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>Tipologia</translation>
+        <translation type="vanished">Tipologia</translation>
     </message>
     <message>
         <source>Use</source>
@@ -4095,19 +3923,15 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation>Tipo di Quantità</translation>
+        <translation type="vanished">Tipo di Quantità</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation>Magazzino</translation>
+        <translation type="vanished">Magazzino</translation>
     </message>
     <message>
         <source>Volume</source>
         <translation type="obsolete">Volume</translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4142,6 +3966,18 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Change %1 on %2 Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nome</translation>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Full Path</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4405,6 +4241,13 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Recipe ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Owner</name>
+    <message>
+        <source>Items</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5823,15 +5666,11 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
-    </message>
-    <message>
-        <source>Snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Brew Date</source>
-        <translation type="unfinished">Data di birrificazione</translation>
+        <translation type="obsolete">Data di birrificazione</translation>
     </message>
     <message>
         <source>Style</source>
@@ -6093,6 +5932,10 @@ Il Volume finale del primo è %1.</translation>
         <source>Yes</source>
         <translation type="unfinished">Si</translation>
     </message>
+    <message>
+        <source>Number of Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -6160,7 +6003,7 @@ Il Volume finale del primo è %1.</translation>
     <name>RecipeAdditionFermentableTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Form</source>
@@ -6172,35 +6015,35 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished">Ammontare</translation>
+        <translation type="obsolete">Ammontare</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Tipo di Quantità</translation>
+        <translation type="obsolete">Tipo di Quantità</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Magazzino</translation>
+        <translation type="obsolete">Magazzino</translation>
     </message>
     <message>
         <source>Stage</source>
-        <translation type="unfinished">Fase</translation>
+        <translation type="obsolete">Fase</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished">Tempo</translation>
+        <translation type="obsolete">Tempo</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Tipologia</translation>
+        <translation type="obsolete">Tipologia</translation>
     </message>
     <message>
         <source>Yield</source>
-        <translation type="unfinished">Prodotto</translation>
+        <translation type="obsolete">Prodotto</translation>
     </message>
     <message>
         <source>Color</source>
-        <translation type="unfinished">Colore</translation>
+        <translation type="obsolete">Colore</translation>
     </message>
 </context>
 <context>
@@ -6246,27 +6089,27 @@ Il Volume finale del primo è %1.</translation>
     <name>RecipeAdditionHopTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished">Forma</translation>
+        <translation type="obsolete">Forma</translation>
     </message>
     <message>
         <source>Alpha %</source>
-        <translation type="unfinished">Alpha %</translation>
+        <translation type="obsolete">Alpha %</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished">Ammontare</translation>
+        <translation type="obsolete">Ammontare</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Magazzino</translation>
+        <translation type="obsolete">Magazzino</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Tipo di Quantità</translation>
+        <translation type="obsolete">Tipo di Quantità</translation>
     </message>
     <message>
         <source>Volume</source>
@@ -6278,15 +6121,11 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished">Tempo</translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Tempo</translation>
     </message>
     <message>
         <source>Stage</source>
-        <translation type="unfinished">Fase</translation>
+        <translation type="obsolete">Fase</translation>
     </message>
 </context>
 <context>
@@ -6336,7 +6175,7 @@ Il Volume finale del primo è %1.</translation>
     <name>RecipeAdditionMiscTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Form</source>
@@ -6348,27 +6187,27 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished">Ammontare</translation>
+        <translation type="obsolete">Ammontare</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Tipo di Quantità</translation>
+        <translation type="obsolete">Tipo di Quantità</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Magazzino</translation>
+        <translation type="obsolete">Magazzino</translation>
     </message>
     <message>
         <source>Stage</source>
-        <translation type="unfinished">Fase</translation>
+        <translation type="obsolete">Fase</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished">Tempo</translation>
+        <translation type="obsolete">Tempo</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Tipologia</translation>
+        <translation type="obsolete">Tipologia</translation>
     </message>
 </context>
 <context>
@@ -6422,11 +6261,11 @@ Il Volume finale del primo è %1.</translation>
     <name>RecipeAdditionYeastTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished">Forma</translation>
+        <translation type="obsolete">Forma</translation>
     </message>
     <message>
         <source>Alpha %</source>
@@ -6434,19 +6273,19 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished">Ammontare</translation>
+        <translation type="obsolete">Ammontare</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Tipo di Quantità</translation>
+        <translation type="obsolete">Tipo di Quantità</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Magazzino</translation>
+        <translation type="obsolete">Magazzino</translation>
     </message>
     <message>
         <source>Stage</source>
-        <translation type="unfinished">Fase</translation>
+        <translation type="obsolete">Fase</translation>
     </message>
     <message>
         <source>Time</source>
@@ -6454,27 +6293,23 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Laboratory</source>
-        <translation type="unfinished">Laboratorio</translation>
+        <translation type="obsolete">Laboratorio</translation>
     </message>
     <message>
         <source>Product ID</source>
-        <translation type="unfinished">ID Prodotto</translation>
+        <translation type="obsolete">ID Prodotto</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Tipologia</translation>
+        <translation type="obsolete">Tipologia</translation>
     </message>
     <message>
         <source>Step</source>
-        <translation type="unfinished">Passo</translation>
+        <translation type="obsolete">Passo</translation>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation type="unfinished">Attenuazione</translation>
-    </message>
-    <message>
-        <source>Times Cultured</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Attenuazione</translation>
     </message>
 </context>
 <context>
@@ -6516,31 +6351,23 @@ Il Volume finale del primo è %1.</translation>
     <name>RecipeAdjustmentSaltTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
-    </message>
-    <message>
-        <source>% Acid</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Magazzino</translation>
+        <translation type="obsolete">Magazzino</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Tipo di Quantità</translation>
+        <translation type="obsolete">Tipo di Quantità</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished">Ammontare</translation>
+        <translation type="obsolete">Ammontare</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Tipologia</translation>
-    </message>
-    <message>
-        <source>Added To</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Tipologia</translation>
     </message>
 </context>
 <context>
@@ -6889,7 +6716,7 @@ Il Volume finale del primo è %1.</translation>
     <name>RecipeTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
 </context>
 <context>
@@ -7017,19 +6844,11 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Type</source>
         <translation type="unfinished">Tipologia</translation>
-    </message>
-    <message>
-        <source>IsAcid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PercentAcid</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Is Acid</source>
@@ -7052,15 +6871,11 @@ Il Volume finale del primo è %1.</translation>
     <name>SaltTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Amount</source>
         <translation type="obsolete">Ammontare</translation>
-    </message>
-    <message>
-        <source>% Acid</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Bad column: %1</source>
@@ -7068,19 +6883,15 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Magazzino</translation>
+        <translation type="obsolete">Magazzino</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Tipo di Quantità</translation>
+        <translation type="obsolete">Tipo di Quantità</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Tipologia</translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Tipologia</translation>
     </message>
 </context>
 <context>
@@ -7220,7 +7031,7 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Category</source>
@@ -7228,11 +7039,7 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Number</source>
-        <translation type="unfinished">Numero</translation>
-    </message>
-    <message>
-        <source>Letter</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Numero</translation>
     </message>
     <message>
         <source>Guide</source>
@@ -7362,31 +7169,15 @@ Il Volume finale del primo è %1.</translation>
     <name>StyleTableModel</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Tipologia</translation>
+        <translation type="obsolete">Tipologia</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation type="unfinished">Categoria</translation>
-    </message>
-    <message>
-        <source>Category Number</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Style Letter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Style Guide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Categoria</translation>
     </message>
 </context>
 <context>
@@ -7815,14 +7606,10 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Ca</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SO4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8012,11 +7799,11 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Bad column: %1</source>
-        <translation>Cattiva colonna: %1</translation>
+        <translation type="vanished">Cattiva colonna: %1</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nome</translation>
+        <translation type="vanished">Nome</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -8024,31 +7811,27 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Calcium (ppm)</source>
-        <translation>Calcio (ppm)</translation>
+        <translation type="vanished">Calcio (ppm)</translation>
     </message>
     <message>
         <source>Bicarbonate (ppm)</source>
-        <translation>Bicarbonato (PPM)</translation>
+        <translation type="vanished">Bicarbonato (PPM)</translation>
     </message>
     <message>
         <source>Sulfate (ppm)</source>
-        <translation>Solfato (ppm)</translation>
+        <translation type="vanished">Solfato (ppm)</translation>
     </message>
     <message>
         <source>Chloride (ppm)</source>
-        <translation>Cloruro (ppm)</translation>
+        <translation type="vanished">Cloruro (ppm)</translation>
     </message>
     <message>
         <source>Sodium (ppm)</source>
-        <translation>Sodio (ppm)</translation>
+        <translation type="vanished">Sodio (ppm)</translation>
     </message>
     <message>
         <source>Magnesium (ppm)</source>
-        <translation>Magnesio (ppm)</translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Magnesio (ppm)</translation>
     </message>
 </context>
 <context>
@@ -8182,7 +7965,7 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <source>Type</source>
@@ -8390,15 +8173,15 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nome</translation>
+        <translation type="vanished">Nome</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>Tipologia</translation>
+        <translation type="vanished">Tipologia</translation>
     </message>
     <message>
         <source>Form</source>
-        <translation>Forma</translation>
+        <translation type="vanished">Forma</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -8406,23 +8189,19 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Laboratory</source>
-        <translation>Laboratorio</translation>
+        <translation type="vanished">Laboratorio</translation>
     </message>
     <message>
         <source>Product ID</source>
-        <translation>ID Prodotto</translation>
+        <translation type="vanished">ID Prodotto</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation>Magazzino</translation>
+        <translation type="vanished">Magazzino</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Tipo di Quantità</translation>
-    </message>
-    <message>
-        <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Tipo di Quantità</translation>
     </message>
 </context>
 <context>

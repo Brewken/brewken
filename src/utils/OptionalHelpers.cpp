@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * utils/OptionalHelpers.cpp is part of Brewken, and is copyright the following authors 2023:
+ * utils/OptionalHelpers.cpp is part of Brewken, and is copyright the following authors 2023-2024:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@ void Optional::removeOptionalWrapper(QVariant & propertyValue, TypeInfo const & 
    if (typeInfo.typeIndex == typeid(int         )) { removeOptionalWrapper<int         >(propertyValue, hasValue); return; }
    if (typeInfo.typeIndex == typeid(unsigned int)) { removeOptionalWrapper<unsigned int>(propertyValue, hasValue); return; }
    if (typeInfo.typeIndex == typeid(bool        )) { removeOptionalWrapper<bool        >(propertyValue, hasValue); return; }
+   if (typeInfo.typeIndex == typeid(QDate       )) { removeOptionalWrapper<QDate       >(propertyValue, hasValue); return; }
 
    // If the native type is an enum, then the QVariant should actually contain an int
    if (typeInfo.isEnum() && propertyValue.canConvert<std::optional<int>>()) {
