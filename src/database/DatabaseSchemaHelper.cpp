@@ -37,7 +37,7 @@
 #include "database/ObjectStoreTyped.h"
 #include "model/Salt.h"
 
-int constexpr DatabaseSchemaHelper::latestVersion = 18;
+int constexpr DatabaseSchemaHelper::latestVersion = 19;
 
 // Default namespace hides functions from everything outside this file.
 namespace {
@@ -2161,27 +2161,27 @@ namespace {
     */
    bool migrate_to_12([[maybe_unused]] Database & db, BtSqlQuery & q) {
       QVector<QueryAndParameters> const migrationQueries{
-         {QString(     "UPDATE hop SET htype = 'aroma/bittering' WHERE lower(htype) = 'both'"     )},
-         {QString("     UPDATE fermentable SET ftype = 'dry extract' WHERE lower(ftype) = 'dry extract'")},
-         {QString("     UPDATE fermentable SET ftype = 'dry extract' WHERE lower(ftype) = 'dryextract'" )},
-         {QString("     UPDATE fermentable SET ftype = 'other'       WHERE lower(ftype) = 'adjunct'"    )},
-         {QString("     UPDATE misc SET mtype = 'water agent' WHERE lower(mtype) = 'water agent'")},
-         {QString("     UPDATE misc SET mtype = 'water agent' WHERE lower(mtype) = 'wateragent'" )},
-         {QString("     UPDATE yeast SET ytype = 'other'     WHERE lower(ytype) = 'wheat'    ")},
-         {QString("     UPDATE yeast SET flocculation = 'very high' WHERE lower(flocculation) = 'very high'")},
-         {QString("     UPDATE yeast SET flocculation = 'very high' WHERE lower(flocculation) = 'veryhigh'" )},
-         {QString("     UPDATE style SET stype = 'beer'  WHERE lower(stype) = 'lager'")},
-         {QString("     UPDATE style SET stype = 'beer'  WHERE lower(stype) = 'ale'  ")},
-         {QString("     UPDATE style SET stype = 'beer'  WHERE lower(stype) = 'wheat'")},
-         {QString("     UPDATE style SET stype = 'other' WHERE lower(stype) = 'mixed'")},
-         {QString("     UPDATE mash_step SET mstype = 'sparge'         WHERE lower(mstype) = 'flysparge'  ")},
-         {QString("     UPDATE mash_step SET mstype = 'sparge'         WHERE lower(mstype) = 'fly sparge'  ")},
-         {QString("     UPDATE mash_step SET mstype = 'drain mash tun' WHERE lower(mstype) = 'batchsparge'")},
-         {QString("     UPDATE mash_step SET mstype = 'drain mash tun' WHERE lower(mstype) = 'batch sparge'")},
-         {QString("     UPDATE recipe SET type = 'partial mash' WHERE lower(type) = 'partial mash'")},
-         {QString("     UPDATE recipe SET type = 'partial mash' WHERE lower(type) = 'partialmash'")},
-         {QString("     UPDATE recipe SET type = 'all grain'    WHERE lower(type) = 'all grain'   ")},
-         {QString("     UPDATE recipe SET type = 'all grain'    WHERE lower(type) = 'allgrain'   ")},
+         {QString("UPDATE hop SET htype = 'aroma/bittering' WHERE lower(htype) = 'both'"     )},
+         {QString("UPDATE fermentable SET ftype = 'dry extract' WHERE lower(ftype) = 'dry extract'")},
+         {QString("UPDATE fermentable SET ftype = 'dry extract' WHERE lower(ftype) = 'dryextract'" )},
+         {QString("UPDATE fermentable SET ftype = 'other'       WHERE lower(ftype) = 'adjunct'"    )},
+         {QString("UPDATE misc SET mtype = 'water agent' WHERE lower(mtype) = 'water agent'")},
+         {QString("UPDATE misc SET mtype = 'water agent' WHERE lower(mtype) = 'wateragent'" )},
+         {QString("UPDATE yeast SET ytype = 'other'     WHERE lower(ytype) = 'wheat'    ")},
+         {QString("UPDATE yeast SET flocculation = 'very high' WHERE lower(flocculation) = 'very high'")},
+         {QString("UPDATE yeast SET flocculation = 'very high' WHERE lower(flocculation) = 'veryhigh'" )},
+         {QString("UPDATE style SET stype = 'beer'  WHERE lower(stype) = 'lager'")},
+         {QString("UPDATE style SET stype = 'beer'  WHERE lower(stype) = 'ale'  ")},
+         {QString("UPDATE style SET stype = 'beer'  WHERE lower(stype) = 'wheat'")},
+         {QString("UPDATE style SET stype = 'other' WHERE lower(stype) = 'mixed'")},
+         {QString("UPDATE mash_step SET mstype = 'sparge'         WHERE lower(mstype) = 'flysparge'  ")},
+         {QString("UPDATE mash_step SET mstype = 'sparge'         WHERE lower(mstype) = 'fly sparge'  ")},
+         {QString("UPDATE mash_step SET mstype = 'drain mash tun' WHERE lower(mstype) = 'batchsparge'")},
+         {QString("UPDATE mash_step SET mstype = 'drain mash tun' WHERE lower(mstype) = 'batch sparge'")},
+         {QString("UPDATE recipe SET type = 'partial mash' WHERE lower(type) = 'partial mash'")},
+         {QString("UPDATE recipe SET type = 'partial mash' WHERE lower(type) = 'partialmash'")},
+         {QString("UPDATE recipe SET type = 'all grain'    WHERE lower(type) = 'all grain'   ")},
+         {QString("UPDATE recipe SET type = 'all grain'    WHERE lower(type) = 'allgrain'   ")},
       };
       return executeSqlQueries(q, migrationQueries);
    }
@@ -2580,6 +2580,167 @@ namespace {
       return executeSqlQueries(q, migrationQueries);
    }
 
+   /**
+    * \brief New Inventory tables and columns, plus some tidy up.
+    */
+   bool migrate_to_19([[maybe_unused]] Database & db, BtSqlQuery & q) {
+      QVector<QueryAndParameters> migrationQueries{
+         //
+         // Add name column to brewnotes table for consistency with other NamedEntity subclasses
+         //
+         {QString("ALTER TABLE brewnote ADD COLUMN name %1").arg(db.getDbNativeTypeName<QString>())},
+         //
+         // For consistency with RecipeAdditionHop, etc, we now use IngredientAmount in RecipeUseOfWater, which means
+         // we need consistent property names and column names in the DB layer.
+         //
+         {QString("ALTER TABLE water_in_recipe RENAME COLUMN volume_l TO quantity")},
+         {QString("ALTER TABLE water_in_recipe ADD COLUMN unit %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("UPDATE      water_in_recipe SET unit = 'liters'")},
+         //
+         // Inventory tables become Stock Purchase tables
+         //
+         {QString("ALTER TABLE fermentable_in_inventory RENAME TO fermentable_stock_purchase")},
+         {QString("ALTER TABLE         hop_in_inventory RENAME TO         hop_stock_purchase")},
+         {QString("ALTER TABLE        misc_in_inventory RENAME TO        misc_stock_purchase")},
+         {QString("ALTER TABLE        salt_in_inventory RENAME TO        salt_stock_purchase")},
+         {QString("ALTER TABLE       yeast_in_inventory RENAME TO       yeast_stock_purchase")},
+         //
+         // Add new columns to inventory tables -- first the ones that are the same for all
+         //
+         {QString("ALTER TABLE fermentable_stock_purchase ADD COLUMN name %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE         hop_stock_purchase ADD COLUMN name %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE        misc_stock_purchase ADD COLUMN name %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE        salt_stock_purchase ADD COLUMN name %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE       yeast_stock_purchase ADD COLUMN name %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable_stock_purchase ADD COLUMN deleted %1").arg(db.getDbNativeTypeName<bool>())},
+         {QString("ALTER TABLE         hop_stock_purchase ADD COLUMN deleted %1").arg(db.getDbNativeTypeName<bool>())},
+         {QString("ALTER TABLE        misc_stock_purchase ADD COLUMN deleted %1").arg(db.getDbNativeTypeName<bool>())},
+         {QString("ALTER TABLE        salt_stock_purchase ADD COLUMN deleted %1").arg(db.getDbNativeTypeName<bool>())},
+         {QString("ALTER TABLE       yeast_stock_purchase ADD COLUMN deleted %1").arg(db.getDbNativeTypeName<bool>())},
+         {QString("ALTER TABLE fermentable_stock_purchase ADD COLUMN quantity_ordered %1").arg(db.getDbNativeTypeName<double>())},
+         {QString("ALTER TABLE         hop_stock_purchase ADD COLUMN quantity_ordered %1").arg(db.getDbNativeTypeName<double>())},
+         {QString("ALTER TABLE        misc_stock_purchase ADD COLUMN quantity_ordered %1").arg(db.getDbNativeTypeName<double>())},
+         {QString("ALTER TABLE        salt_stock_purchase ADD COLUMN quantity_ordered %1").arg(db.getDbNativeTypeName<double>())},
+         {QString("ALTER TABLE       yeast_stock_purchase ADD COLUMN quantity_ordered %1").arg(db.getDbNativeTypeName<double>())},
+         {QString("ALTER TABLE fermentable_stock_purchase ADD COLUMN date_received %1").arg(db.getDbNativeTypeName<QDate>())},
+         {QString("ALTER TABLE         hop_stock_purchase ADD COLUMN date_received %1").arg(db.getDbNativeTypeName<QDate>())},
+         {QString("ALTER TABLE        misc_stock_purchase ADD COLUMN date_received %1").arg(db.getDbNativeTypeName<QDate>())},
+         {QString("ALTER TABLE        salt_stock_purchase ADD COLUMN date_received %1").arg(db.getDbNativeTypeName<QDate>())},
+         {QString("ALTER TABLE       yeast_stock_purchase ADD COLUMN date_received %1").arg(db.getDbNativeTypeName<QDate>())},
+         {QString("ALTER TABLE fermentable_stock_purchase ADD COLUMN date_ordered %1").arg(db.getDbNativeTypeName<QDate>())},
+         {QString("ALTER TABLE         hop_stock_purchase ADD COLUMN date_ordered %1").arg(db.getDbNativeTypeName<QDate>())},
+         {QString("ALTER TABLE        misc_stock_purchase ADD COLUMN date_ordered %1").arg(db.getDbNativeTypeName<QDate>())},
+         {QString("ALTER TABLE        salt_stock_purchase ADD COLUMN date_ordered %1").arg(db.getDbNativeTypeName<QDate>())},
+         {QString("ALTER TABLE       yeast_stock_purchase ADD COLUMN date_ordered %1").arg(db.getDbNativeTypeName<QDate>())},
+         {QString("ALTER TABLE fermentable_stock_purchase ADD COLUMN date_best_before %1").arg(db.getDbNativeTypeName<QDate>())},
+         {QString("ALTER TABLE         hop_stock_purchase ADD COLUMN date_best_before %1").arg(db.getDbNativeTypeName<QDate>())},
+         {QString("ALTER TABLE        misc_stock_purchase ADD COLUMN date_best_before %1").arg(db.getDbNativeTypeName<QDate>())},
+         {QString("ALTER TABLE        salt_stock_purchase ADD COLUMN date_best_before %1").arg(db.getDbNativeTypeName<QDate>())},
+         {QString("ALTER TABLE       yeast_stock_purchase ADD COLUMN date_best_before %1").arg(db.getDbNativeTypeName<QDate>())},
+         {QString("ALTER TABLE fermentable_stock_purchase ADD COLUMN supplier %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE         hop_stock_purchase ADD COLUMN supplier %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE        misc_stock_purchase ADD COLUMN supplier %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE        salt_stock_purchase ADD COLUMN supplier %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE       yeast_stock_purchase ADD COLUMN supplier %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable_stock_purchase ADD COLUMN note %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE         hop_stock_purchase ADD COLUMN note %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE        misc_stock_purchase ADD COLUMN note %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE        salt_stock_purchase ADD COLUMN note %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE       yeast_stock_purchase ADD COLUMN note %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable_stock_purchase ADD COLUMN purchase_price_currency %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE         hop_stock_purchase ADD COLUMN purchase_price_currency %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE        misc_stock_purchase ADD COLUMN purchase_price_currency %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE        salt_stock_purchase ADD COLUMN purchase_price_currency %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE       yeast_stock_purchase ADD COLUMN purchase_price_currency %1").arg(db.getDbNativeTypeName<QString>())},
+         // See comments in CurrencyAmount for why we use int here (it's m_totalAsCents).  So $1.23 will be stored as 123.
+         {QString("ALTER TABLE fermentable_stock_purchase ADD COLUMN purchase_price %1").arg(db.getDbNativeTypeName<int>())},
+         {QString("ALTER TABLE         hop_stock_purchase ADD COLUMN purchase_price %1").arg(db.getDbNativeTypeName<int>())},
+         {QString("ALTER TABLE        misc_stock_purchase ADD COLUMN purchase_price %1").arg(db.getDbNativeTypeName<int>())},
+         {QString("ALTER TABLE        salt_stock_purchase ADD COLUMN purchase_price %1").arg(db.getDbNativeTypeName<int>())},
+         {QString("ALTER TABLE       yeast_stock_purchase ADD COLUMN purchase_price %1").arg(db.getDbNativeTypeName<int>())},
+         {QString("ALTER TABLE fermentable_stock_purchase ADD COLUMN purchase_tax_currency %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE         hop_stock_purchase ADD COLUMN purchase_tax_currency %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE        misc_stock_purchase ADD COLUMN purchase_tax_currency %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE        salt_stock_purchase ADD COLUMN purchase_tax_currency %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE       yeast_stock_purchase ADD COLUMN purchase_tax_currency %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable_stock_purchase ADD COLUMN purchase_tax %1").arg(db.getDbNativeTypeName<int>())},
+         {QString("ALTER TABLE         hop_stock_purchase ADD COLUMN purchase_tax %1").arg(db.getDbNativeTypeName<int>())},
+         {QString("ALTER TABLE        misc_stock_purchase ADD COLUMN purchase_tax %1").arg(db.getDbNativeTypeName<int>())},
+         {QString("ALTER TABLE        salt_stock_purchase ADD COLUMN purchase_tax %1").arg(db.getDbNativeTypeName<int>())},
+         {QString("ALTER TABLE       yeast_stock_purchase ADD COLUMN purchase_tax %1").arg(db.getDbNativeTypeName<int>())},
+         {QString("ALTER TABLE fermentable_stock_purchase ADD COLUMN shipping_cost_currency %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE         hop_stock_purchase ADD COLUMN shipping_cost_currency %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE        misc_stock_purchase ADD COLUMN shipping_cost_currency %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE        salt_stock_purchase ADD COLUMN shipping_cost_currency %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE       yeast_stock_purchase ADD COLUMN shipping_cost_currency %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE fermentable_stock_purchase ADD COLUMN shipping_cost %1").arg(db.getDbNativeTypeName<int>())},
+         {QString("ALTER TABLE         hop_stock_purchase ADD COLUMN shipping_cost %1").arg(db.getDbNativeTypeName<int>())},
+         {QString("ALTER TABLE        misc_stock_purchase ADD COLUMN shipping_cost %1").arg(db.getDbNativeTypeName<int>())},
+         {QString("ALTER TABLE        salt_stock_purchase ADD COLUMN shipping_cost %1").arg(db.getDbNativeTypeName<int>())},
+         {QString("ALTER TABLE       yeast_stock_purchase ADD COLUMN shipping_cost %1").arg(db.getDbNativeTypeName<int>())},
+         //
+         // Now add the ingredient-specific columns.  (See comments in InventoryHop and Hop for why year is a string.)
+         //
+         {QString("ALTER TABLE         hop_stock_purchase ADD COLUMN alpha_pct %1").arg(db.getDbNativeTypeName<double >())},
+         {QString("ALTER TABLE         hop_stock_purchase ADD COLUMN form      %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE         hop_stock_purchase ADD COLUMN year      %1").arg(db.getDbNativeTypeName<QString>())},
+
+         //
+         // Old inventory entries are retained as legacy stock purchases, but they won't have values in the new columns.
+         // It's helpful to identify such old rows.  It's not ideal putting the text in hard-coded English here, but at
+         // least the user can edit it.
+         //
+         {QString("UPDATE fermentable_stock_purchase SET supplier = 'Migrated inventory entry', date_received = ?"), {QVariant{QDate::currentDate()}}},
+         {QString("UPDATE         hop_stock_purchase SET supplier = 'Migrated inventory entry', date_received = ?"), {QVariant{QDate::currentDate()}}},
+         {QString("UPDATE        misc_stock_purchase SET supplier = 'Migrated inventory entry', date_received = ?"), {QVariant{QDate::currentDate()}}},
+         {QString("UPDATE        salt_stock_purchase SET supplier = 'Migrated inventory entry', date_received = ?"), {QVariant{QDate::currentDate()}}},
+         {QString("UPDATE       yeast_stock_purchase SET supplier = 'Migrated inventory entry', date_received = ?"), {QVariant{QDate::currentDate()}}},
+
+         //
+         // Now we added the deleted column we want to start existing data out as undeleted.  However, a lot of
+         // existing data will be zero, so there's no point showing that.
+         //
+         // (We added the "name" column too, but, for now at least, we'll ignore it.  It's only there for consistency
+         // since Inventory inherits from NamedEntity.)
+         //
+         {QString("UPDATE fermentable_stock_purchase SET deleted = (quantity <= 0)")},
+         {QString("UPDATE         hop_stock_purchase SET deleted = (quantity <= 0)")},
+         {QString("UPDATE        misc_stock_purchase SET deleted = (quantity <= 0)")},
+         {QString("UPDATE        salt_stock_purchase SET deleted = (quantity <= 0)")},
+         {QString("UPDATE       yeast_stock_purchase SET deleted = (quantity <= 0)")},
+
+      };
+      //
+      // Add new tables for stock uses
+      //
+      for (char const * baseName : {"fermentable", "hop", "misc", "salt", "yeast"}) {
+         QString createNewTableSql;
+         QTextStream createNewTableSqlStream(&createNewTableSql);
+         createNewTableSqlStream <<
+            "CREATE TABLE " << baseName << "_stock_use ("
+               "id"                       " " << db.getDbNativePrimaryKeyDeclaration() << ", " <<
+               "name"                     " " << db.getDbNativeTypeName<QString>()     << ", " <<
+               "deleted"                  " " << db.getDbNativeTypeName<bool>()        << ", " <<
+               baseName << "_purchase_id" " " << db.getDbNativeTypeName<int>()         << ", " <<
+               "sequence_number"          " " << db.getDbNativeTypeName<int>()         << ", " <<
+               "date"                     " " << db.getDbNativeTypeName<QDate>()       << ", " <<
+               "reason"                   " " << db.getDbNativeTypeName<QString>()     << ", " <<
+               "comment"                  " " << db.getDbNativeTypeName<QString>()     << ", " <<
+               "quantity_used"            " " << db.getDbNativeTypeName<double>()      << ", " <<
+               "brewnote_id"              " " << db.getDbNativeTypeName<int>()         << ", " <<
+               "FOREIGN KEY(" << baseName << "_purchase_id) REFERENCES " << baseName << "_stock_purchase(id), "
+               "FOREIGN KEY(brewnote_id) REFERENCES brewnote(id) "
+            ");";
+         migrationQueries.append({createNewTableSql});
+      }
+
+      return executeSqlQueries(q, migrationQueries);
+   }
+
+   //
+   // Next time - maybe fix remaining issues listed in ObjectStore legacyBadTypes
+   //
+
    /*!
     * \brief Migrate from version \c oldVersion to \c oldVersion+1
     */
@@ -2588,26 +2749,27 @@ namespace {
       BtSqlQuery sqlQuery(db);
       bool ret = true;
 
-      // NOTE: Add a new case when adding a new schema change.  It's a bit clunky, but, since there aren't hundreds of
-      //       database versions, I don't think it's worth trying to do something more elegant here.
+      // NOTE: Add a new case when adding a new schema change.  It's a bit clunky, but, since there aren't (yet!)
+      //       hundreds of database versions, I don't think it's worth trying to do something more elegant here.
       switch(oldVersion) {
          case  1: ret &= migrate_to_202(database, sqlQuery); break; // == '2.0.0'
          case  2: ret &= migrate_to_210(database, sqlQuery); break; // == '2.0.2'
-         case  3: ret &= migrate_to_4 (database, sqlQuery); break;  // == '2.1.0'
-         case  4: ret &= migrate_to_5 (database, sqlQuery); break;
-         case  5: ret &= migrate_to_6 (database, sqlQuery); break;
-         case  6: ret &= migrate_to_7 (database, sqlQuery); break;
-         case  7: ret &= migrate_to_8 (database, sqlQuery); break;
-         case  8: ret &= migrate_to_9 (database, sqlQuery); break;
-         case  9: ret &= migrate_to_10(database, sqlQuery); break;
-         case 10: ret &= migrate_to_11(database, sqlQuery); break;
-         case 11: ret &= migrate_to_12(database, sqlQuery); break;
-         case 12: ret &= migrate_to_13(database, sqlQuery); break;
-         case 13: ret &= migrate_to_14(database, sqlQuery); break;
-         case 14: ret &= migrate_to_15(database, sqlQuery); break;
-         case 15: ret &= migrate_to_16(database, sqlQuery); break;
-         case 16: ret &= migrate_to_17(database, sqlQuery); break;
-         case 17: ret &= migrate_to_18(database, sqlQuery); break;
+         case  3: ret &= migrate_to_4  (database, sqlQuery); break; // == '2.1.0'
+         case  4: ret &= migrate_to_5  (database, sqlQuery); break;
+         case  5: ret &= migrate_to_6  (database, sqlQuery); break;
+         case  6: ret &= migrate_to_7  (database, sqlQuery); break;
+         case  7: ret &= migrate_to_8  (database, sqlQuery); break;
+         case  8: ret &= migrate_to_9  (database, sqlQuery); break;
+         case  9: ret &= migrate_to_10 (database, sqlQuery); break;
+         case 10: ret &= migrate_to_11 (database, sqlQuery); break;
+         case 11: ret &= migrate_to_12 (database, sqlQuery); break;
+         case 12: ret &= migrate_to_13 (database, sqlQuery); break;
+         case 13: ret &= migrate_to_14 (database, sqlQuery); break;
+         case 14: ret &= migrate_to_15 (database, sqlQuery); break;
+         case 15: ret &= migrate_to_16 (database, sqlQuery); break;
+         case 16: ret &= migrate_to_17 (database, sqlQuery); break;
+         case 17: ret &= migrate_to_18 (database, sqlQuery); break;
+         case 18: ret &= migrate_to_19 (database, sqlQuery); break;
          default:
             qCritical() << QString("Unknown version %1").arg(oldVersion);
             return false;

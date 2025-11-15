@@ -39,10 +39,6 @@
 #include "model/FermentationStep.h"
 #include "model/Hop.h"
 #include "model/Instruction.h"
-#include "model/InventoryFermentable.h"
-#include "model/InventoryHop.h"
-#include "model/InventoryMisc.h"
-#include "model/InventoryYeast.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "model/Misc.h"
@@ -118,7 +114,7 @@ QString NamedEntity::localisedName() { return tr("Named Entity"); }
 QString NamedEntity::localisedName_deleted         () { return tr("Deleted"   ); }
 QString NamedEntity::localisedName_key             () { return tr("Key"       ); }
 QString NamedEntity::localisedName_name            () { return tr("Name"      ); }
-QString NamedEntity::localisedName_numRecipesUsedIn() { return tr("No Recipes"); }
+QString NamedEntity::localisedName_numRecipesUsedIn() { return tr("N° Recipes"); }
 QString NamedEntity::localisedName_subsidiary      () { return tr("Subsidiary"); }
 
 NamedEntity::NamedEntity(QString t_name) :
@@ -425,12 +421,12 @@ void NamedEntity::prepareForPropertyChange(BtStringConst const & propertyName) {
 
 void NamedEntity::propagatePropertyChange(BtStringConst const & propertyName, bool notify) const {
    //
-   // Normally leave this log statement commented out as otherwise it can generate a lot of lines in the log files
+   // Normally leave this log statement commented out as otherwise it generates a lot of lines in the log files
    //
 //   qDebug() <<
-//      Q_FUNC_INFO << "Property name" << *propertyName << "change on" << this->metaObject()->className() <<
-//      ": m_propagationAndSignalsEnabled " << (this->m_propagationAndSignalsEnabled ? "set" : "unset") << ", notify" <<
-//      (notify ? "on" : "off");
+//      Q_FUNC_INFO << "Property name" << *propertyName << "change on" << this->metaObject()->className() << "#" <<
+//      this->m_key << ": m_propagationAndSignalsEnabled " << (this->m_propagationAndSignalsEnabled ? "set" : "unset") <<
+//      ", notify" << (notify ? "on" : "off");
    if (!this->m_propagationAndSignalsEnabled) {
       return;
    }

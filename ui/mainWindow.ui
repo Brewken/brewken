@@ -2422,17 +2422,17 @@
   <customwidget>
    <class>MashStepsWidget</class>
    <extends>QWidget</extends>
-   <header>widgets/StepsWidget.h</header>
+   <header>widgets/EnumeratedItemsWidget.h</header>
   </customwidget>
   <customwidget>
    <class>BoilStepsWidget</class>
    <extends>QWidget</extends>
-   <header>widgets/StepsWidget.h</header>
+   <header>widgets/EnumeratedItemsWidget.h</header>
   </customwidget>
   <customwidget>
    <class>FermentationStepsWidget</class>
    <extends>QWidget</extends>
-   <header>widgets/StepsWidget.h</header>
+   <header>widgets/EnumeratedItemsWidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

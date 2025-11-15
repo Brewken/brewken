@@ -38,22 +38,6 @@
 #include "utils/EnumStringMapping.h"
 #include "utils/NoCopy.h"
 
-/**
- * \brief Each tree has one primary type of object that it stores.  However, some trees (eg Recipe, Mash) can hold
- *        secondary items (eg Recipe tree holds Recipes and BrewNotes owned by those Recipes).  It's useful to have a
- *        compile-time mapping from object type to show which class belongs in which tree.  The rule here is that things
- *        belong in their own tree (eg Equipment is in Equipment tree) unless there's a specialisation that says
- *        otherwise.
- *
- *        If a secondary item \c FooBar is omitted from this list, we'll get compile errors along the lines of `invalid
- *        use of incomplete type ‘struct TreeNodeTraits<FooBar, FooBar>’`.
- */
-template <class NE> struct TreeTypeDeducer                   { using TreeType = NE          ; };
-template<>          struct TreeTypeDeducer<BrewNote        > { using TreeType = Recipe      ; };
-template<>          struct TreeTypeDeducer<MashStep        > { using TreeType = Mash        ; };
-template<>          struct TreeTypeDeducer<BoilStep        > { using TreeType = Boil        ; };
-template<>          struct TreeTypeDeducer<FermentationStep> { using TreeType = Fermentation; };
-
 class TreeModel;
 
 

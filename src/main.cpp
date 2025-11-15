@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * main.cpp is part of Brewken, and is copyright the following authors 2009-2024:
+ * main.cpp is part of Brewken, and is copyright the following authors 2009-2025:
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
@@ -57,7 +57,7 @@ namespace {
          exit(1);
       }
       Database::instance().unload();
-      PersistentSettings::insert(PersistentSettings::Names::converted, QDate().currentDate().toString());
+      PersistentSettings::insert_ck(PersistentSettings::Names::converted, QDate().currentDate().toString());
       exit(0);
    }
 
