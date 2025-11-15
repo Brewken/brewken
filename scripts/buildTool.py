@@ -856,7 +856,7 @@ def doPackage():
          # This is because we typically release two versions of the Linux packages -- one built on the last Ubuntu LTS
          # release, and one built on the previous one.
          #
-         distroInfo = getLinuxDistroInfo()
+         distroInfo = btUtils.getLinuxDistroInfo()
          if ('Ubuntu' == distroInfo["name"]):
             #
             # We want to rename, eg "brewtarget-4.2.1-1_amd64.deb" to "brewtarget-4.2.1_22-1_amd64.deb" or

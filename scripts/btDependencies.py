@@ -70,7 +70,7 @@ def installDependencies():
          # NOTE: For the moment at least, we are assuming you are on Ubuntu or another Debian-based Linux.  For other
          # flavours of the OS you need to install libraries and frameworks manually.
          #
-         distroInfo = getLinuxDistroInfo()
+         distroInfo = btUtils.getLinuxDistroInfo()
          distroName = distroInfo["name"]
          distroRelease = distroInfo["release"]
          log.debug('Linux distro: ' + distroName + ', release: ' + distroRelease + ' (' + str(distroInfo["major"]) +
