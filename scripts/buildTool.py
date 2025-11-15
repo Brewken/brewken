@@ -50,7 +50,7 @@ from decimal import Decimal
 # Our own modules
 #-----------------------------------------------------------------------------------------------------------------------
 import btUtils
-import btInstallDependencies
+import btDependencies
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Global constants
