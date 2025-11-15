@@ -323,67 +323,6 @@ def copyWithoutCommentsOrFolds(inputPath, outputPath):
    return
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Helper function to get Linux distro name and release number
-#
-# Returns a dictionary with:
-#   "name" set to distro name (string)
-#   "release" set to the release number (string)
-#   "major" set to release major number (int)
-#   "minor" set to release minor number (int)
-#
-# Example outputs:
-#                     Ubuntu                 Debian
-#                     ======                 ======
-#       name:         "Ubuntu"               "Debian"
-#       release:      "24.04"                "12"
-#       major:        24                     12
-#       minor:        4                      0
-#
-#-----------------------------------------------------------------------------------------------------------------------
-def getLinuxDistroInfo():
-   # See comment above about why it's OK to call logging.getLogger() more than once
-   log = logging.getLogger(__name__)
-
-   distroInfo = {
-      "name": "Unknown",
-      "release": "",
-      "major":   "",
-      "minor":   ""
-   }
-
-   #
-   # We run lsb_release -a to give full output for logging.  But we then run again just to output the parameters we
-   # want (which seems less work and more reliable than parsing the full output with regular expressions).
-   #
-   # It is not a fatal error if we cannot run lsb_release.  (Caller has to decide what to do if we couldn't determine
-   # release info.)  So, we deliberately don't use btUtils.abortOnRunFail here.
-   #
-   lsbResult = subprocess.run(['lsb_release', '-a'], capture_output=True)
-   if (lsbResult.returncode != 0):
-      log.info('Ignoring error running lsb_release -a: ' + lsbResult.stderr.decode('UTF-8'))
-   else:
-      lsbOutput = lsbResult.stdout.decode('UTF-8').rstrip()
-      log.info('Output from running lsb_release -a: ' + lsbOutput)
-      #
-      # We assume that if `lsb_release -a` ran OK then the other invocations below will too
-      #
-      distroInfo["name"] = str(
-         subprocess.run(['lsb_release', '-is'], encoding = "utf-8", capture_output = True).stdout
-      ).rstrip()
-      distroInfo["release"] = str(
-         subprocess.run(['lsb_release', '-rs'], encoding = "utf-8", capture_output = True).stdout
-      ).rstrip()
-
-      #
-      # Now split release into major and minor
-      #
-      parsedRelease = packaging.version.parse(distroInfo["release"])
-      distroInfo["major"] = parsedRelease.major
-      distroInfo["minor"] = parsedRelease.minor
-
-   return distroInfo
-
-#-----------------------------------------------------------------------------------------------------------------------
 # Create fileToDistribute.sha256sum for a given fileToDistribute in a given directory
 #-----------------------------------------------------------------------------------------------------------------------
 def writeSha256sum(directory, fileToDistribute):
