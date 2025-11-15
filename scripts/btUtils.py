@@ -25,6 +25,7 @@ import logging
 import os
 import pathlib
 import subprocess
+import packaging.version
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Helper function to return the 'base' directory (ie the one above the directory in which this file lives).
