@@ -618,8 +618,8 @@ def installDependencies():
          shutil.unpack_archive('Locate.zip', 'Locate')
          downloadFile('https://nsis.sourceforge.io/mediawiki/images/7/76/Nsislog.zip')
          shutil.unpack_archive('Nsislog.zip', 'Nsislog')
-         copyFilesToDir(['Locate/Include/Locate.nsh'], '/mingw32/share/nsis/Include/')
-         copyFilesToDir(['Locate/Plugin/locate.dll',
+         btFileSystem.copyFilesToDir(['Locate/Include/Locate.nsh'], '/mingw32/share/nsis/Include/')
+         btFileSystem.copyFilesToDir(['Locate/Plugin/locate.dll',
                          'Nsislog/plugin/nsislog.dll'],'/mingw32/share/nsis/Plugins/ansi/')
          os.chdir(previousWorkingDirectory)
          shutil.rmtree(tmpDirName, ignore_errors=False)

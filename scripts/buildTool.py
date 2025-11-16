@@ -285,7 +285,7 @@ def doSetup(setupOption):
       log.info('Setting up ' + btFileSystem.dir_build.as_posix() + ' meson build directory')
       # See https://mesonbuild.com/Commands.html#setup for all the optional parameters to meson setup
       # Note that meson setup will create the build directory (along with various subdirectories)
-      btExecute.abortOnRunFail(subprocess.run([exe_meson, "setup", btFileSystem.dir_build.as_posix(), btFileSystem.dir_base.as_posix()],
+      btExecute.abortOnRunFail(subprocess.run([btUtils.exe_meson, "setup", btFileSystem.dir_build.as_posix(), btFileSystem.dir_base.as_posix()],
                                             capture_output=False))
 
       log.info('Finished setting up Meson build.  Note that the warnings above about path separator and optimization ' +
@@ -421,11 +421,11 @@ def doPackage():
    log.info('Creating source tarball')
    if (mesonVersion >= packaging.version.parse('0.62.0')):
       btExecute.abortOnRunFail(
-         subprocess.run([exe_meson, 'dist', '--no-tests', '--allow-dirty'], capture_output=False)
+         subprocess.run([btUtils.exe_meson, 'dist', '--no-tests', '--allow-dirty'], capture_output=False)
       )
    else:
       btExecute.abortOnRunFail(
-         subprocess.run([exe_meson, 'dist', '--no-tests'], capture_output=False)
+         subprocess.run([btUtils.exe_meson, 'dist', '--no-tests'], capture_output=False)
       )
 
    #
@@ -469,7 +469,7 @@ def doPackage():
    #
    log.info('Running meson install with --destdir option')
    # See https://mesonbuild.com/Commands.html#install for the optional parameters to meson install
-   btExecute.abortOnRunFail(subprocess.run([exe_meson, 'install', '--destdir', btFileSystem.dir_packages_platform.as_posix()],
+   btExecute.abortOnRunFail(subprocess.run([btUtils.exe_meson, 'install', '--destdir', btFileSystem.dir_packages_platform.as_posix()],
                                  capture_output=False))
 
    #
