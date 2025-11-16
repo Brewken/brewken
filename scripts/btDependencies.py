@@ -27,6 +27,7 @@ import packaging.version
 import pathlib
 import platform
 import re
+import requests
 import shutil
 import subprocess
 import tempfile
@@ -983,7 +984,7 @@ def installDependencies():
                subprocess.run(['brew', '--prefix', 'qt@6'], capture_output=True)
             ).stdout.decode('UTF-8').rstrip()
 
-            qmakePath = findFirstMatchingFile('qmake', qtBaseDir)
+            qmakePath = btFileSystem.findFirstMatchingFile('qmake', qtBaseDir)
             if ('' == qmakePath):
                log.error('Unable to write to find qmake under ' + qtBaseDir)
             else:
@@ -1019,7 +1020,7 @@ def installDependencies():
             # were found in /opt/local/libexec/qt5/bin/, then we'd want to run
             # `ln -s /opt/local/libexec/qt5/bin/qmake /opt/local/bin/qmake`.
             #
-            qmakePath = findFirstMatchingFile('qmake', '/opt')
+            qmakePath = btFileSystem.findFirstMatchingFile('qmake', '/opt')
             if ('' == qmakePath):
                log.error('Unable to write to find qmake under /opt')
             else:

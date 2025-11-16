@@ -48,7 +48,6 @@ import stat
 import subprocess
 import sys
 import packaging.version
-import requests
 import tomlkit
 
 #-----------------------------------------------------------------------------------------------------------------------
