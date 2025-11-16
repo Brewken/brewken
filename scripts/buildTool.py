@@ -36,7 +36,6 @@ import btInitVenv
 #-----------------------------------------------------------------------------------------------------------------------
 import argparse
 import datetime
-import getpass
 import glob
 import logging
 import os

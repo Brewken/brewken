@@ -22,6 +22,7 @@
 # Python built-in modules we use
 #-----------------------------------------------------------------------------------------------------------------------
 from decimal import Decimal
+import getpass
 import os
 import packaging.version
 import pathlib
