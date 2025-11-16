@@ -27,6 +27,7 @@ import packaging.version
 import pathlib
 import platform
 import re
+import shutil
 import subprocess
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -128,7 +129,7 @@ def installDependencies():
             'libglx-dev',
             'libgl1-mesa-dev',
             #
-            'libqt6gui6t64', # Qt GUI module -- needed for QColor (per https://doc.qt.io/qt-6.2/qtgui-module.html)
+            'libqt6gui6', # Qt GUI module -- needed for QColor (per https://doc.qt.io/qt-6.2/qtgui-module.html)
             'libqt6sql6-psql',
             'libqt6sql6-sqlite',
             'libqt6svg6',
