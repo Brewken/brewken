@@ -38,21 +38,6 @@ import btFileSystem
 log = btLogger.getLogger()
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Helper function for downloading a file
-#-----------------------------------------------------------------------------------------------------------------------
-def downloadFile(url):
-   filename = url.split('/')[-1]
-   log.info('Downloading ' + url + ' to ' + filename + ' in directory ' + pathlib.Path.cwd().as_posix())
-   response = requests.get(url)
-   if (response.status_code != 200):
-      log.critical('Error code ' + str(response.status_code) + ' while downloading ' + url)
-      exit(1)
-   with open(filename, 'wb') as fd:
-      for chunk in response.iter_content(chunk_size = 128):
-         fd.write(chunk)
-   return
-
-#-----------------------------------------------------------------------------------------------------------------------
 # Helper function for finding and copying extra libraries
 #
 # This is used in both the Windows and Mac packaging
