@@ -47,7 +47,6 @@ import shutil
 import stat
 import subprocess
 import sys
-import tempfile
 import packaging.version
 import requests
 import tomlkit

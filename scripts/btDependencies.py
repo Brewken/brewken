@@ -29,6 +29,7 @@ import platform
 import re
 import shutil
 import subprocess
+import tempfile
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Our own modules
@@ -479,6 +480,7 @@ def installDependencies():
 
          # Ensure pip is up-to-date.  This is what the error message tells you to run if it's not!
          log.info('Ensuring Python pip is up-to-date')
+         exe_python = shutil.which('python3')
          btExecute.abortOnRunFail(subprocess.run([exe_python, '-m', 'pip', 'install', '--upgrade', 'pip']))
 
          #
