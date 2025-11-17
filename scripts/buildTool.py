@@ -1205,7 +1205,7 @@ def doPackage():
             'libzstd'      , # ZStandard (aka zstd) = fast lossless compression algorithm
             'zlib'         , # ZLib compression library
          ]
-         findAndCopyLibs(pathsToSearch, extraLibs, 'dll', '-?[0-9]*.dll', dir_packages_win_bin)
+         btUtils.findAndCopyLibs(pathsToSearch, extraLibs, 'dll', '-?[0-9]*.dll', dir_packages_win_bin)
 
          # Copy the NSIS installer script to where it belongs
          shutil.copy2(btFileSystem.dir_build.joinpath('NsisInstallerScript.nsi'), btFileSystem.dir_packages_platform)
@@ -1791,7 +1791,7 @@ def doPackage():
          extraLibs = [
             'libdbus'  , # Eg libdbus-1.3.dylib
          ]
-         findAndCopyLibs(pathsToSearch, extraLibs, 'dylib', '.*.dylib', dir_packages_mac_bin)
+         btUtils.findAndCopyLibs(pathsToSearch, extraLibs, 'dylib', '.*.dylib', dir_packages_mac_bin)
 
          #
          # Before we try to run macdeployqt, we need to make sure its directory is in the PATH.  (Depending on how Qt
