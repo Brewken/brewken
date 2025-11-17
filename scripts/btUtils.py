@@ -25,6 +25,7 @@ import glob
 import logging
 import os
 import pathlib
+import re
 import shutil
 import subprocess
 import packaging.version
