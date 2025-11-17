@@ -418,7 +418,7 @@ def doPackage():
    # won't pick up other things that happen to be hanging around in the source etc directory trees.
    #
    log.info('Creating source tarball')
-   if (mesonVersion >= packaging.version.parse('0.62.0')):
+   if (btUtils.mesonVersion >= packaging.version.parse('0.62.0')):
       btExecute.abortOnRunFail(
          subprocess.run([btUtils.exe_meson, 'dist', '--no-tests', '--allow-dirty'], capture_output=False)
       )
