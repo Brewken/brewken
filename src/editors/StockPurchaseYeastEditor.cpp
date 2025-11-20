@@ -55,11 +55,11 @@ StockPurchaseYeastEditor::StockPurchaseYeastEditor(QWidget* parent, QString cons
       EDITOR_FIELD_COPQ(StockPurchaseYeast, label_amountType    , comboBox_amountType    , StockPurchaseBase::amountReceived, {lineEdit_amountReceived,
                                                                                                                                      lineEdit_amountOrdered},
                                                                                                                                     WhenToWriteField::Never),
-      EDITOR_FIELD_NORM(StockPurchaseYeast, label_amountRemaining, label_amountRemaining_value, StockPurchaseBase::amountRemaining, 1),
-      EDITOR_FIELD_NORM(StockPurchaseYeast, label_purchasePrice  , lineEdit_purchasePrice     , StockPurchase::purchasePrice ),
-      EDITOR_FIELD_NORM(StockPurchaseYeast, label_purchaseTax    , lineEdit_purchaseTax       , StockPurchase::purchaseTax   ),
-      EDITOR_FIELD_NORM(StockPurchaseYeast, label_shippingCost   , lineEdit_shippingCost      , StockPurchase::shippingCost  ),
-      EDITOR_FIELD_NORM(StockPurchaseYeast, label_dateBestBefore , dateEdit_dateBestBefore    , StockPurchase::dateBestBefore),
+      EDITOR_FIELD_NORM(StockPurchaseYeast, label_amountRemaining, display_amountRemaining, StockPurchaseBase::amountRemaining, 1),
+      EDITOR_FIELD_NORM(StockPurchaseYeast, label_purchasePrice  , lineEdit_purchasePrice , StockPurchase::purchasePrice ),
+      EDITOR_FIELD_NORM(StockPurchaseYeast, label_purchaseTax    , lineEdit_purchaseTax   , StockPurchase::purchaseTax   ),
+      EDITOR_FIELD_NORM(StockPurchaseYeast, label_shippingCost   , lineEdit_shippingCost  , StockPurchase::shippingCost  ),
+      EDITOR_FIELD_NORM(StockPurchaseYeast, label_dateBestBefore , dateEdit_dateBestBefore, StockPurchase::dateBestBefore),
    });
    return;
 }
