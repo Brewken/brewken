@@ -164,7 +164,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Boil Time</source>
+        <source>Time At Boiling</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2806,10 +2806,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Kettle Boil Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Kettle Evaporation Per Hour</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2920,6 +2916,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <message>
         <source>Top Up Water</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil Size</source>
+        <translation type="unfinished">Kochgröße</translation>
     </message>
 </context>
 <context>
@@ -3295,10 +3295,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>FineGrindYield</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Friability</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3316,10 +3312,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Hardness Proportion Mealy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ibu Gal Per Lb</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3380,6 +3372,14 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Fermentable Purchases</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yield (DBFG) %</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IBU Gal Per Lb</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3808,14 +3808,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Alpha Acid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Beta Acids</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>β-Pinene</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3897,6 +3889,14 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Hop Purchases</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>% Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>% Beta</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4205,6 +4205,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <message>
         <source>Total Inventory</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished">Mengenangabe</translation>
     </message>
 </context>
 <context>
@@ -4620,10 +4624,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Grain Temperature</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mash Tun Specific Heat</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4644,10 +4644,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Total Mash Water</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Tun Temperature</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4658,6 +4654,14 @@ If you need help, please open an issue at %1</source>
     <message>
         <source>Yes</source>
         <translation type="unfinished">Ja</translation>
+    </message>
+    <message>
+        <source>Initial Grain Temperature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash Water</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4762,12 +4766,12 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Liquor To Grist Ratio</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Type</source>
         <translation type="unfinished">Typ</translation>
+    </message>
+    <message>
+        <source>Water:Grain</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5178,15 +5182,7 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
-    </message>
-    <message>
-        <source>Path</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Full Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Name</translation>
     </message>
     <message>
         <source>%1 #%2</source>
@@ -5212,11 +5208,11 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished">Name</translation>
     </message>
     <message>
-        <source>No Recipes</source>
+        <source>Subsidiary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Subsidiary</source>
+        <source>N° Recipes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5450,6 +5446,10 @@ If you need help, please open an issue at %1</source>
     <message>
         <source>Recipe ID</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe</source>
+        <translation type="unfinished">Rezept</translation>
     </message>
 </context>
 <context>
@@ -7173,7 +7173,7 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <translation type="unfinished">Ja</translation>
     </message>
     <message>
-        <source>Number of Snapshots</source>
+        <source>Snapshots</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8083,10 +8083,6 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Percent Acid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>No</source>
         <translation type="unfinished">Nein</translation>
     </message>
@@ -8096,6 +8092,10 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Salt Purchases</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%% Acid</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8237,10 +8237,6 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
 <context>
     <name>StockPurchase</name>
     <message>
-        <source>StockPurchase</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Date Ordered</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8274,6 +8270,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Ingredient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stock Purchase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Note</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8330,20 +8334,8 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
 <context>
     <name>StockUse</name>
     <message>
-        <source>StockPurchase Change</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>BrewNote ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Date</source>
         <translation type="unfinished">Datum</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Owner ID</source>
@@ -8367,6 +8359,22 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Disposed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stock Use</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Note ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comment</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8449,11 +8457,11 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Number</source>
-        <translation type="obsolete">Nummer</translation>
+        <translation type="unfinished">Nummer</translation>
     </message>
     <message>
         <source>Letter</source>
-        <translation type="obsolete">Buchstabe</translation>
+        <translation type="unfinished">Buchstabe</translation>
     </message>
     <message>
         <source>Guide</source>
@@ -8493,10 +8501,6 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Min Carb</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Category Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8553,14 +8557,6 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Overall Impression</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Style Guide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Style Letter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10701,6 +10697,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <source>Total amount in inventory</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Add Purchase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a new stock purchase record for this fermentable</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -11224,6 +11228,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Total Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Purchase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a new stock purchase record for this hop</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12756,6 +12768,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <source>Total amount in inventory</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Add Purchase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a new stock purchase record for this ingredient</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>namedMashEditor</name>
@@ -13690,6 +13710,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <source>Total amount in inventory</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Add Purchase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a new stock purchase record for this salt</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>stockPurchaseFermentableEditor</name>
@@ -13846,6 +13874,10 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     <message>
         <source>Cancel</source>
         <translation type="unfinished">Abbruch</translation>
+    </message>
+    <message>
+        <source>Note</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -14020,6 +14052,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     <message>
         <source>Cancel</source>
         <translation type="unfinished">Abbruch</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe</source>
+        <translation type="unfinished">Rezept</translation>
     </message>
 </context>
 <context>
@@ -14857,6 +14897,14 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>Total Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Purchase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a new stock purchase record for this yeast</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
