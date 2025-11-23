@@ -8420,6 +8420,13 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
 </context>
 <context>
+    <name>StockPurchaseFermentable</name>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Kleur</translation>
+    </message>
+</context>
+<context>
     <name>StockPurchaseFermentableEditor</name>
     <message>
         <source>Fermentable Stock Purchase Editor</source>

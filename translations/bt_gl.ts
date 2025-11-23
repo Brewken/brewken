@@ -6945,6 +6945,13 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
+    <name>StockPurchaseFermentable</name>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Cor</translation>
+    </message>
+</context>
+<context>
     <name>StockPurchaseFermentableEditor</name>
     <message>
         <source>Fermentable Stock Purchase Editor</source>
