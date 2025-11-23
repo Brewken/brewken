@@ -2,6 +2,29 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="da_DK" sourcelanguage="de_DE">
 <context>
+    <name></name>
+    <message>
+        <source>Add %1 item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected %1 item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move selected %1 item up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move selected %1 item down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit selected %1 item</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AboutDialog</name>
     <message>
         <source>About Brewtarget</source>
@@ -122,7 +145,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Boil Time</source>
+        <source>Time At Boiling</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1025,6 +1048,1234 @@
     </message>
 </context>
 <context>
+    <name>CurrencyInfo</name>
+    <message>
+        <source>United Arab Emirates Dirham</source>
+        <extracomment>*</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dirham</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fils</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Afghan Afghani</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Afghani</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pul</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Albanian Lek</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lek</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Qindarka</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Armenian Dram</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dram</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Luma</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Angolan Kwanza</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kwanza</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Centimo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Argentine Peso</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peso</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Centavo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Australian Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aruban Florin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Florin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Azerbaijani Manat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Qapik</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bosnia-Herzegovina Convertible Mark</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fening</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Barbados Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bangladeshi Taka</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Taka</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Poisha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bulgarian Lev</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lev</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stotinka</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bahraini Dinar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dinar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Burundian Franc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Franc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Centime</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bermudian Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brunei Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bolivian Boliviano</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boliviano</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brazilian Real</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Real</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bahamian Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bhutanese Ngultrum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ngultrum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chetrum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Botswana Pula</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pula</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thebe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Belarusian Ruble</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ruble</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kapiejka</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Belize Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Canadian Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Congolese Franc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Swiss Franc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chilean Peso</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chinese Yuan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yuan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Colombian Peso</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Costa Rican Colón</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Colón</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cuban Peso</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cabo Verdean Escudo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Escudo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Czech Koruna</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Koruna</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Haléř</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Djiboutian Franc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Danish Krone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Krone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Øre</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dominican Peso</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Algerian Dinar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Santeem</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Egyptian Pound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Qirsh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Eritrean Nakfa</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nakfa</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ethiopian Birr</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Birr</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Santim</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Euro</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fiji Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Falkland Islands Pound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Penny</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pound Sterling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Georgian Lari</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lari</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tetri</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ghanaian Cedi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cedi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pesewa</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gibraltar Pound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gambian Dalasi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dalasi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Butut</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Guinean Franc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Guatemalan Quetzal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quetzal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Guyanese Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hong Kong Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Honduran Lempira</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lempira</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Haitian Gourde</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gourde</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hungarian Forint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>fillér</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Indonesian Rupiah</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rupiah</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Israeli Shekel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shekel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Agora</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Indian Rupee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rupee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paisa</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Iraqi Dinar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Iranian Rial</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rial</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Icelandic Krona</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Krona</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aurar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Jamaican Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Jordanian Dinar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Japanese Yen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kenyan Shilling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shilling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kyrgyzstani Som</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Som</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tyiyn</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cambodian Riel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Riel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comorian Franc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>North Korean Won</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Won</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>South Korean Won</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Jeon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kuwaiti Dinar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cayman Islands Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kazakhstani Tenge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tenge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tıyn</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lao Kip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Att</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lebanese Pound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sri Lankan Rupee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Liberian Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lesotho Loti</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loti</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sente</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Libyan Dinar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Moroccan Dirham</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Moldovan Leu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Leu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ban</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Malagasy Ariary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ariary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Iraimbilanja</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Macedonian Denar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Denar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deni</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Myanmar Kyat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kyat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pya</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mongolian Tögrög</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tögrög</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>möngö</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Macanese Pataca</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pataca</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Avo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mauritanian Ouguiya</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ouguiya</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Khoums</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mauritian Rupee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maldivian Rufiyaa</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rufiyaa</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>laari</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Malawian Kwacha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kwacha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tambala</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mexican Peso</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Malaysian Ringgit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ringgit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mozambican Metical</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Metical</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Namibian Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nigerian Naira</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Naira</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kobo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nicaraguan Córdoba</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Córdoba</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Norwegian Krone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>øre</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nepalese Rupee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Zealand Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Omani Rial</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Baisa</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Panamanian Balboa</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Balboa</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Centésimo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peruvian Sol</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sol</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Céntimo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Papua New Guinean Kina</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kina</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toea</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Philippine Peso</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sentimo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pakistani Rupee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Polish Zloty</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zloty</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Grosz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paraguayan Guaraní</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Guaraní</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Qatari Riyal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Riyal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Romanian Leu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Serbian Dinar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Para</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Russian Ruble</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kopek</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rwandan Franc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saudi Riyal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Halalah</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Solomon Islands Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Seychelles Rupee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sudanese Pound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Swedish Krona</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Öre</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Singapore Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saint Helena Pound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sierra Leonean New Leone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Leone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Somali Shilling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Senti</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Surinamese Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>South Sudanese Pound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sao Tome Dobra</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dobra</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Salvadoran Colón</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Syrian Pound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Swazi Lilangeni</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lilangeni</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thai Baht</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Baht</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Satang</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tajikistani Somoni</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Somoni</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Diram</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turkmenistan Manat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tunisian Dinar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Millime</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tongan Pa&apos;anga</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pa&apos;anga</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Seniti</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turkish Lira</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lira</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kuruş</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Trinidad and Tobago Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Taiwan Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tanzanian Shilling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ukrainian Hryvnia</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hryvnia</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kopiyka</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ugandan Shilling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>US Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Uruguayan Peso</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Uzbekistani Som</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tiyin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Venezuelan Bolívar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bolívar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vietnamese Dong</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dong</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hào</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vanuatu Vatu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vatu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Samoan Tala</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tala</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Central African CFA Franc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>East Caribbean Dollar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Caribbean Guilder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Guilder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>West African CFA Franc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CFP Franc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Currency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished">Ingen</translation>
+    </message>
+    <message>
+        <source>Yemeni Rial</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>South African Rand</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rand</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zambian Kwacha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ngwee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zimbabwe Gold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gold</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Database</name>
     <message>
         <source>Merge Database</source>
@@ -1273,7 +2524,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Addition of %1</source>
-        <translation type="unfinished">Tilsætning af %1</translation>
+        <translation type="obsolete">Tilsætning af %1</translation>
     </message>
     <message>
         <source>Invalid!</source>
@@ -1329,10 +2580,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Owner ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Step Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1393,6 +2640,29 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Amount Remaining</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Used</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number</source>
+        <translation type="unfinished">Tal</translation>
+    </message>
+    <message>
+        <source>Quantity Remaining</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Purchase</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Derived::StockUseClass</name>
+    <message>
+        <source>Use of %1 in %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1492,10 +2762,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Hop Utilization</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Kettle Boil Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1608,6 +2874,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Top Up Water</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil Size</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1876,10 +3146,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished">Gærbarhed</translation>
     </message>
     <message>
-        <source>FineGrindYield</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Friability</source>
         <translation type="unfinished">Sprødhed</translation>
     </message>
@@ -1897,10 +3163,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Hardness Proportion Mealy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ibu Gal Per Lb</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1960,7 +3222,15 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished">Viskositet</translation>
     </message>
     <message>
-        <source>InventoryFermentables</source>
+        <source>Fermentable Purchases</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yield (DBFG) %</source>
+        <translation type="unfinished">Udbytte af ekstrakt med fint kværnet malt (DBFG) %</translation>
+    </message>
+    <message>
+        <source>IBU Gal Per Lb</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2332,7 +3602,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>% Alpha</source>
-        <translation type="vanished">% alfa</translation>
+        <translation>% alfa</translation>
     </message>
     <message>
         <source>Origin</source>
@@ -2352,14 +3622,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Alpha Acid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Beta Acids</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2441,6 +3703,14 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <message>
         <source>Year</source>
         <translation type="unfinished">År</translation>
+    </message>
+    <message>
+        <source>Hop Purchases</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>% Beta</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2638,12 +3908,23 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Total Inventory</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>IngredientInRecipe</name>
     <message>
         <source>Ingredient In Recipe</source>
         <translation type="vanished">Ingrediens i opskrift</translation>
+    </message>
+</context>
+<context>
+    <name>IngredientName</name>
+    <message>
+        <source>Purchase of %1 </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2685,47 +3966,33 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>Inventory</name>
     <message>
         <source>Inventory</source>
-        <translation>Lager</translation>
-    </message>
-    <message>
-        <source>Date Ordered</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Date Received</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Best Before Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Lager</translation>
     </message>
     <message>
         <source>Supplier</source>
-        <translation type="unfinished">Forhandler</translation>
-    </message>
-    <message>
-        <source>Quantity Ordered</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Purchase Price</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Purchase Tax</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shipping Cost</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Quantity Remaining</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Forhandler</translation>
     </message>
     <message>
         <source>Ingredient</source>
-        <translation type="unfinished">Ingrediens</translation>
+        <translation type="obsolete">Ingrediens</translation>
+    </message>
+</context>
+<context>
+    <name>InventoryChange</name>
+    <message>
+        <source>Date</source>
+        <translation type="obsolete">Dato</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="obsolete">Beskrivelse</translation>
+    </message>
+</context>
+<context>
+    <name>InventoryHop</name>
+    <message>
+        <source>Year</source>
+        <translation type="obsolete">År</translation>
     </message>
 </context>
 <context>
@@ -3078,10 +4345,6 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Grain Temperature</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mash Tun Specific Heat</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3102,10 +4365,6 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Total Mash Water</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Tun Temperature</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3115,6 +4374,14 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Initial Grain Temperature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash Water</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3220,11 +4487,11 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Liquor To Grist Ratio</source>
+        <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Type</source>
+        <source>Water:Grain</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3472,6 +4739,10 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
         <source>Use For</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Misc Purchases</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MiscDialog</name>
@@ -3609,39 +4880,11 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add %1 step</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected %1 step</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Move selected %1 step up</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Move selected %1 step down</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit selected %1 step</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change %1 on %2 Recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Path</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Full Path</source>
+        <source>%1 #%2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3664,11 +4907,11 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>No Recipes</source>
+        <source>Subsidiary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Subsidiary</source>
+        <source>N° Recipes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3940,6 +5183,10 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
         <source>Recipe ID</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Recipe</source>
+        <translation type="unfinished">Opskrift</translation>
+    </message>
 </context>
 <context>
     <name>Owner</name>
@@ -4104,7 +5351,7 @@ Error message:
     </message>
     <message>
         <source>Inventory</source>
-        <translation>Lager</translation>
+        <translation type="vanished">Lager</translation>
     </message>
     <message>
         <source>Name</source>
@@ -4120,7 +5367,7 @@ Error message:
     </message>
     <message>
         <source>No inventory available.</source>
-        <translation>Ingen lagerbeholdning.</translation>
+        <translation type="vanished">Ingen lagerbeholdning.</translation>
     </message>
     <message>
         <source>Detailed (for debugging)</source>
@@ -4869,10 +6116,6 @@ Logfil indeholder evt. flere detaljer.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add step to %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mosher&apos;s approximation</source>
         <translation type="unfinished">Mosher&apos;s approksimation</translation>
     </message>
@@ -4954,6 +6197,34 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>Did not recognise file extension on &quot;%1&quot; so nothing read.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Salts</source>
+        <translation type="unfinished">Salte</translation>
+    </message>
+    <message>
+        <source>Yeasts</source>
+        <translation type="unfinished">Gær</translation>
+    </message>
+    <message>
+        <source>Enter filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 to %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No stock available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>StockPurchase</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5256,7 +6527,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Snapshots</source>
-        <translation type="vanished">Oversigter</translation>
+        <translation>Oversigter</translation>
     </message>
     <message>
         <source>Brew Date</source>
@@ -5520,10 +6791,6 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Number of Snapshots</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6470,15 +7737,19 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Percent Acid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>No</source>
         <translation type="unfinished">Nej</translation>
     </message>
     <message>
         <source>Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Salt Purchases</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%% Acid</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6603,6 +7874,189 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
+    <name>StockPurchase</name>
+    <message>
+        <source>Date Ordered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Received</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Best Before Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Supplier</source>
+        <translation type="unfinished">Forhandler</translation>
+    </message>
+    <message>
+        <source>Quantity Ordered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Purchase Price</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Purchase Tax</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shipping Cost</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ingredient</source>
+        <translation type="unfinished">Ingrediens</translation>
+    </message>
+    <message>
+        <source>Stock Purchase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StockPurchaseFermentableEditor</name>
+    <message>
+        <source>Fermentable Stock Purchase Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StockPurchaseHop</name>
+    <message>
+        <source>Alpha Acid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Year</source>
+        <translation type="unfinished">År</translation>
+    </message>
+</context>
+<context>
+    <name>StockPurchaseHopEditor</name>
+    <message>
+        <source>Hop Stock Purchase Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StockPurchaseMiscEditor</name>
+    <message>
+        <source>Misc Stock Purchase Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StockPurchaseSaltEditor</name>
+    <message>
+        <source>Salt Stock Purchase Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StockPurchaseYeastEditor</name>
+    <message>
+        <source>Yeast Stock Purchase Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StockUse</name>
+    <message>
+        <source>Date</source>
+        <translation type="unfinished">Dato</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="obsolete">Beskrivelse</translation>
+    </message>
+    <message>
+        <source>Owner ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quantity Used</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reason</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Used</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lost</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disposed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stock Use</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Note</source>
+        <translation type="unfinished">Brygnotat</translation>
+    </message>
+    <message>
+        <source>Brew Note ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StockUseFermentableEditor</name>
+    <message>
+        <source>%1 Stock Use Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StockUseHopEditor</name>
+    <message>
+        <source>%1 Stock Use Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StockUseMiscEditor</name>
+    <message>
+        <source>%1 Stock Use Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StockUseSaltEditor</name>
+    <message>
+        <source>%1 Stock Use Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StockUseYeastEditor</name>
+    <message>
+        <source>%1 Stock Use Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Style</name>
     <message>
         <source>Style</source>
@@ -6646,11 +8100,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Number</source>
-        <translation type="vanished">Tal</translation>
+        <translation>Tal</translation>
     </message>
     <message>
         <source>Letter</source>
-        <translation type="vanished">Bogstav</translation>
+        <translation>Bogstav</translation>
     </message>
     <message>
         <source>Guide</source>
@@ -6694,7 +8148,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Category Number</source>
-        <translation type="unfinished">Kategorinummer</translation>
+        <translation type="obsolete">Kategorinummer</translation>
     </message>
     <message>
         <source>Max Color</source>
@@ -6754,11 +8208,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Style Guide</source>
-        <translation type="unfinished">Stilart guide</translation>
+        <translation type="obsolete">Stilart guide</translation>
     </message>
     <message>
         <source>Style Letter</source>
-        <translation type="unfinished">Stilart bogstav</translation>
+        <translation type="obsolete">Stilart bogstav</translation>
     </message>
     <message>
         <source>Type String</source>
@@ -7662,6 +9116,10 @@ The final volume in the primary is %1.</source>
         <source>Yes</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Yeast Purchases</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>YeastTableModel</name>
@@ -8498,11 +9956,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Amount in Inventory</source>
-        <translation>Mængde på lager</translation>
+        <translation type="vanished">Mængde på lager</translation>
     </message>
     <message>
         <source>Amount in inventory</source>
-        <translation>Mængde på lager</translation>
+        <translation type="vanished">Mængde på lager</translation>
     </message>
     <message>
         <source>Color</source>
@@ -8518,7 +9976,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Fermantable Type</source>
-        <translation>Gærbar ingrediens type</translation>
+        <translation type="vanished">Gærbar ingrediens type</translation>
     </message>
     <message>
         <source>Fermantable Grain Group</source>
@@ -8526,11 +9984,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Whether the amount is weight or volume</source>
-        <translation>Om mængde er masse eller volumen</translation>
+        <translation type="vanished">Om mængde er masse eller volumen</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation>Mængdeangivelse</translation>
+        <translation type="vanished">Mængdeangivelse</translation>
     </message>
     <message>
         <source>Diastatic power</source>
@@ -8667,6 +10125,26 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Cancel</source>
         <translation type="unfinished">Annuller</translation>
+    </message>
+    <message>
+        <source>Fermentable Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount in inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Purchase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a new stock purchase record for this fermentable</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8919,7 +10397,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Amount in Inventory</source>
-        <translation>Mængde på lager</translation>
+        <translation type="vanished">Mængde på lager</translation>
     </message>
     <message>
         <source>Main</source>
@@ -8959,11 +10437,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Whether the amount is weight or volume</source>
-        <translation>Om mængden er masse eller volumen</translation>
+        <translation type="vanished">Om mængden er masse eller volumen</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation>Mængdeangivelse</translation>
+        <translation type="vanished">Mængdeangivelse</translation>
     </message>
     <message>
         <source>ID in database</source>
@@ -9105,6 +10583,18 @@ The final volume in the primary is %1.</source>
         <source>Cancel</source>
         <translation type="unfinished">Annuller</translation>
     </message>
+    <message>
+        <source>Total Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Purchase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a new stock purchase record for this hop</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>instructionWidget</name>
@@ -9130,18 +10620,189 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
+    <name>inventoryChangeFermentableEditor</name>
+    <message>
+        <source>Date</source>
+        <translation type="obsolete">Dato</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="obsolete">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
+</context>
+<context>
+    <name>inventoryChangeHopEditor</name>
+    <message>
+        <source>Date</source>
+        <translation type="obsolete">Dato</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
+    </message>
+</context>
+<context>
+    <name>inventoryChangeMiscEditor</name>
+    <message>
+        <source>Date</source>
+        <translation type="obsolete">Dato</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
+    </message>
+</context>
+<context>
+    <name>inventoryChangeSaltEditor</name>
+    <message>
+        <source>Date</source>
+        <translation type="obsolete">Dato</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
+    </message>
+</context>
+<context>
+    <name>inventoryChangeYeastEditor</name>
+    <message>
+        <source>Date</source>
+        <translation type="obsolete">Dato</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
+    </message>
+</context>
+<context>
     <name>inventoryFermentableEditor</name>
     <message>
-        <source>Fermentable Inventory Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Main</source>
-        <translation type="unfinished">Hoved</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Hoved</translation>
     </message>
     <message>
         <source>Amount in Inventory</source>
@@ -9157,11 +10818,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>ID in database</source>
-        <translation type="unfinished">ID i database</translation>
+        <translation type="obsolete">ID i database</translation>
     </message>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
-        <translation type="unfinished">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+        <translation type="obsolete">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
     </message>
     <message>
         <source>Use for</source>
@@ -9169,58 +10830,218 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished">Ny</translation>
+        <translation type="obsolete">Ny</translation>
     </message>
     <message>
         <source>Save and close</source>
-        <translation type="unfinished">Gem og luk</translation>
+        <translation type="obsolete">Gem og luk</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished">Gem</translation>
+        <translation type="obsolete">Gem</translation>
     </message>
     <message>
         <source>Discard and close</source>
-        <translation type="unfinished">Annuller og luk</translation>
+        <translation type="obsolete">Annuller og luk</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annuller</translation>
-    </message>
-    <message>
-        <source>Date Ordered</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Annuller</translation>
     </message>
     <message>
         <source>dd MMM yyyy</source>
-        <translation type="unfinished">dd mm yyyy</translation>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation type="obsolete">Dato</translation>
+    </message>
+    <message>
+        <source>Supplier</source>
+        <translation type="obsolete">Forhandler</translation>
+    </message>
+</context>
+<context>
+    <name>inventoryHopEditor</name>
+    <message>
+        <source>Main</source>
+        <translation type="obsolete">Hoved</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="obsolete">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
+    </message>
+</context>
+<context>
+    <name>inventoryMiscEditor</name>
+    <message>
+        <source>Main</source>
+        <translation type="obsolete">Hoved</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="obsolete">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
+    </message>
+</context>
+<context>
+    <name>inventorySaltEditor</name>
+    <message>
+        <source>Main</source>
+        <translation type="obsolete">Hoved</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="obsolete">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
     </message>
 </context>
 <context>
     <name>inventoryWindow</name>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Lager</translation>
+        <translation type="obsolete">Lager</translation>
     </message>
     <message>
         <source>Fermentables</source>
-        <translation type="unfinished">Gærbare ingredienser</translation>
+        <translation type="obsolete">Gærbare ingredienser</translation>
     </message>
     <message>
         <source>Hops</source>
-        <translation type="unfinished">Humle</translation>
+        <translation type="obsolete">Humle</translation>
     </message>
     <message>
         <source>Miscellaneous</source>
-        <translation type="unfinished">Diverse ingredienser</translation>
+        <translation type="obsolete">Diverse ingredienser</translation>
     </message>
     <message>
         <source>Yeasts</source>
-        <translation type="unfinished">Gær</translation>
+        <translation type="obsolete">Gær</translation>
     </message>
     <message>
         <source>Salts</source>
-        <translation type="unfinished">Salte</translation>
+        <translation type="obsolete">Salte</translation>
+    </message>
+</context>
+<context>
+    <name>inventoryYeastEditor</name>
+    <message>
+        <source>Main</source>
+        <translation type="obsolete">Hoved</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="obsolete">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
     </message>
 </context>
 <context>
@@ -10270,11 +12091,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Amount in Inventory</source>
-        <translation>Mængde på lager</translation>
+        <translation type="vanished">Mængde på lager</translation>
     </message>
     <message>
         <source>Amount in inventory</source>
-        <translation>Mængde på lager</translation>
+        <translation type="vanished">Mængde på lager</translation>
     </message>
     <message>
         <source>Main</source>
@@ -10282,11 +12103,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Whether the amount is weight or volume</source>
-        <translation>Om mængde er masse eller volumen</translation>
+        <translation type="vanished">Om mængde er masse eller volumen</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation>Mængdeangivelse</translation>
+        <translation type="vanished">Mængdeangivelse</translation>
     </message>
     <message>
         <source>Producer</source>
@@ -10335,6 +12156,22 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Cancel</source>
         <translation type="unfinished">Annuller</translation>
+    </message>
+    <message>
+        <source>Total Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount in inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Purchase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a new stock purchase record for this ingredient</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11132,19 +12969,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Amount in Inventory</source>
-        <translation type="unfinished">Mængde på lager</translation>
+        <translation type="obsolete">Mængde på lager</translation>
     </message>
     <message>
         <source>Amount in inventory</source>
-        <translation type="unfinished">Mængde på lager</translation>
-    </message>
-    <message>
-        <source>Whether the amount is weight or volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Amount Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Mængde på lager</translation>
     </message>
     <message>
         <source>Producer</source>
@@ -11181,6 +13010,570 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Percent Acid</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total amount in inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Purchase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a new stock purchase record for this salt</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>stockPurchaseFermentableEditor</name>
+    <message>
+        <source>Main</source>
+        <translation type="obsolete">Hoved</translation>
+    </message>
+    <message>
+        <source>Supplier</source>
+        <translation type="obsolete">Forhandler</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="obsolete">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
+    </message>
+</context>
+<context>
+    <name>stockPurchaseHopEditor</name>
+    <message>
+        <source>Main</source>
+        <translation type="obsolete">Hoved</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="obsolete">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
+    </message>
+</context>
+<context>
+    <name>stockPurchaseIngredientEditor</name>
+    <message>
+        <source>Main</source>
+        <translation type="unfinished">Hoved</translation>
+    </message>
+    <message>
+        <source>Supplier</source>
+        <translation type="unfinished">Forhandler</translation>
+    </message>
+    <message>
+        <source>Ordered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation type="unfinished">Dato</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="unfinished">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount ordered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Received</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount received</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether the amount is weight or volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Uses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Remaining</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Best Before</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
+    <message>
+        <source>Extras</source>
+        <translation type="unfinished">Ekstra</translation>
+    </message>
+    <message>
+        <source>Purchase Price</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Purchase Tax</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shipping Cost</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuller</translation>
+    </message>
+    <message>
+        <source>Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>stockPurchaseMiscEditor</name>
+    <message>
+        <source>Main</source>
+        <translation type="obsolete">Hoved</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="obsolete">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
+    </message>
+</context>
+<context>
+    <name>stockPurchaseSaltEditor</name>
+    <message>
+        <source>Main</source>
+        <translation type="obsolete">Hoved</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="obsolete">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
+    </message>
+</context>
+<context>
+    <name>stockPurchaseYeastEditor</name>
+    <message>
+        <source>Main</source>
+        <translation type="obsolete">Hoved</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="obsolete">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
+    </message>
+</context>
+<context>
+    <name>stockUseFermentableEditor</name>
+    <message>
+        <source>Date</source>
+        <translation type="obsolete">Dato</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="obsolete">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
+    </message>
+</context>
+<context>
+    <name>stockUseHopEditor</name>
+    <message>
+        <source>Date</source>
+        <translation type="obsolete">Dato</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
+    </message>
+</context>
+<context>
+    <name>stockUseIngredientEditor</name>
+    <message>
+        <source>Date</source>
+        <translation type="unfinished">Dato</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="unfinished">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>Reason</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount used</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="unfinished">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="unfinished">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="unfinished">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="unfinished">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuller</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe</source>
+        <translation type="unfinished">Opskrift</translation>
+    </message>
+</context>
+<context>
+    <name>stockUseMiscEditor</name>
+    <message>
+        <source>Date</source>
+        <translation type="obsolete">Dato</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
+    </message>
+</context>
+<context>
+    <name>stockUseSaltEditor</name>
+    <message>
+        <source>Date</source>
+        <translation type="obsolete">Dato</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
+    </message>
+</context>
+<context>
+    <name>stockUseYeastEditor</name>
+    <message>
+        <source>Date</source>
+        <translation type="obsolete">Dato</translation>
+    </message>
+    <message>
+        <source>dd MMM yyyy</source>
+        <translation type="obsolete">dd mm yyyy</translation>
+    </message>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
     </message>
 </context>
 <context>
@@ -11776,7 +14169,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Total amount in Inventory</source>
-        <translation>Total mængde på lager</translation>
+        <translation type="vanished">Total mængde på lager</translation>
     </message>
     <message>
         <source>Total amount in inventory</source>
@@ -11784,11 +14177,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Whether the amount is weight or volume</source>
-        <translation>Om mængde er masse eller volumen</translation>
+        <translation type="vanished">Om mængde er masse eller volumen</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation>Mængdeangivelse</translation>
+        <translation type="vanished">Mængdeangivelse</translation>
     </message>
     <message>
         <source>ID in database</source>
@@ -11913,6 +14306,18 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Cancel</source>
         <translation type="unfinished">Annuller</translation>
+    </message>
+    <message>
+        <source>Total Inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Purchase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a new stock purchase record for this yeast</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * database/DbTransaction.cpp is part of Brewken, and is copyright the following authors 2021-2024:
+ * database/DbTransaction.cpp is part of Brewken, and is copyright the following authors 2021-2025:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -51,7 +51,8 @@ DbTransaction::DbTransaction(Database & database,
 }
 
 DbTransaction::~DbTransaction() {
-   qDebug() << Q_FUNC_INFO;
+   // Normally leave the next line commented out
+//   qDebug() << Q_FUNC_INFO;
    if (!committed) {
       bool succeeded = this->connection.rollback();
       qDebug() <<

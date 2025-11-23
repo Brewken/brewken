@@ -216,6 +216,7 @@ public:
       this->derived().setAndNotify(PropertyNames::StepBase::rampTime_mins, this->m_rampTime_mins, val);
       return;
    }
+
 private:
 
    // Called from StepBase::toString.  Only a member function to allow us to use StepBase::Empty.  (Alternative was
@@ -272,10 +273,11 @@ TypeLookup const StepBase<Derived, Owner, stepBaseOptions>::typeLookup {
           PropertyNames::StepBase::stepTime_days,
           StepBase::localisedName_stepTime_days,
           TypeLookupOf<MemberFunctionReturnType_t<&StepBase<Derived, Owner, stepBaseOptions>::stepTime_days>>::value,
-          // Note that, because days is not our canonical unit of measurement for time, this has to be a
-          // NonPhysicalQuantity, not Measurement::PhysicalQuantity::Time.
-          NonPhysicalQuantity::OrdinalNumeral,
-          DisplayInfo::Precision{0}
+          Measurement::PhysicalQuantity::Time,
+          DisplayInfo::Precision{0},
+          // Note that, because days is not our canonical unit of measurement for time, we have to specify the units of
+          // this property.
+          &Measurement::Units::days
        )},
       {&PropertyNames::StepBase::startTemp_c,
        TypeInfo::construct<decltype(StepBase<Derived, Owner, stepBaseOptions>::m_startTemp_c)>(
@@ -297,6 +299,7 @@ TypeLookup const StepBase<Derived, Owner, stepBaseOptions>::typeLookup {
    // Parent class lookup
    {&EnumeratedBase<Derived, Owner>::typeLookup}
 };
+
 
 /**
  * \brief Derived classes should include this in their header file, right after Q_OBJECT.  Concrete derived classes also

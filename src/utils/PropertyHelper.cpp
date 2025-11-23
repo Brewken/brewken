@@ -18,6 +18,17 @@
 #include "utils/EnumStringMapping.h"
 #include "utils/OptionalHelpers.h"
 
+Qt::AlignmentFlag PropertyHelper::getAlignment(TypeInfo const & typeInfo) {
+   //
+   // Number fields are right-aligned
+   //
+   if (typeInfo.typeIndex == typeid(double             ) ||
+       typeInfo.typeIndex == typeid(Measurement::Amount)) {
+      return Qt::AlignRight;
+   }
+   return Qt::AlignLeft;
+}
+
 QVariant PropertyHelper::readDataFromPropertyValue(
    QVariant modelData,
    TypeInfo const & typeInfo,
@@ -44,7 +55,7 @@ QVariant PropertyHelper::readDataFromPropertyValue(
    //      widget.  For other types, we want to hand back something that can be converted to QString.
    //
    //    - For Qt::DisplayRole, we're typically being called from QSortFilterProxyModel::data which is, in turn, called
-   //      by QItemDelegate::paint.  We don't want to override QItemDelegate::paint in ItemDelegate, because it would be
+   //      by QStyledItemDelegate::paint.  We don't want to override QStyledItemDelegate::paint in ItemDelegate, because it would be
    //      overkill.  So, here, we just need to make sure we're returning something that can sensibly be converted to
    //      QString.
    //
@@ -177,11 +188,15 @@ QVariant PropertyHelper::readDataFromPropertyValue(
          double const rawValue = modelData.value<double>();
          //
          // This is one of the points where it's important that NamedEntity classes always store data in canonical
-         // units.  For any properties where that's _not_ the case, we need to ensure we're passing
-         // Measurement::Amount, ie the units are always included.
+         // units.  For any properties where that's _not_ the case, we need either to:
+         //   - ensure we're passing Measurement::Amount, ie the units are always included; or
+         //   - specify the non-canonical unit in TypeInfo.
          //
          auto const physicalQuantity = std::get<Measurement::PhysicalQuantity>(*typeInfo.fieldType);
-         Measurement::Amount const amount{rawValue, Measurement::Unit::getCanonicalUnit(physicalQuantity)};
+         Measurement::Unit const & unit{
+            typeInfo.unit ? *typeInfo.unit : Measurement::Unit::getCanonicalUnit(physicalQuantity)
+         };
+         Measurement::Amount const amount{rawValue, unit};
 
          // For sorting, we need the actual amount
          if (role == Qt::UserRole) {
@@ -281,6 +296,8 @@ bool PropertyHelper::isLessThan(QVariant const &  leftItem, QVariant const & rig
          auto const nonPhysicalQuantity = std::get<NonPhysicalQuantity>(fieldType);
          switch (nonPhysicalQuantity) {
             case NonPhysicalQuantity::Date:
+               return leftItem.toDate() < rightItem.toDate();
+
             case NonPhysicalQuantity::String:
             case NonPhysicalQuantity::Enum:
             case NonPhysicalQuantity::Bool:

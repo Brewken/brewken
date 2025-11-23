@@ -113,7 +113,7 @@ endif()
 #=======================================================================================================================
 # It's simplest to keep the project name all lower-case as it means we can use a lot more of the default settings for
 # Linux packaging (where directory names etc are expected to be all lower-case)
-project(brewken VERSION 1.0.0 LANGUAGES CXX)
+project(brewken VERSION 2.0.0 LANGUAGES CXX)
 message(STATUS "Building ${PROJECT_NAME} version ${PROJECT_VERSION}")
 message(STATUS "PROJECT_SOURCE_DIR is ${PROJECT_SOURCE_DIR}")
 # Sometimes we do need the capitalised version of the project name
@@ -1179,7 +1179,7 @@ target_link_libraries(${fileName_executable} ${appAndTestCommonLibraries})
 # do things differently on the CMake build: when we're running the unit tests because of the way we look for the data
 # directory (see initResourceDir() function in Application.cpp).
 add_executable(${fileName_unitTestRunner}
-               ${repoDir}/src/unitTests/Testing.cpp
+               ${unitTestFiles_cpp}
                $<TARGET_OBJECTS:btobjlib>)
 #set_target_properties(${fileName_unitTestRunner} PROPERTIES RUNTIME_OUTPUT_DIRECTORY bin)
 
@@ -1197,6 +1197,7 @@ add_test(NAME testNumberDisplayAndParsing COMMAND ./${fileName_unitTestRunner} t
 add_test(NAME testAlgorithms              COMMAND ./${fileName_unitTestRunner} testAlgorithms             )
 add_test(NAME testTypeLookups             COMMAND ./${fileName_unitTestRunner} testTypeLookups            )
 add_test(NAME testInventory               COMMAND ./${fileName_unitTestRunner} testInventory              )
+add_test(NAME testMultiVector             COMMAND ./${fileName_unitTestRunner} testMultiVector            )
 add_test(NAME testLogRotation             COMMAND ./${fileName_unitTestRunner} testLogRotation            )
 
 #=================================Installs=====================================
