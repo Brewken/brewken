@@ -2704,6 +2704,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>%1 Purchase</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Show only non-zero inventory</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Derived::StockUseClass</name>
