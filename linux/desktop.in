@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------------------------------------------------
-# packaging/config.toml.in is part of Brewken, and is copyright the following authors 2023-2025:
+# linux/desktop.in is part of Brewken, and is copyright the following authors 2025:
 #   • Matt Young <mfsy@yahoo.com>
 #
 # Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -15,15 +15,16 @@
 #-----------------------------------------------------------------------------------------------------------------------
 
 #
-# This file is used by meson.build to export build system config into a TOML (https://toml.io/en/) file in the build
-# directory that the bt Python script can use during packaging
+# See comments in meson.build for how this file gets processed into a .desktop file
 #
-CONFIG_VERSION_STRING       = "@CONFIG_VERSION_STRING@"
-CONFIG_APPLICATION_NAME_UC  = "@CONFIG_APPLICATION_NAME_UC@"
-CONFIG_APPLICATION_NAME_LC  = "@CONFIG_APPLICATION_NAME_LC@"
-# NB: This is an array so we don't want it in quotes!
-CONFIG_SHARED_LIBRARY_PATHS = @CONFIG_SHARED_LIBRARY_PATHS@
-
-CONFIG_CHANGE_LOG_UNCOMPRESSED = "@CONFIG_CHANGE_LOG_UNCOMPRESSED@"
-CONFIG_PACKAGE_MAINTAINER      = "@CONFIG_PACKAGE_MAINTAINER@"
-CONFIG_ORGANIZATION_REVERSE_DOMAIN = "@CONFIG_ORGANIZATION_REVERSE_DOMAIN@"
+[Desktop Entry]
+Categories=Qt;KDE;Education;Utility;Engineering;
+Exec=@CONFIG_APPLICATION_NAME_LC@
+Name=@CONFIG_APPLICATION_NAME_UC@
+GenericName=Beer Brewing Tool
+Comment=Create recipes and manage ingredients
+Keywords=Beer;Ale;Lager;Cider;Brew;Brewing;Recipe;Beersmith;
+X-KDE-StartupNotify=true
+Icon=@CONFIG_APPLICATION_NAME_LC@
+Terminal=false
+Type=Application
