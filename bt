@@ -43,6 +43,10 @@
 #                                Since it's only needed to build AppImages, and since most folks doing builds don't need
 #                                to do that, we don't included it in the `setup all` functionality above.)
 #
+#    ./bt flatpak                Generates a Flatpak single-file bundle file
+#
+#    ./bt snap
+#
 # NOTE: This tool, used in conjunction with Meson, is now the official way to build and package the software.  We will
 #       continue to support CMake indefinitely for local compiles and installs, since it is such a widespread and
 #       familiar build system for C++ projects.  However, we no longer attempt to support packaging via CPack.
