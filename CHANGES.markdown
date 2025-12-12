@@ -11,10 +11,15 @@ format therein).
 
 ## v2.0.0
 
+Release 2.0
 * Stock rotation support in inventory
+
+### Release Timestamp
+Fri, 12 Dec 2025 02:00:00 +0100
 
 ## v1.0.0
 
+Release 1.0
 * BeerJSON support
 
 ### Release Timestamp
