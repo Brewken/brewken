@@ -150,6 +150,20 @@ jobs:
           umask 022
           ../bt package
 
+      - name: AppImage
+        working-directory: ${{github.workspace}}/mbuild
+        shell: bash
+        run: |
+          umask 022
+          ../bt appimage
+
+      - name: Flatpak
+        working-directory: ${{github.workspace}}/mbuild
+        shell: bash
+        run: |
+          umask 022
+          ../bt flatpak
+
       - name: Upload Linux Packages (Installers)
         if: ${{ success() }}
         uses: actions/upload-artifact@v4
@@ -162,6 +176,10 @@ jobs:
             mbuild/packages/linux/brewken*.deb.sha256sum
             mbuild/packages/linux/brewken*.rpm
             mbuild/packages/linux/brewken*.rpm.sha256sum
+            contAppPkgs/appimage/brewken*.AppImage
+            contAppPkgs/appimage/brewken*.AppImage.sha256sum
+            contAppPkgs/flatpak/brewken*.flatpak
+            contAppPkgs/flatpak/brewken*.flatpak.sha256sum
           retention-days: 7
 
       - name: Recover Debris Artifacts (Meson)
