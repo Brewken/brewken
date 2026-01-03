@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------------------------------------------------
-# .github/workflows/mac.yml is part of Brewken, and is copyright the following authors 2021-2025:
+# .github/workflows/mac.yml is part of Brewken, and is copyright the following authors 2021-2026:
 #   • Artem Martynov <martynov-a@polyplastic.by>
 #   • Mattias Måhl <mattias@kejsarsten.com>
 #   • Matt Young <mfsy@yahoo.com>
@@ -20,11 +20,11 @@ name: Mac
 on:
   push:
     branches:
-      - develop
+      - main
       - "stable/**"
   pull_request:
     branches:
-      - develop
+      - main
   schedule:
     - cron: "0 2 * * *"
 
