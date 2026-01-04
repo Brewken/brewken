@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------------------------------------------------
-# .github/workflows/linux-ubuntu.yml is part of Brewken, and is copyright the following authors 2021-2024:
+# .github/workflows/linux-ubuntu.yml is part of Brewken, and is copyright the following authors 2021-2026:
 #   • Artem Martynov <martynov-a@polyplastic.by>
 #   • Chris Speck <cgspeck@gmail.com>
 #   • Mattias Måhl <mattias@kejsarsten.com>
@@ -22,11 +22,11 @@ name: Linux
 on:
   push:
     branches:
-      - develop
+      - main
       - "stable/**"
   pull_request:
     branches:
-      - develop
+      - main
   schedule:
     - cron: "0 2 * * *"
 
