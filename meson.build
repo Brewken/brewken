@@ -729,6 +729,7 @@ commonSourceFiles = files([
    'src/model/RecipeAdditionYeast.cpp',
    'src/model/RecipeAdjustmentSalt.cpp',
    'src/model/RecipeUseOfWater.cpp',
+   'src/model/RecipeUtils.cpp',
    'src/model/Salt.cpp',
    'src/model/Step.cpp',
    'src/model/StepExtended.cpp',
