@@ -1,6 +1,6 @@
 /*======================================================================================================================
  * qtModels/sortFilterProxyModels/SortFilterProxyModelBase.h is part of Brewken, and is copyright the following authors
- * 2023-2025:
+ * 2023-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -109,7 +109,7 @@ protected:
             return false;
          }
 
-         if constexpr (IsIngredient<typename NeTableModel::UnderlyingItem>) {
+         if constexpr (std::is_base_of_v<Ingredient, typename NeTableModel::UnderlyingItem>) {
             if (this->m_hideZeroInventoryItems && !tableModel->getRow(source_row)->isOnHand()) {
                return false;
             }
