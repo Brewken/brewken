@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * undoRedo/Undoable.h is part of Brewken, and is copyright the following authors 2020-2025:
+ * undoRedo/Undoable.h is part of Brewken, and is copyright the following authors 2020-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -39,8 +39,10 @@ namespace Undoable {
     */
    void doOrRedoUpdate(QUndoCommand * update);
 
-   //! \brief Doing updates via this method makes them undoable (and redoable).  This is the simplified version
-   //         which suffices for modifications to most individual non-relational attributes.
+   /**
+    * \brief Doing updates via this method makes them undoable (and redoable).  This is the simplified version, which
+    *        suffices for modifications to most individual non-relational attributes.
+    */
    template<typename T>
    void doOrRedoUpdate(NamedEntity & updatee,
                        TypeInfo const & typeInfo,

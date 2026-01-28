@@ -2735,6 +2735,42 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Change %1 Name</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detach Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snapshot Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew It!</source>
+        <translation type="unfinished">¡Elaborar cerveza!</translation>
+    </message>
+    <message>
+        <source>Brew again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change date</source>
+        <translation type="unfinished">Cambiar la fecha</translation>
+    </message>
+    <message>
+        <source>Recalculate efficiency</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Derived::StockUseClass</name>
@@ -7949,44 +7985,24 @@ El volumen final en el primario es %1.</translation>
 <context>
     <name>RecipeTreeView</name>
     <message>
-        <source>Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Detach Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Snapshot Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Brew It!</source>
-        <translation type="unfinished">¡Elaborar cerveza!</translation>
+        <translation type="obsolete">¡Elaborar cerveza!</translation>
     </message>
     <message>
         <source>Brew Again</source>
-        <translation type="unfinished">Elaborar de nuevo</translation>
+        <translation type="obsolete">Elaborar de nuevo</translation>
     </message>
     <message>
         <source>Change date</source>
-        <translation type="unfinished">Cambiar la fecha</translation>
+        <translation type="obsolete">Cambiar la fecha</translation>
     </message>
     <message>
         <source>Recalculate eff</source>
-        <translation type="unfinished">Recalcular ef.</translation>
+        <translation type="obsolete">Recalcular ef.</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Eliminar</translation>
+        <translation type="obsolete">Eliminar</translation>
     </message>
 </context>
 <context>

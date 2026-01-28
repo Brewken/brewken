@@ -2687,6 +2687,42 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Change %1 Name</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detach Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snapshot Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew It!</source>
+        <translation type="unfinished">Скувај!</translation>
+    </message>
+    <message>
+        <source>Brew again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change date</source>
+        <translation type="unfinished">Промени датум</translation>
+    </message>
+    <message>
+        <source>Recalculate efficiency</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Derived::StockUseClass</name>
@@ -7669,44 +7705,24 @@ The final volume in the primary is %1.</source>
 <context>
     <name>RecipeTreeView</name>
     <message>
-        <source>Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Detach Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Snapshot Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Brew It!</source>
-        <translation type="unfinished">Скувај!</translation>
+        <translation type="obsolete">Скувај!</translation>
     </message>
     <message>
         <source>Brew Again</source>
-        <translation type="unfinished">Скувај опет</translation>
+        <translation type="obsolete">Скувај опет</translation>
     </message>
     <message>
         <source>Change date</source>
-        <translation type="unfinished">Промени датум</translation>
+        <translation type="obsolete">Промени датум</translation>
     </message>
     <message>
         <source>Recalculate eff</source>
-        <translation type="unfinished">Прерачунај ефик</translation>
+        <translation type="obsolete">Прерачунај ефик</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Обриши</translation>
+        <translation type="obsolete">Обриши</translation>
     </message>
 </context>
 <context>

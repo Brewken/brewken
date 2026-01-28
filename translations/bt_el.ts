@@ -2674,6 +2674,42 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Change %1 Name</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide Snapshots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detach Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snapshot Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew It!</source>
+        <translation type="unfinished">Ζυθοποίησε!</translation>
+    </message>
+    <message>
+        <source>Brew again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change date</source>
+        <translation type="unfinished">Αλλαγή ημερομηνίας</translation>
+    </message>
+    <message>
+        <source>Recalculate efficiency</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Derived::StockUseClass</name>
@@ -7839,44 +7875,24 @@ The final volume in the primary is %1.</source>
 <context>
     <name>RecipeTreeView</name>
     <message>
-        <source>Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide Snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Detach Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Snapshot Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Brew It!</source>
-        <translation type="unfinished">Ζυθοποίησε!</translation>
+        <translation type="obsolete">Ζυθοποίησε!</translation>
     </message>
     <message>
         <source>Brew Again</source>
-        <translation type="unfinished">Ζυθοποίησε πάλι</translation>
+        <translation type="obsolete">Ζυθοποίησε πάλι</translation>
     </message>
     <message>
         <source>Change date</source>
-        <translation type="unfinished">Αλλαγή ημερομηνίας</translation>
+        <translation type="obsolete">Αλλαγή ημερομηνίας</translation>
     </message>
     <message>
         <source>Recalculate eff</source>
-        <translation type="unfinished">Επανυπολογισμός απόδ.</translation>
+        <translation type="obsolete">Επανυπολογισμός απόδ.</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Διαγραφή</translation>
+        <translation type="obsolete">Διαγραφή</translation>
     </message>
 </context>
 <context>

@@ -2690,6 +2690,42 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Change %1 Name</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Snapshots</source>
+        <translation type="unfinished">Oversigter</translation>
+    </message>
+    <message>
+        <source>Show Snapshots</source>
+        <translation type="unfinished">Vis oversigter</translation>
+    </message>
+    <message>
+        <source>Hide Snapshots</source>
+        <translation type="unfinished">Skjul oversigter</translation>
+    </message>
+    <message>
+        <source>Detach Recipe</source>
+        <translation type="unfinished">Løsriv opskrift</translation>
+    </message>
+    <message>
+        <source>Snapshot Recipe</source>
+        <translation type="unfinished">Oversigt opskrift</translation>
+    </message>
+    <message>
+        <source>Brew It!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change date</source>
+        <translation type="unfinished">Skift dato</translation>
+    </message>
+    <message>
+        <source>Recalculate efficiency</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Derived::StockUseClass</name>
@@ -7636,43 +7672,39 @@ The final volume in the primary is %1.</source>
     <name>RecipeTreeView</name>
     <message>
         <source>Snapshots</source>
-        <translation type="unfinished">Oversigter</translation>
+        <translation type="obsolete">Oversigter</translation>
     </message>
     <message>
         <source>Show Snapshots</source>
-        <translation type="unfinished">Vis oversigter</translation>
+        <translation type="obsolete">Vis oversigter</translation>
     </message>
     <message>
         <source>Hide Snapshots</source>
-        <translation type="unfinished">Skjul oversigter</translation>
+        <translation type="obsolete">Skjul oversigter</translation>
     </message>
     <message>
         <source>Detach Recipe</source>
-        <translation type="unfinished">Løsriv opskrift</translation>
+        <translation type="obsolete">Løsriv opskrift</translation>
     </message>
     <message>
         <source>Snapshot Recipe</source>
-        <translation type="unfinished">Oversigt opskrift</translation>
-    </message>
-    <message>
-        <source>Brew It!</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Oversigt opskrift</translation>
     </message>
     <message>
         <source>Brew Again</source>
-        <translation type="unfinished">Bryg igen</translation>
+        <translation type="obsolete">Bryg igen</translation>
     </message>
     <message>
         <source>Change date</source>
-        <translation type="unfinished">Skift dato</translation>
+        <translation type="obsolete">Skift dato</translation>
     </message>
     <message>
         <source>Recalculate eff</source>
-        <translation type="unfinished">Genberegn effektivitet</translation>
+        <translation type="obsolete">Genberegn effektivitet</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Slet</translation>
+        <translation type="obsolete">Slet</translation>
     </message>
 </context>
 <context>
