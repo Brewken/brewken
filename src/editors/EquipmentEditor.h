@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * editors/EquipmentEditor.h is part of Brewken, and is copyright the following authors 2009-2025:
+ * editors/EquipmentEditor.h is part of Brewken, and is copyright the following authors 2009-2026:
  *   • David Grundberg <individ@acc.umu.se>
  *   • Jeff Bailey <skydvr38@verizon.net>
  *   • Matt Young <mfsy@yahoo.com>

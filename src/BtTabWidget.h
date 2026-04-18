@@ -50,6 +50,12 @@ class BtTabWidget : public QTabWidget {
 public:
    BtTabWidget(QWidget* parent = nullptr);
 
+   //=================================================== PROPERTIES ====================================================
+   Q_PROPERTY(QString   mimeAccepted   READ mimeAccepted   WRITE setMimeAccepted)
+
+   QString mimeAccepted() const;
+   void setMimeAccepted(QString const & val);
+
 signals:
    void setRecipe(Recipe* rec);
    void setEquipment(Equipment * equipment);

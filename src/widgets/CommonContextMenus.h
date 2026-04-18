@@ -34,7 +34,6 @@
 #include "utils/PropertyHelper.h"
 
 class BrewNote;
-class Folder;
 class Ingredient;
 class Salt;
 class StockPurchase;
@@ -282,8 +281,7 @@ public:
 
          if constexpr (std::same_as<NE, Recipe>) {
             // You cannot delete a locked recipe
-            auto const & recipe{selected.firstPrimary};
-            this->m_action_delete.setEnabled(!recipe->locked() && selected.numPrimary >= 1);
+            this->m_action_delete.setEnabled(selected.numPrimary >= 1 && !selected.firstPrimary->locked());
          } else {
             this->m_action_delete.setEnabled(selected.numPrimary >= 1);
          }
@@ -344,8 +342,7 @@ public:
             this->m_action_showStockPurchases.setEnabled(selected.numPrimary == 1);
          }
 
-         this->m_action_rename.setEnabled(selected.numPrimary == 1);
-
+         this->m_action_rename.setEnabled((selected.numPrimary + selected.numFolders) == 1);
       }
 
       QAction * result = menuToShow->exec(point);
@@ -536,26 +533,19 @@ public:
    }
 
    void renamePrimaryItem(NE & item) const {
-      //
-      // TODO: Once we make Folders first-class NamedEntity objects, we can do their renaming here, instead of in
-      //       TreeModelBase.
-      //
-      if constexpr (!std::is_same_v<NE, Folder>) {
-         QString newName = QInputDialog::getText(&this->m_derived,
-                                                 Derived::tr("%1 name").arg(NE::localisedName()),
-                                                 Derived::tr("%1 name:").arg(NE::localisedName()),
-                                                 QLineEdit::Normal,
-                                                 item.name()).simplified();
-         if (newName.isEmpty()) {
-            return;
-         }
-
-         Undoable::doOrRedoUpdate(item,
-                                  TYPE_INFO(NE, NamedEntity, name),
-                                  newName,
-                                  Derived::tr("Change %1 Name").arg(NE::localisedName()));
-
+      QString newName = QInputDialog::getText(&this->m_derived,
+                                              Derived::tr("%1 name").arg(NE::localisedName()),
+                                              Derived::tr("%1 name:").arg(NE::localisedName()),
+                                              QLineEdit::Normal,
+                                              item.name()).simplified();
+      if (newName.isEmpty()) {
+         return;
       }
+
+      Undoable::doOrRedoUpdate(item,
+                               TYPE_INFO(NE, NamedEntity, name),
+                               newName,
+                               Derived::tr("Change %1 Name").arg(NE::localisedName()));
       return;
    }
 

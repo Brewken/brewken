@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * Application.cpp is part of Brewken, and is copyright the following authors 2009-2025:
+ * Application.cpp is part of Brewken, and is copyright the following authors 2009-2026:
  *   • A.J. Drobnich <aj.drobnich@gmail.com>
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Chris Pavetto <chrispavetto@gmail.com>
@@ -114,17 +114,17 @@ namespace {
    //! \brief Ensure our directories exist.
    bool ensureDirectoriesExist() {
       //
-      // A missing resource directory is a serious issue, without it we're missing the default DB, sound files &
+      // A missing resource directory is a serious issue, without it, we're missing the default DB, sound files &
       // translations.  We could attempt to create it, like the other config/data directories, but an empty resource
       // dir is just as bad as a missing one.  So, instead, we'll display a little more dire warning.
       //
       // .:TBD:. Maybe we should terminate the app here as it's likely that there's some problem with the install and
       //         users are going to hit other problems, including the program crashing.
       //
-      QDir resourceDir = Application::getResourceDir();
-      bool resourceDirSuccess = resourceDir.exists();
+      QDir const resourceDir = Application::getResourceDir();
+      bool const resourceDirSuccess = resourceDir.exists();
       if (!resourceDirSuccess) {
-         QString errMsg{
+         QString const errMsg{
             QObject::tr("Resource directory %1 is missing.  Without this directory and its contents, the software "
                         "will not operate correctly and may terminate abruptly.").arg(resourceDir.absolutePath())
          };
@@ -146,8 +146,7 @@ namespace {
             // For the moment, the output format is a bit clunky, and we do not correctly skip over things we should
             // omit such as the parent directory from the ".." link, or multiple visits to the current directory by the
             // iterator.
-            auto fileName = ii.next();
-            if (fileName != "..") {
+            if (auto fileName = ii.next(); fileName != "..") {
                auto fileInfo = ii.fileInfo();
                dirListStream <<
                   "   " << fileInfo.absoluteFilePath() << "\t\t(" << fileInfo.permissions() << ") " << fileInfo.size() <<
@@ -194,7 +193,7 @@ namespace {
    void initResourceDir(QDir & resourceDirVar) {
       //
       // Directory locations are complicated on Linux because different distros can do things differently.  (See comment
-      // in main CMakeLists.txt for more info.)  Also the documentation for QCoreApplication::applicationDirPath() says
+      // in main CMakeLists.txt for more info.)  Also, the documentation for QCoreApplication::applicationDirPath() says
       // "Warning: On Linux, this function will try to get the path from the /proc file system. If that fails, it
       // assumes that argv[0] contains the absolute file name of the executable. The function also assumes that the
       // current directory has not been changed by the application."
@@ -203,8 +202,10 @@ namespace {
       //   (1) Assume that binary is in /usr/bin and resources are in /usr/share/[application name].  This should be
       //       right most of the time, because it's what most of the big distros do.  But it could be a problem, eg,
       //       someone compiling from source might want to use:
-      //         - /usr/local/bin and /usr/local/share/[application name], or
-      //         - $HOME/.local/bin and $HOME/.local/share/[application name]
+      //          - /usr/local/bin and /usr/local/share/[application name], or
+      //          - $HOME/.local/bin and $HOME/.local/share/[application name]
+      //       Moreover, in container packages, things can have very different paths, eg /app/bin is standard inside a
+      //       Flatpak container.
       //   (2) Get the directory at run-time from Qt.  If Qt is able to read from the /proc pseudo file system then the
       //       info will be spot on as it comes from the kernel.  AFAICT the warning in the Qt doco is only because,
       //       technically, we can't guarantee that /proc will always be mounted in every instance of every Linux
@@ -228,8 +229,9 @@ namespace {
 
       // Note that the Qt "application name" is not the same as the executable name on disk; it is what is set by the
       // call to QCoreApplication::setApplicationName when the application is started.
-      QString applicationName = QCoreApplication::applicationName();
-      qInfo() << Q_FUNC_INFO << "Application name" << applicationName;
+      QString const applicationName = QCoreApplication::applicationName();
+      qInfo() <<
+         Q_FUNC_INFO << "Application name" << applicationName << "; QCoreApplication::applicationDirPath()" << path;
       if (applicationName.endsWith("-test")) {
          qInfo() << Q_FUNC_INFO << "Assuming this is Unit Testing executable and resources are in ../data directory";
          path += "../data/";
@@ -238,7 +240,7 @@ namespace {
 #if defined(Q_OS_LINUX)
          // === Linux ===
          // We'll assume the return value from QCoreApplication::applicationDirPath is invalid if it does not end in
-         // /bin (because there's no way it would make sense for us to be in an sbin directory
+         // /bin (because there's no way it would make sense for us to be in an /sbin directory
          if (path.endsWith("/bin/")) {
             path += QString{"../share/%1/"}.arg(CONFIG_APPLICATION_NAME_LC);
          } else {

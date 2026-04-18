@@ -2331,22 +2331,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>NODB</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SQLITE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PGSQL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ALLDB</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Software Upgraded</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2397,6 +2381,22 @@ Log file may contain more details.</source>
 
 Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SQLite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PosgreSQL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot create new DB schema in file &apos;%1&apos;.  File already exists!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2545,10 +2545,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Owner ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Folder Path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2709,6 +2705,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Recalculate efficiency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder ID</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3625,6 +3625,13 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Name</source>
         <translation type="obsolete">Název</translation>
     </message>
+    <message>
+        <source>Folder</source>
+        <translation type="obsolete">Adresář</translation>
+    </message>
+</context>
+<context>
+    <name>FolderCommon</name>
     <message>
         <source>Folder</source>
         <translation type="unfinished">Adresář</translation>
@@ -4592,6 +4599,10 @@ If you need help, please open an issue at %1</source>
         <source>Notes from brew day on %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Change Brew Date</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -5499,6 +5510,22 @@ Error message:
 Running two copies of the program at once may lead to data loss.
 
 Press OK to quit.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Creation of empty Database file &apos;%1&apos; %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>succeeded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To use the newly-created file, rename it to &apos;%1&apos; and move it to directory %2.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6610,6 +6637,14 @@ Program will now exit.</source>
         <source>Stock Purchases (Inventory)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop bothering you about new data?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -6623,7 +6658,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>to the mash tun.</source>
-        <translation>do rmutovací pánve.</translation>
+        <translation type="vanished">do rmutovací pánve.</translation>
     </message>
     <message>
         <source>Heat water</source>
@@ -6659,23 +6694,23 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Put %1 %2 into boil for %3.</source>
-        <translation>Nechte %1 %2 vařit po dobu %3.</translation>
+        <translation type="vanished">Nechte %1 %2 vařit po dobu %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into fermenter for %3.</source>
-        <translation>Nechte %1 %2 v kvasné nádobě po dobu %3.</translation>
+        <translation type="vanished">Nechte %1 %2 v kvasné nádobě po dobu %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into first wort for %3.</source>
-        <translation>Přidejte %1 %2 do díla při scezování na %3.</translation>
+        <translation type="vanished">Přidejte %1 %2 do díla při scezování na %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into mash for %3.</source>
-        <translation>Přidejte %1 %2 do vystírky po dobu %3.</translation>
+        <translation type="vanished">Přidejte %1 %2 do vystírky po dobu %3.</translation>
     </message>
     <message>
         <source>Steep %1 %2 in wort for %3.</source>
-        <translation>Nechte %1 %2 máčet ve rmutu po dobu %3.</translation>
+        <translation type="vanished">Nechte %1 %2 máčet ve rmutu po dobu %3.</translation>
     </message>
     <message>
         <source>Use %1 %2 for %3</source>
@@ -6683,27 +6718,27 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Hop addition</source>
-        <translation>Přidání chmele</translation>
+        <translation type="vanished">Přidání chmele</translation>
     </message>
     <message>
         <source>Use %1 %2 at bottling for %3.</source>
-        <translation>Použijte %1 %2 při lahvování po dobu %3.</translation>
+        <translation type="vanished">Použijte %1 %2 při lahvování po dobu %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into primary for %3.</source>
-        <translation>Dejte %1 %2 do hlavního kvašení na %3.</translation>
+        <translation type="vanished">Dejte %1 %2 do hlavního kvašení na %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into secondary for %3.</source>
-        <translation>Dejte %1 %2 do dokvašování na %3.</translation>
+        <translation type="vanished">Dejte %1 %2 do dokvašování na %3.</translation>
     </message>
     <message>
         <source>Use %1 %2 for %3.</source>
-        <translation>Použijte %1 %2 na %3.</translation>
+        <translation type="vanished">Použijte %1 %2 na %3.</translation>
     </message>
     <message>
         <source>Misc addition</source>
-        <translation>Přídávání přípravků</translation>
+        <translation type="vanished">Přídávání přípravků</translation>
     </message>
     <message>
         <source>Do first wort hopping with </source>
@@ -6769,11 +6804,11 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Boil time</source>
-        <translation>Délka chmelovaru</translation>
+        <translation type="vanished">Délka chmelovaru</translation>
     </message>
     <message>
         <source>You did not configure an equipment (which you really should), so tell me the boil time.</source>
-        <translation>Nenastavili jste vybavení (což byste opravdu měli), tudíž zadejte délku chmelovaru.</translation>
+        <translation type="vanished">Nenastavili jste vybavení (což byste opravdu měli), tudíž zadejte délku chmelovaru.</translation>
     </message>
     <message>
         <source>Bring the wort to a boil and hold for %1.</source>
@@ -6898,10 +6933,6 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Wine</source>
         <translation type="unfinished">Víno</translation>
-    </message>
-    <message>
-        <source>Put %1 %2 into packaging for %3.</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 %2</source>
@@ -7183,6 +7214,54 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <source>Snapshots</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Put %1 %2 into mash%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into first wort%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Steep %1 %2 in wort%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into boil%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into fermenter%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into primary%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into secondary%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use %1 %2 at bottling%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> at end of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> to the mash tun.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -7191,20 +7270,8 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add to Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add to Boil</source>
-        <translation type="unfinished">Množství pro přidání</translation>
-    </message>
-    <message>
-        <source>Add to Fermentation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Package</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Množství pro přidání</translation>
     </message>
     <message>
         <source>Stage</source>
@@ -7228,6 +7295,22 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>Duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished">Chmelovar</translation>
+    </message>
+    <message>
+        <source>Fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Package</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

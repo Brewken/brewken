@@ -2398,22 +2398,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>NODB</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SQLITE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PGSQL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ALLDB</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Software Upgraded</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2464,6 +2448,22 @@ Log file may contain more details.</source>
 
 Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SQLite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PosgreSQL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot create new DB schema in file &apos;%1&apos;.  File already exists!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2606,10 +2606,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Owner ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Folder Path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2770,6 +2766,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Recalculate efficiency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder ID</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3710,6 +3710,13 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>FULLPATH</source>
         <translation type="obsolete">Teljes útvonal</translation>
     </message>
+    <message>
+        <source>Folder</source>
+        <translation type="obsolete">Mappa</translation>
+    </message>
+</context>
+<context>
+    <name>FolderCommon</name>
     <message>
         <source>Folder</source>
         <translation type="unfinished">Mappa</translation>
@@ -4684,6 +4691,10 @@ If you need help, please open an issue at %1</source>
         <source>Notes from brew day on %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Change Brew Date</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -5575,6 +5586,22 @@ Error message:
 Running two copies of the program at once may lead to data loss.
 
 Press OK to quit.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Creation of empty Database file &apos;%1&apos; %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>succeeded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To use the newly-created file, rename it to &apos;%1&apos; and move it to directory %2.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6682,6 +6709,14 @@ Program will now exit.</source>
         <source>Stock Purchases (Inventory)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop bothering you about new data?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -6695,7 +6730,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>to the mash tun.</source>
-        <translation>cefréző edénybe</translation>
+        <translation type="vanished">cefréző edénybe</translation>
     </message>
     <message>
         <source>Heat water</source>
@@ -6731,23 +6766,23 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Put %1 %2 into boil for %3.</source>
-        <translation>Öntsd össze %1 és %2 részeket, majd forrald %3</translation>
+        <translation type="vanished">Öntsd össze %1 és %2 részeket, majd forrald %3</translation>
     </message>
     <message>
         <source>Put %1 %2 into fermenter for %3.</source>
-        <translation>Erjesztő edénybe fejteni %1 %2 elérendő érték %3</translation>
+        <translation type="vanished">Erjesztő edénybe fejteni %1 %2 elérendő érték %3</translation>
     </message>
     <message>
         <source>Put %1 %2 into first wort for %3.</source>
-        <translation>Színlébe önteni %1 %2 elérendő érték %3</translation>
+        <translation type="vanished">Színlébe önteni %1 %2 elérendő érték %3</translation>
     </message>
     <message>
         <source>Put %1 %2 into mash for %3.</source>
-        <translation>Cefrébe önteni %1 %2 elérendő érték %3</translation>
+        <translation type="vanished">Cefrébe önteni %1 %2 elérendő érték %3</translation>
     </message>
     <message>
         <source>Steep %1 %2 in wort for %3.</source>
-        <translation>Máslani %1 %2 elérendő érték %3</translation>
+        <translation type="vanished">Máslani %1 %2 elérendő érték %3</translation>
     </message>
     <message>
         <source>Use %1 %2 for %3</source>
@@ -6755,27 +6790,27 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Hop addition</source>
-        <translation>Komlózás</translation>
+        <translation type="vanished">Komlózás</translation>
     </message>
     <message>
         <source>Use %1 %2 at bottling for %3.</source>
-        <translation>Használni %1 %2 palackozni %3 értéken</translation>
+        <translation type="vanished">Használni %1 %2 palackozni %3 értéken</translation>
     </message>
     <message>
         <source>Put %1 %2 into primary for %3.</source>
-        <translation>Hozzáadni  %1 %2 az elsődleges erjesztőbe, elérendő érték %3</translation>
+        <translation type="vanished">Hozzáadni  %1 %2 az elsődleges erjesztőbe, elérendő érték %3</translation>
     </message>
     <message>
         <source>Put %1 %2 into secondary for %3.</source>
-        <translation>Hozzáadni  %1 %2 a másodlagos erjesztőbe, elérendő érték %3</translation>
+        <translation type="vanished">Hozzáadni  %1 %2 a másodlagos erjesztőbe, elérendő érték %3</translation>
     </message>
     <message>
         <source>Use %1 %2 for %3.</source>
-        <translation>Használni %1 %2 elérendő érték %3</translation>
+        <translation type="vanished">Használni %1 %2 elérendő érték %3</translation>
     </message>
     <message>
         <source>Misc addition</source>
-        <translation>Egyéb összetevő adagolása</translation>
+        <translation type="vanished">Egyéb összetevő adagolása</translation>
     </message>
     <message>
         <source>Do first wort hopping with </source>
@@ -6841,11 +6876,11 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Boil time</source>
-        <translation>Forralási idő</translation>
+        <translation type="vanished">Forralási idő</translation>
     </message>
     <message>
         <source>You did not configure an equipment (which you really should), so tell me the boil time.</source>
-        <translation>Add meg a forralási időt (nincs beállítva a felszerelésnél)</translation>
+        <translation type="vanished">Add meg a forralási időt (nincs beállítva a felszerelésnél)</translation>
     </message>
     <message>
         <source>Bring the wort to a boil and hold for %1.</source>
@@ -6970,10 +7005,6 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Wine</source>
         <translation type="unfinished">Bor</translation>
-    </message>
-    <message>
-        <source>Put %1 %2 into packaging for %3.</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 %2</source>
@@ -7255,27 +7286,59 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <source>Snapshots</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Put %1 %2 into mash%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into first wort%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Steep %1 %2 in wort%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into boil%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into fermenter%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into primary%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into secondary%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use %1 %2 at bottling%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> at end of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> to the mash tun.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
     <message>
         <source>Recipe Addition</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Boil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Fermentation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Package</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7300,6 +7363,22 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished">Cefre</translation>
+    </message>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished">Forralás</translation>
+    </message>
+    <message>
+        <source>Fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Package</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

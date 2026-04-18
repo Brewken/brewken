@@ -2422,22 +2422,6 @@
         <translation type="unfinished">Gebruikersnaam</translation>
     </message>
     <message>
-        <source>NODB</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SQLITE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PGSQL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ALLDB</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Software Upgraded</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2488,6 +2472,22 @@ Log file may contain more details.</source>
 
 Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SQLite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PosgreSQL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot create new DB schema in file &apos;%1&apos;.  File already exists!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2633,10 +2633,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Owner ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Folder Path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2797,6 +2793,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Recalculate efficiency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder ID</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3729,6 +3729,13 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>FULLPATH</source>
         <translation type="obsolete">VOLLEDIGPAD</translation>
     </message>
+    <message>
+        <source>Folder</source>
+        <translation type="obsolete">Map</translation>
+    </message>
+</context>
+<context>
+    <name>FolderCommon</name>
     <message>
         <source>Folder</source>
         <translation type="unfinished">Map</translation>
@@ -4716,6 +4723,10 @@ If you need help, please open an issue at %1</source>
         <source>Notes from brew day on %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Change Brew Date</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -5697,6 +5708,22 @@ Foutmelding:
 Running two copies of the program at once may lead to data loss.
 
 Press OK to quit.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Creation of empty Database file &apos;%1&apos; %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>succeeded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To use the newly-created file, rename it to &apos;%1&apos; and move it to directory %2.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6780,6 +6807,14 @@ Program will now exit.</source>
         <source>Stock Purchases (Inventory)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop bothering you about new data?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -6793,7 +6828,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>to the mash tun.</source>
-        <translation>aan het maisch vat.</translation>
+        <translation type="vanished">aan het maisch vat.</translation>
     </message>
     <message>
         <source>Heat water</source>
@@ -6829,23 +6864,23 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Put %1 %2 into boil for %3.</source>
-        <translation>Stop %1 %2 in het kookvat voor %3.</translation>
+        <translation type="vanished">Stop %1 %2 in het kookvat voor %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into fermenter for %3.</source>
-        <translation>Stop %1 %2 in het vergistingsvat voor %3.</translation>
+        <translation type="vanished">Stop %1 %2 in het vergistingsvat voor %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into first wort for %3.</source>
-        <translation>Stop %1 %2 in de eerste wort voor %3.</translation>
+        <translation type="vanished">Stop %1 %2 in de eerste wort voor %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into mash for %3.</source>
-        <translation>Stop %1 %2 in de maisch voor %3.</translation>
+        <translation type="vanished">Stop %1 %2 in de maisch voor %3.</translation>
     </message>
     <message>
         <source>Steep %1 %2 in wort for %3.</source>
-        <translation>Laat %1 %2 trekken in het wort voor %3.</translation>
+        <translation type="vanished">Laat %1 %2 trekken in het wort voor %3.</translation>
     </message>
     <message>
         <source>Use %1 %2 for %3</source>
@@ -6853,27 +6888,27 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Hop addition</source>
-        <translation>Hop gift</translation>
+        <translation type="vanished">Hop gift</translation>
     </message>
     <message>
         <source>Use %1 %2 at bottling for %3.</source>
-        <translation>Gebruik %1 %2 tijdens het bottelen voor %3.</translation>
+        <translation type="vanished">Gebruik %1 %2 tijdens het bottelen voor %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into primary for %3.</source>
-        <translation>Stop %1 %2 in de hoofdvergisting voor %3.</translation>
+        <translation type="vanished">Stop %1 %2 in de hoofdvergisting voor %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into secondary for %3.</source>
-        <translation>Stop %1 %2 in het nagistingsvat voor %3.</translation>
+        <translation type="vanished">Stop %1 %2 in het nagistingsvat voor %3.</translation>
     </message>
     <message>
         <source>Use %1 %2 for %3.</source>
-        <translation>Gebruik %1 %2 voor %3.</translation>
+        <translation type="vanished">Gebruik %1 %2 voor %3.</translation>
     </message>
     <message>
         <source>Misc addition</source>
-        <translation>Overige toevoegingen</translation>
+        <translation type="vanished">Overige toevoegingen</translation>
     </message>
     <message>
         <source>Do first wort hopping with </source>
@@ -6939,11 +6974,11 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Boil time</source>
-        <translation>Kook tijd</translation>
+        <translation type="vanished">Kook tijd</translation>
     </message>
     <message>
         <source>You did not configure an equipment (which you really should), so tell me the boil time.</source>
-        <translation>U heeft geen apparatuur geconfigureerd (wat zou moeten), dus vertel mij de kooktijd.</translation>
+        <translation type="vanished">U heeft geen apparatuur geconfigureerd (wat zou moeten), dus vertel mij de kooktijd.</translation>
     </message>
     <message>
         <source>Bring the wort to a boil and hold for %1.</source>
@@ -7068,10 +7103,6 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Wine</source>
         <translation type="unfinished">Wijn</translation>
-    </message>
-    <message>
-        <source>Put %1 %2 into packaging for %3.</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 %2</source>
@@ -7353,6 +7384,54 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <source>Snapshots</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Put %1 %2 into mash%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into first wort%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Steep %1 %2 in wort%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into boil%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into fermenter%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into primary%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into secondary%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use %1 %2 at bottling%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> at end of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> to the mash tun.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -7361,20 +7440,8 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add to Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add to Boil</source>
-        <translation type="unfinished">Toevoegen bij het koken</translation>
-    </message>
-    <message>
-        <source>Add to Fermentation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Package</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Toevoegen bij het koken</translation>
     </message>
     <message>
         <source>Stage</source>
@@ -7398,6 +7465,22 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished">Maisch</translation>
+    </message>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished">Koken</translation>
+    </message>
+    <message>
+        <source>Fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Package</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
