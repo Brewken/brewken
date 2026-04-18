@@ -171,10 +171,16 @@ def installDependencies():
             #
             # The following are needed to build the install packages (rather than just install locally)
             #
-            'debhelper'      , # Needed to build .deb packages for Debian/Ubuntu
-            'lintian'        , # Needed to validate .deb packages
-            'rpm'            , # Needed to build RPMs
-            'rpmlint'        , # Needed to validate RPMs
+            'debhelper', # Needed to build .deb packages for Debian/Ubuntu
+            'lintian'  , # Needed to validate .deb packages
+            'rpm'      , # Needed to build RPMs
+            'rpmlint'  , # Needed to validate RPMs
+            #
+            # Other
+            #
+            'appstream', # Needed for appstreamcli -- see https://www.freedesktop.org/software/appstream/docs/re01.html
+            'binutils',  # Provides objdump, readelf, elfedit
+            'patchelf',  # Used to modify the ELF section of an existing binary -- eg to edit RPATH / RUNPATH
 
          ]
          for packageToInstall in installList:

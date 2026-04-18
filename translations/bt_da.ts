@@ -2303,19 +2303,19 @@
     </message>
     <message>
         <source>NODB</source>
-        <translation>NODB</translation>
+        <translation type="vanished">NODB</translation>
     </message>
     <message>
         <source>SQLITE</source>
-        <translation>SQLITE</translation>
+        <translation type="vanished">SQLITE</translation>
     </message>
     <message>
         <source>PGSQL</source>
-        <translation>PGSQL</translation>
+        <translation type="vanished">PGSQL</translation>
     </message>
     <message>
         <source>ALLDB</source>
-        <translation>ALLDB</translation>
+        <translation type="vanished">ALLDB</translation>
     </message>
     <message>
         <source>Unable to back up database before upgrading</source>
@@ -2414,6 +2414,22 @@ Logfil indeholder måske flere detaljer.</translation>
 
 Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SQLite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PosgreSQL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot create new DB schema in file &apos;%1&apos;.  File already exists!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2560,10 +2576,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Owner ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Folder Path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2724,6 +2736,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Recalculate efficiency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder ID</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3510,6 +3526,13 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>FULLPATH</source>
         <translation type="vanished">Fuldstændig sti</translation>
     </message>
+    <message>
+        <source>Folder</source>
+        <translation type="obsolete">Mappe</translation>
+    </message>
+</context>
+<context>
+    <name>FolderCommon</name>
     <message>
         <source>Folder</source>
         <translation type="unfinished">Mappe</translation>
@@ -4383,6 +4406,10 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>Notes from brew day on %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Brew Date</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5307,6 +5334,22 @@ Error message:
     </message>
     <message>
         <source>The application encountered a fatal error.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Creation of empty Database file &apos;%1&apos; %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>succeeded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To use the newly-created file, rename it to &apos;%1&apos; and move it to directory %2.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6302,6 +6345,14 @@ Logfil indeholder evt. flere detaljer.</translation>
         <source>Stock Purchases (Inventory)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop bothering you about new data?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -6315,7 +6366,7 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>to the mash tun.</source>
-        <translation>til mæskebeholder</translation>
+        <translation type="vanished">til mæskebeholder</translation>
     </message>
     <message>
         <source>Heat water</source>
@@ -6351,47 +6402,47 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>Put %1 %2 into boil for %3.</source>
-        <translation>Sæt %1 %2 til kogningen i %3.</translation>
+        <translation type="vanished">Sæt %1 %2 til kogningen i %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into fermenter for %3.</source>
-        <translation>Sæt %1 %2 til gæringen i %3.</translation>
+        <translation type="vanished">Sæt %1 %2 til gæringen i %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into first wort for %3.</source>
-        <translation>Sæt %1 %2 til første urt i %3.</translation>
+        <translation type="vanished">Sæt %1 %2 til første urt i %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into mash for %3.</source>
-        <translation>3.Kunne ikke forbinde til %1:%2</translation>
+        <translation type="vanished">3.Kunne ikke forbinde til %1:%2</translation>
     </message>
     <message>
         <source>Steep %1 %2 in wort for %3.</source>
-        <translation>Sæt %1 %2 til urten i %3.</translation>
+        <translation type="vanished">Sæt %1 %2 til urten i %3.</translation>
     </message>
     <message>
         <source>Hop addition</source>
-        <translation>Humletilsætning</translation>
+        <translation type="vanished">Humletilsætning</translation>
     </message>
     <message>
         <source>Use %1 %2 at bottling for %3.</source>
-        <translation>Anvend %1 %2 til flaskning i %3.</translation>
+        <translation type="vanished">Anvend %1 %2 til flaskning i %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into primary for %3.</source>
-        <translation>Sæt %1 %2 til første i %3.</translation>
+        <translation type="vanished">Sæt %1 %2 til første i %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into secondary for %3.</source>
-        <translation>Sæt %1 %2 til anden i %3.</translation>
+        <translation type="vanished">Sæt %1 %2 til anden i %3.</translation>
     </message>
     <message>
         <source>Use %1 %2 for %3.</source>
-        <translation>Anvend %1 %2 til %3.</translation>
+        <translation type="vanished">Anvend %1 %2 til %3.</translation>
     </message>
     <message>
         <source>Misc addition</source>
-        <translation>Tilsætning af diverse ingredienser</translation>
+        <translation type="vanished">Tilsætning af diverse ingredienser</translation>
     </message>
     <message>
         <source>Do first wort hopping with </source>
@@ -6454,11 +6505,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Boil time</source>
-        <translation>Varighed kogning</translation>
+        <translation type="vanished">Varighed kogning</translation>
     </message>
     <message>
         <source>You did not configure an equipment (which you really should), so tell me the boil time.</source>
-        <translation>Du har ikke konfigureret et udstyr (hvilket du burde gøre); så oplys om kogningens varighed.</translation>
+        <translation type="vanished">Du har ikke konfigureret et udstyr (hvilket du burde gøre); så oplys om kogningens varighed.</translation>
     </message>
     <message>
         <source>Bring the wort to a boil and hold for %1.</source>
@@ -6526,7 +6577,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Put %1 %2 into packaging for %3.</source>
-        <translation>Læg %1 %2 i pakning til %3.</translation>
+        <translation type="vanished">Læg %1 %2 i pakning til %3.</translation>
     </message>
     <message>
         <source>%1 %2</source>
@@ -6868,6 +6919,54 @@ The final volume in the primary is %1.</source>
         <source>Yes</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Put %1 %2 into mash%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into first wort%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Steep %1 %2 in wort%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into boil%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into fermenter%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into primary%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into secondary%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use %1 %2 at bottling%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> at end of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> to the mash tun.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -6877,19 +6976,19 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Add to Mash</source>
-        <translation>Føj til mæsk</translation>
+        <translation type="vanished">Føj til mæsk</translation>
     </message>
     <message>
         <source>Add to Boil</source>
-        <translation>Føj til kogning</translation>
+        <translation type="vanished">Føj til kogning</translation>
     </message>
     <message>
         <source>Add to Fermentation</source>
-        <translation>Føj til gæring</translation>
+        <translation type="vanished">Føj til gæring</translation>
     </message>
     <message>
         <source>Add to Package</source>
-        <translation>Føj til pakning</translation>
+        <translation type="vanished">Føj til pakning</translation>
     </message>
     <message>
         <source>Stage</source>
@@ -6913,6 +7012,22 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentation</source>
+        <translation type="unfinished">Gæring</translation>
+    </message>
+    <message>
+        <source>Package</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

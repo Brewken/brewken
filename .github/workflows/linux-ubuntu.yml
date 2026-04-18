@@ -155,14 +155,14 @@ jobs:
         shell: bash
         run: |
           umask 022
-          ../bt appimage
+          ../bt -v appimage
 
       - name: Flatpak
         working-directory: ${{github.workspace}}/mbuild
         shell: bash
         run: |
           umask 022
-          ../bt flatpak
+          ../bt -v flatpak
 
       - name: Upload Linux Packages (Installers)
         if: ${{ success() }}

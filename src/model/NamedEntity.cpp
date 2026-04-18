@@ -93,6 +93,8 @@ namespace {
    }
 }
 
+QString NamedEntity::className() const { return this->metaObject()->className(); }
+
 QString NamedEntity::localisedName() { return tr("Named Entity"); }
 QString NamedEntity::localisedName_deleted         () { return tr("Deleted"   ); }
 QString NamedEntity::localisedName_key             () { return tr("Key"       ); }

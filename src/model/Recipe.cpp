@@ -25,7 +25,8 @@
 #include "model/Recipe.h"
 
 #include <cmath> // For pow/log
-#include <compare> //
+#include <compare>
+#include <tuple>
 
 #include <boost/container/flat_set.hpp>
 
@@ -77,25 +78,91 @@
 #endif
 
 namespace {
-
    /**
-    * \brief This is used to assist the creation of instructions.
+    * \brief This class is used to assist the creation and ordering of Instructions.
+    *
+    *        For each stage (RecipeAddition::Stage) of the Recipe, it's easiest to generate instructions by type -- eg
+    *        all the Hop additions to the Mash, then all the Misc additions to the Mash etc.  However, we want end up
+    *        with the instructions in time order for the stage -- eg first Misc addition might be between second and
+    *        third Hop additions.  So what we do is generate PreInstructions (which, unlike Instruction, don't have the
+    *        EnumeratedBase::sequenceNumber field), then sort them by time (within the stage), then use these
+    *        sorted PreInstructions to generate a correctly-ordered list of Instructions for the Recipe stage.
+    *
+    *        TBD: Maybe we could just generate Instructions directly and then sort them.
     */
    struct PreInstruction {
-      PreInstruction(QString text, QString title, double  time) : text{text}, title{title}, time{time} { return; }
-      // Since we'll, amongst other things, be storing PreInstruction in a QVector, it needs to be default-constructable
-      PreInstruction() : text{""}, title{""}, time{0.0} { return; }
+      RecipeAddition::Stage stage        ; // Not part of Instruction, but used for sorting
+      std::optional<int>    step         ; // Not part of Instruction, but used for sorting
+      double                interval_mins; // Instruction::interval_mins
+      QString               name         ; // Instruction::name
+      QString               directions   ; // Instruction::directions
+
+      PreInstruction(RecipeAddition::Stage const   stage,
+                     std::optional<int>    const   step,
+                     double                const   interval_mins,
+                     QString               const & name,
+                     QString               const & directions) :
+         stage        {stage        },
+         step         {step         },
+         interval_mins{interval_mins},
+         name         {name         },
+         directions   {directions   } {
+         return;
+      }
+      /**
+       * Since we will, amongst other things, be storing PreInstruction in a QVector, it needs to be
+       * default-constructable.  We don't however inherently care about what the default values are because we will
+       * never rely on them.
+       */
+      PreInstruction() : PreInstruction(RecipeAddition::Stage::Packaging, std::nullopt, 0.0, "", "") { return; }
       ~PreInstruction() = default;
 
-      QString text;
-      QString title;
-      double  time;
+      //
+      // For sorting, we only care about stage, time and step.  It suits us that the standard behaviour of <=> for
+      // std::optional<int>, gives std::nullopt as lower than all other possible values.
+      //
+
+      auto operator<=>(PreInstruction const & other) const {
+         // We need to invert the natural ordering of interval_mins because it is "time remaining" rather than "time
+         // elapsed".  The tie needs references to lvalues, so we can't do this "in place" in its constructor.
+         auto const thisInvertInterval_mins = -this->interval_mins;
+         auto const otherInvertInterval_mins = -other.interval_mins;
+         return std::tie(this->stage, this->step, thisInvertInterval_mins) <=>
+                std::tie(other.stage, other.step, otherInvertInterval_mins);
+      }
+
+      bool operator==(PreInstruction const & other) const {
+         // For equality, we don't have to worry about the inversion of interval_mins.
+         return std::tie(this->stage, this->step, this->interval_mins) ==
+                std::tie(other.stage, other.step, other.interval_mins);
+      }
+
+      /**
+       * @brief Generate an Instruction from a PreInstruction
+       * @return
+       */
+      std::shared_ptr<Instruction> toInstruction() const {
+         auto instruction = std::make_shared<Instruction>();
+         instruction->setName(this->name);
+         instruction->setDirections(this->directions);
+         instruction->setInterval_mins(this->interval_mins);
+         return instruction;
+      }
    };
-   auto operator<=>(PreInstruction const & lhs, PreInstruction const & rhs) {
-      return lhs.time <=> rhs.time;
+
+   /**
+    * \brief Convenience function for logging
+    */
+   template<class S>
+   S & operator<<(S & stream, PreInstruction const & preInstruction) {
+      stream <<
+         "PreInstruction" << preInstruction.name << "@" << preInstruction.stage << ":" << preInstruction.step << ":" <<
+         preInstruction.interval_mins;
+      return stream;
    }
 
-   bool isFermentableSugar(Fermentable * fermy) {
+
+   bool isFermentableSugar(Fermentable const * fermy) {
       // TODO: This probably doesn't work in languages other than English!
       if (fermy->type() == Fermentable::Type::Sugar && fermy->name() == "Milk Sugar (Lactose)") {
          return false;
@@ -135,7 +202,7 @@ public:
    /**
     * Constructors
     */
-   impl(Recipe & self) :
+   explicit impl(Recipe & self) :
       m_self                 {self},
       m_ABV_pct              {0.0},
       m_color_mcu            {0.0},
@@ -244,115 +311,218 @@ public:
       return;
    }
 
-   QVector<PreInstruction> mashInstructions(double timeRemaining,
-                                            double totalWaterAdded_l,
-                                            [[maybe_unused]] unsigned int size) {
-      QVector<PreInstruction> preins;
-      if (!m_self.mash()) {
-         return preins;
-      }
+   /**
+    * Convenience function to get the length of each recipe stage.  No general case, only specialisations, which have to
+    * be defined below outside the impl class.
+    *
+    * @tparam stage
+    * @return
+    */
+   template<RecipeAddition::Stage stage> double stageLength_mins() const;
 
-      for (auto step : m_self.mash()->mashSteps()) {
+   /**
+    * @brief Generate the (pre-)instructions for the Mash itself, ie water additions, temperature changes etc
+    *
+    * @param totalWaterAdded_l IN
+    * @param preInstructions OUT
+    * @return
+    */
+   void instructionsForMash(double & totalWaterAdded_l,
+                            QVector<PreInstruction> & preInstructions) const {
+      auto const mash = this->m_self.mash();
+      if (!mash) {
+         // We shouldn't actually be called if there is no mash...
+         return;
+      }
+      double timeRemaining = mash->totalTime_mins();
+
+      for (auto const & step : mash->mashSteps()) {
          QString str;
          if (step->isInfusion()) {
             str = tr("Add %1 water at %2 to mash to bring it to %3.")
-                  .arg(Measurement::displayAmount(Measurement::Amount{step->amount_l(), Measurement::Units::liters}))
-                  .arg(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c().value_or(step->startTemp_c()), Measurement::Units::celsius}))
-                  .arg(Measurement::displayAmount(Measurement::Amount{step->startTemp_c(), Measurement::Units::celsius}));
+                  .arg(Measurement::displayAmount(Measurement::Amount{step->amount_l(), Measurement::Units::liters}, 1))
+                  .arg(Measurement::displayAmount(Measurement::Amount{step->infuseTemp_c().value_or(step->startTemp_c()), Measurement::Units::celsius}, 1))
+                  .arg(Measurement::displayAmount(Measurement::Amount{step->startTemp_c(), Measurement::Units::celsius}, 1));
             totalWaterAdded_l += step->amount_l();
          } else if (step->isTemperature()) {
             str = tr("Heat mash to %1.").arg(Measurement::displayAmount(Measurement::Amount{step->startTemp_c(),
-                                                                                            Measurement::Units::celsius}));
+                                                                                            Measurement::Units::celsius}, 1));
          } else if (step->isDecoction()) {
             str = tr("Bring %1 of the mash to a boil and return to the mash tun to bring it to %2.")
                   .arg(Measurement::displayAmount(Measurement::Amount{step->amount_l(),
-                                                                      Measurement::Units::liters}))
+                                                                      Measurement::Units::liters}, 1))
                   .arg(Measurement::displayAmount(Measurement::Amount{step->startTemp_c(),
-                                                                      Measurement::Units::celsius}));
+                                                                      Measurement::Units::celsius}, 1));
          }
 
          str += tr(" Hold for %1.").arg(Measurement::displayAmount(Measurement::Amount{step->stepTime_mins(),
-                                                                                       Measurement::Units::minutes}));
+                                                                                       Measurement::Units::minutes}, 0));
 
-         preins.push_back(PreInstruction(str, QString("%1 - %2").arg(MashStep::typeDisplayNames[step->type()]).arg(step->name()),
-                                       timeRemaining));
+         preInstructions.push_back(
+            PreInstruction(RecipeAddition::Stage::Mash,
+                           step->sequenceNumber(),
+                           timeRemaining,
+                           QString("%1 - %2").arg(MashStep::typeDisplayNames[step->type()]).arg(step->name()),
+                           str)
+         );
          timeRemaining -= step->stepTime_mins();
       }
-      return preins;
+      return;
    }
 
-   QVector<PreInstruction> hopSteps(RecipeAddition::Stage const stage) {
-      // TBD: What about hopAddition->addAtTime_mins()?
-      QVector<PreInstruction> preins;
-      for (auto hopAddition : m_self.hopAdditions()) {
-         auto hop = hopAddition->hop();
-         if (hopAddition->stage() == stage) {
-            QString str;
-            switch (stage) {
-               case RecipeAddition::Stage::Mash:
-                  str = tr("Put %1 %2 into mash for %3.");
-                  break;
-               case RecipeAddition::Stage::Boil:
-                  if (hopAddition->isFirstWort()) {
-                     str = tr("Put %1 %2 into first wort for %3.");
-                  } else if (hopAddition->isAroma()) {
-                     str = tr("Steep %1 %2 in wort for %3.");
-                  } else {
-                     str = tr("Put %1 %2 into boil for %3.");
-                  }
-                  break;
-               case RecipeAddition::Stage::Fermentation:
-                  str = tr("Put %1 %2 into fermenter for %3.");
-                  break;
-               case RecipeAddition::Stage::Packaging:
-                  // We don't really support this yet, but best to say something if we read in a recipe that has this
-                  str = tr("Put %1 %2 into packaging for %3.");
-                  break;
-               // NB: No default case as we want compiler to warn us if we missed a value above
+   template<typename AdditionType, RecipeAddition::Stage stage>
+   void instructionsForRecipeAddition(AdditionType const & addition, QVector<PreInstruction> & preInstructions) const {
+      if (addition->stage() == stage) {
+         std::optional<int> const step = addition->step();
+         std::optional<double> stepLength_mins = std::nullopt;
+         if (step) {
+            // stepTime_mins() will return either double or std::optional<double> depending on whether it's a required
+            // field for that step type (eg yes for Mash, no for Boil).
+            //
+            // TBD: We could probably do some sort of templating here to avoid this clunky if/else
+            if constexpr (RecipeAddition::Stage::Mash == stage) {
+               if (auto const mash = this->m_self.mash();
+                   mash && *step <= static_cast<int>(mash->numSteps())) {
+                  stepLength_mins = mash->stepAt(*step)->stepTime_mins();
+               }
+            } else if constexpr (RecipeAddition::Stage::Boil == stage) {
+               if (auto const boil = this->m_self.boil();
+                   boil && *step <= static_cast<int>(boil->numSteps())) {
+                  stepLength_mins = boil->stepAt(*step)->stepTime_mins();
+               }
+            } else if constexpr (RecipeAddition::Stage::Fermentation == stage) {
+               if (auto const fermentation = this->m_self.fermentation();
+                   fermentation && *step <= static_cast<int>(fermentation->numSteps())) {
+                  stepLength_mins = fermentation->stepAt(*step)->stepTime_mins();
+               }
+            } else if constexpr (RecipeAddition::Stage::Packaging == stage) {
+               // We don't yet fully support packaging
+               stepLength_mins = std::nullopt;
             }
-
-            str = str.arg(Measurement::displayAmount(hopAddition->amount()))
-                     .arg(hop->name())
-                     .arg(Measurement::displayAmount(Measurement::Amount{hopAddition->duration_mins().value_or(0.0), Measurement::Units::minutes}));
-
-            preins.push_back(PreInstruction(str, tr("Hop addition"), hopAddition->duration_mins().value_or(0.0)));
          }
-      }
-      return preins;
-   }
-
-   QVector<PreInstruction> miscSteps(RecipeAdditionMisc::Use type) {
-      QVector<PreInstruction> preins;
-      for (auto miscAddition : m_self.miscAdditions()) {
+         double const additionDuration_mins{
+            // If we have a duration, this will take precedence over the calculated one
+            addition->duration_mins().value_or(
+               // If addAtTime_mins is not set, we assume addition happens at the start of the stage
+               this->stageLength_mins<stage>() - addition->addAfterStart_mins(stepLength_mins).value_or(0.0)
+            )
+         };
+         //
+         // When the duration is 0 -- either because we're adding something at the end of the stage or because we
+         // don't have a length for the stage, we want to show "at end of [stage name]" rather than "for 0 minutes",
+         // hence the extra layer of indirection below in string construction.
+         //
+         // We take advantage of compile-time string literal concatenation to make things a bit more readable in the
+         // source code.
+         //
+         // TODO: This next block is common with instructionsForMiscAdditions, so we should factor it out into a
+         //       separate function.
+         //
          QString str;
-         auto misc = miscAddition->misc();
-         if (miscAddition->use() == type) {
-            if (type == RecipeAdditionMisc::Use::Boil) {
-               str = tr("Put %1 %2 into boil for %3.");
-            } else if (type == RecipeAdditionMisc::Use::Bottling) {
-               str = tr("Use %1 %2 at bottling for %3.");
-            } else if (type == RecipeAdditionMisc::Use::Mash) {
-               str = tr("Put %1 %2 into mash for %3.");
-            } else if (type == RecipeAdditionMisc::Use::Primary) {
-               str = tr("Put %1 %2 into primary for %3.");
-            } else if (type == RecipeAdditionMisc::Use::Secondary) {
-               str = tr("Put %1 %2 into secondary for %3.");
-            } else {
-               qWarning() << Q_FUNC_INFO << "Unrecognized misc use.";
-               str = tr("Use %1 %2 for %3.");
-            }
-
-            str = str.arg(Measurement::displayAmount(miscAddition->amount()))
-                     .arg(misc->name())
-                     .arg(Measurement::displayAmount(Measurement::Amount{miscAddition->duration_mins().value_or(0.0), Measurement::Units::minutes}));
-
-            preins.push_back(PreInstruction(str, tr("Misc addition"), miscAddition->duration_mins().value_or(0.0)));
+         switch (stage) {
+            case RecipeAddition::Stage::Mash:
+               str = tr("Put %1 %2 into mash" "%3.");
+               break;
+            case RecipeAddition::Stage::Boil:
+               if constexpr (std::same_as<AdditionType, RecipeAdditionHop>) {
+                  if (addition->isFirstWort()) {
+                     str = tr("Put %1 %2 into first wort" "%3.");
+                  } else if (addition->isAroma()) {
+                     str = tr("Steep %1 %2 in wort" "%3.");
+                  } else {
+                     str = tr("Put %1 %2 into boil" "%3.");
+                  }
+               } else {
+                  str = tr("Put %1 %2 into boil" "%3.");
+               }
+               break;
+            case RecipeAddition::Stage::Fermentation:
+               if constexpr (std::same_as<AdditionType, RecipeAdditionHop>) {
+                  str = tr("Put %1 %2 into fermenter" "%3.");
+               } else {
+                  if (step == 1) {
+                     str = tr("Put %1 %2 into primary" "%3.");
+                  } else {
+                     str = tr("Put %1 %2 into secondary" "%3.");
+                  }
+               }
+               break;
+            case RecipeAddition::Stage::Packaging:
+               str = tr("Use %1 %2 at bottling" "%3.");
+               break;
+            // NB: No default case as we want compiler to warn us if we missed a value above
          }
+         QString const durationString{
+            qFuzzyIsNull(additionDuration_mins) ?
+               tr(" at end of %1").arg(RecipeAddition::stageDisplayNames[stage]) :
+               tr(" for %1").arg(
+                  Measurement::displayAmount(Measurement::Amount{additionDuration_mins,
+                                                                 Measurement::Units::minutes}, 0)
+               )
+         };
+
+         str = str.arg(Measurement::displayAmount(addition->amount(), 1))
+                  .arg(addition->ingredientRaw()->name())
+                  .arg(durationString);
+
+         preInstructions.push_back(
+            PreInstruction(addition->stage(),
+                           addition->step(),
+                           additionDuration_mins,
+                           // localisedName() gives tr("Hop"), tr("Misc"), etc
+                           tr("%1 addition").arg(addition->ingredientRaw()->localisedName()),
+                           str)
+         );
       }
-      return preins;
+      return;
    }
 
-   PreInstruction boilFermentablesPre(double timeRemaining) {
+   /**
+    * @brief Generate the (pre-)instructions for Hop additions for the given Recipe stage.
+    *
+    * @param preInstructions OUT
+    */
+   template<RecipeAddition::Stage stage>
+   void instructionsForHopAdditions(QVector<PreInstruction> & preInstructions) const {
+      //
+      // Recipe additions have two time fields: addAtTime_mins and duration_mins.  The latter is often unset, signifying
+      // that the addition remains for the duration (eg until the end of the boil).  Per the comments in
+      // \c RecipeAddition.h, for additions to the boil, addAtTime_mins is measured backwards from the end of the
+      // boil -- ie "time before the end of the boil" etc.  We express this in the instructions as "Add Hop X for Y
+      // minutes".
+      //
+
+      // TBD: What about hopAddition->addAtTime_mins()?
+      for (auto const & hopAddition : m_self.hopAdditions()) {
+         this->instructionsForRecipeAddition<decltype(hopAddition), stage>(hopAddition, preInstructions);
+      }
+      return;
+   }
+
+   /**
+    * @brief Generate the (pre-)instructions for Misc additions for the given Recipe stage.
+    *
+    *        On the template parameters, it's simpler to have an int than std::optional<int>, so we use 0 to represent
+    *        std::nullopt.
+    *
+    * @param preInstructions OUT
+    */
+   template<RecipeAddition::Stage stage>
+   void instructionsForMiscAdditions(QVector<PreInstruction> & preInstructions) const {
+      for (auto const & miscAddition : m_self.miscAdditions()) {
+         this->instructionsForRecipeAddition<decltype(miscAddition), stage>(miscAddition, preInstructions);
+      }
+      return;
+   }
+
+   /**
+    * @brief
+    * @param timeRemaining IN
+    * @param preInstructions OUT
+    */
+   void instructionsForBoilFermentables(double const timeRemaining,
+                                        QVector<PreInstruction> & preInstructions) const {
+      bool foundBoilFermentables = false;
       QString str = tr("Boil or steep ");
       for (auto const & fermentableAddition : m_self.fermentableAdditions()) {
          if (fermentableAddition->stage() != RecipeAddition::Stage::Boil ||
@@ -360,63 +530,51 @@ public:
             continue;
          }
 
+         foundBoilFermentables = true;
          str += QString("%1 %2, ")
-               .arg(Measurement::displayAmount(fermentableAddition->amount()))
+               .arg(Measurement::displayAmount(fermentableAddition->amount(), 1))
                .arg(fermentableAddition->name());
       }
       str += ".";
 
-      return PreInstruction(str, tr("Boil/steep fermentables"), timeRemaining);
-   }
-
-   bool hasBoilFermentable() {
-      for (auto const & fermentableAddition : m_self.fermentableAdditions()) {
-         if (fermentableAddition->stage() != RecipeAddition::Stage::Mash && !fermentableAddition->addAfterBoil()) {
-            return true;
-         }
-      }
-      return false;
-   }
-
-   bool hasBoilExtract() {
-      for (auto const & fermentableAddition : m_self.fermentableAdditions()) {
-         if (fermentableAddition->fermentable()->isExtract()) {
-            return true;
-         }
-      }
-      return false;
-   }
-
-   PreInstruction addExtracts(double timeRemaining) const {
-      QString str = tr("Raise water to boil and then remove from heat. Stir in  ");
-      for (auto const & fermentableAddition : m_self.fermentableAdditions()) {
-         if (fermentableAddition->fermentable()->isExtract()) {
-            str += QString("%1 %2, ")
-                  .arg(Measurement::displayAmount(fermentableAddition->amount()))
-                  .arg(fermentableAddition->fermentable()->name());
-         }
-      }
-      str += ".";
-
-      return PreInstruction(str, tr("Add Extracts to water"), timeRemaining);
-   }
-
-   void addPreinstructions(QVector<PreInstruction> preins) {
-      // Add instructions in descending mash time order.
-      std::sort(preins.begin(), preins.end(), std::greater<PreInstruction>());
-      for (int ii = 0; ii < preins.size(); ++ii) {
-         PreInstruction pi = preins[ii];
-
-         auto ins = std::make_shared<Instruction>();
-         ins->setName(pi.title);
-         ins->setDirections(pi.text);
-         ins->setInterval_mins(pi.time);
-
-         this->m_self.m_instructions.add(ins);
+      // Unlike Hops and Miscs, we don't call out the individual Fermentables in the instructions
+      if (foundBoilFermentables) {
+         preInstructions.push_back(
+            PreInstruction(RecipeAddition::Stage::Boil,
+                           std::nullopt,
+                           timeRemaining,
+                           tr("Boil/steep fermentables"),
+                           str)
+         );
       }
       return;
    }
 
+   void instructionsForExtracts(double const timeRemaining,
+                                QVector<PreInstruction> & preInstructions) const {
+      bool foundExtracts = false;
+      QString str = tr("Raise water to boil and then remove from heat. Stir in  ");
+      for (auto const & fermentableAddition : m_self.fermentableAdditions()) {
+         if (fermentableAddition->fermentable()->isExtract()) {
+            foundExtracts = true;
+            str += QString("%1 %2, ")
+                  .arg(Measurement::displayAmount(fermentableAddition->amount(), 1))
+                  .arg(fermentableAddition->fermentable()->name());
+         }
+      }
+      if (foundExtracts) {
+         str += ".";
+         preInstructions.push_back(
+            PreInstruction(RecipeAddition::Stage::Boil,
+                           std::nullopt,
+                           timeRemaining,
+                           tr("Add Extracts to water"),
+                           str)
+         );
+      }
+
+      return;
+   }
 
    /**
     * \brief This does the logic for \c nonOptBoil, \c nonOptFermentation, etc
@@ -438,28 +596,17 @@ public:
     *        the boil.
     */
    double boilSizeInLitersOr(double const defaultValue) const {
-      auto boil = this->m_self.boil();
+      auto const boil = this->m_self.boil();
       if (!boil) {
          return defaultValue;
       }
       return boil->preBoilSize_l().value_or(defaultValue);
    }
 
-   /**
-    * \brief Returns the boil time in minutes, or the supplied value if there is no boil.
-    */
-   double boilTimeInMinutesOr(double const defaultValue) const {
-      auto boil = this->m_self.boil();
-      if (!boil) {
-         return defaultValue;
-      }
-      return boil->boilTime_mins();
-   }
-
    //! \brief send me a list of salts and if we are wanting to add to the
    //! mash or the sparge, and I will return a list of instructions
    QStringList getReagents(QList<std::shared_ptr<RecipeAdjustmentSalt>> saltAdditions,
-                           RecipeAdjustmentSalt::WhenToAdd wanted) {
+                           RecipeAdjustmentSalt::WhenToAdd wanted) const {
       QStringList reagents = QStringList();
 
       for (auto saltAddition : saltAdditions ) {
@@ -467,8 +614,9 @@ public:
          auto const salt      = saltAddition->salt();
          QString tmp;
 
+         // TBD: For the moment I'm leaving the salt additions at 3 decimal places, but this is maybe too much
          if (whenToAdd == wanted || whenToAdd == RecipeAdjustmentSalt::WhenToAdd::Equal) {
-            tmp = tr("%1 %2").arg(Measurement::displayAmount(saltAddition->amount())).arg(salt->name());
+            tmp = tr("%1 %2").arg(Measurement::displayAmount(saltAddition->amount())).arg(salt->name(), 3);
          } else if (whenToAdd == RecipeAdjustmentSalt::WhenToAdd::Ratio) {
             double ratio = 1.0;
             if (wanted == RecipeAdjustmentSalt::WhenToAdd::Sparge) {
@@ -477,7 +625,7 @@ public:
 
             auto adjustedAmount = saltAddition->amount();
             adjustedAmount.quantity *= ratio;
-            tmp = tr("%1 %2").arg(Measurement::displayAmount(adjustedAmount)).arg(salt->name());
+            tmp = tr("%1 %2").arg(Measurement::displayAmount(adjustedAmount)).arg(salt->name(), 3);
          } else {
             continue;
          }
@@ -491,9 +639,8 @@ public:
    }
 
    // Adds instructions to the recipe.
-   void postboilFermentablesIns() {
-      QString tmp;
-      bool hasFerms = false;
+   void instructionsForPostBoilFermentables(QVector<PreInstruction> & preInstructions) const {
+      bool foundPostBoilFermentables = false;
 
       QString str = tr("Add ");
       for (auto const & fermentableAddition : this->m_self.fermentableAdditions()) {
@@ -501,30 +648,28 @@ public:
             continue;
          }
 
-         hasFerms = true;
-         tmp = QString("%1 %2, ")
-               .arg(Measurement::displayAmount(fermentableAddition->amount()))
+         foundPostBoilFermentables = true;
+         str += QString("%1 %2, ")
+               .arg(Measurement::displayAmount(fermentableAddition->amount(), 1))
                .arg(fermentableAddition->fermentable()->name());
-         str += tmp;
-      }
-      str += tr("to the boil at knockout.");
-
-      if (!hasFerms) {
-         return;
       }
 
-      auto ins = std::make_shared<Instruction>();
-      ins->setName(tr("Knockout additions"));
-      ins->setDirections(str);
-      ins->addReagent(tmp);
-
-      this->m_self.m_instructions.add(ins);
+      if (foundPostBoilFermentables) {
+         str += tr("to the boil at knockout.");
+         preInstructions.push_back(
+            PreInstruction(RecipeAddition::Stage::Boil,
+                           std::nullopt, // TBD: this->m_self.boil()->numSteps()
+                           0.0,
+                           tr("Knockout additions"),
+                           str)
+         );
+      }
 
       return;
    }
 
-   void postboilIns() {
-      auto equipment = this->m_self.equipment();
+   void instructionsForPostBoil(QVector<PreInstruction> & preInstructions) const {
+      auto const equipment = this->m_self.equipment();
       if (!equipment) {
          return;
       }
@@ -538,29 +683,38 @@ public:
 
       double wort_l = equipment->wortEndOfBoil_l(wortInBoil_l);
       QString str = tr("You should have %1 wort post-boil.")
-                  .arg(Measurement::displayAmount(Measurement::Amount{wort_l, Measurement::Units::liters}));
-      str += tr("\nYou anticipate losing %1 to trub and chiller loss.")
-            .arg(Measurement::displayAmount(Measurement::Amount{equipment->kettleTrubChillerLoss_l(), Measurement::Units::liters}));
+                  .arg(Measurement::displayAmount(Measurement::Amount{wort_l, Measurement::Units::liters}, 1));
+      str += tr("\nYou anticipate losing %1 to trub and chiller loss.").arg(
+         Measurement::displayAmount(Measurement::Amount{equipment->kettleTrubChillerLoss_l(),
+                                                        Measurement::Units::liters}, 1)
+      );
       wort_l -= equipment->kettleTrubChillerLoss_l();
-      if (equipment->topUpWater_l() > 0.0)
-         str += tr("\nAdd %1 top up water into primary.")
-               .arg(Measurement::displayAmount(Measurement::Amount{equipment->topUpWater_l().value_or(Equipment::default_topUpWater_l), Measurement::Units::liters}));
+      if (equipment->topUpWater_l() > 0.0) {
+         str += tr("\nAdd %1 top up water into primary.").arg(
+            Measurement::displayAmount(
+               Measurement::Amount{equipment->topUpWater_l().value_or(Equipment::default_topUpWater_l),
+                                   Measurement::Units::liters}, 1
+            )
+         );
+      }
       wort_l += equipment->topUpWater_l().value_or(Equipment::default_topUpWater_l);
-      str += tr("\nThe final volume in the primary is %1.")
-            .arg(Measurement::displayAmount(Measurement::Amount{wort_l, Measurement::Units::liters}));
+      str += tr("\nThe final volume in the primary is %1.").arg(
+         Measurement::displayAmount(Measurement::Amount{wort_l, Measurement::Units::liters}, 1)
+      );
 
-      auto ins = std::make_shared<Instruction>();
-      ins->setName(tr("Post boil"));
-      ins->setDirections(str);
-      this->m_self.m_instructions.add(ins);
+      preInstructions.push_back(
+         PreInstruction(RecipeAddition::Stage::Fermentation,
+                        std::nullopt,
+                        0.0,
+                        tr("Post boil"),
+                        str)
+      );
 
       return;
    }
 
-   void mashFermentableIns() {
+   void instructionsForMashFermentables(QVector<PreInstruction> & preInstructions) const {
       /*** Add grains ***/
-      auto ins = std::make_shared<Instruction>();
-      ins->setName(tr("Add grains"));
       QString str = tr("Add ");
       QList<QString> reagents = this->m_self.getReagents(this->m_self.fermentableAdditions());
 
@@ -568,39 +722,47 @@ public:
          str += reagents.at(ii);
       }
 
-      str += tr("to the mash tun.");
-      ins->setDirections(str);
+      str += tr(" to the mash tun.");
 
-      this->m_self.m_instructions.add(ins);
+      preInstructions.push_back(
+         PreInstruction(RecipeAddition::Stage::Mash,
+                        std::nullopt,
+                        0.0,
+                        tr("Add grains"),
+                        str)
+      );
 
       return;
    }
 
-   void mashWaterIns() {
+   void instructionsForMashWater(QVector<PreInstruction> & preInstructions) const {
 
       if (!this->m_self.mash()) {
          return;
       }
 
-      auto ins = std::make_shared<Instruction>();
-      ins->setName(tr("Heat water"));
       QString str = tr("Bring ");
-      QList<QString> reagents = this->m_self.getReagents(this->m_self.mash()->mashSteps());
+      QList<QString> const reagents = this->m_self.getReagents(this->m_self.mash()->mashSteps());
 
       for (int ii = 0; ii < reagents.size(); ++ii) {
          str += reagents.at(ii);
       }
 
       str += tr("for upcoming infusions.");
-      ins->setDirections(str);
 
-      this->m_self.m_instructions.add(ins);
+      preInstructions.push_back(
+         PreInstruction(RecipeAddition::Stage::Mash,
+                        std::nullopt,
+                        0.0,
+                        tr("Heat water"),
+                        str)
+      );
 
       return;
    }
 
-   void firstWortHopsIns() {
-      QList<QString> reagents = this->m_self.getReagents(this->m_self.hopAdditions(), true);
+   void instructionsForFirstWortHops(QVector<PreInstruction> & preInstructions) const {
+      QList<QString> const reagents = this->m_self.getReagents(this->m_self.hopAdditions(), true);
       if (reagents.size() == 0) {
          return;
       }
@@ -612,69 +774,75 @@ public:
       }
       str += ".";
 
-      auto ins = std::make_shared<Instruction>();
-      ins->setName(tr("First wort hopping"));
-      ins->setDirections(str);
-
-      this->m_self.m_instructions.add(ins);
+      preInstructions.push_back(
+         PreInstruction(RecipeAddition::Stage::Boil,
+                        1, // First wort hops are added at the start of the boil
+                        0.0,
+                        tr("First wort hopping"),
+                        str)
+      );
 
       return;
    }
 
-   void topOffIns() {
-      auto equipment = this->m_self.equipment();
+   void instructionsForTopOff(QVector<PreInstruction> & preInstructions) const {
+      auto const equipment = this->m_self.equipment();
       if (!equipment) {
          return;
       }
 
       double wortInBoil_l = this->m_self.wortFromMash_l() - equipment->getLauteringDeadspaceLoss_l();
       QString str = tr("You should now have %1 wort.")
-                  .arg(Measurement::displayAmount(Measurement::Amount{wortInBoil_l, Measurement::Units::liters}));
+                  .arg(Measurement::displayAmount(Measurement::Amount{wortInBoil_l, Measurement::Units::liters}, 1));
       if (!equipment->topUpKettle_l() || *equipment->topUpKettle_l() == 0.0) {
          return;
       }
 
       wortInBoil_l += *equipment->topUpKettle_l();
-      QString tmp = tr(" Add %1 water to the kettle, bringing pre-boil volume to %2.")
-                  .arg(Measurement::displayAmount(Measurement::Amount{*equipment->topUpKettle_l(), Measurement::Units::liters}))
-                  .arg(Measurement::displayAmount(Measurement::Amount{wortInBoil_l, Measurement::Units::liters}));
+      str += tr(" Add %1 water to the kettle, bringing pre-boil volume to %2.")
+                  .arg(Measurement::displayAmount(Measurement::Amount{*equipment->topUpKettle_l(), Measurement::Units::liters}, 1))
+                  .arg(Measurement::displayAmount(Measurement::Amount{wortInBoil_l, Measurement::Units::liters}, 1));
 
-      str += tmp;
-
-      auto ins = std::make_shared<Instruction>();
-      ins->setName(tr("Pre-boil"));
-      ins->setDirections(str);
-      ins->addReagent(tmp);
-
-      this->m_self.m_instructions.add(ins);
+      preInstructions.push_back(
+         PreInstruction(RecipeAddition::Stage::Boil,
+                        1,
+                        0.0,
+                        tr("Pre-boil"),
+                        str)
+      );
 
       return;
    }
 
-   void saltWater(RecipeAdjustmentSalt::WhenToAdd when) {
+   void instructionsForSalts(RecipeAdjustmentSalt::WhenToAdd const whenToAdd,
+                             std::optional<int> stepNumber,
+                             QVector<PreInstruction> & preInstructions) const {
 
       if (!this->m_self.mash() || this->m_self.saltAdjustments().size() == 0) {
          return;
       }
 
-      QStringList reagents = this->getReagents(this->m_self.saltAdjustments(), when);
+      QStringList const reagents = this->getReagents(this->m_self.saltAdjustments(), whenToAdd);
       if (reagents.size() == 0) {
          return;
       }
 
-      auto ins = std::make_shared<Instruction>();
-      QString tmp = when == RecipeAdjustmentSalt::WhenToAdd::Mash ? tr("mash") : tr("sparge");
-      ins->setName(tr("Modify %1 water").arg(tmp));
+      QString const mashOrSparge = whenToAdd == RecipeAdjustmentSalt::WhenToAdd::Mash ? tr("mash") : tr("sparge");
       QString str = tr("Dissolve ");
 
       for (int ii = 0; ii < reagents.size(); ++ii) {
          str += reagents.at(ii);
       }
 
-      str += QString(tr(" into the %1 water").arg(tmp));
-      ins->setDirections(str);
+      str += QString(tr(" into the %1 water").arg(mashOrSparge));
 
-      this->m_self.m_instructions.add(ins);
+      preInstructions.push_back(
+         PreInstruction(RecipeAddition::Stage::Mash,
+                        stepNumber,
+                        0.0,
+                        tr("Modify %1 water").arg(mashOrSparge),
+                        str)
+      );
 
       return;
    }
@@ -682,7 +850,7 @@ public:
    // Batch size without losses.
    double batchSizeNoLosses_l() const {
       double ret = this->m_self.batchSize_l();
-      auto equipment = this->m_self.equipment();
+      auto const equipment = this->m_self.equipment();
       if (equipment) {
          ret += equipment->kettleTrubChillerLoss_l();
       }
@@ -1273,6 +1441,29 @@ public:
 
 };
 
+template<> double Recipe::impl::stageLength_mins<RecipeAddition::Stage::Mash>() const {
+   if (auto const mash = this->m_self.mash();
+       mash && mash->mashSteps().size() > 0) {
+      return mash->totalTime_mins();
+   }
+   // No Mash so mash length is zero
+   return 0.0;
+}
+template<> double Recipe::impl::stageLength_mins<RecipeAddition::Stage::Boil>() const {
+   if (auto const boil = this->m_self.boil();
+       boil) {
+      return boil->boilTime_mins();
+   }
+   // No Boil so mash length is zero
+   return 0.0;
+}
+template<> double Recipe::impl::stageLength_mins<RecipeAddition::Stage::Fermentation>() const {
+   return 0.0;
+}
+template<> double Recipe::impl::stageLength_mins<RecipeAddition::Stage::Packaging>() const {
+   return 0.0;
+}
+
 template<> auto & Recipe::ownedSetFor<RecipeAdditionFermentable>() const { return this->m_fermentableAdditions; }
 template<> auto & Recipe::ownedSetFor<RecipeAdditionHop        >() const { return this->m_hopAdditions        ; }
 template<> auto & Recipe::ownedSetFor<RecipeAdditionMisc       >() const { return this->m_miscAdditions       ; }
@@ -1418,7 +1609,7 @@ bool Recipe::compareWith(NamedEntity const & other, QList<BtStringConst const *>
       //
       // Parent classes have to match too.
       //
-      this->FolderBase<Recipe>::doCompareWith(rhs, propertiesThatDiffer)
+      this->FolderPropertyBase<Recipe>::doCompareWith(rhs, propertiesThatDiffer)
    );
 }
 
@@ -1494,13 +1685,13 @@ TypeLookup const Recipe::typeLookup {
    },
    // Parent classes lookup
    {&NamedEntity::typeLookup,
-    std::addressof(FolderBase<Recipe>::typeLookup)}
+    std::addressof(FolderPropertyBase<Recipe>::typeLookup)}
 };
-static_assert(std::is_base_of<FolderBase<Recipe>, Recipe>::value);
+static_assert(std::is_base_of<FolderPropertyBase<Recipe>, Recipe>::value);
 
 Recipe::Recipe(QString name) :
    NamedEntity              {name},
-   FolderBase<Recipe>       {},
+   FolderPropertyBase<Recipe>       {},
    pimpl                    {std::make_unique<impl>(*this)},
    m_type                   {Recipe::Type::AllGrain       },
    m_brewer                 {""                           },
@@ -1551,7 +1742,7 @@ Recipe::Recipe(QString name) :
 
 Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity          {namedParameterBundle},
-   FolderBase<Recipe>   {namedParameterBundle},
+   FolderPropertyBase<Recipe>   {namedParameterBundle},
    pimpl                {std::make_unique<impl>(*this, namedParameterBundle)},
    SET_REGULAR_FROM_NPB (m_type                   , namedParameterBundle, PropertyNames::Recipe::type                   ),
    SET_REGULAR_FROM_NPB (m_brewer                 , namedParameterBundle, PropertyNames::Recipe::brewer                 , ""),
@@ -1609,7 +1800,7 @@ Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
 
 Recipe::Recipe(Recipe const & other) :
    NamedEntity{other},
-   FolderBase<Recipe>{other},
+   FolderPropertyBase<Recipe>{other},
    // The impl copy constructor calls the OwnedSet copy constructor for each type of recipe addition etc which, in turn
    // does a deep copy of the corresonding additions
    pimpl{std::make_unique<impl>(*this, other)},
@@ -1758,153 +1949,171 @@ void Recipe::connectSignals() {
 }
 
 void Recipe::generateInstructions() {
-   double totalWaterAdded_l = 0.0;
-
    if (this->m_instructions.size() > 0) {
       this->m_instructions.removeAll();
    }
 
-   QVector<PreInstruction> preinstructions;
+   //
+   // The original approach here was to add instructions in the "correct" order with a bit of sorting along the way for
+   // things in the same "group" (eg hop additions to the boil).  As a simplification we now include stage, step and
+   // time in PreInstruction so we can add instructions in any order and rely on the sort at the end.
+   //
+   // TBD: There is therefore scope to simplify the code below further -- eg we don't need to separate out the Mash and
+   //      Boil additions of each type.
+   //
+   QVector<PreInstruction> preInstructions;
 
    // Mash instructions
-
-   int size = (mash() == nullptr) ? 0 : mash()->mashSteps().size();
-   if (size > 0) {
+   if (auto const mash = this->mash();
+       mash && mash->numSteps() > 0) {
+      double totalWaterAdded_l = 0.0;
       /*** prepare mashed fermentables ***/
-      this->pimpl->mashFermentableIns();
+      this->pimpl->instructionsForMashFermentables(preInstructions);
 
-      /*** salt the water ***/
-      this->pimpl->saltWater(RecipeAdjustmentSalt::WhenToAdd::Mash);
-      this->pimpl->saltWater(RecipeAdjustmentSalt::WhenToAdd::Sparge);
+      //
+      // Salt the water
+      //
+      // Although there are two stages (start of mash and start of sparge) when water needs to have salt, for the
+      // purposes of the instructions, we currently assume you are preparing all salt additions for both batches of
+      // water at the start of the mash.  Hence why we pass std::nullopt as step number here.
+      //
+      this->pimpl->instructionsForSalts(RecipeAdjustmentSalt::WhenToAdd::Mash, std::nullopt, preInstructions);
+      this->pimpl->instructionsForSalts(RecipeAdjustmentSalt::WhenToAdd::Sparge, std::nullopt, preInstructions);
 
       /*** Prepare water additions ***/
-      this->pimpl->mashWaterIns();
+      this->pimpl->instructionsForMashWater(preInstructions);
 
       /*** Generate the mash instructions ***/
-      preinstructions = this->pimpl->mashInstructions(mash()->totalTime_mins(), totalWaterAdded_l, size);
+      this->pimpl->instructionsForMash(totalWaterAdded_l, preInstructions);
 
       /*** Hops mash additions ***/
-      preinstructions += this->pimpl->hopSteps(RecipeAddition::Stage::Mash);
+      this->pimpl->instructionsForHopAdditions<RecipeAddition::Stage::Mash>(preInstructions);
 
       /*** Misc mash additions ***/
-      preinstructions += this->pimpl->miscSteps(RecipeAdditionMisc::Use::Mash);
-
-      /*** Add the preinstructions into the instructions ***/
-      this->pimpl->addPreinstructions(preinstructions);
+      this->pimpl->instructionsForMiscAdditions<RecipeAddition::Stage::Mash>(preInstructions);
 
    } // END mash instructions.
 
    // First wort hopping
-   this->pimpl->firstWortHopsIns();
+   this->pimpl->instructionsForFirstWortHops(preInstructions);
 
    // Need to top up the kettle before boil?
-   this->pimpl->topOffIns();
+   this->pimpl->instructionsForTopOff(preInstructions);
 
    // Boil instructions
-   preinstructions.clear();
+   if (auto const boil = this->boil();
+       boil && boil->numSteps() > 0) {
 
-   // Find boil time.
-   double const timeRemaining_mins {
-      this->equipment() ?
-         this->equipment()->boilTime_min().value_or(Equipment::default_boilTime_mins) :
-         Measurement::qStringToSI(QInputDialog::getText(nullptr,
-                                                        tr("Boil time"),
-                                                        tr("You did not configure an equipment (which you really "
-                                                           "should), so tell me the boil time.")),
-                                  Measurement::PhysicalQuantity::Time).quantity
-   };
+      // Find boil time.
+      double const boilTime_mins = boil->boilTime_mins();
 
-   QString str = tr("Bring the wort to a boil and hold for %1.").arg(
-      Measurement::displayAmount(Measurement::Amount{timeRemaining_mins, Measurement::Units::minutes})
-   );
+      preInstructions.push_back(
+      PreInstruction(
+         RecipeAddition::Stage::Boil,
+         1,
+         boilTime_mins,
+         tr("Start boil"),
+         tr("Bring the wort to a boil and hold for %1.").arg(
+               Measurement::displayAmount(Measurement::Amount{boilTime_mins, Measurement::Units::minutes},
+               0)
+            )
+         )
+      );
 
-   auto startBoilIns = std::make_shared<Instruction>();
-   startBoilIns->setName(tr("Start boil"));
-   startBoilIns->setInterval_mins(timeRemaining_mins);
-   startBoilIns->setDirections(str);
-   this->m_instructions.add(startBoilIns);
+      // Get fermentables unless we haven't added yet
+      this->pimpl->instructionsForBoilFermentables(boilTime_mins, preInstructions);
 
-   /*** Get fermentables unless we haven't added yet ***/
-   if (this->pimpl->hasBoilFermentable()) {
-      preinstructions.push_back(this->pimpl->boilFermentablesPre(timeRemaining_mins));
+      // add the instructions for including Extracts to wort
+      this->pimpl->instructionsForExtracts(boilTime_mins - 1, preInstructions);
+
+      // Boiled hops
+      this->pimpl->instructionsForHopAdditions<RecipeAddition::Stage::Boil>(preInstructions);
+
+      // Boiled miscs
+      this->pimpl->instructionsForMiscAdditions<RecipeAddition::Stage::Boil>(preInstructions);
+
+      // FLAMEOUT
+      preInstructions.push_back(
+         PreInstruction(RecipeAddition::Stage::Boil,
+                        boil->numSteps(),  // Flameout is end of the last boil step
+                        0.0,
+                        tr("Flameout"),
+                        tr("Stop boiling the wort."))
+      );
+
+      // END boil instructions.
    }
 
-   // add the intructions for including Extracts to wort
-   if (this->pimpl->hasBoilExtract()) {
-      preinstructions.push_back(this->pimpl->addExtracts(timeRemaining_mins - 1));
-   }
-
-   /*** Boiled hops ***/
-   preinstructions += this->pimpl->hopSteps(RecipeAddition::Stage::Boil);
-
-   /*** Boiled miscs ***/
-   preinstructions += this->pimpl->miscSteps(RecipeAdditionMisc::Use::Boil);
-
-   // END boil instructions.
-
-   // Add instructions in descending mash time order.
-   this->pimpl->addPreinstructions(preinstructions);
-
-   // FLAMEOUT
-   auto flameoutIns = std::make_shared<Instruction>();
-   flameoutIns->setName(tr("Flameout"));
-   flameoutIns->setDirections(tr("Stop boiling the wort."));
-   this->m_instructions.add(flameoutIns);
 
    // TODO: These get included in RecipeAddition::Stage::Boil above.  But we're going to want to rework this anyway to
    //       order by stage, step, time.
    // Steeped aroma hops
    // preinstructions = this->pimpl->hopSteps(Hop::Use::Aroma);
-   this->pimpl->addPreinstructions(preinstructions);
+   //this->pimpl->addPreInstructions(preInstructions);
 
    // Fermentation instructions
-   preinstructions.clear();
 
    /*** Fermentables added after boil ***/
-   this->pimpl->postboilFermentablesIns();
+   this->pimpl->instructionsForPostBoilFermentables(preInstructions);
 
    /*** post boil ***/
-   this->pimpl->postboilIns();
+   this->pimpl->instructionsForPostBoil(preInstructions);
 
-   /*** Primary yeast ***/
-   str = tr("Cool wort and pitch ");
-   for (auto yeastAddition : this->yeastAdditions()) {
-      if (1 == yeastAddition->step()) {
-         auto yeast = yeastAddition->yeast();
-         str += tr("%1 %2 yeast, ").arg(yeast->name()).arg(Yeast::typeDisplayNames[yeast->type()]);
+   if (auto const fermentation = this->fermentation();
+       fermentation) {
+      /*** Primary yeast ***/
+      QString str = tr("Cool wort and pitch ");
+      for (auto const & yeastAddition : this->yeastAdditions()) {
+         if (1 == yeastAddition->step()) {
+            auto const yeast = yeastAddition->yeast();
+            str += tr("%1 %2 yeast, ").arg(yeast->name()).arg(Yeast::typeDisplayNames[yeast->type()]);
+         }
       }
+      str += tr("to the primary.");
+
+      preInstructions.push_back(
+         PreInstruction(RecipeAddition::Stage::Fermentation,
+                        1,
+                        0.0,
+                        tr("Pitch yeast"),
+                        str)
+      );
+
+      /*** End primary yeast ***/
+
+      /*** Primary & Secondary misc ***/
+      this->pimpl->instructionsForMiscAdditions<RecipeAddition::Stage::Fermentation>(preInstructions);
+
+      preInstructions.push_back(
+         PreInstruction(RecipeAddition::Stage::Fermentation,
+                        1,
+                        0.0,
+                        tr("Ferment"),
+                        tr("Let ferment until FG is %1.").arg(
+                           Measurement::displayAmount(Measurement::Amount{fg(), Measurement::Units::specificGravity}, 3)
+                        ))
+      );
+
+      if (fermentation->numSteps() > 1) {
+         preInstructions.push_back(
+            PreInstruction(RecipeAddition::Stage::Fermentation,
+                           2,
+                           0.0,
+                           tr("Transfer to secondary"),
+                           tr("Transfer beer to secondary."))
+         );
+      }
+
+      /*** Dry hopping ***/
+      this->pimpl->instructionsForHopAdditions<RecipeAddition::Stage::Fermentation>(preInstructions);
+
    }
-   str += tr("to the primary.");
 
-   auto pitchIns = std::make_shared<Instruction>();
-   pitchIns->setName(tr("Pitch yeast"));
-   pitchIns->setDirections(str);
-   this->m_instructions.add(pitchIns);
-   /*** End primary yeast ***/
-
-   /*** Primary misc ***/
-   this->pimpl->addPreinstructions(this->pimpl->miscSteps(RecipeAdditionMisc::Use::Primary));
-
-   str = tr("Let ferment until FG is %1.").arg(
-      Measurement::displayAmount(Measurement::Amount{fg(), Measurement::Units::specificGravity}, 3)
-   );
-
-   auto fermentIns = std::make_shared<Instruction>();
-   fermentIns->setName(tr("Ferment"));
-   fermentIns->setDirections(str);
-   this->m_instructions.add(fermentIns);
-
-   str = tr("Transfer beer to secondary.");
-   auto transferIns = std::make_shared<Instruction>();
-   transferIns->setName(tr("Transfer to secondary"));
-   transferIns->setDirections(str);
-   this->m_instructions.add(transferIns);
-
-   /*** Secondary misc ***/
-   this->pimpl->addPreinstructions(this->pimpl->miscSteps(RecipeAdditionMisc::Use::Secondary));
-
-   /*** Dry hopping ***/
-   this->pimpl->addPreinstructions(this->pimpl->hopSteps(RecipeAddition::Stage::Fermentation));
+   // Add instructions in correct order
+   std::ranges::sort(preInstructions, std::less<PreInstruction>());
+   for (auto const & preInstruction: preInstructions) {
+      this->m_instructions.add(preInstruction.toInstruction());
+   }
 
    // END fermentation instructions. Let everybody know that now is the time
    // to update instructions
@@ -1935,9 +2144,9 @@ QString Recipe::nextAddToBoil(double & time) {
       double const addAtTime_mins = *hopAddition->addAtTime_mins();
       if (addAtTime_mins < time && addAtTime_mins > max) {
          ret = tr("Add %1 %2 to boil at %3.")
-               .arg(Measurement::displayAmount(hopAddition->amount()))
+               .arg(Measurement::displayAmount(hopAddition->amount(), 1))
                .arg(hopAddition->hop()->name())
-               .arg(Measurement::displayAmount(Measurement::Amount{addAtTime_mins, Measurement::Units::minutes}));
+               .arg(Measurement::displayAmount(Measurement::Amount{addAtTime_mins, Measurement::Units::minutes}, 0));
 
          max = addAtTime_mins;
          foundSomething = true;
@@ -1955,9 +2164,9 @@ QString Recipe::nextAddToBoil(double & time) {
       double const addAtTime_mins = *miscAddition->addAtTime_mins();
       if (addAtTime_mins < time && addAtTime_mins > max) {
          ret = tr("Add %1 %2 to boil at %3.");
-         ret = ret.arg(Measurement::displayAmount(miscAddition->amount()));
+         ret = ret.arg(Measurement::displayAmount(miscAddition->amount(), 1));
          ret = ret.arg(miscAddition->misc()->name());
-         ret = ret.arg(Measurement::displayAmount(Measurement::Amount{addAtTime_mins, Measurement::Units::minutes}));
+         ret = ret.arg(Measurement::displayAmount(Measurement::Amount{addAtTime_mins, Measurement::Units::minutes}, 0));
          max = addAtTime_mins;
          foundSomething = true;
       }
@@ -2019,8 +2228,16 @@ int Recipe::numRecipesUsing(IngredientType const & ingredient) requires (std::is
    //
    boost::container::flat_set<int> matchingRecipeIds;
    return ObjectStoreWrapper::numMatching<typename IngredientType::RecipeAdditionClass>(
-      [&](IngredientType::RecipeAdditionClass const * addition) {
-         if (addition->ingredientId() == ingredient.key()) {
+      [&](typename IngredientType::RecipeAdditionClass const * addition) {
+         //
+         // Note that we want to exclude deleted RecipeAdditions and deleted Recipes.
+         // In theory a recipe addition should always have a recipe, but in practice it's possible for unowned recipe
+         // additions to exist in the database :-/ so we filter them out.
+         //
+         if (!addition->deleted() &&
+             addition->recipeId() > 0 &&
+             !addition->recipe()->deleted() &&
+             addition->ingredientId() == ingredient.key()) {
             // Emplace returns std::pair<iterator, bool>.  The bool component of this is true if and only if the
             // insertion took place (ie the item wasn't already in the set).
             return matchingRecipeIds.emplace(addition->recipeId()).second;
@@ -2042,7 +2259,12 @@ int Recipe::numRecipesUsing(T const & var) requires (!std::is_base_of_v<Ingredie
    //
    // This implementation is used for things that a Recipe only has at most one of, so this implementation is fine.
    //
-   return ObjectStoreWrapper::numMatching<Recipe>( [& var](Recipe const * rec) {return rec->uses(var);} );
+   return ObjectStoreWrapper::numMatching<Recipe>(
+      [& var](Recipe const * rec) {
+         // Note that we want to exclude deleted recipes from the count
+         return !rec->deleted() && rec->uses(var);
+      }
+   );
 }
 template int Recipe::numRecipesUsing(Equipment    const & var);
 template int Recipe::numRecipesUsing(Style        const & var);
@@ -2775,7 +2997,7 @@ QList<QString> Recipe::getReagents(QList<std::shared_ptr<RecipeAdditionFermentab
             format = ", %1 %2";
          }
          reagents.append(
-            format.arg(Measurement::displayAmount(fermentableAddition->amount()))
+            format.arg(Measurement::displayAmount(fermentableAddition->amount(), 1))
                   .arg(fermentableAddition->fermentable()->name())
          );
       }
@@ -2790,7 +3012,7 @@ QList<QString> Recipe::getReagents(QList<std::shared_ptr<RecipeAdditionHop>> hop
    for (auto hopAddition : hopAdditions) {
       if (firstWort && (hopAddition->isFirstWort())) {
          QString tmp = QString("%1 %2,")
-               .arg(Measurement::displayAmount(hopAddition->amount()))
+               .arg(Measurement::displayAmount(hopAddition->amount(), 1))
                .arg(hopAddition->hop()->name());
          reagents.append(tmp);
       }
@@ -2809,7 +3031,7 @@ QList<QString> Recipe::getReagents(QList< std::shared_ptr<MashStep> > msteps) {
       bool const commaNeeded {ii + 1 < msteps.size()};
       reagents.append(
          tr(commaNeeded ? "%1 water to %2, " : "%1 water to %2 ").arg(
-            Measurement::displayAmount(Measurement::Amount{msteps[ii]->amount_l(), Measurement::Units::liters})
+            Measurement::displayAmount(Measurement::Amount{msteps[ii]->amount_l(), Measurement::Units::liters}, 1)
          ).arg(
             Measurement::displayAmount(Measurement::Amount{msteps[ii]->infuseTemp_c().value_or(msteps[ii]->startTemp_c()), Measurement::Units::celsius}, 1)
          )
@@ -3021,5 +3243,5 @@ void Recipe::hardDeleteOrphanedEntities() {
    return;
 }
 
-// Boilerplate code for FolderBase
+// Boilerplate code for FolderPropertyBase
 FOLDER_BASE_COMMON_CODE(Recipe)

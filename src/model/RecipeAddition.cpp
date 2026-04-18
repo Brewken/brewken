@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/RecipeAddition.cpp is part of Brewken, and is copyright the following authors 2023-2025:
+ * model/RecipeAddition.cpp is part of Brewken, and is copyright the following authors 2023-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -45,11 +45,15 @@ EnumStringMapping const RecipeAddition::stageStringMapping {
    {RecipeAddition::Stage::Packaging   , "add_to_package"     },
 };
 
+//
+// In the past, we had these names as "Add to Mash", "Add to Boil", etc, but I think that's considerably less flexible
+// than just having the translated stage names.
+//
 EnumStringMapping const RecipeAddition::stageDisplayNames {
-   {RecipeAddition::Stage::Mash        , tr("Add to Mash"        ) },
-   {RecipeAddition::Stage::Boil        , tr("Add to Boil"        ) },
-   {RecipeAddition::Stage::Fermentation, tr("Add to Fermentation") },
-   {RecipeAddition::Stage::Packaging   , tr("Add to Package"     ) },
+   {RecipeAddition::Stage::Mash        , tr("Mash"        ) },
+   {RecipeAddition::Stage::Boil        , tr("Boil"        ) },
+   {RecipeAddition::Stage::Fermentation, tr("Fermentation") },
+   {RecipeAddition::Stage::Packaging   , tr("Package"     ) },
 };
 
 bool RecipeAddition::compareWith(NamedEntity const & other, QList<BtStringConst const *> * propertiesThatDiffer) const {
@@ -174,7 +178,37 @@ void RecipeAddition::setAddAtGravity_sg(std::optional<double> const val) { SET_A
 void RecipeAddition::setAddAtAcidity_pH(std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::RecipeAddition::addAtAcidity_pH, this->m_addAtAcidity_pH, val); return; }
 void RecipeAddition::setDuration_mins  (std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::RecipeAddition::duration_mins  , this->m_duration_mins  , val); return; }
 
-
 QString RecipeAddition::extraLogInfo() const {
    return QString("Stage: %1").arg(RecipeAddition::stageStringMapping[this->m_stage]);
+}
+
+std::optional<double> RecipeAddition::addAfterStart_mins(std::optional<double> stepLength_mins) const {
+   //
+   // Boil is the stage we measure from the end
+   //
+   if (RecipeAddition::Stage::Boil == this->m_stage) {
+      if (stepLength_mins.has_value() && this->m_addAtTime_mins.has_value()) {
+         return *stepLength_mins - *this->m_addAtTime_mins;
+      }
+      return std::nullopt;
+   }
+
+   //
+   // Other stages we measure from the start
+   //
+   return this->m_addAtTime_mins;
+}
+
+std::optional<double> RecipeAddition::addBeforeEnd_mins(std::optional<double> stepLength_mins) const {
+   //
+   // This is essentially the reverse of \c RecipeAddition::addAfterStart_mins
+   //
+   if (RecipeAddition::Stage::Boil != this->m_stage) {
+      if (stepLength_mins.has_value() && this->m_addAtTime_mins.has_value()) {
+         return *stepLength_mins - *this->m_addAtTime_mins;
+      }
+      return std::nullopt;
+   }
+
+   return this->m_addAtTime_mins;
 }

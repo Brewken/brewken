@@ -2382,22 +2382,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>NODB</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SQLITE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PGSQL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ALLDB</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Software Upgraded</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2448,6 +2432,22 @@ Log file may contain more details.</source>
 
 Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SQLite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PosgreSQL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot create new DB schema in file &apos;%1&apos;.  File already exists!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2593,10 +2593,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Owner ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Folder Path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2757,6 +2753,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Recalculate efficiency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder ID</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3681,6 +3681,13 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>FULLPATH</source>
         <translation type="obsolete">FULLPATH</translation>
     </message>
+    <message>
+        <source>Folder</source>
+        <translation type="obsolete">Pasta</translation>
+    </message>
+</context>
+<context>
+    <name>FolderCommon</name>
     <message>
         <source>Folder</source>
         <translation type="unfinished">Pasta</translation>
@@ -4620,6 +4627,10 @@ If you need help, please open an issue at %1</source>
         <source>Notes from brew day on %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Change Brew Date</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -5527,6 +5538,22 @@ Error message:
 Running two copies of the program at once may lead to data loss.
 
 Press OK to quit.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Creation of empty Database file &apos;%1&apos; %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>succeeded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To use the newly-created file, rename it to &apos;%1&apos; and move it to directory %2.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6646,6 +6673,14 @@ Program will now exit.</source>
         <source>Stock Purchases (Inventory)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop bothering you about new data?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -6659,7 +6694,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>to the mash tun.</source>
-        <translation>para o tonel do mosto.</translation>
+        <translation type="vanished">para o tonel do mosto.</translation>
     </message>
     <message>
         <source>Heat water</source>
@@ -6695,23 +6730,23 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Put %1 %2 into boil for %3.</source>
-        <translation>Colocar %1 %2 em fervura por %3.</translation>
+        <translation type="vanished">Colocar %1 %2 em fervura por %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into fermenter for %3.</source>
-        <translation>Colocar %1 %2 no fermentador por %3.</translation>
+        <translation type="vanished">Colocar %1 %2 no fermentador por %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into first wort for %3.</source>
-        <translation>Colocar %1 %2 no primeiro mosto para %3.</translation>
+        <translation type="vanished">Colocar %1 %2 no primeiro mosto para %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into mash for %3.</source>
-        <translation>Colocar %1 %2 no mosto por %3.</translation>
+        <translation type="vanished">Colocar %1 %2 no mosto por %3.</translation>
     </message>
     <message>
         <source>Steep %1 %2 in wort for %3.</source>
-        <translation>Passo %1 %2 no mosto para %3.</translation>
+        <translation type="vanished">Passo %1 %2 no mosto para %3.</translation>
     </message>
     <message>
         <source>Use %1 %2 for %3</source>
@@ -6719,27 +6754,27 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Hop addition</source>
-        <translation>Adição de Lúpulo</translation>
+        <translation type="vanished">Adição de Lúpulo</translation>
     </message>
     <message>
         <source>Use %1 %2 at bottling for %3.</source>
-        <translation>Usar %1 %2 no engarrafamento para %3.</translation>
+        <translation type="vanished">Usar %1 %2 no engarrafamento para %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into primary for %3.</source>
-        <translation>Colocar %1 %2 no fermentador primário por %3.</translation>
+        <translation type="vanished">Colocar %1 %2 no fermentador primário por %3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into secondary for %3.</source>
-        <translation>Colocar %1 %2 no secundário por %3.</translation>
+        <translation type="vanished">Colocar %1 %2 no secundário por %3.</translation>
     </message>
     <message>
         <source>Use %1 %2 for %3.</source>
-        <translation>Usar %1 %2 por %3.</translation>
+        <translation type="vanished">Usar %1 %2 por %3.</translation>
     </message>
     <message>
         <source>Misc addition</source>
-        <translation>Adição de Adjuntos Cervejeiros</translation>
+        <translation type="vanished">Adição de Adjuntos Cervejeiros</translation>
     </message>
     <message>
         <source>Do first wort hopping with </source>
@@ -6805,11 +6840,11 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Boil time</source>
-        <translation>Tempo de Fervura</translation>
+        <translation type="vanished">Tempo de Fervura</translation>
     </message>
     <message>
         <source>You did not configure an equipment (which you really should), so tell me the boil time.</source>
-        <translation>Você não configurou um equipamento (o que você realmente deve fazer), então diga-me o tempo de fervura.</translation>
+        <translation type="vanished">Você não configurou um equipamento (o que você realmente deve fazer), então diga-me o tempo de fervura.</translation>
     </message>
     <message>
         <source>Bring the wort to a boil and hold for %1.</source>
@@ -6934,10 +6969,6 @@ O volume final do fermentador primário é %1.</translation>
     <message>
         <source>Wine</source>
         <translation type="unfinished">Vinho</translation>
-    </message>
-    <message>
-        <source>Put %1 %2 into packaging for %3.</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 %2</source>
@@ -7215,6 +7246,54 @@ O volume final do fermentador primário é %1.</translation>
         <source>Snapshots</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Put %1 %2 into mash%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into first wort%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Steep %1 %2 in wort%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into boil%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into fermenter%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into primary%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into secondary%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use %1 %2 at bottling%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> at end of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 addition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> to the mash tun.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -7223,20 +7302,8 @@ O volume final do fermentador primário é %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add to Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add to Boil</source>
-        <translation type="unfinished">Adicionar à Fervura</translation>
-    </message>
-    <message>
-        <source>Add to Fermentation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Package</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Adicionar à Fervura</translation>
     </message>
     <message>
         <source>Stage</source>
@@ -7260,6 +7327,22 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash</source>
+        <translation type="unfinished">Mosto</translation>
+    </message>
+    <message>
+        <source>Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Package</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
