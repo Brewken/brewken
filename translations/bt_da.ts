@@ -540,14 +540,10 @@
     </message>
 </context>
 <context>
-    <name>BrewNote</name>
+    <name>BrewLog</name>
     <message>
         <source>Brew Note</source>
-        <translation>Brygnotat</translation>
-    </message>
-    <message>
-        <source>Brew Note #%1 for brew on %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brygnotat</translation>
     </message>
     <message>
         <source>ABV</source>
@@ -668,6 +664,33 @@
     <message>
         <source>Volume Into Fermentor</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Note #%1 for brew on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BrewNote</name>
+    <message>
+        <source>Brew Note</source>
+        <translation type="vanished">Brygnotat</translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation type="obsolete">Slutmassefylde (FG)</translation>
+    </message>
+    <message>
+        <source>Projected ABV</source>
+        <translation type="obsolete">Planlagt alkoholvolumenprocent (ABV)</translation>
+    </message>
+    <message>
+        <source>Projected OG</source>
+        <translation type="obsolete">Planlagt startmassefylde (OG)</translation>
+    </message>
+    <message>
+        <source>SG</source>
+        <translation type="obsolete">Massefylde (SG)</translation>
     </message>
 </context>
 <context>
@@ -2739,7 +2762,19 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Folder ID</source>
+        <source>Contained in Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contained in Folder ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder name cannot be blank (and cannot contain &apos;/&apos;)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9593,106 +9628,257 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
-    <name>brewNoteWidget</name>
+    <name>brewLogWidget</name>
+    <message>
+        <source>Brew Note</source>
+        <translation type="unfinished">Brygnotat</translation>
+    </message>
     <message>
         <source>Preboil</source>
-        <translation>Før kogning</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>SG</source>
-        <translation>Massefylde (SG)</translation>
+        <translation type="unfinished">Massefylde (SG)</translation>
     </message>
     <message>
         <source>Preboil gravity</source>
-        <translation>Massefylde før kogning</translation>
+        <translation type="unfinished">Massefylde før kogning</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation>Volumen</translation>
+        <translation type="unfinished">Volumen</translation>
     </message>
     <message>
         <source>Volume of wort collected</source>
-        <translation>Volumen af opsamlet</translation>
+        <translation type="unfinished">Volumen af opsamlet</translation>
     </message>
     <message>
         <source>Strike Temp</source>
-        <translation>Temperatur ved malttilsætning</translation>
+        <translation type="unfinished">Temperatur ved malttilsætning</translation>
+    </message>
+    <message>
+        <source>Temperature of strike water before dough in</source>
+        <translation type="unfinished">Temperatur af vand før tilsætning af malt</translation>
     </message>
     <message>
         <source>Final Temp</source>
-        <translation>Sluttemperatur</translation>
+        <translation type="unfinished">Sluttemperatur</translation>
     </message>
     <message>
         <source>Temperature of mash before mash out</source>
-        <translation>Temperatur af mask før udmæskning</translation>
+        <translation type="unfinished">Temperatur af mask før udmæskning</translation>
     </message>
     <message>
         <source>Postboil</source>
-        <translation>Efter kogning</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>OG</source>
-        <translation>Massefylde efter mæskning (OG)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Post boil gravity</source>
-        <translation>Massefylde efter kogning</translation>
+        <translation type="unfinished">Massefylde efter kogning</translation>
     </message>
     <message>
         <source>Postboil Volume</source>
-        <translation>Volumen efter kogning</translation>
+        <translation type="unfinished">Volumen efter kogning</translation>
     </message>
     <message>
         <source>Volume of wort in BK after boil</source>
-        <translation>Volumen af urt i kogekar efter kogning</translation>
+        <translation type="unfinished">Volumen af urt i kogekar efter kogning</translation>
     </message>
     <message>
         <source>Volume of wort transferred to fermenter</source>
-        <translation>Volumen af urt overført til gæringskar</translation>
+        <translation type="unfinished">Volumen af urt overført til gæringskar</translation>
     </message>
     <message>
         <source>Volume into fermenter</source>
-        <translation>Volume i gæringskar</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source> Pitch Temp</source>
-        <translation>Temperatur ved gærtilsætning</translation>
+        <translation type="unfinished">Temperatur ved gærtilsætning</translation>
     </message>
     <message>
         <source>Temperature of wort when yeast is pitched</source>
-        <translation>Temperatur af urt ved gærtilsætning</translation>
+        <translation type="unfinished">Temperatur af urt ved gærtilsætning</translation>
     </message>
     <message>
         <source>Postferment</source>
-        <translation>Eftergæring</translation>
+        <translation type="unfinished">Eftergæring</translation>
     </message>
     <message>
         <source>Final gravity</source>
-        <translation>Slutmassefylde</translation>
+        <translation type="unfinished">Slutmassefylde</translation>
     </message>
     <message>
         <source>Volume of beer into serving keg/bottles</source>
-        <translation>Volumen af øl i fad/flasker</translation>
+        <translation type="unfinished">Volumen af øl i fad/flasker</translation>
+    </message>
+    <message>
+        <source>yyyy-dd-MM</source>
+        <translation type="unfinished">yyyy-dd-mm</translation>
+    </message>
+    <message>
+        <source>Percent efficiency into boil kettle</source>
+        <translation type="unfinished">Effektivitet i procent i kogekar</translation>
+    </message>
+    <message>
+        <source>Efficiency into boil kettle</source>
+        <translation type="unfinished">Effektivitet i kogekar</translation>
+    </message>
+    <message>
+        <source>Expected OG, based on measured FG</source>
+        <translation type="unfinished">Forventet startmassefylde (OG) baseret på målt slutmassefylde (FG)</translation>
     </message>
     <message>
         <source>Projected OG</source>
-        <translation>Planlagt startmassefylde (OG)</translation>
+        <translation type="unfinished">Planlagt startmassefylde (OG)</translation>
     </message>
     <message>
         <source>Brewhouse efficiency</source>
-        <translation>Bryggeri effektivitet</translation>
+        <translation type="unfinished">Bryggeri effektivitet</translation>
+    </message>
+    <message>
+        <source>Expected ABV based on recipe OG</source>
+        <translation type="unfinished">Forventet valkoholvolumen (ABV) baseret på opskriftens startmassefylde (OG)</translation>
     </message>
     <message>
         <source>Projected ABV</source>
-        <translation>Planlagt alkoholvolumenprocent (ABV)</translation>
+        <translation type="unfinished">Planlagt alkoholvolumenprocent (ABV)</translation>
+    </message>
+    <message>
+        <source>ABV based on user-reported FG</source>
+        <translation type="unfinished">Alkoholvolumenprocent (ABV) baseret på brugerindtastet slutmassefylde (FG)</translation>
     </message>
     <message>
         <source>ABV</source>
-        <translation>Alkoholvolumenprocent (ABV)</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yeast attenuation based on yeast specified in recipe</source>
+        <translation type="unfinished">Forgæringsgrad baseret på gær angivet i opskrift</translation>
+    </message>
+    <message>
+        <source>Projected yeast attenuation</source>
+        <translation type="unfinished">Planlagt forgæringsgrad</translation>
+    </message>
+    <message>
+        <source>Yeast attentuation based on user-reported OG and FG</source>
+        <translation type="unfinished">Forgæringsgrad baseret på brugerindtastet startmassefylde (OG) og slutmassefylde (FG)</translation>
+    </message>
+    <message>
+        <source>Measured yeast attenuation</source>
+        <translation type="unfinished">Målt forgæringsgrad</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Notater</translation>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>brewNoteWidget</name>
+    <message>
+        <source>Preboil</source>
+        <translation type="vanished">Før kogning</translation>
+    </message>
+    <message>
+        <source>SG</source>
+        <translation type="vanished">Massefylde (SG)</translation>
+    </message>
+    <message>
+        <source>Preboil gravity</source>
+        <translation type="vanished">Massefylde før kogning</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="vanished">Volumen</translation>
+    </message>
+    <message>
+        <source>Volume of wort collected</source>
+        <translation type="vanished">Volumen af opsamlet</translation>
+    </message>
+    <message>
+        <source>Strike Temp</source>
+        <translation type="vanished">Temperatur ved malttilsætning</translation>
+    </message>
+    <message>
+        <source>Final Temp</source>
+        <translation type="vanished">Sluttemperatur</translation>
+    </message>
+    <message>
+        <source>Temperature of mash before mash out</source>
+        <translation type="vanished">Temperatur af mask før udmæskning</translation>
+    </message>
+    <message>
+        <source>Postboil</source>
+        <translation type="vanished">Efter kogning</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="vanished">Massefylde efter mæskning (OG)</translation>
+    </message>
+    <message>
+        <source>Post boil gravity</source>
+        <translation type="vanished">Massefylde efter kogning</translation>
+    </message>
+    <message>
+        <source>Postboil Volume</source>
+        <translation type="vanished">Volumen efter kogning</translation>
+    </message>
+    <message>
+        <source>Volume of wort in BK after boil</source>
+        <translation type="vanished">Volumen af urt i kogekar efter kogning</translation>
+    </message>
+    <message>
+        <source>Volume of wort transferred to fermenter</source>
+        <translation type="vanished">Volumen af urt overført til gæringskar</translation>
+    </message>
+    <message>
+        <source>Volume into fermenter</source>
+        <translation type="vanished">Volume i gæringskar</translation>
+    </message>
+    <message>
+        <source> Pitch Temp</source>
+        <translation type="vanished">Temperatur ved gærtilsætning</translation>
+    </message>
+    <message>
+        <source>Temperature of wort when yeast is pitched</source>
+        <translation type="vanished">Temperatur af urt ved gærtilsætning</translation>
+    </message>
+    <message>
+        <source>Postferment</source>
+        <translation type="vanished">Eftergæring</translation>
+    </message>
+    <message>
+        <source>Final gravity</source>
+        <translation type="vanished">Slutmassefylde</translation>
+    </message>
+    <message>
+        <source>Volume of beer into serving keg/bottles</source>
+        <translation type="vanished">Volumen af øl i fad/flasker</translation>
+    </message>
+    <message>
+        <source>Projected OG</source>
+        <translation type="vanished">Planlagt startmassefylde (OG)</translation>
+    </message>
+    <message>
+        <source>Brewhouse efficiency</source>
+        <translation type="vanished">Bryggeri effektivitet</translation>
+    </message>
+    <message>
+        <source>Projected ABV</source>
+        <translation type="vanished">Planlagt alkoholvolumenprocent (ABV)</translation>
+    </message>
+    <message>
+        <source>ABV</source>
+        <translation type="vanished">Alkoholvolumenprocent (ABV)</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="vanished">Notater</translation>
     </message>
     <message>
         <source>brewNote</source>
@@ -9700,51 +9886,51 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>yyyy-dd-MM</source>
-        <translation>yyyy-dd-mm</translation>
+        <translation type="vanished">yyyy-dd-mm</translation>
     </message>
     <message>
         <source>Temperature of strike water before dough in</source>
-        <translation>Temperatur af vand før tilsætning af malt</translation>
+        <translation type="vanished">Temperatur af vand før tilsætning af malt</translation>
     </message>
     <message>
         <source>Percent efficiency into boil kettle</source>
-        <translation>Effektivitet i procent i kogekar</translation>
+        <translation type="vanished">Effektivitet i procent i kogekar</translation>
     </message>
     <message>
         <source>Efficiency into boil kettle</source>
-        <translation>Effektivitet i kogekar</translation>
+        <translation type="vanished">Effektivitet i kogekar</translation>
     </message>
     <message>
         <source>Expected OG, based on measured FG</source>
-        <translation>Forventet startmassefylde (OG) baseret på målt slutmassefylde (FG)</translation>
+        <translation type="vanished">Forventet startmassefylde (OG) baseret på målt slutmassefylde (FG)</translation>
     </message>
     <message>
         <source>Expected ABV based on recipe OG</source>
-        <translation>Forventet valkoholvolumen (ABV) baseret på opskriftens startmassefylde (OG)</translation>
+        <translation type="vanished">Forventet valkoholvolumen (ABV) baseret på opskriftens startmassefylde (OG)</translation>
     </message>
     <message>
         <source>ABV based on user-reported FG</source>
-        <translation>Alkoholvolumenprocent (ABV) baseret på brugerindtastet slutmassefylde (FG)</translation>
+        <translation type="vanished">Alkoholvolumenprocent (ABV) baseret på brugerindtastet slutmassefylde (FG)</translation>
     </message>
     <message>
         <source>Yeast attenuation based on yeast specified in recipe</source>
-        <translation>Forgæringsgrad baseret på gær angivet i opskrift</translation>
+        <translation type="vanished">Forgæringsgrad baseret på gær angivet i opskrift</translation>
     </message>
     <message>
         <source>Projected yeast attenuation</source>
-        <translation>Planlagt forgæringsgrad</translation>
+        <translation type="vanished">Planlagt forgæringsgrad</translation>
     </message>
     <message>
         <source>Yeast attentuation based on user-reported OG and FG</source>
-        <translation>Forgæringsgrad baseret på brugerindtastet startmassefylde (OG) og slutmassefylde (FG)</translation>
+        <translation type="vanished">Forgæringsgrad baseret på brugerindtastet startmassefylde (OG) og slutmassefylde (FG)</translation>
     </message>
     <message>
         <source>Measured yeast attenuation</source>
-        <translation>Målt forgæringsgrad</translation>
+        <translation type="vanished">Målt forgæringsgrad</translation>
     </message>
     <message>
         <source>Brew Note</source>
-        <translation type="unfinished">Brygnotat</translation>
+        <translation type="obsolete">Brygnotat</translation>
     </message>
 </context>
 <context>

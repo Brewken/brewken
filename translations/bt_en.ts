@@ -391,13 +391,9 @@
     </message>
 </context>
 <context>
-    <name>BrewNote</name>
+    <name>BrewLog</name>
     <message>
         <source>Brew Note</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Brew Note #%1 for brew on %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -518,6 +514,10 @@
     </message>
     <message>
         <source>Volume Into Fermentor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Note #%1 for brew on %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2295,7 +2295,19 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Folder ID</source>
+        <source>Contained in Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contained in Folder ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder name cannot be blank (and cannot contain &apos;/&apos;)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7430,7 +7442,11 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
-    <name>brewNoteWidget</name>
+    <name>brewLogWidget</name>
+    <message>
+        <source>Brew Note</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>Preboil</source>
         <translation type="unfinished"></translation>
@@ -7453,6 +7469,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Strike Temp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Temperature of strike water before dough in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7512,31 +7532,7 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Projected OG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Brewhouse efficiency</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Projected ABV</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ABV</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Notes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>yyyy-dd-MM</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Temperature of strike water before dough in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7552,11 +7548,27 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Projected OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brewhouse efficiency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Expected ABV based on recipe OG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Projected ABV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>ABV based on user-reported FG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ABV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7576,7 +7588,7 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Brew Note</source>
+        <source>Notes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

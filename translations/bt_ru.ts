@@ -509,13 +509,9 @@
     </message>
 </context>
 <context>
-    <name>BrewNote</name>
+    <name>BrewLog</name>
     <message>
         <source>Brew Note</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Brew Note #%1 for brew on %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -637,6 +633,21 @@
     <message>
         <source>Volume Into Fermentor</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Note #%1 for brew on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BrewNote</name>
+    <message>
+        <source>Brew Date</source>
+        <translation type="obsolete">Дата варки</translation>
+    </message>
+    <message>
+        <source>Final Volume</source>
+        <translation type="obsolete">Объём сусла после кипячения</translation>
     </message>
 </context>
 <context>
@@ -2765,7 +2776,19 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Folder ID</source>
+        <source>Contained in Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contained in Folder ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder name cannot be blank (and cannot contain &apos;/&apos;)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9928,141 +9951,97 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
-    <name>brewNoteWidget</name>
+    <name>brewLogWidget</name>
     <message>
-        <source>Preboil</source>
-        <translation>Перед кипячением</translation>
-    </message>
-    <message>
-        <source>SG</source>
-        <translation>Плотность SG</translation>
-    </message>
-    <message>
-        <source>Preboil gravity</source>
-        <translation>Плотность до кипячения</translation>
-    </message>
-    <message>
-        <source>Volume</source>
-        <translation>Объём</translation>
-    </message>
-    <message>
-        <source>Volume of wort collected</source>
-        <translation>Объем собранного сусла</translation>
-    </message>
-    <message>
-        <source>Strike Temp</source>
-        <translation>Температура закипания</translation>
-    </message>
-    <message>
-        <source>Temperature of mash after dough in</source>
-        <translation type="vanished">Температура затора при начале затирания</translation>
-    </message>
-    <message>
-        <source>Final Temp</source>
-        <translation>Конечная температура</translation>
-    </message>
-    <message>
-        <source>Temperature of mash before mash out</source>
-        <translation>Температура затора перед окончанием затирания</translation>
-    </message>
-    <message>
-        <source>Postboil</source>
-        <translation>После кипячения</translation>
-    </message>
-    <message>
-        <source>OG</source>
-        <translation>Начальная плотность (OG)</translation>
-    </message>
-    <message>
-        <source>Post boil gravity</source>
-        <translation>Плотность после кипячения</translation>
-    </message>
-    <message>
-        <source>Postboil Volume</source>
-        <translation>Объем сусла после кипячения</translation>
-    </message>
-    <message>
-        <source>Volume of wort in BK after boil</source>
-        <translation>Объем сусла в сусловарнике после кипячения</translation>
-    </message>
-    <message>
-        <source>Volume of wort transferred to fermenter</source>
-        <translation>Объем сусла, перелитого в бродильню</translation>
-    </message>
-    <message>
-        <source>Volume into fermenter</source>
-        <translation>Объем сусла в бродильне</translation>
-    </message>
-    <message>
-        <source> Pitch Temp</source>
-        <translation> Температура засева</translation>
-    </message>
-    <message>
-        <source>Temperature of wort when yeast is pitched</source>
-        <translation>Температура сусла в момент добавления дрожжей</translation>
-    </message>
-    <message>
-        <source>Postferment</source>
-        <translation>После брожения</translation>
-    </message>
-    <message>
-        <source>Final gravity</source>
-        <translation>Конечная плотность</translation>
-    </message>
-    <message>
-        <source>Volume of beer into serving keg/bottles</source>
-        <translation>Объем пива, розлитого в кеги/бутылки</translation>
-    </message>
-    <message>
-        <source>percent efficiency into boil kettle</source>
-        <translation type="vanished">процент эффективности в сусловарнике</translation>
-    </message>
-    <message>
-        <source>Eff into BK</source>
-        <translation type="vanished">Эффективность варочного котла</translation>
-    </message>
-    <message>
-        <source>Expected OG, based on measure fg</source>
-        <translation type="vanished">Ожидаемая НП, основанная на измерении КП</translation>
-    </message>
-    <message>
-        <source>Projected OG</source>
-        <translation>Предполагаемая НП</translation>
-    </message>
-    <message>
-        <source>Brewhouse efficiency</source>
-        <translation>Эффективность затирания</translation>
-    </message>
-    <message>
-        <source>Brewhouse Eff</source>
-        <translation type="vanished">Эффективность</translation>
-    </message>
-    <message>
-        <source>Expected ABV based on OG</source>
-        <translation type="vanished">Ожидаемый % алк.(об), основываясь на НП</translation>
-    </message>
-    <message>
-        <source>Projected ABV</source>
-        <translation>Предполагаемый % алк.(об)</translation>
-    </message>
-    <message>
-        <source>ABV based on FG</source>
-        <translation type="vanished">% алкоголя (об.), основанный на КП</translation>
-    </message>
-    <message>
-        <source>ABV</source>
-        <translation>% алкоголя (об.)</translation>
-    </message>
-    <message>
-        <source>Notes</source>
-        <translation>Примечания</translation>
-    </message>
-    <message>
-        <source>yyyy-dd-MM</source>
+        <source>Brew Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Preboil</source>
+        <translation type="unfinished">Перед кипячением</translation>
+    </message>
+    <message>
+        <source>SG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preboil gravity</source>
+        <translation type="unfinished">Плотность до кипячения</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="unfinished">Объём</translation>
+    </message>
+    <message>
+        <source>Volume of wort collected</source>
+        <translation type="unfinished">Объем собранного сусла</translation>
+    </message>
+    <message>
+        <source>Strike Temp</source>
+        <translation type="unfinished">Температура закипания</translation>
+    </message>
+    <message>
         <source>Temperature of strike water before dough in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Final Temp</source>
+        <translation type="unfinished">Конечная температура</translation>
+    </message>
+    <message>
+        <source>Temperature of mash before mash out</source>
+        <translation type="unfinished">Температура затора перед окончанием затирания</translation>
+    </message>
+    <message>
+        <source>Postboil</source>
+        <translation type="unfinished">После кипячения</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post boil gravity</source>
+        <translation type="unfinished">Плотность после кипячения</translation>
+    </message>
+    <message>
+        <source>Postboil Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Volume of wort in BK after boil</source>
+        <translation type="unfinished">Объем сусла в сусловарнике после кипячения</translation>
+    </message>
+    <message>
+        <source>Volume of wort transferred to fermenter</source>
+        <translation type="unfinished">Объем сусла, перелитого в бродильню</translation>
+    </message>
+    <message>
+        <source>Volume into fermenter</source>
+        <translation type="unfinished">Объем сусла в бродильне</translation>
+    </message>
+    <message>
+        <source> Pitch Temp</source>
+        <translation type="unfinished"> Температура засева</translation>
+    </message>
+    <message>
+        <source>Temperature of wort when yeast is pitched</source>
+        <translation type="unfinished">Температура сусла в момент добавления дрожжей</translation>
+    </message>
+    <message>
+        <source>Postferment</source>
+        <translation type="unfinished">После брожения</translation>
+    </message>
+    <message>
+        <source>Final gravity</source>
+        <translation type="unfinished">Конечная плотность</translation>
+    </message>
+    <message>
+        <source>Volume of beer into serving keg/bottles</source>
+        <translation type="unfinished">Объем пива, розлитого в кеги/бутылки</translation>
+    </message>
+    <message>
+        <source>yyyy-dd-MM</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10078,11 +10057,27 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Projected OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brewhouse efficiency</source>
+        <translation type="unfinished">Эффективность затирания</translation>
+    </message>
+    <message>
         <source>Expected ABV based on recipe OG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Projected ABV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>ABV based on user-reported FG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ABV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10102,8 +10097,139 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Brew Note</source>
+        <source>Notes</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>brewNoteWidget</name>
+    <message>
+        <source>Preboil</source>
+        <translation type="vanished">Перед кипячением</translation>
+    </message>
+    <message>
+        <source>SG</source>
+        <translation type="vanished">Плотность SG</translation>
+    </message>
+    <message>
+        <source>Preboil gravity</source>
+        <translation type="vanished">Плотность до кипячения</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="vanished">Объём</translation>
+    </message>
+    <message>
+        <source>Volume of wort collected</source>
+        <translation type="vanished">Объем собранного сусла</translation>
+    </message>
+    <message>
+        <source>Strike Temp</source>
+        <translation type="vanished">Температура закипания</translation>
+    </message>
+    <message>
+        <source>Temperature of mash after dough in</source>
+        <translation type="vanished">Температура затора при начале затирания</translation>
+    </message>
+    <message>
+        <source>Final Temp</source>
+        <translation type="vanished">Конечная температура</translation>
+    </message>
+    <message>
+        <source>Temperature of mash before mash out</source>
+        <translation type="vanished">Температура затора перед окончанием затирания</translation>
+    </message>
+    <message>
+        <source>Postboil</source>
+        <translation type="vanished">После кипячения</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="vanished">Начальная плотность (OG)</translation>
+    </message>
+    <message>
+        <source>Post boil gravity</source>
+        <translation type="vanished">Плотность после кипячения</translation>
+    </message>
+    <message>
+        <source>Postboil Volume</source>
+        <translation type="vanished">Объем сусла после кипячения</translation>
+    </message>
+    <message>
+        <source>Volume of wort in BK after boil</source>
+        <translation type="vanished">Объем сусла в сусловарнике после кипячения</translation>
+    </message>
+    <message>
+        <source>Volume of wort transferred to fermenter</source>
+        <translation type="vanished">Объем сусла, перелитого в бродильню</translation>
+    </message>
+    <message>
+        <source>Volume into fermenter</source>
+        <translation type="vanished">Объем сусла в бродильне</translation>
+    </message>
+    <message>
+        <source> Pitch Temp</source>
+        <translation type="vanished"> Температура засева</translation>
+    </message>
+    <message>
+        <source>Temperature of wort when yeast is pitched</source>
+        <translation type="vanished">Температура сусла в момент добавления дрожжей</translation>
+    </message>
+    <message>
+        <source>Postferment</source>
+        <translation type="vanished">После брожения</translation>
+    </message>
+    <message>
+        <source>Final gravity</source>
+        <translation type="vanished">Конечная плотность</translation>
+    </message>
+    <message>
+        <source>Volume of beer into serving keg/bottles</source>
+        <translation type="vanished">Объем пива, розлитого в кеги/бутылки</translation>
+    </message>
+    <message>
+        <source>percent efficiency into boil kettle</source>
+        <translation type="vanished">процент эффективности в сусловарнике</translation>
+    </message>
+    <message>
+        <source>Eff into BK</source>
+        <translation type="vanished">Эффективность варочного котла</translation>
+    </message>
+    <message>
+        <source>Expected OG, based on measure fg</source>
+        <translation type="vanished">Ожидаемая НП, основанная на измерении КП</translation>
+    </message>
+    <message>
+        <source>Projected OG</source>
+        <translation type="vanished">Предполагаемая НП</translation>
+    </message>
+    <message>
+        <source>Brewhouse efficiency</source>
+        <translation type="vanished">Эффективность затирания</translation>
+    </message>
+    <message>
+        <source>Brewhouse Eff</source>
+        <translation type="vanished">Эффективность</translation>
+    </message>
+    <message>
+        <source>Expected ABV based on OG</source>
+        <translation type="vanished">Ожидаемый % алк.(об), основываясь на НП</translation>
+    </message>
+    <message>
+        <source>Projected ABV</source>
+        <translation type="vanished">Предполагаемый % алк.(об)</translation>
+    </message>
+    <message>
+        <source>ABV based on FG</source>
+        <translation type="vanished">% алкоголя (об.), основанный на КП</translation>
+    </message>
+    <message>
+        <source>ABV</source>
+        <translation type="vanished">% алкоголя (об.)</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="vanished">Примечания</translation>
     </message>
 </context>
 <context>

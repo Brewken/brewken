@@ -527,13 +527,9 @@
     </message>
 </context>
 <context>
-    <name>BrewNote</name>
+    <name>BrewLog</name>
     <message>
         <source>Brew Note</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Brew Note #%1 for brew on %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -655,6 +651,53 @@
     <message>
         <source>Volume Into Fermentor</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Note #%1 for brew on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BrewNote</name>
+    <message>
+        <source>ABV</source>
+        <translation type="obsolete">ABV</translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="obsolete">Demping</translation>
+    </message>
+    <message>
+        <source>Brew Date</source>
+        <translation type="obsolete">Bryggedato</translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation type="obsolete">FG</translation>
+    </message>
+    <message>
+        <source>Final Volume</source>
+        <translation type="obsolete">Sluttvolum</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="obsolete">Notater</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="obsolete">OG</translation>
+    </message>
+    <message>
+        <source>Projected ABV</source>
+        <translation type="obsolete">Projisert ABV</translation>
+    </message>
+    <message>
+        <source>Projected OG</source>
+        <translation type="obsolete">Projisert OG</translation>
+    </message>
+    <message>
+        <source>SG</source>
+        <translation type="obsolete">SG</translation>
     </message>
 </context>
 <context>
@@ -2721,7 +2764,19 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Folder ID</source>
+        <source>Contained in Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contained in Folder ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder name cannot be blank (and cannot contain &apos;/&apos;)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9997,141 +10052,97 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
 </context>
 <context>
-    <name>brewNoteWidget</name>
+    <name>brewLogWidget</name>
     <message>
-        <source>Preboil</source>
-        <translation>Før koking</translation>
-    </message>
-    <message>
-        <source>SG</source>
-        <translation>SG</translation>
-    </message>
-    <message>
-        <source>Preboil gravity</source>
-        <translation>SG før koking</translation>
-    </message>
-    <message>
-        <source>Volume</source>
-        <translation>Volum</translation>
-    </message>
-    <message>
-        <source>Volume of wort collected</source>
-        <translation>Volum på samlet vørter</translation>
-    </message>
-    <message>
-        <source>Strike Temp</source>
-        <translation>Forhåndstemperatur</translation>
-    </message>
-    <message>
-        <source>Temperature of mash after dough in</source>
-        <translation type="vanished">Temperatur på mesk etter proteinpause</translation>
-    </message>
-    <message>
-        <source>Final Temp</source>
-        <translation>Endelig temperatur</translation>
-    </message>
-    <message>
-        <source>Temperature of mash before mash out</source>
-        <translation>Temperatur på mesk før utmesking</translation>
-    </message>
-    <message>
-        <source>Postboil</source>
-        <translation>Etter koking</translation>
-    </message>
-    <message>
-        <source>OG</source>
-        <translation>OG</translation>
-    </message>
-    <message>
-        <source>Post boil gravity</source>
-        <translation>SG etter koking</translation>
-    </message>
-    <message>
-        <source>Postboil Volume</source>
-        <translation>Volum etter koking</translation>
-    </message>
-    <message>
-        <source>Volume of wort in BK after boil</source>
-        <translation>Volum på vørter i BK etter koking</translation>
-    </message>
-    <message>
-        <source>Volume of wort transferred to fermenter</source>
-        <translation>Volum på vørter overført til gjæring</translation>
-    </message>
-    <message>
-        <source>Volume into fermenter</source>
-        <translation>Volum til gjæring</translation>
-    </message>
-    <message>
-        <source> Pitch Temp</source>
-        <translation> Temperatur på gjærstarter</translation>
-    </message>
-    <message>
-        <source>Temperature of wort when yeast is pitched</source>
-        <translation>Temperatur på vørter når gjær tilsettes</translation>
-    </message>
-    <message>
-        <source>Postferment</source>
-        <translation>Etter gjæring</translation>
-    </message>
-    <message>
-        <source>Final gravity</source>
-        <translation>FG</translation>
-    </message>
-    <message>
-        <source>Volume of beer into serving keg/bottles</source>
-        <translation>Volum øl til flasking/fat</translation>
-    </message>
-    <message>
-        <source>percent efficiency into boil kettle</source>
-        <translation type="vanished">Prosent effektivitet i kokekar</translation>
-    </message>
-    <message>
-        <source>Eff into BK</source>
-        <translation type="vanished">Eff i BK</translation>
-    </message>
-    <message>
-        <source>Expected OG, based on measure fg</source>
-        <translation type="vanished">Forventet OG, basert på målt fg</translation>
-    </message>
-    <message>
-        <source>Projected OG</source>
-        <translation>Projisert OG</translation>
-    </message>
-    <message>
-        <source>Brewhouse efficiency</source>
-        <translation>Bryggerhusefektivitet</translation>
-    </message>
-    <message>
-        <source>Brewhouse Eff</source>
-        <translation type="vanished">Bryggerhus Eff</translation>
-    </message>
-    <message>
-        <source>Expected ABV based on OG</source>
-        <translation type="vanished">Forventet ABV basert på OG</translation>
-    </message>
-    <message>
-        <source>Projected ABV</source>
-        <translation>Projisert ABV</translation>
-    </message>
-    <message>
-        <source>ABV based on FG</source>
-        <translation type="vanished">ABV basert på OG</translation>
-    </message>
-    <message>
-        <source>ABV</source>
-        <translation>ABV</translation>
-    </message>
-    <message>
-        <source>Notes</source>
-        <translation>Notater</translation>
-    </message>
-    <message>
-        <source>yyyy-dd-MM</source>
+        <source>Brew Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Preboil</source>
+        <translation type="unfinished">Før koking</translation>
+    </message>
+    <message>
+        <source>SG</source>
+        <translation type="unfinished">SG</translation>
+    </message>
+    <message>
+        <source>Preboil gravity</source>
+        <translation type="unfinished">SG før koking</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="unfinished">Volum</translation>
+    </message>
+    <message>
+        <source>Volume of wort collected</source>
+        <translation type="unfinished">Volum på samlet vørter</translation>
+    </message>
+    <message>
+        <source>Strike Temp</source>
+        <translation type="unfinished">Forhåndstemperatur</translation>
+    </message>
+    <message>
         <source>Temperature of strike water before dough in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Final Temp</source>
+        <translation type="unfinished">Endelig temperatur</translation>
+    </message>
+    <message>
+        <source>Temperature of mash before mash out</source>
+        <translation type="unfinished">Temperatur på mesk før utmesking</translation>
+    </message>
+    <message>
+        <source>Postboil</source>
+        <translation type="unfinished">Etter koking</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="unfinished">OG</translation>
+    </message>
+    <message>
+        <source>Post boil gravity</source>
+        <translation type="unfinished">SG etter koking</translation>
+    </message>
+    <message>
+        <source>Postboil Volume</source>
+        <translation type="unfinished">Volum etter koking</translation>
+    </message>
+    <message>
+        <source>Volume of wort in BK after boil</source>
+        <translation type="unfinished">Volum på vørter i BK etter koking</translation>
+    </message>
+    <message>
+        <source>Volume of wort transferred to fermenter</source>
+        <translation type="unfinished">Volum på vørter overført til gjæring</translation>
+    </message>
+    <message>
+        <source>Volume into fermenter</source>
+        <translation type="unfinished">Volum til gjæring</translation>
+    </message>
+    <message>
+        <source> Pitch Temp</source>
+        <translation type="unfinished"> Temperatur på gjærstarter</translation>
+    </message>
+    <message>
+        <source>Temperature of wort when yeast is pitched</source>
+        <translation type="unfinished">Temperatur på vørter når gjær tilsettes</translation>
+    </message>
+    <message>
+        <source>Postferment</source>
+        <translation type="unfinished">Etter gjæring</translation>
+    </message>
+    <message>
+        <source>Final gravity</source>
+        <translation type="unfinished">FG</translation>
+    </message>
+    <message>
+        <source>Volume of beer into serving keg/bottles</source>
+        <translation type="unfinished">Volum øl til flasking/fat</translation>
+    </message>
+    <message>
+        <source>yyyy-dd-MM</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10147,12 +10158,28 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Projected OG</source>
+        <translation type="unfinished">Projisert OG</translation>
+    </message>
+    <message>
+        <source>Brewhouse efficiency</source>
+        <translation type="unfinished">Bryggerhusefektivitet</translation>
+    </message>
+    <message>
         <source>Expected ABV based on recipe OG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Projected ABV</source>
+        <translation type="unfinished">Projisert ABV</translation>
+    </message>
+    <message>
         <source>ABV based on user-reported FG</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ABV</source>
+        <translation type="unfinished">ABV</translation>
     </message>
     <message>
         <source>Yeast attenuation based on yeast specified in recipe</source>
@@ -10171,8 +10198,139 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Brew Note</source>
-        <translation type="unfinished"></translation>
+        <source>Notes</source>
+        <translation type="unfinished">Notater</translation>
+    </message>
+</context>
+<context>
+    <name>brewNoteWidget</name>
+    <message>
+        <source>Preboil</source>
+        <translation type="vanished">Før koking</translation>
+    </message>
+    <message>
+        <source>SG</source>
+        <translation type="vanished">SG</translation>
+    </message>
+    <message>
+        <source>Preboil gravity</source>
+        <translation type="vanished">SG før koking</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="vanished">Volum</translation>
+    </message>
+    <message>
+        <source>Volume of wort collected</source>
+        <translation type="vanished">Volum på samlet vørter</translation>
+    </message>
+    <message>
+        <source>Strike Temp</source>
+        <translation type="vanished">Forhåndstemperatur</translation>
+    </message>
+    <message>
+        <source>Temperature of mash after dough in</source>
+        <translation type="vanished">Temperatur på mesk etter proteinpause</translation>
+    </message>
+    <message>
+        <source>Final Temp</source>
+        <translation type="vanished">Endelig temperatur</translation>
+    </message>
+    <message>
+        <source>Temperature of mash before mash out</source>
+        <translation type="vanished">Temperatur på mesk før utmesking</translation>
+    </message>
+    <message>
+        <source>Postboil</source>
+        <translation type="vanished">Etter koking</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="vanished">OG</translation>
+    </message>
+    <message>
+        <source>Post boil gravity</source>
+        <translation type="vanished">SG etter koking</translation>
+    </message>
+    <message>
+        <source>Postboil Volume</source>
+        <translation type="vanished">Volum etter koking</translation>
+    </message>
+    <message>
+        <source>Volume of wort in BK after boil</source>
+        <translation type="vanished">Volum på vørter i BK etter koking</translation>
+    </message>
+    <message>
+        <source>Volume of wort transferred to fermenter</source>
+        <translation type="vanished">Volum på vørter overført til gjæring</translation>
+    </message>
+    <message>
+        <source>Volume into fermenter</source>
+        <translation type="vanished">Volum til gjæring</translation>
+    </message>
+    <message>
+        <source> Pitch Temp</source>
+        <translation type="vanished"> Temperatur på gjærstarter</translation>
+    </message>
+    <message>
+        <source>Temperature of wort when yeast is pitched</source>
+        <translation type="vanished">Temperatur på vørter når gjær tilsettes</translation>
+    </message>
+    <message>
+        <source>Postferment</source>
+        <translation type="vanished">Etter gjæring</translation>
+    </message>
+    <message>
+        <source>Final gravity</source>
+        <translation type="vanished">FG</translation>
+    </message>
+    <message>
+        <source>Volume of beer into serving keg/bottles</source>
+        <translation type="vanished">Volum øl til flasking/fat</translation>
+    </message>
+    <message>
+        <source>percent efficiency into boil kettle</source>
+        <translation type="vanished">Prosent effektivitet i kokekar</translation>
+    </message>
+    <message>
+        <source>Eff into BK</source>
+        <translation type="vanished">Eff i BK</translation>
+    </message>
+    <message>
+        <source>Expected OG, based on measure fg</source>
+        <translation type="vanished">Forventet OG, basert på målt fg</translation>
+    </message>
+    <message>
+        <source>Projected OG</source>
+        <translation type="vanished">Projisert OG</translation>
+    </message>
+    <message>
+        <source>Brewhouse efficiency</source>
+        <translation type="vanished">Bryggerhusefektivitet</translation>
+    </message>
+    <message>
+        <source>Brewhouse Eff</source>
+        <translation type="vanished">Bryggerhus Eff</translation>
+    </message>
+    <message>
+        <source>Expected ABV based on OG</source>
+        <translation type="vanished">Forventet ABV basert på OG</translation>
+    </message>
+    <message>
+        <source>Projected ABV</source>
+        <translation type="vanished">Projisert ABV</translation>
+    </message>
+    <message>
+        <source>ABV based on FG</source>
+        <translation type="vanished">ABV basert på OG</translation>
+    </message>
+    <message>
+        <source>ABV</source>
+        <translation type="vanished">ABV</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="vanished">Notater</translation>
     </message>
 </context>
 <context>
