@@ -531,13 +531,9 @@
     </message>
 </context>
 <context>
-    <name>BrewNote</name>
+    <name>BrewLog</name>
     <message>
         <source>Brew Note</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Brew Note #%1 for brew on %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -659,6 +655,53 @@
     <message>
         <source>Volume Into Fermentor</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Note #%1 for brew on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BrewNote</name>
+    <message>
+        <source>ABV</source>
+        <translation type="obsolete">alkoholfok (v/v%)</translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="obsolete">erjesztési hatékonyság</translation>
+    </message>
+    <message>
+        <source>Brew Date</source>
+        <translation type="obsolete">Sörfőzés ideje</translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation type="obsolete">végleges fajsúly (FG)</translation>
+    </message>
+    <message>
+        <source>Final Volume</source>
+        <translation type="obsolete">Mennyiség (végleges)</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="obsolete">Megjegyzések</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="obsolete">kezdeti fajsúly (OG)</translation>
+    </message>
+    <message>
+        <source>Projected ABV</source>
+        <translation type="obsolete">Tervezett alkoholfok (v/v%)</translation>
+    </message>
+    <message>
+        <source>Projected OG</source>
+        <translation type="obsolete">Várható kezdeti fajsúly</translation>
+    </message>
+    <message>
+        <source>SG</source>
+        <translation type="obsolete">fajsúly (SG)</translation>
     </message>
 </context>
 <context>
@@ -2769,7 +2812,19 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Folder ID</source>
+        <source>Contained in Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contained in Folder ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder name cannot be blank (and cannot contain &apos;/&apos;)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10034,141 +10089,97 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
 </context>
 <context>
-    <name>brewNoteWidget</name>
+    <name>brewLogWidget</name>
     <message>
-        <source>Preboil</source>
-        <translation>Forralást megelőző</translation>
-    </message>
-    <message>
-        <source>SG</source>
-        <translation>fajsúly (SG)</translation>
-    </message>
-    <message>
-        <source>Preboil gravity</source>
-        <translation>forralás előtti fajsúly</translation>
-    </message>
-    <message>
-        <source>Volume</source>
-        <translation>Mennyiség</translation>
-    </message>
-    <message>
-        <source>Volume of wort collected</source>
-        <translation>Színlé mennyisége</translation>
-    </message>
-    <message>
-        <source>Strike Temp</source>
-        <translation>Felöntővíz hőmérséklet</translation>
-    </message>
-    <message>
-        <source>Temperature of mash after dough in</source>
-        <translation type="vanished">A bekevert cefrézendő anyag hőmérséklete a cefrézés kezdetekor</translation>
-    </message>
-    <message>
-        <source>Final Temp</source>
-        <translation>Végleges hőmérséklet</translation>
-    </message>
-    <message>
-        <source>Temperature of mash before mash out</source>
-        <translation>A kicefrézés megkezdése előtti cefre hőfoka</translation>
-    </message>
-    <message>
-        <source>Postboil</source>
-        <translation>Forralást követő</translation>
-    </message>
-    <message>
-        <source>OG</source>
-        <translation>kezdeti fajsúly (OG)</translation>
-    </message>
-    <message>
-        <source>Post boil gravity</source>
-        <translation>Forralás utáni fajsúly</translation>
-    </message>
-    <message>
-        <source>Postboil Volume</source>
-        <translation>Forralás utáni mennyiség</translation>
-    </message>
-    <message>
-        <source>Volume of wort in BK after boil</source>
-        <translation>Sörlé mennyisége forralás után</translation>
-    </message>
-    <message>
-        <source>Volume of wort transferred to fermenter</source>
-        <translation>Erjesztőbe átfejtett sörlé mennyisége</translation>
-    </message>
-    <message>
-        <source>Volume into fermenter</source>
-        <translation>Mennyiség (erjesztőbe fejtéskor)</translation>
-    </message>
-    <message>
-        <source> Pitch Temp</source>
-        <translation> Élesztővel beoltás hőfoka</translation>
-    </message>
-    <message>
-        <source>Temperature of wort when yeast is pitched</source>
-        <translation>Sörlé hőfoka beoltáskor</translation>
-    </message>
-    <message>
-        <source>Postferment</source>
-        <translation>Erjedést követő</translation>
-    </message>
-    <message>
-        <source>Final gravity</source>
-        <translation>Végleges fajsúly</translation>
-    </message>
-    <message>
-        <source>Volume of beer into serving keg/bottles</source>
-        <translation>Kiszerelési mennyiség</translation>
-    </message>
-    <message>
-        <source>percent efficiency into boil kettle</source>
-        <translation type="vanished">forraláskor mért kihozatal</translation>
-    </message>
-    <message>
-        <source>Eff into BK</source>
-        <translation type="vanished">Forralóba kerülő színlé kihozatali aránya</translation>
-    </message>
-    <message>
-        <source>Expected OG, based on measure fg</source>
-        <translation type="vanished">Végleges fajsúly alapján becsült kezdeti fajsúly</translation>
-    </message>
-    <message>
-        <source>Projected OG</source>
-        <translation>Várható kezdeti fajsúly</translation>
-    </message>
-    <message>
-        <source>Brewhouse efficiency</source>
-        <translation>Kihozatal</translation>
-    </message>
-    <message>
-        <source>Brewhouse Eff</source>
-        <translation type="vanished">Teljes folyamatra vetített kihozatali arány</translation>
-    </message>
-    <message>
-        <source>Expected ABV based on OG</source>
-        <translation type="vanished">Várható alkoholfok(v/v%) a kezdeti fajsúly alapján</translation>
-    </message>
-    <message>
-        <source>Projected ABV</source>
-        <translation>Tervezett alkoholfok (v/v%)</translation>
-    </message>
-    <message>
-        <source>ABV based on FG</source>
-        <translation type="vanished">Alkoholfok alapján számított végső fajsúly</translation>
-    </message>
-    <message>
-        <source>ABV</source>
-        <translation>alkoholfok (v/v%)</translation>
-    </message>
-    <message>
-        <source>Notes</source>
-        <translation>Megjegyzések</translation>
-    </message>
-    <message>
-        <source>yyyy-dd-MM</source>
+        <source>Brew Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Preboil</source>
+        <translation type="unfinished">Forralást megelőző</translation>
+    </message>
+    <message>
+        <source>SG</source>
+        <translation type="unfinished">fajsúly (SG)</translation>
+    </message>
+    <message>
+        <source>Preboil gravity</source>
+        <translation type="unfinished">forralás előtti fajsúly</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="unfinished">Mennyiség</translation>
+    </message>
+    <message>
+        <source>Volume of wort collected</source>
+        <translation type="unfinished">Színlé mennyisége</translation>
+    </message>
+    <message>
+        <source>Strike Temp</source>
+        <translation type="unfinished">Felöntővíz hőmérséklet</translation>
+    </message>
+    <message>
         <source>Temperature of strike water before dough in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Final Temp</source>
+        <translation type="unfinished">Végleges hőmérséklet</translation>
+    </message>
+    <message>
+        <source>Temperature of mash before mash out</source>
+        <translation type="unfinished">A kicefrézés megkezdése előtti cefre hőfoka</translation>
+    </message>
+    <message>
+        <source>Postboil</source>
+        <translation type="unfinished">Forralást követő</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="unfinished">kezdeti fajsúly (OG)</translation>
+    </message>
+    <message>
+        <source>Post boil gravity</source>
+        <translation type="unfinished">Forralás utáni fajsúly</translation>
+    </message>
+    <message>
+        <source>Postboil Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Volume of wort in BK after boil</source>
+        <translation type="unfinished">Sörlé mennyisége forralás után</translation>
+    </message>
+    <message>
+        <source>Volume of wort transferred to fermenter</source>
+        <translation type="unfinished">Erjesztőbe átfejtett sörlé mennyisége</translation>
+    </message>
+    <message>
+        <source>Volume into fermenter</source>
+        <translation type="unfinished">Mennyiség (erjesztőbe fejtéskor)</translation>
+    </message>
+    <message>
+        <source> Pitch Temp</source>
+        <translation type="unfinished"> Élesztővel beoltás hőfoka</translation>
+    </message>
+    <message>
+        <source>Temperature of wort when yeast is pitched</source>
+        <translation type="unfinished">Sörlé hőfoka beoltáskor</translation>
+    </message>
+    <message>
+        <source>Postferment</source>
+        <translation type="unfinished">Erjedést követő</translation>
+    </message>
+    <message>
+        <source>Final gravity</source>
+        <translation type="unfinished">Végleges fajsúly</translation>
+    </message>
+    <message>
+        <source>Volume of beer into serving keg/bottles</source>
+        <translation type="unfinished">Kiszerelési mennyiség</translation>
+    </message>
+    <message>
+        <source>yyyy-dd-MM</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10184,12 +10195,28 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Projected OG</source>
+        <translation type="unfinished">Várható kezdeti fajsúly</translation>
+    </message>
+    <message>
+        <source>Brewhouse efficiency</source>
+        <translation type="unfinished">Kihozatal</translation>
+    </message>
+    <message>
         <source>Expected ABV based on recipe OG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Projected ABV</source>
+        <translation type="unfinished">Tervezett alkoholfok (v/v%)</translation>
+    </message>
+    <message>
         <source>ABV based on user-reported FG</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ABV</source>
+        <translation type="unfinished">alkoholfok (v/v%)</translation>
     </message>
     <message>
         <source>Yeast attenuation based on yeast specified in recipe</source>
@@ -10208,8 +10235,139 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Brew Note</source>
-        <translation type="unfinished"></translation>
+        <source>Notes</source>
+        <translation type="unfinished">Megjegyzések</translation>
+    </message>
+</context>
+<context>
+    <name>brewNoteWidget</name>
+    <message>
+        <source>Preboil</source>
+        <translation type="vanished">Forralást megelőző</translation>
+    </message>
+    <message>
+        <source>SG</source>
+        <translation type="vanished">fajsúly (SG)</translation>
+    </message>
+    <message>
+        <source>Preboil gravity</source>
+        <translation type="vanished">forralás előtti fajsúly</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="vanished">Mennyiség</translation>
+    </message>
+    <message>
+        <source>Volume of wort collected</source>
+        <translation type="vanished">Színlé mennyisége</translation>
+    </message>
+    <message>
+        <source>Strike Temp</source>
+        <translation type="vanished">Felöntővíz hőmérséklet</translation>
+    </message>
+    <message>
+        <source>Temperature of mash after dough in</source>
+        <translation type="vanished">A bekevert cefrézendő anyag hőmérséklete a cefrézés kezdetekor</translation>
+    </message>
+    <message>
+        <source>Final Temp</source>
+        <translation type="vanished">Végleges hőmérséklet</translation>
+    </message>
+    <message>
+        <source>Temperature of mash before mash out</source>
+        <translation type="vanished">A kicefrézés megkezdése előtti cefre hőfoka</translation>
+    </message>
+    <message>
+        <source>Postboil</source>
+        <translation type="vanished">Forralást követő</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="vanished">kezdeti fajsúly (OG)</translation>
+    </message>
+    <message>
+        <source>Post boil gravity</source>
+        <translation type="vanished">Forralás utáni fajsúly</translation>
+    </message>
+    <message>
+        <source>Postboil Volume</source>
+        <translation type="vanished">Forralás utáni mennyiség</translation>
+    </message>
+    <message>
+        <source>Volume of wort in BK after boil</source>
+        <translation type="vanished">Sörlé mennyisége forralás után</translation>
+    </message>
+    <message>
+        <source>Volume of wort transferred to fermenter</source>
+        <translation type="vanished">Erjesztőbe átfejtett sörlé mennyisége</translation>
+    </message>
+    <message>
+        <source>Volume into fermenter</source>
+        <translation type="vanished">Mennyiség (erjesztőbe fejtéskor)</translation>
+    </message>
+    <message>
+        <source> Pitch Temp</source>
+        <translation type="vanished"> Élesztővel beoltás hőfoka</translation>
+    </message>
+    <message>
+        <source>Temperature of wort when yeast is pitched</source>
+        <translation type="vanished">Sörlé hőfoka beoltáskor</translation>
+    </message>
+    <message>
+        <source>Postferment</source>
+        <translation type="vanished">Erjedést követő</translation>
+    </message>
+    <message>
+        <source>Final gravity</source>
+        <translation type="vanished">Végleges fajsúly</translation>
+    </message>
+    <message>
+        <source>Volume of beer into serving keg/bottles</source>
+        <translation type="vanished">Kiszerelési mennyiség</translation>
+    </message>
+    <message>
+        <source>percent efficiency into boil kettle</source>
+        <translation type="vanished">forraláskor mért kihozatal</translation>
+    </message>
+    <message>
+        <source>Eff into BK</source>
+        <translation type="vanished">Forralóba kerülő színlé kihozatali aránya</translation>
+    </message>
+    <message>
+        <source>Expected OG, based on measure fg</source>
+        <translation type="vanished">Végleges fajsúly alapján becsült kezdeti fajsúly</translation>
+    </message>
+    <message>
+        <source>Projected OG</source>
+        <translation type="vanished">Várható kezdeti fajsúly</translation>
+    </message>
+    <message>
+        <source>Brewhouse efficiency</source>
+        <translation type="vanished">Kihozatal</translation>
+    </message>
+    <message>
+        <source>Brewhouse Eff</source>
+        <translation type="vanished">Teljes folyamatra vetített kihozatali arány</translation>
+    </message>
+    <message>
+        <source>Expected ABV based on OG</source>
+        <translation type="vanished">Várható alkoholfok(v/v%) a kezdeti fajsúly alapján</translation>
+    </message>
+    <message>
+        <source>Projected ABV</source>
+        <translation type="vanished">Tervezett alkoholfok (v/v%)</translation>
+    </message>
+    <message>
+        <source>ABV based on FG</source>
+        <translation type="vanished">Alkoholfok alapján számított végső fajsúly</translation>
+    </message>
+    <message>
+        <source>ABV</source>
+        <translation type="vanished">alkoholfok (v/v%)</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="vanished">Megjegyzések</translation>
     </message>
 </context>
 <context>

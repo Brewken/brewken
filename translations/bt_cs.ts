@@ -531,13 +531,9 @@
     </message>
 </context>
 <context>
-    <name>BrewNote</name>
+    <name>BrewLog</name>
     <message>
         <source>Brew Note</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Brew Note #%1 for brew on %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -659,6 +655,37 @@
     <message>
         <source>Volume Into Fermentor</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Note #%1 for brew on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BrewNote</name>
+    <message>
+        <source>Attenuation</source>
+        <translation type="obsolete">Prokvašení</translation>
+    </message>
+    <message>
+        <source>Brew Date</source>
+        <translation type="obsolete">Datum vaření</translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation type="obsolete">Konečná hustota</translation>
+    </message>
+    <message>
+        <source>Final Volume</source>
+        <translation type="obsolete">Cílový objem</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="obsolete">Poznámky</translation>
+    </message>
+    <message>
+        <source>Projected ABV</source>
+        <translation type="obsolete">Odhadovaný obsah alkoholu</translation>
     </message>
 </context>
 <context>
@@ -2708,7 +2735,19 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Folder ID</source>
+        <source>Contained in Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contained in Folder ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder name cannot be blank (and cannot contain &apos;/&apos;)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9954,141 +9993,97 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
 </context>
 <context>
-    <name>brewNoteWidget</name>
+    <name>brewLogWidget</name>
     <message>
-        <source>Preboil</source>
-        <translation>Před chmelovarem</translation>
-    </message>
-    <message>
-        <source>SG</source>
-        <translation>Hustota</translation>
-    </message>
-    <message>
-        <source>Preboil gravity</source>
-        <translation>Hustota před chmelovarem</translation>
-    </message>
-    <message>
-        <source>Volume</source>
-        <translation>Objem</translation>
-    </message>
-    <message>
-        <source>Volume of wort collected</source>
-        <translation>Objem získaného díla</translation>
-    </message>
-    <message>
-        <source>Strike Temp</source>
-        <translation>Teplota zapářky</translation>
-    </message>
-    <message>
-        <source>Temperature of mash after dough in</source>
-        <translation type="vanished">Teplota rmutu po zapaření</translation>
-    </message>
-    <message>
-        <source>Final Temp</source>
-        <translation>Výsledná teplota</translation>
-    </message>
-    <message>
-        <source>Temperature of mash before mash out</source>
-        <translation>Teplota rmutu před odrmutováním</translation>
-    </message>
-    <message>
-        <source>Postboil</source>
-        <translation>Po chmelovaru</translation>
-    </message>
-    <message>
-        <source>OG</source>
-        <translation>Počát. hustota</translation>
-    </message>
-    <message>
-        <source>Post boil gravity</source>
-        <translation>Hustota po chmelovaru</translation>
-    </message>
-    <message>
-        <source>Postboil Volume</source>
-        <translation>Objem po chmelovaru</translation>
-    </message>
-    <message>
-        <source>Volume of wort in BK after boil</source>
-        <translation>Objem díla ve varné nádobě po chmelovaru</translation>
-    </message>
-    <message>
-        <source>Volume of wort transferred to fermenter</source>
-        <translation>Objem díla přesouvanéhé do spilky</translation>
-    </message>
-    <message>
-        <source>Volume into fermenter</source>
-        <translation>Objem do spilky</translation>
-    </message>
-    <message>
-        <source> Pitch Temp</source>
-        <translation> Teplota zakvašení</translation>
-    </message>
-    <message>
-        <source>Temperature of wort when yeast is pitched</source>
-        <translation>Teplota díla, při které se přidají kvasnice</translation>
-    </message>
-    <message>
-        <source>Postferment</source>
-        <translation>Po kvašení</translation>
-    </message>
-    <message>
-        <source>Final gravity</source>
-        <translation>Konečná hustota</translation>
-    </message>
-    <message>
-        <source>Volume of beer into serving keg/bottles</source>
-        <translation>Objem piva do sudů/lahví</translation>
-    </message>
-    <message>
-        <source>percent efficiency into boil kettle</source>
-        <translation type="vanished">procentuální výtěžnost varné nádoby</translation>
-    </message>
-    <message>
-        <source>Eff into BK</source>
-        <translation type="vanished">Výtěžnost varné nádoby</translation>
-    </message>
-    <message>
-        <source>Expected OG, based on measure fg</source>
-        <translation type="vanished">Očekávaná počáteční hustota, založeno na měření konečné hustoty</translation>
-    </message>
-    <message>
-        <source>Projected OG</source>
-        <translation>Předpokl. počáteční hustota</translation>
-    </message>
-    <message>
-        <source>Brewhouse efficiency</source>
-        <translation>Varní výtěžnost pivovaru</translation>
-    </message>
-    <message>
-        <source>Brewhouse Eff</source>
-        <translation type="vanished">Varní výtěžnost pivovaru</translation>
-    </message>
-    <message>
-        <source>Expected ABV based on OG</source>
-        <translation type="vanished">Očekávaný obsah alkoholu na základě počáteční hustoty</translation>
-    </message>
-    <message>
-        <source>Projected ABV</source>
-        <translation>Odhadovaný obsah alkoholu</translation>
-    </message>
-    <message>
-        <source>ABV based on FG</source>
-        <translation type="vanished">Obsah alkoholu na základě konečné hustoty</translation>
-    </message>
-    <message>
-        <source>ABV</source>
-        <translation>Obsah alkoholu</translation>
-    </message>
-    <message>
-        <source>Notes</source>
-        <translation>Poznámky</translation>
-    </message>
-    <message>
-        <source>yyyy-dd-MM</source>
+        <source>Brew Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Preboil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preboil gravity</source>
+        <translation type="unfinished">Hustota před chmelovarem</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="unfinished">Objem</translation>
+    </message>
+    <message>
+        <source>Volume of wort collected</source>
+        <translation type="unfinished">Objem získaného díla</translation>
+    </message>
+    <message>
+        <source>Strike Temp</source>
+        <translation type="unfinished">Teplota zapářky</translation>
+    </message>
+    <message>
         <source>Temperature of strike water before dough in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Final Temp</source>
+        <translation type="unfinished">Výsledná teplota</translation>
+    </message>
+    <message>
+        <source>Temperature of mash before mash out</source>
+        <translation type="unfinished">Teplota rmutu před odrmutováním</translation>
+    </message>
+    <message>
+        <source>Postboil</source>
+        <translation type="unfinished">Po chmelovaru</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post boil gravity</source>
+        <translation type="unfinished">Hustota po chmelovaru</translation>
+    </message>
+    <message>
+        <source>Postboil Volume</source>
+        <translation type="unfinished">Objem po chmelovaru</translation>
+    </message>
+    <message>
+        <source>Volume of wort in BK after boil</source>
+        <translation type="unfinished">Objem díla ve varné nádobě po chmelovaru</translation>
+    </message>
+    <message>
+        <source>Volume of wort transferred to fermenter</source>
+        <translation type="unfinished">Objem díla přesouvanéhé do spilky</translation>
+    </message>
+    <message>
+        <source>Volume into fermenter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> Pitch Temp</source>
+        <translation type="unfinished"> Teplota zakvašení</translation>
+    </message>
+    <message>
+        <source>Temperature of wort when yeast is pitched</source>
+        <translation type="unfinished">Teplota díla, při které se přidají kvasnice</translation>
+    </message>
+    <message>
+        <source>Postferment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Final gravity</source>
+        <translation type="unfinished">Konečná hustota</translation>
+    </message>
+    <message>
+        <source>Volume of beer into serving keg/bottles</source>
+        <translation type="unfinished">Objem piva do sudů/lahví</translation>
+    </message>
+    <message>
+        <source>yyyy-dd-MM</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10104,11 +10099,27 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Projected OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brewhouse efficiency</source>
+        <translation type="unfinished">Varní výtěžnost pivovaru</translation>
+    </message>
+    <message>
         <source>Expected ABV based on recipe OG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Projected ABV</source>
+        <translation type="unfinished">Odhadovaný obsah alkoholu</translation>
+    </message>
+    <message>
         <source>ABV based on user-reported FG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ABV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10128,8 +10139,139 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Brew Note</source>
-        <translation type="unfinished"></translation>
+        <source>Notes</source>
+        <translation type="unfinished">Poznámky</translation>
+    </message>
+</context>
+<context>
+    <name>brewNoteWidget</name>
+    <message>
+        <source>Preboil</source>
+        <translation type="vanished">Před chmelovarem</translation>
+    </message>
+    <message>
+        <source>SG</source>
+        <translation type="vanished">Hustota</translation>
+    </message>
+    <message>
+        <source>Preboil gravity</source>
+        <translation type="vanished">Hustota před chmelovarem</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="vanished">Objem</translation>
+    </message>
+    <message>
+        <source>Volume of wort collected</source>
+        <translation type="vanished">Objem získaného díla</translation>
+    </message>
+    <message>
+        <source>Strike Temp</source>
+        <translation type="vanished">Teplota zapářky</translation>
+    </message>
+    <message>
+        <source>Temperature of mash after dough in</source>
+        <translation type="vanished">Teplota rmutu po zapaření</translation>
+    </message>
+    <message>
+        <source>Final Temp</source>
+        <translation type="vanished">Výsledná teplota</translation>
+    </message>
+    <message>
+        <source>Temperature of mash before mash out</source>
+        <translation type="vanished">Teplota rmutu před odrmutováním</translation>
+    </message>
+    <message>
+        <source>Postboil</source>
+        <translation type="vanished">Po chmelovaru</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="vanished">Počát. hustota</translation>
+    </message>
+    <message>
+        <source>Post boil gravity</source>
+        <translation type="vanished">Hustota po chmelovaru</translation>
+    </message>
+    <message>
+        <source>Postboil Volume</source>
+        <translation type="vanished">Objem po chmelovaru</translation>
+    </message>
+    <message>
+        <source>Volume of wort in BK after boil</source>
+        <translation type="vanished">Objem díla ve varné nádobě po chmelovaru</translation>
+    </message>
+    <message>
+        <source>Volume of wort transferred to fermenter</source>
+        <translation type="vanished">Objem díla přesouvanéhé do spilky</translation>
+    </message>
+    <message>
+        <source>Volume into fermenter</source>
+        <translation type="vanished">Objem do spilky</translation>
+    </message>
+    <message>
+        <source> Pitch Temp</source>
+        <translation type="vanished"> Teplota zakvašení</translation>
+    </message>
+    <message>
+        <source>Temperature of wort when yeast is pitched</source>
+        <translation type="vanished">Teplota díla, při které se přidají kvasnice</translation>
+    </message>
+    <message>
+        <source>Postferment</source>
+        <translation type="vanished">Po kvašení</translation>
+    </message>
+    <message>
+        <source>Final gravity</source>
+        <translation type="vanished">Konečná hustota</translation>
+    </message>
+    <message>
+        <source>Volume of beer into serving keg/bottles</source>
+        <translation type="vanished">Objem piva do sudů/lahví</translation>
+    </message>
+    <message>
+        <source>percent efficiency into boil kettle</source>
+        <translation type="vanished">procentuální výtěžnost varné nádoby</translation>
+    </message>
+    <message>
+        <source>Eff into BK</source>
+        <translation type="vanished">Výtěžnost varné nádoby</translation>
+    </message>
+    <message>
+        <source>Expected OG, based on measure fg</source>
+        <translation type="vanished">Očekávaná počáteční hustota, založeno na měření konečné hustoty</translation>
+    </message>
+    <message>
+        <source>Projected OG</source>
+        <translation type="vanished">Předpokl. počáteční hustota</translation>
+    </message>
+    <message>
+        <source>Brewhouse efficiency</source>
+        <translation type="vanished">Varní výtěžnost pivovaru</translation>
+    </message>
+    <message>
+        <source>Brewhouse Eff</source>
+        <translation type="vanished">Varní výtěžnost pivovaru</translation>
+    </message>
+    <message>
+        <source>Expected ABV based on OG</source>
+        <translation type="vanished">Očekávaný obsah alkoholu na základě počáteční hustoty</translation>
+    </message>
+    <message>
+        <source>Projected ABV</source>
+        <translation type="vanished">Odhadovaný obsah alkoholu</translation>
+    </message>
+    <message>
+        <source>ABV based on FG</source>
+        <translation type="vanished">Obsah alkoholu na základě konečné hustoty</translation>
+    </message>
+    <message>
+        <source>ABV</source>
+        <translation type="vanished">Obsah alkoholu</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="vanished">Poznámky</translation>
     </message>
 </context>
 <context>

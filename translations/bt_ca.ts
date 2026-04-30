@@ -535,13 +535,9 @@
     </message>
 </context>
 <context>
-    <name>BrewNote</name>
+    <name>BrewLog</name>
     <message>
         <source>Brew Note</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Brew Note #%1 for brew on %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -663,6 +659,41 @@
     <message>
         <source>Volume Into Fermentor</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Note #%1 for brew on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BrewNote</name>
+    <message>
+        <source>ABV</source>
+        <translation type="obsolete">ABV</translation>
+    </message>
+    <message>
+        <source>Attenuation</source>
+        <translation type="obsolete">Atenuació</translation>
+    </message>
+    <message>
+        <source>Brew Date</source>
+        <translation type="obsolete">Data d&apos;elaboració</translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation type="obsolete">DF</translation>
+    </message>
+    <message>
+        <source>Final Volume</source>
+        <translation type="obsolete">Volum final</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="obsolete">Notes</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="obsolete">DI</translation>
     </message>
 </context>
 <context>
@@ -2780,7 +2811,19 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Folder ID</source>
+        <source>Contained in Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contained in Folder ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder name cannot be blank (and cannot contain &apos;/&apos;)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10170,142 +10213,98 @@ El volum final al primari és de %1.</translation>
     </message>
 </context>
 <context>
-    <name>brewNoteWidget</name>
+    <name>brewLogWidget</name>
+    <message>
+        <source>Brew Note</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>Preboil</source>
-        <translation>Abans de bullir</translation>
+        <translation type="unfinished">Abans de bullir</translation>
     </message>
     <message>
         <source>SG</source>
-        <translation>Densitat estimada</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Preboil gravity</source>
-        <translation>Densitat abans de bullir</translation>
+        <translation type="unfinished">Densitat abans de bullir</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation>Volum</translation>
+        <translation type="unfinished">Volum</translation>
     </message>
     <message>
         <source>Volume of wort collected</source>
-        <translation>Volum de most resultant</translation>
+        <translation type="unfinished">Volum de most resultant</translation>
     </message>
     <message>
         <source>Strike Temp</source>
-        <translation>Temp. aigua</translation>
-    </message>
-    <message>
-        <source>Temperature of mash after dough in</source>
-        <translation type="vanished">Temperatura del macerat</translation>
-    </message>
-    <message>
-        <source>Final Temp</source>
-        <translation>Temperatura final</translation>
-    </message>
-    <message>
-        <source>Temperature of mash before mash out</source>
-        <translation>Temperatura del macerat</translation>
-    </message>
-    <message>
-        <source>Postboil</source>
-        <translation>Després de bullir</translation>
-    </message>
-    <message>
-        <source>OG</source>
-        <translation>DI</translation>
-    </message>
-    <message>
-        <source>Post boil gravity</source>
-        <translation>Desnsitat després de bulir</translation>
-    </message>
-    <message>
-        <source>Postboil Volume</source>
-        <translation>Volum després de l&apos;ebullició</translation>
-    </message>
-    <message>
-        <source>Volume of wort in BK after boil</source>
-        <translation>Volum de most en el recipient d&apos;ebullició després de bullir</translation>
-    </message>
-    <message>
-        <source>Volume of wort transferred to fermenter</source>
-        <translation>Volum de most transferit al fermentador</translation>
-    </message>
-    <message>
-        <source>Volume into fermenter</source>
-        <translation>Volum en el fermentador</translation>
-    </message>
-    <message>
-        <source> Pitch Temp</source>
-        <translation> Temp. Sembrat</translation>
-    </message>
-    <message>
-        <source>Temperature of wort when yeast is pitched</source>
-        <translation>Temperatura del most cuan s&apos;afegeix el llevat</translation>
-    </message>
-    <message>
-        <source>Postferment</source>
-        <translation>Post-fermentació</translation>
-    </message>
-    <message>
-        <source>Final gravity</source>
-        <translation>Densitat Final</translation>
-    </message>
-    <message>
-        <source>Volume of beer into serving keg/bottles</source>
-        <translation>Volum de cervesa en barril / ampolles</translation>
-    </message>
-    <message>
-        <source>percent efficiency into boil kettle</source>
-        <translation type="vanished">percentatge d&apos;eficiència en el recipient d&apos;ebullició</translation>
-    </message>
-    <message>
-        <source>Eff into BK</source>
-        <translation type="vanished">eficiència en BK</translation>
-    </message>
-    <message>
-        <source>Expected OG, based on measure fg</source>
-        <translation type="vanished">DI esperada</translation>
-    </message>
-    <message>
-        <source>Projected OG</source>
-        <translation>DI prevista</translation>
-    </message>
-    <message>
-        <source>Brewhouse efficiency</source>
-        <translation>Brewhouse Eficiència</translation>
-    </message>
-    <message>
-        <source>Brewhouse Eff</source>
-        <translation type="vanished">Brewhouse Efi</translation>
-    </message>
-    <message>
-        <source>Expected ABV based on OG</source>
-        <translation type="vanished">ABV esperat basat en la DI</translation>
-    </message>
-    <message>
-        <source>Projected ABV</source>
-        <translation>ABV projectat</translation>
-    </message>
-    <message>
-        <source>ABV based on FG</source>
-        <translation type="vanished">ABV basat en la DF</translation>
-    </message>
-    <message>
-        <source>ABV</source>
-        <translation>ABV</translation>
-    </message>
-    <message>
-        <source>Notes</source>
-        <translation>Notes</translation>
-    </message>
-    <message>
-        <source>yyyy-dd-MM</source>
-        <translation>aaaa-dd-MM</translation>
+        <translation type="unfinished">Temp. aigua</translation>
     </message>
     <message>
         <source>Temperature of strike water before dough in</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Final Temp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Temperature of mash before mash out</source>
+        <translation type="unfinished">Temperatura del macerat</translation>
+    </message>
+    <message>
+        <source>Postboil</source>
+        <translation type="unfinished">Després de bullir</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="unfinished">DI</translation>
+    </message>
+    <message>
+        <source>Post boil gravity</source>
+        <translation type="unfinished">Desnsitat després de bulir</translation>
+    </message>
+    <message>
+        <source>Postboil Volume</source>
+        <translation type="unfinished">Volum després de l&apos;ebullició</translation>
+    </message>
+    <message>
+        <source>Volume of wort in BK after boil</source>
+        <translation type="unfinished">Volum de most en el recipient d&apos;ebullició després de bullir</translation>
+    </message>
+    <message>
+        <source>Volume of wort transferred to fermenter</source>
+        <translation type="unfinished">Volum de most transferit al fermentador</translation>
+    </message>
+    <message>
+        <source>Volume into fermenter</source>
+        <translation type="unfinished">Volum en el fermentador</translation>
+    </message>
+    <message>
+        <source> Pitch Temp</source>
+        <translation type="unfinished"> Temp. Sembrat</translation>
+    </message>
+    <message>
+        <source>Temperature of wort when yeast is pitched</source>
+        <translation type="unfinished">Temperatura del most cuan s&apos;afegeix el llevat</translation>
+    </message>
+    <message>
+        <source>Postferment</source>
+        <translation type="unfinished">Post-fermentació</translation>
+    </message>
+    <message>
+        <source>Final gravity</source>
+        <translation type="unfinished">Densitat Final</translation>
+    </message>
+    <message>
+        <source>Volume of beer into serving keg/bottles</source>
+        <translation type="unfinished">Volum de cervesa en barril / ampolles</translation>
+    </message>
+    <message>
+        <source>yyyy-dd-MM</source>
+        <translation type="unfinished">aaaa-dd-MM</translation>
     </message>
     <message>
         <source>Percent efficiency into boil kettle</source>
@@ -10320,12 +10319,28 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Projected OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brewhouse efficiency</source>
+        <translation type="unfinished">Brewhouse Eficiència</translation>
+    </message>
+    <message>
         <source>Expected ABV based on recipe OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Projected ABV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>ABV based on user-reported FG</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ABV</source>
+        <translation type="unfinished">ABV</translation>
     </message>
     <message>
         <source>Yeast attenuation based on yeast specified in recipe</source>
@@ -10344,8 +10359,143 @@ El volum final al primari és de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Brew Note</source>
-        <translation type="unfinished"></translation>
+        <source>Notes</source>
+        <translation type="unfinished">Notes</translation>
+    </message>
+</context>
+<context>
+    <name>brewNoteWidget</name>
+    <message>
+        <source>Preboil</source>
+        <translation type="vanished">Abans de bullir</translation>
+    </message>
+    <message>
+        <source>SG</source>
+        <translation type="vanished">Densitat estimada</translation>
+    </message>
+    <message>
+        <source>Preboil gravity</source>
+        <translation type="vanished">Densitat abans de bullir</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation type="vanished">Volum</translation>
+    </message>
+    <message>
+        <source>Volume of wort collected</source>
+        <translation type="vanished">Volum de most resultant</translation>
+    </message>
+    <message>
+        <source>Strike Temp</source>
+        <translation type="vanished">Temp. aigua</translation>
+    </message>
+    <message>
+        <source>Temperature of mash after dough in</source>
+        <translation type="vanished">Temperatura del macerat</translation>
+    </message>
+    <message>
+        <source>Final Temp</source>
+        <translation type="vanished">Temperatura final</translation>
+    </message>
+    <message>
+        <source>Temperature of mash before mash out</source>
+        <translation type="vanished">Temperatura del macerat</translation>
+    </message>
+    <message>
+        <source>Postboil</source>
+        <translation type="vanished">Després de bullir</translation>
+    </message>
+    <message>
+        <source>OG</source>
+        <translation type="vanished">DI</translation>
+    </message>
+    <message>
+        <source>Post boil gravity</source>
+        <translation type="vanished">Desnsitat després de bulir</translation>
+    </message>
+    <message>
+        <source>Postboil Volume</source>
+        <translation type="vanished">Volum després de l&apos;ebullició</translation>
+    </message>
+    <message>
+        <source>Volume of wort in BK after boil</source>
+        <translation type="vanished">Volum de most en el recipient d&apos;ebullició després de bullir</translation>
+    </message>
+    <message>
+        <source>Volume of wort transferred to fermenter</source>
+        <translation type="vanished">Volum de most transferit al fermentador</translation>
+    </message>
+    <message>
+        <source>Volume into fermenter</source>
+        <translation type="vanished">Volum en el fermentador</translation>
+    </message>
+    <message>
+        <source> Pitch Temp</source>
+        <translation type="vanished"> Temp. Sembrat</translation>
+    </message>
+    <message>
+        <source>Temperature of wort when yeast is pitched</source>
+        <translation type="vanished">Temperatura del most cuan s&apos;afegeix el llevat</translation>
+    </message>
+    <message>
+        <source>Postferment</source>
+        <translation type="vanished">Post-fermentació</translation>
+    </message>
+    <message>
+        <source>Final gravity</source>
+        <translation type="vanished">Densitat Final</translation>
+    </message>
+    <message>
+        <source>Volume of beer into serving keg/bottles</source>
+        <translation type="vanished">Volum de cervesa en barril / ampolles</translation>
+    </message>
+    <message>
+        <source>percent efficiency into boil kettle</source>
+        <translation type="vanished">percentatge d&apos;eficiència en el recipient d&apos;ebullició</translation>
+    </message>
+    <message>
+        <source>Eff into BK</source>
+        <translation type="vanished">eficiència en BK</translation>
+    </message>
+    <message>
+        <source>Expected OG, based on measure fg</source>
+        <translation type="vanished">DI esperada</translation>
+    </message>
+    <message>
+        <source>Projected OG</source>
+        <translation type="vanished">DI prevista</translation>
+    </message>
+    <message>
+        <source>Brewhouse efficiency</source>
+        <translation type="vanished">Brewhouse Eficiència</translation>
+    </message>
+    <message>
+        <source>Brewhouse Eff</source>
+        <translation type="vanished">Brewhouse Efi</translation>
+    </message>
+    <message>
+        <source>Expected ABV based on OG</source>
+        <translation type="vanished">ABV esperat basat en la DI</translation>
+    </message>
+    <message>
+        <source>Projected ABV</source>
+        <translation type="vanished">ABV projectat</translation>
+    </message>
+    <message>
+        <source>ABV based on FG</source>
+        <translation type="vanished">ABV basat en la DF</translation>
+    </message>
+    <message>
+        <source>ABV</source>
+        <translation type="vanished">ABV</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="vanished">Notes</translation>
+    </message>
+    <message>
+        <source>yyyy-dd-MM</source>
+        <translation type="vanished">aaaa-dd-MM</translation>
     </message>
 </context>
 <context>
