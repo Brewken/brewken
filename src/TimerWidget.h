@@ -1,8 +1,9 @@
 /*======================================================================================================================
- * TimerWidget.h is part of Brewken, and is copyright the following authors 2009-2022:
+ * TimerWidget.h is part of Brewken, and is copyright the following authors 2009-2026:
  *   • Aidan Roberts <aidanr67@gmail.com>
  *   • Eric Tamme <etamme@gmail.com>
  *   • Julein <j2bweb@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *   • Théophane Martin <theophane.m@gmail.com>
  *
@@ -47,7 +48,7 @@ public:
    void setBoil(BoilTime* bt);
    void reset();
    int getTime();
-   QString getNote();
+   QString getNote() const;
    void cancel();
    void stopAlarm();
    void setAlarmLimits(bool l, unsigned int a);

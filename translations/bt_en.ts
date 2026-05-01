@@ -393,10 +393,6 @@
 <context>
     <name>BrewLog</name>
     <message>
-        <source>Brew Note</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>ABV</source>
         <translation type="unfinished"></translation>
     </message>
@@ -517,7 +513,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Brew Note #%1 for brew on %2</source>
+        <source>Brew Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Log #%1 for brew on %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3472,15 +3472,15 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Brew Note #%1 for brew on %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Notes from brew day on %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Brew Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Log #%1 for brew on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Log for brew on %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5299,10 +5299,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Brew Notes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Calculations Enabled</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5328,10 +5324,6 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Carbonation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5516,6 +5508,14 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source> to the mash tun.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Logs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6373,15 +6373,15 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Brew Note</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Brew Note ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Log ID</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7444,10 +7444,6 @@ The final volume in the primary is %1.</source>
 <context>
     <name>brewLogWidget</name>
     <message>
-        <source>Brew Note</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Preboil</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7589,6 +7585,18 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brew Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Batch Number</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

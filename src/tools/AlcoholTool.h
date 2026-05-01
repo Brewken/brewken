@@ -1,6 +1,5 @@
 /*======================================================================================================================
- * HydrometerTool.h is part of Brewken, and is copyright the following authors 2016-2023:
- *   • Jamie Daws <jdelectronics1@gmail.com>
+ * tools/AlcoholTool.h is is part of Brewken, and is copyright the following authors 2009-2021:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Ryan Hoobler <rhoob@yahoo.com>
  *
@@ -15,49 +14,46 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef HYDROMETERTOOL_H
-#define HYDROMETERTOOL_H
+#ifndef TOOLS_ALCOHOLTOOL_H
+#define TOOLS_ALCOHOLTOOL_H
 #pragma once
+
+#include <memory> // For PImpl
 
 #include <QDialog>
 
-#include "widgets/SmartLabel.h"
-#include "widgets/SmartLineEdit.h"
-
-class QEvent;
-class QGroupBox;
-class QPushButton;
 class QWidget;
+class QEvent;
 
-class HydrometerTool : public QDialog {
+/*!
+ * \brief Dialog to calculate ABV from OG and FG readings - optionally with:
+ *         - temperature correction.
+ */
+class AlcoholTool : public QDialog {
    Q_OBJECT
+
 public:
-   HydrometerTool(QWidget* parent = nullptr);
-
-   //! \name Public UI Variables
-   //! @{
-   QPushButton   * pushButton_convert;
-   SmartLabel    * label_inputSg;
-   SmartLineEdit * lineEdit_inputSg;
-   SmartLabel    * label_outputSg;
-   SmartLineEdit * lineEdit_outputSg;
-
-   SmartLabel    * label_inputTemp;
-   SmartLineEdit * lineEdit_inputTemp;
-   SmartLabel    * label_calibratedTemp;
-   SmartLineEdit * lineEdit_calibratedTemp;
-   QGroupBox     * groupBox_inputSg;
-   //! @}
+   explicit AlcoholTool(QWidget* parent = nullptr);
+   ~AlcoholTool() override;
 
 public slots:
-   void convert();
+   void calculate();
+
+   /**
+    * \brief Turn the advanced controls (temperature correction) on or off
+    */
+   void toggleAdvancedControls();
+
+   //! (Overrides QDialog::done.) Called when the user closes the tool
+   void done(int r) override;
 
 protected:
-   virtual void changeEvent(QEvent* event);
+   void changeEvent(QEvent* event) override;
 
 private:
-   void doLayout();
-   void retranslateUi();
+   // Private implementation details - see https://herbsutter.com/gotw/_100/
+   class impl;
+   std::unique_ptr<impl> pimpl;
 };
 
 #endif

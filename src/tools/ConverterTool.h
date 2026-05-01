@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * PrimingDialog.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * tools/ConverterTool.h is part of Brewken, and is copyright the following authors 2009-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -14,32 +14,46 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef PRIMINGDIALOG_H
-#define PRIMINGDIALOG_H
+#ifndef TOOLS_CONVERTERTOOL_H
+#define TOOLS_CONVERTERTOOL_H
 #pragma once
 
 #include <QDialog>
-#include "ui_primingDialog.h"
-
-class QButtonGroup;
-class QWidget;
+#include <QEvent>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QWidget>
 
 /*!
- * \class PrimingDialog
- *
- * \brief Dialog to calculate priming sugar amounts
+ * \brief Dialog to convert units.
  */
-class PrimingDialog : public QDialog, public Ui::primingDialog {
-Q_OBJECT
+class ConverterTool : public QDialog {
+   Q_OBJECT
 public:
-   PrimingDialog(QWidget* parent = nullptr);
-   virtual ~PrimingDialog();
+   explicit ConverterTool(QWidget * parent = nullptr);
+
+   //! \name Public UI Variables
+   //! @{
+   QPushButton * pushButton_convert;
+   QLabel *      inputLabel;
+   QLineEdit *   inputLineEdit;
+   QLabel *      outputLabel;
+   QLineEdit *   outputLineEdit;
+   QLabel *      outputUnitsLabel;
+   QLineEdit *   outputUnitsLineEdit;
+   //! @}
 
 public slots:
-   void calculate();
+   void convert();
+
+protected:
+   void changeEvent(QEvent* event) override;
 
 private:
-   QButtonGroup* sugarGroup;
+
+   void doLayout();
+   void retranslateUi();
 };
 
 #endif

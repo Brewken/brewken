@@ -1,7 +1,7 @@
 /*======================================================================================================================
- * AlcoholTool.h is is part of Brewken, and is copyright the following authors 2009-2021:
+ * tools/PrimingDialog.h is part of Brewken, and is copyright the following authors 2009-2023:
  *   • Matt Young <mfsy@yahoo.com>
- *   • Ryan Hoobler <rhoob@yahoo.com>
+ *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -14,44 +14,32 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef ALCOHOLTOOL_H
-#define ALCOHOLTOOL_H
+#ifndef TOOLS_PRIMINGDIALOG_H
+#define TOOLS_PRIMINGDIALOG_H
 #pragma once
 
-#include <memory> // For PImpl
-
 #include <QDialog>
+#include "ui_primingDialog.h"
 
+class QButtonGroup;
 class QWidget;
-class QEvent;
 
 /*!
- * \brief Dialog to calculate ABV from OG and FG readings - optionally with temperature correction.
+ * \class PrimingDialog
+ *
+ * \brief Dialog to calculate priming sugar amounts
  */
-class AlcoholTool : public QDialog {
+class PrimingDialog : public QDialog, public Ui::primingDialog {
    Q_OBJECT
-
 public:
-   AlcoholTool(QWidget* parent = nullptr);
-   virtual ~AlcoholTool();
+   explicit PrimingDialog(QWidget * parent = nullptr);
+   ~PrimingDialog() override;
 
 public slots:
    void calculate();
 
-   /**
-    * \brief Turn the advanced controls (temperature correction) on or off
-    */
-   void toggleAdvancedControls();
-
-protected:
-   virtual void changeEvent(QEvent* event);
-   //! Called when the user closes the tool
-   virtual void done(int r);
-
 private:
-   // Private implementation details - see https://herbsutter.com/gotw/_100/
-   class impl;
-   std::unique_ptr<impl> pimpl;
+   QButtonGroup * sugarGroup;
 };
 
 #endif
