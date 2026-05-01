@@ -1,5 +1,8 @@
 /*======================================================================================================================
- * RefractoDialog.h is part of Brewken, and is copyright the following authors 2009-2014:
+ * tools/PitchDialog.h is part of Brewken, and is copyright the following authors 2009-2024:
+ *   • A.J. Drobnich <aj.drobnich@gmail.com>
+ *   • Matt Young <mfsy@yahoo.com>
+ *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,31 +16,48 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef REFRACTODIALOG_H
-#define REFRACTODIALOG_H
+#ifndef TOOLS_PITCHDIALOG_H
+#define TOOLS_PITCHDIALOG_H
 #pragma once
 
 #include <QDialog>
 #include <QWidget>
-#include "ui_refractoDialog.h"
+#include "ui_pitchDialog.h"
+
+#include "measurement/UnitSystem.h"
 
 /*!
- * \class RefractoDialog
+ * \class PitchDialog
  *
- * \brief Dialog for calculating refractometer stuff.
+ * \brief Dialog to calculate how much yeast to pitch.
  */
-class RefractoDialog : public QDialog, public Ui::refractoDialog
-{
+class PitchDialog : public QDialog, public Ui::pitchDialog {
    Q_OBJECT
-public:
-   RefractoDialog(QWidget* parent = 0);
-   ~RefractoDialog();
 
-private slots:
+public:
+   explicit PitchDialog(QWidget* parent = nullptr);
+   ~PitchDialog() override;
+
+   //! \brief Set the wort volume in liters.
+   void setWortVolume_l(double volume);
+
+   //! \brief Set the wort gravity in 20C/20C SG.
+   void setWortDensity(double sg);
+
+public slots:
    void calculate();
+   void updateShownPitchRate(int percent);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+   void toggleViabilityFromDate(Qt::CheckState state);
+#else
+   void toggleViabilityFromDate(int state);
+#endif
+   void updateViabilityFromDate(QDate date);
+
+   void updateProductionDate();
 
 private:
-   void clearOutputFields();
+
 };
 
 #endif

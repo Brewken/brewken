@@ -1,7 +1,6 @@
 /*======================================================================================================================
- * StrikeWaterDialog.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * tools/RefractoDialog.h is part of Brewken, and is copyright the following authors 2009-2026:
  *   • Matt Young <mfsy@yahoo.com>
- *   • Maxime Lavigne <duguigne@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -15,42 +14,30 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef STRIKEWATERDIALOG_H
-#define STRIKEWATERDIALOG_H
+#ifndef TOOLS_REFRACTODIALOG_H
+#define TOOLS_REFRACTODIALOG_H
 #pragma once
 
 #include <QDialog>
 #include <QWidget>
-#include <QButtonGroup>
-
-#include "ui_strikeWaterDialog.h"
-
-#include "measurement/Unit.h"
+#include "ui_refractoDialog.h"
 
 /*!
- * \class StrikeWaterDialog
+ * \class RefractoDialog
  *
- * \brief Dialog to calculate the amount and temperature of the strike water.
+ * \brief Dialog for calculating refractometer stuff.
  */
-class StrikeWaterDialog : public QDialog, public Ui::strikeWaterDialog {
+class RefractoDialog : public QDialog, public Ui::refractoDialog {
    Q_OBJECT
 public:
-   StrikeWaterDialog(QWidget* parent = 0);
-   ~StrikeWaterDialog();
+   explicit RefractoDialog(QWidget* parent = 0);
+   ~RefractoDialog() override;
 
-public slots:
+private slots:
    void calculate();
 
 private:
-   /**
-    * \brief
-    */
-   double computeInitialInfusion();
-
-   /**
-    * \brief
-    */
-   double computeMashInfusion();
+   void clearOutputFields();
 };
 
 #endif
