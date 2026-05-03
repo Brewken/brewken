@@ -11871,11 +11871,11 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>&amp;OG Correction Help</source>
-        <translation>&amp;Korekcja gęstości</translation>
+        <translation type="vanished">&amp;Korekcja gęstości</translation>
     </message>
     <message>
         <source>&amp;Convert Units</source>
-        <translation>&amp;Konwerter jednostek</translation>
+        <translation type="vanished">&amp;Konwerter jednostek</translation>
     </message>
     <message>
         <source>Backup Database</source>
@@ -12191,6 +12191,14 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>W&amp;aters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Unit Conversion Tool</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12836,7 +12844,7 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     <name>ogAdjuster</name>
     <message>
         <source>Adjust Volume to Hit OG</source>
-        <translation>Dopasuj objętość by uzyskać gęstość początkową</translation>
+        <translation type="vanished">Dopasuj objętość by uzyskać gęstość początkową</translation>
     </message>
     <message>
         <source>Input</source>
@@ -12917,6 +12925,18 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     <message>
         <source>Calculate</source>
         <translation>Wylicz</translation>
+    </message>
+    <message>
+        <source>Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter data below then click button (TODO - rewrite this!)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Some more detailed text.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -12346,11 +12346,11 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     </message>
     <message>
         <source>&amp;OG Correction Help</source>
-        <translation>Aide à la correction de &amp;DI</translation>
+        <translation type="vanished">Aide à la correction de &amp;DI</translation>
     </message>
     <message>
         <source>&amp;Convert Units</source>
-        <translation>&amp;Convertisseur d&apos;unités</translation>
+        <translation type="vanished">&amp;Convertisseur d&apos;unités</translation>
     </message>
     <message>
         <source>Backup Database</source>
@@ -12670,6 +12670,14 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     </message>
     <message>
         <source>W&amp;aters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Unit Conversion Tool</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13315,7 +13323,7 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     <name>ogAdjuster</name>
     <message>
         <source>Adjust Volume to Hit OG</source>
-        <translation>Ajuster le volume pour atteindre la DI</translation>
+        <translation type="vanished">Ajuster le volume pour atteindre la DI</translation>
     </message>
     <message>
         <source>Input</source>
@@ -13396,6 +13404,18 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     <message>
         <source>Calculate</source>
         <translation>Calculer</translation>
+    </message>
+    <message>
+        <source>Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter data below then click button (TODO - rewrite this!)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Some more detailed text.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

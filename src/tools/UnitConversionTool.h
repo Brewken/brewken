@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tools/ConverterTool.h is part of Brewken, and is copyright the following authors 2009-2026:
+ * tools/UnitConversionTool.h is part of Brewken, and is copyright the following authors 2009-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef TOOLS_CONVERTERTOOL_H
-#define TOOLS_CONVERTERTOOL_H
+#ifndef TOOLS_UNITCONVERSIONTOOL_H
+#define TOOLS_UNITCONVERSIONTOOL_H
 #pragma once
 
 #include <QDialog>
@@ -28,10 +28,10 @@
 /*!
  * \brief Dialog to convert units.
  */
-class ConverterTool : public QDialog {
+class UnitConversionTool : public QDialog {
    Q_OBJECT
 public:
-   explicit ConverterTool(QWidget * parent = nullptr);
+   explicit UnitConversionTool(QWidget * parent = nullptr);
 
    //! \name Public UI Variables
    //! @{

@@ -11240,14 +11240,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;OG Correction Help</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Convert Units</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Backup Database</source>
         <translation>Направи сигурносну копију базе</translation>
     </message>
@@ -11513,6 +11505,14 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>W&amp;aters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Unit Conversion Tool</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12017,10 +12017,6 @@ The final volume in the primary is %1.</source>
 <context>
     <name>ogAdjuster</name>
     <message>
-        <source>Adjust Volume to Hit OG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Input</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12098,6 +12094,18 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Calculate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter data below then click button (TODO - rewrite this!)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Some more detailed text.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

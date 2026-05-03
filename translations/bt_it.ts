@@ -12233,11 +12233,11 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>&amp;OG Correction Help</source>
-        <translation>Aiuto Correzione Gravità &amp;Originale</translation>
+        <translation type="vanished">Aiuto Correzione Gravità &amp;Originale</translation>
     </message>
     <message>
         <source>&amp;Convert Units</source>
-        <translation>&amp;Converti Unità</translation>
+        <translation type="vanished">&amp;Converti Unità</translation>
     </message>
     <message>
         <source>Backup Database</source>
@@ -12557,6 +12557,14 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>W&amp;aters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Unit Conversion Tool</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13198,7 +13206,7 @@ Il Volume finale del primo è %1.</translation>
     <name>ogAdjuster</name>
     <message>
         <source>Adjust Volume to Hit OG</source>
-        <translation>Regolazione del volume a Hit OG</translation>
+        <translation type="vanished">Regolazione del volume a Hit OG</translation>
     </message>
     <message>
         <source>Input</source>
@@ -13279,6 +13287,18 @@ Il Volume finale del primo è %1.</translation>
     <message>
         <source>Calculate</source>
         <translation>Calcola</translation>
+    </message>
+    <message>
+        <source>Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter data below then click button (TODO - rewrite this!)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Some more detailed text.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -12209,11 +12209,11 @@ El volumen final en el primario es %1.</translation>
     </message>
     <message>
         <source>&amp;OG Correction Help</source>
-        <translation>&amp;Ayuda para Corrección de DI</translation>
+        <translation type="vanished">&amp;Ayuda para Corrección de DI</translation>
     </message>
     <message>
         <source>&amp;Convert Units</source>
-        <translation>&amp;Convertir unidades</translation>
+        <translation type="vanished">&amp;Convertir unidades</translation>
     </message>
     <message>
         <source>Backup Database</source>
@@ -12525,6 +12525,14 @@ El volumen final en el primario es %1.</translation>
     </message>
     <message>
         <source>W&amp;aters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Unit Conversion Tool</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13170,7 +13178,7 @@ El volumen final en el primario es %1.</translation>
     <name>ogAdjuster</name>
     <message>
         <source>Adjust Volume to Hit OG</source>
-        <translation>Ajustar el Volumen para alcanzar la DI</translation>
+        <translation type="vanished">Ajustar el Volumen para alcanzar la DI</translation>
     </message>
     <message>
         <source>Input</source>
@@ -13251,6 +13259,18 @@ El volumen final en el primario es %1.</translation>
     <message>
         <source>Calculate</source>
         <translation>Calcular</translation>
+    </message>
+    <message>
+        <source>Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter data below then click button (TODO - rewrite this!)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Some more detailed text.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

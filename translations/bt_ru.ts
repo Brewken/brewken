@@ -12038,11 +12038,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>&amp;OG Correction Help</source>
-        <translation>Коррекция &amp;НП</translation>
+        <translation type="vanished">Коррекция &amp;НП</translation>
     </message>
     <message>
         <source>&amp;Convert Units</source>
-        <translation>&amp;Преобразование единиц</translation>
+        <translation type="vanished">&amp;Преобразование единиц</translation>
     </message>
     <message>
         <source>Backup Database</source>
@@ -12350,6 +12350,14 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>W&amp;aters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Unit Conversion Tool</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12987,7 +12995,7 @@ The final volume in the primary is %1.</source>
     <name>ogAdjuster</name>
     <message>
         <source>Adjust Volume to Hit OG</source>
-        <translation>Коррекция объема для получения НП</translation>
+        <translation type="vanished">Коррекция объема для получения НП</translation>
     </message>
     <message>
         <source>Input</source>
@@ -13068,6 +13076,18 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Calculate</source>
         <translation>Расчитать</translation>
+    </message>
+    <message>
+        <source>Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter data below then click button (TODO - rewrite this!)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Some more detailed text.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

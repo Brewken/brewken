@@ -11997,11 +11997,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>&amp;OG Correction Help</source>
-        <translation>&amp;Βοήθημα διόρθωσης OG</translation>
+        <translation type="vanished">&amp;Βοήθημα διόρθωσης OG</translation>
     </message>
     <message>
         <source>&amp;Convert Units</source>
-        <translation>&amp;Μετατροπή μονάδων μέτρησης</translation>
+        <translation type="vanished">&amp;Μετατροπή μονάδων μέτρησης</translation>
     </message>
     <message>
         <source>Backup Database</source>
@@ -12317,6 +12317,14 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>W&amp;aters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Unit Conversion Tool</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12962,7 +12970,7 @@ The final volume in the primary is %1.</source>
     <name>ogAdjuster</name>
     <message>
         <source>Adjust Volume to Hit OG</source>
-        <translation>Ρύθμιση όγκου για να συμπέσει με την OG</translation>
+        <translation type="vanished">Ρύθμιση όγκου για να συμπέσει με την OG</translation>
     </message>
     <message>
         <source>Input</source>
@@ -13043,6 +13051,18 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Calculate</source>
         <translation>Υπολογισμός</translation>
+    </message>
+    <message>
+        <source>Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter data below then click button (TODO - rewrite this!)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Some more detailed text.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

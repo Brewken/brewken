@@ -12142,11 +12142,11 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>&amp;OG Correction Help</source>
-        <translation>Ú&amp;prava objemu pro dosažení hustoty</translation>
+        <translation type="vanished">Ú&amp;prava objemu pro dosažení hustoty</translation>
     </message>
     <message>
         <source>&amp;Convert Units</source>
-        <translation>&amp;Převody jednotek</translation>
+        <translation type="vanished">&amp;Převody jednotek</translation>
     </message>
     <message>
         <source>Backup Database</source>
@@ -12462,6 +12462,14 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     </message>
     <message>
         <source>W&amp;aters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Unit Conversion Tool</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13107,7 +13115,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <name>ogAdjuster</name>
     <message>
         <source>Adjust Volume to Hit OG</source>
-        <translation>Úprava objemu pro dosažení hustoty</translation>
+        <translation type="vanished">Úprava objemu pro dosažení hustoty</translation>
     </message>
     <message>
         <source>Input</source>
@@ -13188,6 +13196,18 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <message>
         <source>Calculate</source>
         <translation>Spočítat</translation>
+    </message>
+    <message>
+        <source>Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter data below then click button (TODO - rewrite this!)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Some more detailed text.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

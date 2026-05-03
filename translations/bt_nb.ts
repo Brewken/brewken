@@ -12203,11 +12203,11 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>&amp;OG Correction Help</source>
-        <translation>&amp;OG korreksjon hjelp</translation>
+        <translation type="vanished">&amp;OG korreksjon hjelp</translation>
     </message>
     <message>
         <source>&amp;Convert Units</source>
-        <translation>&amp;Konverter enheter</translation>
+        <translation type="vanished">&amp;Konverter enheter</translation>
     </message>
     <message>
         <source>Backup Database</source>
@@ -12523,6 +12523,14 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>W&amp;aters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Unit Conversion Tool</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13168,7 +13176,7 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     <name>ogAdjuster</name>
     <message>
         <source>Adjust Volume to Hit OG</source>
-        <translation>Juster volum for å treffe OG</translation>
+        <translation type="vanished">Juster volum for å treffe OG</translation>
     </message>
     <message>
         <source>Input</source>
@@ -13249,6 +13257,18 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     <message>
         <source>Calculate</source>
         <translation>Beregn</translation>
+    </message>
+    <message>
+        <source>Original Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter data below then click button (TODO - rewrite this!)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Some more detailed text.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
