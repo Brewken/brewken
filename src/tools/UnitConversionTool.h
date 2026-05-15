@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tools/OgAdjuster.h is part of Brewken, and is copyright the following authors 2009-2026:
+ * tools/UnitConversionTool.h is part of Brewken, and is copyright the following authors 2009-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -14,34 +14,46 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef TOOLS_OGADJUSTER_H
-#define TOOLS_OGADJUSTER_H
+#ifndef TOOLS_UNITCONVERSIONTOOL_H
+#define TOOLS_UNITCONVERSIONTOOL_H
 #pragma once
 
 #include <QDialog>
-
-#include "ui_ogAdjuster.h"
-
-#include "model/Recipe.h"
+#include <QEvent>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QWidget>
 
 /*!
- * \class OgAdjuster
- *
- * \brief View/controller dialog that helps you correct your OG on brew day.
+ * \brief Dialog to convert units.
  */
-class OgAdjuster : public QDialog, public Ui::ogAdjuster {
+class UnitConversionTool : public QDialog {
    Q_OBJECT
-
 public:
-   explicit OgAdjuster( QWidget* parent = 0 );
-   //! Set the recipe whose OG to correct.
-   void setRecipe( Recipe* rec );
+   explicit UnitConversionTool(QWidget * parent = nullptr);
+
+   //! \name Public UI Variables
+   //! @{
+   QPushButton * pushButton_convert;
+   QLabel *      inputLabel;
+   QLineEdit *   inputLineEdit;
+   QLabel *      outputLabel;
+   QLineEdit *   outputLineEdit;
+   QLabel *      outputUnitsLabel;
+   QLineEdit *   outputUnitsLineEdit;
+   //! @}
 
 public slots:
-   void calculate();
+   void convert();
+
+protected:
+   void changeEvent(QEvent* event) override;
 
 private:
-   Recipe* recObs;
+
+   void doLayout();
+   void retranslateUi();
 };
 
 #endif

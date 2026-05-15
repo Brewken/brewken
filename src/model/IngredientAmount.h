@@ -467,7 +467,9 @@ TypeLookup const IngredientAmount<Derived, IngredientClass>::typeLookup {
    bool                          Derived::isWeight    () const { return this->getIsWeight    (); } \
    /*============================ "SETTER" MEMBER FUNCTIONS ============================*/ \
    void Derived::setIngredientId(int                           const   val) { this->doSetIngredientId(val); return; } \
-   void Derived::setAmount      (Measurement::Amount           const & val) { this->doSetAmount      (val); return; } \
+   void Derived::setAmount      (Measurement::Amount           const & val) { \
+   this->doSetAmount      (IngredientAmount<Derived, IngredientClass>::AmountType{val}); return; \
+   } \
    void Derived::setQuantity    (double                        const   val) { this->doSetQuantity    (val); return; } \
    void Derived::setUnit        (Measurement::Unit const *     const   val) { this->doSetUnit        (val); return; } \
    void Derived::setMeasure     (Measurement::PhysicalQuantity const   val) { this->doSetMeasure     (val); return; } \

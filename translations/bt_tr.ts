@@ -708,41 +708,6 @@
     </message>
 </context>
 <context>
-    <name>ConverterTool</name>
-    <message>
-        <source>Converter Tool</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Input</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Output Units</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Output</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Convert</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Amount and units to convert</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unit you want to convert to</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Output conversion</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>CurrencyInfo</name>
     <message>
         <source>United Arab Emirates Dirham</source>
@@ -3973,6 +3938,33 @@ If you need help, please open an issue at %1</source>
     </message>
 </context>
 <context>
+    <name>OgCorrectionTool</name>
+    <message>
+        <source>Gravity Correction Tool - No Recipe Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You need to have a recipe open in the main window before you can use this tool.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gravity Correction Tool - No Equipment on Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe %1 has no equipment set.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t read input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Need a valid value for Measured Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>OptionDialog</name>
     <message>
         <source>Copy Data</source>
@@ -5098,6 +5090,14 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Stop bothering you about new data?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>°C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>°F</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6326,7 +6326,7 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This wizard will help you scale a recipe to another size or efficiency.Select another equipment with the new batch size and/or efficiency andthe wizard will scale the recipe ingredients automatically.</source>
+        <source>This wizard will help you scale a recipe to another size or efficiency.  Select another equipment with the new batch size and/or efficiency and the wizard will scale the recipe ingredients automatically.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6934,6 +6934,41 @@ The final volume in the primary is %1.</source>
     <name>UnitAndScalePopUpMenu</name>
     <message>
         <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>UnitConversionTool</name>
+    <message>
+        <source>Converter Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output Units</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount and units to convert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unit you want to convert to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output conversion</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8067,6 +8102,10 @@ The final volume in the primary is %1.</source>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Adjustment factor for large batch hop utilization.  This value should be 100% for batches less than 20 gallons, but may be higher (200% or more) for very large batch equipment.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>fermentableEditor</name>
@@ -9005,14 +9044,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;OG Correction Help</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Convert Units</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Backup Database</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9278,6 +9309,18 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>W&amp;aters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Unit Conversion Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Gravity Correction Tool</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9689,25 +9732,37 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
-    <name>ogAdjuster</name>
+    <name>ogCorrectionTool</name>
     <message>
-        <source>Adjust Volume to Hit OG</source>
+        <source>Gravity Correction Tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Input</source>
+        <source>If, during the boil, your measurements suggest you aren&apos;t going to hit your target original gravity (OG), you may be able to &quot;correct&quot; things.  This tool helps you work out what your options are.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>SG</source>
+        <source>If your boil isn&apos;t going to hit your target original gravity (OG), you can make adjustments, which this tool helps you calculate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Measured gravity pre-boil</source>
+        <source>Target OG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Temp</source>
+        <source>Default value comes from current recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Measured Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A value in Plato will be used as-is.  An SG value can be corrected for actual vs calibrated temperature.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>@ temperature</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9715,15 +9770,15 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Calibration Temp</source>
+        <source>Calibrated at</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Temp to which the hydrometer is calibrated</source>
+        <source>Temperature to which the hydrometer is calibrated</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>-or-</source>
+        <source>Corrected SG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9732,6 +9787,14 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Plato (percent by mass of equivalent sucrose)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>-or-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
