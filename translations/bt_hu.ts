@@ -1121,35 +1121,35 @@
     <name>ConverterTool</name>
     <message>
         <source>Converter Tool</source>
-        <translation>Mértékegység átváltó</translation>
+        <translation type="vanished">Mértékegység átváltó</translation>
     </message>
     <message>
         <source>Input</source>
-        <translation>Bevitel</translation>
+        <translation type="vanished">Bevitel</translation>
     </message>
     <message>
         <source>Output Units</source>
-        <translation>Kimeneti mértékegység</translation>
+        <translation type="vanished">Kimeneti mértékegység</translation>
     </message>
     <message>
         <source>Output</source>
-        <translation>Kimenet</translation>
+        <translation type="vanished">Kimenet</translation>
     </message>
     <message>
         <source>Convert</source>
-        <translation>Átváltás</translation>
+        <translation type="vanished">Átváltás</translation>
     </message>
     <message>
         <source>Amount and units to convert</source>
-        <translation>Átváltandó mennyiség és mértékegység</translation>
+        <translation type="vanished">Átváltandó mennyiség és mértékegység</translation>
     </message>
     <message>
         <source>Unit you want to convert to</source>
-        <translation>Átváltandó mértékegység</translation>
+        <translation type="vanished">Átváltandó mértékegység</translation>
     </message>
     <message>
         <source>Output conversion</source>
-        <translation>Kimeneti mértékegység átváltás</translation>
+        <translation type="vanished">Kimeneti mértékegység átváltás</translation>
     </message>
 </context>
 <context>
@@ -5374,6 +5374,33 @@ If you need help, please open an issue at %1</source>
     </message>
 </context>
 <context>
+    <name>OgCorrectionTool</name>
+    <message>
+        <source>Gravity Correction Tool - No Recipe Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You need to have a recipe open in the main window before you can use this tool.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gravity Correction Tool - No Equipment on Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe %1 has no equipment set.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t read input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Need a valid value for Measured Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>OldInventory</name>
     <message>
         <source>Inventory</source>
@@ -6770,6 +6797,14 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Stop bothering you about new data?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>°C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>°F</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8352,7 +8387,7 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This wizard will help you scale a recipe to another size or efficiency.Select another equipment with the new batch size and/or efficiency andthe wizard will scale the recipe ingredients automatically.</source>
+        <source>This wizard will help you scale a recipe to another size or efficiency.  Select another equipment with the new batch size and/or efficiency and the wizard will scale the recipe ingredients automatically.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9138,6 +9173,41 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>Default</source>
         <translation type="unfinished">Alapértelmezett</translation>
+    </message>
+</context>
+<context>
+    <name>UnitConversionTool</name>
+    <message>
+        <source>Converter Tool</source>
+        <translation type="unfinished">Mértékegység átváltó</translation>
+    </message>
+    <message>
+        <source>Input</source>
+        <translation type="unfinished">Bevitel</translation>
+    </message>
+    <message>
+        <source>Output Units</source>
+        <translation type="unfinished">Kimeneti mértékegység</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation type="unfinished">Kimenet</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation type="unfinished">Átváltás</translation>
+    </message>
+    <message>
+        <source>Amount and units to convert</source>
+        <translation type="unfinished">Átváltandó mennyiség és mértékegység</translation>
+    </message>
+    <message>
+        <source>Unit you want to convert to</source>
+        <translation type="unfinished">Átváltandó mértékegység</translation>
+    </message>
+    <message>
+        <source>Output conversion</source>
+        <translation type="unfinished">Kimeneti mértékegység átváltás</translation>
     </message>
 </context>
 <context>
@@ -10703,6 +10773,10 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Adjustment factor for large batch hop utilization.  This value should be 100% for batches less than 20 gallons, but may be higher (200% or more) for very large batch equipment.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>fermentableEditor</name>
@@ -12060,7 +12134,7 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>&amp;Recipe</source>
-        <translation type="vanished">&amp;Recept</translation>
+        <translation>&amp;Recept</translation>
     </message>
     <message>
         <source>&amp;Database</source>
@@ -12491,11 +12565,11 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Original Gravity Correction Tool</source>
+        <source>&amp;Unit Conversion Tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Unit Conversion Tool</source>
+        <source>&amp;Gravity Correction Tool</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13077,42 +13151,89 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <name>ogAdjuster</name>
     <message>
         <source>Input</source>
-        <translation>Bevitel</translation>
+        <translation type="vanished">Bevitel</translation>
     </message>
     <message>
         <source>SG</source>
-        <translation>fajsúly (SG)</translation>
-    </message>
-    <message>
-        <source>Measured gravity pre-boil</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">fajsúly (SG)</translation>
     </message>
     <message>
         <source>Temp</source>
-        <translation>Hőmérséklet</translation>
+        <translation type="vanished">Hőmérséklet</translation>
+    </message>
+    <message>
+        <source>Plato</source>
+        <translation type="vanished">°B</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation type="vanished">Kimenet</translation>
+    </message>
+</context>
+<context>
+    <name>ogCorrectionTool</name>
+    <message>
+        <source>Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If, during the boil, your measurements suggest you aren&apos;t going to hit your target original gravity (OG), you may be able to &quot;correct&quot; things.  This tool helps you work out what your options are.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If your boil isn&apos;t going to hit your target original gravity (OG), you can make adjustments, which this tool helps you calculate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default value comes from current recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Measured Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A value in Plato will be used as-is.  An SG value can be corrected for actual vs calibrated temperature.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>@ temperature</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Temperature of SG reading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Calibration Temp</source>
+        <source>Calibrated at</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Temp to which the hydrometer is calibrated</source>
+        <source>Temperature to which the hydrometer is calibrated</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>-or-</source>
+        <source>Corrected SG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Plato</source>
-        <translation>°B</translation>
+        <translation type="unfinished">°B</translation>
     </message>
     <message>
         <source>Plato (percent by mass of equivalent sucrose)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input</source>
+        <translation type="unfinished">Bevitel</translation>
+    </message>
+    <message>
+        <source>-or-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -13125,7 +13246,7 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Output</source>
-        <translation>Kimenet</translation>
+        <translation type="unfinished">Kimenet</translation>
     </message>
     <message>
         <source>OG w/o Correction</source>
@@ -13153,18 +13274,6 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Calculate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Original Gravity Correction Tool</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter data below then click button (TODO - rewrite this!)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Some more detailed text.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

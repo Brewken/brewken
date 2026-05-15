@@ -48,7 +48,6 @@ class EquipmentEditor : public QDialog,
 
 public slots:
    void hideOrShowOptionalVessels();
-   void updateCalcBoilVolume();
    void resetAbsorption();
    void updateDefaultEquipment();
 
@@ -57,7 +56,6 @@ public:
 
 private:
    void postReadFieldsFromEditItem(std::optional<QString> propName);
-   double calcBatchSize();
 };
 
 #endif

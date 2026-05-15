@@ -1043,35 +1043,35 @@
     <name>ConverterTool</name>
     <message>
         <source>Converter Tool</source>
-        <translation>Omregningsværktøj</translation>
+        <translation type="vanished">Omregningsværktøj</translation>
     </message>
     <message>
         <source>Input</source>
-        <translation>Inddata</translation>
+        <translation type="vanished">Inddata</translation>
     </message>
     <message>
         <source>Output Units</source>
-        <translation>Uddata enheder</translation>
+        <translation type="vanished">Uddata enheder</translation>
     </message>
     <message>
         <source>Output</source>
-        <translation>Uddata</translation>
+        <translation type="vanished">Uddata</translation>
     </message>
     <message>
         <source>Convert</source>
-        <translation>Omregn</translation>
+        <translation type="vanished">Omregn</translation>
     </message>
     <message>
         <source>Amount and units to convert</source>
-        <translation>Mængde og enheder, der skal omregnes</translation>
+        <translation type="vanished">Mængde og enheder, der skal omregnes</translation>
     </message>
     <message>
         <source>Unit you want to convert to</source>
-        <translation>Enhed du vil omregne til</translation>
+        <translation type="vanished">Enhed du vil omregne til</translation>
     </message>
     <message>
         <source>Output conversion</source>
-        <translation>Uddata omregning</translation>
+        <translation type="vanished">Uddata omregning</translation>
     </message>
 </context>
 <context>
@@ -5053,6 +5053,33 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
 </context>
 <context>
+    <name>OgCorrectionTool</name>
+    <message>
+        <source>Gravity Correction Tool - No Recipe Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You need to have a recipe open in the main window before you can use this tool.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gravity Correction Tool - No Equipment on Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe %1 has no equipment set.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t read input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Need a valid value for Measured Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>OptionDialog</name>
     <message>
         <source>Copy Data</source>
@@ -6390,6 +6417,14 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>Stop bothering you about new data?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>°C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>°F</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8028,7 +8063,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>This wizard will help you scale a recipe to another size or efficiency.Select another equipment with the new batch size and/or efficiency andthe wizard will scale the recipe ingredients automatically.</source>
-        <translation>Denne guide vil hjælpe dig til at skalere opskriften til et andet volument af portion eller effektivitet. Vælg et andet udstyr med det nye volumen og/eller effektivitet og guiden vil automatisk skalere opskriften.</translation>
+        <translation type="vanished">Denne guide vil hjælpe dig til at skalere opskriften til et andet volument af portion eller effektivitet. Vælg et andet udstyr med det nye volumen og/eller effektivitet og guiden vil automatisk skalere opskriften.</translation>
+    </message>
+    <message>
+        <source>This wizard will help you scale a recipe to another size or efficiency.  Select another equipment with the new batch size and/or efficiency and the wizard will scale the recipe ingredients automatically.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8811,6 +8850,41 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Default</source>
         <translation>Standardvalg</translation>
+    </message>
+</context>
+<context>
+    <name>UnitConversionTool</name>
+    <message>
+        <source>Converter Tool</source>
+        <translation type="unfinished">Omregningsværktøj</translation>
+    </message>
+    <message>
+        <source>Input</source>
+        <translation type="unfinished">Inddata</translation>
+    </message>
+    <message>
+        <source>Output Units</source>
+        <translation type="unfinished">Uddata enheder</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation type="unfinished">Omregn</translation>
+    </message>
+    <message>
+        <source>Amount and units to convert</source>
+        <translation type="unfinished">Mængde og enheder, der skal omregnes</translation>
+    </message>
+    <message>
+        <source>Unit you want to convert to</source>
+        <translation type="unfinished">Enhed du vil omregne til</translation>
+    </message>
+    <message>
+        <source>Output conversion</source>
+        <translation type="unfinished">Uddata omregning</translation>
     </message>
 </context>
 <context>
@@ -10241,6 +10315,10 @@ The final volume in the primary is %1.</source>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
+    <message>
+        <source>Adjustment factor for large batch hop utilization.  This value should be 100% for batches less than 20 gallons, but may be higher (200% or more) for very large batch equipment.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12106,11 +12184,15 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Original Gravity Correction Tool</source>
+        <source>&amp;Unit Conversion Tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Unit Conversion Tool</source>
+        <source>&amp;Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Gravity Correction Tool</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12672,95 +12754,190 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Input</source>
-        <translation>Inddata</translation>
+        <translation type="vanished">Inddata</translation>
     </message>
     <message>
         <source>SG</source>
-        <translation>Massefylde (SG)</translation>
+        <translation type="vanished">Massefylde (SG)</translation>
     </message>
     <message>
         <source>Measured gravity pre-boil</source>
-        <translation>Målt massefylde før urtkogning</translation>
+        <translation type="vanished">Målt massefylde før urtkogning</translation>
     </message>
     <message>
         <source>Temp</source>
-        <translation>Temperatur</translation>
+        <translation type="vanished">Temperatur</translation>
     </message>
     <message>
         <source>Temperature of SG reading</source>
-        <translation>Temperatur ved aflæsning af specifik massefylde (SG)</translation>
+        <translation type="vanished">Temperatur ved aflæsning af specifik massefylde (SG)</translation>
     </message>
     <message>
         <source>Calibration Temp</source>
-        <translation>Kalibreringstemperatur</translation>
+        <translation type="vanished">Kalibreringstemperatur</translation>
     </message>
     <message>
         <source>Temp to which the hydrometer is calibrated</source>
-        <translation>Hydrometer kalibreringstemperatur</translation>
+        <translation type="vanished">Hydrometer kalibreringstemperatur</translation>
     </message>
     <message>
         <source>-or-</source>
-        <translation>-eller-</translation>
+        <translation type="vanished">-eller-</translation>
     </message>
     <message>
         <source>Plato</source>
-        <translation>Plato</translation>
+        <translation type="vanished">Plato</translation>
     </message>
     <message>
         <source>Plato (percent by mass of equivalent sucrose)</source>
-        <translation>Plato (masseprocent af ækvivalent sucrose)</translation>
+        <translation type="vanished">Plato (masseprocent af ækvivalent sucrose)</translation>
     </message>
     <message>
         <source>Pre-Boil Volume</source>
-        <translation>Voumen før kogning</translation>
+        <translation type="vanished">Voumen før kogning</translation>
     </message>
     <message>
         <source>Measured pre-boil volume</source>
-        <translation>Målt volumen før urtkogning</translation>
+        <translation type="vanished">Målt volumen før urtkogning</translation>
     </message>
     <message>
         <source>Output</source>
-        <translation>Uddata</translation>
+        <translation type="vanished">Uddata</translation>
     </message>
     <message>
         <source>OG w/o Correction</source>
-        <translation>OG uden korrektion</translation>
+        <translation type="vanished">OG uden korrektion</translation>
     </message>
     <message>
         <source>OG if you boil as planned</source>
-        <translation>OG hvis kogning sker som planlagt</translation>
+        <translation type="vanished">OG hvis kogning sker som planlagt</translation>
     </message>
     <message>
         <source>Add to Boil</source>
-        <translation>Føj til kogning</translation>
+        <translation type="vanished">Føj til kogning</translation>
     </message>
     <message>
         <source>Amount of water you need to add to hit planned OG (or boil off if negative)</source>
-        <translation>Mængde vand du skal tilsætte for at ramme planlagt OG (eller afdampe, hvis negativ)</translation>
+        <translation type="vanished">Mængde vand du skal tilsætte for at ramme planlagt OG (eller afdampe, hvis negativ)</translation>
     </message>
     <message>
         <source>Final Batch Size</source>
-        <translation>Endelig volument af portion</translation>
+        <translation type="vanished">Endelig volument af portion</translation>
     </message>
     <message>
         <source>Estimated batch size after correction</source>
-        <translation>Skønnet volumen af portion efter korrektion</translation>
+        <translation type="vanished">Skønnet volumen af portion efter korrektion</translation>
     </message>
     <message>
         <source>Calculate</source>
-        <translation>Beregn</translation>
+        <translation type="vanished">Beregn</translation>
     </message>
+</context>
+<context>
+    <name>ogCorrectionTool</name>
     <message>
-        <source>Original Gravity Correction Tool</source>
+        <source>Gravity Correction Tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enter data below then click button (TODO - rewrite this!)</source>
+        <source>If, during the boil, your measurements suggest you aren&apos;t going to hit your target original gravity (OG), you may be able to &quot;correct&quot; things.  This tool helps you work out what your options are.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Some more detailed text.</source>
+        <source>If your boil isn&apos;t going to hit your target original gravity (OG), you can make adjustments, which this tool helps you calculate</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default value comes from current recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Measured Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A value in Plato will be used as-is.  An SG value can be corrected for actual vs calibrated temperature.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>@ temperature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Temperature of SG reading</source>
+        <translation type="unfinished">Temperatur ved aflæsning af specifik massefylde (SG)</translation>
+    </message>
+    <message>
+        <source>Calibrated at</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Temperature to which the hydrometer is calibrated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Corrected SG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plato</source>
+        <translation type="unfinished">Plato</translation>
+    </message>
+    <message>
+        <source>Plato (percent by mass of equivalent sucrose)</source>
+        <translation type="unfinished">Plato (masseprocent af ækvivalent sucrose)</translation>
+    </message>
+    <message>
+        <source>Input</source>
+        <translation type="unfinished">Inddata</translation>
+    </message>
+    <message>
+        <source>-or-</source>
+        <translation type="unfinished">-eller-</translation>
+    </message>
+    <message>
+        <source>Pre-Boil Volume</source>
+        <translation type="unfinished">Voumen før kogning</translation>
+    </message>
+    <message>
+        <source>Measured pre-boil volume</source>
+        <translation type="unfinished">Målt volumen før urtkogning</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OG w/o Correction</source>
+        <translation type="unfinished">OG uden korrektion</translation>
+    </message>
+    <message>
+        <source>OG if you boil as planned</source>
+        <translation type="unfinished">OG hvis kogning sker som planlagt</translation>
+    </message>
+    <message>
+        <source>Add to Boil</source>
+        <translation type="unfinished">Føj til kogning</translation>
+    </message>
+    <message>
+        <source>Amount of water you need to add to hit planned OG (or boil off if negative)</source>
+        <translation type="unfinished">Mængde vand du skal tilsætte for at ramme planlagt OG (eller afdampe, hvis negativ)</translation>
+    </message>
+    <message>
+        <source>Final Batch Size</source>
+        <translation type="unfinished">Endelig volument af portion</translation>
+    </message>
+    <message>
+        <source>Estimated batch size after correction</source>
+        <translation type="unfinished">Skønnet volumen af portion efter korrektion</translation>
+    </message>
+    <message>
+        <source>Calculate</source>
+        <translation type="unfinished">Beregn</translation>
     </message>
 </context>
 <context>

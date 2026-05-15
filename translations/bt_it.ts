@@ -1117,35 +1117,35 @@
     <name>ConverterTool</name>
     <message>
         <source>Converter Tool</source>
-        <translation>Strumento di conversione</translation>
+        <translation type="vanished">Strumento di conversione</translation>
     </message>
     <message>
         <source>Input</source>
-        <translation>Input</translation>
+        <translation type="vanished">Input</translation>
     </message>
     <message>
         <source>Output Units</source>
-        <translation>Moduli di uscita</translation>
+        <translation type="vanished">Moduli di uscita</translation>
     </message>
     <message>
         <source>Output</source>
-        <translation>Produzione</translation>
+        <translation type="vanished">Produzione</translation>
     </message>
     <message>
         <source>Convert</source>
-        <translation>Convertire</translation>
+        <translation type="vanished">Convertire</translation>
     </message>
     <message>
         <source>Amount and units to convert</source>
-        <translation>Importo e unità per la conversione</translation>
+        <translation type="vanished">Importo e unità per la conversione</translation>
     </message>
     <message>
         <source>Unit you want to convert to</source>
-        <translation>Unità che si desidera convertire in</translation>
+        <translation type="vanished">Unità che si desidera convertire in</translation>
     </message>
     <message>
         <source>Output conversion</source>
-        <translation>uscita di conversione</translation>
+        <translation type="vanished">uscita di conversione</translation>
     </message>
 </context>
 <context>
@@ -5373,6 +5373,33 @@ If you need help, please open an issue at %1</source>
     </message>
 </context>
 <context>
+    <name>OgCorrectionTool</name>
+    <message>
+        <source>Gravity Correction Tool - No Recipe Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You need to have a recipe open in the main window before you can use this tool.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gravity Correction Tool - No Equipment on Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe %1 has no equipment set.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t read input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Need a valid value for Measured Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>OldInventory</name>
     <message>
         <source>Inventory</source>
@@ -6773,6 +6800,14 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Stop bothering you about new data?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>°C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>°F</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8365,7 +8400,11 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>This wizard will help you scale a recipe to another size or efficiency.Select another equipment with the new batch size and/or efficiency andthe wizard will scale the recipe ingredients automatically.</source>
-        <translation>Questa procedura guidata ti aiuterà a ricalcolare la ricetta per un&apos;altra quantità o efficienza. Seleziona un&apos;altra attrezzatura con la nuova quantità e/o efficienza e la procedura guidata ricalcolerà gli ingredienti della ricetta automaticamente</translation>
+        <translation type="vanished">Questa procedura guidata ti aiuterà a ricalcolare la ricetta per un&apos;altra quantità o efficienza. Seleziona un&apos;altra attrezzatura con la nuova quantità e/o efficienza e la procedura guidata ricalcolerà gli ingredienti della ricetta automaticamente</translation>
+    </message>
+    <message>
+        <source>This wizard will help you scale a recipe to another size or efficiency.  Select another equipment with the new batch size and/or efficiency and the wizard will scale the recipe ingredients automatically.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9179,6 +9218,41 @@ Il Volume finale del primo è %1.</translation>
     <message>
         <source>Default</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>UnitConversionTool</name>
+    <message>
+        <source>Converter Tool</source>
+        <translation type="unfinished">Strumento di conversione</translation>
+    </message>
+    <message>
+        <source>Input</source>
+        <translation type="unfinished">Input</translation>
+    </message>
+    <message>
+        <source>Output Units</source>
+        <translation type="unfinished">Moduli di uscita</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation type="unfinished">Convertire</translation>
+    </message>
+    <message>
+        <source>Amount and units to convert</source>
+        <translation type="unfinished">Importo e unità per la conversione</translation>
+    </message>
+    <message>
+        <source>Unit you want to convert to</source>
+        <translation type="unfinished">Unità che si desidera convertire in</translation>
+    </message>
+    <message>
+        <source>Output conversion</source>
+        <translation type="unfinished">uscita di conversione</translation>
     </message>
 </context>
 <context>
@@ -10764,6 +10838,10 @@ Il Volume finale del primo è %1.</translation>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Adjustment factor for large batch hop utilization.  This value should be 100% for batches less than 20 gallons, but may be higher (200% or more) for very large batch equipment.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>fermentableEditor</name>
@@ -12125,7 +12203,7 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>&amp;Recipe</source>
-        <translation type="vanished">&amp;Ricetta</translation>
+        <translation>&amp;Ricetta</translation>
     </message>
     <message>
         <source>&amp;Database</source>
@@ -12560,11 +12638,11 @@ Il Volume finale del primo è %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Original Gravity Correction Tool</source>
+        <source>&amp;Unit Conversion Tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Unit Conversion Tool</source>
+        <source>&amp;Gravity Correction Tool</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13210,95 +13288,190 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Input</source>
-        <translation>Input</translation>
+        <translation type="vanished">Input</translation>
     </message>
     <message>
         <source>SG</source>
-        <translation>SG</translation>
+        <translation type="vanished">SG</translation>
     </message>
     <message>
         <source>Measured gravity pre-boil</source>
-        <translation>Misurata Densità pre ebollizione</translation>
+        <translation type="vanished">Misurata Densità pre ebollizione</translation>
     </message>
     <message>
         <source>Temp</source>
-        <translation>Temperatura</translation>
+        <translation type="vanished">Temperatura</translation>
     </message>
     <message>
         <source>Temperature of SG reading</source>
-        <translation>Temperatura dell&apos;SG letta</translation>
+        <translation type="vanished">Temperatura dell&apos;SG letta</translation>
     </message>
     <message>
         <source>Calibration Temp</source>
-        <translation>Calibrazione temperatura</translation>
+        <translation type="vanished">Calibrazione temperatura</translation>
     </message>
     <message>
         <source>Temp to which the hydrometer is calibrated</source>
-        <translation>Temperatura a cui è tarato il densimetro</translation>
+        <translation type="vanished">Temperatura a cui è tarato il densimetro</translation>
     </message>
     <message>
         <source>-or-</source>
-        <translation>-o-</translation>
+        <translation type="vanished">-o-</translation>
     </message>
     <message>
         <source>Plato</source>
-        <translation>Plato</translation>
+        <translation type="vanished">Plato</translation>
     </message>
     <message>
         <source>Plato (percent by mass of equivalent sucrose)</source>
-        <translation>Plato (percentuale in massa di saccarosio equivalente)</translation>
+        <translation type="vanished">Plato (percentuale in massa di saccarosio equivalente)</translation>
     </message>
     <message>
         <source>Pre-Boil Volume</source>
-        <translation>Volume pre bollitura</translation>
+        <translation type="vanished">Volume pre bollitura</translation>
     </message>
     <message>
         <source>Measured pre-boil volume</source>
-        <translation>Misurato Volume pre ebollizione</translation>
+        <translation type="vanished">Misurato Volume pre ebollizione</translation>
     </message>
     <message>
         <source>Output</source>
-        <translation>Produzione</translation>
+        <translation type="vanished">Produzione</translation>
     </message>
     <message>
         <source>OG w/o Correction</source>
-        <translation>Correzione OG w/o</translation>
+        <translation type="vanished">Correzione OG w/o</translation>
     </message>
     <message>
         <source>OG if you boil as planned</source>
-        <translation>OG se bolle come previsto</translation>
+        <translation type="vanished">OG se bolle come previsto</translation>
     </message>
     <message>
         <source>Add to Boil</source>
-        <translation>Aggiungere alla bollitura</translation>
+        <translation type="vanished">Aggiungere alla bollitura</translation>
     </message>
     <message>
         <source>Amount of water you need to add to hit planned OG (or boil off if negative)</source>
-        <translation>Quantità di acqua necessaria da aggiungere per determinare OG previsto (o ferma la bollitura se negativo)</translation>
+        <translation type="vanished">Quantità di acqua necessaria da aggiungere per determinare OG previsto (o ferma la bollitura se negativo)</translation>
     </message>
     <message>
         <source>Final Batch Size</source>
-        <translation>Misura lotto finale</translation>
+        <translation type="vanished">Misura lotto finale</translation>
     </message>
     <message>
         <source>Estimated batch size after correction</source>
-        <translation>Misura lotto stimata dopo correzione</translation>
+        <translation type="vanished">Misura lotto stimata dopo correzione</translation>
     </message>
     <message>
         <source>Calculate</source>
-        <translation>Calcola</translation>
+        <translation type="vanished">Calcola</translation>
     </message>
+</context>
+<context>
+    <name>ogCorrectionTool</name>
     <message>
-        <source>Original Gravity Correction Tool</source>
+        <source>Gravity Correction Tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enter data below then click button (TODO - rewrite this!)</source>
+        <source>If, during the boil, your measurements suggest you aren&apos;t going to hit your target original gravity (OG), you may be able to &quot;correct&quot; things.  This tool helps you work out what your options are.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Some more detailed text.</source>
+        <source>If your boil isn&apos;t going to hit your target original gravity (OG), you can make adjustments, which this tool helps you calculate</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default value comes from current recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Measured Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A value in Plato will be used as-is.  An SG value can be corrected for actual vs calibrated temperature.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>@ temperature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Temperature of SG reading</source>
+        <translation type="unfinished">Temperatura dell&apos;SG letta</translation>
+    </message>
+    <message>
+        <source>Calibrated at</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Temperature to which the hydrometer is calibrated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Corrected SG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plato</source>
+        <translation type="unfinished">Plato</translation>
+    </message>
+    <message>
+        <source>Plato (percent by mass of equivalent sucrose)</source>
+        <translation type="unfinished">Plato (percentuale in massa di saccarosio equivalente)</translation>
+    </message>
+    <message>
+        <source>Input</source>
+        <translation type="unfinished">Input</translation>
+    </message>
+    <message>
+        <source>-or-</source>
+        <translation type="unfinished">-o-</translation>
+    </message>
+    <message>
+        <source>Pre-Boil Volume</source>
+        <translation type="unfinished">Volume pre bollitura</translation>
+    </message>
+    <message>
+        <source>Measured pre-boil volume</source>
+        <translation type="unfinished">Misurato Volume pre ebollizione</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OG w/o Correction</source>
+        <translation type="unfinished">Correzione OG w/o</translation>
+    </message>
+    <message>
+        <source>OG if you boil as planned</source>
+        <translation type="unfinished">OG se bolle come previsto</translation>
+    </message>
+    <message>
+        <source>Add to Boil</source>
+        <translation type="unfinished">Aggiungere alla bollitura</translation>
+    </message>
+    <message>
+        <source>Amount of water you need to add to hit planned OG (or boil off if negative)</source>
+        <translation type="unfinished">Quantità di acqua necessaria da aggiungere per determinare OG previsto (o ferma la bollitura se negativo)</translation>
+    </message>
+    <message>
+        <source>Final Batch Size</source>
+        <translation type="unfinished">Misura lotto finale</translation>
+    </message>
+    <message>
+        <source>Estimated batch size after correction</source>
+        <translation type="unfinished">Misura lotto stimata dopo correzione</translation>
+    </message>
+    <message>
+        <source>Calculate</source>
+        <translation type="unfinished">Calcola</translation>
     </message>
 </context>
 <context>
