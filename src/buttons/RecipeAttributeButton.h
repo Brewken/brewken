@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * buttons/RecipeAttributeButton.h is part of Brewken, and is copyright the following authors 2009-2025:
+ * buttons/RecipeAttributeButton.h is part of Brewken, and is copyright the following authors 2009-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -35,6 +35,8 @@
  *
  *        Subclasses must also inherit from the CRTP class \c RecipeAttributeButtonBase (see below) which provides the
  *        substance.   (This class just declares Qt slots etc.)
+ *
+ *        TODO: I think we can delete all these buttons now as they are no longer used...
  */
 class RecipeAttributeButton : public QPushButton {
    Q_OBJECT
