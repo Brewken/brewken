@@ -303,6 +303,10 @@
         <source>Volume into fermenter</source>
         <translation type="unfinished">Volume no Fermentador</translation>
     </message>
+    <message>
+        <source>unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrewDayScrollWidget</name>
@@ -424,6 +428,14 @@
     </message>
     <message>
         <source>Generating instructions will overwrite the existing ones.  This is not undoable.  Do you want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>not set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>n/a</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2814,7 +2826,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Boil Time</source>
-        <translation type="unfinished">Tempo de Fervura</translation>
+        <translation type="obsolete">Tempo de Fervura</translation>
     </message>
     <message>
         <source>Equipments</source>
@@ -2826,7 +2838,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>BoilTime</source>
-        <translation type="unfinished">Tempo de Fervura</translation>
+        <translation type="obsolete">Tempo de Fervura</translation>
     </message>
     <message>
         <source>Aging Vessel Loss</source>
@@ -2846,10 +2858,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Boiling Point</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Calculate Boil Volume</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3015,6 +3023,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <message>
         <source>Boil Size</source>
         <translation type="unfinished">Tamanho da Fervura</translation>
+    </message>
+    <message>
+        <source>Kettle Boil Size</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4555,10 +4567,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Boil Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Recipe Efficiency</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5292,19 +5300,7 @@ If you need help, please open an issue at %1</source>
 <context>
     <name>OgCorrectionTool</name>
     <message>
-        <source>Gravity Correction Tool - No Recipe Selected</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You need to have a recipe open in the main window before you can use this tool.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Gravity Correction Tool - No Equipment on Recipe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Recipe %1 has no equipment set.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5313,6 +5309,66 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Need a valid value for Measured Gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Recipe Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Equipment on Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe &quot;%1&quot; has no equipment.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Boil on Recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe &quot;%1&quot; has no boil.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Need a valid value for Wort Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>- On Target -</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>↑ Above Target ↑</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>↓ Below Target ↓</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remedy: Add Water To Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount to Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount of water you need to add to hit planned OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remedy: Boil Down To Reduce Wort Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount to Boil Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extra wort you need to boil off to hit planned OG</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7388,10 +7444,6 @@ O volume final do fermentador primário é %1.</translation>
         <translation type="unfinished">Etapa</translation>
     </message>
     <message>
-        <source>Add At Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add At Gravity</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7418,6 +7470,10 @@ O volume final do fermentador primário é %1.</translation>
     <message>
         <source>Package</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished">Tempo</translation>
     </message>
 </context>
 <context>
@@ -10480,11 +10536,11 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished">Tempo</translation>
+        <translation type="obsolete">Tempo</translation>
     </message>
     <message>
         <source>Calculate pre-boil volume</source>
-        <translation type="unfinished">Calcular volume pré-fervura</translation>
+        <translation type="obsolete">Calcular volume pré-fervura</translation>
     </message>
     <message>
         <source>Boil time</source>
@@ -10676,10 +10732,6 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Attributes of &quot;optional&quot; vessels will not be saved if their volumes are set to 0.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Default boil time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -13338,19 +13390,7 @@ O volume final do fermentador primário é %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>If, during the boil, your measurements suggest you aren&apos;t going to hit your target original gravity (OG), you may be able to &quot;correct&quot; things.  This tool helps you work out what your options are.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>If your boil isn&apos;t going to hit your target original gravity (OG), you can make adjustments, which this tool helps you calculate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Target OG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Default value comes from current recipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -13378,24 +13418,20 @@ O volume final do fermentador primário é %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Corrected SG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Plato</source>
-        <translation type="unfinished">Plato</translation>
+        <translation type="obsolete">Plato</translation>
     </message>
     <message>
         <source>Plato (percent by mass of equivalent sucrose)</source>
-        <translation type="unfinished">Plato (percentagem, em massa, equivalente de sacarose</translation>
+        <translation type="obsolete">Plato (percentagem, em massa, equivalente de sacarose</translation>
     </message>
     <message>
         <source>Input</source>
-        <translation type="unfinished">Entrada</translation>
+        <translation type="obsolete">Entrada</translation>
     </message>
     <message>
         <source>-or-</source>
-        <translation type="unfinished">-ou-</translation>
+        <translation type="obsolete">-ou-</translation>
     </message>
     <message>
         <source>Pre-Boil Volume</source>
@@ -13407,23 +13443,23 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Output</source>
-        <translation type="unfinished">Saída</translation>
+        <translation type="obsolete">Saída</translation>
     </message>
     <message>
         <source>OG w/o Correction</source>
-        <translation type="unfinished">OG com a correção</translation>
+        <translation type="obsolete">OG com a correção</translation>
     </message>
     <message>
         <source>OG if you boil as planned</source>
-        <translation type="unfinished">OG se você ferver como o planejado</translation>
+        <translation type="obsolete">OG se você ferver como o planejado</translation>
     </message>
     <message>
         <source>Add to Boil</source>
-        <translation type="unfinished">Adicionar à Fervura</translation>
+        <translation type="obsolete">Adicionar à Fervura</translation>
     </message>
     <message>
         <source>Amount of water you need to add to hit planned OG (or boil off if negative)</source>
-        <translation type="unfinished">Quantidade de água que você necessita adicionar para atingir a OG planejada (ferva se for negativo)</translation>
+        <translation type="obsolete">Quantidade de água que você necessita adicionar para atingir a OG planejada (ferva se for negativo)</translation>
     </message>
     <message>
         <source>Final Batch Size</source>
@@ -13436,6 +13472,62 @@ O volume final do fermentador primário é %1.</translation>
     <message>
         <source>Calculate</source>
         <translation type="unfinished">Calcular</translation>
+    </message>
+    <message>
+        <source>If you overshoot or undershoot your anticipated efficiency, this tool helps you to correct the OG in the boil.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NB: this tool makes the assumption that you are not going to add any water post boil.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From current recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Actual SG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Either converted from Plato/Brix, or adjusted for hydrometer calibration temperature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Predicted OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OG if you take no action, ie boil as originally planned</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remedy: Add Water To Boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount to Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount of water you need to add to hit planned OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>-- OR --</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remedy: Add Sugar or DME</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount To Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount of Sugar or DME to add to the boil</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -13804,6 +13896,14 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Default efficiency to set on new recipes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boil Time</source>
+        <translation type="unfinished">Tempo de Fervura</translation>
+    </message>
+    <message>
+        <source>Default boil time to set on new recipes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
