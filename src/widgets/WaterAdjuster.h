@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tools/WaterProfileAdjustmentTool.h is part of Brewken, and is copyright the following authors 2009-2025:
+ * widgets/WaterAdjuster.h is part of Brewken, and is copyright the following authors 2009-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Maxime Lavigne <duguigne@gmail.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef TOOLS_WATERPROFILEADJUSTMENTTOOL_H
-#define TOOLS_WATERPROFILEADJUSTMENTTOOL_H
+#ifndef WIDGETS_WATERADJUSTER_H
+#define WIDGETS_WATERADJUSTER_H
 #pragma once
 
 #include <memory> // For PImpl
@@ -25,40 +25,38 @@
 #include <QDialog>
 #include <QWidget>
 
-#include "ui_waterProfileAdjustmentTool.h"
-
-#include "model/Salt.h"
+#include "ui_waterAdjuster.h"
 
 /*!
- * \class WaterProfileAdjustmentTool
+ * \class WaterAdjuster
  *
- * \brief Helps you work out what salts etc to add to water of one profile to make it closer to another profile.
- *
- *        TODO: This class / tool still needs a bit more thinking through.  It's not currently as useful as it perhaps
- *              might be.  But we also need to decide properly how we are going to use \c RecipeUseOfWater.
+ * \brief Helps you work out what water adjustments etc to add to water of one profile to make it closer to another profile.
  */
-class WaterProfileAdjustmentTool : public QDialog, public Ui::waterProfileAdjustmentTool {
+class WaterAdjuster : public QWidget, public Ui::waterAdjuster {
    Q_OBJECT
 
 public:
-   explicit WaterProfileAdjustmentTool(QWidget * parent = nullptr);
-   ~WaterProfileAdjustmentTool() override;
+   explicit WaterAdjuster(QWidget * parent = nullptr);
+   ~WaterAdjuster() override;
+
+   /**
+    * Certain parts of initialisation need to wait until \c MainWindow is constructed, so \c MainWindow calls this
+    * function when it is ready.
+    */
+   void init();
 
    void setRecipe(Recipe * rec);
 
 public slots:
-   void update_baseProfile(int selected);
-   void update_targetProfile(int selected);
+   void updateBaseProfile(int selected) const;
+   void updateTargetProfile(int selected) const;
    void newTotals();
-   void removeSalts();
-   void setMashRO(int val);
-   void setSpargeRO(int val);
-   void saveAndClose();
-   void clearAndClose();
+   void removeSelectedWaterAdjustments();
+   void removeSelectedAcidMalts();
+   void updateRoWaterMash_pct(int val);
+   void updateRoWaterSparge_pct(int val);
 
 signals:
-   void newSalt(Salt * drop);
-   void newSalts(QList<Salt *> drops);
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/

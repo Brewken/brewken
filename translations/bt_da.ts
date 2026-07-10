@@ -2,29 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="da_DK" sourcelanguage="de_DE">
 <context>
-    <name></name>
-    <message>
-        <source>Add %1 item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected %1 item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Move selected %1 item up</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Move selected %1 item down</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit selected %1 item</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>AboutDialog</name>
     <message>
         <source>About Brewtarget</source>
@@ -2464,12 +2441,12 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>PosgreSQL</source>
+        <source>Cannot create new DB schema in file &apos;%1&apos;.  File already exists!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cannot create new DB schema in file &apos;%1&apos;.  File already exists!</source>
-        <translation type="unfinished"></translation>
+        <source>PostgreSQL</source>
+        <translation type="unfinished">PostgreSQL</translation>
     </message>
 </context>
 <context>
@@ -2492,11 +2469,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Export</source>
-        <translation type="unfinished">Eksporter</translation>
+        <translation type="obsolete">Eksporter</translation>
     </message>
     <message>
         <source>To File (BeerXML or BeerJSON)</source>
-        <translation type="unfinished">Til fil (BeerXML eller BeerJSON)</translation>
+        <translation type="obsolete">Til fil (BeerXML eller BeerJSON)</translation>
     </message>
     <message>
         <source>Import</source>
@@ -2718,14 +2695,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Export Succeeded</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export Failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2791,6 +2760,14 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Folder name cannot be blank (and cannot contain &apos;/&apos;)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nothing to Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nothing is selected or none of the selected things can be exported</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3366,6 +3343,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>IBU Gal Per Lb</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lactic Acid content (% weight)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4138,6 +4119,29 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
 </context>
 <context>
+    <name>Item</name>
+    <message>
+        <source>Add %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move selected %1 up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move selected %1 down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit selected %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Open</source>
@@ -4425,11 +4429,11 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>No Mash</source>
-        <translation>Ingen mæskning</translation>
+        <translation type="vanished">Ingen mæskning</translation>
     </message>
     <message>
         <source>You must define a mash first.</source>
-        <translation>Du skal først definere en mæskning.</translation>
+        <translation type="vanished">Du skal først definere en mæskning.</translation>
     </message>
     <message>
         <source>Automatically-created Boil for %1</source>
@@ -4438,10 +4442,6 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     <message>
         <source>Automatically-created Fermentation for %1</source>
         <translation>Automatisk genereret gæring for %1</translation>
-    </message>
-    <message>
-        <source>Drop salt(s) on a recipe</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Wrote recipe to file</source>
@@ -4887,6 +4887,86 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>Misc Purchases</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water Agent Is Acid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water Agent %% Acid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water Agent Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished">Nej</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CaCl2 (Calcium chloride)</source>
+        <translation type="obsolete">CaCl₂ (Calciumchlorid)</translation>
+    </message>
+    <message>
+        <source>CaCO3 (Calcium carbonate)</source>
+        <translation type="obsolete">CaCO₃ (Calciumcarbonat)</translation>
+    </message>
+    <message>
+        <source>CaSO4 (Calcium sulfate)</source>
+        <translation type="obsolete">CaSO₄ (Calciumsulfat)</translation>
+    </message>
+    <message>
+        <source>MgSO4 (Magnesium sulfate)</source>
+        <translation type="obsolete">MgSO₄ (Magnesiumsulfat)</translation>
+    </message>
+    <message>
+        <source>NaCl (Sodium chloride)</source>
+        <translation type="obsolete">NaCl (Natriumchlorid)</translation>
+    </message>
+    <message>
+        <source>NaHCO3 (Sodium bicarbonate)</source>
+        <translation type="obsolete">NaHCO₃ (natriumhydrogencarbonat)</translation>
+    </message>
+    <message>
+        <source>H3PO4 (Phosphoric acid)</source>
+        <translation type="obsolete">H₃PO₄ (fosforsyre)</translation>
+    </message>
+    <message>
+        <source>Calcium Chloride (CaCl₂)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calcium Carbonate (CaCO₃)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calcium Sulfate (CaSO₄)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Magnesium Sulfate (MgSO₄)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sodium Chloride (NaCl)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sodium Bicarbonate (NaHCO₃)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lactic Acid (C₃H₆O₃)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Phosphoric acid (H₃PO₄)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5376,6 +5456,14 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     <message>
         <source>Lovibond</source>
         <translation type="unfinished">Lovibond</translation>
+    </message>
+    <message>
+        <source>Conversion Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Data transfer failed.  See log file for more details.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6066,11 +6154,11 @@ Programmet lukkes nu.</translation>
     </message>
     <message>
         <source>BeerJSON and BeerXML files (*.json *.xml);;BeerJSON files (*.json);;BeerXML files (*.xml)</source>
-        <translation>BeerJSON og BeerXML-filer (*.json *.xml);;BeerJSON-filer (*.json);;BeerXML-filer (*xml)</translation>
+        <translation type="vanished">BeerJSON og BeerXML-filer (*.json *.xml);;BeerJSON-filer (*.json);;BeerXML-filer (*xml)</translation>
     </message>
     <message>
         <source>BeerJSON format (*.json);;BeerXML format (*.xml)</source>
-        <translation>BeerJSON-format (*.json);;BeerXML-format (*.xml)</translation>
+        <translation type="vanished">BeerJSON-format (*.json);;BeerXML-format (*.xml)</translation>
     </message>
     <message>
         <source>Success!</source>
@@ -6424,10 +6512,6 @@ Logfil indeholder evt. flere detaljer.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Did not recognise file extension on &quot;%1&quot; so nothing written.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Could not open &quot;%1&quot; for writing</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6437,7 +6521,7 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>Salts</source>
-        <translation type="unfinished">Salte</translation>
+        <translation type="obsolete">Salte</translation>
     </message>
     <message>
         <source>Yeasts</source>
@@ -6485,6 +6569,14 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>°F</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DotBeer, BeerJSON and BeerXML files (*.beer *.json *.xml);;DotBeer files (*.beer);;BeerJSON files (*.json);;BeerXML files (*.xml)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DotBeer format (*.beer);;BeerJSON format (*.json);;BeerXML format (*.xml)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6715,31 +6807,31 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>%1 %2</source>
-        <translation>%1 %2</translation>
+        <translation type="vanished">%1 %2</translation>
     </message>
     <message>
         <source>, </source>
-        <translation>, </translation>
+        <translation type="vanished">, </translation>
     </message>
     <message>
         <source>mash</source>
-        <translation>mæsk</translation>
+        <translation type="vanished">mæsk</translation>
     </message>
     <message>
         <source>sparge</source>
-        <translation>eftergyd</translation>
+        <translation type="vanished">eftergyd</translation>
     </message>
     <message>
         <source>Modify %1 water</source>
-        <translation>Behandl %1 vand</translation>
+        <translation type="vanished">Behandl %1 vand</translation>
     </message>
     <message>
         <source>Dissolve </source>
-        <translation>Opløs</translation>
+        <translation type="vanished">Opløs</translation>
     </message>
     <message>
         <source> into the %1 water</source>
-        <translation> i de %1 vand</translation>
+        <translation type="vanished"> i de %1 vand</translation>
     </message>
     <message>
         <source>Recipe</source>
@@ -7010,10 +7102,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Salt Adjustments</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Style ID</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7027,10 +7115,6 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Water Uses</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7104,6 +7188,34 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Date Created</source>
         <translation type="unfinished">Bryggedato</translation>
+    </message>
+    <message>
+        <source>Base Water Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Base Water Profile ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target Water Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target Water Profile ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IBU Formula</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage reverse-osmosis water in mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage reverse-osmosis water in sparge</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7392,6 +7504,21 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
+    <name>RecipeAdditionWaterAdjustment</name>
+    <message>
+        <source>Sparge</source>
+        <translation type="obsolete">Eftergydning</translation>
+    </message>
+    <message>
+        <source>Ratio</source>
+        <translation type="obsolete">Brøkdel</translation>
+    </message>
+    <message>
+        <source>Equal</source>
+        <translation type="obsolete">Lig med</translation>
+    </message>
+</context>
+<context>
     <name>RecipeAdditionYeast</name>
     <message>
         <source>Yeast Addition</source>
@@ -7489,27 +7616,27 @@ The final volume in the primary is %1.</source>
     <name>RecipeAdjustmentSalt</name>
     <message>
         <source>Salt Addition</source>
-        <translation>Tilsætning salt</translation>
+        <translation type="vanished">Tilsætning salt</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation>Mæskning</translation>
+        <translation type="vanished">Mæskning</translation>
     </message>
     <message>
         <source>Sparge</source>
-        <translation>Eftergydning</translation>
+        <translation type="vanished">Eftergydning</translation>
     </message>
     <message>
         <source>Ratio</source>
-        <translation>Brøkdel</translation>
+        <translation type="vanished">Brøkdel</translation>
     </message>
     <message>
         <source>Equal</source>
-        <translation>Lig med</translation>
+        <translation type="vanished">Lig med</translation>
     </message>
     <message>
         <source>Addition of %1</source>
-        <translation>Tilsætning af %1</translation>
+        <translation type="vanished">Tilsætning af %1</translation>
     </message>
     <message>
         <source>Invalid!</source>
@@ -7517,11 +7644,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Salt</source>
-        <translation type="unfinished">Salt</translation>
-    </message>
-    <message>
-        <source>When To Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Salt</translation>
     </message>
 </context>
 <context>
@@ -7964,7 +8087,7 @@ The final volume in the primary is %1.</source>
     <name>RecipeUseOfWater</name>
     <message>
         <source>Recipe Use Of Water</source>
-        <translation>Opskrift anvendelse af vand</translation>
+        <translation type="vanished">Opskrift anvendelse af vand</translation>
     </message>
     <message>
         <source>Use of %1</source>
@@ -7975,20 +8098,12 @@ The final volume in the primary is %1.</source>
         <translation type="vanished">Ugyldig!</translation>
     </message>
     <message>
-        <source>Use of %1 water</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Recipe ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Water</source>
-        <translation type="unfinished">Vand</translation>
+        <translation type="obsolete">Vand</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation type="unfinished">Volumen</translation>
+        <translation type="obsolete">Volumen</translation>
     </message>
 </context>
 <context>
@@ -8006,31 +8121,31 @@ The final volume in the primary is %1.</source>
     <name>Salt</name>
     <message>
         <source>Salt</source>
-        <translation>Salt</translation>
+        <translation type="vanished">Salt</translation>
     </message>
     <message>
         <source>CaCl2 (Calcium chloride)</source>
-        <translation>CaCl₂ (Calciumchlorid)</translation>
+        <translation type="vanished">CaCl₂ (Calciumchlorid)</translation>
     </message>
     <message>
         <source>CaCO3 (Calcium carbonate)</source>
-        <translation>CaCO₃ (Calciumcarbonat)</translation>
+        <translation type="vanished">CaCO₃ (Calciumcarbonat)</translation>
     </message>
     <message>
         <source>CaSO4 (Calcium sulfate)</source>
-        <translation>CaSO₄ (Calciumsulfat)</translation>
+        <translation type="vanished">CaSO₄ (Calciumsulfat)</translation>
     </message>
     <message>
         <source>MgSO4 (Magnesium sulfate)</source>
-        <translation>MgSO₄ (Magnesiumsulfat)</translation>
+        <translation type="vanished">MgSO₄ (Magnesiumsulfat)</translation>
     </message>
     <message>
         <source>NaCl (Sodium chloride)</source>
-        <translation>NaCl (Natriumchlorid)</translation>
+        <translation type="vanished">NaCl (Natriumchlorid)</translation>
     </message>
     <message>
         <source>NaHCO3 (Sodium bicarbonate)</source>
-        <translation>NaHCO₃ (natriumhydrogencarbonat)</translation>
+        <translation type="vanished">NaHCO₃ (natriumhydrogencarbonat)</translation>
     </message>
     <message>
         <source>Lactic Acid</source>
@@ -8038,43 +8153,19 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>H3PO4 (Phosphoric acid)</source>
-        <translation>H₃PO₄ (fosforsyre)</translation>
+        <translation type="vanished">H₃PO₄ (fosforsyre)</translation>
     </message>
     <message>
         <source>Acidulated Malt</source>
-        <translation>Sur (acidulated) malt</translation>
-    </message>
-    <message>
-        <source>Lactic Acid (C3H6O3)</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Sur (acidulated) malt</translation>
     </message>
     <message>
         <source>Salts</source>
-        <translation type="unfinished">Salte</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Is Acid</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Salte</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Nej</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Salt Purchases</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%% Acid</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nej</translation>
     </message>
 </context>
 <context>
@@ -8292,13 +8383,6 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
-    <name>StockPurchaseSaltEditor</name>
-    <message>
-        <source>Salt Stock Purchase Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>StockPurchaseYeastEditor</name>
     <message>
         <source>Yeast Stock Purchase Editor</source>
@@ -8376,13 +8460,6 @@ The final volume in the primary is %1.</source>
 </context>
 <context>
     <name>StockUseMiscEditor</name>
-    <message>
-        <source>%1 Stock Use Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>StockUseSaltEditor</name>
     <message>
         <source>%1 Stock Use Editor</source>
         <translation type="unfinished"></translation>
@@ -8962,35 +9039,35 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Base</source>
-        <translation>Basis</translation>
+        <translation type="vanished">Basis</translation>
     </message>
     <message>
         <source>Target</source>
-        <translation>Tilsigtet</translation>
+        <translation type="vanished">Tilsigtet</translation>
     </message>
     <message>
         <source>Ca  </source>
-        <translation>Ca  </translation>
+        <translation type="vanished">Ca  </translation>
     </message>
     <message>
         <source>Cl  </source>
-        <translation>Cl  </translation>
+        <translation type="vanished">Cl  </translation>
     </message>
     <message>
         <source>HCO3</source>
-        <translation>HCO₃</translation>
+        <translation type="vanished">HCO₃</translation>
     </message>
     <message>
         <source>Mg  </source>
-        <translation>Mg  </translation>
+        <translation type="vanished">Mg  </translation>
     </message>
     <message>
         <source>Na  </source>
-        <translation>Na  </translation>
+        <translation type="vanished">Na  </translation>
     </message>
     <message>
         <source>SO4 </source>
-        <translation>SO₄ </translation>
+        <translation type="vanished">SO₄ </translation>
     </message>
     <message>
         <source>Name</source>
@@ -9069,10 +9146,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished">Magnesium</translation>
     </message>
     <message>
-        <source>RO (reverse osmosis) in Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Nitrate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9093,10 +9166,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished">Natrium</translation>
     </message>
     <message>
-        <source>SpargeRo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Sulfate</source>
         <translation type="unfinished">sulfat</translation>
     </message>
@@ -9111,6 +9180,175 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Yes</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bicarbonate (HCO₃⁻)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calcium (Ca²⁺)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Carbonate (CO₃²⁻)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chloride (Cl⁻)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copper (Cu²⁺)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Iron (Fe²⁺)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Magnesium (Mg²⁺)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manganese (Mn²⁺)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nitrate (NO₃⁻)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nitrite (NO₂⁻)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Phosphate (PO₄³⁻)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Potassium (K⁺)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sodium (Na⁺)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sulfate (SO₄²⁻)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zinc (Zn²⁺)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WaterAdjuster</name>
+    <message>
+        <source>Minimum expected concentration is %1 ppm</source>
+        <translation type="unfinished">Minimum forventet koncentration er %1 ppm</translation>
+    </message>
+    <message>
+        <source>In range for target profile.</source>
+        <translation type="unfinished">Passende til anvendt profil.</translation>
+    </message>
+    <message>
+        <source>Maximum expected concentration is %1 ppm</source>
+        <translation type="unfinished">Maksimum forventet koncentration er %1 ppm</translation>
+    </message>
+    <message>
+        <source>PPM</source>
+        <translation type="unfinished">ppm</translation>
+    </message>
+    <message>
+        <source>Too low for target profile.</source>
+        <translation type="unfinished">For lav til anvendt profil.</translation>
+    </message>
+    <message>
+        <source>Too high for target profile.</source>
+        <translation type="unfinished">For høj til anvendt profil.</translation>
+    </message>
+</context>
+<context>
+    <name>WaterAdjustment</name>
+    <message>
+        <source>CaCl2 (Calcium chloride)</source>
+        <translation type="obsolete">CaCl₂ (Calciumchlorid)</translation>
+    </message>
+    <message>
+        <source>CaCO3 (Calcium carbonate)</source>
+        <translation type="obsolete">CaCO₃ (Calciumcarbonat)</translation>
+    </message>
+    <message>
+        <source>CaSO4 (Calcium sulfate)</source>
+        <translation type="obsolete">CaSO₄ (Calciumsulfat)</translation>
+    </message>
+    <message>
+        <source>MgSO4 (Magnesium sulfate)</source>
+        <translation type="obsolete">MgSO₄ (Magnesiumsulfat)</translation>
+    </message>
+    <message>
+        <source>NaCl (Sodium chloride)</source>
+        <translation type="obsolete">NaCl (Natriumchlorid)</translation>
+    </message>
+    <message>
+        <source>NaHCO3 (Sodium bicarbonate)</source>
+        <translation type="obsolete">NaHCO₃ (natriumhydrogencarbonat)</translation>
+    </message>
+    <message>
+        <source>H3PO4 (Phosphoric acid)</source>
+        <translation type="obsolete">H₃PO₄ (fosforsyre)</translation>
+    </message>
+    <message>
+        <source>Acidulated Malt</source>
+        <translation type="obsolete">Sur (acidulated) malt</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="obsolete">Nej</translation>
+    </message>
+</context>
+<context>
+    <name>WaterAgent</name>
+    <message>
+        <source>CaCl2 (Calcium chloride)</source>
+        <translation type="obsolete">CaCl₂ (Calciumchlorid)</translation>
+    </message>
+    <message>
+        <source>CaCO3 (Calcium carbonate)</source>
+        <translation type="obsolete">CaCO₃ (Calciumcarbonat)</translation>
+    </message>
+    <message>
+        <source>CaSO4 (Calcium sulfate)</source>
+        <translation type="obsolete">CaSO₄ (Calciumsulfat)</translation>
+    </message>
+    <message>
+        <source>MgSO4 (Magnesium sulfate)</source>
+        <translation type="obsolete">MgSO₄ (Magnesiumsulfat)</translation>
+    </message>
+    <message>
+        <source>NaCl (Sodium chloride)</source>
+        <translation type="obsolete">NaCl (Natriumchlorid)</translation>
+    </message>
+    <message>
+        <source>NaHCO3 (Sodium bicarbonate)</source>
+        <translation type="obsolete">NaHCO₃ (natriumhydrogencarbonat)</translation>
+    </message>
+    <message>
+        <source>H3PO4 (Phosphoric acid)</source>
+        <translation type="obsolete">H₃PO₄ (fosforsyre)</translation>
+    </message>
+    <message>
+        <source>Acidulated Malt</source>
+        <translation type="obsolete">Sur (acidulated) malt</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="obsolete">Nej</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="obsolete">Andet</translation>
     </message>
 </context>
 <context>
@@ -9148,27 +9386,27 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Calcium</source>
-        <translation>Calcium</translation>
+        <translation type="vanished">Calcium</translation>
     </message>
     <message>
         <source>Bicarbonate</source>
-        <translation>hydrogencarbonat</translation>
+        <translation type="vanished">hydrogencarbonat</translation>
     </message>
     <message>
         <source>Sulfate</source>
-        <translation>sulfat</translation>
+        <translation type="vanished">sulfat</translation>
     </message>
     <message>
         <source>Chloride</source>
-        <translation>Chlorid</translation>
+        <translation type="vanished">Chlorid</translation>
     </message>
     <message>
         <source>Sodium</source>
-        <translation>Natrium</translation>
+        <translation type="vanished">Natrium</translation>
     </message>
     <message>
         <source>Magnesium</source>
-        <translation>Magnesium</translation>
+        <translation type="vanished">Magnesium</translation>
     </message>
     <message>
         <source>Current</source>
@@ -9186,32 +9424,48 @@ The final volume in the primary is %1.</source>
         <source>HCO3</source>
         <translation>HCO₃</translation>
     </message>
+    <message>
+        <source>Base Profile</source>
+        <translation type="unfinished">Basisprofil</translation>
+    </message>
+    <message>
+        <source>Target Profile</source>
+        <translation type="unfinished">Anvendt profil</translation>
+    </message>
+    <message>
+        <source>Actual Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WaterProfileAdjustmentTool</name>
     <message>
         <source>Too low for target profile.</source>
-        <translation type="unfinished">For lav til anvendt profil.</translation>
+        <translation type="obsolete">For lav til anvendt profil.</translation>
     </message>
     <message>
         <source>In range for target profile.</source>
-        <translation type="unfinished">Passende til anvendt profil.</translation>
+        <translation type="obsolete">Passende til anvendt profil.</translation>
     </message>
     <message>
         <source>Too high for target profile.</source>
-        <translation type="unfinished">For høj til anvendt profil.</translation>
+        <translation type="obsolete">For høj til anvendt profil.</translation>
     </message>
     <message>
         <source>Minimum expected concentration is %1 ppm</source>
-        <translation type="unfinished">Minimum forventet koncentration er %1 ppm</translation>
+        <translation type="obsolete">Minimum forventet koncentration er %1 ppm</translation>
     </message>
     <message>
         <source>Maximum expected concentration is %1 ppm</source>
-        <translation type="unfinished">Maksimum forventet koncentration er %1 ppm</translation>
+        <translation type="obsolete">Maksimum forventet koncentration er %1 ppm</translation>
     </message>
     <message>
         <source>Use of %1</source>
         <translation type="obsolete">Anvendelse af %1</translation>
+    </message>
+    <message>
+        <source>PPM</source>
+        <translation type="obsolete">ppm</translation>
     </message>
 </context>
 <context>
@@ -10687,6 +10941,14 @@ The final volume in the primary is %1.</source>
         <source>Create a new stock purchase record for this fermentable</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>% Lactic Acid (by weight)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>For aciduated malts (aka acid malts)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>fermentationEditor</name>
@@ -11993,7 +12255,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>&amp;Efficiency (%)</source>
-        <translation>&amp;Effektivitet (%)</translation>
+        <translation type="vanished">&amp;Effektivitet (%)</translation>
     </message>
     <message>
         <source>Recipe Locked</source>
@@ -12097,7 +12359,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Edit</source>
-        <translation>Rediger</translation>
+        <translation type="vanished">Rediger</translation>
     </message>
     <message>
         <source>Help</source>
@@ -12177,27 +12439,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Salts</source>
-        <translation type="unfinished">Salte</translation>
-    </message>
-    <message>
-        <source>Add salt</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Salte</translation>
     </message>
     <message>
         <source>Remove selected salt</source>
-        <translation type="unfinished">Fjern et salt</translation>
-    </message>
-    <message>
-        <source>Edit selected salt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>S&amp;alts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Water &amp;Profile Adjustment Tool</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Fjern et salt</translation>
     </message>
     <message>
         <source>Mash Profiles</source>
@@ -12253,6 +12499,34 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>&amp;Gravity Correction Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit this style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit this equipment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit this mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit this boil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit this fermentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Efficienc&amp;y</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12724,6 +12998,14 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Create a new stock purchase record for this ingredient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water Agent Properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percent Acid</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13660,18 +13942,6 @@ The final volume in the primary is %1.</source>
 <context>
     <name>saltEditor</name>
     <message>
-        <source>Salt Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount in Inventory</source>
         <translation type="obsolete">Mængde på lager</translation>
     </message>
@@ -13685,51 +13955,31 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>ID in database</source>
-        <translation type="unfinished">ID i database</translation>
+        <translation type="obsolete">ID i database</translation>
     </message>
     <message>
         <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
-        <translation type="unfinished">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+        <translation type="obsolete">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished">Ny</translation>
+        <translation type="obsolete">Ny</translation>
     </message>
     <message>
         <source>Save and close</source>
-        <translation type="unfinished">Gem og luk</translation>
+        <translation type="obsolete">Gem og luk</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished">Gem</translation>
+        <translation type="obsolete">Gem</translation>
     </message>
     <message>
         <source>Discard and close</source>
-        <translation type="unfinished">Annuller og luk</translation>
+        <translation type="obsolete">Annuller og luk</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annuller</translation>
-    </message>
-    <message>
-        <source>Percent Acid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Total Inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Total amount in inventory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Purchase</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create a new stock purchase record for this salt</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Annuller</translation>
     </message>
 </context>
 <context>
@@ -14537,6 +14787,128 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
+    <name>waterAdjuster</name>
+    <message>
+        <source>Recipe</source>
+        <translation type="obsolete">Opskrift</translation>
+    </message>
+    <message>
+        <source>Profiles</source>
+        <translation type="obsolete">Profiler</translation>
+    </message>
+    <message>
+        <source>Base Profile</source>
+        <translation type="unfinished">Basisprofil</translation>
+    </message>
+    <message>
+        <source>Edit base water profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target Profile</source>
+        <translation type="unfinished">Anvendt profil</translation>
+    </message>
+    <message>
+        <source>Edit target water profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>% RO in Mash</source>
+        <translation type="unfinished">% vand fra omvendt osmose i mæsk</translation>
+    </message>
+    <message>
+        <source>% RO in Sparge</source>
+        <translation type="unfinished">% vand fra omvendt osmose i eftergydning</translation>
+    </message>
+    <message>
+        <source>Actual</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ca</source>
+        <translation type="unfinished">Ca</translation>
+    </message>
+    <message>
+        <source>Mg</source>
+        <translation type="unfinished">Mg</translation>
+    </message>
+    <message>
+        <source>pH</source>
+        <translation type="unfinished">pH</translation>
+    </message>
+    <message>
+        <source>Na</source>
+        <translation type="unfinished">Na</translation>
+    </message>
+    <message>
+        <source>Cl</source>
+        <translation type="unfinished">Cl</translation>
+    </message>
+    <message>
+        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water Agents (Miscellaneous)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add a water agent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected water agent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Acid Malts (Fermentables)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add an acid malt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected acid malt</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>waterAdjustmentEditor</name>
+    <message>
+        <source>ID in database</source>
+        <translation type="obsolete">ID i database</translation>
+    </message>
+    <message>
+        <source>You can normally ignore this, but it&apos;s sometimes useful for debugging.</source>
+        <translation type="obsolete">Du kan normalt ignorere dette, men det er nogle gange nyttigt til fejlfinding.</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="obsolete">Ny</translation>
+    </message>
+    <message>
+        <source>Save and close</source>
+        <translation type="obsolete">Gem og luk</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="obsolete">Gem</translation>
+    </message>
+    <message>
+        <source>Discard and close</source>
+        <translation type="obsolete">Annuller og luk</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Annuller</translation>
+    </message>
+</context>
+<context>
     <name>waterDialog</name>
     <message>
         <source>Water Chemistry</source>
@@ -14701,104 +15073,92 @@ The final volume in the primary is %1.</source>
 <context>
     <name>waterProfileAdjustmentTool</name>
     <message>
-        <source>Water Profile Adjustment Tool</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Profiles</source>
-        <translation type="unfinished">Profiler</translation>
+        <translation type="obsolete">Profiler</translation>
     </message>
     <message>
         <source>% RO in Mash</source>
-        <translation type="unfinished">% vand fra omvendt osmose i mæsk</translation>
+        <translation type="obsolete">% vand fra omvendt osmose i mæsk</translation>
     </message>
     <message>
         <source>Target Profile</source>
-        <translation type="unfinished">Anvendt profil</translation>
+        <translation type="obsolete">Anvendt profil</translation>
     </message>
     <message>
         <source>PushButton</source>
-        <translation type="unfinished">Trykknap</translation>
+        <translation type="obsolete">Trykknap</translation>
     </message>
     <message>
         <source>Base Profile</source>
-        <translation type="unfinished">Basisprofil</translation>
+        <translation type="obsolete">Basisprofil</translation>
     </message>
     <message>
         <source>% RO in Sparge</source>
-        <translation type="unfinished">% vand fra omvendt osmose i eftergydning</translation>
+        <translation type="obsolete">% vand fra omvendt osmose i eftergydning</translation>
     </message>
     <message>
         <source>PPM</source>
-        <translation type="unfinished">ppm</translation>
+        <translation type="obsolete">ppm</translation>
     </message>
     <message>
         <source>Ca</source>
-        <translation type="unfinished">Ca</translation>
+        <translation type="obsolete">Ca</translation>
     </message>
     <message>
         <source>Mg</source>
-        <translation type="unfinished">Mg</translation>
+        <translation type="obsolete">Mg</translation>
     </message>
     <message>
         <source>pH</source>
-        <translation type="unfinished">pH</translation>
+        <translation type="obsolete">pH</translation>
     </message>
     <message>
         <source>Na</source>
-        <translation type="unfinished">Na</translation>
+        <translation type="obsolete">Na</translation>
     </message>
     <message>
         <source>Cl</source>
-        <translation type="unfinished">Cl</translation>
-    </message>
-    <message>
-        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Cl</translation>
     </message>
     <message>
         <source>Total Salts</source>
-        <translation type="unfinished">Total salte</translation>
+        <translation type="obsolete">Total salte</translation>
     </message>
     <message>
         <source>CaCl&lt;sub&gt;2&lt;/sub&gt;</source>
-        <translation type="unfinished">CaCl₂</translation>
+        <translation type="obsolete">CaCl₂</translation>
     </message>
     <message>
         <source>MgSO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation type="unfinished">MgSO₄</translation>
+        <translation type="obsolete">MgSO₄</translation>
     </message>
     <message>
         <source>CaCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished">CaCO₃</translation>
+        <translation type="obsolete">CaCO₃</translation>
     </message>
     <message>
         <source>NaCl</source>
-        <translation type="unfinished">NaCl</translation>
+        <translation type="obsolete">NaCl</translation>
     </message>
     <message>
         <source>CaSO&lt;sub&gt;4&lt;?sub&gt;</source>
-        <translation type="unfinished">CaSO₄</translation>
+        <translation type="obsolete">CaSO₄</translation>
     </message>
     <message>
         <source>NaHCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished">NaHCO₃</translation>
+        <translation type="obsolete">NaHCO₃</translation>
     </message>
     <message>
         <source>Salts</source>
-        <translation type="unfinished">Salte</translation>
+        <translation type="obsolete">Salte</translation>
     </message>
     <message>
         <source>Add a salt</source>
-        <translation type="unfinished">Tilføj et salt</translation>
+        <translation type="obsolete">Tilføj et salt</translation>
     </message>
     <message>
         <source>Remove selected salt</source>
-        <translation type="unfinished">Fjern et salt</translation>
+        <translation type="obsolete">Fjern et salt</translation>
     </message>
 </context>
 <context>

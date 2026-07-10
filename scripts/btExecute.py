@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #-----------------------------------------------------------------------------------------------------------------------
-# scripts/btExecute.py is part of Brewken, and is copyright the following authors 2022-2025:
+# scripts/btExecute.py is part of Brewken, and is copyright the following authors 2022-2026:
 #   • Matt Young <mfsy@yahoo.com>
 #
 # Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@
 import logging
 import os
 import subprocess
+import sys
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Helper function for checking result of running external commands
@@ -45,6 +46,6 @@ def abortOnRunFail(runResult: subprocess.CompletedProcess):
          log.critical('Error running ' + commandName + ' (' + ' '.join(str(ii) for ii in runResult.args) + ')')
       if runResult.stderr:
          log.critical('stderr: ' + runResult.stderr.decode('UTF-8'))
-      exit(runResult.returncode)
+      sys.exit(runResult.returncode)
 
    return runResult

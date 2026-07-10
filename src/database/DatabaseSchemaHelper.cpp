@@ -36,9 +36,8 @@
 #include "database/Database.h"
 #include "database/DbTransaction.h"
 #include "database/ObjectStoreTyped.h"
-#include "model/Salt.h"
 
-int constexpr DatabaseSchemaHelper::latestVersion = 20;
+int constexpr DatabaseSchemaHelper::latestVersion = 21;
 
 // Default namespace hides functions from everything outside this file.
 namespace {
@@ -2065,7 +2064,7 @@ namespace {
          {QString("ALTER TABLE yeast       DROP COLUMN amount_is_weight")},
          //
          // We would like hop_in_inventory.hop_id to be a foreign key to hop.id.  SQLite only lets you create foreign
-         // key constraints at the time that you create the table, so this is a bit of a palava.
+         // key constraints at the time that you create the table (or add a new column), so this is a bit of a palava.
          //
          {QString("CREATE TABLE tmp_hop_in_inventory ( "
                     "id        %1, "
@@ -2365,18 +2364,15 @@ namespace {
                   "(?, ?, ?, '', 10.0, ?)"
             ),
             {
-               QVariant{Salt::typeDisplayNames[Salt::Type::CaCl2 ]}, QVariant{false}, QVariant{true}, QVariant{Salt::typeStringMapping[Salt::Type::CaCl2 ]},
-               QVariant{Salt::typeDisplayNames[Salt::Type::CaCO3 ]}, QVariant{false}, QVariant{true}, QVariant{Salt::typeStringMapping[Salt::Type::CaCO3 ]},
-               QVariant{Salt::typeDisplayNames[Salt::Type::CaSO4 ]}, QVariant{false}, QVariant{true}, QVariant{Salt::typeStringMapping[Salt::Type::CaSO4 ]},
-               QVariant{Salt::typeDisplayNames[Salt::Type::MgSO4 ]}, QVariant{false}, QVariant{true}, QVariant{Salt::typeStringMapping[Salt::Type::MgSO4 ]},
-               QVariant{Salt::typeDisplayNames[Salt::Type::NaCl  ]}, QVariant{false}, QVariant{true}, QVariant{Salt::typeStringMapping[Salt::Type::NaCl  ]},
-               QVariant{Salt::typeDisplayNames[Salt::Type::NaHCO3]}, QVariant{false}, QVariant{true}, QVariant{Salt::typeStringMapping[Salt::Type::NaHCO3]},
-               QVariant{QString{"%1 %2"}.arg(Salt::typeDisplayNames[Salt::Type::LacticAcid]).arg("80%")},
-                  QVariant{false}, QVariant{true}, QVariant{Salt::typeStringMapping[Salt::Type::LacticAcid]},
-               QVariant{QString{"%1 %2"}.arg(Salt::typeDisplayNames[Salt::Type::H3PO4]).arg("75%")},
-                  QVariant{false}, QVariant{true}, QVariant{Salt::typeStringMapping[Salt::Type::H3PO4]},
-               QVariant{QString{"%1 %2"}.arg(Salt::typeDisplayNames[Salt::Type::H3PO4]).arg("10%")},
-                  QVariant{false}, QVariant{true}, QVariant{Salt::typeStringMapping[Salt::Type::H3PO4]},
+               QVariant{"CaCl2 (Calcium chloride)"   }, QVariant{false}, QVariant{true}, QVariant{"CaCl2"     },
+               QVariant{"CaCO3 (Calcium carbonate)"  }, QVariant{false}, QVariant{true}, QVariant{"CaCO3"     },
+               QVariant{"CaSO4 (Calcium sulfate)"    }, QVariant{false}, QVariant{true}, QVariant{"CaSO4"     },
+               QVariant{"MgSO4 (Magnesium sulfate)"  }, QVariant{false}, QVariant{true}, QVariant{"MgSO4"     },
+               QVariant{"NaCl (Sodium chloride)"     }, QVariant{false}, QVariant{true}, QVariant{"NaCl"      },
+               QVariant{"NaHCO3 (Sodium bicarbonate)"}, QVariant{false}, QVariant{true}, QVariant{"NaHCO3"    },
+               QVariant{"Lactic Acid (C3H6O3) 80%"   }, QVariant{false}, QVariant{true}, QVariant{"LacticAcid"},
+               QVariant{"H3PO4 (Phosphoric acid) 75%"}, QVariant{false}, QVariant{true}, QVariant{"H3PO4"     },
+               QVariant{"H3PO4 (Phosphoric acid) 10%"}, QVariant{false}, QVariant{true}, QVariant{"H3PO4"     },
             }
          }
       };
@@ -2763,6 +2759,7 @@ namespace {
 
       return executeSqlQueries(q, migrationQueries);
    }
+
    /**
     * \brief Main change is new Folder tables.  But we also add batch number to BrewNote.
     */
@@ -2832,8 +2829,16 @@ namespace {
          //     (if any) that contains this recipe etc.
          //
          migrationQueries.append({QString(
+            //
+            // Note that, when we are selecting a constant as a "dummy column", it's good practice to give it a name.
+            // And when we are selecting NULL as the value for such a column, it's good practice to give it a type, eg
+            // via CAST().  You can get away without this on SQLite, but PostgreSQL is often more fussy, giving an
+            // error along the lines of:
+            //
+            //    column "contained_in_folder_id" is of type integer but expression is of type text
+            //
             "INSERT INTO %1 (name, deleted, contained_in_folder_id) "
-            "SELECT DISTINCT folder, false, NULL FROM %2 "
+            "SELECT DISTINCT folder, false AS deleted, CAST(NULL AS integer) AS contained_in_folder_id FROM %2 "
             "WHERE folder IS NOT NULL AND folder != '' "
             "ORDER BY folder"
          ).arg(folderTable, baseTable)});
@@ -2967,7 +2972,7 @@ namespace {
                   // We'll insert with the full path here to keep names unique until we have all the IDs.
                   //
                   QString const insertFolderSql = QString("INSERT INTO %1 (name, deleted, contained_in_folder_id) "
-                                                          "VALUES (?, false, NULL)").arg(folderTable);
+                                                          "VALUES (?, false, CAST(NULL AS integer))").arg(folderTable);
                   if (!executeQuery(q, insertFolderSql, {parentPath})) {
                      // executeQuery will already have logged an error in this instance
                      return false;
@@ -3048,16 +3053,274 @@ namespace {
 
    }
 
+   /**
+    * \brief Main change is removing the salt table and migrating Salt to be part of Misc (as Misc::Type::WaterAgent).
+    *
+    *        We add base and target water profiles to Recipe, along with mashRo_pct and spargeRo_pct (which we drop from
+    *        Water).
+    *
+    *        We also tidy up brew_log, and drop the no-longer used equipment.boil_time and equipment.calc_boil_volume
+    *        columns.
+    */
+   bool migrate_to_21([[maybe_unused]] Database & db, BtSqlQuery & q) {
+      QVector<QueryAndParameters> const migrationQueries{
+         //
+         // Since we're moving them to another table, and introducing DotBeer support, this is a good time to clean up
+         // the type names for water agents (previously salts).
+         //
+         // Strictly speaking, we should move anything of type "AcidulatedMalt" into the Fermentables table rather than
+         // the Misc one.  However, this might create as many problems as it solves.  An aciduated malt in the Salt
+         // table would not have counted towards the grain bill and so would already have needed a duplicate entry in
+         // the Fermentable table.  So, in this instance, we'll leave it to the user to make corrective modifications
+         // after this migration.
+         //
+         {QString("UPDATE salt SET stype = 'calcium chloride' "   "WHERE stype = 'CaCl2'"         )},
+         {QString("UPDATE salt SET stype = 'calcium carbonate' "  "WHERE stype = 'CaCO3'"         )},
+         {QString("UPDATE salt SET stype = 'calcium sulfate' "    "WHERE stype = 'CaSO4'"         )},
+         {QString("UPDATE salt SET stype = 'magnesium sulfate' "  "WHERE stype = 'MgSO4'"         )},
+         {QString("UPDATE salt SET stype = 'sodium chloride' "    "WHERE stype = 'NaCl'"          )},
+         {QString("UPDATE salt SET stype = 'sodium bicarbonate' " "WHERE stype = 'NaHCO3'"        )},
+         {QString("UPDATE salt SET stype = 'lactic acid' "        "WHERE stype = 'LacticAcid'"    )},
+         {QString("UPDATE salt SET stype = 'phosphoric acid' "    "WHERE stype = 'H3PO4'"         )},
+         {QString("UPDATE salt SET stype = 'other' "              "WHERE stype = 'AcidulatedMalt'")},
+         // Add the extra water agent columns to misc before we migrate rows from salt
+         // Also, add a temporary column to misc to make it easier to migrate salt_in_recipe, salt_stock_purchase, etc
+         {QString("ALTER TABLE misc ADD COLUMN water_agent_type %1").arg(db.getDbNativeTypeName<QString>())},
+         {QString("ALTER TABLE misc ADD COLUMN water_agent_percent_acid %1").arg(db.getDbNativeTypeName<double>())},
+         {QString("ALTER TABLE misc ADD COLUMN old_salt_id %1").arg(db.getDbNativeTypeName<int>())},
+         //
+         // Move the rows across to misc from salt.  We mark the rows so it's obvious to the user that they were
+         // previously "salts".  Ideally we'd do this in the user's local language, but I think it would be overkill.
+         // By the time all the translations got done, most or all users would already have done the upgrade, so they
+         // would never see the translated text.
+         //
+         {QString("INSERT INTO misc (old_salt_id, "
+                                    "name, "
+                                    "deleted, "
+                                    "mtype, "
+                                    "water_agent_type, "
+                                    "water_agent_percent_acid) "
+                  "SELECT id, "
+                         "CONCAT(name, ' (migrated from salts)') AS name, "
+                         "deleted, "
+                         "'water agent', "
+                         "stype, "
+                         "percent_acid "
+                  "FROM salt")},
+         // Move the rows across to misc_in_recipe from salt_in_recipe
+         {QString("INSERT INTO misc_in_recipe (name, "
+                                              "deleted, "
+                                              "quantity, "
+                                              "unit, "
+                                              "stage, "
+                                              "recipe_id, "
+                                              "misc_id) "
+                  //
+                  // All "Salt" additions are assumed to be during the mash, but there isn't an easy mapping from
+                  // salt_in_recipe.when_to_add (mash/sparge/ratio/equal) to equivalent columns in misc_in_recipe,
+                  // because we'd have to work out the step number from the recipe's mash profile.
+                  //
+                  // Since we don't think a huge amount of use is currently made of salt_in_recipe (because more work is
+                  // needed on the water profile tool), we'll just mark all existing additions as at an undefined point
+                  // in the mash, and retain the value of when_to_add as a text addition to the name.  In the new
+                  // structure, it will be possible to be more precise about when additions happen, so it's a net gain
+                  // in the long term.
+                  //
+                  // For similar reasons, we do not attempt to set the contained_in_folder_id column.  Strictly, we
+                  // ought to migrate folder_for_salt to folder_for_misc, but it would be a fair bit of work to merge
+                  // the two folder trees.  Since we don't think anyone has vast numbers of rows in their salt tables,
+                  // I don't think it's worth it.  So we just put all the new misc rows migrated from salt in the root
+                  // folder (ie with no folder ID).
+                  //
+                  "SELECT sir.name || ' (' || sir.when_to_add || ')' AS name, "
+                         "sir.deleted, "
+                         "sir.quantity, "
+                         "sir.unit, "
+                         "'add_to_mash' AS stage,"
+                         "sir.recipe_id, "
+                         "misc.id AS misc_id "
+                  "FROM salt_in_recipe AS sir, misc "
+                  "WHERE sir.salt_id = misc.old_salt_id")},
+         //
+         // Move the rows across to misc_stock_purchase from salt_stock_purchase.  As with the misc table, we create a
+         // temporary column, this time to help us with stock use migration below.
+         //
+         {QString("ALTER TABLE misc_stock_purchase ADD COLUMN old_salt_purchase_id %1").arg(db.getDbNativeTypeName<int>())},
+         {QString("INSERT INTO misc_stock_purchase (old_salt_purchase_id, "
+                                                   "name, "
+                                                   "deleted, "
+                                                   "misc_id, "
+                                                   "quantity, "
+                                                   "unit, "
+                                                   "quantity_ordered, "
+                                                   "date_received, "
+                                                   "date_ordered, "
+                                                   "date_best_before, "
+                                                   "supplier, "
+                                                   "note, "
+                                                   "purchase_price_currency, "
+                                                   "purchase_price, "
+                                                   "purchase_tax_currency, "
+                                                   "purchase_tax, "
+                                                   "shipping_cost_currency, "
+                                                   "shipping_cost) "
+                  "SELECT spr.id, "
+                         "spr.name, "
+                         "spr.deleted, "
+                         "misc.id, "
+                         "spr.quantity, "
+                         "spr.unit, "
+                         "spr.quantity_ordered, "
+                         "spr.date_received, "
+                         "spr.date_ordered, "
+                         "spr.date_best_before,"
+                         "spr.supplier, "
+                         "spr.note, "
+                         "spr.purchase_price_currency, "
+                         "spr.purchase_price, "
+                         "spr.purchase_tax_currency, "
+                         "spr.purchase_tax, "
+                         "spr.shipping_cost_currency, "
+                         "spr.shipping_cost "
+                  "FROM salt_stock_purchase AS spr, misc "
+                  "WHERE spr.salt_id = misc.old_salt_id")},
+         //
+         // Now do stock use
+         //
+         {QString("INSERT INTO misc_stock_use (name, "
+                                              "deleted, "
+                                              "misc_purchase_id, "
+                                              "sequence_number, "
+                                              "date, "
+                                              "reason, "
+                                              "comment, "
+                                              "quantity_used, "
+                                              "brew_log_id) "
+                  "SELECT ssu.name, "
+                         "ssu.deleted, "
+                         "msp.id AS misc_purchase_id, "
+                         "ssu.sequence_number, "
+                         "ssu.date, "
+                         "ssu.reason, "
+                         "ssu.comment, "
+                         "ssu.quantity_used, "
+                         "ssu.brew_log_id "
+                  "FROM salt_stock_use AS ssu, misc_stock_purchase AS msp "
+                  "WHERE ssu.salt_purchase_id = msp.old_salt_purchase_id")},
+         // Drop the temporary columns we added to help with migration
+         {QString("ALTER TABLE misc DROP COLUMN old_salt_id")},
+         {QString("ALTER TABLE misc_stock_purchase DROP COLUMN old_salt_purchase_id")},
+         //
+         // Drop the salt tables.  In theory, since we have foreign keys disabled, this should be straightforward.
+         // In practice, PostgreSQL doesn't like dropping a table that has a foreign key to itself, unless we give it
+         // the CASCADE option (which SQLite does not support).
+         //
+         {QString("DROP TABLE salt_stock_use")},
+         {QString("DROP TABLE salt_stock_purchase")},
+         {QString("DROP TABLE salt_in_recipe")},
+         {QString("DROP TABLE folder_for_salt %1").arg(db.getCascade())},
+         {QString("DROP TABLE salt")},
+
+         //
+         // Although we didn't migrate acid(uated) malts to the Fermentable table, we do add a new column to that table
+         // to make it easier to usefully store such malts there.
+         //
+         {QString("ALTER TABLE fermentable ADD COLUMN lactic_acid_by_weight_pct %1").arg(db.getDbNativeTypeName<double>())},
+
+         //
+         // Now we drop the columns that we stopped using in an earlier release
+         //
+         {QString("ALTER TABLE equipment DROP COLUMN boil_time")},
+         {QString("ALTER TABLE equipment DROP COLUMN calc_boil_volume")},
+
+         //
+         // Now we sort out water profiles on Recipe.
+         //
+         // There are a few things that made sense back when "use of" something involved "make a copy of" it, but now
+         // need to be modeled differently.
+         //
+         // water.mash_ro and water.sparge_ro are not properly exposed in the UI, which is a good thing because these
+         // columns make more sense on either Recipe or Mash.  We choose to move them to Recipe.  Similarly, water.type
+         // is not really exposed in the UI and is no longer needed.  The names of the new water profile fields on
+         // Recipe now fulfil this purpose.
+         //
+         {QString("ALTER TABLE water DROP COLUMN mash_ro")},
+         {QString("ALTER TABLE water DROP COLUMN sparge_ro")},
+         {QString("ALTER TABLE water DROP COLUMN wtype")},
+
+         // DB-specific version of ALTER TABLE recipe ADD COLUMN water_base INTEGER REFERENCES water(id)
+         {QString(db.getSqlToAddColumnAsForeignKey()).arg("recipe", "water_base", "water", "id")},
+         // DB-specific version of ALTER TABLE recipe ADD COLUMN water_target INTEGER REFERENCES water(id)
+         {QString(db.getSqlToAddColumnAsForeignKey()).arg("recipe", "water_target", "water", "id")},
+         {QString("ALTER TABLE recipe ADD COLUMN ro_water_mash_pct   %1").arg(db.getDbNativeTypeName<double>())},
+         {QString("ALTER TABLE recipe ADD COLUMN ro_water_sparge_pct %1").arg(db.getDbNativeTypeName<double>())},
+
+         //
+         // I never did get to the bottom of how to make use of BeerJSON's RecipeType.ingredients.water_additions.  As
+         // far as I can understand, it's a bit of an incomplete feature.  As of 2026, it seems unlikely BeerJSON is
+         // going to evolve much in the foreseeable future.  So, I think we'll just drop support for this bit of
+         // BeerJSON, and thereby simplify our data model (by eliminating RecipeUseOfWater).
+         //
+         {QString("DROP TABLE water_in_recipe")},
+
+         //
+         // Tidy up some of the column names for BrewLog
+         //
+         {QString("ALTER TABLE brew_log RENAME COLUMN brewdate                TO brew_date"    )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN fermentdate             TO ferment_date" )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN projected_boil_grav     TO expected_pre_boil_gravity_sg"    )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN sg                      TO measured_pre_boil_gravity_sg"    )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN projected_vol_into_bk   TO expected_pre_boil_volume_l"      )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN volume_into_bk          TO measured_pre_boil_volume_l"      )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN projected_strike_temp   TO expected_strike_temp_c"          )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN strike_temp             TO measured_strike_temp_c"          )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN projected_mash_fin_temp TO expected_mash_final_temp_c"      )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN mash_final_temp         TO measured_mash_final_temp_c"      )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN projected_og            TO expected_original_gravity_sg"    )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN og                      TO measured_original_gravity_sg"    )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN post_boil_volume        TO measured_post_boil_volume_l"     )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN projected_vol_into_ferm TO expected_volume_into_fermentor_l")},
+         {QString("ALTER TABLE brew_log RENAME COLUMN volume_into_fermenter   TO measured_volume_into_fermentor_l")},
+         {QString("ALTER TABLE brew_log RENAME COLUMN pitch_temp              TO measured_pitch_temp_c"           )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN projected_fg            TO expected_final_gravity_sg"       )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN fg                      TO measured_final_gravity_sg"       )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN final_volume            TO measured_final_volume"           )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN projected_abv           TO expected_alcohol_by_volume_pct"  )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN abv                     TO computed_alcohol_by_volume_pct"  )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN projected_atten         TO expected_attenuation_pct"        )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN attenuation             TO computed_attenuation_pct"        )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN projected_eff           TO expected_efficiency_pct"         )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN brewhouse_eff           TO computed_efficiency_pct"         )},
+         {QString("ALTER TABLE brew_log RENAME COLUMN eff_into_bk             TO computed_pre_boil_efficiency_pct")},
+         {QString("ALTER TABLE brew_log RENAME COLUMN boil_off                TO expected_boil_off_l")},
+
+         //
+         // We have two unnecessary columns:
+         //    projected_points      = expected_pre_boil_gravity_sg converted to gravity points
+         //    projected_ferm_points = expected_original_gravity_sg converted to gravity points
+         //
+         {QString("ALTER TABLE brew_log DROP COLUMN projected_points")},
+         {QString("ALTER TABLE brew_log DROP COLUMN projected_ferm_points")},
+         //
+         // But we also add a column to split "projected OG" out into its two meanings (value from the recipe, and value
+         // computed from pre-boil measurements.
+         //
+         {QString("ALTER TABLE brew_log ADD COLUMN forecast_original_gravity_sg %1").arg(db.getDbNativeTypeName<double>())},
+
+      };
+
+      return executeSqlQueries(q, migrationQueries);
+   }
+
    //
-   // Next time (_21):
-   //   - Drop equipment.boil_time and equipment.calc_boil_volume columns
+   // At some future point:
    //   - maybe fix remaining issues listed in ObjectStore legacyBadTypes
    //
 
    /*!
     * \brief Migrate from version \c oldVersion to \c oldVersion+1
     */
-   bool migrateNext(Database & database, int oldVersion, QSqlDatabase db ) {
+   bool migrateNext(Database & database, int const oldVersion, QSqlDatabase db) {
       qDebug() << Q_FUNC_INFO << "Migrating DB schema from v" << oldVersion << "to v" << oldVersion + 1;
       BtSqlQuery sqlQuery(db);
       bool ret = true;
@@ -3084,6 +3347,7 @@ namespace {
          case 17: ret &= migrate_to_18 (database, sqlQuery); break;
          case 18: ret &= migrate_to_19 (database, sqlQuery); break;
          case 19: ret &= migrate_to_20 (database, sqlQuery); break;
+         case 20: ret &= migrate_to_21 (database, sqlQuery); break;
          default:
             qCritical() << QString("Unknown version %1").arg(oldVersion);
             return false;
@@ -3095,7 +3359,7 @@ namespace {
       if (oldVersion > 3) {
          QString const queryString{"UPDATE settings SET version=:version WHERE id=1"};
          sqlQuery.prepare(queryString);
-         QVariant bindValue{QString::number(oldVersion + 1)};
+         QVariant const bindValue{QString::number(oldVersion + 1)};
          sqlQuery.bindValue(":version", bindValue);
          ret &= sqlQuery.exec();
       }
@@ -3106,22 +3370,22 @@ namespace {
 }
 
 
-int DatabaseSchemaHelper::getDefaultContentVersionFromDb(QSqlDatabase & db) {
+int DatabaseSchemaHelper::getDefaultContentVersionFromDb(QSqlDatabase const & db) {
    BtSqlQuery sqlQuery("SELECT default_content_version FROM settings WHERE id=1", db);
    if (sqlQuery.next() ) {
-      QVariant dc = sqlQuery.value("default_content_version");
+      QVariant const dc = sqlQuery.value("default_content_version");
       return dc.toInt();
    }
    return -1;
 }
 
-bool DatabaseSchemaHelper::setDefaultContentVersionFromDb(QSqlDatabase & db, int val) {
+bool DatabaseSchemaHelper::setDefaultContentVersionFromDb(QSqlDatabase const & db, int const val) {
    BtSqlQuery sqlQuery{db};
    QString const queryString{"UPDATE settings SET default_content_version=:version WHERE id=1"};
    sqlQuery.prepare(queryString);
-   QVariant bindValue{QString::number(val)};
+   QVariant const bindValue{QString::number(val)};
    sqlQuery.bindValue(":version", bindValue);
-   bool ret = sqlQuery.exec();
+   bool const ret = sqlQuery.exec();
    return ret;
 }
 
@@ -3183,7 +3447,7 @@ bool DatabaseSchemaHelper::create(Database & database, QSqlDatabase connection) 
    return true;
 }
 
-bool DatabaseSchemaHelper::migrate(Database & database, int oldVersion, int newVersion, QSqlDatabase connection) {
+bool DatabaseSchemaHelper::migrate(Database & database, int oldVersion, int const newVersion, QSqlDatabase connection) {
    if (oldVersion >= newVersion || newVersion > DatabaseSchemaHelper::latestVersion ) {
       qCritical() << Q_FUNC_INFO <<
          "Requested backwards migration from" << oldVersion << "to" << newVersion << ".  Assuming this is a coding "
@@ -3200,7 +3464,7 @@ bool DatabaseSchemaHelper::migrate(Database & database, int oldVersion, int newV
    // transaction is committed or rolled back.)
    DbTransaction dbTransaction{database, connection, "Migrate", DbTransaction::DISABLE_FOREIGN_KEYS};
 
-   for ( ; oldVersion < newVersion && ret; ++oldVersion ) {
+   for ( ; oldVersion < newVersion && ret; ++oldVersion) {
       ret &= migrateNext(database, oldVersion, connection);
    }
 
@@ -3250,7 +3514,7 @@ int DatabaseSchemaHelper::schemaVersion(QSqlDatabase & db) {
    return -1;
 }
 
-bool DatabaseSchemaHelper::copyToNewDatabase(Database & newDatabase, QSqlDatabase & connectionNew) {
+[[nodiscard]] bool DatabaseSchemaHelper::copyToNewDatabase(Database & newDatabase, QSqlDatabase & connectionNew) {
 
    // this is to prevent us from over-writing or doing heavens knows what to an existing db
    if (connectionNew.tables().contains(QLatin1String("settings"))) {

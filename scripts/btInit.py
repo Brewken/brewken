@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #-----------------------------------------------------------------------------------------------------------------------
-# scripts/btInit.py is part of Brewken, and is copyright the following authors 2022-2025:
+# scripts/btInit.py is part of Brewken, and is copyright the following authors 2022-2026:
 #   • Matt Young <mfsy@yahoo.com>
 #
 # Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -139,7 +139,7 @@ match platform.system():
 
    case _:
       btLogger.log.critical('Unrecognised platform: ' + platform.system())
-      exit(1)
+      sys.exit(1)
 
 exe_python = shutil.which('python3')
 btLogger.log.info('sys.version: ' + sys.version + '; exe_python: ' + exe_python + '; ' + sys.executable)
