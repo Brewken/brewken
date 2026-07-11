@@ -184,6 +184,7 @@ S & NamedParameterBundle::writeToStream(S & stream, QString const indent) const 
       // convert, eg QVariant<std::optional<int>> to "QVariant(std::optional<int>, 0)" or "QVariant(std::optional<int>,
       // NULL)" etc.
       //
+      static_assert(std::is_same_v<decltype(value), QVariant const &>);
       bool const canConvertToQString = value.canConvert<QString>();
       if (canConvertToQString) {
          stream << newIndent << key << "->" << value.typeName() << ":" << value.toString() << "\n";

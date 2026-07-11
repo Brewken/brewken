@@ -526,10 +526,6 @@
         <translation type="unfinished">Vergisting</translation>
     </message>
     <message>
-        <source>Boil-Off</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Brew Date</source>
         <translation type="unfinished">Brouwdatum</translation>
     </message>
@@ -543,10 +539,6 @@
     </message>
     <message>
         <source>Ferment Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>FG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -566,10 +558,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Pitch Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Post-Boil Volume</source>
         <translation type="unfinished"></translation>
     </message>
@@ -579,10 +567,6 @@
     </message>
     <message>
         <source>Projected Attenuation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Projected Boil Gravity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -606,10 +590,6 @@
         <translation type="unfinished">Geschatte OG</translation>
     </message>
     <message>
-        <source>Projected Points</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Projected Strike Temperature</source>
         <translation type="unfinished"></translation>
     </message>
@@ -623,7 +603,7 @@
     </message>
     <message>
         <source>SG</source>
-        <translation type="unfinished">SG</translation>
+        <translation type="obsolete">SG</translation>
     </message>
     <message>
         <source>Strike Temperature</source>
@@ -643,6 +623,30 @@
     </message>
     <message>
         <source>Brew Log #%1 for brew on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expected Boil-Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Planned OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expected pre-boil specific gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Measured FG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Measured Pitch Temperature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Measured pre-boil specific gravity</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2798,10 +2802,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <message>
         <source>Change date</source>
         <translation type="unfinished">Datum veranderen</translation>
-    </message>
-    <message>
-        <source>Recalculate efficiency</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Contained in Folder</source>
@@ -6985,6 +6985,14 @@ Program will now exit.</source>
         <source>DotBeer format (*.beer);;BeerJSON format (*.json);;BeerXML format (*.xml)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Gravity Points</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>points</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -8222,19 +8230,19 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>SG</source>
-        <translation>SG</translation>
+        <translation type="vanished">SG</translation>
     </message>
     <message>
         <source>Volume into BK</source>
-        <translation>Volume naar kook</translation>
+        <translation type="vanished">Volume naar kook</translation>
     </message>
     <message>
         <source>Strike Temp</source>
-        <translation>Maisch water start temperatuur</translation>
+        <translation type="vanished">Maisch water start temperatuur</translation>
     </message>
     <message>
         <source>Final Temp</source>
-        <translation>Eind Temperatuur</translation>
+        <translation type="vanished">Eind Temperatuur</translation>
     </message>
     <message>
         <source>Eff into BK</source>
@@ -8250,11 +8258,11 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Postboil Volume</source>
-        <translation>Volume na het koken</translation>
+        <translation type="vanished">Volume na het koken</translation>
     </message>
     <message>
         <source>Volume Into Fermenter</source>
-        <translation>Volume in het vergistingsvat</translation>
+        <translation type="vanished">Volume in het vergistingsvat</translation>
     </message>
     <message>
         <source>Brewhouse Eff</source>
@@ -8270,7 +8278,7 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation>Volume</translation>
+        <translation type="vanished">Volume</translation>
     </message>
     <message>
         <source>Category</source>
@@ -9433,7 +9441,7 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Type</translation>
+        <translation type="obsolete">Type</translation>
     </message>
     <message>
         <source>No</source>
@@ -10423,10 +10431,6 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Expected OG, based on measured FG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Projected OG</source>
         <translation type="unfinished">Geschatte OG</translation>
     </message>
@@ -10459,10 +10463,6 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Yeast attentuation based on user-reported OG and FG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Measured yeast attenuation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10480,6 +10480,22 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Batch Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expected OG, based on recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Projected OG, based on measured pre-boil gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yeast attenuation based on user-reported OG and FG</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

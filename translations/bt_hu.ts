@@ -530,10 +530,6 @@
         <translation type="unfinished">erjesztési hatékonyság</translation>
     </message>
     <message>
-        <source>Boil-Off</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Brew Date</source>
         <translation type="unfinished">Sörfőzés ideje</translation>
     </message>
@@ -551,7 +547,7 @@
     </message>
     <message>
         <source>FG</source>
-        <translation type="unfinished">végleges fajsúly (FG)</translation>
+        <translation type="obsolete">végleges fajsúly (FG)</translation>
     </message>
     <message>
         <source>Final Volume</source>
@@ -570,10 +566,6 @@
         <translation type="unfinished">kezdeti fajsúly (OG)</translation>
     </message>
     <message>
-        <source>Pitch Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Post-Boil Volume</source>
         <translation type="unfinished"></translation>
     </message>
@@ -583,10 +575,6 @@
     </message>
     <message>
         <source>Projected Attenuation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Projected Boil Gravity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -610,10 +598,6 @@
         <translation type="unfinished">Várható kezdeti fajsúly</translation>
     </message>
     <message>
-        <source>Projected Points</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Projected Strike Temperature</source>
         <translation type="unfinished"></translation>
     </message>
@@ -627,7 +611,7 @@
     </message>
     <message>
         <source>SG</source>
-        <translation type="unfinished">fajsúly (SG)</translation>
+        <translation type="obsolete">fajsúly (SG)</translation>
     </message>
     <message>
         <source>Strike Temperature</source>
@@ -647,6 +631,30 @@
     </message>
     <message>
         <source>Brew Log #%1 for brew on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expected Boil-Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Planned OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expected pre-boil specific gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Measured FG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Measured Pitch Temperature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Measured pre-boil specific gravity</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2783,10 +2791,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <message>
         <source>Change date</source>
         <translation type="unfinished">Változtatás időpontja</translation>
-    </message>
-    <message>
-        <source>Recalculate efficiency</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Contained in Folder</source>
@@ -6903,6 +6907,14 @@ Program will now exit.</source>
         <source>DotBeer format (*.beer);;BeerJSON format (*.json);;BeerXML format (*.xml)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Gravity Points</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>points</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -8124,19 +8136,19 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>SG</source>
-        <translation>fajsúly (SG)</translation>
+        <translation type="vanished">fajsúly (SG)</translation>
     </message>
     <message>
         <source>Volume into BK</source>
-        <translation>Forraló edénybe kerülő mennyiség</translation>
+        <translation type="vanished">Forraló edénybe kerülő mennyiség</translation>
     </message>
     <message>
         <source>Strike Temp</source>
-        <translation>Felöntővíz hőmérséklet</translation>
+        <translation type="vanished">Felöntővíz hőmérséklet</translation>
     </message>
     <message>
         <source>Final Temp</source>
-        <translation>Végleges hőmérséklet</translation>
+        <translation type="vanished">Végleges hőmérséklet</translation>
     </message>
     <message>
         <source>Eff into BK</source>
@@ -8152,11 +8164,11 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Postboil Volume</source>
-        <translation>Forralást követő mennyiség</translation>
+        <translation type="vanished">Forralást követő mennyiség</translation>
     </message>
     <message>
         <source>Volume Into Fermenter</source>
-        <translation>Erjesztőedénybe kerülő mennyiség</translation>
+        <translation type="vanished">Erjesztőedénybe kerülő mennyiség</translation>
     </message>
     <message>
         <source>Brewhouse Eff</source>
@@ -8172,7 +8184,7 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation>Mennyiség</translation>
+        <translation type="vanished">Mennyiség</translation>
     </message>
     <message>
         <source>Print Document</source>
@@ -9297,10 +9309,6 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>No</source>
         <translation type="unfinished">Nem</translation>
     </message>
@@ -10276,10 +10284,6 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Expected OG, based on measured FG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Projected OG</source>
         <translation type="unfinished">Várható kezdeti fajsúly</translation>
     </message>
@@ -10312,10 +10316,6 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Yeast attentuation based on user-reported OG and FG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Measured yeast attenuation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10333,6 +10333,22 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     </message>
     <message>
         <source>Batch Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expected OG, based on recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Projected OG, based on measured pre-boil gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yeast attenuation based on user-reported OG and FG</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

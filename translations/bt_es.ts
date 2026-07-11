@@ -526,10 +526,6 @@
         <translation type="unfinished">Atenuación</translation>
     </message>
     <message>
-        <source>Boil-Off</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Brew Date</source>
         <translation type="unfinished">Fecha de Elaboración</translation>
     </message>
@@ -543,10 +539,6 @@
     </message>
     <message>
         <source>Ferment Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>FG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -566,10 +558,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Pitch Temp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Post-Boil Volume</source>
         <translation type="unfinished"></translation>
     </message>
@@ -579,10 +567,6 @@
     </message>
     <message>
         <source>Projected Attenuation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Projected Boil Gravity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -606,10 +590,6 @@
         <translation type="unfinished">D.I. Prevista</translation>
     </message>
     <message>
-        <source>Projected Points</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Projected Strike Temperature</source>
         <translation type="unfinished"></translation>
     </message>
@@ -623,7 +603,7 @@
     </message>
     <message>
         <source>SG</source>
-        <translation type="unfinished">Densidad</translation>
+        <translation type="obsolete">Densidad</translation>
     </message>
     <message>
         <source>Strike Temperature</source>
@@ -643,6 +623,30 @@
     </message>
     <message>
         <source>Brew Log #%1 for brew on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expected Boil-Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Planned OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expected pre-boil specific gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Measured FG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Measured Pitch Temperature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Measured pre-boil specific gravity</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2770,10 +2774,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <message>
         <source>Change date</source>
         <translation type="unfinished">Cambiar la fecha</translation>
-    </message>
-    <message>
-        <source>Recalculate efficiency</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Contained in Folder</source>
@@ -6867,6 +6867,14 @@ Program will now exit.</source>
         <source>DotBeer format (*.beer);;BeerJSON format (*.json);;BeerXML format (*.xml)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Gravity Points</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>points</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -8072,19 +8080,19 @@ El volumen final en el primario es %1.</translation>
     </message>
     <message>
         <source>SG</source>
-        <translation>Densidad</translation>
+        <translation type="vanished">Densidad</translation>
     </message>
     <message>
         <source>Volume into BK</source>
-        <translation>Volumen en la olla de hervido</translation>
+        <translation type="vanished">Volumen en la olla de hervido</translation>
     </message>
     <message>
         <source>Strike Temp</source>
-        <translation>Temp. de Salto</translation>
+        <translation type="vanished">Temp. de Salto</translation>
     </message>
     <message>
         <source>Final Temp</source>
-        <translation>Temp. Final</translation>
+        <translation type="vanished">Temp. Final</translation>
     </message>
     <message>
         <source>Eff into BK</source>
@@ -8100,11 +8108,11 @@ El volumen final en el primario es %1.</translation>
     </message>
     <message>
         <source>Postboil Volume</source>
-        <translation>Volumen después de hervir</translation>
+        <translation type="vanished">Volumen después de hervir</translation>
     </message>
     <message>
         <source>Volume Into Fermenter</source>
-        <translation>Volumen en el fermentador</translation>
+        <translation type="vanished">Volumen en el fermentador</translation>
     </message>
     <message>
         <source>Brewhouse Eff</source>
@@ -8120,7 +8128,7 @@ El volumen final en el primario es %1.</translation>
     </message>
     <message>
         <source>Volume</source>
-        <translation>Volúmen</translation>
+        <translation type="vanished">Volúmen</translation>
     </message>
     <message>
         <source>Print Document</source>
@@ -9264,7 +9272,7 @@ El volumen final en el primario es %1.</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Tipo</translation>
+        <translation type="obsolete">Tipo</translation>
     </message>
     <message>
         <source>No</source>
@@ -10254,10 +10262,6 @@ El volumen final en el primario es %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Expected OG, based on measured FG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Projected OG</source>
         <translation type="unfinished">D.I. Prevista</translation>
     </message>
@@ -10290,10 +10294,6 @@ El volumen final en el primario es %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Yeast attentuation based on user-reported OG and FG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Measured yeast attenuation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10311,6 +10311,22 @@ El volumen final en el primario es %1.</translation>
     </message>
     <message>
         <source>Batch Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expected OG, based on recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe OG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Projected OG, based on measured pre-boil gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yeast attenuation based on user-reported OG and FG</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
