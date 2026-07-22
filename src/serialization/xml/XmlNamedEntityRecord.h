@@ -1,4 +1,4 @@
-/*======================================================================================================================
+   /*======================================================================================================================
  * serialization/xml/XmlNamedEntityRecord.h is part of Brewken, and is copyright the following authors 2020-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *
@@ -24,8 +24,6 @@
 #include "model/Recipe.h"
 #include "serialization/NamedEntityRecordBase.h"
 #include "serialization/xml/XmlRecord.h"
-#include "serialization/xml/XQString.h"
-
 
 /**
  * \brief Provides class-specific extensions to \b XmlRecord.  See comment in xml/XmlCoding.h for more details.
