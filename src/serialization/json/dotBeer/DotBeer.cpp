@@ -16,6 +16,7 @@
 #include "serialization/json/dotBeer/DotBeer.h"
 
 #include <cstdlib>
+#include <format>
 
 // We could just include <boost/json.hpp> which pulls all the Boost.JSON headers in, but that seems overkill
 #include <boost/json/kind.hpp>
