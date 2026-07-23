@@ -785,7 +785,7 @@ def installDependencies():
                             'qtmultimedia',
                             'qtnetworkauth',
                             'openssl@3', # OpenSSL headers and library
-                            'libxml2-dev',
+                            'libxml2', # There is no split between libxml2 and libxml2-dev on Mac; only the former exists
                             ]
          for packageToInstall in installListBrew:
             #
@@ -945,7 +945,7 @@ def installDependencies():
 #                            'tree',
 #                            'dylibbundler',
                             'pandoc',
-#                            'libxml2-dev',
+#                            'libxml2',
 #                            'qt6',
 #                            'qt6-qttranslations',
                             'dbus'
