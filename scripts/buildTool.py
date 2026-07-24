@@ -1049,7 +1049,7 @@ def doPackage():
             btLogger.log.critical(
                'Cannot find bin subdirectory of ' + btFileSystem.dir_packages_platform.as_posix() + ' packaging directory'
             )
-            exit(1)
+            sys.exit(1)
          if (len(packageBinDirList) > 1):
             btLogger.log.warning(
                'Found more than one bin subdirectory of ' + btFileSystem.dir_packages_platform.as_posix() +
@@ -1181,9 +1181,7 @@ def doPackage():
             'libstdc++'    ,
             'librsvg-2'    , # SVG rendering library -- see https://wiki.gnome.org/Projects/LibRsvg
             'libwinpthread',
-            'libxalan-c'   ,
-            'libxalanMsg'  ,
-            'libxerces-c-3',
+            'libxml2'      ,
             'libzstd'      , # ZStandard (aka zstd) = fast lossless compression algorithm
             'zlib'         , # ZLib compression library
          ]
@@ -1270,10 +1268,8 @@ def doPackage():
          #        │   ├── libwebp.7.dylib        🟢
          #        │   ├── libwebpdemux.2.dylib   🟢
          #        │   ├── libwebpmux.3.dylib     🟢
-         #        │   ├── libxalan-c.112.dylib   🟢
-         #        │   ├── libxerces-c-3.2.dylib  🟢
-         #        │   ├── libzstd.1.dylib        🟢
-         #        │   └── libxalanMsg.112.dylib  ❇ ✴
+         #        │   ├── libxml2.*.dylib        🟢
+         #        │   └── libzstd.1.dylib        🟢
          #        ├── MacOS
          #        │   └── [capitalisedProjectName] ❇  <── the executable
          #        ├── Plugins  <── Contains loadable bundles that extend the basic features of the application
@@ -1441,7 +1437,6 @@ def doPackage():
          #
          # For us, macdeployqt does seem to cover almost all the shared libraries and frameworks we need, including
          # those that are not part of Qt.  The exceptions are:
-         #    - libxalanMsg -- a library that libxalan-c uses (so an indirect rather than direct dependency)
          #    - libqsqlpsql.dylib -- which would be needed for any user that wants to use PostgreSQL instead of SQLite
          #
          # Note per https://www.unix.com/man_page/osx/1/dyld/ that the dynamic link editor (dyld), which is what loads
@@ -1501,76 +1496,75 @@ def doPackage():
          # '@loader_path/../Frameworks/', as will be seen from the subsequent output of running `otool`.
          #
          # We want to grab:
-         #   - the directory containing libxalan-c, as that's the same directory in which we should find libxalanMsg
          #   - information that would allow us to find libqsqlpsql.dylib .:TODO:. Still to work out how to do this.  For
          #     now, I think that means users requiring PostgreSQL support on MacOS will need to build the app from
          #     source.
          #
-         xalanDir = ''
-         xalanLibName = ''
-         xalanMatch = re.search(r'^\s*(\S+/)(libxalan-c\S*.dylib)', otoolOutputExe, re.MULTILINE)
-         if (xalanMatch):
-            # The [1] index gives us the first parenthesized subgroup of the regexp match, which in this case should be
-            # the directory path to libxalan-c.xxx.dylib
-            xalanDir = xalanMatch[1]
-            xalanLibName = xalanMatch[2]
-         else:
-            btLogger.log.warning(
-               'Could not find libxalan dependency in ' + capitalisedProjectName +
-               ' so assuming /usr/local/opt/xalan-c/lib/'
-            )
-            xalanDir = '/usr/local/opt/xalan-c/lib/'
-            xalanLibName = 'libxalan-c.112.dylib'
-         btLogger.log.debug('xalanDir: ' + xalanDir + '; contents:')
-         btExecute.abortOnRunFail(subprocess.run(['ls', '-l', xalanDir], capture_output=False))
-
-         #
-         # Strictly speaking, we should look at every /usr/local/opt/.../*.dylib dependency of our executable, and run
-         # each of those .dylib files through otool to get its dependencies, then repeat until we find no new
-         # dependencies.  Then we should ensure each dependency is copied into the app bundle and whatever depends on it
-         # knows where to find it etc.  Pretty soon we'd have ended up reimplementing macdeployqt.  Fortunately, in
-         # practice, for Xalan, it suffices to grab libxalanMsg and put it in the same directory in the bundle as
-         # libxalanc.
-         #
-         # We use otool to get the right name for libxalanMsg, which is typically listed as a relative path dependency
-         # eg '@rpath/libxalanMsg.112.dylib'.
-         #
-         # Per https://www.mikeash.com/pyblog/friday-qa-2009-11-06-linking-and-install-names.html:
-         #
-         #    @executable_path - will expand at run time to the absolute path of the app bundle's executable directory,
-         #                       ie [projectName]_[versionNumber].app/Contents/MacOS for us
-         #
-         #    @loader_path     - will expand at run time to the absolute path of whatever is loading the library,
-         #                       typically either the executable directory (if it's the executable loading the library
-         #                       directly) or, for us, the [projectName]_[versionNumber].app/Contents/Frameworks
-         #                       directory if it's another shared library requesting the load
-         #
-         #    @rpath           - means search a list of locations specified at the point the application was linked (by
-         #                       means of the -rpath linker flag), so, eg, including
-         #                       '-rpath @executable_path/../Frameworks' at link time means, for us, that
-         #                       [projectName]_[versionNumber].app/Contents/Frameworks is one of the places to search
-         #                       when @rpath is specified
-         #
-         btLogger.log.debug('Running otool -L on ' + xalanDir + xalanLibName)
-         otoolOutputXalan = btExecute.abortOnRunFail(
-            subprocess.run(['otool',
-                            '-L',
-                            xalanDir + xalanLibName],
-                           capture_output=True)
-         ).stdout.decode('UTF-8')
-         btLogger.log.debug('Output of `otool -L ' + xalanDir + xalanLibName + '`: ' + otoolOutputXalan)
-         xalanMsgLibName = ''
-         xalanMsgMatch =  re.search(r'^\s*(\S+/)(libxalanMsg\S*.dylib)', otoolOutputXalan, re.MULTILINE)
-         if (xalanMsgMatch):
-            xalanMsgLibName = xalanMsgMatch[2]
-         else:
-            btLogger.log.warning(
-               'Could not find libxalanMsg dependency in ' + xalanDir + xalanLibName +
-               ' so assuming libxalanMsg.112.dylib'
-            )
-            xalanMsgLibName = 'libxalanMsg.112.dylib'
-         btLogger.log.debug('Copying ' + xalanDir + xalanMsgLibName + ' to ' + dir_packages_mac_frm.as_posix())
-         shutil.copy2(xalanDir + xalanMsgLibName, dir_packages_mac_frm)
+###         xalanDir = ''
+###         xalanLibName = ''
+###         xalanMatch = re.search(r'^\s*(\S+/)(libxalan-c\S*.dylib)', otoolOutputExe, re.MULTILINE)
+###         if (xalanMatch):
+###            # The [1] index gives us the first parenthesized subgroup of the regexp match, which in this case should be
+###            # the directory path to libxalan-c.xxx.dylib
+###            xalanDir = xalanMatch[1]
+###            xalanLibName = xalanMatch[2]
+###         else:
+###            btLogger.log.warning(
+###               'Could not find libxalan dependency in ' + capitalisedProjectName +
+###               ' so assuming /usr/local/opt/xalan-c/lib/'
+###            )
+###            xalanDir = '/usr/local/opt/xalan-c/lib/'
+###            xalanLibName = 'libxalan-c.112.dylib'
+###         btLogger.log.debug('xalanDir: ' + xalanDir + '; contents:')
+###         btExecute.abortOnRunFail(subprocess.run(['ls', '-l', xalanDir], capture_output=False))
+###
+###         #
+###         # Strictly speaking, we should look at every /usr/local/opt/.../*.dylib dependency of our executable, and run
+###         # each of those .dylib files through otool to get its dependencies, then repeat until we find no new
+###         # dependencies.  Then we should ensure each dependency is copied into the app bundle and whatever depends on it
+###         # knows where to find it etc.  Pretty soon we'd have ended up reimplementing macdeployqt.  Fortunately, in
+###         # practice, for Xalan, it suffices to grab libxalanMsg and put it in the same directory in the bundle as
+###         # libxalanc.
+###         #
+###         # We use otool to get the right name for libxalanMsg, which is typically listed as a relative path dependency
+###         # eg '@rpath/libxalanMsg.112.dylib'.
+###         #
+###         # Per https://www.mikeash.com/pyblog/friday-qa-2009-11-06-linking-and-install-names.html:
+###         #
+###         #    @executable_path - will expand at run time to the absolute path of the app bundle's executable directory,
+###         #                       ie [projectName]_[versionNumber].app/Contents/MacOS for us
+###         #
+###         #    @loader_path     - will expand at run time to the absolute path of whatever is loading the library,
+###         #                       typically either the executable directory (if it's the executable loading the library
+###         #                       directly) or, for us, the [projectName]_[versionNumber].app/Contents/Frameworks
+###         #                       directory if it's another shared library requesting the load
+###         #
+###         #    @rpath           - means search a list of locations specified at the point the application was linked (by
+###         #                       means of the -rpath linker flag), so, eg, including
+###         #                       '-rpath @executable_path/../Frameworks' at link time means, for us, that
+###         #                       [projectName]_[versionNumber].app/Contents/Frameworks is one of the places to search
+###         #                       when @rpath is specified
+###         #
+###         btLogger.log.debug('Running otool -L on ' + xalanDir + xalanLibName)
+###         otoolOutputXalan = btExecute.abortOnRunFail(
+###            subprocess.run(['otool',
+###                            '-L',
+###                            xalanDir + xalanLibName],
+###                           capture_output=True)
+###         ).stdout.decode('UTF-8')
+###         btLogger.log.debug('Output of `otool -L ' + xalanDir + xalanLibName + '`: ' + otoolOutputXalan)
+###         xalanMsgLibName = ''
+###         xalanMsgMatch =  re.search(r'^\s*(\S+/)(libxalanMsg\S*.dylib)', otoolOutputXalan, re.MULTILINE)
+###         if (xalanMsgMatch):
+###            xalanMsgLibName = xalanMsgMatch[2]
+###         else:
+###            btLogger.log.warning(
+###               'Could not find libxalanMsg dependency in ' + xalanDir + xalanLibName +
+###               ' so assuming libxalanMsg.112.dylib'
+###            )
+###            xalanMsgLibName = 'libxalanMsg.112.dylib'
+###         btLogger.log.debug('Copying ' + xalanDir + xalanMsgLibName + ' to ' + dir_packages_mac_frm.as_posix())
+###         shutil.copy2(xalanDir + xalanMsgLibName, dir_packages_mac_frm)
 
          #
          # The dylibbundler tool (https://github.com/auriamg/macdylibbundler/) proposes a ready-made solution to make
@@ -1642,10 +1636,7 @@ def doPackage():
             # otool output from earlier:
             #    /opt/homebrew/opt/qt/lib/QtMultimedia.framework/Versions/A/QtMultimedia
             #
-            # We want to change QtMultimedia to QtNetwork and then copy the whole of the .framework directory:
-            #    /opt/homebrew/opt/qt/lib/QtNetwork.framework
-            #
-            frameworkMatch = re.search(r'^\s*(/\S+/' + framework + '.framework)', otoolOutputExe, re.MULTILINE)
+            frameworkMatch = re.search(r'^\s*(/\S+/' + framework + r'.framework/\S*)', otoolOutputExe, re.MULTILINE)
             if (frameworkMatch):
                frameworkPath = frameworkMatch[1]
                btLogger.log.debug('Doing extra dependencies for ' + frameworkPath)
@@ -1654,159 +1645,174 @@ def doPackage():
                if (not qtFrameworksDir):
                   qtFrameworksDir = os.path.dirname(frameworkPath)
 
+               #
+               # We used to assume the dependency path takes the same form as the framework that requires it.  Eg
+               # QtMultimedia -> QtNetwork meant we transformed
+               #    /opt/homebrew/opt/qt/lib/QtMultimedia.framework/Versions/A/QtMultimedia
+               # to:
+               #    /opt/homebrew/opt/qt/lib/QtNetwork.framework/Versions/A/QtNetwork
+               #
+               # However, at some point, Homebrew started putting different bits of Qt into different subdirectories.
+               # So now, we need to run otool to get the actual path of the dependency.
+               #
+               btLogger.log.debug('Running otool -L on ' + frameworkPath)
+               otoolOutputFramework = btExecute.abortOnRunFail(
+                  subprocess.run(['otool',
+                                  '-L',
+                                  frameworkPath],
+                                 capture_output=True)
+               ).stdout.decode('UTF-8')
+               btLogger.log.debug('Output of `otool -L ' + frameworkPath + '`: ' + otoolOutputFramework)
                for dependency in dependencies:
-                  #
-                  # We assume the dependency path takes the same form as the framework that requires it.  Eg
-                  # QtMultimedia -> QtNetwork means we transform
-                  #    /opt/homebrew/opt/qt/lib/QtMultimedia.framework/Versions/A/QtMultimedia
-                  # to:
-                  #    /opt/homebrew/opt/qt/lib/QtNetwork.framework/Versions/A/QtNetwork
-                  #
-                  dependencyPath = frameworkPath.replace(framework, dependency)
-                  dependencyTarget = dir_packages_mac_frm.joinpath(dependency + '.framework')
-                  #
-                  # It seems there are problems when we copy the framework trees.  Users trying to install the app who
-                  # run `codesign` get an error "bundle format is ambiguous (could be app or framework)".  We suspect
-                  # this may be related to the way we handle symlinks when we copy the tree, so this diagnostic is to
-                  # list in detail all the files in the tree before we copy it.
-                  #
-                  # Looks like symlinks are all relative and point inside the tree we are copying, so it's safe to copy
-                  # them _as_ symlinks below.
-                  #
-                  btExecute.abortOnRunFail(
-                     subprocess.run(
-                        ['find', dependencyPath, '-exec', 'ls', '-ld', '{}', '+'],
-                        capture_output=False
+                  dependencyMatch = re.search(r'^\s*(/\S+/' + dependency + '.framework)', otoolOutputFramework, re.MULTILINE)
+                  if not dependencyMatch:
+                     btLogger.log.error('Could not find dependency info for ' + dependency)
+                  else:
+                     dependencyPath = dependencyMatch[1]
+                     dependencyTarget = dir_packages_mac_frm.joinpath(dependency + '.framework')
+                     #
+                     # It seems there are problems when we copy the framework trees.  Users trying to install the app who
+                     # run `codesign` get an error "bundle format is ambiguous (could be app or framework)".  We suspect
+                     # this may be related to the way we handle symlinks when we copy the tree, so this diagnostic is to
+                     # list in detail all the files in the tree before we copy it.
+                     #
+                     # Looks like symlinks are all relative and point inside the tree we are copying, so it's safe to copy
+                     # them _as_ symlinks below.
+                     #
+                     btExecute.abortOnRunFail(
+                        subprocess.run(
+                           ['find', dependencyPath, '-exec', 'ls', '-ld', '{}', '+'],
+                           capture_output=False
+                        )
                      )
-                  )
-                  btLogger.log.debug('Copying tree ' + dependencyPath + ' to ' + dependencyTarget.as_posix())
-                  shutil.copytree(dependencyPath, dependencyTarget.as_posix(), symlinks=True)
-                  #
-                  # It is not enough to just copy, eg, QtDBus framework into the app bundle.  We need to fix its
-                  # dependencies to point inside the bundle.  Eg after we copy
-                  # /opt/homebrew/opt/qt/lib/QtDBus.framework/ to
-                  # [projectName]_[versionNumber]_MacOS.app/Contents/Frameworks/QtDBus.framework/, the other
-                  # dependencies of the library inside that framework directory will still be on the "system" paths (eg
-                  # /opt/homebrew/opt/qt/lib/QtCore.framework/, /opt/local/lib/, /opt/local/libexec/, etc).  We need to
-                  # change them to point inside the app bundle (eg
-                  # [projectName]_[versionNumber]_MacOS.app/Contents/Frameworks/QtCore.framework/ etc).
-                  #
-                  # The variable names risk getting a bit confusing here because we are talking about dependencies of
-                  # dependency.  Hence why we start referring to dependency as copiedLibrary.
-                  #
-                  copiedLibrary = dependencyTarget.joinpath('Versions', 'Current', dependency)
-                  btLogger.log.debug('Fixing absolute dependencies for ' + dependency + ' (at' + copiedLibrary.as_posix() + ')')
+                     btLogger.log.debug('Copying tree ' + dependencyPath + ' to ' + dependencyTarget.as_posix())
+                     shutil.copytree(dependencyPath, dependencyTarget.as_posix(), symlinks=True)
+                     #
+                     # It is not enough to just copy, eg, QtDBus framework into the app bundle.  We need to fix its
+                     # dependencies to point inside the bundle.  Eg after we copy
+                     # /opt/homebrew/opt/qt/lib/QtDBus.framework/ to
+                     # [projectName]_[versionNumber]_MacOS.app/Contents/Frameworks/QtDBus.framework/, the other
+                     # dependencies of the library inside that framework directory will still be on the "system" paths (eg
+                     # /opt/homebrew/opt/qt/lib/QtCore.framework/, /opt/local/lib/, /opt/local/libexec/, etc).  We need to
+                     # change them to point inside the app bundle (eg
+                     # [projectName]_[versionNumber]_MacOS.app/Contents/Frameworks/QtCore.framework/ etc).
+                     #
+                     # The variable names risk getting a bit confusing here because we are talking about dependencies of
+                     # dependency.  Hence why we start referring to dependency as copiedLibrary.
+                     #
+                     copiedLibrary = dependencyTarget.joinpath('Versions', 'Current', dependency)
+                     btLogger.log.debug('Fixing absolute dependencies for ' + dependency + ' (at' + copiedLibrary.as_posix() + ')')
 
-                  otoolOutputCopiedLibrary = btExecute.abortOnRunFail(
-                     subprocess.run(['otool',
-                                    '-L',
+                     otoolOutputCopiedLibrary = btExecute.abortOnRunFail(
+                        subprocess.run(['otool',
+                                       '-L',
+                                       copiedLibrary.as_posix()],
+                                       capture_output=True)
+                     ).stdout.decode('UTF-8')
+                     btLogger.log.debug('Output of `otool -L ' + copiedLibrary.as_posix() + '`: ' + otoolOutputCopiedLibrary)
+
+                     for outputLine in otoolOutputCopiedLibrary.splitlines():
+                        #
+                        # If we find a dependency of the form:
+                        #    /opt/local/libexec/qt6/lib/QtCore.framework/Versions/A/QtCore
+                        # we want to change it to the form:
+                        #    @executable_path/../Frameworks/QtCore.framework/Versions/A/QtCore
+                        #
+                        # For other dependencies under /opt (eg /opt/local/lib/libdbus-1.3.dylib,
+                        # /opt/local/libexec/libssl.3.dylib, we just need to point to the @executable_path/../Frameworks/
+                        # directory.
+                        #
+                        qtAbsoluteDependencyMatch = re.search(r'^\s*(/\S+/qt\S+/lib/)(Qt\S+) ', outputLine, re.MULTILINE)
+                        if (qtAbsoluteDependencyMatch):
+                           qtDepAbsPrefix = qtAbsoluteDependencyMatch[1]
+                           qtDepFramework = qtAbsoluteDependencyMatch[2]
+                           qtDepRelPrefix = '@executable_path/../Frameworks/'
+                           qtDepAbsPath = '' + qtDepAbsPrefix + qtDepFramework
+                           qtDepRelPath = '' + qtDepRelPrefix + qtDepFramework
+                           #
+                           # Per https://www.unix.com/man_page/osx/1/install_name_tool/, "install_name_tool changes the
+                           # dynamic shared library install names and or adds, changes or deletes the rpaths recorded in a
+                           # Mach-O binary".
+                           #
+                           # Specifically:
+                           #
+                           #    -id name
+                           #          Changes the shared library identification name of a dynamic shared library to name
+                           #
+                           #    -change old new
+                           #          Changes the dependent shared library install name old to new in the specified Mach-O
+                           #          binary.
+                           #
+                           # We need the -id option to change the path the shared library thinks it lives in (which is the
+                           # first line of output of otool -L).
+                           #
+                           # We need the -change option to change where the shared library looks for other shared libraries
+                           # on which it depends.
+                           #
+                           # We rely here on the different library names being sufficiently different that none contains
+                           # the name of another -- ie there is no library name (eg QtFoo) that is contained in another (eg
+                           # QtFooQtBar).
+                           #
+                           if (qtDepFramework == dependency):
+                              btLogger.log.debug(
+                                 'Running install_name_tool -id ' + qtDepRelPath + ' ' + copiedLibrary.as_posix()
+                              )
+
+                              btExecute.abortOnRunFail(
+                                 subprocess.run(
+                                    ['install_name_tool',
+                                    '-id',
+                                    qtDepRelPath,
                                     copiedLibrary.as_posix()],
-                                    capture_output=True)
-                  ).stdout.decode('UTF-8')
-                  btLogger.log.debug('Output of `otool -L ' + copiedLibrary.as_posix() + '`: ' + otoolOutputCopiedLibrary)
-
-                  for outputLine in otoolOutputCopiedLibrary.splitlines():
-                     #
-                     # If we find a dependency of the form:
-                     #    /opt/local/libexec/qt6/lib/QtCore.framework/Versions/A/QtCore
-                     # we want to change it to the form:
-                     #    @executable_path/../Frameworks/QtCore.framework/Versions/A/QtCore
-                     #
-                     # For other dependencies under /opt (eg /opt/local/lib/libdbus-1.3.dylib,
-                     # /opt/local/libexec/libssl.3.dylib, we just need to point to the @executable_path/../Frameworks/
-                     # directory.
-                     #
-                     qtAbsoluteDependencyMatch = re.search(r'^\s*(/\S+/qt\S+/lib/)(Qt\S+) ', outputLine, re.MULTILINE)
-                     if (qtAbsoluteDependencyMatch):
-                        qtDepAbsPrefix = qtAbsoluteDependencyMatch[1]
-                        qtDepFramework = qtAbsoluteDependencyMatch[2]
-                        qtDepRelPrefix = '@executable_path/../Frameworks/'
-                        qtDepAbsPath = '' + qtDepAbsPrefix + qtDepFramework
-                        qtDepRelPath = '' + qtDepRelPrefix + qtDepFramework
-                        #
-                        # Per https://www.unix.com/man_page/osx/1/install_name_tool/, "install_name_tool changes the
-                        # dynamic shared library install names and or adds, changes or deletes the rpaths recorded in a
-                        # Mach-O binary".
-                        #
-                        # Specifically:
-                        #
-                        #    -id name
-                        #          Changes the shared library identification name of a dynamic shared library to name
-                        #
-                        #    -change old new
-                        #          Changes the dependent shared library install name old to new in the specified Mach-O
-                        #          binary.
-                        #
-                        # We need the -id option to change the path the shared library thinks it lives in (which is the
-                        # first line of output of otool -L).
-                        #
-                        # We need the -change option to change where the shared library looks for other shared libraries
-                        # on which it depends.
-                        #
-                        # We rely here on the different library names being sufficiently different that none contains
-                        # the name of another -- ie there is no library name (eg QtFoo) that is contained in another (eg
-                        # QtFooQtBar).
-                        #
-                        if (qtDepFramework == dependency):
-                           btLogger.log.debug(
-                              'Running install_name_tool -id ' + qtDepRelPath + ' ' + copiedLibrary.as_posix()
-                           )
-
-                           btExecute.abortOnRunFail(
-                              subprocess.run(
-                                 ['install_name_tool',
-                                 '-id',
-                                 qtDepRelPath,
-                                 copiedLibrary.as_posix()],
-                                 capture_output=False
+                                    capture_output=False
+                                 )
                               )
-                           )
+                           else:
+                              btLogger.log.debug(
+                                 'Running install_name_tool -change ' + qtDepAbsPath + ' ' + qtDepRelPath + ' ' +
+                                 copiedLibrary.as_posix()
+                              )
+
+                              btExecute.abortOnRunFail(
+                                 subprocess.run(
+                                    ['install_name_tool',
+                                    '-change',
+                                    qtDepAbsPath,
+                                    qtDepRelPath,
+                                    copiedLibrary.as_posix()],
+                                    capture_output=False
+                                 )
+                              )
                         else:
-                           btLogger.log.debug(
-                              'Running install_name_tool -change ' + qtDepAbsPath + ' ' + qtDepRelPath + ' ' +
-                              copiedLibrary.as_posix()
-                           )
-
-                           btExecute.abortOnRunFail(
-                              subprocess.run(
-                                 ['install_name_tool',
-                                 '-change',
-                                 qtDepAbsPath,
-                                 qtDepRelPath,
-                                 copiedLibrary.as_posix()],
-                                 capture_output=False
+                           otherLibMatch = re.search(r'^\s*(/opt/\S+/)([^/ ]+) ', outputLine, re.MULTILINE)
+                           if (otherLibMatch):
+                              otherLibAbsPrefix = otherLibMatch[1]
+                              otherLibName      = otherLibMatch[2]
+                              otherLibRelPrefix = '@executable_path/../Frameworks/'
+                              otherLibAbsPath = '' + otherLibAbsPrefix + otherLibName
+                              otherLibRelPath = '' + otherLibRelPrefix + otherLibName
+                              btLogger.log.debug(
+                                 'Running install_name_tool -change ' + otherLibAbsPath + ' ' + otherLibRelPath + ' ' +
+                                 copiedLibrary.as_posix()
                               )
-                           )
-                     else:
-                        otherLibMatch = re.search(r'^\s*(/opt/\S+/)([^/ ]+) ', outputLine, re.MULTILINE)
-                        if (otherLibMatch):
-                           otherLibAbsPrefix = otherLibMatch[1]
-                           otherLibName      = otherLibMatch[2]
-                           otherLibRelPrefix = '@executable_path/../Frameworks/'
-                           otherLibAbsPath = '' + otherLibAbsPrefix + otherLibName
-                           otherLibRelPath = '' + otherLibRelPrefix + otherLibName
-                           btLogger.log.debug(
-                              'Running install_name_tool -change ' + otherLibAbsPath + ' ' + otherLibRelPath + ' ' +
-                              copiedLibrary.as_posix()
-                           )
-                           btExecute.abortOnRunFail(
-                              subprocess.run(
-                                 ['install_name_tool',
-                                  '-change',
-                                  otherLibAbsPath,
-                                  otherLibRelPath,
-                                  copiedLibrary.as_posix()],
-                                 capture_output=False
+                              btExecute.abortOnRunFail(
+                                 subprocess.run(
+                                    ['install_name_tool',
+                                     '-change',
+                                     otherLibAbsPath,
+                                     otherLibRelPath,
+                                     copiedLibrary.as_posix()],
+                                    capture_output=False
+                                 )
                               )
-                           )
 
-                  otoolOutputCopiedLibrary = btExecute.abortOnRunFail(
-                     subprocess.run(['otool',
-                                    '-L',
-                                    copiedLibrary],
-                                    capture_output=True)
-                  ).stdout.decode('UTF-8')
-                  btLogger.log.debug('Output of `otool -L ' + copiedLibrary.as_posix() + '`: ' + otoolOutputCopiedLibrary)
+                     otoolOutputCopiedLibrary = btExecute.abortOnRunFail(
+                        subprocess.run(['otool',
+                                       '-L',
+                                       copiedLibrary],
+                                       capture_output=True)
+                     ).stdout.decode('UTF-8')
+                     btLogger.log.debug('Output of `otool -L ' + copiedLibrary.as_posix() + '`: ' + otoolOutputCopiedLibrary)
 
          #
          # Before we try to run macdeployqt, we need to make sure its directory is in the PATH.  (Depending on how Qt
@@ -1911,9 +1917,9 @@ def doPackage():
          os.chdir(dir_packages_mac_bin)
          btExecute.abortOnRunFail(subprocess.run(['otool', '-L', capitalisedProjectName], capture_output=False))
          btExecute.abortOnRunFail(subprocess.run(['otool', '-l', capitalisedProjectName], capture_output=False))
-         btLogger.log.debug('Running otool on ' + xalanDir + xalanLibName + ' library after macdeployqt')
-         os.chdir(dir_packages_mac_frm)
-         btExecute.abortOnRunFail(subprocess.run(['otool', '-L', xalanDir + xalanLibName], capture_output=False))
+###         btLogger.log.debug('Running otool on ' + xalanDir + xalanLibName + ' library after macdeployqt')
+###         os.chdir(dir_packages_mac_frm)
+###         btExecute.abortOnRunFail(subprocess.run(['otool', '-L', xalanDir + xalanLibName], capture_output=False))
 
          btLogger.log.info('Created ' + dmgFileName + ' in directory ' + btFileSystem.dir_packages_platform.as_posix())
 
@@ -1951,7 +1957,7 @@ def doPackage():
 
       case _:
          btLogger.log.critical('Unrecognised platform: ' + platform.system())
-         exit(1)
+         sys.exit(1)
 
    # If we got this far, everything must have worked
    print()
@@ -1985,4 +1991,4 @@ match args.subCommand:
    # If we get here, it's a coding error as argparse should have already validated the command line arguments
    case _:
       btLogger.log.error('Unrecognised command "' + command + '"')
-      exit(1)
+      sys.exit(1)

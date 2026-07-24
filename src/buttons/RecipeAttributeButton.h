@@ -24,7 +24,6 @@
 #include <QVariant>
 
 #include "model/Recipe.h"
-#include "model/RecipeUseOfWater.h"
 #include "utils/CuriouslyRecurringTemplateBase.h"
 
 //=============================================== RecipeAttributeButton ================================================

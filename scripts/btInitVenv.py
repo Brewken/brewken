@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #-----------------------------------------------------------------------------------------------------------------------
-# scripts/btInitVenv.py is part of Brewken, and is copyright the following authors 2022-2025:
+# scripts/btInitVenv.py is part of Brewken, and is copyright the following authors 2022-2026:
 #   • Matt Young <mfsy@yahoo.com>
 #
 # Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -57,7 +57,7 @@ if (exe_pip is None or exe_pip == ''):
       'Cannot find pip (PATH=' + pathEnvVar + ') - please see https://pip.pypa.io/en/stable/installation/ for how to ' +
       'install'
    )
-   exit(1)
+   sys.exit(1)
 
 btLogger.log.info('Found pip at: ' + exe_pip)
 

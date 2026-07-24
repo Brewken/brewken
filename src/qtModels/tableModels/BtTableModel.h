@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * qtModels/tableModels/BtTableModel.h is part of Brewken, and is copyright the following authors 2021-2025:
+ * qtModels/tableModels/BtTableModel.h is part of Brewken, and is copyright the following authors 2021-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -70,12 +70,11 @@ template<class Derived, class NE> class TableModelBase; // This forward declarat
  *                            /      MashStepTableModel      /
  *                           /         MiscTableModel       /
  *                          /         YeastTableModel      /
- *                         /           SaltTableModel     /
- *                        /           WaterTableModel    /
- *                       /                              /
- *              BtTableModelRecipeObserver             /
- *                                    \               /
- *                                     \             /
+ *                         /           WaterTableModel    /
+ *                        /                              /
+ *              BtTableModelRecipeObserver              /
+ *                                    \                /
+ *                                     \              /
  *                     RecipeAdditionFermentableTableModel
  *                        RecipeAdditionHopTableModel
  *                        RecipeAdditionMiscTableModel
