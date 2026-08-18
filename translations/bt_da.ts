@@ -6269,15 +6269,15 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>MeasurementWithUnits</source>
-        <translation>Måling med enhed</translation>
+        <translation type="vanished">Måling med enhed</translation>
     </message>
     <message>
         <source>OneOfMeasurementsWithUnits</source>
-        <translation>En af målinger med enhed</translation>
+        <translation type="vanished">En af målinger med enhed</translation>
     </message>
     <message>
         <source>SingleUnitValue</source>
-        <translation>Værdi med enkelt enhed</translation>
+        <translation type="vanished">Værdi med enkelt enhed</translation>
     </message>
     <message>
         <source>RequiredConstant</source>
@@ -6629,6 +6629,30 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>Unrecognised (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>List-Of-Records</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Measurement-With-Units</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>One-Of-Measurements-With-Units</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Single-Unit-Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Required-Constant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder-Path</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13666,7 +13690,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Always show snapshots</source>
-        <translation>Vis altid oversigter</translation>
+        <translation type="vanished">Vis altid oversigter</translation>
     </message>
     <message>
         <source>How many times %1 needs to be run to trigger another backup: 1 means always backup</source>
@@ -13716,6 +13740,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Default boil time to set on new recipes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show snapshots by default</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

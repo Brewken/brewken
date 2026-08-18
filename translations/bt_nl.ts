@@ -6454,18 +6454,6 @@ Log file may contain more details.</source>
         <translation type="unfinished">Datum</translation>
     </message>
     <message>
-        <source>MeasurementWithUnits</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OneOfMeasurementsWithUnits</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SingleUnitValue</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>RequiredConstant</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7031,6 +7019,30 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Unrecognised (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>List-Of-Records</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Measurement-With-Units</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>One-Of-Measurements-With-Units</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Single-Unit-Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Required-Constant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder-Path</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13962,10 +13974,6 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Always show snapshots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;qt&gt;
    &lt;b&gt;Know another language?&lt;/b&gt;
    &lt;br&gt;&lt;br&gt;
@@ -14013,6 +14021,10 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Default boil time to set on new recipes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show snapshots by default</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
