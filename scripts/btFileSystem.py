@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------------------------------------------------
-# scripts/btFileSystem.py is part of Brewken, and is copyright the following authors 2022-2025:
+# scripts/btFileSystem.py is part of Brewken, and is copyright the following authors 2022-2026:
 #   • Matt Young <mfsy@yahoo.com>
 #
 # Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -92,7 +92,7 @@ def setGlobalDirVars():
    dir_base          = getBaseDir()
    dir_gitInfo       = dir_base.joinpath('.git')
    dir_build         = dir_base.joinpath('mbuild')
-   # Where submodules live and how many there are.  Currently there are 2: libbacktrace and valijson
+   # Where submodules live and how many there are.  Currently, there are 2: libbacktrace and blaze
    dir_gitSubmodules = dir_base.joinpath('third-party')
    num_gitSubmodules = 2
    # Top-level packaging directory - NB deliberately different name from 'packaging' (= dir_base.joinpath('packaging'))

@@ -64,18 +64,15 @@ def installDependencies():
    btLogger.log.info('Checking which dependencies need to be installed')
    #
    # I looked at using ConanCenter (https://conan.io/center/) as a source of libraries, so that we could automate
-   # installing dependencies, but it does not have all the ones we need.  Eg it has Boost, Qt, Xerces-C and Valijson,
-   # but not Xalan-C.  (Someone else has already requested Xalan-C, see
-   # https://github.com/conan-io/conan-center-index/issues/5546, but that request has been open a long time, so its
-   # fulfilment doesn't seem imminent.)  It also doesn't yet integrate quite as well with meson as we might like (eg
-   # as at 2023-01-15, https://docs.conan.io/en/latest/reference/conanfile/tools/meson.html is listed as "experimental
-   # and subject to breaking changes".
+   # installing dependencies, but it does not have all the ones we need.  However, things might improve in the future.
+   # (In 2023, Conan's Meson integration was listed as "experimental and subject to breaking changes"; in 2026, it's now
+   # free of such warnings.)
    #
-   # Another option is vcpkg (https://vcpkg.io/en/index.html), which does have both Xerces-C and Xalan-C, along with
-   # Boost, Qt and Valijson.  There is an example here https://github.com/Neumann-A/meson-vcpkg of how to use vcpkg from
-   # Meson.  However, it's pretty slow to get started with because it builds from source everything it installs
-   # (including tools it depends on such as CMake) -- even if they are already installed on your system from another
-   # source.  This is laudably correct but I'm too impatient to do things that way.
+   # Another option is vcpkg (https://vcpkg.io/en/index.html), which does have more libraries.  There is an example here
+   # https://github.com/Neumann-A/meson-vcpkg of how to use vcpkg from Meson.  However, it's pretty slow to get started
+   # with because it builds from source everything it installs (including tools it depends on such as CMake) -- even if
+   # they are already installed on your system from another source.  This is laudably correct, but I'm too impatient to
+   # do things that way.
    #
    # Will probably take another look at Conan in future, subject to working out how to have it use already-installed
    # versions of libraries/frameworks if they are present.  The recommended way to install Conan is via a Python
@@ -104,7 +101,7 @@ def installDependencies():
                    '.' + str(distroInfo["minor"]) + ')')
 
          #
-         # For almost everything apart form Boost (see below) we can rely on the distro packages.  A few notes:
+         # For almost everything apart from Boost (see below), we can rely on the distro packages.  A few notes:
          #  - We need CMake even for the Meson build because meson uses CMake as one of its library-finding tools
          #  - The pandoc package helps us create man pages from markdown input
          #  - The build-essential and debhelper packages are for creating Debian packages
@@ -1207,6 +1204,28 @@ def installDependencies():
    btExecute.abortOnRunFail(subprocess.run(['sh', './configure']))
    btExecute.abortOnRunFail(subprocess.run(['make']))
    os.chdir(previousWorkingDirectory)
+
+   #
+   # Per comments elsewhere, we use Sourcemeta Blaze (https://github.com/sourcemeta/blaze) for JSON schema validation.
+   #
+   # Same principles apply as for libbackgrace above.
+   #
+   blazeDir = btFileSystem.dir_gitSubmodules.joinpath('blaze')
+   os.chdir(blazeDir)
+   btLogger.log.debug('Run cmake in ' + blazeDir.as_posix())
+   btExecute.abortOnRunFail(
+      subprocess.run([
+         'cmake',
+         '-S', '.', '-B', './build',
+         '-DCMAKE_BUILD_TYPE:STRING=Release',
+         '-DCMAKE_COMPILE_WARNING_AS_ERROR:BOOL=ON',
+         '-DBLAZE_DOCS:BOOL=OFF',
+         '-DBLAZE_TEST:BOOL=OFF',
+         '-DBLAZE_TESTS:BOOL=OFF',
+      ])
+   )
+   btExecute.abortOnRunFail(subprocess.run(['cmake', '--build', 'build', '--config', 'Release']))
+   btExecute.abortOnRunFail(subprocess.run(['sudo', 'cmake', '--install', 'build', '--config', 'Release']))
 
    btLogger.log.info('*** Finished checking / installing dependencies ***')
    return
