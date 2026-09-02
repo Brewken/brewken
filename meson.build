@@ -630,28 +630,6 @@ message('OpenSSL Library:', openSslDependency.name(), 'found =', openSslDependen
         'version =', openSslDependency.version())
 #sharedLibraryPaths += openSslLibPaths
 
-####====================================================== Valijson =======================================================
-####
-#### Per the Valijson documentation at https://github.com/tristanpenman/valijson#regular-expression-engine, by default
-#### it uses std::regex for enforcing 'pattern' properties.  There are problems with this because "std::regex has no
-#### protection against catastrophic backtracking and the implementation in gcc is so suboptimal that it can easily
-#### lead to segmentation faults".
-####
-#### There are two ways to use a different regex engine.  We can either specify boost::regex via compile flags (but we
-#### then have to bundle boost::regex ourselves), or we can implement our own wrapper for and alternative regular
-#### expression engine.  We could use Qt's regex capabilities, but this would require converting between std::string
-#### and QString, which feels a bit clunky.  So, since boost::regex is a header-only library, we prefer the former
-#### option.
-####
-#### Apart from the above, won't need to do anything special, other than set include directories below, as it's header-only
-#### and we pull it in as a Git submodule.  We do, however, periodically need to run the following, to update to the latest
-#### version of it:
-####
-####    git submodule update --remote
-####
-###add_global_arguments('-DVALIJSON_USE_BOOST_REGEX=1', language : 'cpp')
-###add_global_arguments('-DVALIJSON_USE_EXCEPTIONS'   , language : 'cpp')
-
 #================================================== Sourcemeta Blaze ===================================================
 #
 # Although we previously used Valijson for JSON schema validation, it does not support more recent versions of the JSON
