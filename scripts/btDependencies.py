@@ -1217,15 +1217,25 @@ def installDependencies():
       subprocess.run([
          'cmake',
          '-S', '.', '-B', './build',
+         # These are the same flags as used in the Blaze nightly builds -- see
+         # https://github.com/sourcemeta/blaze/blob/main/.github/workflows/ci.yml
          '-DCMAKE_BUILD_TYPE:STRING=Release',
-         '-DCMAKE_COMPILE_WARNING_AS_ERROR:BOOL=ON',
+         '-DBLAZE_TESTS:BOOL=ON',
+         '-DBLAZE_BENCHMARK:BOOL=ON',
+         '-DBLAZE_CONTRIB:BOOL=ON',
          '-DBLAZE_DOCS:BOOL=OFF',
-         '-DBLAZE_TEST:BOOL=OFF',
-         '-DBLAZE_TESTS:BOOL=OFF',
+         '-DBUILD_SHARED_LIBS:BOOL=OFF',
+         '-DCMAKE_COMPILE_WARNING_AS_ERROR:BOOL=ON',
       ])
    )
-   btExecute.abortOnRunFail(subprocess.run(['cmake', '--build', 'build', '--config', 'Release']))
-   btExecute.abortOnRunFail(subprocess.run(['sudo', 'cmake', '--install', 'build', '--config', 'Release']))
+   # I don't think we need to build clang_format_test, but it doesn't take long and keeps us as close as possible to the
+   # Blaze nightly GitHub builds.
+   btExecute.abortOnRunFail(subprocess.run(['cmake', '--build', './build', '--config', 'Release', '--target', 'clang_format_test']))
+   btExecute.abortOnRunFail(subprocess.run(['cmake', '--build', 'build', '--config', 'Release', '--parallel', '4']))
+   btExecute.abortOnRunFail(subprocess.run(['cmake', '--install', './build', '--prefix', './build/dist', '--config', 'Release', '--verbose', '--component', 'sourcemeta_core']))
+   btExecute.abortOnRunFail(subprocess.run(['cmake', '--install', './build', '--prefix', './build/dist', '--config', 'Release', '--verbose', '--component', 'sourcemeta_core_dev']))
+   btExecute.abortOnRunFail(subprocess.run(['cmake', '--install', './build', '--prefix', './build/dist', '--config', 'Release', '--verbose', '--component', 'sourcemeta_blaze']))
+   btExecute.abortOnRunFail(subprocess.run(['cmake', '--install', './build', '--prefix', './build/dist', '--config', 'Release', '--verbose', '--component', 'sourcemeta_blaze_dev']))
 
    btLogger.log.info('*** Finished checking / installing dependencies ***')
    return

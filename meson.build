@@ -692,6 +692,19 @@ blazeDependencies = declare_dependency(
    include_directories: include_directories('third-party/blaze/build/dist/include'),
 )
 
+#
+# In theory we can get CMake to do the dependencies for us, along the following lines, but we haven't yet managed to get
+# this to work.
+#
+###blazeDependencies = dependency('blaze',
+###                              method : 'cmake',
+###                              modules : [ 'sourcemeta::core::json',
+###                                          'sourcemeta::blaze::compiler',
+###                                          'sourcemeta::blaze::evaluator',
+###                                          'sourcemeta::blaze::output' ],
+###                              cmake_module_path : join_paths(meson.project_source_root(), 'third-party/blaze/build/dist/lib/cmake'),
+###                              required : true)
+
 #==================================================== Other headers ====================================================
 # Other directories to search in for headers.  Meson will barf an error if any of these directories does not exist.
 includeDirs = include_directories('src',

@@ -783,13 +783,13 @@ find_package(CURL REQUIRED)
 endif()
 
 #================================================== Sourcemeta Blaze ===================================================
-include_directories(${ROOTDIR}/third-party/blaze/build/dist/include)
-###add_subdirectory(${repoDir}/third-party/blaze)
+include_directories(${PROJECT_SOURCE_DIR}/third-party/blaze/build/dist/include)
+add_subdirectory(${PROJECT_SOURCE_DIR}/third-party/blaze)
 ###find_package(Blaze REQUIRED COMPONENTS evaluator compiler)
 
 # Link your targets accordingly
-target_link_libraries(${fileName_executable} PUBLIC sourcemeta::blaze::evaluator)
-target_link_libraries(${fileName_executable} PUBLIC sourcemeta::blaze::compiler)
+###target_link_libraries(${fileName_executable} PUBLIC sourcemeta::blaze::evaluator)
+###target_link_libraries(${fileName_executable} PUBLIC sourcemeta::blaze::compiler)
 
 ####=======================================================Valijson========================================================
 #### Since Valijson is also hosted at github (https://github.com/tristanpenman/valijson) we just add it as a submodule
