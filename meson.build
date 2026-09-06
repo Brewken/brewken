@@ -301,6 +301,85 @@ fs = import('fs')
 prefix = get_option('prefix')
 
 #=======================================================================================================================
+#========================================= Compiler-specific settings & flags ==========================================
+#=======================================================================================================================
+if compiler.get_id() == 'gcc'
+   #
+   # -g3   should give even more debugging information than -g (which is equivalent to -g2)
+   #
+   # -O2   is hopefully a sensible optimisation level.  It means "GCC performs nearly all supported optimizations that do
+   #       not involve a space-speed tradeoff. As compared to -O, this option increases both compilation time and the
+   #       performance of the generated code."
+   #
+   # -z noexecstack  Is, in theory at least, to ensure/assert we do not have an executable stack.  This is partly as a
+   #                 good thing in itself, and partly because, by default, rpmlint with throw a
+   #                 missing-PT_GNU_STACK-section error if we don't.
+   #                    In theory, the compiler should work out automatically whether we need an executable stack,
+   #                 decide the answer is "No" and pass all the right options to the linker.   In practice, it seems
+   #                 this doesn't happen for reasons I have, as yet, to discover.
+   #                    So, we attempt to assert manually that the stack should not be executable.  The "-z noexecstack"
+   #                 should get passed through by gcc the linker (see
+   #                 https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html#Link-Options) and the GNU linker
+   #                 (https://sourceware.org/binutils/docs/ld/Options.html) should recognise "-z noexecstack" as "Marks
+   #                 the object as not requiring executable stack".
+   #                    However, even this is not sufficient(!).  So, for the moment, we suppress the rpmlint error (see
+   #                 packaging/rpmLintFilters.toml).
+   #
+   # -fconcepts  Is needed on older versions of GCC to enable C++20 concepts (because specifying C++20 was not enough
+   #             for some reason).
+   #
+   # -fconcepts-diagnostics-depth  This needs to be set to 2 or higher to give more detailed diagnostics if there is a
+   #                               compile-time error (eg from `static_assert(std::random_access_iterator<iterator>)`).
+   #
+   # The following are, according to some comments at
+   # https://stackoverflow.com/questions/52583544/boost-stack-trace-not-showing-function-names-and-line-numbers, needed
+   # for Boost stacktrace to work properly:
+   #    -no-pie
+   #    -fno-pie
+   #    -rdynamic
+   #
+   # HOWEVER, there are a couple of gotchas:
+   #    - For some reason, gcc on Windows does not accept -rdynamic -- so we only set this on Linux
+   #    - On Linux, executables in Debian packages are supposed to be compiled as position-independent code, otherwise
+   #      we'll get a 'hardening-no-pie' Lintian warning -- so we only set no-pie options on Windows
+   #
+   # NOTE that add_global_arguments() must be called before any build target is declared, otherwise we'll get an error.
+   #
+   add_global_arguments(['-g3',
+                         '-O2',
+                         '-z', 'noexecstack', # NB Not '-z noexecstack' as otherwise will be passed to gcc in quotes!
+                         '-fconcepts',
+                         '-fconcepts-diagnostics-depth=2'
+                        ], language : 'cpp')
+   if host_machine.system() == 'windows'
+      add_global_arguments     (['-no-pie', '-fno-pie'], language : 'cpp')
+      if compiler.get_linker_id() == 'ld.bfd'
+         #
+         # GNU Linker
+         #
+         # See https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html for options
+         #
+         add_global_link_arguments(['-no-pie',
+                                    '-fno-pie'], language : 'cpp')
+      endif
+   else
+      add_global_arguments     (['-pie', '-fpie'], language : 'cpp')
+      add_global_link_arguments(['-pie', '-fpie'], language : 'cpp')
+      add_global_arguments     ('-rdynamic', language : 'cpp')
+      add_global_link_arguments('-rdynamic', language : 'cpp')
+   endif
+endif
+
+if host_machine.system() == 'darwin'
+   # As explained at https://stackoverflow.com/questions/5582211/what-does-define-gnu-source-imply, defining _GNU_SOURCE
+   # gives access to various non-standard GNU/Linux extension functions and changes the behaviour of some POSIX
+   # functions.
+   #
+   # This is needed for Boost stacktrace on Mac
+   add_project_arguments('-D_GNU_SOURCE', language : 'cpp')
+endif
+
+#=======================================================================================================================
 #============================================== Frameworks and Libraries ===============================================
 #=======================================================================================================================
 #
@@ -308,7 +387,7 @@ prefix = get_option('prefix')
 # which we depend.  However, I have yet to find a universal pain-free solution.
 #
 # Meson has its own dependency management system, Wrap, but the list of pre-provided projects at
-# https://mesonbuild.com/Wrapdb-projects.html does not include Qt, Boost, Xerces, Xalan or Valijson.
+# https://mesonbuild.com/Wrapdb-projects.html does not include all the libraries/frameworks we need (eg Qt, Boost).
 #
 # You can bridge out to other systems such as Conan or vcpkg, but it's a bit clunky.
 #
@@ -431,6 +510,13 @@ qtTestRunnerDependencies = dependency('qt6', version : minVersionOfQt, modules: 
 #    Boost.Core, part of collection of the Boost C++ Libraries, is a collection of core utilities used by other Boost
 #    libraries.  Boost JSON needs a more recent version than 1.71.
 #
+#    *******************
+#    *** Boost.Regex ***
+#    *******************
+#
+#    We use this header-only library to provide an alternative to std::regex for Valijson (see
+#    https://github.com/tristanpenman/valijson#regular-expression-engine).
+#
 # For Boost, per https://mesonbuild.com/Dependencies.html#boost, we only need to supply module names for libraries we
 # need to link against.  For the header-only Boost libraries, the 'boost' dependency suffices.
 boostModules = []
@@ -519,10 +605,10 @@ backtraceDependency = compiler.find_library('backtrace',
 #   - libxml2 version 2.9.14 is the maximum available in Ubuntu 24.04 (Noble).
 #
 libxml2Dependency = dependency('LibXml2',
-                              method : 'cmake',
-                              version : '>=2.9.13',
-                              required : true,
-                              static : true)
+                               method : 'cmake',
+                               version : '>=2.9.13',
+                               required : true,
+                               static : true)
 libxml2LibPaths = libxml2Dependency.get_variable(cmake : 'PACKAGE_LIBRARIES')
 message('libxml2 Library:', libxml2Dependency.name(), 'found =', libxml2Dependency.found(),
         'version =', libxml2Dependency.version(), 'path(s)=', libxml2LibPaths)
@@ -544,17 +630,87 @@ message('OpenSSL Library:', openSslDependency.name(), 'found =', openSslDependen
         'version =', openSslDependency.version())
 #sharedLibraryPaths += openSslLibPaths
 
-#====================================================== Valijson =======================================================
-# Don't need to do anything special, other than set include directories below, as it's header-only and we pull it in as
-# a Git submodule.  We do, however, periodically need to run the following, to update to the latest version of it:
+#================================================== Sourcemeta Blaze ===================================================
+#
+# Although we previously used Valijson for JSON schema validation, it does not support more recent versions of the JSON
+# Schema standard.  As of 2026-08, it seems full support for the 2020-12 standard is still a long way off (see eg
+# https://bowtie.report/#/implementations/cpp-valijson).
+#
+# So we have switched to Sourcemeta Blaze (https://github.com/sourcemeta/blaze).  Per the instructions at
+# https://blaze.sourcemeta.com/, we add it as a git submodule.  However, as with libbacktrace, the build is done in
+# scripts/btDependencies.py.  (You might imagine that we could compile it as a subproject here.  However, this turns out
+# to be surprisingly painful because lots of the compiler flags from Blaze and its internal sourcemeta dependencies leak
+# up to this project and break things.  In theory, you can limit this "leaking" by using Meson's `partial_dependency`
+# command, but, in practice, it's fiddly and fragile.)
+#
+# We periodically need to run the following, to update to the latest version of it:
 #
 #    git submodule update --remote
 #
-add_global_arguments('-DVALIJSON_USE_EXCEPTIONS', language : 'cpp')
+blazeLibDir = join_paths(meson.project_source_root(), 'third-party/blaze/build/dist/lib')
+blazeLibNamesOrdered = [
+   #
+   # Blaze is built up from lots of modules, including several that are shared with other Sourcemeta projects.  The end
+   # result of compiling it is 50 or so static libraries.  We only need a subset of them (listed below), but working out
+   # which subset was a bit tiresome.  (In a CMake build, CMake can do this work for you by inspecting Blaze's CMake
+   # files, but the Meson integrations down to CMake don't give you the totality of that functionality.)
+   #
+   'sourcemeta_blaze_compiler',
+   'sourcemeta_blaze_evaluator',
+   'sourcemeta_core_json',
+   'sourcemeta_core_jsonpointer',
+   'sourcemeta_core_uritemplate',
+   'sourcemeta_core_email',
+   'sourcemeta_core_dns',
+   'sourcemeta_core_idna',
+   'sourcemeta_core_punycode',
+   'sourcemeta_core_time',
+   'sourcemeta_core_crypto',
+   'sourcemeta_core_css',
+   'sourcemeta_blaze_bundle',
+   'sourcemeta_blaze_foundation',
+   'sourcemeta_core_numeric',
+   'sourcemeta_core_regex',
+   'pcre2',
+   'sljit',
+   'sourcemeta_core_uri',
+   'sourcemeta_core_ip',
+   'sourcemeta_core_io',
+   'sourcemeta_core_text',
+   'sourcemeta_core_unicode',
+]
+blazeLibPaths = []
+foreach name : blazeLibNamesOrdered
+   blazeLibPaths += join_paths(blazeLibDir, 'lib' + name + '.a')
+endforeach
+blazeLibMimallocPath = join_paths(blazeLibDir, 'libmimalloc.a')
+blazeDependencies = declare_dependency(
+   link_args: ['-Wl,--start-group'] + blazeLibPaths + ['-Wl,--end-group',
+                                                       '-Wl,--push-state,--whole-archive',
+                                                       blazeLibMimallocPath,
+                                                       '-Wl,--pop-state'],
+   include_directories: include_directories('third-party/blaze/build/dist/include'),
+)
+
+#
+# In theory we can get CMake to do the dependencies for us, along the following lines, but we haven't yet managed to get
+# this to work.
+#
+###blazeDependencies = dependency('blaze',
+###                              method : 'cmake',
+###                              modules : [ 'sourcemeta::core::json',
+###                                          'sourcemeta::blaze::compiler',
+###                                          'sourcemeta::blaze::evaluator',
+###                                          'sourcemeta::blaze::output' ],
+###                              cmake_module_path : join_paths(meson.project_source_root(), 'third-party/blaze/build/dist/lib/cmake'),
+###                              required : true)
 
 #==================================================== Other headers ====================================================
 # Other directories to search in for headers.  Meson will barf an error if any of these directories does not exist.
-includeDirs = include_directories('src', 'third-party/valijson/include', 'third-party/libbacktrace')
+includeDirs = include_directories('src',
+###                                  'third-party/valijson/include',
+                                  'third-party/libbacktrace',
+                                  'third-party/blaze/build/dist/include')
 
 #=======================================================================================================================
 #============================================== Extra Apple dependencies ===============================================
@@ -631,7 +787,7 @@ commonSourceFiles = files([
    'src/StyleRangeWidget.cpp',
    'src/TimerListDialog.cpp',
    'src/TimerWidget.cpp',
-   'src/boiltime.cpp',
+   'src/BoilTimer.cpp',
    'src/buttons/BoilButton.cpp',
    'src/buttons/EquipmentButton.cpp',
    'src/buttons/FermentationButton.cpp',
@@ -894,7 +1050,7 @@ mocHeaders = files([
    'src/StyleRangeWidget.h',
    'src/TimerListDialog.h',
    'src/TimerWidget.h',
-   'src/boiltime.h',
+   'src/BoilTimer.h',
    'src/buttons/BoilButton.h',
    'src/buttons/EquipmentButton.h',
    'src/buttons/FermentationButton.h',
@@ -1334,12 +1490,15 @@ translations = qt.compile_translations(ts_files         : translationSourceFiles
 #=======================================================================================================================
 #=============================================== Lists of Dependencies =================================================
 #=======================================================================================================================
-commonDependencies = [qtCommonDependencies,
-                      libxml2Dependency,
-                      boostDependency,
-                      dlDependency,
-                      openSslDependency, # This isn't strictly needed for the testRunner, but no harm comes from including it
-                      backtraceDependency]
+commonDependencies = [
+   qtCommonDependencies,
+   libxml2Dependency,
+   boostDependency,
+   dlDependency,
+   openSslDependency, # This isn't strictly needed for the testRunner, but no harm comes from including it
+   backtraceDependency,
+   blazeDependencies
+]
 mainExeDependencies = commonDependencies + qtMainExeDependencies
 testRunnerDependencies = commonDependencies + qtTestRunnerDependencies
 
@@ -1642,83 +1801,6 @@ if host_machine.system() == 'darwin'
 elif host_machine.system() == 'windows'
    # TBD: Not sure whether this is the right place to put the icon on Windows
    install_data(filesToInstall_windowsIcon, install_dir : installSubDir_data)
-endif
-
-#=======================================================================================================================
-#========================================= Compiler-specific settings & flags ==========================================
-#=======================================================================================================================
-if compiler.get_id() == 'gcc'
-   #
-   # -g3   should give even more debugging information than -g (which is equivalent to -g2)
-   #
-   # -O2   is hopefully a sensible optimisation level.  It means "GCC performs nearly all supported optimizations that do
-   #       not involve a space-speed tradeoff. As compared to -O, this option increases both compilation time and the
-   #       performance of the generated code."
-   #
-   # -z noexecstack  Is, in theory at least, to ensure/assert we do not have an executable stack.  This is partly as a
-   #                 good thing in itself, and partly because, by default, rpmlint with throw a
-   #                 missing-PT_GNU_STACK-section error if we don't.
-   #                    In theory, the compiler should work out automatically whether we need an executable stack,
-   #                 decide the answer is "No" and pass all the right options to the linker.   In practice, it seems
-   #                 this doesn't happen for reasons I have, as yet, to discover.
-   #                    So, we attempt to assert manually that the stack should not be executable.  The "-z noexecstack"
-   #                 should get passed through by gcc the linker (see
-   #                 https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html#Link-Options) and the GNU linker
-   #                 (https://sourceware.org/binutils/docs/ld/Options.html) should recognise "-z noexecstack" as "Marks
-   #                 the object as not requiring executable stack".
-   #                    However, even this is not sufficient(!).  So, for the moment, we suppress the rpmlint error (see
-   #                 packaging/rpmLintFilters.toml).
-   #
-   # -fconcepts  Is needed on older versions of GCC to enable C++20 concepts (because specifying C++20 was not enough
-   #             for some reason).
-   #
-   # -fconcepts-diagnostics-depth  This needs to be set to 2 or higher to give more detailed diagnostics if there is a
-   #                               compile-time error (eg from `static_assert(std::random_access_iterator<iterator>)`).
-   #
-   # The following are, according to some comments at
-   # https://stackoverflow.com/questions/52583544/boost-stack-trace-not-showing-function-names-and-line-numbers, needed
-   # for Boost stacktrace to work properly:
-   #    -no-pie
-   #    -fno-pie
-   #    -rdynamic
-   #
-   # HOWEVER, there are a couple of gotchas:
-   #    - For some reason, gcc on Windows does not accept -rdynamic -- so we only set this on Linux
-   #    - On Linux, executables in Debian packages are supposed to be compiled as position-independent code, otherwise
-   #      we'll get a 'hardening-no-pie' Lintian warning -- so we only set no-pie options on Windows
-   #
-   add_global_arguments(['-g3',
-                         '-O2',
-                         '-z', 'noexecstack', # NB Not '-z noexecstack' as otherwise will be passed to gcc in quotes!
-                         '-fconcepts',
-                         '-fconcepts-diagnostics-depth=2'
-                         ], language : 'cpp')
-   if host_machine.system() == 'windows'
-      add_global_arguments     (['-no-pie', '-fno-pie'], language : 'cpp')
-      if compiler.get_linker_id() == 'ld.bfd'
-         #
-         # GNU Linker
-         #
-         # See https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html for options
-         #
-         add_global_link_arguments(['-no-pie',
-                                    '-fno-pie'], language : 'cpp')
-      endif
-   else
-      add_global_arguments     (['-pie', '-fpie'], language : 'cpp')
-      add_global_link_arguments(['-pie', '-fpie'], language : 'cpp')
-      add_global_arguments     ('-rdynamic', language : 'cpp')
-      add_global_link_arguments('-rdynamic', language : 'cpp')
-   endif
-endif
-
-if host_machine.system() == 'darwin'
-   # As explained at https://stackoverflow.com/questions/5582211/what-does-define-gnu-source-imply, defining _GNU_SOURCE
-   # gives access to various non-standard GNU/Linux extension functions and changes the behaviour of some POSIX
-   # functions.
-   #
-   # This is needed for Boost stacktrace on Mac
-   add_project_arguments('-D_GNU_SOURCE', language : 'cpp')
 endif
 
 #=======================================================================================================================

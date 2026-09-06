@@ -2339,6 +2339,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Import (from dotBeer, BeerXML or BeerJSON)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Contained in Folder Path</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Derived::StockUseClass</name>
@@ -4588,14 +4592,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>At node %1, error was %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 errors found in JSON file.  First error: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Could not open %1 for reading (error # %2)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5241,6 +5237,10 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Folder-Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 errors found in JSON file.  First error at %2: schema condition %3 is violated because &quot;%4&quot;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6033,6 +6033,14 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Change Apparent Attenuation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calories/33cl</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calories/12oz</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8888,10 +8896,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Calories/12oz</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Extras</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9108,10 +9112,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>1.0</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Export to &amp;BBCode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9132,23 +9132,11 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Tar&amp;get Boil Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Recipe Locked</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Target Batch Si&amp;ze</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Batch Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Boil Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9321,6 +9309,26 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Efficienc&amp;y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calculated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calculated final volume into the primary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pre-Boil Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calculated preboil volume - See Boil tab below</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10328,10 +10336,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Asst. Brewer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Taste Rating</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10369,6 +10373,18 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Date Created</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Assistant Brewer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calories/12oz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>1.0</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

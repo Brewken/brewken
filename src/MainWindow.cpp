@@ -161,7 +161,7 @@
 #include "utils/OptionalHelpers.h"
 #include "widgets/WaterAdjuster.h"
 
-#ifdef BUILDING_WITH_CMAKE
+#ifdef MANUALLY_INCLUDE_MOC
    // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
    #include "moc_MainWindow.cpp"
 #endif
@@ -503,8 +503,10 @@ public:
          Q_FUNC_INFO << "Logo default size:" << this->m_self.label_Brewken->width() << "×" <<
          this->m_self.label_Brewken->height();
       this->m_self.label_Brewken->setScaledContents(true);
-      this->m_self.label_Brewken->setFixedSize((265.0/66.0) * dpiX/2,  // width = 265/66 × height = 265/66 × half an inch = (265/66) × (dpiX/2)
-                                               dpiY/2);                // height = half an inch = dpiY/2
+      this->m_self.label_Brewken->setFixedSize(
+         static_cast<int>((265.0/66.0) * dpiX/2),  // width = 265/66 × height = 265/66 × half an inch = (265/66) × (dpiX/2)
+         dpiY/2                                    // height = half an inch = dpiY/2
+      );
       qDebug() <<
          Q_FUNC_INFO << "Logo new size:" << this->m_self.label_Brewken->width() << "×" <<
          this->m_self.label_Brewken->height();

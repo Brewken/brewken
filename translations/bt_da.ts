@@ -2778,6 +2778,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Import (from dotBeer, BeerXML or BeerJSON)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Contained in Folder Path</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Derived::StockUseClass</name>
@@ -6285,11 +6289,11 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>At node %1, error was %2</source>
-        <translation>Ved punkt %1 var fejl %2</translation>
+        <translation type="vanished">Ved punkt %1 var fejl %2</translation>
     </message>
     <message>
         <source>%1 errors found in JSON file.  First error: </source>
-        <translation>%1 fejl fundet i JSON-fil. Første fejl:</translation>
+        <translation type="vanished">%1 fejl fundet i JSON-fil. Første fejl:</translation>
     </message>
     <message>
         <source>Could not open %1 for reading (error # %2)</source>
@@ -6653,6 +6657,10 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>Folder-Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 errors found in JSON file.  First error at %2: schema condition %3 is violated because &quot;%4&quot;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7799,6 +7807,14 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Change Apparent Attenuation</source>
         <translation>Ændr tilsyneladende forgæringsgrad</translation>
+    </message>
+    <message>
+        <source>Calories/33cl</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calories/12oz</source>
+        <translation type="unfinished">Kalorieindhold pr. 12 oz</translation>
     </message>
 </context>
 <context>
@@ -12063,7 +12079,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Calories/12oz</source>
-        <translation>Kalorieindhold pr. 12 oz</translation>
+        <translation type="vanished">Kalorieindhold pr. 12 oz</translation>
     </message>
     <message>
         <source>Extras</source>
@@ -12347,7 +12363,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>1.0</source>
-        <translation>1.0</translation>
+        <translation type="vanished">1.0</translation>
     </message>
     <message>
         <source>Export to &amp;BBCode</source>
@@ -12371,11 +12387,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Target Batch Si&amp;ze</source>
-        <translation>Tilsigtet &amp;volumen af portion</translation>
+        <translation type="vanished">Tilsigtet &amp;volumen af portion</translation>
     </message>
     <message>
         <source>Tar&amp;get Boil Size</source>
-        <translation>Tilsigtet volumen før ko&amp;gning</translation>
+        <translation type="vanished">Tilsigtet volumen før ko&amp;gning</translation>
     </message>
     <message>
         <source>(See Boil tab below)</source>
@@ -12395,7 +12411,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Boil Size</source>
-        <translation>Volumen ved kogning</translation>
+        <translation type="vanished">Volumen ved kogning</translation>
     </message>
     <message>
         <source>Boil</source>
@@ -12655,6 +12671,26 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Efficienc&amp;y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target</source>
+        <translation type="unfinished">Tilsigtet</translation>
+    </message>
+    <message>
+        <source>Calculated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calculated final volume into the primary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pre-Boil Volume</source>
+        <translation type="unfinished">Voumen før kogning</translation>
+    </message>
+    <message>
+        <source>Calculated preboil volume - See Boil tab below</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13961,7 +13997,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Asst. Brewer</source>
-        <translation>Bryggermedhjælper</translation>
+        <translation type="vanished">Bryggermedhjælper</translation>
     </message>
     <message>
         <source>Taste Rating</source>
@@ -14002,6 +14038,18 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Total apparent attenuation</source>
         <translation>Total tilsyneladende forgæringsgrad</translation>
+    </message>
+    <message>
+        <source>Assistant Brewer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calories/12oz</source>
+        <translation type="unfinished">Kalorieindhold pr. 12 oz</translation>
+    </message>
+    <message>
+        <source>1.0</source>
+        <translation type="unfinished">1.0</translation>
     </message>
 </context>
 <context>

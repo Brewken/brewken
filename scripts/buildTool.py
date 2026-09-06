@@ -225,6 +225,33 @@ def doSetup(setupOption):
 
       btUtils.ensureSubmodulesPresent()
 
+   #
+   # Although we don't use CMake for generating releases, we do support it for local compilation.  We'll do the minimum
+   # here to set it up if there is no CMake build directory (build).  We don't need this directory for the Meson build,
+   # but we know we already have CMake installed (because Meson needs it), so it's no harm to set it up here.  It also
+   # simplifies the nightly builds to have this script handle setup for both Meson and CMake builds.
+   #
+   # TODO: If we wanted to be a bit more slick here, we could check whether dir_cMakeBuild is empty via
+   #       len(os.listdir())
+   #
+   if btFileSystem.dir_cMakeBuild.exists():
+      btLogger.log.info('Cmake build directory ' + os.path.abspath(btFileSystem.dir_cMakeBuild) + 'already exists')
+   else:
+      btLogger.log.info('Creating and configuring CMake build directory ' + os.path.abspath(btFileSystem.dir_cMakeBuild) + ' but NB this is NOT required for Meson builds')
+      previousWorkingDirectory = pathlib.Path.cwd().as_posix()
+      os.mkdir(btFileSystem.dir_cMakeBuild)
+      os.chdir(btFileSystem.dir_cMakeBuild)
+      extraParms = []
+      if (platform.system() == 'Linux'):
+         # On Linux, CMake defaults CMAKE_INSTALL_PREFIX=/usr/local.
+         # On debian/ubuntu, it's better to install to /usr.
+         linuxType = btUtils.getLinuxType()
+         if linuxType == 'debian':
+            extraParms.append('-DCMAKE_INSTALL_PREFIX=/usr')
+
+      btExecute.abortOnRunFail(subprocess.run(['cmake', '-DDO_RELEASE_BUILD=ON'] + extraParms + ['..']))
+      os.chdir(previousWorkingDirectory)
+
    # Check whether Meson build directory is already set up.  (Although nothing bad happens, if you run setup twice,
    # it complains and tells you to run configure.)
    # Best clue that set-up has been run (rather than, say, user just created empty mbuild directory by hand) is the
@@ -245,7 +272,7 @@ def doSetup(setupOption):
       #
       response = ""
       while (response != 'y' and response != 'n'):
-         response = input('Do you want to completely reset the build directory? [y or n] ').lower()
+         response = input('Do you want to completely reset the meson build directory (mbuild)? [y or n] ').lower()
       if (response == 'n'):
          runMesonSetup = False
       else:
@@ -265,8 +292,20 @@ def doSetup(setupOption):
       btLogger.log.info('Setting up ' + btFileSystem.dir_build.as_posix() + ' meson build directory')
       # See https://mesonbuild.com/Commands.html#setup for all the optional parameters to meson setup
       # Note that meson setup will create the build directory (along with various subdirectories)
-      btExecute.abortOnRunFail(subprocess.run([btUtils.exe_meson, "setup", btFileSystem.dir_build.as_posix(), btFileSystem.dir_base.as_posix()],
-                                            capture_output=False))
+      additionalMesonOptions=[
+         # Uncomment the next line to enable multi-threaded linking.  HOWEVER, we might want to wait until a newer
+         # version of Qt to try this.  As of 2026-09-06, enabling this on Ubuntu 24.04 LTS results in a start-up crash
+         # in the Qt code!
+#         '-Db_lto=true', '-Db_lto_threads=0'
+      ]
+      btExecute.abortOnRunFail(
+         subprocess.run([btUtils.exe_meson,
+                         "setup",
+                         btFileSystem.dir_build.as_posix(),
+                         btFileSystem.dir_base.as_posix()] +
+                        additionalMesonOptions,
+                        capture_output=False)
+      )
 
       btLogger.log.info('Finished setting up Meson build.  Note that the warnings above about path separator and optimization ' +
                'level are expected!')
@@ -277,7 +316,7 @@ def doSetup(setupOption):
    btLogger.log.debug('PATH=' + os.environ["PATH"])
    print()
    print('You can now build, test, install and run ' + capitalisedProjectName + ' with the following commands:')
-   print('   cd ' + os.path.relpath(btFileSystem.dir_build))
+   print('   cd ' + os.path.abspath(btFileSystem.dir_build))
    print('   meson compile')
    print('   meson test')
    if (platform.system() == 'Linux'):
@@ -285,7 +324,6 @@ def doSetup(setupOption):
    else:
       print('   meson install')
    print('   ' + projectName)
-
 
    return
 
@@ -1500,71 +1538,6 @@ def doPackage():
          #     now, I think that means users requiring PostgreSQL support on MacOS will need to build the app from
          #     source.
          #
-###         xalanDir = ''
-###         xalanLibName = ''
-###         xalanMatch = re.search(r'^\s*(\S+/)(libxalan-c\S*.dylib)', otoolOutputExe, re.MULTILINE)
-###         if (xalanMatch):
-###            # The [1] index gives us the first parenthesized subgroup of the regexp match, which in this case should be
-###            # the directory path to libxalan-c.xxx.dylib
-###            xalanDir = xalanMatch[1]
-###            xalanLibName = xalanMatch[2]
-###         else:
-###            btLogger.log.warning(
-###               'Could not find libxalan dependency in ' + capitalisedProjectName +
-###               ' so assuming /usr/local/opt/xalan-c/lib/'
-###            )
-###            xalanDir = '/usr/local/opt/xalan-c/lib/'
-###            xalanLibName = 'libxalan-c.112.dylib'
-###         btLogger.log.debug('xalanDir: ' + xalanDir + '; contents:')
-###         btExecute.abortOnRunFail(subprocess.run(['ls', '-l', xalanDir], capture_output=False))
-###
-###         #
-###         # Strictly speaking, we should look at every /usr/local/opt/.../*.dylib dependency of our executable, and run
-###         # each of those .dylib files through otool to get its dependencies, then repeat until we find no new
-###         # dependencies.  Then we should ensure each dependency is copied into the app bundle and whatever depends on it
-###         # knows where to find it etc.  Pretty soon we'd have ended up reimplementing macdeployqt.  Fortunately, in
-###         # practice, for Xalan, it suffices to grab libxalanMsg and put it in the same directory in the bundle as
-###         # libxalanc.
-###         #
-###         # We use otool to get the right name for libxalanMsg, which is typically listed as a relative path dependency
-###         # eg '@rpath/libxalanMsg.112.dylib'.
-###         #
-###         # Per https://www.mikeash.com/pyblog/friday-qa-2009-11-06-linking-and-install-names.html:
-###         #
-###         #    @executable_path - will expand at run time to the absolute path of the app bundle's executable directory,
-###         #                       ie [projectName]_[versionNumber].app/Contents/MacOS for us
-###         #
-###         #    @loader_path     - will expand at run time to the absolute path of whatever is loading the library,
-###         #                       typically either the executable directory (if it's the executable loading the library
-###         #                       directly) or, for us, the [projectName]_[versionNumber].app/Contents/Frameworks
-###         #                       directory if it's another shared library requesting the load
-###         #
-###         #    @rpath           - means search a list of locations specified at the point the application was linked (by
-###         #                       means of the -rpath linker flag), so, eg, including
-###         #                       '-rpath @executable_path/../Frameworks' at link time means, for us, that
-###         #                       [projectName]_[versionNumber].app/Contents/Frameworks is one of the places to search
-###         #                       when @rpath is specified
-###         #
-###         btLogger.log.debug('Running otool -L on ' + xalanDir + xalanLibName)
-###         otoolOutputXalan = btExecute.abortOnRunFail(
-###            subprocess.run(['otool',
-###                            '-L',
-###                            xalanDir + xalanLibName],
-###                           capture_output=True)
-###         ).stdout.decode('UTF-8')
-###         btLogger.log.debug('Output of `otool -L ' + xalanDir + xalanLibName + '`: ' + otoolOutputXalan)
-###         xalanMsgLibName = ''
-###         xalanMsgMatch =  re.search(r'^\s*(\S+/)(libxalanMsg\S*.dylib)', otoolOutputXalan, re.MULTILINE)
-###         if (xalanMsgMatch):
-###            xalanMsgLibName = xalanMsgMatch[2]
-###         else:
-###            btLogger.log.warning(
-###               'Could not find libxalanMsg dependency in ' + xalanDir + xalanLibName +
-###               ' so assuming libxalanMsg.112.dylib'
-###            )
-###            xalanMsgLibName = 'libxalanMsg.112.dylib'
-###         btLogger.log.debug('Copying ' + xalanDir + xalanMsgLibName + ' to ' + dir_packages_mac_frm.as_posix())
-###         shutil.copy2(xalanDir + xalanMsgLibName, dir_packages_mac_frm)
 
          #
          # The dylibbundler tool (https://github.com/auriamg/macdylibbundler/) proposes a ready-made solution to make

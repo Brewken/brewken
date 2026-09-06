@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/StepOwnerBase.h is part of Brewken, and is copyright the following authors 2023-2025:
+ * model/StepOwnerBase.h is part of Brewken, and is copyright the following authors 2023-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -205,7 +205,7 @@ public:
    }
 
    unsigned int numSteps() const {
-      return this->m_stepSet.size();
+      return static_cast<int>(this->m_stepSet.size());
    }
 
    /*!

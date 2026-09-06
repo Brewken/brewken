@@ -45,7 +45,7 @@ jobs:
         # LTS release and the update of ubuntu-latest (eg in October 2022, it was still Ubuntu 20.04 rather than 22.04).
         # So we explicitly specify here which versions we want to build on.
         #
-        os: [ubuntu-22.04, ubuntu-24.04]
+        os: [ubuntu-24.04, ubuntu-26.04]
     steps:
       - uses: actions/checkout@v6
         with:
@@ -78,17 +78,6 @@ jobs:
       - name: Create CMake build environment
         run: cmake -E make_directory ${{github.workspace}}/build
 
-      - name: Configure CMake
-        shell: bash
-        working-directory: ${{github.workspace}}/build
-        run: |
-          umask 022
-          cmake \
-            DESTDIR=/usr \
-            -DDO_RELEASE_BUILD=ON \
-            -DNO_MESSING_WITH_FLAGS=ON \
-            $GITHUB_WORKSPACE
-
       - name: Build (with Meson)
         id: meson-build
         working-directory: ${{github.workspace}}/mbuild
@@ -114,7 +103,7 @@ jobs:
         working-directory: ${{github.workspace}}/build
         shell: bash
         run: |
-          make
+           cmake --build . --parallel
 
       - name: Test (via CMake)
         id: cmake-test
