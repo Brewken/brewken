@@ -1225,7 +1225,9 @@ def installDependencies():
          '-DBLAZE_CONTRIB:BOOL=ON',
          '-DBLAZE_DOCS:BOOL=OFF',
          '-DBUILD_SHARED_LIBS:BOOL=OFF',
-         '-DCMAKE_COMPILE_WARNING_AS_ERROR:BOOL=ON',
+         # In the native Blaze builds, warnings are treated as errors.  But on some platforms we're using different
+         # (versions of) different compilers.  So it's easier for us to turn them off.
+         '-DCMAKE_COMPILE_WARNING_AS_ERROR:BOOL=OFF',
       ])
    )
    # I don't think we need to build clang_format_test, and it gives errors on Windows, so commented out for now.

@@ -717,6 +717,7 @@ endif()
 #
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROJECT_SOURCE_DIR}/third-party/blaze/build/dist/lib/cmake/blaze")
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROJECT_SOURCE_DIR}/third-party/blaze/build/dist/lib/cmake/core")
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROJECT_SOURCE_DIR}/third-party/blaze/build/dist/lib/cmake/mimalloc")
 message("Before searching for Blaze, CMAKE_PREFIX_PATH is ${CMAKE_PREFIX_PATH}")
 find_package(Blaze REQUIRED COMPONENTS compiler evaluator)
 find_package(Core REQUIRED COMPONENTS json jsonpointer)
