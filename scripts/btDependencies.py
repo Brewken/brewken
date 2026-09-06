@@ -1228,9 +1228,8 @@ def installDependencies():
          '-DCMAKE_COMPILE_WARNING_AS_ERROR:BOOL=ON',
       ])
    )
-   # I don't think we need to build clang_format_test, but it doesn't take long and keeps us as close as possible to the
-   # Blaze nightly GitHub builds.
-   btExecute.abortOnRunFail(subprocess.run(['cmake', '--build', './build', '--config', 'Release', '--target', 'clang_format_test']))
+   # I don't think we need to build clang_format_test, and it gives errors on Windows, so commented out for now.
+#   btExecute.abortOnRunFail(subprocess.run(['cmake', '--build', './build', '--config', 'Release', '--target', 'clang_format_test']))
    btExecute.abortOnRunFail(subprocess.run(['cmake', '--build', 'build', '--config', 'Release', '--parallel', '4']))
    btExecute.abortOnRunFail(subprocess.run(['cmake', '--install', './build', '--prefix', './build/dist', '--config', 'Release', '--verbose', '--component', 'sourcemeta_core']))
    btExecute.abortOnRunFail(subprocess.run(['cmake', '--install', './build', '--prefix', './build/dist', '--config', 'Release', '--verbose', '--component', 'sourcemeta_core_dev']))

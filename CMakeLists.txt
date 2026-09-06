@@ -355,51 +355,6 @@ if(APPLE)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GNU_SOURCE")
 endif()
 
-####======Speed up compilation by using precompiled headers (PCH) for development======
-###
-#### (ADD_PCH_RULE  _header_filename _src_list)
-#### Version 7/26/2010
-####
-#### use this macro before "add_executable"
-####
-#### _header_filename
-####  header to make a .gch
-####
-#### _src_list
-####   the variable name (do not use ${..}) which contains a
-####     a list of sources (a.cpp b.cpp c.cpp ...)
-####  This macro will append a header file to it, then this src_list can be used in
-####  "add_executable..."
-####
-####
-#### Now a .gch file should be generated and gcc should use it.
-####        (add -Winvalid-pch to the cpp flags to verify)
-####
-#### make clean should delete the pch file
-####
-#### example : ADD_PCH_RULE(headers.h myprog_SRCS)
-###MACRO (ADD_PCH_RULE  _header_filename _src_list)
-###   set(_gch_filename "${CMAKE_CURRENT_BINARY_DIR}/${_header_filename}.gch")
-###   set(_header "${CMAKE_CURRENT_SOURCE_DIR}/${_header_filename}")
-###
-###   LIST(APPEND ${_src_list} ${_gch_filename})
-###
-###   SET (_args ${CMAKE_CXX_FLAGS})
-###   LIST(APPEND _args -c ${_header} -o ${_gch_filename})
-###
-###   GET_DIRECTORY_PROPERTY(DIRINC include_directories)
-###   FOREACH(_inc ${DIRINC})
-###      LIST(APPEND _args "-I" ${_inc})
-###   ENDFOREACH(_inc ${DIRINC})
-###
-###   SEPARATE_ARGUMENTS(_args)
-###
-###   ADD_CUSTOM_COMMAND(OUTPUT ${_gch_filename}
-###                      COMMAND rm -f ${_gch_filename}
-###                      COMMAND ${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_ARG1} ${_args}
-###                      DEPENDS ${_header})
-###ENDMACRO(ADD_PCH_RULE _src_list _header_filename)
-
 #=======================================================================================================================
 #=================================================== Set build type ====================================================
 #=======================================================================================================================
@@ -453,7 +408,7 @@ if(APPLE)
    # It seems this is only needed on MacOS.  According to ./third-party/valijson/README.md we are not the only ones to
    # experience this!
    #
-   execute_process(COMMAND brew --prefix qt6 OUTPUT_VARIABLE CMAKE_PREFIX_PATH)
+   execute_process(COMMAND brew --prefix qt6 OUTPUT_VARIABLE CMAKE_PREFIX_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
    message(STATUS "CMAKE_PREFIX_PATH = ${CMAKE_PREFIX_PATH}")
 endif()
 
@@ -761,33 +716,10 @@ endif()
 # provide the path to a directory containing FoobarConfig.cmake or foobar-config.cmake.
 #
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROJECT_SOURCE_DIR}/third-party/blaze/build/dist/lib/cmake/blaze")
-message("CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROJECT_SOURCE_DIR}/third-party/blaze/build/dist/lib/cmake/core")
+message("Before searching for Blaze, CMAKE_PREFIX_PATH is ${CMAKE_PREFIX_PATH}")
 find_package(Blaze REQUIRED COMPONENTS compiler evaluator)
 find_package(Core REQUIRED COMPONENTS json jsonpointer)
-
-####=======================================================Valijson========================================================
-#### Since Valijson is also hosted at github (https://github.com/tristanpenman/valijson) we just add it as a submodule
-#### (via git clone https://github.com/tristanpenman/valijson third-party/valijson).  Then the following also come from
-#### https://github.com/tristanpenman/valijson#readme
-####
-#### Valijson is a header-only library, so we don't need to build or link to any libraries etc (unless you want to build
-#### its test suite - in which case, uncomment the add_subdirectory line and add ValiJSON::valijson to both lists of
-#### target_link_libraries in src/CMakeLists.txt).
-####
-#### Previously we were using CMake ExternalProject_Add to pull Valijson in, but this is unnecessary (because we don't need
-#### to build Valijson) and somewhat harder to debug when it goes wrong.  So, instead, per the readme at
-#### https://github.com/tristanpenman/valijson, we just added ValiJSON as a git submodule from the command line.
-####
-###message(STATUS "Valijson source at  ${CMAKE_CURRENT_SOURCE_DIR}/third-party/valijson")
-#### Per comment above, leave the next line commented out unless you want to build the ValiJSON test suite
-####add_subdirectory(third-party/valijson)
-###valijson_USE_BOOST_REGEX=TRUE
-###add_compile_definitions(VALIJSON_USE_EXCEPTIONS)
-###include_directories(${ROOTDIR}/third-party/valijson/include)
-###execute_process(COMMAND git config --global --add safe.directory third-party/valijson
-###                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-###execute_process(COMMAND git submodule update --init --recursive
-###                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 #========================================= Find MinGW (only needed on Windows) =========================================
 if(WIN32)
