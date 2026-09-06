@@ -78,16 +78,16 @@ jobs:
       - name: Create CMake build environment
         run: cmake -E make_directory ${{github.workspace}}/build
 
-      - name: Configure CMake
-        shell: bash
-        working-directory: ${{github.workspace}}/build
-        run: |
-          umask 022
-          cmake \
-            DESTDIR=/usr \
-            -DDO_RELEASE_BUILD=ON \
-            -DNO_MESSING_WITH_FLAGS=ON \
-            $GITHUB_WORKSPACE
+###      - name: Configure CMake
+###        shell: bash
+###        working-directory: ${{github.workspace}}/build
+###        run: |
+###          umask 022
+###          cmake \
+###            DESTDIR=/usr \
+###            -DDO_RELEASE_BUILD=ON \
+###            -DNO_MESSING_WITH_FLAGS=ON \
+###            $GITHUB_WORKSPACE
 
       - name: Build (with Meson)
         id: meson-build
@@ -114,7 +114,8 @@ jobs:
         working-directory: ${{github.workspace}}/build
         shell: bash
         run: |
-          make
+#          make
+           cmake --build . --parallel
 
       - name: Test (via CMake)
         id: cmake-test

@@ -490,7 +490,6 @@ public:
    // as we can get is using [[no_unique_address]] here, which allows the compiler to optimise away the variable storage
    // when it's an empty class type
    //
-   struct Empty { };
    [[no_unique_address]] std::conditional_t<IsSubstantiveVariant<ChildPtrTypes>,
                                             std::vector<ChildPtrTypes>,
                                             Empty>  m_children;
