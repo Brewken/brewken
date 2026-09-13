@@ -681,6 +681,7 @@ message('OpenSSL Library:', openSslDependency.name(), 'found =', openSslDependen
 # poorly-documented `cmake_args` option.
 #
 blazeDistDir = join_paths(meson.project_source_root(), 'third-party/blaze/build/dist')
+message('blazeDistDir:', blazeDistDir)
 ###blazeLibDir = join_paths(meson.project_source_root(), 'third-party/blaze/build/dist/lib')
 ###blazeCmakeDir = join_paths(meson.project_source_root(), 'third-party/blaze/cmake')
 blazeDependencies = dependency('Blaze',

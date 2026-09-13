@@ -302,7 +302,7 @@ def doSetup(setupOption):
          #
          # On Windows and Mac we prefer static linking as it simplifies packaging.
          #
-         # On Linux, there is less need for static linking and it actually creates problems in some circumstances --
+         # On Linux, there is less need for static linking, and it actually creates problems in some circumstances --
          # specifically on Ubuntu 26.04, trying to link OpenSSL statically creates a link dependency on
          # libjitterentropy.a, which is potentially tiresome to address.  (TBD if installing libjitterentropy3-dev
          # package would address it or whether you'd have to build the static version of that library from source.  In
@@ -319,8 +319,10 @@ def doSetup(setupOption):
                         capture_output=False)
       )
 
-      btLogger.log.info('Finished setting up Meson build.  Note that the warnings above about path separator and optimization ' +
-               'level are expected!')
+      btLogger.log.info(
+         'Finished setting up Meson build.  Note that the warnings above about path separator and optimization ' +
+         'level are expected!'
+      )
 
    if (warnAboutCurrentDirectory):
       print("❗❗❗ Your current directory has been deleted!  You need to run 'cd ../mbuild' ❗❗❗")

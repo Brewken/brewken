@@ -1262,5 +1262,10 @@ def installDependencies():
    btExecute.abortOnRunFail(subprocess.run(sudoIfNeeded + ['cmake', '--install', './build', '--prefix', './build/dist', '--config', 'Release', '--verbose', '--component', 'sourcemeta_blaze'    ]))
    btExecute.abortOnRunFail(subprocess.run(sudoIfNeeded + ['cmake', '--install', './build', '--prefix', './build/dist', '--config', 'Release', '--verbose', '--component', 'sourcemeta_blaze_dev']))
 
+   btExecute.abortOnRunFail(subprocess.run(sudoIfNeeded + ['cmake', '--install', './build', '--config', 'Release', '--verbose', '--component', 'sourcemeta_core'     ]))
+   btExecute.abortOnRunFail(subprocess.run(sudoIfNeeded + ['cmake', '--install', './build', '--config', 'Release', '--verbose', '--component', 'sourcemeta_core_dev' ]))
+   btExecute.abortOnRunFail(subprocess.run(sudoIfNeeded + ['cmake', '--install', './build', '--config', 'Release', '--verbose', '--component', 'sourcemeta_blaze'    ]))
+   btExecute.abortOnRunFail(subprocess.run(sudoIfNeeded + ['cmake', '--install', './build', '--config', 'Release', '--verbose', '--component', 'sourcemeta_blaze_dev']))
+
    btLogger.log.info('*** Finished checking / installing dependencies ***')
    return
