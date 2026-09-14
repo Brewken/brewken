@@ -662,10 +662,13 @@ message('OpenSSL Library:', openSslDependency.name(), 'found =', openSslDependen
 # subdirectories of /usr/local/lib and /usr/local/include on Ubuntu).  However, things aren't simple on all platforms.
 #
 # Blaze provides cmake/FindCore.cmake, for Blaze to find its Core dependency, but this is for building Blaze, and is not
-# part of its install.  (There is no FindBlaze.cmake, because Blaze does not need to know how to find itself!).  We need
-# CMake to be able to find core-config.cmake and blaze-config.cmake.  These are in the ./core and ./blaze subdirectories
-# of wherever Blaze is installed (eg /usr/local/lib/cmake/core and /usr/local/lib/cmake/blaze if installed to default
-# location on Ubuntu.
+# part of its install.  There is no FindBlaze.cmake, because Blaze does not need to know how to find itself(!)
+# Moreover, setting CMAKE_MODULE_PATH to the third-party/blaze/cmake directory is counterproductive: it results in the
+# `dependency()` command below failing.
+#
+# We need CMake to be able to find core-config.cmake and blaze-config.cmake.  These are in the ./core and ./blaze
+# subdirectories of wherever Blaze is installed (eg /usr/local/lib/cmake/core and /usr/local/lib/cmake/blaze if
+# installed to default location on Ubuntu.
 #
 # The trouble is that, on Windows, the default install location puts these files at
 # '/c/Program Files (x86)/blaze/lib/cmake/blaze' and '/c/Program Files (x86)/blaze/lib/cmake/core' (from an MSYS2 point
@@ -676,9 +679,9 @@ message('OpenSSL Library:', openSslDependency.name(), 'found =', openSslDependen
 # use CMAKE_PREFIX_PATH to tell CMake where Blaze is installed.  (It takes a bit of trial-and-error to understand which
 # directory CMake needs here.  It turns out it's the top-level one and lib/cmake gets added automatically inside CMake.)
 #
-# There is a specific Meson dependency() option, `cmake_module_path`, for setting CMAKE_MODULE_PATH but, for some
-# reason, there is _not_ a `cmake_prefix_path` option.  Fortunately, we can also pass settings to CMake via the
-# poorly-documented `cmake_args` option.
+# There is a specific Meson dependency() option, `cmake_module_path`, for setting CMAKE_MODULE_PATH (which, per above we
+# do NOT want to set).  However, for some reason, there is _not_ a `cmake_prefix_path` option.  Fortunately, we can also
+# pass settings to CMake via the poorly-documented `cmake_args` option.
 #
 blazeDistDir = join_paths(meson.project_source_root(), 'third-party/blaze/build/dist')
 message('blazeDistDir:', blazeDistDir)
@@ -706,11 +709,6 @@ blazeDependencies = dependency('Blaze',
                                components : ['compiler',
                                              'evaluator',
                                              'output'],
-                               #
-                               # On Windows at least, CMAKE_MODULE_PATH needs to be set for CMake to find
-                               # third-party/blaze/cmake/FindCore.cmake
-                               #
-                               cmake_module_path : blazeCmakeDir,
                                cmake_args : '-DCMAKE_PREFIX_PATH=' + blazeDistDir,
                                required : true)
 
