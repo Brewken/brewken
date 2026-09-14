@@ -683,7 +683,7 @@ message('OpenSSL Library:', openSslDependency.name(), 'found =', openSslDependen
 blazeDistDir = join_paths(meson.project_source_root(), 'third-party/blaze/build/dist')
 message('blazeDistDir:', blazeDistDir)
 ###blazeLibDir = join_paths(meson.project_source_root(), 'third-party/blaze/build/dist/lib')
-###blazeCmakeDir = join_paths(meson.project_source_root(), 'third-party/blaze/cmake')
+blazeCmakeDir = join_paths(meson.project_source_root(), 'third-party/blaze/cmake')
 blazeDependencies = dependency('Blaze',
                                method : 'cmake',
                                modules : [ 'sourcemeta::core::json',
@@ -706,11 +706,11 @@ blazeDependencies = dependency('Blaze',
                                components : ['compiler',
                                              'evaluator',
                                              'output'],
-###                               #
-###                               # On Windows at least, CMAKE_MODULE_PATH needs to be set for CMake to find
-###                               # third-party/blaze/cmake/FindCore.cmake
-###                               #
-####                               cmake_module_path : blazeCmakeDir,
+                               #
+                               # On Windows at least, CMAKE_MODULE_PATH needs to be set for CMake to find
+                               # third-party/blaze/cmake/FindCore.cmake
+                               #
+                               cmake_module_path : blazeCmakeDir,
                                cmake_args : '-DCMAKE_PREFIX_PATH=' + blazeDistDir,
                                required : true)
 
