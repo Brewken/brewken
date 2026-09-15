@@ -526,7 +526,8 @@ def doFlatpak():
       btLogger.log.info('Installing flatpak')
       btExecute.abortOnRunFail(subprocess.run(['sudo', 'apt', 'update']))
       btExecute.abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', 'flatpak']))
-      # We deliberately don't apt install flatpak-builder here -- see comment below
+      btExecute.abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', 'flatpak-builder']))
+###      # We deliberately don't apt install flatpak-builder here -- see comment below
       btExecute.abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', 'appstream']))
       btExecute.abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', 'appstream-compose']))
       exe_flatpak = shutil.which('flatpak')
@@ -660,18 +661,18 @@ def doFlatpak():
       subprocess.run(['flatpak', '--user', 'install', '--assumeyes', 'org.kde.Sdk//' + runtimeVersion])
    )
 
-   #
-   # In theory, we could install flatpak builder using `sudo apt install flatpak-builder` (above where we install
-   # flatpak itself).  However, on Ubuntu 22.04, this installs too old a version.  Instead, we install via flatpak
-   # which gives us a more recent one.  Note, however, that we need to have installed the Platform and Sdk first.
-   #
-   # Note that Flatpak Linter (flatpak-builder-lint) is included in Flatpak Builder
-   #
-   btLogger.log.info('Installing Flatpak Builder')
-   btExecute.abortOnRunFail(
-#      subprocess.run(['flatpak', '--user', 'install', 'flathub', '--assumeyes', 'org.flatpak.Builder'])
-      subprocess.run(['flatpak', '--user', 'install', '--assumeyes', 'org.flatpak.Builder'])
-   )
+###   #
+###   # In theory, we could install flatpak builder using `sudo apt install flatpak-builder` (above where we install
+###   # flatpak itself).  However, on Ubuntu 22.04, this installs too old a version.  Instead, we install via flatpak
+###   # which gives us a more recent one.  Note, however, that we need to have installed the Platform and Sdk first.
+###   #
+###   # Note that Flatpak Linter (flatpak-builder-lint) is included in Flatpak Builder
+###   #
+###   btLogger.log.info('Installing Flatpak Builder')
+###   btExecute.abortOnRunFail(
+####      subprocess.run(['flatpak', '--user', 'install', 'flathub', '--assumeyes', 'org.flatpak.Builder'])
+###      subprocess.run(['flatpak', '--user', 'install', '--assumeyes', 'org.flatpak.Builder'])
+###   )
 
    builderInfo = btExecute.abortOnRunFail(
       subprocess.run(
@@ -699,7 +700,7 @@ def doFlatpak():
 
    #
    # Since we have to rebuild everything, we need the source code.  We want this in a subdirectory of the one holding
-   # the manifest, because flatpak-builder is going to copy it and we don't want to be trying to copy a directory tree
+   # the manifest, because flatpak-builder is going to copy it, and we don't want to be trying to copy a directory tree
    # inside itself.
    #
    btLogger.log.info('Copy source tree etc')
@@ -827,18 +828,24 @@ def doFlatpak():
          # See https://docs.flatpak.org/en/latest/flatpak-builder-command-reference.html for flatpak-builder command
          # reference.
          #
-         ['dbus-run-session', '--',
-            'flatpak',
-          '--user',
-          '--verbose',
-          'run',
-          'org.flatpak.Builder',
-          '--user',
-          '--verbose',
-          '--install-deps-from=flathub', # In theory we already installed the dependencies above, but, in practice, we
-                                         # seem to need some more when we're running as a GitHub action.
-          dir_flatpakBuild.as_posix(),
-          file_manifest.as_posix()],
+         ['flatpak-builder',
+                    '--user',
+                    '--verbose'
+                    dir_flatpakBuild.as_posix(),
+                    file_manifest.as_posix()],
+###
+###         ['dbus-run-session', '--',
+###            'flatpak',
+###          '--user',
+###          '--verbose',
+###          'run',
+###          'org.flatpak.Builder',
+###          '--user',
+###          '--verbose',
+###          '--install-deps-from=flathub', # In theory we already installed the dependencies above, but, in practice, we
+###                                         # seem to need some more when we're running as a GitHub action.
+###          dir_flatpakBuild.as_posix(),
+###          file_manifest.as_posix()],
          capture_output=False
       )
    )

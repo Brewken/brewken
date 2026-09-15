@@ -644,27 +644,50 @@ message('OpenSSL Library:', openSslDependency.name(), 'found =', openSslDependen
 # up to this project and break things.  In theory, you can limit this "leaking" by using Meson's `partial_dependency`
 # command, but, in practice, it's fiddly and fragile.)
 #
-# We periodically need to run the following, to update to the latest version of it:
+# We periodically need to run the following, to update to the latest version of Blaze:
 #
 #    git submodule update --remote
 #
-# CMAKE_PREFIX_PATH is a "Semicolon-separated list of directories specifying installation prefixes to be searched by the
-# find_package(), find_program(), find_library(), find_file(), and find_path() commands. Each command will add
-# appropriate subdirectories (like bin, lib, or include) as specified in its own documentation."
+# In order for Meson to find Blaze as a dependency, we need to "outsource" things to CMake's `find_package()` command
+# (via the `method : 'cmake'` option on Meson's `dependency()` command).  This is a bit fiddly because Blaze consists of
+# multiple static libraries, so we need it to find its own dependencies.  There are a couple of options we can pass in
+# to CMake's `find_package()`:
 #
-# CMAKE_MODULE_PATH is a "semicolon-separated list of directories, represented using forward slashes, specifying a
-# search path for CMake modules to be loaded by the include() or find_package() commands before checking the default
-# modules that come with CMake".  What this means is that it's a place CMake looks for a FindFoobar.cmake file when you
-# invoke find_package(Foobar).  If you don't have a FindFoobar.cmake file, you should instead use CMAKE_PREFIX_PATH to
-# provide the path to a directory containing FoobarConfig.cmake or foobar-config.cmake.
+#    CMAKE_PREFIX_PATH is a "Semicolon-separated list of directories specifying installation prefixes to be searched by
+#                      the find_package(), find_program(), find_library(), find_file(), and find_path() commands. Each
+#                      command will add appropriate subdirectories (like bin, lib, or include) as specified in its own
+#                      documentation."
+#
+#    CMAKE_MODULE_PATH is a "semicolon-separated list of directories, represented using forward slashes, specifying a
+#                      search path for CMake modules to be loaded by the include() or find_package() commands before
+#                      checking the default modules that come with CMake".  What this means is that it's a place CMake
+#                      looks for a FindFoobar.cmake file when you invoke find_package(Foobar).  If you don't have a
+#                      FindFoobar.cmake file, you should instead use CMAKE_PREFIX_PATH to provide the path to a
+#                      directory containing FoobarConfig.cmake or foobar-config.cmake.
 #
 # In theory we shouldn't need to worry about either of these if Blaze is installed to a "Standard" location (eg
 # subdirectories of /usr/local/lib and /usr/local/include on Ubuntu).  However, things aren't simple on all platforms.
 #
-# Blaze provides cmake/FindCore.cmake, for Blaze to find its Core dependency, but this is for building Blaze, and is not
-# part of its install.  There is no FindBlaze.cmake, because Blaze does not need to know how to find itself(!)
-# Moreover, setting CMAKE_MODULE_PATH to the third-party/blaze/cmake directory is counterproductive: it results in the
-# `dependency()` command below failing.
+# One thing to understand is that, per https://cmake.org/cmake/help/latest/command/find_package.html, `find_package()`
+# can run in two different modes:
+#
+#    Module Mode: CMake searches for a file called Find<PackageName>.cmake, looking first in the locations listed in the
+#                 CMAKE_MODULE_PATH, then among the Find Modules provided by the CMake installation.
+#
+#    Config Mode: CMake searches for a file matching <PackageName>.cps, <lowercasePackageName>.cps,
+#                 <lowercasePackageName>-config.cmake, or <PackageName>Config.cmake.
+#
+# Depending on how CMake is invoked, it runs either Module Mode or Config Mode but then potentially falls back to the
+# other mode if the package is not found.
+#
+# Blaze provides cmake/FindCore.cmake, for Blaze to find its Core dependency in Module Mode, but this is for building
+# Blaze, and is not part of its install.  There is no FindBlaze.cmake, because Blaze does not need to know how to find
+# itself(!)  Moreover, setting CMAKE_MODULE_PATH to the third-party/blaze/cmake directory is counterproductive: it
+# results in the `dependency()` command below failing.
+#
+# To avoid confusing errors about not being able to find FindBlaze.cmake, we would prefer CMake to fun in Config Mode
+# first.  Per https://cmake.org/cmake/help/latest/variable/CMAKE_FIND_PACKAGE_PREFER_CONFIG.html, we can do this via the
+# CMAKE_FIND_PACKAGE_PREFER_CONFIG variable.
 #
 # We need CMake to be able to find core-config.cmake and blaze-config.cmake.  These are in the ./core and ./blaze
 # subdirectories of wherever Blaze is installed (eg /usr/local/lib/cmake/core and /usr/local/lib/cmake/blaze if
@@ -709,7 +732,10 @@ blazeDependencies = dependency('Blaze',
                                components : ['compiler',
                                              'evaluator',
                                              'output'],
-                               cmake_args : '-DCMAKE_PREFIX_PATH=' + blazeDistDir,
+                               cmake_args : [
+                                  '-DCMAKE_PREFIX_PATH=' + blazeDistDir,
+                                  '-DCMAKE_FIND_PACKAGE_PREFER_CONFIG=TRUE',
+                               ],
                                required : true)
 
 #==================================================== Other headers ====================================================
