@@ -673,14 +673,14 @@ def doFlatpak():
 ####      subprocess.run(['flatpak', '--user', 'install', 'flathub', '--assumeyes', 'org.flatpak.Builder'])
 ###      subprocess.run(['flatpak', '--user', 'install', '--assumeyes', 'org.flatpak.Builder'])
 ###   )
-
-   builderInfo = btExecute.abortOnRunFail(
-      subprocess.run(
-         ['flatpak', '--user', 'info', 'org.flatpak.Builder'],
-         capture_output=True
-      )
-   ).stdout.decode('UTF-8')
-   btLogger.log.info('Flatpak Builder Info:\n' + builderInfo)
+###
+###   builderInfo = btExecute.abortOnRunFail(
+###      subprocess.run(
+###         ['flatpak', '--user', 'info', 'org.flatpak.Builder'],
+###         capture_output=True
+###      )
+###   ).stdout.decode('UTF-8')
+###   btLogger.log.info('Flatpak Builder Info:\n' + builderInfo)
 
    installedFlatpakRuntimes = btExecute.abortOnRunFail(
       subprocess.run(

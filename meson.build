@@ -709,7 +709,7 @@ message('OpenSSL Library:', openSslDependency.name(), 'found =', openSslDependen
 blazeDistDir = join_paths(meson.project_source_root(), 'third-party/blaze/build/dist')
 message('blazeDistDir:', blazeDistDir)
 ###blazeLibDir = join_paths(meson.project_source_root(), 'third-party/blaze/build/dist/lib')
-blazeCmakeDir = join_paths(meson.project_source_root(), 'third-party/blaze/cmake')
+###blazeCmakeDir = join_paths(meson.project_source_root(), 'third-party/blaze/cmake')
 blazeDependencies = dependency('Blaze',
                                method : 'cmake',
                                modules : [ 'sourcemeta::core::json',
@@ -732,9 +732,11 @@ blazeDependencies = dependency('Blaze',
                                components : ['compiler',
                                              'evaluator',
                                              'output'],
+                               # CMAKE_FIND_DEBUG_MODE will hopefully help diagnose problems!
                                cmake_args : [
                                   '-DCMAKE_PREFIX_PATH=' + blazeDistDir,
                                   '-DCMAKE_FIND_PACKAGE_PREFER_CONFIG=TRUE',
+                                  '-DCMAKE_FIND_DEBUG_MODE=ON',
                                ],
                                required : true)
 
