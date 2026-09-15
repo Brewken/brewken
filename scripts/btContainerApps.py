@@ -830,7 +830,7 @@ def doFlatpak():
          #
          ['flatpak-builder',
                     '--user',
-                    '--verbose'
+                    '--verbose',
                     dir_flatpakBuild.as_posix(),
                     file_manifest.as_posix()],
 ###
