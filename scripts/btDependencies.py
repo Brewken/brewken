@@ -1243,12 +1243,10 @@ def installDependencies():
    btExecute.abortOnRunFail(subprocess.run(['cmake', '--build', 'build', '--config', 'Release', '--parallel', '4']))
    #
    # In Blaze's own nightly builds, they use the `--prefix ./build/dist` option to "install" to a subdirectory of the
-   # build directory.  This is attractive, given that Blaze is a static library and we don't inherently need to install
-   # it system-wide.  However, it's problematic to get Meson to pass the right arguments to CMake (when we use
-   # `depencency()` in meson.build).  The only reliable way I've found to do it is globally via an extra command-line
-   # argument to meson setup (eg `meson setup mbuild -Dcmake_prefix_path=$(pwd)/third-party/blaze/build/dist`).  This
-   # seems a bit clunky.  So, for now at least, we let cmake install Blaze to "standard" locations, then the Meson
-   # invocation of CMake to find the libraries works without any additional magic.
+   # build directory.  This is attractive, given that Blaze is a static library, and we don't inherently need to install
+   # it system-wide.  However, it's proved fiddly trying to get everything to work on every platform.  So we do a
+   # belt-and-braces and install Blaze in both locations (ie system-wide and in the third-party/blaze/build/dist
+   # subdirectory).
    #
    # On Linux and Mac, we need sudo to install to the "standard" locations.  However, "sudo" does not exist on Windows,
    # even in the MSYS2 environment.
@@ -1257,10 +1255,10 @@ def installDependencies():
    if (platform.system() != 'Windows'):
       sudoIfNeeded.append('sudo')
 
-   btExecute.abortOnRunFail(subprocess.run(sudoIfNeeded + ['cmake', '--install', './build', '--prefix', './build/dist', '--config', 'Release', '--verbose', '--component', 'sourcemeta_core'     ]))
-   btExecute.abortOnRunFail(subprocess.run(sudoIfNeeded + ['cmake', '--install', './build', '--prefix', './build/dist', '--config', 'Release', '--verbose', '--component', 'sourcemeta_core_dev' ]))
-   btExecute.abortOnRunFail(subprocess.run(sudoIfNeeded + ['cmake', '--install', './build', '--prefix', './build/dist', '--config', 'Release', '--verbose', '--component', 'sourcemeta_blaze'    ]))
-   btExecute.abortOnRunFail(subprocess.run(sudoIfNeeded + ['cmake', '--install', './build', '--prefix', './build/dist', '--config', 'Release', '--verbose', '--component', 'sourcemeta_blaze_dev']))
+   btExecute.abortOnRunFail(subprocess.run(['cmake', '--install', './build', '--prefix', './build/dist', '--config', 'Release', '--verbose', '--component', 'sourcemeta_core'     ]))
+   btExecute.abortOnRunFail(subprocess.run(['cmake', '--install', './build', '--prefix', './build/dist', '--config', 'Release', '--verbose', '--component', 'sourcemeta_core_dev' ]))
+   btExecute.abortOnRunFail(subprocess.run(['cmake', '--install', './build', '--prefix', './build/dist', '--config', 'Release', '--verbose', '--component', 'sourcemeta_blaze'    ]))
+   btExecute.abortOnRunFail(subprocess.run(['cmake', '--install', './build', '--prefix', './build/dist', '--config', 'Release', '--verbose', '--component', 'sourcemeta_blaze_dev']))
 
    btExecute.abortOnRunFail(subprocess.run(sudoIfNeeded + ['cmake', '--install', './build', '--config', 'Release', '--verbose', '--component', 'sourcemeta_core'     ]))
    btExecute.abortOnRunFail(subprocess.run(sudoIfNeeded + ['cmake', '--install', './build', '--config', 'Release', '--verbose', '--component', 'sourcemeta_core_dev' ]))

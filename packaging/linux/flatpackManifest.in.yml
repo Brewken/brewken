@@ -33,48 +33,6 @@ modules:
    # In theory, we should install libxml2 here, but it seems like it's always already installed.
    #
 
-###   #
-###   # Previously we used to pull Xerces-C and Xalan-C from the official Apache mirror and then apply the Gentoo patches
-###   # to them.  However, the Gentoo servers can be a bit flaky, so it's simpler to have everything on GitHub.  Hence, we
-###   # fork the projects and apply to patches to our forked versions.
-###   #
-####   - name: XercesC
-####     sources:
-####       - type: git
-####         url: https://github.com/Brewken/xerces-c/
-####         commit: 7fa658d0fa8e23ea62747fb34f4ac16bb6d8a197  # 2026-03-03
-####     buildsystem: cmake-ninja
-####     builddir: true
-####     # See https://xerces.apache.org/xerces-c/build-3.html for Xerces-C build options
-####     # We would like to suppress compile warnings in the Xerces build, as there are a lot of them, and it overwhelms
-####     # the log file when we run in a GitHub Action.  I hoped that '-Wno-dev' would do the job, but it does not.
-####     config-opts:
-####       - -DCMAKE_BUILD_TYPE=Release
-####       - -DBUILD_SHARED_LIBS=ON
-####       - -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-####       - -DCMAKE_INSTALL_PREFIX=/app
-####       - -DCMAKE_INSTALL_LIBDIR=/app/lib
-####       - -Wno-dev
-####
-####   - name: XalanC
-####     sources:
-####       - type: git
-####         url: https://github.com/Brewken/xalan-c/
-####         commit: 5863eaf743c8eff44d5c563fe86bdd71fc2a6a63  # 2026-03-04
-####     buildsystem: cmake-ninja
-####     builddir: true
-####     # See https://xalan-c.org/build.html#configuration for Xalan-C build options
-####     # We would like to suppress compile warnings in the Xalan build, as there are a lot of them, and it overwhelms
-####     # the log file when we run in a GitHub Action.  I hoped that '-Wno-dev' would do the job, but it does not.
-####     config-opts:
-####       - -DCMAKE_BUILD_TYPE=Release
-####       - -DBUILD_SHARED_LIBS=ON
-####       - -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-####       - -DCMAKE_POLICY_VERSION_MINIMUM=3.5
-####       - -DCMAKE_INSTALL_PREFIX=/app
-####       - -DCMAKE_INSTALL_LIBDIR=/app/lib
-####       - -Wno-dev
-
    - name: LibBacktrace
      sources:
        - type: git
@@ -86,6 +44,18 @@ modules:
        - type: git
          url: https://github.com/sourcemeta/blaze
          commit: e9ddd90e8c1b5b89e6f95660f6bbc5502c34bea6  # 2026-09-08
+     buildsystem: simple
+     build-commands:
+       - cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=Release -DBLAZE_TESTS:BOOL=ON -DBLAZE_BENCHMARK:BOOL=OFF -DBLAZE_CONTRIB:BOOL=ON -DBLAZE_DOCS:BOOL=OFF -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_COMPILE_WARNING_AS_ERROR:BOOL=OFF -DBLAZE_TEST:BOOL=OFF
+       - cmake --build build --config Release --parallel 4
+       - cmake --install ./build --prefix ./build/dist --config Release --verbose --component sourcemeta_core
+       - cmake --install ./build --prefix ./build/dist --config Release --verbose --component sourcemeta_core_dev
+       - cmake --install ./build --prefix ./build/dist --config Release --verbose --component sourcemeta_blaze
+       - cmake --install ./build --prefix ./build/dist --config Release --verbose --component sourcemeta_blaze_dev
+       - sudo cmake --install ./build --config Release --verbose --component sourcemeta_core
+       - sudo cmake --install ./build --config Release --verbose --component sourcemeta_core_dev
+       - sudo cmake --install ./build --config Release --verbose --component sourcemeta_blaze
+       - sudo cmake --install ./build --config Release --verbose --component sourcemeta_blaze_dev
 
    - name: Boost
      buildsystem: simple
