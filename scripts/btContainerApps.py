@@ -527,6 +527,7 @@ def doFlatpak():
       btExecute.abortOnRunFail(subprocess.run(['sudo', 'apt', 'update']))
       btExecute.abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', 'flatpak']))
       btExecute.abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', 'flatpak-builder']))
+      btExecute.abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', 'flatpak-builder-lint']))
 ###      # We deliberately don't apt install flatpak-builder here -- see comment below
       btExecute.abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', 'appstream']))
       btExecute.abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', 'appstream-compose']))
@@ -759,14 +760,15 @@ def doFlatpak():
    btLogger.log.info('Running Flatpak Linter')
    btExecute.abortOnRunFail(
       subprocess.run(
-         ['flatpak',
-               '--user',
-               '--verbose',
-               'run',
-               '--command=flatpak-builder-lint',
-               'org.flatpak.Builder',
-               'manifest',
-               file_manifest.as_posix()],
+         ['flatpak-builder-lint', 'manifest', file_manifest.as_posix()],
+###         ['flatpak',
+###               '--user',
+###               '--verbose',
+###               'run',
+###               '--command=flatpak-builder-lint',
+###               'org.flatpak.Builder',
+###               'manifest',
+###               file_manifest.as_posix()],
          capture_output=False
       )
    )

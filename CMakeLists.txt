@@ -704,7 +704,11 @@ find_package(CURL REQUIRED)
 endif()
 
 #================================================== Sourcemeta Blaze ===================================================
-find_package(Blaze REQUIRED COMPONENTS compiler evaluator)
+# See comments in meson.build for why we need extra options here (mostly to make things work on Windows/MSYS2).
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/third-party/blaze/build/dist)
+set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
+set(CMAKE_FIND_DEBUG_MODE TRUE)
+find_package(Blaze REQUIRED COMPONENTS compiler evaluator output)
 find_package(Core REQUIRED COMPONENTS json jsonpointer)
 
 #========================================= Find MinGW (only needed on Windows) =========================================
