@@ -527,7 +527,6 @@ def doFlatpak():
       btExecute.abortOnRunFail(subprocess.run(['sudo', 'apt', 'update']))
       btExecute.abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', 'flatpak']))
       btExecute.abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', 'flatpak-builder']))
-###      # We deliberately don't apt install flatpak-builder here -- see comment below
       btExecute.abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', 'appstream']))
       btExecute.abortOnRunFail(subprocess.run(['sudo', 'apt', 'install', 'appstream-compose']))
       exe_flatpak = shutil.which('flatpak')
@@ -798,31 +797,6 @@ def doFlatpak():
    #
    btLogger.log.info('Running Flatpak Builder')
    btExecute.abortOnRunFail(
-      #
-      # Because we needed to get a more recent version of Flatpak Builder than is in the Ubuntu 22.04 repositories, we
-      # install Flatpak Builder from a Flatpak (see above).  This means we need to invoke
-      # 'flatpak run org.flatpak.Builder' here rather than directly call 'flatpak-builder'.  As a result, we need to
-      # take care that there are separate options to the 'flatpak' command and to the
-      # 'org.flatpak.Builder' app it is invoking.  Eg this is why we see '--user' and '--verbose' twice below.
-      #
-      # However, there is a bit more pain/complexity to deal with:
-      #    (1) Because we are running Flatpak Builder as a Flatpak, it is somewhat isolated from the rest of the system.
-      #        Eg it cannot see org.kde.Sdk that we installed above.  The way we get around this is to tell Builder to
-      #        install any dependencies it needs (inside its own sandbox presumably) -- hence the
-      #        '--install-deps-from=flathub' option.
-      #    (2) In a GitHub Action, the install-deps-from option causes Flatpak Builder will fail with an error along the
-      #        lines of "Error installing deps: running flatpak --user install -y --noninteractive flathub
-      #        org.kde.Sdk/x86_64/6.10: Cannot autolaunch D-Bus without X11 $DISPLAY".  We get around this by running
-      #        Flatpak builder inside an isolated D-Bus instance -- hence the 'dbus-run-session --' wrapper.
-      #
-      # TBD: In 2026, when we get to a point where we are no longer supporting Ubuntu 22.04, we can probably switch to
-      #      using the apt repository version of flatpak-builder, which will then mean this call can be simplified down
-      #      to ['flatpak-builder',
-      #          '--user',
-      #          '--verbose'
-      #          dir_flatpakBuild.as_posix(),
-      #          file_manifest.as_posix()].
-      #
       subprocess.run(
          #
          # See https://docs.flatpak.org/en/latest/flatpak-builder-command-reference.html for flatpak-builder command
@@ -833,19 +807,6 @@ def doFlatpak():
                     '--verbose',
                     dir_flatpakBuild.as_posix(),
                     file_manifest.as_posix()],
-###
-###         ['dbus-run-session', '--',
-###            'flatpak',
-###          '--user',
-###          '--verbose',
-###          'run',
-###          'org.flatpak.Builder',
-###          '--user',
-###          '--verbose',
-###          '--install-deps-from=flathub', # In theory we already installed the dependencies above, but, in practice, we
-###                                         # seem to need some more when we're running as a GitHub action.
-###          dir_flatpakBuild.as_posix(),
-###          file_manifest.as_posix()],
          capture_output=False
       )
    )
