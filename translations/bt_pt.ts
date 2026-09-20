@@ -2783,6 +2783,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Import (from dotBeer, BeerXML or BeerJSON)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Contained in Folder Path</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Derived::StockUseClass</name>
@@ -6216,14 +6220,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>At node %1, error was %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 errors found in JSON file.  First error: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Could not open %1 for reading (error # %2)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6905,6 +6901,10 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Folder-Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 errors found in JSON file.  First error at %2: schema condition %3 is violated because &quot;%4&quot;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7962,6 +7962,14 @@ O volume final do fermentador primário é %1.</translation>
     <message>
         <source>Change Apparent Attenuation</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calories/33cl</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calories/12oz</source>
+        <translation type="unfinished">Calorias/12oz</translation>
     </message>
 </context>
 <context>
@@ -12162,7 +12170,7 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Calories/12oz</source>
-        <translation>Calorias/12oz</translation>
+        <translation type="vanished">Calorias/12oz</translation>
     </message>
     <message>
         <source>Extras</source>
@@ -12518,7 +12526,7 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>1.0</source>
-        <translation>1.0</translation>
+        <translation type="vanished">1.0</translation>
     </message>
     <message>
         <source>Strike Water Calculator</source>
@@ -12545,15 +12553,7 @@ O volume final do fermentador primário é %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Tar&amp;get Boil Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Recipe Locked</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Target Batch Si&amp;ze</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -12562,7 +12562,7 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Boil Size</source>
-        <translation type="unfinished">Tamanho da Fervura</translation>
+        <translation type="obsolete">Tamanho da Fervura</translation>
     </message>
     <message>
         <source>&amp;Export to File</source>
@@ -12730,6 +12730,26 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Efficienc&amp;y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calculated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calculated final volume into the primary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pre-Boil Volume</source>
+        <translation type="unfinished">Volume de Pré-fervura</translation>
+    </message>
+    <message>
+        <source>Calculated preboil volume - See Boil tab below</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14204,7 +14224,7 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>Asst. Brewer</source>
-        <translation>Assistente Cervejeiro</translation>
+        <translation type="vanished">Assistente Cervejeiro</translation>
     </message>
     <message>
         <source>Taste Rating</source>
@@ -14273,6 +14293,18 @@ O volume final do fermentador primário é %1.</translation>
     <message>
         <source>Date Created</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Assistant Brewer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calories/12oz</source>
+        <translation type="unfinished">Calorias/12oz</translation>
+    </message>
+    <message>
+        <source>1.0</source>
+        <translation type="unfinished">1.0</translation>
     </message>
 </context>
 <context>

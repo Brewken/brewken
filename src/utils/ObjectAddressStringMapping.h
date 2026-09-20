@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * utils/ObjectAddressStringMapping.h is part of Brewken, and is copyright the following authors 2023:
+ * utils/ObjectAddressStringMapping.h is part of Brewken, and is copyright the following authors 2023-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -52,9 +52,9 @@ public:
       QString   string ;
 
       //! Standard constructor saves us prefixing everything with & at the call site.
-      ObjectAddressAndItsString(T const & address, QString string) :
-         address{&address},
-         string{string} {
+      ObjectAddressAndItsString(T const & address_, QString string_) :
+         address{&address_},
+         string{string_} {
          return;
       }
    };

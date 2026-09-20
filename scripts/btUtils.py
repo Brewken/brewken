@@ -153,6 +153,13 @@ def getLinuxDistroInfo():
 
    return distroInfo
 
+#-----------------------------------------------------------------------------------------------------------------------
+# Returns the Linux type from the ID_LIKE line in /etc/os-release.  Thus will return 'debian' for Ubuntu and Debian
+#-----------------------------------------------------------------------------------------------------------------------
+def getLinuxType():
+   grepOutput = btExecute.abortOnRunFail(subprocess.run(['grep', '^ID_LIKE=', '/etc/os-release'], capture_output=True))
+   linuxTypeLine = grepOutput.stdout.decode('UTF-8').rstrip()
+   return linuxTypeLine.replace('ID_LIKE=', '')
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Set global variables exe_git and exe_meson with the locations of the git and meson executables plus mesonVersion with
