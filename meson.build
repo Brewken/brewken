@@ -702,14 +702,21 @@ message('OpenSSL Library:', openSslDependency.name(), 'found =', openSslDependen
 # use CMAKE_PREFIX_PATH to tell CMake where Blaze is installed.  (It takes a bit of trial-and-error to understand which
 # directory CMake needs here.  It turns out it's the top-level one and lib/cmake gets added automatically inside CMake.)
 #
+# For reasons I have not got to the bottom of, this does not work on every platform.  In some cases (Ubuntu IIRC), I
+# only mananged to get things working with Blaze installed in the default location.  So, for now, as a sledgehammer
+# solution, we install Blaze to _both_ locations and let Meson/CMake find whichever one it can.  TODO: One day we should
+# find a cleaner solution.
+#
 # There is a specific Meson dependency() option, `cmake_module_path`, for setting CMAKE_MODULE_PATH (which, per above we
 # do NOT want to set).  However, for some reason, there is _not_ a `cmake_prefix_path` option.  Fortunately, we can also
 # pass settings to CMake via the poorly-documented `cmake_args` option.
 #
 blazeDistDir = join_paths(meson.project_source_root(), 'third-party/blaze/build/dist')
 message('blazeDistDir:', blazeDistDir)
-###blazeLibDir = join_paths(meson.project_source_root(), 'third-party/blaze/build/dist/lib')
+blazeBlazeDir = join_paths(blazeDistDir, 'lib/cmake/blaze')
+message('blazeBlazeDir:', blazeBlazeDir)
 blazeCoreDir = join_paths(blazeDistDir, 'lib/cmake/core')
+message('blazeCoreDir:', blazeCoreDir)
 blazeDependencies = dependency('Blaze',
                                method : 'cmake',
                                modules : [ 'sourcemeta::core::json',
@@ -738,6 +745,7 @@ blazeDependencies = dependency('Blaze',
                                   '-DCMAKE_PREFIX_PATH=' + blazeDistDir,
                                   '-DCMAKE_FIND_PACKAGE_PREFER_CONFIG=TRUE',
                                   '-DCMAKE_FIND_DEBUG_MODE=TRUE',
+                                  '-DBlaze_DIR=' + blazeBlazeDir,
                                   '-DCore_DIR=' + blazeCoreDir,
                                ],
                                required : true)

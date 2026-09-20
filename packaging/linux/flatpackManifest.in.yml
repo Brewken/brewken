@@ -32,30 +32,17 @@ modules:
    #
    # In theory, we should install libxml2 here, but it seems like it's always already installed.
    #
+   # We also don't install Blaze here, as it's included as a Git Submodule of our own code.  It suffices to compile and
+   # install it as an initial step of our build.  (See below.)
+   #
+   # TBD: We could probably take the same approach for LibBacktrace, rather than install it here.
+   #
 
    - name: LibBacktrace
      sources:
        - type: git
          url: https://github.com/ianlancetaylor/libbacktrace/
          commit: 0b9b49cf4a2c9229fc052d6716e1528b2f23e91a  # 2026-09-03
-
-   - name: Blaze
-     sources:
-       - type: git
-         url: https://github.com/sourcemeta/blaze
-         commit: e9ddd90e8c1b5b89e6f95660f6bbc5502c34bea6  # 2026-09-08
-     buildsystem: simple
-     build-commands:
-       - cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=Release -DBLAZE_TESTS:BOOL=ON -DBLAZE_BENCHMARK:BOOL=OFF -DBLAZE_CONTRIB:BOOL=ON -DBLAZE_DOCS:BOOL=OFF -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_COMPILE_WARNING_AS_ERROR:BOOL=OFF -DBLAZE_TEST:BOOL=OFF
-       - cmake --build build --config Release --parallel 4
-       - cmake --install ./build --prefix ./build/dist --config Release --verbose --component sourcemeta_core
-       - cmake --install ./build --prefix ./build/dist --config Release --verbose --component sourcemeta_core_dev
-       - cmake --install ./build --prefix ./build/dist --config Release --verbose --component sourcemeta_blaze
-       - cmake --install ./build --prefix ./build/dist --config Release --verbose --component sourcemeta_blaze_dev
-       - sudo cmake --install ./build --config Release --verbose --component sourcemeta_core
-       - sudo cmake --install ./build --config Release --verbose --component sourcemeta_core_dev
-       - sudo cmake --install ./build --config Release --verbose --component sourcemeta_blaze
-       - sudo cmake --install ./build --config Release --verbose --component sourcemeta_blaze_dev
 
    - name: Boost
      buildsystem: simple
@@ -138,9 +125,28 @@ modules:
      sources:
        - type: dir
          path: copyOfSource
-     # Although we're using meson, we can't put  buildsystem: meson  here, as we need to do a couple of extra steps
+     #
+     # Although we're using meson, we can't put  `buildsystem: meson`  here, as we need to do a couple of extra steps.
+     # Those extra steps are done by the `bt` and related scripts in our main builds.
+     #
+     # For Blaze, as in `btDependencies.py`, we install both to a subdirectory (./third-party/blaze/build/dist) and
+     # system-wide.  For the latter, we need to provide the Flatpak system-wide install location (/app), as the CMake
+     # scripts won't be able to deduce it.  TBD: We could probably skip the subdirectory install and rely only on the
+     # system-wide one.
+     #
      buildsystem: simple
      build-commands:
+       - rm -rf ./third-party/blaze/build
+       - cmake -S ./third-party/blaze -B ./third-party/blaze/build -DCMAKE_BUILD_TYPE:STRING=Release -DBLAZE_TESTS:BOOL=ON -DBLAZE_BENCHMARK:BOOL=OFF -DBLAZE_CONTRIB:BOOL=ON -DBLAZE_DOCS:BOOL=OFF -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_COMPILE_WARNING_AS_ERROR:BOOL=OFF -DBLAZE_TEST:BOOL=OFF
+       - cmake --build ./third-party/blaze/build --config Release --parallel 4
+       - cmake --install ./third-party/blaze/build --prefix ./third-party/blaze/build/dist --config Release --verbose --component sourcemeta_core
+       - cmake --install ./third-party/blaze/build --prefix ./third-party/blaze/build/dist --config Release --verbose --component sourcemeta_core_dev
+       - cmake --install ./third-party/blaze/build --prefix ./third-party/blaze/build/dist --config Release --verbose --component sourcemeta_blaze
+       - cmake --install ./third-party/blaze/build --prefix ./third-party/blaze/build/dist --config Release --verbose --component sourcemeta_blaze_dev
+       - cmake --install ./third-party/blaze/build --prefix /app --config Release --verbose --component sourcemeta_core
+       - cmake --install ./third-party/blaze/build --prefix /app --config Release --verbose --component sourcemeta_core_dev
+       - cmake --install ./third-party/blaze/build --prefix /app --config Release --verbose --component sourcemeta_blaze
+       - cmake --install ./third-party/blaze/build --prefix /app --config Release --verbose --component sourcemeta_blaze_dev
        - mkdir mbuild
        - meson setup --includedir /app/include --libdir /app/lib:/app/lib64 mbuild .
        - meson compile -C mbuild --verbose
@@ -161,8 +167,6 @@ modules:
          BOOST_INCLUDEDIR:   /app/include
          BOOST_LIBRARYDIR: /app/lib
          BOOST_ROOT:       /app
-         XercesC_ROOT:     /app
-         XalanC_ROOT:      /app
          LIBRARY_PATH:     /app/lib:/app/lib64
          LD_LIBRARY_PATH:  /app/lib:/app/lib64
          PKG_CONFIG_PATH:  /app/lib/pkgconfig:/app/lib64/pkgconfig:/app/share/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig

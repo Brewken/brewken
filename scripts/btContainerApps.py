@@ -661,26 +661,26 @@ def doFlatpak():
       subprocess.run(['flatpak', '--user', 'install', '--assumeyes', 'org.kde.Sdk//' + runtimeVersion])
    )
 
-###   #
-###   # In theory, we could install flatpak builder using `sudo apt install flatpak-builder` (above where we install
-###   # flatpak itself).  However, on Ubuntu 22.04, this installs too old a version.  Instead, we install via flatpak
-###   # which gives us a more recent one.  Note, however, that we need to have installed the Platform and Sdk first.
-###   #
-###   # Note that Flatpak Linter (flatpak-builder-lint) is included in Flatpak Builder
-###   #
-###   btLogger.log.info('Installing Flatpak Builder')
-###   btExecute.abortOnRunFail(
-####      subprocess.run(['flatpak', '--user', 'install', 'flathub', '--assumeyes', 'org.flatpak.Builder'])
-###      subprocess.run(['flatpak', '--user', 'install', '--assumeyes', 'org.flatpak.Builder'])
-###   )
-###
-###   builderInfo = btExecute.abortOnRunFail(
-###      subprocess.run(
-###         ['flatpak', '--user', 'info', 'org.flatpak.Builder'],
-###         capture_output=True
-###      )
-###   ).stdout.decode('UTF-8')
-###   btLogger.log.info('Flatpak Builder Info:\n' + builderInfo)
+   #
+   # Although we could install flatpak builder using `sudo apt install flatpak-builder` (above where we install
+   # flatpak itself), this does not install Flatpak Linter (flatpak-builder-lint).  So we also we install flatpak
+   # builder via flatpak, as that does give us the linter.  Note, however, that we need to have installed the Platform and Sdk first.
+   #
+   # Note that Flatpak Linter (flatpak-builder-lint) is included in Flatpak Builder
+   #
+   btLogger.log.info('Installing Flatpak Builder from Flatpak (to get Linter)')
+   btExecute.abortOnRunFail(
+#      subprocess.run(['flatpak', '--user', 'install', 'flathub', '--assumeyes', 'org.flatpak.Builder'])
+      subprocess.run(['flatpak', '--user', 'install', '--assumeyes', 'org.flatpak.Builder'])
+   )
+
+   builderInfo = btExecute.abortOnRunFail(
+      subprocess.run(
+         ['flatpak', '--user', 'info', 'org.flatpak.Builder'],
+         capture_output=True
+      )
+   ).stdout.decode('UTF-8')
+   btLogger.log.info('Flatpak Builder Info:\n' + builderInfo)
 
    installedFlatpakRuntimes = btExecute.abortOnRunFail(
       subprocess.run(
@@ -759,15 +759,14 @@ def doFlatpak():
    btLogger.log.info('Running Flatpak Linter')
    btExecute.abortOnRunFail(
       subprocess.run(
-         ['flatpak-builder-lint', 'manifest', file_manifest.as_posix()],
-###         ['flatpak',
-###               '--user',
-###               '--verbose',
-###               'run',
-###               '--command=flatpak-builder-lint',
-###               'org.flatpak.Builder',
-###               'manifest',
-###               file_manifest.as_posix()],
+         ['flatpak',
+          '--user',
+          '--verbose',
+          'run',
+          '--command=flatpak-builder-lint',
+          'org.flatpak.Builder',
+          'manifest',
+          file_manifest.as_posix()],
          capture_output=False
       )
    )
