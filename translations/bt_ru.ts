@@ -6846,6 +6846,10 @@ Program will now exit.</source>
         <source>%1 errors found in JSON file.  First error at %2: schema condition %3 is violated because &quot;%4&quot;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Local-ID</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
