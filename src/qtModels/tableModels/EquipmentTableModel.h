@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * qtModels/tableModels/EquipmentTableModel.h is part of Brewken, and is copyright the following authors 2023-2025:
+ * qtModels/tableModels/EquipmentTableModel.h is part of Brewken, and is copyright the following authors 2023-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -34,7 +34,7 @@ class Recipe;
 COLUMN_NAMES(EquipmentTableModel, Name            ,
                                   MashTunVolume   ,
                                   KettleVolume    ,
-                                  FermenterVolume ,
+                                  FermentorVolume ,
                                   NumRecipesUsedIn,)
 
 /*!

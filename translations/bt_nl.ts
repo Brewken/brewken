@@ -286,10 +286,14 @@
     </message>
     <message>
         <source>Volume into fermenter</source>
-        <translation type="unfinished">Volume in het vergistingsvat</translation>
+        <translation type="obsolete">Volume in het vergistingsvat</translation>
     </message>
     <message>
         <source>unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Volume into fermentor</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -373,7 +377,7 @@
     </message>
     <message>
         <source>Volume into fermenter</source>
-        <translation>Volume in het vergistingsvat</translation>
+        <translation type="vanished">Volume in het vergistingsvat</translation>
     </message>
     <message>
         <source>&lt;h2&gt;Notes&lt;/h2&gt;</source>
@@ -417,6 +421,10 @@
     </message>
     <message>
         <source>n/a</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Volume into fermentor</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2890,22 +2898,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fermenter Batch Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Loss</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Notes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>HLT Loss</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3051,6 +3043,22 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Kettle Boil Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Batch Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Loss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7070,7 +7078,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Bring </source>
-        <translation>Breng </translation>
+        <translation type="vanished">Breng </translation>
     </message>
     <message>
         <source>%1 water to %2, </source>
@@ -7078,7 +7086,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>for upcoming infusions.</source>
-        <translation>voor aanstaande infusies.</translation>
+        <translation type="vanished">voor aanstaande infusies.</translation>
     </message>
     <message>
         <source>Add %1 water at %2 to mash to bring it to %3.</source>
@@ -7146,7 +7154,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Do first wort hopping with </source>
-        <translation>Doe de eerste hopgift met </translation>
+        <translation type="vanished">Doe de eerste hopgift met </translation>
     </message>
     <message>
         <source>First wort hopping</source>
@@ -7595,10 +7603,6 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Put %1 %2 into fermenter%3.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Put %1 %2 into primary%3.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7620,10 +7624,6 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>%1 addition</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> to the mash tun.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7661,6 +7661,26 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Percentage reverse-osmosis water in sparge</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into fermentor%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 to the mash tun.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bring %1 for upcoming infusions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do first wort hopping with %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 water to %2</source>
+        <translation type="unfinished">%1 water naar %2  {1 ?} {2?}</translation>
     </message>
 </context>
 <context>
@@ -10784,10 +10804,6 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <translation type="obsolete">Ketel top-up water</translation>
     </message>
     <message>
-        <source>Kettle to Fermenter Loss</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Default Absorption</source>
         <translation type="unfinished">Standaard Absorbtie</translation>
     </message>
@@ -10904,19 +10920,7 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fermenter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Deadspace Losses</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11021,6 +11025,22 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     </message>
     <message>
         <source>Adjustment factor for large batch hop utilization.  This value should be 100% for batches less than 20 gallons, but may be higher (200% or more) for very large batch equipment.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kettle to Fermentor Loss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Notes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
