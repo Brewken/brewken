@@ -290,10 +290,14 @@
     </message>
     <message>
         <source>Volume into fermenter</source>
-        <translation type="unfinished">Volym i jäskärl</translation>
+        <translation type="obsolete">Volym i jäskärl</translation>
     </message>
     <message>
         <source>unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Volume into fermentor</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -377,7 +381,7 @@
     </message>
     <message>
         <source>Volume into fermenter</source>
-        <translation>Volym i jäskärl</translation>
+        <translation type="vanished">Volym i jäskärl</translation>
     </message>
     <message>
         <source>Print Document</source>
@@ -425,6 +429,10 @@
     </message>
     <message>
         <source>n/a</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Volume into fermentor</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2906,22 +2914,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fermenter Batch Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Loss</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Notes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>HLT Loss</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3067,6 +3059,22 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Kettle Boil Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Batch Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Loss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7048,7 +7056,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Bring </source>
-        <translation>Värm </translation>
+        <translation type="vanished">Värm </translation>
     </message>
     <message>
         <source>%1 water to %2, </source>
@@ -7056,7 +7064,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>for upcoming infusions.</source>
-        <translation>för kommande infusion.</translation>
+        <translation type="vanished">för kommande infusion.</translation>
     </message>
     <message>
         <source>Add %1 water at %2 to mash to bring it to %3.</source>
@@ -7124,7 +7132,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Do first wort hopping with </source>
-        <translation>Humla den okokta mäsken med </translation>
+        <translation type="vanished">Humla den okokta mäsken med </translation>
     </message>
     <message>
         <source>First wort hopping</source>
@@ -7573,10 +7581,6 @@ Primärens slutgiltiga volym är %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Put %1 %2 into fermenter%3.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Put %1 %2 into primary%3.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7598,10 +7602,6 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>%1 addition</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> to the mash tun.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7639,6 +7639,26 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>Percentage reverse-osmosis water in sparge</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into fermentor%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 to the mash tun.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bring %1 for upcoming infusions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do first wort hopping with %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 water to %2</source>
+        <translation type="unfinished">%1 vatten till %2  {1 ?} {2?}</translation>
     </message>
 </context>
 <context>
@@ -10689,10 +10709,6 @@ Primärens slutgiltiga volym är %1.</translation>
         <translation type="obsolete">Kittel uppfyllning vatten</translation>
     </message>
     <message>
-        <source>Kettle to Fermenter Loss</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Default Absorption</source>
         <translation type="unfinished">Standard Absorberingsförmåga</translation>
     </message>
@@ -10809,19 +10825,7 @@ Primärens slutgiltiga volym är %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fermenter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Deadspace Losses</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10926,6 +10930,22 @@ Primärens slutgiltiga volym är %1.</translation>
     </message>
     <message>
         <source>Adjustment factor for large batch hop utilization.  This value should be 100% for batches less than 20 gallons, but may be higher (200% or more) for very large batch equipment.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kettle to Fermentor Loss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Notes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -290,10 +290,14 @@
     </message>
     <message>
         <source>Volume into fermenter</source>
-        <translation type="unfinished">Volume dans le fermenteur</translation>
+        <translation type="obsolete">Volume dans le fermenteur</translation>
     </message>
     <message>
         <source>unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Volume into fermentor</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -377,7 +381,7 @@
     </message>
     <message>
         <source>Volume into fermenter</source>
-        <translation>Volume dans le fermenteur</translation>
+        <translation type="vanished">Volume dans le fermenteur</translation>
     </message>
     <message>
         <source>Print Document</source>
@@ -425,6 +429,10 @@
     </message>
     <message>
         <source>n/a</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Volume into fermentor</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2874,22 +2882,6 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fermenter Batch Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Loss</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Notes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>HLT Loss</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3035,6 +3027,22 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Kettle Boil Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Batch Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Loss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7055,7 +7063,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Bring </source>
-        <translation>Portez </translation>
+        <translation type="vanished">Portez </translation>
     </message>
     <message>
         <source>%1 water to %2, </source>
@@ -7063,7 +7071,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>for upcoming infusions.</source>
-        <translation>pour les infusions à venir.</translation>
+        <translation type="vanished">pour les infusions à venir.</translation>
     </message>
     <message>
         <source>Add %1 water at %2 to mash to bring it to %3.</source>
@@ -7131,7 +7139,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Do first wort hopping with </source>
-        <translation>Réalisez le houblonnage pré-ébullition avec </translation>
+        <translation type="vanished">Réalisez le houblonnage pré-ébullition avec </translation>
     </message>
     <message>
         <source>First wort hopping</source>
@@ -7576,10 +7584,6 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Put %1 %2 into fermenter%3.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Put %1 %2 into primary%3.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7601,10 +7605,6 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     </message>
     <message>
         <source>%1 addition</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> to the mash tun.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7642,6 +7642,26 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     <message>
         <source>Percentage reverse-osmosis water in sparge</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put %1 %2 into fermentor%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add %1 to the mash tun.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bring %1 for upcoming infusions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do first wort hopping with %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 water to %2</source>
+        <translation type="unfinished">%1 d&apos;eau à %2  {1 ?} {2?}</translation>
     </message>
 </context>
 <context>
@@ -10739,10 +10759,6 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
         <translation type="obsolete">Ajout d&apos;eau avant l&apos;ébullition</translation>
     </message>
     <message>
-        <source>Kettle to Fermenter Loss</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Default Absorption</source>
         <translation type="unfinished">Absorption par défaut</translation>
     </message>
@@ -10859,19 +10875,7 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fermenter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Deadspace Losses</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fermenter Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10976,6 +10980,22 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     </message>
     <message>
         <source>Adjustment factor for large batch hop utilization.  This value should be 100% for batches less than 20 gallons, but may be higher (200% or more) for very large batch equipment.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kettle to Fermentor Loss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fermentor Notes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
