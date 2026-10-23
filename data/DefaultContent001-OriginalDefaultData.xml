@@ -3179,6 +3179,8 @@ Intensely sweet - adds a sweet malty flavor sometimes associated with honey. </N
     <IBU_GAL_PER_LB>0</IBU_GAL_PER_LB>
     <PRODUCER></PRODUCER>
     <PRODUCT_ID></PRODUCT_ID>
+    <!-- Brewken/Brewtarget extension tag: lactose is not fermentable by brewing yeast -->
+    <FERMENTABLE_FRACTION_PCT>0</FERMENTABLE_FRACTION_PCT>
     <AMOUNT>0.123</AMOUNT>
   </FERMENTABLE>
   <FERMENTABLE>
