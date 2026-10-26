@@ -610,10 +610,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Projected Volume Into Fermentor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>SG</source>
         <translation type="obsolete">SG</translation>
     </message>
@@ -623,10 +619,6 @@
     </message>
     <message>
         <source>Volume Into Boil Kettle</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Volume Into Fermentor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -659,6 +651,14 @@
     </message>
     <message>
         <source>Measured pre-boil specific gravity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Projected Volume Into Fermentation Vessel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Volume Into Fermentation Vessel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3475,6 +3475,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Lactic Acid content (% weight)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Fermentable by yeast (%)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FermentableDialog</name>
@@ -4707,6 +4711,10 @@ If you need help, please open an issue at %1</source>
         <source>Brew Log for brew on %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Primary fermentation for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -5157,23 +5165,7 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished">Ja</translation>
     </message>
     <message>
-        <source>Calcium Chloride (CaCl₂)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Calcium Carbonate (CaCO₃)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Calcium Sulfate (CaSO₄)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Magnesium Sulfate (MgSO₄)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sodium Chloride (NaCl)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5186,6 +5178,42 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Phosphoric acid (H₃PO₄)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anhydrous Calcium Chloride (CaCl₂)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calcium Chloride Dihydrate (CaCl₂·2H₂O)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gypsum (CaSO₄·2H₂O)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pickling Lime (Ca(OH)₂)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Epsom Salt (MgSO₄·7H₂O)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Magnesium Chloride Hexahydrate (MgCl₂·6H₂O)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Regular Salt (NaCl)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>sulfuric acid (H₂SO₄)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>hydrochloric acid (HCl)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6441,10 +6469,6 @@ Log file may contain more details.</source>
         <translation type="obsolete">Fjern valgt ingrediens</translation>
     </message>
     <message>
-        <source>Specific Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Specific Heat Capacity Btus per</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6930,6 +6954,66 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Local-ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Volume per Mass</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Energy per Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>kcal/L</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>kcal/50cl</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>kcal/33cl</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>kcal/25cl</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>kcal/100ml</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>kcal/pt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>kcal/12floz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>kJ/100ml</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date-Time-With-Timezone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date-or-Date-Time-Local</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This file was written using version %1 of the dotBeer format, which is newer than the version this version of %2 supports (%3).  You may need a newer version of %2 to read it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Primary fermentation for %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7557,6 +7641,10 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <source>%1 water to %2</source>
         <translation type="unfinished">%1 vann til %2  {1 ?} {2?}</translation>
     </message>
+    <message>
+        <source>Primary fermentation for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -7700,6 +7788,10 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     <message>
         <source>Use</source>
         <translation type="unfinished">Bruk</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10772,14 +10864,6 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Optional Vessels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Attributes of &quot;optional&quot; vessels will not be saved if their volumes are set to 0.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Default final top-up water</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10857,6 +10941,15 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>Fermentor Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optional Vessel
+Tabs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>These checkboxes control which vessel tabs are shown.  An asterisk after a vessel means it has a volume set, and so is used in calculations, even if its tab is hidden.  Attributes of &quot;optional&quot; vessels will not be saved if their volumes are left blank or set to 0.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11204,6 +11297,14 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>For aciduated malts (aka acid malts)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>% Fermentable by yeast</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Percentage of this ingredient&apos;s extract that brewing yeast can ferment.  Leave blank for 100%.  Set to 0 for lactose, or about 10 for maltodextrin.  Not normally needed for malts.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11632,14 +11733,6 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Pinene %</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pinene</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Farnesene %</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11769,6 +11862,14 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>6 Month Alpha Loss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>α-Pinene %</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>α-Pinene</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
