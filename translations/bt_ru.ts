@@ -4668,6 +4668,10 @@ If you need help, please open an issue at %1</source>
         <source>Brew Log for brew on %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Primary fermentation for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -6926,6 +6930,18 @@ Program will now exit.</source>
         <source>Date-or-Date-Time-Local</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>This file was written using version %1 of the dotBeer format, which is newer than the version this version of %2 supports (%3).  You may need a newer version of %2 to read it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash step for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Primary fermentation for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -7542,6 +7558,10 @@ The final volume in the primary is %1.</source>
     <message>
         <source>%1 water to %2</source>
         <translation type="unfinished">%1 воды к %2  {1 ?} {2?}</translation>
+    </message>
+    <message>
+        <source>Primary fermentation for %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10731,14 +10751,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Optional Vessels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Attributes of &quot;optional&quot; vessels will not be saved if their volumes are set to 0.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Default final top-up water</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10816,6 +10828,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Fermentor Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optional Vessel
+Tabs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>These checkboxes control which vessel tabs are shown.  An asterisk after a vessel means it has a volume set, and so is used in calculations, even if its tab is hidden.  Attributes of &quot;optional&quot; vessels will not be saved if their volumes are left blank or set to 0.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
