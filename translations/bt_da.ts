@@ -3020,6 +3020,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Fermentor Type</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Mash Tun Foundation Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>EquipmentEditor</name>
@@ -3134,6 +3138,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <message>
         <source>Data Discard Warnings</source>
         <translation>Advarsel om at data glemmes</translation>
+    </message>
+    <message>
+        <source>Foundation water (%1) plus mash tun loss (%2) leaves no room for the mash in a mash tun with total capacity %3.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10708,7 +10716,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Volume of mash tun</source>
-        <translation>Volumen af mæskekar</translation>
+        <translation type="vanished">Volumen af mæskekar</translation>
     </message>
     <message>
         <source>This is equal to the vessel&apos;s Heat Capacity divided by its weight.  Typical values are • Aluminum - 0.215 c/g·C  • Copper - 0.092 c/g·C  • Iron/Steel - 0.108 c/g·C  • Plastic - 0.359 c/g·C.</source>
@@ -10724,19 +10732,19 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>How much water is permanently lost to each unit of weight of grain during mashing. The default value is 1.0875 liters per kilogram. This can fluctuate due to the fine-ness of your grind, humidity, brand, and other factors. Pressing the &quot;Default Absorption&quot; button will reset the value to this default.</source>
-        <translation>Hvor meget vand mistes pr. masseenhed af malt under mæskningen. Standardværdien er 1.0875 L/kg. Dette kan variere afhængigt af formalingsgraden, leverandør og andre faktorer. Ved klik på &quot;Standardabsorption&quot; vil værdien blive sat til denne standard.</translation>
+        <translation type="vanished">Hvor meget vand mistes pr. masseenhed af malt under mæskningen. Standardværdien er 1.0875 L/kg. Dette kan variere afhængigt af formalingsgraden, leverandør og andre faktorer. Ved klik på &quot;Standardabsorption&quot; vil værdien blive sat til denne standard.</translation>
     </message>
     <message>
         <source>Other Mashing losses</source>
-        <translation>Andre tab under mæskning</translation>
+        <translation type="vanished">Andre tab under mæskning</translation>
     </message>
     <message>
         <source>Mashing losses not included in grain absorption</source>
-        <translation>Tab under mæskning, som ikke er indregnet i absorption</translation>
+        <translation type="vanished">Tab under mæskning, som ikke er indregnet i absorption</translation>
     </message>
     <message>
         <source>If you do not have a separate lauter tun, then this should include the lautering deadspace.</source>
-        <translation>Hvis du ikke har en særskilt urtfiltrerinsbeholder, skal denne inkludere dødvolumen ved urtfiltreringen.</translation>
+        <translation type="vanished">Hvis du ikke har en særskilt urtfiltrerinsbeholder, skal denne inkludere dødvolumen ved urtfiltreringen.</translation>
     </message>
     <message>
         <source>Mash Tun Notes</source>
@@ -10889,6 +10897,58 @@ Tabs</source>
     </message>
     <message>
         <source>These checkboxes control which vessel tabs are shown.  An asterisk after a vessel means it has a volume set, and so is used in calculations, even if its tab is hidden.  Attributes of &quot;optional&quot; vessels will not be saved if their volumes are left blank or set to 0.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total Capacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Total usable capacity of the mash tun, including any space below the false bottom or malt pipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The most the mash tun can hold, including any space below the false bottom (or malt pipe / basket) and anything that stays behind in the vessel.  The space actually available for the grain and its strike water is this volume less the Foundation Water and Mash Tun Loss below.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Foundation Water (recovered)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water below the false bottom or malt pipe that drains out with the wort</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The water that has to be below the false bottom (or malt pipe / basket) before the grain is covered, but which drains out with the wort and so is NOT lost.  This is common in all-in-one systems -- eg about 3.5 liters for a Grainfather G30.  It is added to the strike water, so the mash thickness you choose applies just to the grain bed, and it is taken off the sparge water, so the total water needed does not change.  Leave at 0 if there is no such space (eg brew in a bag without a false bottom).  Other software calls this, eg, &quot;Mash-Tun Deadspace&quot; (Brewfather) or &quot;Mash Tun Addition&quot; (BeerSmith).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash Tun Loss (not recovered)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Liquid that stays behind in the mash tun and is never recovered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Liquid that stays behind in the mash tun (eg below the outlet or in pipework) and never reaches the boil.  It is added to the strike water and to the total water needed.  Do not include grain absorption (see below) or anything that drains out with the wort (put that under Foundation Water above).  If you do not have a separate lauter tun, include your lautering losses here.  If you do have a separate lauter tun, its losses go on the Lauter Tun tab.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>How much water is permanently lost to each unit of weight of grain during mashing (ie the water the spent grain retains).  This is separate from Foundation Water and Mash Tun Loss, which are about the vessel rather than the grain.  The default value is about 1.085 liters per kilogram (0.13 US gallons per pound), which is typical for a conventional mash tun.  For an all-in-one system with a malt pipe, about 0.8 liters per kilogram is more typical, and for brew in a bag with the bag squeezed, about 0.66 liters per kilogram.  It can fluctuate due to the fineness of your grind, how well the grain is drained, the malt, and other factors.  Pressing the &quot;Default Absorption&quot; button will reset the value to the default.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lauter Tun Loss (not recovered)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wort that stays behind in the lauter tun and is never recovered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wort that stays behind in the lauter tun and its plumbing, and never reaches the boil.  This is only used if you have a separate lauter tun (ie the lauter tun has a volume set).  Otherwise, include lautering losses in the Mash Tun Loss on the Mash Tun tab.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

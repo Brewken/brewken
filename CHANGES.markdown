@@ -8,6 +8,11 @@ format therein).
 ## Forthcoming in v2.1.0
 
 * Improvements to inventory
+* Equipment: new "Foundation Water" field for the mash tun, for the space below a false bottom or malt pipe (eg in
+  all-in-one systems) that has to be filled before the grain is covered but which drains out with the wort
+* Mash and lauter tun losses are now correctly allowed for in the mash wizard's total water
+* BeerXML export and import now keep folders (via an extension tag)
+* Importing a dotBeer file into a folder now keeps the subfolders given in the file
 
 ## v2.0.0
 
