@@ -9887,12 +9887,12 @@ Tolerância ao etanol: Alta (12% ABV)</NOTES>
   <RECIPE>
     <NAME>Bt: American Barleywine</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>American Barleywine</NAME>
       <CATEGORY>Strong Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>19</CATEGORY_NUMBER>
       <STYLE_LETTER>C</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -10308,12 +10308,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: American Barleywine - Extract</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>American Barleywine</NAME>
       <CATEGORY>Strong Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>19</CATEGORY_NUMBER>
       <STYLE_LETTER>C</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -10700,12 +10700,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: American IPA</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>American IPA</NAME>
       <CATEGORY>India Pale Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>14</CATEGORY_NUMBER>
       <STYLE_LETTER>B</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -11078,12 +11078,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: American IPA - Extract</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>American IPA</NAME>
       <CATEGORY>India Pale Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>14</CATEGORY_NUMBER>
       <STYLE_LETTER>B</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -11426,12 +11426,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: American Pale Ale</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>American Pale Ale</NAME>
       <CATEGORY>American Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>10</CATEGORY_NUMBER>
       <STYLE_LETTER>A</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -11807,12 +11807,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: American Pale Ale - Extract</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>American Pale Ale</NAME>
       <CATEGORY>American Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>10</CATEGORY_NUMBER>
       <STYLE_LETTER>A</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -12180,12 +12180,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Belgian Blonde Ale</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Belgian Blond Ale</NAME>
       <CATEGORY>Belgian Strong Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>18</CATEGORY_NUMBER>
       <STYLE_LETTER>A</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -12481,12 +12481,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Belgian Blonde Ale - Extract</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Belgian Blond Ale</NAME>
       <CATEGORY>Belgian Strong Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>18</CATEGORY_NUMBER>
       <STYLE_LETTER>A</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -12756,12 +12756,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Berliner Weisse</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Berliner Weisse</NAME>
       <CATEGORY>Sour Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>17</CATEGORY_NUMBER>
       <STYLE_LETTER>A</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -13011,12 +13011,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Berliner Weisse - Extract</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Berliner Weisse</NAME>
       <CATEGORY>Sour Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>17</CATEGORY_NUMBER>
       <STYLE_LETTER>A</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -13240,12 +13240,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Blonde Ale</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Blonde Ale</NAME>
       <CATEGORY>Light Hybrid Beer</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>6</CATEGORY_NUMBER>
       <STYLE_LETTER>B</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -13498,12 +13498,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Blonde Ale - Extract</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Blonde Ale</NAME>
       <CATEGORY>Light Hybrid Beer</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>6</CATEGORY_NUMBER>
       <STYLE_LETTER>B</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -13727,12 +13727,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: California Common</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>California Common Beer</NAME>
       <CATEGORY>Amber Hybrid Beer</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>7</CATEGORY_NUMBER>
       <STYLE_LETTER>B</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -14102,12 +14102,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: California Common - Extract</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>California Common Beer</NAME>
       <CATEGORY>Amber Hybrid Beer</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>7</CATEGORY_NUMBER>
       <STYLE_LETTER>B</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -14447,12 +14447,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Extra Special Bitter</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Extra Special/Strong Bitter (English Pale Ale)</NAME>
       <CATEGORY>English Pale Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>8</CATEGORY_NUMBER>
       <STYLE_LETTER>C</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -14748,12 +14748,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Extra Special Bitter - Extract</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Extra Special/Strong Bitter (English Pale Ale)</NAME>
       <CATEGORY>English Pale Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>8</CATEGORY_NUMBER>
       <STYLE_LETTER>C</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -15024,12 +15024,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Nut Brown</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Northern English Brown Ale</NAME>
       <CATEGORY>English Brown Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>11</CATEGORY_NUMBER>
       <STYLE_LETTER>C</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -15369,12 +15369,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Nut Brown - Extract</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Northern English Brown Ale</NAME>
       <CATEGORY>English Brown Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>11</CATEGORY_NUMBER>
       <STYLE_LETTER>C</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -15689,12 +15689,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Oatmeal Stout</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Oatmeal Stout</NAME>
       <CATEGORY>Stout</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>13</CATEGORY_NUMBER>
       <STYLE_LETTER>C</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -16031,12 +16031,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Oatmeal Stout - Extract</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Oatmeal Stout</NAME>
       <CATEGORY>Stout</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>13</CATEGORY_NUMBER>
       <STYLE_LETTER>C</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -16348,12 +16348,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Rauchbier</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Classic Rauchbier</NAME>
       <CATEGORY>Smoke-flavored/Wood-aged Beer</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>22</CATEGORY_NUMBER>
       <STYLE_LETTER>A</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -16719,12 +16719,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Robust Porter</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Robust Porter</NAME>
       <CATEGORY>Porter</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>12</CATEGORY_NUMBER>
       <STYLE_LETTER>B</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -17094,12 +17094,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Robust Porter - Extract</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Robust Porter</NAME>
       <CATEGORY>Porter</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>12</CATEGORY_NUMBER>
       <STYLE_LETTER>B</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -17439,12 +17439,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Saison</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Saison</NAME>
       <CATEGORY>Belgian and French Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>16</CATEGORY_NUMBER>
       <STYLE_LETTER>C</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -17764,12 +17764,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Saison - Extract</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Saison</NAME>
       <CATEGORY>Belgian and French Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>16</CATEGORY_NUMBER>
       <STYLE_LETTER>C</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -18084,12 +18084,12 @@ Malted in small batches, making it an excellent fit for small batch craft brewin
   <RECIPE>
     <NAME>Bt: Scottish 70 Shilling</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Scottish Heavy 70/-</NAME>
       <CATEGORY>Scottish and Irish Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>9</CATEGORY_NUMBER>
       <STYLE_LETTER>B</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -18428,12 +18428,12 @@ Intensely sweet - adds a sweet malty flavor sometimes associated with honey. </N
   <RECIPE>
     <NAME>Bt: Scottish 70 Shilling - Extract</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Scottish Heavy 70/-</NAME>
       <CATEGORY>Scottish and Irish Ale</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>9</CATEGORY_NUMBER>
       <STYLE_LETTER>B</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -18746,12 +18746,12 @@ Intensely sweet - adds a sweet malty flavor sometimes associated with honey. </N
   <RECIPE>
     <NAME>Bt: Weizen</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Weizen/Weissbier</NAME>
       <CATEGORY>German Wheat and Rye Beer</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>15</CATEGORY_NUMBER>
       <STYLE_LETTER>A</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
@@ -19001,12 +19001,12 @@ Intensely sweet - adds a sweet malty flavor sometimes associated with honey. </N
   <RECIPE>
     <NAME>Bt: Weizen - Extract</NAME>
     <VERSION>1</VERSION>
+    <FOLDER_PATH>default</FOLDER_PATH>
     <TYPE>All Grain</TYPE>
     <STYLE>
       <NAME>Weizen/Weissbier</NAME>
       <CATEGORY>German Wheat and Rye Beer</CATEGORY>
       <VERSION>1</VERSION>
-      <FOLDER_PATH>default</FOLDER_PATH>
       <CATEGORY_NUMBER>15</CATEGORY_NUMBER>
       <STYLE_LETTER>A</STYLE_LETTER>
       <STYLE_GUIDE>BJCP</STYLE_GUIDE>
