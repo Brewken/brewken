@@ -13,6 +13,8 @@ format therein).
 * Mash and lauter tun losses are now correctly allowed for in the mash wizard's total water
 * BeerXML export and import now keep folders (via an extension tag)
 * Importing a dotBeer file into a folder now keeps the subfolders given in the file
+* When a recipe's pre-boil size is set from equipment whose default pre-boil volume was calculated (eg on import from
+  dotBeer or BeerJSON), it is now adjusted for the recipe's boil time
 
 ## v2.0.0
 
