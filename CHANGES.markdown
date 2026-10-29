@@ -15,6 +15,13 @@ format therein).
 * Importing a dotBeer file into a folder now keeps the subfolders given in the file
 * When a recipe's pre-boil size is set from equipment whose default pre-boil volume was calculated (eg on import from
   dotBeer or BeerJSON), it is now adjusted for the recipe's boil time
+* A boil step with no start/end temperature is now treated as being at boiling (Brewtarget
+  [1165](https://github.com/Brewtarget/brewtarget/issues/1165))
+* It is no longer possible to drag-and-drop a folder onto itself or one of its subfolders (Brewtarget
+  [1157](https://github.com/Brewtarget/brewtarget/issues/1157))
+* Exporting a hop, yeast or style with only one end of a range set (eg minimum but not maximum alpha acid) no longer
+  creates a dotBeer or BeerJSON file that cannot be imported
+* Yeast addition cell counts no longer need to be whole numbers
 
 ## v2.0.0
 
