@@ -31,7 +31,7 @@ This release changes the version numbering to match that of Brewtarget.  We incl
 * Yeast addition cell counts no longer need to be whole numbers
 
 ### Release Timestamp
-Fri, 30 Oct 2026 05:02:00 +0100
+Sat, 31 Oct 2026 05:02:00 +0100
 
 ## v2.0.0
 
