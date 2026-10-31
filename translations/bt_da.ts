@@ -7463,7 +7463,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>%1 water to %2</source>
-        <translation type="unfinished">%1 vand til %2  {1 ?} {2?}</translation>
+        <translation type="unfinished">%1 vand til %2</translation>
     </message>
     <message>
         <source>Primary fermentation for %1</source>

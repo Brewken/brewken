@@ -7686,7 +7686,7 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
     </message>
     <message>
         <source>%1 water to %2</source>
-        <translation type="unfinished">%1 Wasser zu %2  {1 ?} {2?}</translation>
+        <translation type="unfinished">%1 Wasser zu %2</translation>
     </message>
     <message>
         <source>Primary fermentation for %1</source>

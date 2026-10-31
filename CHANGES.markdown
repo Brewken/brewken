@@ -5,8 +5,15 @@ Note however that we also process it into a Debian-compliant text change log, so
 In particular, the Release Timestamp section is needed as part of this (and you need to be meticulous about the date
 format therein).
 
-## Forthcoming in v2.1.0
+## Forthcoming in v5.3.0
 
+### New Features
+* TODO: Additional methods for calculating IBU
+* Shopping Lists
+* We'll list other new features here...
+
+## v5.2.0
+This release changes the version numbering to match that of Brewtarget.  We include various fixes and enhancements, including:
 * Improvements to inventory
 * Equipment: new "Foundation Water" field for the mash tun, for the space below a false bottom or malt pipe (eg in
   all-in-one systems) that has to be filled before the grain is covered but which drains out with the wort
@@ -15,6 +22,16 @@ format therein).
 * Importing a dotBeer file into a folder now keeps the subfolders given in the file
 * When a recipe's pre-boil size is set from equipment whose default pre-boil volume was calculated (eg on import from
   dotBeer or BeerJSON), it is now adjusted for the recipe's boil time
+* A boil step with no start/end temperature is now treated as being at boiling (Brewtarget
+  [1165](https://github.com/Brewtarget/brewtarget/issues/1165))
+* It is no longer possible to drag-and-drop a folder onto itself or one of its subfolders (Brewtarget
+  [1157](https://github.com/Brewtarget/brewtarget/issues/1157))
+* Exporting a hop, yeast or style with only one end of a range set (eg minimum but not maximum alpha acid) no longer
+  creates a dotBeer or BeerJSON file that cannot be imported
+* Yeast addition cell counts no longer need to be whole numbers
+
+### Release Timestamp
+Sat, 31 Oct 2026 05:02:00 +0100
 
 ## v2.0.0
 

@@ -1,5 +1,5 @@
 //======================================================================================================================
-// examples/invalid/DefaultBatchSizeErrors.beer is part of dotBeer and is copyright the following authors 2026:
+// examples/warnings/DefaultBatchSizeTooBig.beer is part of dotBeer and is copyright the following authors 2026:
 //   • Matt Young <mfsy@yahoo.com>
 //
 // This Source Code Form is subject to the terms of the Mozilla Public License (MPL), version 2.0.  If a copy of the MPL
@@ -9,12 +9,13 @@
 // warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the Mozilla Public License for more details.
 //======================================================================================================================
 
-// EXPECT-INVALID: /DotBeer/equipments/0 ("Nominal Batch Too Big"): default_batch_size (58 l) plus kettle loss (3 l) plus 60 minutes' boil-off (4.5 l) needs a pre-boil volume of 65.5 l, which is more than kettle max_volume (60 l)
-// EXPECT-INVALID: /DotBeer/equipments/1 ("Mixed Units Too Big"): default_batch_size (5 gal) plus kettle loss (1 l) plus 60 minutes' boil-off (4 l) needs a pre-boil volume of 23.9271 l, which is more than kettle max_volume (22 l)
-// EXPECT-INVALID: /DotBeer/equipments/2 ("No Boil-Off Given"): default_batch_size (30 l) plus kettle loss (2 l) needs a pre-boil volume of 32 l, which is more than kettle max_volume (30 l)
+// EXPECT-WARNING: /DotBeer/equipments/0 ("Nominal Batch Too Big"): default_batch_size (58 l) plus kettle loss (3 l) plus 60 minutes' boil-off (4.5 l) needs a pre-boil volume of 65.5 l, which is more than kettle max_volume (60 l)
+// EXPECT-WARNING: /DotBeer/equipments/1 ("Mixed Units Too Big"): default_batch_size (5 gal) plus kettle loss (1 l) plus 60 minutes' boil-off (4 l) needs a pre-boil volume of 23.9271 l, which is more than kettle max_volume (22 l)
+// EXPECT-WARNING: /DotBeer/equipments/2 ("No Boil-Off Given"): default_batch_size (30 l) plus kettle loss (2 l) needs a pre-boil volume of 32 l, which is more than kettle max_volume (30 l)
 //
 // Default batch sizes that, with the kettle loss and an hour's boil-off, need more pre-boil wort than the kettle can
-// hold (which JSON Schema cannot check):
+// hold.  This is valid (and JSON Schema cannot check it anyway), but it is probably a mistake -- eg a manufacturer's
+// nominal batch size that assumes a shorter boil -- so scripts/validate.py gives a warning:
 //   • all in the same units
 //   • in different units
 //   • with no boil-off rate given (so we only check batch size plus kettle loss)

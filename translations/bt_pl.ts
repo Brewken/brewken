@@ -7468,7 +7468,7 @@ Końcowa pojemność w fermentorze wyniesie %1.</translation>
     </message>
     <message>
         <source>%1 water to %2</source>
-        <translation type="unfinished">%1 wody do %2  {1 ?} {2?}</translation>
+        <translation type="unfinished">%1 wody do %2</translation>
     </message>
     <message>
         <source>Primary fermentation for %1</source>

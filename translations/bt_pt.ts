@@ -7654,7 +7654,7 @@ O volume final do fermentador primário é %1.</translation>
     </message>
     <message>
         <source>%1 water to %2</source>
-        <translation type="unfinished">%1 de água para %2  {1 ?} {2?}</translation>
+        <translation type="unfinished">%1 de água para %2</translation>
     </message>
     <message>
         <source>Primary fermentation for %1</source>

@@ -117,7 +117,7 @@ endif()
 #=======================================================================================================================
 # It's simplest to keep the project name all lower-case as it means we can use a lot more of the default settings for
 # Linux packaging (where directory names etc are expected to be all lower-case)
-project(brewken VERSION 2.0.0 LANGUAGES CXX)
+project(brewken VERSION 5.2.0 LANGUAGES CXX)
 message(STATUS "Building ${PROJECT_NAME} version ${PROJECT_VERSION} with CMake ${CMAKE_VERSION}")
 message(STATUS "PROJECT_SOURCE_DIR is ${PROJECT_SOURCE_DIR}")
 # Sometimes we do need the capitalised version of the project name
@@ -405,8 +405,8 @@ if(APPLE)
    # CMAKE_PREFIX_PATH environment variable to the Qt 5 installation prefix.  In theory, setting the corresponding CMake
    # variable should do the same job (per https://cmake.org/cmake/help/latest/variable/CMAKE_PREFIX_PATH.html).
    #
-   # It seems this is only needed on MacOS.  According to ./third-party/valijson/README.md we are not the only ones to
-   # experience this!
+   # It seems this is only needed on MacOS.  (According to the README.md of Valijson, which we used to use for JSON schema
+   # validation, we are not the only ones to experience this!)
    #
    execute_process(COMMAND brew --prefix qt6 OUTPUT_VARIABLE CMAKE_PREFIX_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
    message(STATUS "CMAKE_PREFIX_PATH = ${CMAKE_PREFIX_PATH}")
@@ -1111,11 +1111,13 @@ add_test(NAME MeasurementTests.testAlgorithms                      COMMAND ./${f
 add_test(NAME RecipeCalcTests.recipeCalcTest_allGrain              COMMAND ./${fileName_unitTestRunner} RecipeCalcTests    recipeCalcTest_allGrain          )
 add_test(NAME RecipeCalcTests.postBoilLossOgTest                   COMMAND ./${fileName_unitTestRunner} RecipeCalcTests    postBoilLossOgTest               )
 add_test(NAME RecipeCalcTests.testBoilAdditionTiming               COMMAND ./${fileName_unitTestRunner} RecipeCalcTests    testBoilAdditionTiming           )
+add_test(NAME RecipeCalcTests.testBoilStepsWithoutTemperatures     COMMAND ./${fileName_unitTestRunner} RecipeCalcTests    testBoilStepsWithoutTemperatures )
 add_test(NAME RecipeCalcTests.testInventory                        COMMAND ./${fileName_unitTestRunner} RecipeCalcTests    testInventory                    )
 add_test(NAME RecipeCalcTests.testMashWaterVolumes                 COMMAND ./${fileName_unitTestRunner} RecipeCalcTests    testMashWaterVolumes             )
 add_test(NAME RecipeCalcTests.testEvaporationRate                  COMMAND ./${fileName_unitTestRunner} RecipeCalcTests    testEvaporationRate              )
 add_test(NAME RecipeCalcTests.testEquipmentDefaultVolumes          COMMAND ./${fileName_unitTestRunner} RecipeCalcTests    testEquipmentDefaultVolumes      )
 add_test(NAME RecipeCalcTests.testMashTunHeatCapacity              COMMAND ./${fileName_unitTestRunner} RecipeCalcTests    testMashTunHeatCapacity          )
+add_test(NAME RecipeCalcTests.testWaterAlkalinity                  COMMAND ./${fileName_unitTestRunner} RecipeCalcTests    testWaterAlkalinity              )
 add_test(NAME SerializationTests.testDotBeerImportedRecipeCalcs    COMMAND ./${fileName_unitTestRunner} SerializationTests testDotBeerImportedRecipeCalcs   )
 add_test(NAME SerializationTests.testDotBeerAdditionStepCorrection COMMAND ./${fileName_unitTestRunner} SerializationTests testDotBeerAdditionStepCorrection)
 add_test(NAME SerializationTests.testBrewLogCalcs                  COMMAND ./${fileName_unitTestRunner} SerializationTests testBrewLogCalcs                 )
