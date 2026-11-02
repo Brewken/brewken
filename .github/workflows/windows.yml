@@ -227,7 +227,7 @@ jobs:
         if: ${{ success()}}
         uses: actions/upload-artifact@v7
         with:
-          name: brewken-dev-${{ matrix.msystem }}
+          name: brewken-dev-windows-${{ matrix.msystem }}
           path: |
             C:/_/mbuild/packages/windows/Brewken*Installer.exe
             C:/_/mbuild/packages/windows/Brewken*Installer.exe.sha256sum

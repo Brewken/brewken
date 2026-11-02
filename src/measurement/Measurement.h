@@ -35,6 +35,32 @@ class NamedEntity;
 struct TypeInfo;
 
 namespace Measurement {
+   /**
+    * \brief Small wrapper class for storing number of decimal places to display.
+    *        We deliberately don't handle std::optional inside this class, as that's dependent on the context.  Eg where
+    *        the user can specify how many decimal places to use (for a physical quantity or an individual field), then
+    *        \c std::nullopt means "default".  But where we are specifying what the ultimate defaults are,
+    *        \c std::nullopt would not be meaningful!  However, see helper static function \c fromOptInt.
+    */
+   class NumDecimalPlaces {
+      public:
+
+         static constexpr int maxValue = 6;
+
+         constexpr explicit NumDecimalPlaces(int const value) : m_value{std::clamp(value, 0, maxValue)} {
+            return;
+         }
+
+         constexpr int value() const { return m_value; }
+         constexpr auto operator<=>(NumDecimalPlaces const &) const = default;
+
+         static constexpr std::optional<NumDecimalPlaces> fromOptInt(std::optional<int> const & value) {
+            return value ? std::optional<NumDecimalPlaces>(value) : std::nullopt;
+         }
+
+      private:
+         int m_value;
+   };
 
    /**
     * \brief Use this when you want to get the text as a number (and ignore any units or other trailling letters or
@@ -50,8 +76,17 @@ namespace Measurement {
     */
    [[nodiscard]] QVariant extractRawFromString(QString const & input, TypeInfo const & typeInfo, bool * ok = nullptr);
 
-   void loadDisplayScales();
-   void saveDisplayScales();
+   /**
+    * \brief Load (from persistent settings) the user's global per-PhysicalQuantity preferences for unit systems and
+    *        number of decimal places to show.
+    */
+   void loadMeasurementDisplayPreferences();
+
+   /**
+    * \brief Save (to persistent settings) the user's global per-PhysicalQuantity preferences for unit systems and
+    *        number of decimal places to show.
+    */
+   void saveMeasurementDisplayPreferences();
 
    /**
     * \brief Set the display \c UnitSystem for the specified \c PhysicalQuantity

@@ -47,24 +47,23 @@ namespace {
     */
    QMap<Measurement::PhysicalQuantity, Measurement::UnitSystem const *> physicalQuantityToDisplayUnitSystem;
 
-   //
-   // Load the previous stored setting for which UnitSystem we use for a particular physical quantity
-   //
-   void loadDisplayScale(Measurement::PhysicalQuantity const physicalQuantity,
-                         BtStringConst const &               settingName,
-                         Measurement::UnitSystem    const &  defaultUnitSystem) {
-      QString unitSystemName = PersistentSettings::value_ck(settingName, defaultUnitSystem.uniqueName).toString();
-      Measurement::UnitSystem const * unitSystem = Measurement::UnitSystem::getInstanceByUniqueName(unitSystemName);
-      if (nullptr == unitSystem) {
-         qWarning() <<
-            Q_FUNC_INFO << "Unrecognised unit system," << unitSystemName << "for" << physicalQuantity <<
-            ", defaulting to" << defaultUnitSystem.uniqueName << "(" <<
-            Measurement::getDisplayName(defaultUnitSystem.systemOfMeasurement) << ")";
-         unitSystem = &defaultUnitSystem;
-      }
-      Measurement::setDisplayUnitSystem(physicalQuantity, *unitSystem);
-      return;
-   }
+   /**
+    * \brief Stores the optional default number of decimal places to use for each \c Measurement::PhysicalQuantity.
+    *        Note that this is slightly different from \c physicalQuantityToDisplayUnitSystem, because, for historical
+    *        reasons, we have a more complicated hierarchy of values.  The precedence, from top to bottom, is:
+    *
+    *           - Per-field user-specified number (if set)
+    *           - Per-physical quantity user-specified number (if set)
+    *           - Per-field default (if present)
+    *           - Per-physical quantity default (which must always exist!)
+    *
+    *        We want to take care that the second and fourth items in this list do not get confused.  In particular, we
+    *        never want to end up writing out the fourth item (ie global default) to the .conf file as though it were
+    *        the second one (ie user preference).  This would silently override the per-field defaults (which are mostly
+    *        sensible for metric system users).
+    */
+   QMap<Measurement::PhysicalQuantity,
+        std::optional<Measurement::NumDecimalPlaces>> physicalQuantityToUserSpecifiedDecimalPlaces;
 
 }
 
@@ -124,20 +123,46 @@ template<> [[nodiscard]] double       Measurement::extractRawFromString<double> 
 }
 
 
-void Measurement::loadDisplayScales() {
+void Measurement::loadMeasurementDisplayPreferences() {
    for (auto const & ii : Measurement::physicalQuantityStringMapping) {
       auto const physicalQuantity = static_cast<Measurement::PhysicalQuantity>(ii.key);
-      loadDisplayScale(physicalQuantity,
-                       Measurement::getSettingsName(physicalQuantity),
-                       Measurement::Unit::getCanonicalUnit(physicalQuantity).getUnitSystem());
+
+      //
+      // Load the previous stored setting for which UnitSystem we use for a particular physical quantity
+      //
+      BtStringConst const & unitSystemSettingName = Measurement::getSettingsNameUnitSystem(physicalQuantity);
+      Measurement::UnitSystem const & defaultUnitSystem = Measurement::Unit::getCanonicalUnit(physicalQuantity).getUnitSystem();
+      QString const unitSystemName = PersistentSettings::value_ck(unitSystemSettingName, defaultUnitSystem.uniqueName).toString();
+      Measurement::UnitSystem const * unitSystem = Measurement::UnitSystem::getInstanceByUniqueName(unitSystemName);
+      if (nullptr == unitSystem) {
+         qWarning() <<
+            Q_FUNC_INFO << "Unrecognised unit system," << unitSystemName << "for" << physicalQuantity <<
+            ", defaulting to" << defaultUnitSystem.uniqueName << "(" <<
+            Measurement::getDisplayName(defaultUnitSystem.systemOfMeasurement) << ")";
+         unitSystem = &defaultUnitSystem;
+      }
+      Measurement::setDisplayUnitSystem(physicalQuantity, *unitSystem);
+
+      //
+      // Load the previous stored setting for how many decimal places to show for a particular physical quantity
+      //
+      std::optional<Measurement::NumDecimalPlaces> const numDecimalPlaces{
+         NumDecimalPlaces::fromOptInt(
+            PersistentSettings::value_ck<int>(Measurement::getSettingsNameDecimalPlaces(physicalQuantity),
+                                              std::nullopt)
+         )
+      };
+
+      ¥¥¥  Now put it somewhere!  Then do saving...
+
    }
    return;
 }
 
-void Measurement::saveDisplayScales() {
+void Measurement::saveMeasurementDisplayPreferences() {
    for (auto const & ii : Measurement::physicalQuantityStringMapping) {
       auto const physicalQuantity = static_cast<Measurement::PhysicalQuantity>(ii.key);
-      PersistentSettings::insert_ck(Measurement::getSettingsName(physicalQuantity),
+      PersistentSettings::insert_ck(Measurement::getSettingsNameUnitSystem(physicalQuantity),
                                     Measurement::getDisplayUnitSystem(physicalQuantity).uniqueName);
    }
    return;

@@ -166,7 +166,7 @@ namespace PersistentSettings {
     * \param customUserDataDir Used only for development/testing (via a command-line option) to override where user
     *                          data is stored
     */
-   void initialise(QString customUserDataDir = "");
+   void initialise(QString const & customUserDataDir = "");
 
    [[nodiscard]] bool isInitialised();
 
@@ -208,7 +208,8 @@ namespace PersistentSettings {
    };
 
    //
-   // See comment in utils/BtStringConst.h for why we can't overload between QString and BtStringConst.  This is why we
+   // See comment in utils/BtStringConst.h for why we can't overload between QString and BtStringConst (because, by
+   // design, both can be constructed from a string literal, so an overload would be ambiguous).  This is why we
    // have contains_ck, insert_ck, etc (where ck stands for "const key").
    //
 
@@ -216,18 +217,30 @@ namespace PersistentSettings {
     * \brief Returns true if the persistent settings storage contains an item with "fully-qualified" key (generated
     *        from key, section and Extension); otherwise returns false.
     */
-   bool contains   (QString const & key,            QString const section = QString(),  Extension extension = PersistentSettings::Extension::NONE);
-   bool contains_ck(BtStringConst const & constKey, QString const section = QString(),  Extension extension = PersistentSettings::Extension::NONE);
-   bool contains_ck(BtStringConst const & constKey, BtStringConst const & constSection, Extension extension = PersistentSettings::Extension::NONE);
+   bool contains   (      QString const & key,       QString const & section = QString(), Extension extension = PersistentSettings::Extension::NONE);
+   bool contains_ck(BtStringConst const & key,       QString const & section = QString(), Extension extension = PersistentSettings::Extension::NONE);
+   bool contains_ck(BtStringConst const & key, BtStringConst const & section            , Extension extension = PersistentSettings::Extension::NONE);
 
    /**
     * \brief Inserts a new item with the "fully-qualified" key (generated from key, section and Extension) and a value
     *        of value.
+    *
     *        If there is already an item with a corresponding key, that item's value is replaced with value.
+    *
+    *        The `std::optional` overloads allow us to explicitly store a "null" value in a (relatively) human-readable
+    *        form without risking it being read as 0.  Specifically, these calls read and write `std::nullopt` as the
+    *        string "default", on the grounds that this is what we usually mean when a setting is null.  (The
+    *        alternative for null values would be to not write the value at all, but that would make the .conf file a
+    *        bit more cryptic.  It already has no comments, so having settings that may or may not be present means you
+    *        have to look at the application source code to know  fields that might be written.)
+    *
+    *        Template implementation is in the .cpp file.
     */
-   void insert   (QString const & key,            QVariant value, QString const section = QString(),  Extension extension = PersistentSettings::Extension::NONE);
-   void insert_ck(BtStringConst const & constKey, QVariant value, QString const section = QString(),  Extension extension = PersistentSettings::Extension::NONE);
-   void insert_ck(BtStringConst const & constKey, QVariant value, BtStringConst const & constSection, Extension extension = PersistentSettings::Extension::NONE);
+   void insert   (      QString const & key, QVariant const & value,       QString const & section = QString(), Extension extension = PersistentSettings::Extension::NONE);
+   void insert_ck(BtStringConst const & key, QVariant const & value,       QString const & section = QString(), Extension extension = PersistentSettings::Extension::NONE);
+   void insert_ck(BtStringConst const & key, QVariant const & value, BtStringConst const & section            , Extension extension = PersistentSettings::Extension::NONE);
+   template<typename T>
+   void insert   (QString const & key,            std::optional<T> const & value, QString const section = QString(),  Extension extension = PersistentSettings::Extension::NONE);
 
    /**
     * \brief Returns the value associated with the "fully-qualified" key (generated from key, section and Extension).
@@ -235,9 +248,11 @@ namespace PersistentSettings {
     *        defaultValue.
     *        If no defaultValue is specified, the function returns a default-constructed value.
     */
-   QVariant value   (QString const & key,            QVariant const defaultValue = QVariant(), QString const section = QString(),  Extension = PersistentSettings::Extension::NONE);
-   QVariant value_ck(BtStringConst const & constKey, QVariant const defaultValue = QVariant(), QString const section = QString(),  Extension = PersistentSettings::Extension::NONE);
-   QVariant value_ck(BtStringConst const & constKey, QVariant const defaultValue,              BtStringConst const & constSection, Extension = PersistentSettings::Extension::NONE);
+   QVariant value   (      QString const & key, QVariant const & defaultValue = QVariant(),       QString const & section = QString(), Extension extension = PersistentSettings::Extension::NONE);
+   QVariant value_ck(BtStringConst const & key, QVariant const & defaultValue = QVariant(),       QString const & section = QString(), Extension extension = PersistentSettings::Extension::NONE);
+   QVariant value_ck(BtStringConst const & key, QVariant const & defaultValue             , BtStringConst const & section            , Extension extension = PersistentSettings::Extension::NONE);
+   template<typename T>
+   std::optional<T> value_ck(BtStringConst const & key, std::optional<T> const & defaultValue, QString const & section = QString(), Extension extension = PersistentSettings::Extension::NONE);
 
    /**
     * \brief Removes the item matching key (unless key is the name of a section, in which case it removes all keys in

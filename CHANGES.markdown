@@ -3,7 +3,9 @@
 This change log is for high-level user-visible changes to Brewken, intended for consumption by the typical end-user.
 Note however that we also process it into a Debian-compliant text change log, so we need to keep the format consistent.
 In particular, the Release Timestamp section is needed as part of this (and you need to be meticulous about the date
-format therein).
+format therein, otherwise you'll get, eg, no-changelogname-tag error from rpmlint).  You get problems if you set the
+release timestamp to be a date in the future, and I'm guessing nobody cares about the exact time of day a release
+happens, so I'm now setting it to a slightly arbitrary time early in the morning.
 
 ## Forthcoming in v5.3.0
 
@@ -11,6 +13,18 @@ format therein).
 * TODO: Additional methods for calculating IBU
 * Shopping Lists
 * We'll list other new features here...
+
+## v5.2.1
+Fix Mac packaging
+
+### New Features
+None
+
+### Bug Fixes
+* macOS release bundles fail to launch on clean Apple Silicon systems [1176](https://github.com/Brewtarget/brewtarget/issues/1176)
+
+### Release Timestamp
+Mon, 1 Nov 2026 05:02:01 +0100
 
 ## v5.2.0
 This release changes the version numbering to match that of Brewtarget.  We include various fixes and enhancements, including:

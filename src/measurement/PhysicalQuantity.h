@@ -237,7 +237,13 @@ namespace Measurement {
     * \brief Return the \c PersistentSettings name for looking up the display \c UnitSystem for the specified
     *        \c PhysicalQuantity
     */
-   BtStringConst const & getSettingsName(Measurement::PhysicalQuantity const physicalQuantity);
+   BtStringConst const & getSettingsNameUnitSystem(Measurement::PhysicalQuantity const physicalQuantity);
+
+   /**
+    * \brief Return the \c PersistentSettings name for looking up the number of decimal places for the specified
+    *        \c PhysicalQuantity
+    */
+   BtStringConst const & getSettingsNameDecimalPlaces(Measurement::PhysicalQuantity const physicalQuantity);
 
    /**
     * \brief In a few cases, we want to be able to handle two or three different ways of measuring a thing (eg \c Mass,
