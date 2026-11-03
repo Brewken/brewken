@@ -40,7 +40,8 @@ namespace Measurement {
     *        We deliberately don't handle std::optional inside this class, as that's dependent on the context.  Eg where
     *        the user can specify how many decimal places to use (for a physical quantity or an individual field), then
     *        \c std::nullopt means "default".  But where we are specifying what the ultimate defaults are,
-    *        \c std::nullopt would not be meaningful!  However, see helper static function \c fromOptInt.
+    *        \c std::nullopt would not be meaningful!  However, see helper static functions \c fromOptInt and
+    *        \c toOptInt.
     */
    class NumDecimalPlaces {
       public:
@@ -55,7 +56,11 @@ namespace Measurement {
          constexpr auto operator<=>(NumDecimalPlaces const &) const = default;
 
          static constexpr std::optional<NumDecimalPlaces> fromOptInt(std::optional<int> const & value) {
-            return value ? std::optional<NumDecimalPlaces>(value) : std::nullopt;
+            return value ? std::optional<NumDecimalPlaces>{value} : std::nullopt;
+         }
+
+         static constexpr std::optional<int> toOptInt(std::optional<NumDecimalPlaces> const & value) {
+            return value ? std::optional<int>{value->value()} : std::nullopt;
          }
 
       private:
@@ -95,9 +100,23 @@ namespace Measurement {
    void setDisplayUnitSystem(PhysicalQuantity physicalQuantity, UnitSystem const & unitSystem);
 
    /**
+    * \brief Set the user-preferred number of decimal places (if any) for the specified \c PhysicalQuantity
+    *
+    * @param physicalQuantity
+    * @param numDecimalPlaces
+    */
+   void setUserSpecifiedDecimalPlaces(PhysicalQuantity const physicalQuantity,
+                                      std::optional<NumDecimalPlaces> const & numDecimalPlaces);
+
+   /**
     * \brief Get the display \c UnitSystem for the specified \c PhysicalQuantity
     */
    UnitSystem const & getDisplayUnitSystem(PhysicalQuantity physicalQuantity);
+
+   /**
+    * \brief Get the user-preferred number of decimal places (if any) for the specified \c PhysicalQuantity
+    */
+   std::optional<NumDecimalPlaces> getUserSpecifiedDecimalPlaces(PhysicalQuantity physicalQuantity);
 
    /*!
     * \brief Converts a quantity without units to a displayable string
@@ -157,5 +176,15 @@ namespace Measurement {
                                    std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement = std::nullopt,
                                    std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt);
 }
+
+/**
+ * \brief Convenience function for logging
+ */
+template<class S>
+S & operator<<(S & stream, Measurement::NumDecimalPlaces const & numDecimalPlaces) {
+   stream << numDecimalPlaces.value();
+   return stream;
+}
+
 
 #endif

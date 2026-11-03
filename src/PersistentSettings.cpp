@@ -272,18 +272,27 @@ void PersistentSettings::insert_ck(BtStringConst const & key,
 template<typename T>
 void PersistentSettings::insert(QString const & key,
                                 std::optional<T> const & value,
-                                QString const section,
+                                QString const & section,
                                 Extension const extension) {
    PersistentSettings::insert(key, value ? QVariant{*value} : nullMarkerVariant, section, extension);
    return;
 }
+template<typename T>
+void PersistentSettings::insert_ck(BtStringConst const & key,
+                                   std::optional<T> const & value,
+                                   QString const & section,
+                                   Extension extension) {
+   Q_ASSERT(!key.isNull());
+   PersistentSettings::insert(QString{*key}, value, section, extension);
+   return;
+}
 //
-// Instantiate the above template for values we want to support
+// Instantiate the above templates for values we want to support
 //
-template void PersistentSettings::insert(QString const & key,
-                                         std::optional<int> const & value,
-                                         QString const section,
-                                         Extension extension);
+template void PersistentSettings::insert_ck(BtStringConst const & key,
+                                            std::optional<int> const & value,
+                                            QString const & section,
+                                            Extension extension);
 
 QVariant PersistentSettings::value(QString const & key,
                                    QVariant const & defaultValue,

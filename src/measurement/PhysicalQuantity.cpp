@@ -168,7 +168,7 @@ BtStringConst const & Measurement::getSettingsNameUnitSystem(PhysicalQuantity co
    Q_UNREACHABLE();
 }
 
-BtStringConst const & getSettingsNameDecimalPlaces(Measurement::PhysicalQuantity const physicalQuantity) {
+BtStringConst const & Measurement::getSettingsNameDecimalPlaces(Measurement::PhysicalQuantity const physicalQuantity) {
    // This is essentially the same logic as getSettingsNameUnitSystem
    switch (physicalQuantity) {
       // As above, decimalPlaces_weight should be decimalPlaces_mass.  However, I think it's better to stay consistent

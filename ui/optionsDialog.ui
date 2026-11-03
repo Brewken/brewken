@@ -20,10 +20,10 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <!-- =============================================== Units tab ================================================ -->
+     <!-- ========================================= Units & Precision tab ========================================== -->
      <widget class="QWidget" name="tab_units">
       <attribute name="title">
-       <string>Units</string>
+       <string>Units & Precision</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout_5">
        <item row="0" column="0">

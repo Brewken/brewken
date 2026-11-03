@@ -152,9 +152,7 @@ void Measurement::loadMeasurementDisplayPreferences() {
                                               std::nullopt)
          )
       };
-
-      ¥¥¥  Now put it somewhere!  Then do saving...
-
+      Measurement::setUserSpecifiedDecimalPlaces(physicalQuantity, numDecimalPlaces);
    }
    return;
 }
@@ -164,6 +162,10 @@ void Measurement::saveMeasurementDisplayPreferences() {
       auto const physicalQuantity = static_cast<Measurement::PhysicalQuantity>(ii.key);
       PersistentSettings::insert_ck(Measurement::getSettingsNameUnitSystem(physicalQuantity),
                                     Measurement::getDisplayUnitSystem(physicalQuantity).uniqueName);
+      PersistentSettings::insert_ck(
+         Measurement::getSettingsNameDecimalPlaces(physicalQuantity),
+         Measurement::NumDecimalPlaces::toOptInt(Measurement::getUserSpecifiedDecimalPlaces(physicalQuantity))
+      );
    }
    return;
 }
@@ -174,6 +176,13 @@ void Measurement::setDisplayUnitSystem(Measurement::PhysicalQuantity const physi
    Q_ASSERT(physicalQuantity == unitSystem.getPhysicalQuantity());
    qDebug() << Q_FUNC_INFO << "Setting UnitSystem for" << physicalQuantity << "to" << unitSystem.uniqueName;
    physicalQuantityToDisplayUnitSystem.insert(physicalQuantity, &unitSystem);
+   return;
+}
+
+void Measurement::setUserSpecifiedDecimalPlaces(Measurement::PhysicalQuantity const physicalQuantity,
+                                                std::optional<Measurement::NumDecimalPlaces> const & numDecimalPlaces) {
+   qDebug() << Q_FUNC_INFO << "Setting" << physicalQuantity << "decimal places to" << numDecimalPlaces;
+   physicalQuantityToUserSpecifiedDecimalPlaces.insert(physicalQuantity, numDecimalPlaces);
    return;
 }
 
@@ -189,6 +198,17 @@ Measurement::UnitSystem const & Measurement::getDisplayUnitSystem(Measurement::P
       Q_ASSERT(false);
    }
    return *unitSystem;
+}
+
+std::optional<Measurement::NumDecimalPlaces> Measurement::getUserSpecifiedDecimalPlaces(Measurement::PhysicalQuantity const physicalQuantity) {
+   // Logic here is similar to getDisplayUnitSystem() above
+   Q_ASSERT(!physicalQuantityToUserSpecifiedDecimalPlaces.isEmpty());
+   if (!physicalQuantityToUserSpecifiedDecimalPlaces.contains(physicalQuantity)) {
+      qCritical() << Q_FUNC_INFO << "Unable to find display unit system for physical quantity" << physicalQuantity;
+      Q_ASSERT(false);
+   }
+
+   return physicalQuantityToUserSpecifiedDecimalPlaces.value(physicalQuantity);
 }
 
 QString Measurement::displayQuantity(double quantity, int precision) {

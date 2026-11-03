@@ -240,7 +240,9 @@ namespace PersistentSettings {
    void insert_ck(BtStringConst const & key, QVariant const & value,       QString const & section = QString(), Extension extension = PersistentSettings::Extension::NONE);
    void insert_ck(BtStringConst const & key, QVariant const & value, BtStringConst const & section            , Extension extension = PersistentSettings::Extension::NONE);
    template<typename T>
-   void insert   (QString const & key,            std::optional<T> const & value, QString const section = QString(),  Extension extension = PersistentSettings::Extension::NONE);
+   void insert   (      QString const & key, std::optional<T> const & value, QString const & section = QString(), Extension extension = PersistentSettings::Extension::NONE);
+   template<typename T>
+   void insert_ck(BtStringConst const & key, std::optional<T> const & value, QString const & section = QString(), Extension extension = PersistentSettings::Extension::NONE);
 
    /**
     * \brief Returns the value associated with the "fully-qualified" key (generated from key, section and Extension).

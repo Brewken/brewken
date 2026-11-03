@@ -84,9 +84,8 @@ namespace {
                                        Measurement::PhysicalQuantity physicalQuantity) {
       // A QVariant can always be converted to a QString (albeit sometimes an empty one!) so there is no success/failure
       // notification from QVariant::toString()
-      QString selection = comboBox.itemData(comboBox.currentIndex()).toString();
-      auto unitSystems = Measurement::UnitSystem::getUnitSystems(physicalQuantity);
-      for (auto unitSystem : unitSystems) {
+      QString const selection = comboBox.itemData(comboBox.currentIndex()).toString();
+      for (auto const unitSystem : Measurement::UnitSystem::getUnitSystems(physicalQuantity)) {
          if (selection == unitSystem->uniqueName) {
             qDebug() <<
                Q_FUNC_INFO << "Setting UnitSystem for" << physicalQuantity << "to" << unitSystem->uniqueName;

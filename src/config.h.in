@@ -26,7 +26,10 @@
  *
  * (Note that src/config.in serves the same purpose for CMake builds and should be retired if/when we stop using CMake.)
  *
- * This is a way to pass Meson variables into the code
+ * This is a way to pass Meson variables into the code.
+ *
+ * NOTE: if you change one of the config values (eg in meson.build), you will want to do a full build to make sure the
+ *       new value appears everywhere it is used.
  */
 
 //! Used on Linux as a fallback way of determining where to look for resources - see Application.cpp
