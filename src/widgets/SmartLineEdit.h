@@ -98,13 +98,13 @@ public slots:
 
    /**
     * \brief This is called from \c onLineChanged and also directly receives the
-    *        \c SmartLabel::changedSystemOfMeasurementOrScale signal when the user has changed units (eg from US
+    *        \c SmartLabel::changedUnitsOrPrecision signal when the user has changed units (eg from US
     *        Customary to Metric).
     *
     *        In previous versions of the code, this was mostly referenced in .ui files.  One disadvantage of that
     *        approach was that the signal connections were only checked at run-time.
     */
-   void lineChanged(SmartAmounts::ScaleInfo previousScaleInfo);
+   void lineChanged(SmartAmounts::UnitsAndPrecisionInfo previousScaleInfo);
 
 signals:
    /**

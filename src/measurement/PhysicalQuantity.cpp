@@ -197,6 +197,35 @@ BtStringConst const & Measurement::getSettingsNameDecimalPlaces(Measurement::Phy
    Q_UNREACHABLE();
 }
 
+int Measurement::getUltimateDefaultDecimalPlaces(Measurement::PhysicalQuantity const physicalQuantity) {
+   switch (physicalQuantity) {
+      // We start off with 3 for a lot of things, as that used to be the global default, but we'll likely tweak this
+      // over time.
+      case Measurement::PhysicalQuantity::Mass                        : return 3;
+      case Measurement::PhysicalQuantity::Volume                      : return 3;
+      case Measurement::PhysicalQuantity::Length                      : return 3;
+      case Measurement::PhysicalQuantity::Time                        : return 1;
+      case Measurement::PhysicalQuantity::Count                       : return 1;
+      case Measurement::PhysicalQuantity::Temperature                 : return 1;
+      case Measurement::PhysicalQuantity::Color                       : return 3;
+      case Measurement::PhysicalQuantity::Gravity                     : return 3;
+      case Measurement::PhysicalQuantity::DiastaticPower              : return 3;
+      case Measurement::PhysicalQuantity::Acidity                     : return 3;
+      case Measurement::PhysicalQuantity::Bitterness                  : return 3;
+      case Measurement::PhysicalQuantity::Carbonation                 : return 3;
+      case Measurement::PhysicalQuantity::MassFractionOrConcentration : return 3;
+      case Measurement::PhysicalQuantity::Viscosity                   : return 3;
+      case Measurement::PhysicalQuantity::SpecificHeatCapacity        : return 3;
+      case Measurement::PhysicalQuantity::HeatCapacity                : return 3;
+      case Measurement::PhysicalQuantity::VolumePerMass               : return 3;
+      case Measurement::PhysicalQuantity::EnergyPerVolume             : return 3;
+      // As usual, we don't want a default case here as we want the compiler to warn us if we missed a physical quantity
+   }
+   // It's a coding error if we get here
+   Q_UNREACHABLE();
+}
+
+
 EnumStringMapping const Measurement::choiceOfPhysicalQuantityStringMapping {
    {Measurement::ChoiceOfPhysicalQuantity::Mass_Volume        , "Mass_Volume"        },
    {Measurement::ChoiceOfPhysicalQuantity::Mass_Volume_Count  , "Mass_Volume_Count"  },

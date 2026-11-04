@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/SmartAmounts.h is part of Brewken, and is copyright the following authors 2023-2025:
+ * widgets/SmartAmounts.h is part of Brewken, and is copyright the following authors 2023-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@
 
 #include <QString>
 
+#include "measurement/Measurement.h"
 #include "measurement/SystemOfMeasurement.h"
 #include "measurement/UnitSystem.h"
 
@@ -93,6 +94,13 @@ namespace SmartAmounts {
                                std::optional<Measurement::UnitSystem::RelativeScale> forcedScale);
 
    /**
+    * \brief Similar to setForcedSystemOfMeasurement and setForcedRelativeScale
+    */
+   void setForcedDecimalPlaces(char const * const owningWindowName,
+                               char const * const fieldName,
+                               std::optional<Measurement::NumDecimalPlaces> forcedDecimalPlaces);
+
+   /**
     * \brief Called by \c SmartLabel or subclasses of \c BtTableModel
     *
     * \param owningWindowName The class name of the editor (eg \c HopEditor) or \c BtTableModel (eg \c HopTableModel)
@@ -107,6 +115,12 @@ namespace SmartAmounts {
     */
    std::optional<Measurement::UnitSystem::RelativeScale> getForcedRelativeScale(char const * const owningWindowName,
                                                                                 char const * const fieldName);
+
+   /**
+    * \brief Similar to getForcedSystemOfMeasurement and getForcedRelativeScale
+    */
+   std::optional<Measurement::NumDecimalPlaces> getForcedDecimalPlaces(char const * const owningWindowName,
+                                                                       char const * const fieldName);
 
    /**
     * \brief Returns the forced \c SystemOfMeasurement or, if there is none, the \c SystemOfMeasurement of the
@@ -126,19 +140,22 @@ namespace SmartAmounts {
                                                  Measurement::PhysicalQuantity physicalQuantity);
 
    /**
-    * \brief It's sometimes useful to have \c SystemOfMeasurement and \c UnitSystem::RelativeScale in a single variable
+    * \brief It's sometimes useful to have \c SystemOfMeasurement, \c UnitSystem::RelativeScale and decimal places in a
+    *        single variable
     */
-   struct ScaleInfo {
+   struct UnitsAndPrecisionInfo {
       Measurement::SystemOfMeasurement systemOfMeasurement;
       std::optional<Measurement::UnitSystem::RelativeScale> relativeScale = std::nullopt;
+      std::optional<Measurement::NumDecimalPlaces> numDecimalPlaces = std::nullopt;
    };
 
    /**
-    * \brief Effectively combines calls to \c getSystemOfMeasurement and \c getForcedRelativeScale
+    * \brief Effectively combines calls to \c getSystemOfMeasurement, \c getForcedRelativeScale and
+    *        \c getForcedDecimalPlaces
     */
-   ScaleInfo getScaleInfo(char const * const owningWindowName,
-                          char const * const fieldName,
-                          Measurement::PhysicalQuantities physicalQuantities);
+   UnitsAndPrecisionInfo getUnitsAndPrecisionInfo(char const * const owningWindowName,
+                                                  char const * const fieldName,
+                                                  Measurement::PhysicalQuantities physicalQuantities);
 
 }
 

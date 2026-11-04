@@ -211,6 +211,26 @@ std::optional<Measurement::NumDecimalPlaces> Measurement::getUserSpecifiedDecima
    return physicalQuantityToUserSpecifiedDecimalPlaces.value(physicalQuantity);
 }
 
+[[nodiscard]] Measurement::NumDecimalPlaces Measurement::getNumDecimalPlaces(
+   PhysicalQuantity const physicalQuantity,
+   std::optional<NumDecimalPlaces> const userSpecifiedForField,
+   std::optional<NumDecimalPlaces> const defaultForField
+) {
+   if (userSpecifiedForField) {
+      return *userSpecifiedForField;
+   }
+   std::optional<NumDecimalPlaces> const userSpecifiedPerPhysicalQuantity{
+      Measurement::getUserSpecifiedDecimalPlaces(physicalQuantity)
+   };
+   if (userSpecifiedPerPhysicalQuantity) {
+      return *userSpecifiedPerPhysicalQuantity;
+   }
+   if (defaultForField) {
+      return *defaultForField;
+   }
+   return Measurement::NumDecimalPlaces{Measurement::getUltimateDefaultDecimalPlaces(physicalQuantity)};
+}
+
 QString Measurement::displayQuantity(double quantity, int precision) {
    return QString("%L1").arg(quantity, fieldWidth, format, precision);
 }
@@ -226,9 +246,10 @@ QString Measurement::displayQuantity(double quantity, int precision, NonPhysical
 }
 
 QString Measurement::displayAmount(Measurement::Amount const & amount,
-                                   int precision,
-                                   std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
-                                   std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
+                                   std::optional<int> const defaultFieldPrecision,
+                                   std::optional<Measurement::SystemOfMeasurement      > const forcedSystemOfMeasurement,
+                                   std::optional<Measurement::UnitSystem::RelativeScale> const forcedScale,
+                                   std::optional<NumDecimalPlaces                      > const forcedFieldPrecision) {
    // Check for insane values.
    if (std::isnan(amount.quantity) || std::isinf(amount.quantity)) {
       return "-";
@@ -240,12 +261,29 @@ QString Measurement::displayAmount(Measurement::Amount const & amount,
    Measurement::UnitSystem const & displayUnitSystem =
       forcedSystemOfMeasurement ? UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity) :
                                   Measurement::getDisplayUnitSystem(physicalQuantity);
+   // Decimal places are a bit more complicated as, for historical reasons, there are per-field defaults.
+   int precision;
+   if (forcedFieldPrecision) {
+      // User's preference for this field takes highest precedence
+      precision = forcedFieldPrecision->value();
+   } else if (auto const userSpecifiedPhysicalQuantityPrecision = Measurement::getUserSpecifiedDecimalPlaces(physicalQuantity)) {
+      // With no per-field user preference, we'll take any user preference for this PhysicalQuantity
+         precision = userSpecifiedPhysicalQuantityPrecision->value();
+   } else if (defaultFieldPrecision) {
+            // If there are no user preferences, then we'll use the per-field default, if there is one
+      precision = *defaultFieldPrecision;
+   } else {
+      // If none of the above are available then we use the default for this PhysicalQuantity, which is always
+      // available
+      precision = getUltimateDefaultDecimalPlaces(physicalQuantity);
+   }
+
    return displayUnitSystem.displayAmount(amount, precision, forcedScale);
 }
 
-double Measurement::amountDisplay(Measurement::Amount const & amount,
-                                  std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
-                                  std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
+double Measurement::quantityOfDisplayAmount(Measurement::Amount const & amount,
+                                            std::optional<Measurement::SystemOfMeasurement      > const forcedSystemOfMeasurement,
+                                            std::optional<Measurement::UnitSystem::RelativeScale> const forcedScale) {
 
    // Check for insane values.
    if (std::isnan(amount.quantity) || std::isinf(amount.quantity)) {
@@ -259,7 +297,7 @@ double Measurement::amountDisplay(Measurement::Amount const & amount,
       forcedSystemOfMeasurement ? UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity) :
                                   Measurement::getDisplayUnitSystem(physicalQuantity);
 
-   return displayUnitSystem.amountDisplay(amount, forcedScale);
+   return displayUnitSystem.quantityOfDisplayAmount(amount, forcedScale);
 }
 
 void Measurement::getThicknessUnits(Unit const ** volumeUnit, Unit const ** weightUnit) {

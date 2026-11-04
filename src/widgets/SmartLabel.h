@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/SmartLabel.h is part of Brewken, and is copyright the following authors 2009-2025:
+ * widgets/SmartLabel.h is part of Brewken, and is copyright the following authors 2009-2026:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -155,9 +155,9 @@ public:
    [[nodiscard]] SmartAmountSettings const & settings() const;
 
    /**
-    * \brief This is called by \c SmartBase and just wraps \c changedSystemOfMeasurementOrScale
+    * \brief This is called by \c SmartBase and just wraps \c changedUnitsOrPrecision
     */
-   void correctEnteredText(SmartAmounts::ScaleInfo previousScaleInfo);
+   void correctEnteredText(SmartAmounts::UnitsAndPrecisionInfo previousScaleInfo);
 
    /**
     * \brief Converts a measurement (aka amount) to its numerical equivalent in whatever units are configured for this
@@ -218,7 +218,7 @@ signals:
     *        There will always be an old \c SystemOfMeasurement, even if it's the global default for this field's
     *        \c PhysicalQuantity.  There might not be an old \c RelativeScale though, hence the \c std::optional.
     */
-   void changedSystemOfMeasurementOrScale(SmartAmounts::ScaleInfo previousScaleInfo);
+   void changedUnitsOrPrecision(SmartAmounts::UnitsAndPrecisionInfo previousScaleInfo);
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/

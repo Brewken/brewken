@@ -131,7 +131,7 @@ public:
     * \param previousScaleInfo
     */
    Measurement::Amount toCanonical(QString const & enteredText,
-                                   SmartAmounts::ScaleInfo previousScaleInfo,
+                                   SmartAmounts::UnitsAndPrecisionInfo previousScaleInfo,
                                    bool * const ok = nullptr) const {
       Q_ASSERT(this->m_initialised);
 
@@ -517,7 +517,7 @@ Measurement::Amount SmartField::getNonOptCanonicalAmt(bool * const ok) const {
    Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType));
    // It's a coding error to call this for an optional value
    Q_ASSERT(!this->getTypeInfo().isOptional());
-   return this->pimpl->toCanonical(this->getRawText(), this->getScaleInfo(), ok);
+   return this->pimpl->toCanonical(this->getRawText(), this->getUnitsAndPrecisionInfo(), ok);
 }
 
 std::optional<Measurement::Amount> SmartField::getOptCanonicalAmt() const {
@@ -532,7 +532,7 @@ std::optional<Measurement::Amount> SmartField::getOptCanonicalAmt() const {
       return std::nullopt;
    }
 
-   return this->pimpl->toCanonical(rawText, this->getScaleInfo());
+   return this->pimpl->toCanonical(rawText, this->getUnitsAndPrecisionInfo());
 }
 
 double SmartField::getNonOptCanonicalQty(bool * const ok) const {
@@ -562,7 +562,7 @@ template<typename T> T SmartField::getNonOptValue(bool * const ok) const {
       return Measurement::extractRawFromString<T>(rawText, ok);
    }
 
-   return static_cast<T>(this->pimpl->toCanonical(rawText, this->getScaleInfo(), ok).quantity);
+   return static_cast<T>(this->pimpl->toCanonical(rawText, this->getUnitsAndPrecisionInfo(), ok).quantity);
 }
 // Instantiate the above template function for the types that are going to use it
 template int          SmartField::getNonOptValue<int         >(bool * const ok) const;
@@ -605,7 +605,7 @@ template<typename T> std::optional<T> SmartField::getOptValue(bool * const ok) c
       return std::make_optional<T>(value);
    }
 
-   auto quantity = static_cast<T>(this->pimpl->toCanonical(rawText, this->getScaleInfo(), ok).quantity);
+   auto quantity = static_cast<T>(this->pimpl->toCanonical(rawText, this->getUnitsAndPrecisionInfo(), ok).quantity);
 //   qDebug() << Q_FUNC_INFO << this->pimpl->m_fieldFqName << "Converted" << rawText << "to" << quantity;
 
    return std::make_optional<T>(quantity);
@@ -615,7 +615,7 @@ template std::optional<int         > SmartField::getOptValue<int         >(bool 
 template std::optional<unsigned int> SmartField::getOptValue<unsigned int>(bool * const ok) const;
 template std::optional<double      > SmartField::getOptValue<double      >(bool * const ok) const;
 
-void SmartField::correctEnteredText(SmartAmounts::ScaleInfo const previousScaleInfo) {
+void SmartField::correctEnteredText(SmartAmounts::UnitsAndPrecisionInfo const previousScaleInfo) {
    Q_ASSERT(this->pimpl->m_initialised);
 
    // It's a coding error to call this version of correctEnteredText with a NonPhysicalQuantity

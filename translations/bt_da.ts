@@ -5407,27 +5407,27 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>US traditional units</source>
-        <translation>Amerikanske normale enheder</translation>
+        <translation type="vanished">Amerikanske normale enheder</translation>
     </message>
     <message>
         <source>British imperial units</source>
-        <translation>Britiske gamle enheder</translation>
+        <translation type="vanished">Britiske gamle enheder</translation>
     </message>
     <message>
         <source>Celsius</source>
-        <translation>Celsius</translation>
+        <translation type="vanished">Celsius</translation>
     </message>
     <message>
         <source>Fahrenheit</source>
-        <translation>Fahrenheit</translation>
+        <translation type="vanished">Fahrenheit</translation>
     </message>
     <message>
         <source>20C/20C Specific Gravity</source>
-        <translation>20°C/20°C Specifik massefylde</translation>
+        <translation type="vanished">20°C/20°C Specifik massefylde</translation>
     </message>
     <message>
         <source>Plato/Brix/Balling</source>
-        <translation>Plato/Brix/Balling</translation>
+        <translation type="vanished">Plato/Brix/Balling</translation>
     </message>
     <message>
         <source>mm-dd-YYYY</source>
@@ -5443,11 +5443,11 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>SRM</source>
-        <translation>SRM</translation>
+        <translation type="vanished">SRM</translation>
     </message>
     <message>
         <source>EBC</source>
-        <translation>EBC</translation>
+        <translation type="vanished">EBC</translation>
     </message>
     <message>
         <source>Tinseth&apos;s approximation</source>
@@ -5531,15 +5531,15 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>Metric / SI units</source>
-        <translation>SI-enheder (metrisk)</translation>
+        <translation type="vanished">SI-enheder (metrisk)</translation>
     </message>
     <message>
         <source>Lintner</source>
-        <translation>Lintner</translation>
+        <translation type="vanished">Lintner</translation>
     </message>
     <message>
         <source>WK</source>
-        <translation>WK</translation>
+        <translation type="vanished">WK</translation>
     </message>
     <message>
         <source>Choose User Data Directory</source>
@@ -5571,7 +5571,7 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>Lovibond</source>
-        <translation type="unfinished">Lovibond</translation>
+        <translation type="obsolete">Lovibond</translation>
     </message>
     <message>
         <source>Conversion Error</source>
@@ -5579,6 +5579,10 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>Data transfer failed.  See log file for more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6046,7 +6050,7 @@ Programmet lukkes nu.</translation>
     </message>
     <message>
         <source>Specific Heat Capacity Btus per</source>
-        <translation>Specifik varmekapacitet BTU pr.</translation>
+        <translation type="vanished">Specifik varmekapacitet BTU pr.</translation>
     </message>
     <message>
         <source>kg</source>
@@ -6600,10 +6604,6 @@ Logfil indeholder evt. flere detaljer.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Heat Capacity Btus per</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>kc/C</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6813,6 +6813,14 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>Primary fermentation for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specific Heat Capacity BTUs per</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Heat Capacity BTUs per</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9293,6 +9301,10 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Scale</source>
         <translation>Skaler</translation>
+    </message>
+    <message>
+        <source>DecimalPlaces</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -13799,11 +13811,11 @@ Tabs</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation>Masse</translation>
+        <translation type="vanished">Masse</translation>
     </message>
     <message>
         <source>Temperature</source>
-        <translation>Temperatur</translation>
+        <translation type="vanished">Temperatur</translation>
     </message>
     <message>
         <source>Celsius</source>
@@ -13815,11 +13827,11 @@ Tabs</source>
     </message>
     <message>
         <source>Volume</source>
-        <translation>Volumen</translation>
+        <translation type="vanished">Volumen</translation>
     </message>
     <message>
         <source>Gravity</source>
-        <translation>Massefylde</translation>
+        <translation type="vanished">Massefylde</translation>
     </message>
     <message>
         <source>Color</source>
@@ -13975,7 +13987,7 @@ Tabs</source>
     </message>
     <message>
         <source>Diastatic power</source>
-        <translation>Diastatisk kraft</translation>
+        <translation type="vanished">Diastatisk kraft</translation>
     </message>
     <message>
         <source>&lt;qt&gt;
@@ -14085,6 +14097,14 @@ Tabs</source>
     </message>
     <message>
         <source>Show snapshots by default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Units &amp;&amp; Precision</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Decimal places</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -99,8 +99,8 @@ void BtTableModel::restoreUiState(BtStringConst const & property, BtStringConst 
 
 void BtTableModel::contextMenu(QPoint const & point) {
    qDebug() << Q_FUNC_INFO;
-   QHeaderView * hView = qobject_cast<QHeaderView *>(this->sender());
-   int selected = hView->logicalIndexAt(point);
+   auto const hView = qobject_cast<QHeaderView const *>(this->sender());
+   int const selected = hView->logicalIndexAt(point);
    ColumnInfo const & columnInfo = this->columnInfo(selected);
 
    // .:TBD:. The logic from here on is similar to that in SmartLabel::popContextMenu, but I didn't yet figure out how
@@ -115,11 +115,12 @@ void BtTableModel::contextMenu(QPoint const & point) {
    //
    // Note that UnitAndScalePopUpMenu::create handles the case where there are two possible physical quantities
    //
-   std::unique_ptr<QMenu> menu =
+   std::unique_ptr<QMenu> const menu =
       UnitAndScalePopUpMenu::create(this->m_parentTableWidget,
                                     ConvertToPhysicalQuantities(fieldType),
                                     columnInfo.getForcedSystemOfMeasurement(),
-                                    columnInfo.getForcedRelativeScale());
+                                    columnInfo.getForcedRelativeScale(),
+                                    columnInfo.getForcedDecimalPlaces());
 
    // If the pop-up menu has no entries, then we can bail out here
    if (menu->actions().size() == 0) {
@@ -129,7 +130,7 @@ void BtTableModel::contextMenu(QPoint const & point) {
    //
    // This shows the context menu and returns when the user either selects something or dismisses the menu
    //
-   QAction * invoked = menu->exec(hView->mapToGlobal(point));
+   QAction const * invoked = menu->exec(hView->mapToGlobal(point));
    if (invoked == nullptr) {
       return;
    }

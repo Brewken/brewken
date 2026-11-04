@@ -86,8 +86,8 @@ void SmartAmounts::initFixed(char const * const editorName,
 }
 
 void SmartAmounts::setForcedSystemOfMeasurement(char const * const owningWindowName,
-                                              char const * const fieldName,
-                                              std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement) {
+                                                char const * const fieldName,
+                                                std::optional<Measurement::SystemOfMeasurement> const forcedSystemOfMeasurement) {
    if (forcedSystemOfMeasurement) {
       PersistentSettings::insert(fieldName,
                                  Measurement::getUniqueName(*forcedSystemOfMeasurement),
@@ -103,7 +103,7 @@ void SmartAmounts::setForcedSystemOfMeasurement(char const * const owningWindowN
 
 void SmartAmounts::setForcedRelativeScale(char const * const owningWindowName,
                                           char const * const fieldName,
-                                          std::optional<Measurement::UnitSystem::RelativeScale> forcedScale) {
+                                          std::optional<Measurement::UnitSystem::RelativeScale> const forcedScale) {
    if (forcedScale) {
       PersistentSettings::insert(fieldName,
                                  Measurement::UnitSystem::getUniqueName(*forcedScale),
@@ -115,6 +115,23 @@ void SmartAmounts::setForcedRelativeScale(char const * const owningWindowName,
                                  PersistentSettings::Extension::SCALE);
    }
    return;
+}
+
+void SmartAmounts::setForcedDecimalPlaces(char const * const owningWindowName,
+                                          char const * const fieldName,
+                                          std::optional<Measurement::NumDecimalPlaces> const forcedDecimalPlaces) {
+   if (forcedDecimalPlaces) {
+      PersistentSettings::insert(fieldName,
+                                 forcedDecimalPlaces->value(),
+                                 owningWindowName,
+                                 PersistentSettings::Extension::PRECISION);
+   } else {
+      PersistentSettings::remove(fieldName,
+                                 owningWindowName,
+                                 PersistentSettings::Extension::PRECISION);
+   }
+   return;
+
 }
 
 std::optional<Measurement::SystemOfMeasurement> SmartAmounts::getForcedSystemOfMeasurement(char const * const owningWindowName,
@@ -135,6 +152,27 @@ std::optional<Measurement::UnitSystem::RelativeScale> SmartAmounts::getForcedRel
                                 owningWindowName,
                                 PersistentSettings::Extension::SCALE).toString()
    );
+}
+
+std::optional<Measurement::NumDecimalPlaces> SmartAmounts::getForcedDecimalPlaces(char const * const owningWindowName,
+                                                                                  char const * const fieldName) {
+   // If something is stored it will be an int inside a QVariant
+   QVariant const storedValue{
+      PersistentSettings::value(fieldName,
+                                QVariant{},
+                                owningWindowName,
+                                PersistentSettings::Extension::PRECISION)
+   };
+   if (storedValue.isNull()) {
+      return std::nullopt;
+   }
+   if (!storedValue.canConvert<int>()) {
+      // This generally shouldn't happen, unless a manual edit was made to the .conf file, but, in any case, we can
+      // recover simply by ignoring the invalid value.
+      qWarning() << Q_FUNC_INFO << "Could not convert" << storedValue << "to number of decimal places";
+      return std::nullopt;
+   }
+   return Measurement::NumDecimalPlaces{storedValue.toInt()};
 }
 
 Measurement::SystemOfMeasurement SmartAmounts::getSystemOfMeasurement(char const * const owningWindowName,
@@ -163,11 +201,12 @@ Measurement::UnitSystem const & SmartAmounts::getUnitSystem(char const * const o
    return Measurement::getDisplayUnitSystem(physicalQuantity);
 }
 
-SmartAmounts::ScaleInfo SmartAmounts::getScaleInfo(char const * const owningWindowName,
+SmartAmounts::UnitsAndPrecisionInfo SmartAmounts::getUnitsAndPrecisionInfo(char const * const owningWindowName,
                                                char const * const fieldName,
                                                Measurement::PhysicalQuantities physicalQuantities) {
-   return SmartAmounts::ScaleInfo{
+   return SmartAmounts::UnitsAndPrecisionInfo{
       SmartAmounts::getSystemOfMeasurement(owningWindowName, fieldName, physicalQuantities),
-      SmartAmounts::getForcedRelativeScale(owningWindowName, fieldName)
+      SmartAmounts::getForcedRelativeScale(owningWindowName, fieldName),
+      SmartAmounts::getForcedDecimalPlaces(owningWindowName, fieldName)
    };
 }

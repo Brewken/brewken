@@ -4142,30 +4142,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>US traditional units</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>British imperial units</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Celsius</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fahrenheit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>20C/20C Specific Gravity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Plato/Brix/Balling</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>mm-dd-YYYY</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4175,14 +4151,6 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>YYYY-mm-dd</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SRM</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>EBC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4199,18 +4167,6 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Transfer database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Metric / SI units</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lintner</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>WK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4242,15 +4198,15 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Lovibond</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Conversion Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Data transfer failed.  See log file for more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4812,10 +4768,6 @@ Log file may contain more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Specific Heat Capacity Btus per</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>BTU/lb·F</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5148,10 +5100,6 @@ Program will now exit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Heat Capacity Btus per</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>kc/C</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5357,6 +5305,14 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Primary fermentation for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specific Heat Capacity BTUs per</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Heat Capacity BTUs per</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7069,6 +7025,10 @@ The final volume in the primary is %1.</source>
     <name>UnitSystem</name>
     <message>
         <source>Scale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DecimalPlaces</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10062,22 +10022,6 @@ Tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Weight</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Gravity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Color</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10222,10 +10166,6 @@ Tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Diastatic power</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Logging</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10313,6 +10253,14 @@ Tabs</source>
     </message>
     <message>
         <source>Show snapshots by default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Units &amp;&amp; Precision</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Decimal places</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

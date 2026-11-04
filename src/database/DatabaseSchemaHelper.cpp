@@ -37,7 +37,7 @@
 #include "database/DbTransaction.h"
 #include "database/ObjectStoreTyped.h"
 
-int constexpr DatabaseSchemaHelper::latestVersion = 21;
+int constexpr DatabaseSchemaHelper::latestVersion = 22;
 
 // Default namespace hides functions from everything outside this file.
 namespace {
@@ -3478,6 +3478,17 @@ namespace {
       return executeSqlQueries(q, migrationQueries);
    }
 
+   /**
+    * \brief Fix bugs in migrate_to_21
+    */
+   bool migrate_to_22([[maybe_unused]] Database & db, BtSqlQuery & q) {
+      QVector<QueryAndParameters> const migrationQueries{
+         {QString("ALTER TABLE brew_log RENAME COLUMN expected_volume_into_fermentor_l TO expected_volume_into_fv_l")},
+         {QString("ALTER TABLE brew_log RENAME COLUMN measured_volume_into_fermentor_l TO measured_volume_into_fv_l")},
+      };
+      return executeSqlQueries(q, migrationQueries);
+   }
+
    //
    // At some future point:
    //   - maybe fix remaining issues listed in ObjectStore legacyBadTypes
@@ -3514,6 +3525,7 @@ namespace {
          case 18: ret &= migrate_to_19 (database, sqlQuery); break;
          case 19: ret &= migrate_to_20 (database, sqlQuery); break;
          case 20: ret &= migrate_to_21 (database, sqlQuery); break;
+         case 21: ret &= migrate_to_22 (database, sqlQuery); break;
          default:
             qCritical() << QString("Unknown version %1").arg(oldVersion);
             return false;

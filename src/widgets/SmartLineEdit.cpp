@@ -140,7 +140,7 @@ void SmartLineEdit::setRawText(QString const & text) {
 }
 
 void SmartLineEdit::connectSmartLabelSignal(SmartLabel & smartLabel) {
-   connect(&smartLabel, &SmartLabel::changedSystemOfMeasurementOrScale, this, &SmartLineEdit::lineChanged);
+   connect(&smartLabel, &SmartLabel::changedUnitsOrPrecision, this, &SmartLineEdit::lineChanged);
    return;
 }
 
@@ -181,13 +181,13 @@ void SmartLineEdit::onLineChanged() {
    // The field must be measuring a physical quantity, because we dealt with the other case above!
    Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType));
 
-   auto const previousScaleInfo = this->getScaleInfo();
+   auto const previousScaleInfo = this->getUnitsAndPrecisionInfo();
 
    this->lineChanged(previousScaleInfo);
    return;
 }
 
-void SmartLineEdit::lineChanged(SmartAmounts::ScaleInfo previousScaleInfo) {
+void SmartLineEdit::lineChanged(SmartAmounts::UnitsAndPrecisionInfo previousScaleInfo) {
    Q_ASSERT(this->isInitialised());
    Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType));
 

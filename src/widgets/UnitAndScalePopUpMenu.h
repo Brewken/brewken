@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * widgets/UnitAndScalePopUpMenu.h is part of Brewken, and is copyright the following authors 2012-2024:
+ * widgets/UnitAndScalePopUpMenu.h is part of Brewken, and is copyright the following authors 2012-2026:
  *   • Mark de Wever <koraq@xs4all.nl>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -24,8 +24,10 @@
 
 #include <QMenu>
 
+#include "measurement/Measurement.h"
 #include "measurement/SystemOfMeasurement.h"
 #include "measurement/UnitSystem.h"
+#include "utils/BtStringConst.h"
 
 namespace UnitAndScalePopUpMenu {
    /**
@@ -33,6 +35,10 @@ namespace UnitAndScalePopUpMenu {
     *        (and thus \c UnitSystem) and/or \c RelativeScale used to display a particular UI field.  This allows it to
     *        be different from the global default (eg so the user can specify a particular weight field is shown in
     *        metric even though they have set US Customary as the default for weight fields).
+    *
+    *        It also allows the user to select whether to override the number of decimal places displayed in this field.
+    *        (Strictly speaking we should have renamed the namespace to UnitScaleAndPrecisionPopUpMenu when we added
+    *        this feature, but that's starting to get a bit of a mouthful.)
     *
     *        Note that the \c UnitAndScalePopUpMenu itself has no knowledge of the field; it is for the creator to
     *        manage the effects of menu choices on how the field is displayed.
@@ -45,6 +51,7 @@ namespace UnitAndScalePopUpMenu {
     *                                  is specified then the global default is used.)
     * \param forcedRelativeScale the forced scale, if any, for displaying the field.  (NB: Should always be
     *                            \c std::nullopt if \c physicalQuantities is \c Measurement::ChoiceOfPhysicalQuantity.)
+    * \param forcedDecimalPlaces if set, the number of decimal places to use when displaying this field
     *
     * \return New \c QMenu "owned" by \c parent, but see comment in \c widgets/SmartLabel.cpp for why we return
     *         unique pointer so that caller really owns the object -- essentially the returned object typically has a
@@ -53,7 +60,13 @@ namespace UnitAndScalePopUpMenu {
    std::unique_ptr<QMenu> create(QWidget * parent,
                                  Measurement::PhysicalQuantities physicalQuantities,
                                  std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
-                                 std::optional<Measurement::UnitSystem::RelativeScale> forcedRelativeScale);
+                                 std::optional<Measurement::UnitSystem::RelativeScale> forcedRelativeScale,
+                                 std::optional<Measurement::NumDecimalPlaces> forcedDecimalPlaces);
+
+   BtStringConst constexpr menuNameSystemOfMeasurement = "menuSystemOfMeasurement";
+   BtStringConst constexpr menuNameRelativeScale       = "menuRelativeScale";
+   BtStringConst constexpr menuNameDecimalPlaces       = "menuSystemOfMeasurement";
+
 
    /**
     * \brief When a pop-up \c QMenu is displayed, by calling its \c exec function, the return value is a \c QAction

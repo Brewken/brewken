@@ -118,6 +118,15 @@ namespace Measurement {
     */
    std::optional<NumDecimalPlaces> getUserSpecifiedDecimalPlaces(PhysicalQuantity physicalQuantity);
 
+   /**
+    * \brief Get the number of decimal places to show for the specified \c PhysicalQuantity
+    */
+   [[nodiscard]] NumDecimalPlaces getNumDecimalPlaces(
+      PhysicalQuantity const physicalQuantity,
+      std::optional<NumDecimalPlaces> const userSpecifiedForField,
+      std::optional<NumDecimalPlaces> const defaultForField
+   );
+
    /*!
     * \brief Converts a quantity without units to a displayable string
     *
@@ -129,18 +138,23 @@ namespace Measurement {
    QString displayQuantity(double quantity, int precision, NonPhysicalQuantity const nonPhysicalQuantity);
 
    /*!
-    * \brief Converts a measurement (aka amount) to a displayable string in the appropriate units.
+    * \brief Converts a measurement (aka amount) to a displayable string in the appropriate units.  We need two
+    *        parameters for decimals because of the order of precedence of user settings
     *
     * \param amount the amount to display
-    * \param precision how many decimal places
+    * \param defaultFieldPrecision number of decimal places, if any, specified as the default for this field.  Will be
+    *                              ignored if \c forcedFieldPrecision is set or if user has set a global default for
+    *                              the \c PhysicalQuantity of \c amount
+    * \param forcedFieldPrecision number of decimal places, if any, that the user has set on this specific field
     * \param forcedSystemOfMeasurement if supplied, which which system of measurement to use, otherwise use the relevant
     *                                  system default
     * \param forcedScale if supplied, which scale to use, otherwise we use the largest scale that generates a value > 1
     */
    QString displayAmount(Measurement::Amount const & amount,
-                         int precision = 3,
-                         std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement = std::nullopt,
-                         std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt);
+                         std::optional<int> defaultFieldPrecision = std::nullopt,
+                         std::optional<SystemOfMeasurement      > forcedSystemOfMeasurement = std::nullopt,
+                         std::optional<UnitSystem::RelativeScale> forcedScale               = std::nullopt,
+                         std::optional<NumDecimalPlaces         > forcedFieldPrecision      = std::nullopt);
 
    /*!
     * \brief Converts a measurement (aka amount) to its numerical equivalent in the specified or default units.
@@ -149,10 +163,12 @@ namespace Measurement {
     * \param forcedSystemOfMeasurement if supplied, which which system of measurement to use, otherwise use the relevant
     *                                  system default
     * \param forcedScale if supplied, which scale to use, otherwise we use the largest scale that generates a value > 1
+    *
+    * \return
     */
-   double amountDisplay(Measurement::Amount const & amount,
-                        std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement = std::nullopt,
-                        std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt);
+   double quantityOfDisplayAmount(Measurement::Amount const & amount,
+                                  std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement = std::nullopt,
+                                  std::optional<Measurement::UnitSystem::RelativeScale> forcedScale = std::nullopt);
 
    //! \brief Displays thickness in appropriate units from standard thickness in L/kg.
    QString displayThickness(double thick_lkg, bool showUnits = true);

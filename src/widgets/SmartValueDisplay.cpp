@@ -35,7 +35,7 @@ void SmartValueDisplay::setRawText(QString const & text) {
 }
 
 void SmartValueDisplay::connectSmartLabelSignal(SmartLabel & smartLabel) {
-   connect(&smartLabel, &SmartLabel::changedSystemOfMeasurementOrScale, this, &SmartValueDisplay::displayChanged);
+   connect(&smartLabel, &SmartLabel::changedUnitsOrPrecision, this, &SmartValueDisplay::displayChanged);
    return;
 }
 
@@ -43,7 +43,7 @@ void SmartValueDisplay::doPostInitWork() {
    return;
 }
 
-void SmartValueDisplay::displayChanged(SmartAmounts::ScaleInfo previousScaleInfo) {
+void SmartValueDisplay::displayChanged(SmartAmounts::UnitsAndPrecisionInfo previousScaleInfo) {
    this->correctEnteredText(previousScaleInfo);
    return;
 }

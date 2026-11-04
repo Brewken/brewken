@@ -5586,28 +5586,20 @@ If you need help, please open an issue at %1</source>
         <translation type="vanished">Chinês</translation>
     </message>
     <message>
-        <source>US traditional units</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>British imperial units</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Celsius</source>
-        <translation type="unfinished">Celsius</translation>
+        <translation type="obsolete">Celsius</translation>
     </message>
     <message>
         <source>Fahrenheit</source>
-        <translation type="unfinished">Fahrenheit</translation>
+        <translation type="obsolete">Fahrenheit</translation>
     </message>
     <message>
         <source>20C/20C Specific Gravity</source>
-        <translation type="unfinished">20C/20C Gravidade Específica</translation>
+        <translation type="obsolete">20C/20C Gravidade Específica</translation>
     </message>
     <message>
         <source>Plato/Brix/Balling</source>
-        <translation type="unfinished">Plato/Brix/Balling</translation>
+        <translation type="obsolete">Plato/Brix/Balling</translation>
     </message>
     <message>
         <source>mm-dd-YYYY</source>
@@ -5623,11 +5615,11 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>SRM</source>
-        <translation type="unfinished">SRM</translation>
+        <translation type="obsolete">SRM</translation>
     </message>
     <message>
         <source>EBC</source>
-        <translation type="unfinished">EBC</translation>
+        <translation type="obsolete">EBC</translation>
     </message>
     <message>
         <source>Tinseth&apos;s approximation</source>
@@ -5662,18 +5654,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Metric / SI units</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lintner</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>WK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Choose User Data Directory</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5702,16 +5682,16 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Lovibond</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Conversion Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Data transfer failed.  See log file for more details.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished">Padrão</translation>
     </message>
 </context>
 <context>
@@ -6488,10 +6468,6 @@ Log file may contain more details.</source>
         <translation type="obsolete">Remover ingrediente selecionado</translation>
     </message>
     <message>
-        <source>Specific Heat Capacity Btus per</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>BTU/lb·F</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6824,10 +6800,6 @@ Program will now exit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Heat Capacity Btus per</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>kc/C</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7033,6 +7005,14 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Primary fermentation for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specific Heat Capacity BTUs per</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Heat Capacity BTUs per</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9368,6 +9348,10 @@ O volume final do fermentador primário é %1.</translation>
     <name>UnitSystem</name>
     <message>
         <source>Scale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DecimalPlaces</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13866,7 +13850,7 @@ Tabs</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation>Peso</translation>
+        <translation type="vanished">Peso</translation>
     </message>
     <message>
         <source>Use SI units</source>
@@ -13882,7 +13866,7 @@ Tabs</source>
     </message>
     <message>
         <source>Temperature</source>
-        <translation>Temperatura</translation>
+        <translation type="vanished">Temperatura</translation>
     </message>
     <message>
         <source>Celsius</source>
@@ -13894,11 +13878,11 @@ Tabs</source>
     </message>
     <message>
         <source>Volume</source>
-        <translation>Volume</translation>
+        <translation type="vanished">Volume</translation>
     </message>
     <message>
         <source>Gravity</source>
-        <translation>Gravidade</translation>
+        <translation type="vanished">Gravidade</translation>
     </message>
     <message>
         <source>20C/20C Specific Gravity</source>
@@ -14137,10 +14121,6 @@ Tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Diastatic power</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Logging</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14228,6 +14208,14 @@ Tabs</source>
     </message>
     <message>
         <source>Show snapshots by default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Units &amp;&amp; Precision</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Decimal places</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

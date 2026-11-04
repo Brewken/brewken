@@ -72,9 +72,12 @@ namespace {
          case PersistentSettings::Extension::SCALE:
             fullyQualifiedKey += "_scale";
             break;
-         case PersistentSettings::Extension::NONE:
-         default:
+         case PersistentSettings::Extension::PRECISION:
+            fullyQualifiedKey += "_precision";
             break;
+         case PersistentSettings::Extension::NONE:
+            break;
+         // No default case as we want compiler to warn us if we missed something above
       }
 
       return fullyQualifiedKey;

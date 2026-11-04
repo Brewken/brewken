@@ -53,7 +53,7 @@ public slots:
     *
     * This is mostly referenced in .ui files.  (NB this means that the signal connections are only checked at run-time.)
     */
-   void displayChanged(SmartAmounts::ScaleInfo previousScaleInfo);
+   void displayChanged(SmartAmounts::UnitsAndPrecisionInfo previousScaleInfo);
 
 };
 

@@ -58,13 +58,18 @@ public:
       return this->derived().settings().getTypeInfo();
    }
 
-   void setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> systemOfMeasurement) {
-      this->mutableSettings().setForcedSystemOfMeasurement(systemOfMeasurement);
+   void setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement> const forcedSystemOfMeasurement) {
+      this->mutableSettings().setForcedSystemOfMeasurement(forcedSystemOfMeasurement);
       return;
    }
 
-   void setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> relativeScale) {
-      this->mutableSettings().setForcedRelativeScale(relativeScale);
+   void setForcedRelativeScale(std::optional<Measurement::UnitSystem::RelativeScale> const forcedRelativeScale) {
+      this->mutableSettings().setForcedRelativeScale(forcedRelativeScale);
+      return;
+   }
+
+   void setForcedDecimalPlaces(std::optional<Measurement::NumDecimalPlaces> const forcedDecimalPlaces) {
+      this->mutableSettings().setForcedDecimalPlaces(forcedDecimalPlaces);
       return;
    }
 
@@ -76,8 +81,12 @@ public:
       return this->derived().settings().getForcedRelativeScale();
    }
 
-   SmartAmounts::ScaleInfo getScaleInfo() const {
-      return this->derived().settings().getScaleInfo();
+   std::optional<Measurement::NumDecimalPlaces> getForcedDecimalPlaces() const {
+      return this->derived().settings().getForcedDecimalPlaces();
+   }
+
+   SmartAmounts::UnitsAndPrecisionInfo getUnitsAndPrecisionInfo() const {
+      return this->derived().settings().getUnitsAndPrecisionInfo();
    }
 
    Measurement::UnitSystem const & getDisplayUnitSystem() const {
@@ -89,7 +98,7 @@ public:
    }
 
    void selectPhysicalQuantity(Measurement::PhysicalQuantity const physicalQuantity) {
-      auto const previousScaleInfo = this->derived().getScaleInfo();
+      auto const previousScaleInfo = this->derived().settings().getUnitsAndPrecisionInfo();
       this->mutableSettings().selectPhysicalQuantity(physicalQuantity);
       this->derived().correctEnteredText(previousScaleInfo);
       return;

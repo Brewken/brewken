@@ -204,7 +204,11 @@ namespace PersistentSettings {
        *        than for fields that can be either weight or volume, this corresponds directly to a
        *        \c Measurement::UnitSystem.)
        */
-      UNIT
+      UNIT,
+      /**
+       * \brief Used to store forced number of decimal places for displaying a particular field.
+       */
+      PRECISION
    };
 
    //
