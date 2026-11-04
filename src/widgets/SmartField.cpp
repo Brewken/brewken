@@ -45,7 +45,7 @@ public:
       m_fieldFqName            {"Uninitialised m_fieldFqName!"},
       m_settings               {nullptr},
       m_smartBuddyLabel        {nullptr},
-      m_precision              {3},
+      m_precision              {std::nullopt},
       m_maximalDisplayString   {"100.000 srm"} {
       return;
    }
@@ -202,6 +202,19 @@ public:
    }
 
    /**
+    * \brief For a \c NonPhysicalQuantity field, returns the number of decimal places to show.  (For a
+    *        \c PhysicalQuantity field, we pass \c m_precision down to \c Measurement::displayAmount, which knows about
+    *        user preferences.)
+    */
+   unsigned int nonPhysicalPrecision(NonPhysicalQuantity const nonPhysicalQuantity) const {
+      if (this->m_precision) {
+         return *this->m_precision;
+      }
+      // If there is no default for this type of quantity, fall back to 3, which used to be the default for everything
+      return static_cast<unsigned int>(GetUltimateDefaultDecimalPlaces(nonPhysicalQuantity).value_or(3));
+   }
+
+   /**
     * \brief Show \c text, which is the display version of \c canonicalAmount, and remember both (see comment in
     *        \c toCanonical for why).
     */
@@ -219,8 +232,11 @@ public:
    std::unique_ptr<SmartAmountSettings> m_settings;
    SmartLabel *                         m_smartBuddyLabel;
    // "Precision" (ie number of decimal places to show) is used if and only the field is numeric.  For int and unsigned
-   // int, it must always be 0.
-   unsigned int              m_precision;
+   // int, it must always be 0.  Otherwise, if not set, we use the defaults for the field's (physical or non-physical)
+   // quantity.  For a PhysicalQuantity, it is only a default, as user preferences (for the field or for the
+   // PhysicalQuantity) override it.  See comment on physicalQuantityToUserSpecifiedDecimalPlaces in
+   // measurement/Measurement.cpp for the full hierarchy.
+   std::optional<unsigned int> m_precision;
    QString                   m_maximalDisplayString;
    // See comment in toCanonical
    QString                            m_lastDisplayedText;
@@ -374,7 +390,9 @@ template<typename T, typename> void SmartField::setQuantity(T quantity) {
 
       this->setRawText(
          // This handles showing the % symbol after the number
-         Measurement::displayQuantity(quantity, this->pimpl->m_precision, nonPhysicalQuantity)
+         Measurement::displayQuantity(quantity,
+                                      this->pimpl->nonPhysicalPrecision(nonPhysicalQuantity),
+                                      nonPhysicalQuantity)
       );
    } else {
       // The field is measuring a physical quantity
@@ -540,12 +558,12 @@ QVariant SmartField::getAsVariant() const {
    return QVariant{};
 }
 
-void SmartField::setPrecision(unsigned int const precision) {
+void SmartField::setPrecision(std::optional<unsigned int> const precision) {
    this->pimpl->m_precision = precision;
    return;
 }
 
-[[nodiscard]] unsigned int SmartField::getPrecision() const {
+[[nodiscard]] std::optional<unsigned int> SmartField::getPrecision() const {
    return this->pimpl->m_precision;
 }
 

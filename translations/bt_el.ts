@@ -9170,6 +9170,10 @@ The final volume in the primary is %1.</source>
         <source>Default</source>
         <translation type="unfinished">Προεπιλογή</translation>
     </message>
+    <message>
+        <source>Decimal Places</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UnitConversionTool</name>
@@ -9210,10 +9214,6 @@ The final volume in the primary is %1.</source>
     <name>UnitSystem</name>
     <message>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DecimalPlaces</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

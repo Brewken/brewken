@@ -1104,6 +1104,7 @@ add_test(NAME CoreTests.testNamedParameterBundle                   COMMAND ./${f
 add_test(NAME CoreTests.testTypeLookups                            COMMAND ./${fileName_unitTestRunner} CoreTests          testTypeLookups                  )
 add_test(NAME CoreTests.testMultiVector                            COMMAND ./${fileName_unitTestRunner} CoreTests          testMultiVector                  )
 add_test(NAME CoreTests.testLogRotation                            COMMAND ./${fileName_unitTestRunner} CoreTests          testLogRotation                  )
+add_test(NAME DatabaseTests.testUpgradeBrewtarget231Database       COMMAND ./${fileName_unitTestRunner} DatabaseTests      testUpgradeBrewtarget231Database )
 add_test(NAME MeasurementTests.testUnitConversions                 COMMAND ./${fileName_unitTestRunner} MeasurementTests   testUnitConversions              )
 add_test(NAME MeasurementTests.testUnitInverses                    COMMAND ./${fileName_unitTestRunner} MeasurementTests   testUnitInverses                 )
 add_test(NAME MeasurementTests.testNumberDisplayAndParsing         COMMAND ./${fileName_unitTestRunner} MeasurementTests   testNumberDisplayAndParsing      )

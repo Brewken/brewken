@@ -9309,6 +9309,10 @@ El volumen final en el primario es %1.</translation>
         <source>Default</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Decimal Places</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UnitConversionTool</name>
@@ -9350,10 +9354,6 @@ El volumen final en el primario es %1.</translation>
     <message>
         <source>Scale</source>
         <translation type="unfinished">Escalar</translation>
-    </message>
-    <message>
-        <source>DecimalPlaces</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

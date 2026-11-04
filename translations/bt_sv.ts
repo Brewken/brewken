@@ -9411,6 +9411,10 @@ Primärens slutgiltiga volym är %1.</translation>
         <source>Default</source>
         <translation type="unfinished">Förvalt</translation>
     </message>
+    <message>
+        <source>Decimal Places</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UnitConversionTool</name>
@@ -9452,10 +9456,6 @@ Primärens slutgiltiga volym är %1.</translation>
     <message>
         <source>Scale</source>
         <translation type="unfinished">Skala</translation>
-    </message>
-    <message>
-        <source>DecimalPlaces</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -9502,6 +9502,10 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
         <source>Default</source>
         <translation type="unfinished">Standaard</translation>
     </message>
+    <message>
+        <source>Decimal Places</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UnitConversionTool</name>
@@ -9543,10 +9547,6 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <message>
         <source>Scale</source>
         <translation type="unfinished">Schaal</translation>
-    </message>
-    <message>
-        <source>DecimalPlaces</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

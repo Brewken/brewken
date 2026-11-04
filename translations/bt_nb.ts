@@ -9310,6 +9310,10 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
         <source>Default</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Decimal Places</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UnitConversionTool</name>
@@ -9350,10 +9354,6 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     <name>UnitSystem</name>
     <message>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DecimalPlaces</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

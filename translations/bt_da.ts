@@ -9260,6 +9260,10 @@ The final volume in the primary is %1.</source>
         <source>Default</source>
         <translation>Standardvalg</translation>
     </message>
+    <message>
+        <source>Decimal Places</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UnitConversionTool</name>
@@ -9301,10 +9305,6 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Scale</source>
         <translation>Skaler</translation>
-    </message>
-    <message>
-        <source>DecimalPlaces</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

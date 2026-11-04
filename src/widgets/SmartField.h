@@ -122,10 +122,11 @@ public:
     *                   to give us inputs in specific units in order to convert them to other units measuring the same
     *                   physical quantity.
     *
-    * \param precision For a decimal field, this determines the number of decimal places to show.  If not specified, we
-    *                  show 3 decimal places.  TBD: IDK if one day we might need to be more sophisticated about this, ie
-    *                  with number of decimal places dependent on the units that the user has chosen, but for now we
-    *                  assume it's the same for everything, but allow modification via \c setPrecision.
+    * \param precision For a decimal field, this determines the default number of decimal places to show.  If not
+    *                  specified, we use the default for the field's quantity -- see \c getUltimateDefaultDecimalPlaces
+    *                  in measurement/PhysicalQuantity.h and \c GetUltimateDefaultDecimalPlaces in
+    *                  measurement/NonPhysicalQuantity.h.  For a \c PhysicalQuantity field, user preferences (for the
+    *                  field or for the \c PhysicalQuantity) override this.  Can be modified via \c setPrecision.
     *
     * \param maximalDisplayString Used for determining the width of the widget (because a fixed pixel width isn't great
     *                             in a world where there are varying display DPIs).
@@ -263,10 +264,11 @@ public:
    /**
     * \brief Normally, you set precision once when \c init is called via \c SMART_FIELD_INIT or similar.  However, if
     *        you really want to modify it on the fly, eg to have different precision for different units, this is what
-    *        you call.  Note that you should call this before calling \c setQuantity.
+    *        you call.  Note that you should call this before calling \c setQuantity.  Setting \c std::nullopt means
+    *        we use the default for the field's quantity (see \c init).
     */
-   void setPrecision(unsigned int const precision);
-   [[nodiscard]] unsigned int getPrecision() const;
+   void setPrecision(std::optional<unsigned int> const precision);
+   [[nodiscard]] std::optional<unsigned int> getPrecision() const;
 
    /**
     * \brief If our field type is \b not \c NonPhysicalQuantity, then this returns the field converted to canonical

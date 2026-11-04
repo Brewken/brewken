@@ -295,6 +295,7 @@ set(filesToCompile_cpp
 #
 set(unitTestFiles_cpp
     ${repoDir}/src/unitTests/CoreTests.cpp
+    ${repoDir}/src/unitTests/DatabaseTests.cpp
     ${repoDir}/src/unitTests/MeasurementTests.cpp
     ${repoDir}/src/unitTests/RecipeCalcTests.cpp
     ${repoDir}/src/unitTests/SerializationTests.cpp

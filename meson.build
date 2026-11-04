@@ -1052,6 +1052,7 @@ applicationMainSourceFile = files([
 #
 unitTestExtraSourceFiles = files([
    'src/unitTests/CoreTests.cpp',
+   'src/unitTests/DatabaseTests.cpp',
    'src/unitTests/MeasurementTests.cpp',
    'src/unitTests/RecipeCalcTests.cpp',
    'src/unitTests/SerializationTests.cpp',
@@ -1260,6 +1261,7 @@ mocHeaders = files([
 
 unitTestMocHeaders = files([
    'src/unitTests/CoreTests.h',
+   'src/unitTests/DatabaseTests.h',
    'src/unitTests/MeasurementTests.h',
    'src/unitTests/RecipeCalcTests.h',
    'src/unitTests/SerializationTests.h',
@@ -1948,6 +1950,7 @@ test('Test type lookups'                     , testRunner, args : ['CoreTests', 
 test('Test MultiVector'                      , testRunner, args : ['CoreTests', 'testMultiVector'                            ], suite : 'core')
 # Need a bit longer than the default 30 second timeout for the log rotation test on some platforms
 test('Test log rotation'                     , testRunner, args : ['CoreTests', 'testLogRotation'                            ], suite : 'core', timeout : 60)
+test('Test DB upgrade from Brewtarget 2.3.1'  , testRunner, args : ['DatabaseTests', 'testUpgradeBrewtarget231Database'      ], suite : 'database')
 test('Test unit conversions'                 , testRunner, args : ['MeasurementTests', 'testUnitConversions'                 ], suite : 'measurement')
 test('Test unit inverses'                    , testRunner, args : ['MeasurementTests', 'testUnitInverses'                    ], suite : 'measurement')
 test('Test number display and parsing'       , testRunner, args : ['MeasurementTests', 'testNumberDisplayAndParsing'         ], suite : 'measurement')
