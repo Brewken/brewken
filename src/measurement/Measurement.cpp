@@ -204,7 +204,7 @@ std::optional<Measurement::NumDecimalPlaces> Measurement::getUserSpecifiedDecima
    // Logic here is similar to getDisplayUnitSystem() above
    Q_ASSERT(!physicalQuantityToUserSpecifiedDecimalPlaces.isEmpty());
    if (!physicalQuantityToUserSpecifiedDecimalPlaces.contains(physicalQuantity)) {
-      qCritical() << Q_FUNC_INFO << "Unable to find display unit system for physical quantity" << physicalQuantity;
+      qCritical() << Q_FUNC_INFO << "Unable to find decimal places setting for physical quantity" << physicalQuantity;
       Q_ASSERT(false);
    }
 
@@ -262,23 +262,11 @@ QString Measurement::displayAmount(Measurement::Amount const & amount,
       forcedSystemOfMeasurement ? UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity) :
                                   Measurement::getDisplayUnitSystem(physicalQuantity);
    // Decimal places are a bit more complicated as, for historical reasons, there are per-field defaults.
-   int precision;
-   if (forcedFieldPrecision) {
-      // User's preference for this field takes highest precedence
-      precision = forcedFieldPrecision->value();
-   } else if (auto const userSpecifiedPhysicalQuantityPrecision = Measurement::getUserSpecifiedDecimalPlaces(physicalQuantity)) {
-      // With no per-field user preference, we'll take any user preference for this PhysicalQuantity
-         precision = userSpecifiedPhysicalQuantityPrecision->value();
-   } else if (defaultFieldPrecision) {
-            // If there are no user preferences, then we'll use the per-field default, if there is one
-      precision = *defaultFieldPrecision;
-   } else {
-      // If none of the above are available then we use the default for this PhysicalQuantity, which is always
-      // available
-      precision = getUltimateDefaultDecimalPlaces(physicalQuantity);
-   }
+   NumDecimalPlaces const precision = Measurement::getNumDecimalPlaces(physicalQuantity,
+                                                                       forcedFieldPrecision,
+                                                                       NumDecimalPlaces::fromOptInt(defaultFieldPrecision));
 
-   return displayUnitSystem.displayAmount(amount, precision, forcedScale);
+   return displayUnitSystem.displayAmount(amount, precision.value(), forcedScale);
 }
 
 double Measurement::quantityOfDisplayAmount(Measurement::Amount const & amount,

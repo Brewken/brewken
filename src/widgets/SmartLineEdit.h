@@ -104,7 +104,7 @@ public slots:
     *        In previous versions of the code, this was mostly referenced in .ui files.  One disadvantage of that
     *        approach was that the signal connections were only checked at run-time.
     */
-   void lineChanged(SmartAmounts::UnitsAndPrecisionInfo previousScaleInfo);
+   void lineChanged(SmartAmounts::ScaleInfo previousScaleInfo);
 
 signals:
    /**

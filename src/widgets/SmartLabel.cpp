@@ -93,7 +93,7 @@ void SmartLabel::init(char const * const   editorName,
    return *this->pimpl->m_settings.get();
 }
 
-void SmartLabel::correctEnteredText(SmartAmounts::UnitsAndPrecisionInfo previousScaleInfo) {
+void SmartLabel::correctEnteredText(SmartAmounts::ScaleInfo previousScaleInfo) {
    emit changedUnitsOrPrecision(previousScaleInfo);
    return;
 }
@@ -223,58 +223,25 @@ void SmartLabel::popContextMenu(QPoint const & point) {
    }
 
    // Show the pop-up menu and get back whatever the user selected
-   QAction const * invoked = menu->exec(widgie->mapToGlobal(point));
-   if (!invoked) {
+   std::optional<UnitAndScalePopUpMenu::Selection> const selection =
+      UnitAndScalePopUpMenu::exec(*menu, widgie->mapToGlobal(point));
+   if (!selection) {
       return;
    }
 
    // Save the current settings (which may come from system-wide defaults) for the signal below
-   Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType));
-   SmartAmounts::UnitsAndPrecisionInfo const previousSettings = this->getUnitsAndPrecisionInfo();
+   SmartAmounts::ScaleInfo const previousScaleInfo = this->getScaleInfo();
 
-   // User will either have selected a SystemOfMeasurement or a UnitSystem::RelativeScale.  We can know which based on
-   // whether it's the menu or the sub-menu that it came from.
-   QObject const * parentMenu = invoked->parent();
-   if (parentMenu == menu.get()) {
-      // It's the top menu, so SystemOfMeasurement
-      std::optional<Measurement::SystemOfMeasurement> const whatSelected =
-         UnitAndScalePopUpMenu::dataFromQAction<Measurement::SystemOfMeasurement>(*invoked);
-      qDebug() << Q_FUNC_INFO << this->pimpl->m_labelFqName << "Selected SystemOfMeasurement" << whatSelected;
-      // This stores the new SystemOfMeasurement (if any), but modification of the field contents
-      // won't happen until it receives the signal sent below.
-      this->setForcedSystemOfMeasurement(whatSelected);
-      // Choosing a forced SystemOfMeasurement resets any selection of forced RelativeScale
-      this->setForcedRelativeScale(std::nullopt);
-   } else {
-      // It's one of the sub-menus
-      QString const parentMenuName = parentMenu->objectName();
-      if (parentMenuName == UnitAndScalePopUpMenu::menuNameRelativeScale) {
-         // It's the sub-menu, so UnitSystem::RelativeScale
-         std::optional<Measurement::UnitSystem::RelativeScale> const whatSelected =
-            UnitAndScalePopUpMenu::dataFromQAction<Measurement::UnitSystem::RelativeScale>(*invoked);
-         qDebug() << Q_FUNC_INFO << this->pimpl->m_labelFqName << "Selected RelativeScale" << whatSelected;
-         // This stores the new SystemOfMeasurement (if any), but modification of the field contents
-         // won't happen until it receives the signal sent below.
-         this->setForcedRelativeScale(whatSelected);
-      } else if (parentMenuName == UnitAndScalePopUpMenu::menuNameDecimalPlaces) {
-         std::optional<Measurement::NumDecimalPlaces> const whatSelected =
-            UnitAndScalePopUpMenu::dataFromQAction<Measurement::NumDecimalPlaces>(*invoked);
-         qDebug() << Q_FUNC_INFO << this->pimpl->m_labelFqName << "Selected precision" << whatSelected;
-         this->setForcedDecimalPlaces(whatSelected);
-      } else {
-         // This shouldn't happen
-         qWarning() << Q_FUNC_INFO << this->pimpl->m_labelFqName << "Uncrecognised menu name:" << parentMenuName;
-         return;
-      }
-
-   }
+   // This stores the new setting, but modification of the field contents won't happen until it receives the signal
+   // sent below.
+   UnitAndScalePopUpMenu::applySelection(*selection, *this);
 
    // Remember, we need the original unit, not the new one.
    //
    // Note that the changedUnitsOrPrecision signal can also be received by other slots than the
    // SmartField::lineChanged.  This is why we use a signal and why we include the SmartAmounts::ScaleInfo data (which
    // SmartField could work out itself).
-   emit changedUnitsOrPrecision(previousSettings);
+   emit changedUnitsOrPrecision(previousScaleInfo);
 
    return;
 }

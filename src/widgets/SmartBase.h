@@ -85,8 +85,8 @@ public:
       return this->derived().settings().getForcedDecimalPlaces();
    }
 
-   SmartAmounts::UnitsAndPrecisionInfo getUnitsAndPrecisionInfo() const {
-      return this->derived().settings().getUnitsAndPrecisionInfo();
+   SmartAmounts::ScaleInfo getScaleInfo() const {
+      return this->derived().settings().getScaleInfo();
    }
 
    Measurement::UnitSystem const & getDisplayUnitSystem() const {
@@ -98,7 +98,7 @@ public:
    }
 
    void selectPhysicalQuantity(Measurement::PhysicalQuantity const physicalQuantity) {
-      auto const previousScaleInfo = this->derived().settings().getUnitsAndPrecisionInfo();
+      auto const previousScaleInfo = this->derived().getScaleInfo();
       this->mutableSettings().selectPhysicalQuantity(physicalQuantity);
       this->derived().correctEnteredText(previousScaleInfo);
       return;

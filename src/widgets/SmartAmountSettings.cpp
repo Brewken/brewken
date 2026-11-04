@@ -128,19 +128,19 @@ std::optional<Measurement::NumDecimalPlaces> SmartAmountSettings::getForcedDecim
    return SmartAmounts::getForcedDecimalPlaces(this->pimpl->m_editorName, this->pimpl->m_labelOrFieldName);
 }
 
-SmartAmounts::UnitsAndPrecisionInfo SmartAmountSettings::getUnitsAndPrecisionInfo() const {
+SmartAmounts::ScaleInfo SmartAmountSettings::getScaleInfo() const {
    // Uncomment the next statement for diagnosing asserts!
 //   qDebug().noquote() <<
 //      Q_FUNC_INFO << this->pimpl->editorName << this->pimpl->labelOrFieldName << ":" << this->pimpl->m_typeInfo <<
 //      "Stack trace:" << Logging::getStackTrace();
 
    if (this->pimpl->m_fixedDisplayUnit) {
-      return SmartAmounts::UnitsAndPrecisionInfo{this->pimpl->m_fixedDisplayUnit->getUnitSystem().systemOfMeasurement,
+      return SmartAmounts::ScaleInfo{this->pimpl->m_fixedDisplayUnit->getUnitSystem().systemOfMeasurement,
                                      std::nullopt};
    }
 
    Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->pimpl->m_typeInfo.fieldType));
-   return SmartAmounts::getUnitsAndPrecisionInfo(this->pimpl->m_editorName,
+   return SmartAmounts::getScaleInfo(this->pimpl->m_editorName,
                                      this->pimpl->m_labelOrFieldName,
                                      ConvertToPhysicalQuantities(*this->pimpl->m_typeInfo.fieldType));
 }

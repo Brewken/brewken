@@ -140,22 +140,23 @@ namespace SmartAmounts {
                                                  Measurement::PhysicalQuantity physicalQuantity);
 
    /**
-    * \brief It's sometimes useful to have \c SystemOfMeasurement, \c UnitSystem::RelativeScale and decimal places in a
-    *        single variable
+    * \brief It's sometimes useful to have \c SystemOfMeasurement and \c UnitSystem::RelativeScale in a single variable.
+    *
+    *        NB: We deliberately don't include the number of decimal places here.  This struct is mostly used to tell a
+    *            field how to interpret the text it is currently showing, and that doesn't depend on how many decimal
+    *            places were used to display it.
     */
-   struct UnitsAndPrecisionInfo {
+   struct ScaleInfo {
       Measurement::SystemOfMeasurement systemOfMeasurement;
       std::optional<Measurement::UnitSystem::RelativeScale> relativeScale = std::nullopt;
-      std::optional<Measurement::NumDecimalPlaces> numDecimalPlaces = std::nullopt;
    };
 
    /**
-    * \brief Effectively combines calls to \c getSystemOfMeasurement, \c getForcedRelativeScale and
-    *        \c getForcedDecimalPlaces
+    * \brief Effectively combines calls to \c getSystemOfMeasurement and \c getForcedRelativeScale
     */
-   UnitsAndPrecisionInfo getUnitsAndPrecisionInfo(char const * const owningWindowName,
-                                                  char const * const fieldName,
-                                                  Measurement::PhysicalQuantities physicalQuantities);
+   ScaleInfo getScaleInfo(char const * const owningWindowName,
+                          char const * const fieldName,
+                          Measurement::PhysicalQuantities physicalQuantities);
 
 }
 

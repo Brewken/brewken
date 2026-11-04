@@ -43,7 +43,7 @@ void SmartValueDisplay::doPostInitWork() {
    return;
 }
 
-void SmartValueDisplay::displayChanged(SmartAmounts::UnitsAndPrecisionInfo previousScaleInfo) {
+void SmartValueDisplay::displayChanged(SmartAmounts::ScaleInfo previousScaleInfo) {
    this->correctEnteredText(previousScaleInfo);
    return;
 }

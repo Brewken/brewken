@@ -54,7 +54,7 @@ public:
     * \brief Get the current settings (which may come from system-wide defaults) for \c SystemOfMeasurement and
     *        \c RelativeScale.
     */
-   [[nodiscard]] SmartAmounts::UnitsAndPrecisionInfo getUnitsAndPrecisionInfo() const;
+   [[nodiscard]] SmartAmounts::ScaleInfo getScaleInfo() const;
 
    /**
     * \brief Returns the \c UnitSystem that should be used to display this field, based on the forced

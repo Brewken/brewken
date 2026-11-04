@@ -20,6 +20,7 @@
 #include "database/DatabaseSchemaHelper.h"
 
 #include <algorithm> // For std::sort and std::set_difference
+#include <utility>   // For std::pair
 
 #include <QDebug>
 #include <QMessageBox>
@@ -3482,10 +3483,23 @@ namespace {
     * \brief Fix bugs in migrate_to_21
     */
    bool migrate_to_22([[maybe_unused]] Database & db, BtSqlQuery & q) {
-      QVector<QueryAndParameters> const migrationQueries{
-         {QString("ALTER TABLE brew_log RENAME COLUMN expected_volume_into_fermentor_l TO expected_volume_into_fv_l")},
-         {QString("ALTER TABLE brew_log RENAME COLUMN measured_volume_into_fermentor_l TO measured_volume_into_fv_l")},
-      };
+      //
+      // The brew_log columns we rename here only have the old names in databases that were upgraded from an older
+      // schema.  A database that was created from scratch at version 21 (by DatabaseSchemaHelper::create, which makes
+      // tables from the ObjectStore definitions rather than by running the migrations) already has the new names, and
+      // trying to rename a non-existent column is an error that would make the whole migration fail.  So, as in
+      // migrate_to_21, we have to check ourselves which columns exist.
+      //
+      QVector<QueryAndParameters> migrationQueries;
+      QSqlRecord const brewLogColumns = q.driver()->record("brew_log");
+      for (auto const & [oldName, newName] : {
+         std::pair{"expected_volume_into_fermentor_l", "expected_volume_into_fv_l"},
+         std::pair{"measured_volume_into_fermentor_l", "measured_volume_into_fv_l"}
+      }) {
+         if (brewLogColumns.contains(oldName)) {
+            migrationQueries.append({QString("ALTER TABLE brew_log RENAME COLUMN %1 TO %2").arg(oldName, newName)});
+         }
+      }
       return executeSqlQueries(q, migrationQueries);
    }
 

@@ -103,13 +103,12 @@ namespace {
    QDir userDataDir{""};
 
    //
-   // This is what we read/write for a `std::nullopt` value when using std::optional rather than QVariant.  It's not
-   // super brilliant for non-English speakers, but we don't translate any setting names in the .conf file, and it's
-   // only a small proportion of users in a small proportion of circumstances that would need to manually edit that
-   // file.
+   // When reading a std::optional value, this is interpreted as `std::nullopt` (as is the setting being absent).  We
+   // never write it ourselves -- see comment in header.  It's not super brilliant for non-English speakers, but we
+   // don't translate any setting names in the .conf file, and it's only a small proportion of users in a small
+   // proportion of circumstances that would need to manually edit that file.
    //
    QString const nullMarker = QStringLiteral("default");
-   QVariant const nullMarkerVariant{nullMarker};
 }
 
 void PersistentSettings::initialise(QString const & customUserDataDir) {
@@ -277,14 +276,19 @@ void PersistentSettings::insert(QString const & key,
                                 std::optional<T> const & value,
                                 QString const & section,
                                 Extension const extension) {
-   PersistentSettings::insert(key, value ? QVariant{*value} : nullMarkerVariant, section, extension);
+   if (value) {
+      PersistentSettings::insert(key, QVariant::fromValue(*value), section, extension);
+   } else {
+      // Not set means we don't store anything.  (See comment in header for why we do not write out "default".)
+      PersistentSettings::remove(key, section, extension);
+   }
    return;
 }
 template<typename T>
 void PersistentSettings::insert_ck(BtStringConst const & key,
                                    std::optional<T> const & value,
                                    QString const & section,
-                                   Extension extension) {
+                                   Extension const extension) {
    Q_ASSERT(!key.isNull());
    PersistentSettings::insert(QString{*key}, value, section, extension);
    return;
@@ -292,10 +296,8 @@ void PersistentSettings::insert_ck(BtStringConst const & key,
 //
 // Instantiate the above templates for values we want to support
 //
-template void PersistentSettings::insert_ck(BtStringConst const & key,
-                                            std::optional<int> const & value,
-                                            QString const & section,
-                                            Extension extension);
+template void PersistentSettings::insert   (QString       const & key, std::optional<int> const & value, QString const & section, Extension const extension);
+template void PersistentSettings::insert_ck(BtStringConst const & key, std::optional<int> const & value, QString const & section, Extension const extension);
 
 QVariant PersistentSettings::value(QString const & key,
                                    QVariant const & defaultValue,
@@ -322,18 +324,18 @@ QVariant PersistentSettings::value_ck(BtStringConst const & key,
 }
 
 template<typename T>
-std::optional<T> PersistentSettings::value_ck(BtStringConst const & key,
-                                              std::optional<T> const & defaultValue,
-                                              QString const & section,
-                                              PersistentSettings::Extension const extension) {
-   //
-   // It's perhaps mildly inefficient to turn the default value into a QVariant, but it keeps things simple to follow
-   // the "standard" way as much as possible.
-   //
-   QVariant const rawValue = PersistentSettings::value_ck(key,
-                                                          defaultValue ? QVariant{*defaultValue} : nullMarkerVariant,
-                                                          section,
-                                                          extension);
+std::optional<T> PersistentSettings::value(QString const & key,
+                                           std::optional<T> const & defaultValue,
+                                           QString const & section,
+                                           PersistentSettings::Extension const extension) {
+   Q_ASSERT(initialised);
+   QString const fqKey = generateFqKey(key, section, extension);
+   if (!qSettings->contains(fqKey)) {
+      return defaultValue;
+   }
+
+   QVariant rawValue = qSettings->value(fqKey);
+
    //
    // We rely on the fact that both T and nullMarker can be turned into QString by QVariant.
    //
@@ -345,24 +347,32 @@ std::optional<T> PersistentSettings::value_ck(BtStringConst const & key,
    }
 
    //
-   // Again, it's belt-and-braces here to check we can convert to T
+   // Note that we can't use QVariant::canConvert() here, because that only tells us whether a conversion between the
+   // two types is possible in principle -- eg it returns true for QString to int even when the string is "abc".  So we
+   // have to attempt the conversion.  (Values read from the .conf file are typically strings, so this matters!)
    //
-   if (!rawValue.canConvert<T>()) {
+   QVariant const originalValue{rawValue};
+   if (!rawValue.convert(QMetaType::fromType<T>())) {
       qWarning() <<
-         Q_FUNC_INFO << "Ignoring unparseable value" << rawValue << "for setting" << key << "/" << section;
+         Q_FUNC_INFO << "Ignoring unparseable value" << originalValue << "for setting" << fqKey;
       return defaultValue;
    }
 
    return rawValue.value<T>();
 }
+template<typename T>
+std::optional<T> PersistentSettings::value_ck(BtStringConst const & key,
+                                              std::optional<T> const & defaultValue,
+                                              QString const & section,
+                                              PersistentSettings::Extension const extension) {
+   Q_ASSERT(!key.isNull());
+   return PersistentSettings::value(QString{*key}, defaultValue, section, extension);
+}
 //
-// Instantiate the above template for values we want to support
+// Instantiate the above templates for values we want to support
 //
-template
-std::optional<int> PersistentSettings::value_ck(BtStringConst const & key,
-                                                std::optional<int> const & defaultValue,
-                                                QString const & section,
-                                                PersistentSettings::Extension const extension);
+template std::optional<int> PersistentSettings::value   (QString       const & key, std::optional<int> const & defaultValue, QString const & section, PersistentSettings::Extension const extension);
+template std::optional<int> PersistentSettings::value_ck(BtStringConst const & key, std::optional<int> const & defaultValue, QString const & section, PersistentSettings::Extension const extension);
 
 void PersistentSettings::remove   (QString const & key,
                                    QString const section,

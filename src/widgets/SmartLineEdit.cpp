@@ -181,13 +181,13 @@ void SmartLineEdit::onLineChanged() {
    // The field must be measuring a physical quantity, because we dealt with the other case above!
    Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType));
 
-   auto const previousScaleInfo = this->getUnitsAndPrecisionInfo();
+   auto const previousScaleInfo = this->getScaleInfo();
 
    this->lineChanged(previousScaleInfo);
    return;
 }
 
-void SmartLineEdit::lineChanged(SmartAmounts::UnitsAndPrecisionInfo previousScaleInfo) {
+void SmartLineEdit::lineChanged(SmartAmounts::ScaleInfo previousScaleInfo) {
    Q_ASSERT(this->isInitialised());
    Q_ASSERT(!std::holds_alternative<NonPhysicalQuantity>(*this->getTypeInfo().fieldType));
 

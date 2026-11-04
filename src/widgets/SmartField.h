@@ -336,7 +336,7 @@ public:
     *
     * \param previousScaleInfo
     */
-   void correctEnteredText(SmartAmounts::UnitsAndPrecisionInfo previousScaleInfo);
+   void correctEnteredText(SmartAmounts::ScaleInfo previousScaleInfo);
 
    /**
     * \brief Version of \c correctEnteredText to call when field type is \c NonPhysicalQuantity

@@ -21,13 +21,15 @@
 
 #include <memory>
 #include <optional>
+#include <type_traits>
+#include <variant>
 
 #include <QMenu>
+#include <QPoint>
 
 #include "measurement/Measurement.h"
 #include "measurement/SystemOfMeasurement.h"
 #include "measurement/UnitSystem.h"
-#include "utils/BtStringConst.h"
 
 namespace UnitAndScalePopUpMenu {
    /**
@@ -63,19 +65,61 @@ namespace UnitAndScalePopUpMenu {
                                  std::optional<Measurement::UnitSystem::RelativeScale> forcedRelativeScale,
                                  std::optional<Measurement::NumDecimalPlaces> forcedDecimalPlaces);
 
-   BtStringConst constexpr menuNameSystemOfMeasurement = "menuSystemOfMeasurement";
-   BtStringConst constexpr menuNameRelativeScale       = "menuRelativeScale";
-   BtStringConst constexpr menuNameDecimalPlaces       = "menuSystemOfMeasurement";
-
+   /**
+    * \brief What the user selected from a menu created by \c create.  The alternative held tells you which (sub-)menu
+    *        the selection came from.  Each alternative is a \c std::optional because \c std::nullopt means the user
+    *        chose "Default" (ie to remove any forced setting).
+    */
+   using Selection = std::variant<std::optional<Measurement::SystemOfMeasurement      >,
+                                  std::optional<Measurement::UnitSystem::RelativeScale>,
+                                  std::optional<Measurement::NumDecimalPlaces         >>;
 
    /**
-    * \brief When a pop-up \c QMenu is displayed, by calling its \c exec function, the return value is a \c QAction
-    *        corresponding to the menu item the user selected.  This function then retrieves the
-    *        \c std::optional<Measurement::SystemOfMeasurement> or
-    *        \c std::optional<Measurement::UnitSystem::RelativeScale> from that \c QAction.
+    * \brief Shows a menu created by \c create and returns what the user selected
+    *
+    * \param menu
+    * \param globalPosition Where to show the menu, in global coordinates
+    *
+    * \return \c std::nullopt if the user dismissed the menu without selecting anything
     */
-   template<typename T>
-   std::optional<T> dataFromQAction(QAction const & action);
+   [[nodiscard]] std::optional<Selection> exec(QMenu & menu, QPoint const & globalPosition);
+
+   /**
+    * \brief Anything we can apply a \c Selection to -- in practice \c SmartLabel and \c ColumnInfo
+    */
+   template<class T>
+   concept CanHaveForcedDisplaySettings = requires (T & target) {
+      target.setForcedSystemOfMeasurement(std::optional<Measurement::SystemOfMeasurement      >{});
+      target.setForcedRelativeScale      (std::optional<Measurement::UnitSystem::RelativeScale>{});
+      target.setForcedDecimalPlaces      (std::optional<Measurement::NumDecimalPlaces         >{});
+   };
+
+   /**
+    * \brief Stores the user's \c Selection via the relevant "forced" setter on \c target.  Note that this only stores
+    *        the new setting; it is for the caller to redisplay the field(s) concerned.
+    */
+   template<CanHaveForcedDisplaySettings T>
+   void applySelection(Selection const & selection, T & target) {
+      std::visit(
+         [&target](auto const & selected) {
+            using SelectedType = std::decay_t<decltype(selected)>;
+            if constexpr (std::is_same_v<SelectedType, std::optional<Measurement::SystemOfMeasurement>>) {
+               target.setForcedSystemOfMeasurement(selected);
+               // Any forced RelativeScale relates to the old UnitSystem, so choosing a forced SystemOfMeasurement
+               // resets it.
+               target.setForcedRelativeScale(std::nullopt);
+            } else if constexpr (std::is_same_v<SelectedType, std::optional<Measurement::UnitSystem::RelativeScale>>) {
+               target.setForcedRelativeScale(selected);
+            } else {
+               static_assert(std::is_same_v<SelectedType, std::optional<Measurement::NumDecimalPlaces>>);
+               target.setForcedDecimalPlaces(selected);
+            }
+            return;
+         },
+         selection
+      );
+      return;
+   }
 }
 
 #endif

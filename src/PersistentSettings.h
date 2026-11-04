@@ -231,12 +231,11 @@ namespace PersistentSettings {
     *
     *        If there is already an item with a corresponding key, that item's value is replaced with value.
     *
-    *        The `std::optional` overloads allow us to explicitly store a "null" value in a (relatively) human-readable
-    *        form without risking it being read as 0.  Specifically, these calls read and write `std::nullopt` as the
-    *        string "default", on the grounds that this is what we usually mean when a setting is null.  (The
-    *        alternative for null values would be to not write the value at all, but that would make the .conf file a
-    *        bit more cryptic.  It already has no comments, so having settings that may or may not be present means you
-    *        have to look at the application source code to know  fields that might be written.)
+    *        For the `std::optional` overloads, `std::nullopt` means "not set", so we remove the item rather than
+    *        storing anything.  This is consistent with how we already handle forced units and scales for individual
+    *        fields, and avoids any risk of a "null" value being read back as 0.  (When reading, we also accept the
+    *        string "default" as meaning `std::nullopt`, in case someone sets that by manually editing the .conf
+    *        file.)
     *
     *        Template implementation is in the .cpp file.
     */
@@ -257,6 +256,14 @@ namespace PersistentSettings {
    QVariant value   (      QString const & key, QVariant const & defaultValue = QVariant(),       QString const & section = QString(), Extension extension = PersistentSettings::Extension::NONE);
    QVariant value_ck(BtStringConst const & key, QVariant const & defaultValue = QVariant(),       QString const & section = QString(), Extension extension = PersistentSettings::Extension::NONE);
    QVariant value_ck(BtStringConst const & key, QVariant const & defaultValue             , BtStringConst const & section            , Extension extension = PersistentSettings::Extension::NONE);
+   /**
+    * \brief The `std::optional` overloads return `std::nullopt` if the setting is "default" (see comment on
+    *        \c insert above), and \c defaultValue if the setting is absent or cannot be parsed as \c T.
+    *
+    *        Template implementation is in the .cpp file.
+    */
+   template<typename T>
+   std::optional<T> value   (      QString const & key, std::optional<T> const & defaultValue, QString const & section = QString(), Extension extension = PersistentSettings::Extension::NONE);
    template<typename T>
    std::optional<T> value_ck(BtStringConst const & key, std::optional<T> const & defaultValue, QString const & section = QString(), Extension extension = PersistentSettings::Extension::NONE);
 
