@@ -126,15 +126,17 @@ QVariant PropertyHelper::readDataFromPropertyValue(
       }
 
       if (nonPhysicalQuantity == NonPhysicalQuantity::Percentage) {
-         // If the column doesn't specify a precision, we use the default for percentages
-         unsigned int precision = static_cast<unsigned int>(
-            GetUltimateDefaultDecimalPlaces(nonPhysicalQuantity).value_or(3)
-         );
+         // The user's choice for the column, if any, overrides the column's precision, if any, which in turn
+         // overrides the default for percentages.
+         std::optional<Measurement::NumDecimalPlaces> defaultForColumn;
          if (typeInfo.displayAs) {
             Q_ASSERT(std::holds_alternative<DisplayInfo::Precision>(*typeInfo.displayAs));
             DisplayInfo::Precision const & precisionInfo = std::get<DisplayInfo::Precision>(*typeInfo.displayAs);
-            precision = precisionInfo.precision;
+            defaultForColumn = Measurement::NumDecimalPlaces{static_cast<int>(precisionInfo.precision)};
          }
+         int const precision = Measurement::getNumDecimalPlaces(nonPhysicalQuantity,
+                                                                forcedDecimalPlaces,
+                                                                defaultForColumn).value();
          // We assert that percentages are numbers and therefore either are double or convertible to double
          Q_ASSERT(modelData.canConvert<double>());
          return QVariant(Measurement::displayQuantity(modelData.toDouble(), precision, nonPhysicalQuantity));

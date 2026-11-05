@@ -1955,6 +1955,7 @@ test('Test unit conversions'                 , testRunner, args : ['MeasurementT
 test('Test unit inverses'                    , testRunner, args : ['MeasurementTests', 'testUnitInverses'                    ], suite : 'measurement')
 test('Test number display and parsing'       , testRunner, args : ['MeasurementTests', 'testNumberDisplayAndParsing'         ], suite : 'measurement')
 test('Test algorithms'                       , testRunner, args : ['MeasurementTests', 'testAlgorithms'                      ], suite : 'measurement')
+test('Test percentage decimal places'        , testRunner, args : ['MeasurementTests', 'testPercentageDecimalPlaces'         ], suite : 'measurement')
 test('Test recipe calculations - all grain'  , testRunner, args : ['RecipeCalcTests', 'recipeCalcTest_allGrain'              ], suite : 'recipe')
 test('Test post boil loss OG'                , testRunner, args : ['RecipeCalcTests', 'postBoilLossOgTest'                   ], suite : 'recipe')
 test('Test boil addition timing'             , testRunner, args : ['RecipeCalcTests', 'testBoilAdditionTiming'               ], suite : 'recipe')

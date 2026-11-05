@@ -1970,7 +1970,7 @@ void MainWindow::updateRecipeEfficiency() {
 
    Undoable::doOrRedoUpdate(*this->pimpl->m_recipeObs,
                         TYPE_INFO(Recipe, efficiency_pct),
-                        lineEdit_efficiency->getNonOptValue<unsigned int>(),
+                        lineEdit_efficiency->getNonOptValue<double>(),
                         tr("Change Recipe Efficiency"));
    return;
 }

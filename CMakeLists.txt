@@ -1109,6 +1109,7 @@ add_test(NAME MeasurementTests.testUnitConversions                 COMMAND ./${f
 add_test(NAME MeasurementTests.testUnitInverses                    COMMAND ./${fileName_unitTestRunner} MeasurementTests   testUnitInverses                 )
 add_test(NAME MeasurementTests.testNumberDisplayAndParsing         COMMAND ./${fileName_unitTestRunner} MeasurementTests   testNumberDisplayAndParsing      )
 add_test(NAME MeasurementTests.testAlgorithms                      COMMAND ./${fileName_unitTestRunner} MeasurementTests   testAlgorithms                   )
+add_test(NAME MeasurementTests.testPercentageDecimalPlaces         COMMAND ./${fileName_unitTestRunner} MeasurementTests   testPercentageDecimalPlaces      )
 add_test(NAME RecipeCalcTests.recipeCalcTest_allGrain              COMMAND ./${fileName_unitTestRunner} RecipeCalcTests    recipeCalcTest_allGrain          )
 add_test(NAME RecipeCalcTests.postBoilLossOgTest                   COMMAND ./${fileName_unitTestRunner} RecipeCalcTests    postBoilLossOgTest               )
 add_test(NAME RecipeCalcTests.testBoilAdditionTiming               COMMAND ./${fileName_unitTestRunner} RecipeCalcTests    testBoilAdditionTiming           )

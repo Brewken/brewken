@@ -592,7 +592,10 @@
                     </item>
 
                     <item row="5" column="0" colspan="2">
-                     <widget class="QLabel" name="label_efficiency">
+                     <widget class="SmartLabel" name="label_efficiency">
+                      <property name="contextMenuPolicy">
+                       <enum>Qt::CustomContextMenu</enum>
+                      </property>
                       <property name="text">
                        <string>Efficienc&amp;y</string>
                       </property>

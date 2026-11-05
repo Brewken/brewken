@@ -114,8 +114,12 @@ public:
     *                 units if it is a \c PhysicalQuantity) and, whether this is an optional field (in which case we
     *                 need to handle blank / empty string as a valid value).
     *
-    * \param buddyLabel Usually needs to be \c QLabel if \c fieldType is a \c NonPhysicalQuantity and \c SmartLabel if
-    *                   it is not.  However, a \c PhysicalQuantity (or \c Measurement::ChoiceOfPhysicalQuantity) field
+    * \param buddyLabel Usually needs to be \c SmartLabel if the user can choose anything about how the field is
+    *                   displayed (see \c UnitAndScalePopUpMenu::isAvailableFor) and \c QLabel if not.  In
+    *                   particular, a field holding a \c PhysicalQuantity can have units, scale and decimal places
+    *                   chosen; one holding a decimal \c NonPhysicalQuantity::Percentage can have decimal places
+    *                   chosen; and others (eg dates and strings) have nothing to choose and must have a \c QLabel.
+    *                   However, a \c PhysicalQuantity (or \c Measurement::ChoiceOfPhysicalQuantity) field
     *                   can have a \c QLabel (rather than a \c SmartLabel) where the user does \b not have a choice
     *                   about units or scales (even though they otherwise would for this sort of \c PhysicalQuantity).
     *                   This is typically used on conversion dialogs, eg \c RefractoDialog, where we are asking the user
@@ -344,6 +348,14 @@ public:
     * \brief Version of \c correctEnteredText to call when field type is \c NonPhysicalQuantity
     */
    void correctEnteredText();
+
+   /**
+    * \brief For a field holding a \c NonPhysicalQuantity, redisplay the current value after the user has changed the
+    *        number of decimal places to show (via the \c SmartLabel buddy).  Subclasses call this from their slot that
+    *        receives \c SmartLabel::changedPrecision.  (For a field holding a \c PhysicalQuantity, this is handled by
+    *        \c correctEnteredText(SmartAmounts::ScaleInfo), via \c SmartLabel::changedUnitsOrPrecision.)
+    */
+   void redisplayWithNewPrecision();
 
 private:
    // Private implementation details - see https://herbsutter.com/gotw/_100/
