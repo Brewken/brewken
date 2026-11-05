@@ -642,7 +642,9 @@ message('OpenSSL Library:', openSslDependency.name(), 'found =', openSslDependen
 #
 # We periodically need to run the following, to update to the latest version of Blaze:
 #
-#    git submodule update --remote
+#    git submodule update --remote third-party/blaze
+#    git add third-party/blaze
+#    git commit -m "Update Blaze submodule"
 #
 # In order for Meson to find Blaze as a dependency, we need to "outsource" things to CMake's `find_package()` command
 # (via the `method : 'cmake'` option on Meson's `dependency()` command).  This is a bit fiddly because Blaze consists of
