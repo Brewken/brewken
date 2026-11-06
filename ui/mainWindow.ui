@@ -1318,6 +1318,13 @@
                  </widget>
                 </item>
                 <item>
+                 <widget class="QLabel" name="label_mashSharing">
+                  <property name="toolTip">
+                   <string>Whether this mash is shared with other recipes and/or locked</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <spacer name="horizontalSpacer_mashCombo">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
@@ -1407,6 +1414,13 @@
                  </widget>
                 </item>
                 <item>
+                 <widget class="QLabel" name="label_boilSharing">
+                  <property name="toolTip">
+                   <string>Whether this boil is shared with other recipes and/or locked</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <spacer name="horizontalSpacer_boilCombo">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
@@ -1475,6 +1489,13 @@
                   <property name="icon">
                    <iconset resource="../resources.qrc">
                     <normaloff>:/images/edit.svg</normaloff>:/images/edit.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_fermentationSharing">
+                  <property name="toolTip">
+                   <string>Whether this fermentation is shared with other recipes and/or locked</string>
                   </property>
                  </widget>
                 </item>

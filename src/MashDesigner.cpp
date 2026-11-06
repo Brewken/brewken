@@ -31,6 +31,7 @@
 #include "measurement/Measurement.h"
 #include "measurement/PhysicalConstants.h"
 #include "model/Fermentable.h"
+#include "widgets/LockAndShareBar.h"
 
 #ifdef MANUALLY_INCLUDE_MOC
    // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
@@ -360,12 +361,38 @@ bool MashDesigner::initializeMash() {
       return false;
    }
 
-   auto const mash = this->m_recObs->mash();
-   if (!mash) {
+   if (!this->m_recObs->mash()) {
       qDebug() << Q_FUNC_INFO << "Create new Mash";
       this->m_mash = std::make_shared<Mash>("");
    } else {
-      qDebug() << Q_FUNC_INFO << "Clear all steps of existing Mash";
+      //
+      // The designer replaces all the steps of the mash.  We mustn't do this if the mash is shared with other recipes
+      // or is locked (including because it's used by a locked recipe), so, in that case, we offer to make a copy.
+      // (Previously we just went ahead and deleted all the steps!)
+      //
+      std::shared_ptr<Mash> const mash = LockAndShare::getChangeable<Mash>(
+         this,
+         *this->m_recObs,
+         tr("The Mash Designer replaces all the steps of the recipe's mash.")
+      );
+      if (!mash) {
+         return false;
+      }
+      if (mash->numSteps() > 0) {
+         QMessageBox::StandardButton const answer = QMessageBox::question(
+            this,
+            tr("Replace mash steps?"),
+            tr("The Mash Designer will replace the %n existing step(s) of mash \"%1\".  Do you want to continue?",
+               "",
+               static_cast<int>(mash->numSteps())).arg(mash->name()),
+            QMessageBox::Yes | QMessageBox::Cancel,
+            QMessageBox::Cancel
+         );
+         if (answer != QMessageBox::Yes) {
+            return false;
+         }
+      }
+      qDebug() << Q_FUNC_INFO << "Clear all steps of Mash #" << mash->key();
       this->m_mash = mash;
       this->m_mash->removeAllSteps();
    }

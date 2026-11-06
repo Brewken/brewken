@@ -78,6 +78,7 @@
 #include "HelpDialog.h"
 #include "Html.h"
 #include "MashDesigner.h"
+#include "model/RecipeUtils.h"
 #include "MashWizard.h"
 #include "OptionDialog.h"
 #include "PersistentSettings.h"
@@ -425,6 +426,89 @@ public:
    template<class StepClass> auto & getStepEditor() const { return this->stepEditor(Identifier<StepClass>{}); }
 
    // Here we have a parameter anyway, so we can just use overloading directly
+   //
+   // For each of Mash, Boil and Fermentation, the widgets we use to show whether the Recipe's one is shared and/or
+   // locked, and to disable changes to it when it is locked.  (Same Identifier trick as for stepEditor.)
+   //
+   QLabel & sharingLabel(Identifier<Mash        > const) const { return *this->m_self.label_mashSharing        ; }
+   QLabel & sharingLabel(Identifier<Boil        > const) const { return *this->m_self.label_boilSharing        ; }
+   QLabel & sharingLabel(Identifier<Fermentation> const) const { return *this->m_self.label_fermentationSharing; }
+   QWidget & stepsWidget(Identifier<Mash        > const) const { return *this->m_self.mashStepsWidget        ; }
+   QWidget & stepsWidget(Identifier<Boil        > const) const { return *this->m_self.boilStepsWidget        ; }
+   QWidget & stepsWidget(Identifier<Fermentation> const) const { return *this->m_self.fermentationStepsWidget; }
+   QWidget & comboBox(Identifier<Mash        > const) const { return *this->m_self.mashComboBox        ; }
+   QWidget & comboBox(Identifier<Boil        > const) const { return *this->m_self.boilComboBox        ; }
+   QWidget & comboBox(Identifier<Fermentation> const) const { return *this->m_self.fermentationComboBox; }
+   QMetaObject::Connection & sharingConnection(Identifier<Mash        > const) { return this->m_mashSharingConnection        ; }
+   QMetaObject::Connection & sharingConnection(Identifier<Boil        > const) { return this->m_boilSharingConnection        ; }
+   QMetaObject::Connection & sharingConnection(Identifier<Fermentation> const) { return this->m_fermentationSharingConnection; }
+
+   /**
+    * \brief Show whether the current Recipe's Mash / Boil / Fermentation is shared with other recipes and/or locked,
+    *        and stop the user changing its steps on the Recipe's tab if it is locked (including because it is used by
+    *        a locked recipe -- see \c RecipeUtils::lockReason).
+    *
+    *        Should be called whenever the Recipe changes (including when it is locked/unlocked).
+    */
+   template<class NE> void updateSharingAndLocking() {
+      QLabel & label = this->sharingLabel(Identifier<NE>{});
+      QWidget & steps = this->stepsWidget(Identifier<NE>{});
+      QMetaObject::Connection & connection = this->sharingConnection(Identifier<NE>{});
+      QObject::disconnect(connection);
+
+      bool const recipeLocked = this->m_recipeObs && this->m_recipeObs->locked();
+      // You can't change which mash etc a locked recipe uses
+      this->comboBox(Identifier<NE>{}).setEnabled(this->m_recipeObs && !recipeLocked);
+
+      // See comment in buttons/RecipeAttributeButton.h for why we need template keyword here for Clang
+      std::shared_ptr<NE> const item = this->m_recipeObs ? this->m_recipeObs->template get<NE>() : nullptr;
+      if (!item) {
+         label.clear();
+         label.setToolTip("");
+         steps.setEnabled(this->m_recipeObs && !recipeLocked);
+         return;
+      }
+
+      //
+      // Watch the item so that we update if, eg, it gets locked or unlocked in its editor
+      //
+      connection = this->m_self.connect(
+         item.get(),
+         &NamedEntity::changed,
+         &this->m_self,
+         [this](QMetaProperty prop, [[maybe_unused]] QVariant val) {
+            if (prop.name() == PropertyNames::LockablePropertyBase::locked) {
+               this->updateSharingAndLocking<NE>();
+            }
+            return;
+         }
+      );
+
+      RecipeUtils::LockReason const lockReason = RecipeUtils::lockReason(*item);
+      qsizetype const numOtherRecipes = RecipeUtils::recipesUsing(*item).size() - 1;
+      QStringList summary;
+      if (lockReason == RecipeUtils::LockReason::ItemLocked) {
+         summary.append(MainWindow::tr("Locked"));
+      } else if (lockReason == RecipeUtils::LockReason::UsedByLockedRecipe && !recipeLocked) {
+         // If the current recipe is locked, that's already shown elsewhere, so we don't need to say it here
+         summary.append(MainWindow::tr("Used by a locked recipe"));
+      }
+      if (numOtherRecipes > 0) {
+         summary.append(MainWindow::tr("Shared with %n other recipe(s)", "", numOtherRecipes));
+      }
+      label.setText(summary.join(MainWindow::tr(" · ")));
+      label.setToolTip(RecipeUtils::describeSharingAndLocking(*item, this->m_recipeObs));
+      steps.setEnabled(lockReason == RecipeUtils::LockReason::NotLocked);
+      return;
+   }
+
+   void updateAllSharingAndLocking() {
+      this->updateSharingAndLocking<Mash        >();
+      this->updateSharingAndLocking<Boil        >();
+      this->updateSharingAndLocking<Fermentation>();
+      return;
+   }
+
    void setStepOwner(std::shared_ptr<Mash> stepOwner) {
       this->m_recipeObs->setMash(stepOwner);
       this->m_mashStepEditor->setOwner(stepOwner);
@@ -817,6 +901,11 @@ public:
    std::unique_ptr<HelpDialog           > m_helpDialog           ;
    std::unique_ptr<HydrometerTool       > m_hydrometerTool       ;
    std::unique_ptr<MashDesigner         > m_mashDesigner         ;
+
+   // See updateSharingAndLocking
+   QMetaObject::Connection m_mashSharingConnection;
+   QMetaObject::Connection m_boilSharingConnection;
+   QMetaObject::Connection m_fermentationSharingConnection;
    std::unique_ptr<MashWizard           > m_mashWizard           ;
    std::unique_ptr<OgCorrectionTool     > m_ogCorrectionTool     ;
    std::unique_ptr<OptionDialog         > m_optionDialog         ;
@@ -1556,8 +1645,14 @@ void MainWindow::lockRecipe(int const state) {
    this->pimpl-> m_miscCatalog->setEnableAddToRecipe(enabled);
    this->pimpl->m_yeastCatalog->setEnableAddToRecipe(enabled);
 
-   // TODO: mashes still need dealing with
    //
+   // A locked recipe's mash, boil and fermentation are, in effect, locked too (see RecipeUtils::lockReason), as is
+   // the choice of which mash etc the recipe uses.  The Mash Designer and Mash Wizard change the recipe's mash, so
+   // they are not available either.
+   //
+   this->pimpl->updateAllSharingAndLocking();
+   this->pushButton_mashDesigner->setEnabled(enabled);
+   this->pushButton_mashWizard  ->setEnabled(enabled);
    return;
 }
 
@@ -1790,9 +1885,27 @@ void MainWindow::updateEquipmentInUi() {
    return;
 }
 
-void MainWindow::updateMashInUi        () { if (this->pimpl->m_recipeObs) { this->        mashComboBox->setItem(this->pimpl->m_recipeObs->        mash()); } return; }
-void MainWindow::updateBoilInUi        () { if (this->pimpl->m_recipeObs) { this->        boilComboBox->setItem(this->pimpl->m_recipeObs->        boil()); } return; }
-void MainWindow::updateFermentationInUi() { if (this->pimpl->m_recipeObs) { this->fermentationComboBox->setItem(this->pimpl->m_recipeObs->fermentation()); } return; }
+void MainWindow::updateMashInUi() {
+   if (this->pimpl->m_recipeObs) {
+      this->mashComboBox->setItem(this->pimpl->m_recipeObs->mash());
+   }
+   this->pimpl->updateSharingAndLocking<Mash>();
+   return;
+}
+void MainWindow::updateBoilInUi() {
+   if (this->pimpl->m_recipeObs) {
+      this->boilComboBox->setItem(this->pimpl->m_recipeObs->boil());
+   }
+   this->pimpl->updateSharingAndLocking<Boil>();
+   return;
+}
+void MainWindow::updateFermentationInUi() {
+   if (this->pimpl->m_recipeObs) {
+      this->fermentationComboBox->setItem(this->pimpl->m_recipeObs->fermentation());
+   }
+   this->pimpl->updateSharingAndLocking<Fermentation>();
+   return;
+}
 
 void MainWindow::droppedRecipeEquipment(Equipment * kitRaw) {
    if (this->pimpl->m_recipeObs == nullptr) {
@@ -2278,23 +2391,20 @@ void MainWindow::editRecipeStyle() {
 }
 
 void MainWindow::editRecipeMash() {
-   this->pimpl->m_mashEditor->setEditItem(this->pimpl->m_recipeObs->mash());
-   this->pimpl->m_mashEditor->setRecipe(this->pimpl->m_recipeObs);
-   this->pimpl->m_mashEditor->showEditor();
+   // If the recipe doesn't have a mash, this will create one for the user to edit
+   this->pimpl->m_mashEditor->doEditForRecipe(this->pimpl->m_recipeObs);
    return;
 }
 
 void MainWindow::editRecipeBoil() {
-   this->pimpl->m_boilEditor->setEditItem(this->pimpl->m_recipeObs->boil());
-   this->pimpl->m_boilEditor->setRecipe(this->pimpl->m_recipeObs);
-   this->pimpl->m_boilEditor->showEditor();
+   // If the recipe doesn't have a boil, this will create one for the user to edit
+   this->pimpl->m_boilEditor->doEditForRecipe(this->pimpl->m_recipeObs);
    return;
 }
 
 void MainWindow::editRecipeFermentation() {
-   this->pimpl->m_fermentationEditor->setEditItem(this->pimpl->m_recipeObs->fermentation());
-   this->pimpl->m_fermentationEditor->setRecipe(this->pimpl->m_recipeObs);
-   this->pimpl->m_fermentationEditor->showEditor();
+   // If the recipe doesn't have a fermentation, this will create one for the user to edit
+   this->pimpl->m_fermentationEditor->doEditForRecipe(this->pimpl->m_recipeObs);
    return;
 }
 

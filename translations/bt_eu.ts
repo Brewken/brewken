@@ -2344,6 +2344,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Contained in Folder Path</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Locked</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Derived::StockUseClass</name>
@@ -3401,6 +3405,33 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
 </context>
 <context>
+    <name>LockAndShareBar</name>
+    <message>
+        <source>Make a copy for this recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Make a copy that this recipe will use instead, so you can change it without affecting anything else.  Any changes you have already made in this editor are kept, and will be saved to the copy when you click Save.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unlock…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow this to be changed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Prevent this from being changed.  You will still be able to use it in recipes, and to make copies of it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Equipment request</source>
@@ -3590,6 +3621,25 @@ If you need help, please open an issue at %1</source>
         <source>Primary fermentation for %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Used by a locked recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>Shared with %n other recipe(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source> · </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -3653,6 +3703,10 @@ If you need help, please open an issue at %1</source>
         <source>Mash Water</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Automatically Adjust</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MashDesigner</name>
@@ -3687,6 +3741,21 @@ If you need help, please open an issue at %1</source>
     <message>
         <source>The first m_mash step cannot be a decoction.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The Mash Designer replaces all the steps of the recipe&apos;s mash.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Replace mash steps?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>The Mash Designer will replace the %n existing step(s) of mash &quot;%1&quot;.  Do you want to continue?</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -3753,6 +3822,22 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Water:Grain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount Fixed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Infuse Temperature Fixed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3863,6 +3948,10 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>You have too much wort from the mash for your boil size.  Try increasing the boil size by increasing the boil time, or reducing your mash thickness.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The Mash Wizard changes the amounts and temperatures of the steps of the recipe&apos;s mash, based on this recipe&apos;s grain bill and equipment.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4016,6 +4105,103 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>%1 #%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This new %1 will be used by this recipe when you click Save.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unlock %1?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Are you sure you want to unlock &quot;%1&quot;?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locking is there to stop this %1 being changed by accident.  If you want to make changes for one recipe, it is usually better to make a copy for that recipe instead.
+
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unlock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe is locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This recipe is locked, so you cannot add a %1 to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 for %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 (copy for %2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This %1 is not used by any recipe.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This %1 is used only by this recipe.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>This %1 is also used by %n other recipe(s): %2.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>This %1 is used by %n recipe(s): %2.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>It is locked, so it cannot be changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It cannot be changed because this recipe is locked.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>It cannot be changed because it is used by %n locked recipe(s): %1.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Any changes you make here will affect all of them.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This recipe is locked, so its %1 cannot be changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Make a copy of %1?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1
+
+Do you want to make a copy of this %2 for this recipe, so that you can continue without affecting anything else?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Make a copy</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9487,6 +9673,18 @@ Tabs</source>
     </message>
     <message>
         <source>Calculated preboil volume - See Boil tab below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether this mash is shared with other recipes and/or locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether this boil is shared with other recipes and/or locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether this fermentation is shared with other recipes and/or locked</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

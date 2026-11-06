@@ -16,6 +16,9 @@
 
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <widget class="LockAndShareBar" name="lockAndShareBar"/>
+   </item>
+   <item>
     <widget class="QTabWidget" name="tabWidget_editor">
      <property name="tabPosition">
       <enum>QTabWidget::West</enum>
@@ -422,6 +425,11 @@
    <header>widgets/EnumeratedItemsWidget.h</header>
   </customwidget>
 
+  <customwidget>
+   <class>LockAndShareBar</class>
+   <extends>QFrame</extends>
+   <header>widgets/LockAndShareBar.h</header>
+  </customwidget>
  </customwidgets>
  <resources/>
 </ui>

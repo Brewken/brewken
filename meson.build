@@ -1047,6 +1047,7 @@ commonSourceFiles = files([
    'src/widgets/CommonContextMenus.cpp',
    'src/widgets/EnumeratedItemsWidget.cpp',
    'src/widgets/InfoButton.cpp',
+   'src/widgets/LockAndShareBar.cpp',
    'src/widgets/InfoText.cpp',
    'src/widgets/SelectionControl.cpp',
    'src/widgets/SmartAmountSettings.cpp',
@@ -1268,6 +1269,7 @@ mocHeaders = files([
    'src/widgets/BtOptionalDateEdit.h',
    'src/widgets/EnumeratedItemsWidget.h',
    'src/widgets/InfoButton.h',
+   'src/widgets/LockAndShareBar.h',
    'src/widgets/InfoText.h',
    'src/widgets/SelectionControl.h',
    'src/widgets/SmartDigitWidget.h',
@@ -1971,6 +1973,7 @@ test('Test MultiVector'                      , testRunner, args : ['CoreTests', 
 # Need a bit longer than the default 30 second timeout for the log rotation test on some platforms
 test('Test log rotation'                     , testRunner, args : ['CoreTests', 'testLogRotation'                            ], suite : 'core', timeout : 60)
 test('Test DB upgrade from Brewtarget 2.3.1'  , testRunner, args : ['DatabaseTests', 'testUpgradeBrewtarget231Database'      ], suite : 'database')
+test('Test locking and sharing'              , testRunner, args : ['DatabaseTests', 'testLockingAndSharing'                 ], suite : 'database')
 test('Test unit conversions'                 , testRunner, args : ['MeasurementTests', 'testUnitConversions'                 ], suite : 'measurement')
 test('Test unit inverses'                    , testRunner, args : ['MeasurementTests', 'testUnitInverses'                    ], suite : 'measurement')
 test('Test number display and parsing'       , testRunner, args : ['MeasurementTests', 'testNumberDisplayAndParsing'         ], suite : 'measurement')
@@ -1991,6 +1994,7 @@ test('Test dotBeer addition step correction' , testRunner, args : ['Serializatio
 test('Test brew log calcs'                   , testRunner, args : ['SerializationTests', 'testBrewLogCalcs'                  ], suite : 'serialization')
 test('Test dotBeer version handling'         , testRunner, args : ['SerializationTests', 'testDotBeerVersionHandling'        ], suite : 'serialization')
 test('Test dotBeer export'                   , testRunner, args : ['SerializationTests', 'testDotBeerExport'                 ], suite : 'serialization')
+test('Test dotBeer locked'                   , testRunner, args : ['SerializationTests', 'testDotBeerLocked'                 ], suite : 'serialization')
 test('Test clear unused optional vessels'    , testRunner, args : ['SerializationTests', 'testClearUnusedOptionalVessels'    ], suite : 'serialization')
 test('Test BeerXML null yield'               , testRunner, args : ['SerializationTests', 'testBeerXmlNullYield'              ], suite : 'serialization')
 test('Test NullSentinel'                     , testRunner, args : ['SerializationTests', 'testNullSentinel'                  ], suite : 'serialization')

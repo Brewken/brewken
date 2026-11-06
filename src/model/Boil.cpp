@@ -47,6 +47,7 @@ bool Boil::compareWith(NamedEntity const & other, QList<BtStringConst const *> *
       AUTO_PROPERTY_COMPARE(this, rhs, m_preBoilSize_l, PropertyNames::Boil::preBoilSize_l, propertiesThatDiffer) &&
       // Parent classes have to be equal too
       this->FolderPropertyBase<Boil>             ::doCompareWith(rhs, propertiesThatDiffer) &&
+      this->LockablePropertyBase<Boil>::doCompareWith(rhs, propertiesThatDiffer) &&
       this->StepOwnerBase<Boil, BoilStep>::doCompareWith(rhs, propertiesThatDiffer)
    );
 }
@@ -67,6 +68,7 @@ TypeLookup const Boil::typeLookup {
    // Parent classes lookup
    {&NamedEntity::typeLookup,
     std::addressof(FolderPropertyBase<Boil>::typeLookup),
+    std::addressof(LockablePropertyBase<Boil>::typeLookup),
     std::addressof(StepOwnerBase<Boil, BoilStep>::typeLookup)}
 };
 static_assert(std::is_base_of<FolderPropertyBase<Boil>, Boil>::value);
@@ -76,6 +78,7 @@ static_assert(std::is_base_of<FolderPropertyBase<Boil>, Boil>::value);
 Boil::Boil(QString name) :
    NamedEntity{name},
    FolderPropertyBase<Boil>{},
+   LockablePropertyBase<Boil>{},
    StepOwnerBase<Boil, BoilStep>{},
    m_description  {""          },
    m_notes        {""          },
@@ -88,6 +91,7 @@ Boil::Boil(QString name) :
 Boil::Boil(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity     {namedParameterBundle},
    FolderPropertyBase<Boil>{namedParameterBundle},
+   LockablePropertyBase<Boil>{namedParameterBundle},
    StepOwnerBase<Boil, BoilStep>{namedParameterBundle},
    SET_REGULAR_FROM_NPB (m_description  , namedParameterBundle, PropertyNames::Boil::description  ),
    SET_REGULAR_FROM_NPB (m_notes        , namedParameterBundle, PropertyNames::Boil::notes        ),
@@ -103,6 +107,7 @@ Boil::Boil(NamedParameterBundle const & namedParameterBundle) :
 Boil::Boil(Boil const & other) :
    NamedEntity{other},
    FolderPropertyBase<Boil>{other},
+   LockablePropertyBase<Boil>{other},
    StepOwnerBase<Boil, BoilStep>{other},
    m_description  {other.m_description  },
    m_notes        {other.m_notes        },
@@ -283,6 +288,9 @@ IMPLEMENT_NUM_RECIPES_USED_IN(Boil)
 
 // Boilerplate code for FolderPropertyBase
 FOLDER_BASE_COMMON_CODE(Boil)
+
+// Boilerplate code for LockablePropertyBase
+LOCKABLE_BASE_COMMON_CODE(Boil)
 
 // Insert boiler-plate wrapper functions that call down to StepOwnerBase
 STEP_OWNER_COMMON_CODE(Boil, boil)

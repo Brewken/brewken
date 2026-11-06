@@ -254,7 +254,7 @@ void SerializationTests::testDotBeerVersionHandling() {
             qPrintable(QString{"Failed to read file from newer minor version: %1"}.arg(message)));
    QVERIFY2(!importDotBeerFile(writeMinimalFile("newerMajor.beer", "2.0.0", hops), message),
             "Should not read file from newer major version");
-   QVERIFY2(message.contains("1.0.0") && message.contains("2.0.0"), qPrintable(message));
+   QVERIFY2(message.contains("1.1.0") && message.contains("2.0.0"), qPrintable(message));
    QVERIFY2(!importDotBeerFile(writeMinimalFile("newerMinorUnknownField.beer",
                                          "1.9.0",
                                          hops + ", \"some_future_field\": true"),
@@ -1077,5 +1077,22 @@ void SerializationTests::testClearUnusedMashTun() {
    QVERIFY(fuzzyComp(equipment->foundationVolume_l(), 3.5, 0.0001));
    QVERIFY(equipment->grainAbsorption_LKg() && fuzzyComp(*equipment->grainAbsorption_LKg(), 0.8, 0.0001));
    QVERIFY(fuzzyComp(equipment->strikeWaterAllowance_l(), 3.5, 0.0001));
+   return;
+}
+
+void SerializationTests::testDotBeerLocked() {
+   QString const filePath{
+      QDir{CONFIG_TEST_DATA_DIR}.filePath("dotBeer/examples/recipes/AmericanPaleAle.beer")
+   };
+   QString message;
+   QVERIFY2(importDotBeerFile(filePath, message), qPrintable(message));
+
+   // In this example file, the mash is locked and the boil is explicitly not locked
+   auto const mash = UnitTests::findByName<Mash>("Single Infusion, Medium Body, Batch Sparge");
+   QVERIFY(mash);
+   QVERIFY(mash->locked());
+   auto const boil = UnitTests::findByName<Boil>("60 Minute Boil with Whirlpool");
+   QVERIFY(boil);
+   QVERIFY(!boil->locked());
    return;
 }

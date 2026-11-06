@@ -36,6 +36,7 @@
 #include "model/Mash.h"
 #include "model/MashStep.h"
 #include "utils/FuzzyCompare.h"
+#include "widgets/LockAndShareBar.h"
 
 #ifdef MANUALLY_INCLUDE_MOC
    // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
@@ -140,7 +141,20 @@ void MashWizard::wizardry() {
       return;
    }
 
-   std::shared_ptr<Mash> mash = m_recObs->mash();
+   //
+   // The wizard changes the steps of the mash, using the recipe's grain bill etc.  We mustn't do this if the mash is
+   // shared with other recipes (as the results would be wrong for them) or is locked (including because it's used by a
+   // locked recipe), so, in that case, we offer to make a copy.
+   //
+   std::shared_ptr<Mash> mash = LockAndShare::getChangeable<Mash>(
+      this,
+      *this->m_recObs,
+      tr("The Mash Wizard changes the amounts and temperatures of the steps of the recipe's mash, based on this "
+         "recipe's grain bill and equipment.")
+   );
+   if (!mash) {
+      return;
+   }
 
    // If we have an equipment, utilize the custom absorption and boiling temp.
    bool const hasEquipment = m_recObs->equipment() ? true : false;

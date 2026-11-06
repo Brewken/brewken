@@ -33,6 +33,7 @@
 #include <QVector>
 
 #include "model/FolderPropertyBase.h"
+#include "model/LockablePropertyBase.h"
 #include "model/NamedEntity.h"
 #include "model/MashStep.h"
 #include "model/StepOwnerBase.h"
@@ -47,6 +48,7 @@ class MashTableModel;
 //========================================== Start of property name constants ==========================================
 // See comment in model/NamedEntity.h
 #define AddPropertyName(property) namespace PropertyNames::Mash { inline BtStringConst const property{#property}; }
+AddPropertyName(autoAdjust               )
 AddPropertyName(equipAdjust              )
 AddPropertyName(grainTemp_c              )
 AddPropertyName(tunSpecificHeat_calGC)
@@ -71,13 +73,17 @@ AddPropertyName(initialTunTemp_c                )
  */
 class Mash : public NamedEntity,
              public FolderPropertyBase<Mash>,
+             public LockablePropertyBase<Mash>,
              public StepOwnerBase<Mash, MashStep> {
    Q_OBJECT
    FOLDER_BASE_DECL(Mash)
+   LOCKABLE_BASE_DECL(Mash)
    STEP_OWNER_COMMON_DECL(Mash, mash)
    // See model/FolderPropertyBase.h for info, getters and setters for these properties
    Q_PROPERTY(int     containedInFolderId     READ containedInFolderId     WRITE setContainedInFolderId  )
    Q_PROPERTY(QString containedInFolderPath   READ containedInFolderPath   WRITE setContainedInFolderPath)
+   // See model/LockablePropertyBase.h for info, getters and setters for this property
+   Q_PROPERTY(bool    locked                  READ locked                  WRITE setLocked               )
    // See model/StepOwnerBase.h for info, getters and setters for these properties
    Q_PROPERTY(QList<std::shared_ptr<MashStep>> steps   READ steps   WRITE setSteps   STORED false)
    Q_PROPERTY(unsigned int numSteps   READ numSteps   STORED false)
@@ -88,6 +94,7 @@ public:
     */
    static QString localisedName();
    static QString localisedName_equipAdjust              ();
+   static QString localisedName_autoAdjust               ();
    static QString localisedName_grainTemp_c              ();
    static QString localisedName_tunSpecificHeat_calGC();
    static QString localisedName_tunWeight_kg         ();
@@ -177,6 +184,18 @@ public:
     */
    Q_PROPERTY(bool                  equipAdjust               READ equipAdjust               WRITE setEquipAdjust  )
 
+   /**
+    * \brief Whether the mash should be automatically adjusted (eg infusion amounts and temperatures recalculated) when
+    *        the \c Recipe that uses it changes (eg when the grain bill changes).  ⮜⮜⮜ Not part of BeerXML or BeerJSON,
+    *        and deliberately not part of dotBeer. ⮞⮞⮞
+    *
+    *        Since the adjustments depend on the \c Recipe, an auto-adjusting mash should be used by at most one
+    *        \c Recipe.  It is the UI's job to enforce this (eg by offering to make a copy when the user tries to use an
+    *        auto-adjusting mash in a second recipe).  It doesn't break anything if this flag is set on a mash that is not
+    *        used by any recipe (eg because the recipe was deleted) -- the Mash Editor turns it off in that case.
+    */
+   Q_PROPERTY(bool                  autoAdjust                READ autoAdjust                WRITE setAutoAdjust   )
+
    //! \brief The total water that went into the mash (ie all the mash water, sparge and strike) in liters. Calculated.
    Q_PROPERTY(double totalMashWater_l   READ totalMashWater_l  STORED false )
    //! \brief The total mash time in minutes. Calculated.
@@ -195,6 +214,7 @@ public:
    std::optional<double> tunWeight_kg         () const;
    std::optional<double> tunSpecificHeat_calGC() const;
    bool                  equipAdjust              () const;
+   bool                  autoAdjust               () const;
 
    //============================================ "SETTER" MEMBER FUNCTIONS ============================================
    void setGrainTemp_c              (double                const   val);
@@ -205,6 +225,7 @@ public:
    void setTunWeight_kg             (std::optional<double> const   val);
    void setTunSpecificHeat_calGC(std::optional<double> const   val);
    void setEquipAdjust              (bool                  const   val);
+   void setAutoAdjust               (bool                  const   val);
 
    // Calculated getters
    double totalMashWater_l() const;
@@ -236,6 +257,7 @@ private:
    std::optional<double> m_tunWeight_kg         ;
    std::optional<double> m_tunSpecificHeat_calGC;
    bool                  m_equipAdjust              ;
+   bool                  m_autoAdjust               ;
 };
 
 BT_DECLARE_METATYPES(Mash)

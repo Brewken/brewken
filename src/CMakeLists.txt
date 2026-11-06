@@ -275,6 +275,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/widgets/CommonContextMenus.cpp
     ${repoDir}/src/widgets/EnumeratedItemsWidget.cpp
     ${repoDir}/src/widgets/InfoButton.cpp
+    ${repoDir}/src/widgets/LockAndShareBar.cpp
     ${repoDir}/src/widgets/InfoText.cpp
     ${repoDir}/src/widgets/SelectionControl.cpp
     ${repoDir}/src/widgets/SmartAmountSettings.cpp

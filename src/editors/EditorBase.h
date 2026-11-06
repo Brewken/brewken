@@ -24,6 +24,8 @@
 
 #include <QAbstractButton>
 #include <QInputDialog>
+#include <QMessageBox>
+#include <QPushButton>
 #include <QString>
 #include <QPlainTextEdit>
 
@@ -31,11 +33,16 @@
 #include "database/ObjectStoreWrapper.h"
 #include "editors/EditorBaseField.h"
 #include "model/Folder.h"
+#include "model/LockablePropertyBase.h"
 #include "model/NamedEntity.h"
 #include "model/Recipe.h" // Need to include this to be able to cast Recipe to QObject
+#include "model/RecipeUtils.h"
 #include "undoRedo/Undoable.h"
 #include "utils/CuriouslyRecurringTemplateBase.h"
 #include "utils/TypeTraits.h"
+#include "widgets/LockAndShareBar.h"
+
+class Mash;
 
 class StepOwner;
 
@@ -311,6 +318,15 @@ public:
       this->derived().connect(this->derived().pushButton_save  , &QAbstractButton::clicked, &this->derived(), &Derived::saveAndClose );
       this->derived().connect(this->derived().pushButton_cancel, &QAbstractButton::clicked, &this->derived(), &Derived::clearAndClose);
       //
+      // Editors for things that can be shared between recipes and locked have a LockAndShareBar
+      //
+      if constexpr (HasLockablePropertyBase<NE>) {
+         LockAndShareBar * bar = this->derived().lockAndShareBar;
+         this->derived().connect(bar, &LockAndShareBar::makeCopyClicked, &this->derived(), [this]() { this->makeCopyForRecipe(); return; });
+         this->derived().connect(bar, &LockAndShareBar::lockClicked    , &this->derived(), [this]() { this->lockEditItem     (); return; });
+         this->derived().connect(bar, &LockAndShareBar::unlockClicked  , &this->derived(), [this]() { this->unlockEditItem   (); return; });
+      }
+      //
       this->connectLiveEditSignalsAndSlots();
       return;
    }
@@ -343,6 +359,7 @@ public:
 
          this->derived().disconnect(this->m_editItem.get(), nullptr, &this->derived(), nullptr);
       }
+      this->discardNewItemForRecipeIfNeeded(editItem);
       this->m_editItem = editItem;
       if (this->m_editItem) {
          //
@@ -376,8 +393,193 @@ public:
 
       this->setLiveEditItem();
 
+      this->refreshLockAndShare();
+
       // Comment below about calling this->derived().validateBeforeSave() also applies here
       this->derived().postSetEditItem();
+      return;
+   }
+
+   /**
+    * \brief If we created a new item for the current Recipe (see \c doEditForRecipe) and the user has not saved it, then
+    *        delete it (unless it is what we are about to edit).  This is how "Cancel" (and switching to a different
+    *        item) undoes the creation of the new item.
+    */
+   void discardNewItemForRecipeIfNeeded(std::shared_ptr<NE> const & nextEditItem) {
+      if (this->m_newItemForRecipe && this->m_newItemForRecipe != nextEditItem) {
+         std::shared_ptr<NE> const unsavedItem = this->m_newItemForRecipe;
+         this->m_newItemForRecipe.reset();
+         qDebug() << Q_FUNC_INFO << "Discarding unsaved new" << NE::staticMetaObject.className() << "#" << unsavedItem->key();
+         // Note that this also deletes any steps the user added while editing
+         ObjectStoreWrapper::hardDelete(unsavedItem);
+      }
+      return;
+   }
+
+   //! \brief No-op version
+   void refreshLockAndShare() requires (!HasLockablePropertyBase<NE>) { return; }
+
+   /**
+    * \brief For things that can be shared between recipes and locked, update the \c LockAndShareBar and make the fields
+    *        read-only if the user cannot change the item.  Called whenever we (re)read the edit item.
+    */
+   void refreshLockAndShare() requires HasLockablePropertyBase<NE> {
+      LockAndShareBar & bar = *this->derived().lockAndShareBar;
+      if (!this->m_editItem) {
+         bar.setVisible(false);
+         this->setFieldsEditable(true);
+         return;
+      }
+      bar.setVisible(true);
+
+      if (this->m_newItemForRecipe == this->m_editItem) {
+         // Special case where we created a new item that will be added to the current recipe when the user clicks Save
+         bar.setState(
+            NE::tr("This new %1 will be used by this recipe when you click Save.").arg(NE::localisedName().toLower()),
+            false,
+            false,
+            false
+         );
+         this->setFieldsEditable(true);
+         return;
+      }
+
+      Recipe * const currentRecipe = this->currentRecipeIfItUsesEditItem();
+      RecipeUtils::LockReason const lockReason = RecipeUtils::lockReason(*this->m_editItem);
+      qsizetype const numRecipesUsing = RecipeUtils::recipesUsing(*this->m_editItem).size();
+      bool const canChange = (lockReason == RecipeUtils::LockReason::NotLocked);
+      bool const isShared = numRecipesUsing > 1;
+      //
+      // We offer to make a copy for the current recipe if the user can't change the item, or if changing it would
+      // affect other recipes.  But there is no point if the current recipe is itself locked, as we cannot change which
+      // item it uses.
+      //
+      bool const offerCopy = currentRecipe && !currentRecipe->locked() && (!canChange || isShared);
+      bar.setState(RecipeUtils::describeSharingAndLocking(*this->m_editItem, currentRecipe),
+                   !canChange || isShared,
+                   offerCopy,
+                   this->m_editItem->locked());
+      this->setFieldsEditable(canChange);
+
+      //
+      // An auto-adjusting mash only makes sense when it is used by a recipe.  If it's no longer used by any recipe (eg
+      // because the recipe was deleted or now uses a different mash), turn the flag off.  (Nothing breaks if we leave it
+      // on, but it would be confusing if the mash was later used by a different recipe.)
+      //
+      if constexpr (std::is_same_v<NE, Mash>) {
+         if (numRecipesUsing == 0 && canChange && this->m_editItem->autoAdjust()) {
+            qInfo() <<
+               Q_FUNC_INFO << "Turning off auto-adjust on Mash #" << this->m_editItem->key() << "as it is not used "
+               "by any recipe";
+            this->m_editItem->setAutoAdjust(false);
+         }
+      }
+      return;
+   }
+
+   /**
+    * \brief Enable or disable all the input fields (and the Save button) according to whether the user can change the
+    *        edit item.
+    */
+   void setFieldsEditable(bool const editable) {
+      if (this->m_fields) {
+         for (auto const & field : *this->m_fields) {
+            std::visit([editable](auto&& fieldInfo) { fieldInfo.editField->setEnabled(editable); return; }, field);
+         }
+      }
+      if constexpr (std::is_base_of<StepOwner, NE>::value) {
+         this->derived().enumeratedItemsWidget->setEnabled(editable);
+      }
+      this->derived().pushButton_save->setEnabled(editable);
+      return;
+   }
+
+   //! \brief No-op version
+   Recipe * currentRecipeIfItUsesEditItem() const requires (!HasRecipe<editorBaseOptions>) { return nullptr; }
+
+   //! \return The current Recipe, if there is one and it uses the edit item; \c nullptr otherwise
+   Recipe * currentRecipeIfItUsesEditItem() const requires HasRecipe<editorBaseOptions> {
+      if (!this->m_recipeObs || !this->m_editItem) {
+         return nullptr;
+      }
+      // See comment in buttons/RecipeAttributeButton.h for why we need template keyword here for Clang
+      std::shared_ptr<NE> const recipeItem = this->m_recipeObs->template get<NE>();
+      if (!recipeItem || recipeItem->key() != this->m_editItem->key()) {
+         return nullptr;
+      }
+      return this->m_recipeObs;
+   }
+
+   /**
+    * \brief Make a copy of the edit item for the current recipe (see \c RecipeUtils::useCopyFor) and switch to editing
+    *        the copy.  Any changes the user has made in the editor but not yet saved are kept, so that they will be saved
+    *        to the copy when the user clicks Save.
+    */
+   void makeCopyForRecipe() requires HasLockablePropertyBase<NE> {
+      Recipe * const recipe = this->currentRecipeIfItUsesEditItem();
+      if (!recipe || recipe->locked()) {
+         // The button should not have been shown in this case
+         qWarning() << Q_FUNC_INFO << "No recipe, or recipe locked";
+         return;
+      }
+      std::shared_ptr<NE> const copy = RecipeUtils::useCopyFor<NE>(*recipe);
+
+      //
+      // We don't want to call setEditItem here, as that would re-read all the fields from the copy, throwing away any
+      // unsaved changes the user has made in the editor.  So we just do the bits of it that we need.
+      //
+      this->derived().disconnect(this->m_editItem.get(), nullptr, &this->derived(), nullptr);
+      this->m_editItem = copy;
+      this->derived().connect(this->m_editItem.get(), &NamedEntity::changed, &this->derived(), &Derived::changed);
+      if constexpr (std::is_base_of<StepOwner, NE>::value) {
+         this->derived().enumeratedItemsWidget->setOwner(copy);
+      }
+      this->setLiveEditItem();
+      // The copy has a new name, which we do want to show.  (This will also refresh the LockAndShareBar etc.)
+      this->readFieldsFromEditItem(*PropertyNames::NamedEntity::name);
+      this->showId();
+      return;
+   }
+
+   void lockEditItem() requires HasLockablePropertyBase<NE> {
+      if (!this->m_editItem) {
+         return;
+      }
+      this->m_editItem->setLocked(true);
+      // Re-read all the fields so that what's shown matches what's stored, now that the user can no longer save changes
+      this->readAllFields();
+      return;
+   }
+
+   /**
+    * \brief Unlocking is deliberately a bit of a hassle, so that it's hard to do by accident.
+    */
+   void unlockEditItem() requires HasLockablePropertyBase<NE> {
+      if (!this->m_editItem) {
+         return;
+      }
+      QString const itemType = NE::localisedName().toLower();
+      QMessageBox messageBox{&this->derived()};
+      messageBox.setIcon(QMessageBox::Warning);
+      messageBox.setWindowTitle(NE::tr("Unlock %1?").arg(itemType));
+      messageBox.setText(
+         NE::tr("Are you sure you want to unlock \"%1\"?").arg(this->m_editItem->name())
+      );
+      messageBox.setInformativeText(
+         NE::tr("Locking is there to stop this %1 being changed by accident.  If you want to make changes for one "
+                "recipe, it is usually better to make a copy for that recipe instead.\n\n%2").arg(
+            itemType, RecipeUtils::describeSharingAndLocking(*this->m_editItem, this->currentRecipeIfItUsesEditItem())
+         )
+      );
+      QPushButton * unlockButton = messageBox.addButton(NE::tr("Unlock"), QMessageBox::DestructiveRole);
+      messageBox.addButton(QMessageBox::Cancel);
+      messageBox.setDefaultButton(QMessageBox::Cancel);
+      messageBox.exec();
+      if (messageBox.clickedButton() != unlockButton) {
+         return;
+      }
+      this->m_editItem->setLocked(false);
+      this->readAllFields();
       return;
    }
 
@@ -490,6 +692,7 @@ public:
       }
       this->writeLateFieldsToEditItem();
       this->updateStepOwnerIfNeeded();
+      this->attachNewItemToRecipeIfNeeded();
 
       //
       // On the whole, it's best for NamedEntity subclass objects to have a name.  If no name has been specified, or it
@@ -600,6 +803,7 @@ public:
       }
       this->showNumRecipesUsing();
       this->updateNameTabIfNeeded(propName);
+      this->refreshLockAndShare();
       // Note the need for derived() here to allow Derived to override
       this->derived().postReadFieldsFromEditItem(propName);
       return;
@@ -700,6 +904,58 @@ public:
       return;
    }
 
+   //! \brief No-op version
+   void attachNewItemToRecipeIfNeeded() requires (!HasRecipe<editorBaseOptions>) { return; }
+
+   //! \brief If we are saving a new item that we created for the current Recipe (see \c doEditForRecipe), add it to the
+   //!        Recipe
+   void attachNewItemToRecipeIfNeeded() requires HasRecipe<editorBaseOptions> {
+      if (this->m_newItemForRecipe && this->m_newItemForRecipe == this->m_editItem) {
+         this->m_newItemForRecipe.reset();
+         if (this->m_recipeObs) {
+            this->m_recipeObs->template set<NE>(this->m_editItem);
+         }
+      }
+      return;
+   }
+
+   /**
+    * \brief Show the editor for the current Recipe's \c NE (eg its \c Mash).  If the Recipe does not have one, we
+    *        create a new one for the user to edit, which will be added to the Recipe when the user clicks Save (or
+    *        discarded if they click Cancel).  This is what the user expects when they click, eg, "Edit this mash" on a
+    *        recipe that does not yet have one.
+    *
+    *        (We have to store the new item in the database straight away, rather than when the user clicks Save, so
+    *        that the user can add steps to it in the editor.)
+    */
+   void doEditForRecipe(Recipe * recipe) requires HasRecipe<editorBaseOptions> {
+      this->setRecipe(recipe);
+      // See comment in buttons/RecipeAttributeButton.h for why we need template keyword here for Clang
+      std::shared_ptr<NE> item = recipe ? recipe->template get<NE>() : nullptr;
+      if (!item && recipe) {
+         if (recipe->locked()) {
+            QMessageBox::information(
+               &this->derived(),
+               NE::tr("Recipe is locked"),
+               NE::tr("This recipe is locked, so you cannot add a %1 to it.").arg(NE::localisedName().toLower())
+            );
+            return;
+         }
+         item = std::make_shared<NE>(NE::tr("%1 for %2").arg(NE::localisedName(), recipe->name()));
+         ObjectStoreWrapper::insert(item);
+         qDebug() << Q_FUNC_INFO << "Created new" << NE::staticMetaObject.className() << "#" << item->key() << "for Recipe #" << recipe->key();
+         // Note that we must call setEditItem _before_ setting m_newItemForRecipe, otherwise setEditItem would think a
+         // previous unsaved item was being discarded!
+         this->setEditItem(item);
+         this->m_newItemForRecipe = item;
+         this->refreshLockAndShare();
+      } else {
+         this->setEditItem(item);
+      }
+      this->doShowEditor();
+      return;
+   }
+
    void setRecipe(Recipe * recipe) requires HasRecipe<editorBaseOptions> {
       this->m_recipeObs = recipe;
       // TBD: We could automatically set the edit item as follows:
@@ -741,6 +997,12 @@ protected:
     *        of the editor classes.
     */
    std::shared_ptr<NE> m_editItem;
+
+   /**
+    * \brief See \c doEditForRecipe.  If this is set, it is the same as \c m_editItem, and is an item we created for
+    *        \c m_recipeObs, which will be added to it when the user clicks Save, or deleted if not.
+    */
+   std::shared_ptr<NE> m_newItemForRecipe = nullptr;
 
    /**
     * \brief Optionally, an editor can create a temporary copy of \c m_editItem to which to apply edits immediately.

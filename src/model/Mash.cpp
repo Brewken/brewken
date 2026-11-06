@@ -38,6 +38,7 @@
 
 QString Mash::localisedName() { return tr("Mash"); }
 QString Mash::localisedName_equipAdjust          () { return tr("Adjust For Equipment"     ); }
+QString Mash::localisedName_autoAdjust           () { return tr("Automatically Adjust"     ); }
 QString Mash::localisedName_grainTemp_c          () { return tr("Initial Grain Temperature"); }
 QString Mash::localisedName_tunSpecificHeat_calGC() { return tr("Mash Tun Specific Heat"   ); }
 QString Mash::localisedName_tunWeight_kg         () { return tr("Mash Tun Weight"          ); }
@@ -61,6 +62,7 @@ bool Mash::compareWith(NamedEntity const & other, QList<BtStringConst const *> *
       AUTO_PROPERTY_COMPARE(this, rhs, m_tunSpecificHeat_calGC, PropertyNames::Mash::tunSpecificHeat_calGC, propertiesThatDiffer) &&
       // Parent classes have to be equal too
       this->FolderPropertyBase<Mash>             ::doCompareWith(rhs, propertiesThatDiffer) &&
+      this->LockablePropertyBase<Mash>::doCompareWith(rhs, propertiesThatDiffer) &&
       this->StepOwnerBase<Mash, MashStep>::doCompareWith(rhs, propertiesThatDiffer)
    );
 }
@@ -72,6 +74,7 @@ ObjectStore & Mash::getObjectStoreTypedInstance() const {
 TypeLookup const Mash::typeLookup {
    "Mash",
    {
+      PROPERTY_TYPE_LOOKUP_ENTRY(Mash, autoAdjust           , m_autoAdjust           , BOOL_INFO(tr("No"), tr("Yes"))            ),
       PROPERTY_TYPE_LOOKUP_ENTRY(Mash, equipAdjust          , m_equipAdjust          , BOOL_INFO(tr("No"), tr("Yes"))            ),
       PROPERTY_TYPE_LOOKUP_ENTRY(Mash, grainTemp_c          , m_grainTemp_c          , Measurement::PhysicalQuantity::Temperature, DisplayInfo::Precision{1}),
       PROPERTY_TYPE_LOOKUP_ENTRY(Mash, notes                , m_notes                ,           NonPhysicalQuantity::String     ),
@@ -86,6 +89,7 @@ TypeLookup const Mash::typeLookup {
    // Parent classes lookup
    {&NamedEntity::typeLookup,
     std::addressof(FolderPropertyBase<Mash>::typeLookup),
+    std::addressof(LockablePropertyBase<Mash>::typeLookup),
     std::addressof(StepOwnerBase<Mash, MashStep>::typeLookup)}
 };
 static_assert(std::is_base_of<FolderPropertyBase<Mash>, Mash>::value);
@@ -95,6 +99,7 @@ static_assert(std::is_base_of<FolderPropertyBase<Mash>, Mash>::value);
 Mash::Mash(QString name) :
    NamedEntity{name},
    FolderPropertyBase<Mash>{},
+   LockablePropertyBase<Mash>{},
    StepOwnerBase<Mash, MashStep>{},
    m_grainTemp_c          {0.0 },
    m_notes                {""  },
@@ -104,7 +109,8 @@ Mash::Mash(QString name) :
    // Not set means use the figures from the equipment -- see Recipe::mashTunHeatCapacity_kcalC
    m_tunWeight_kg         {std::nullopt},
    m_tunSpecificHeat_calGC{std::nullopt},
-   m_equipAdjust          {true} {
+   m_equipAdjust          {true},
+   m_autoAdjust           {false} {
 
    CONSTRUCTOR_END
    return;
@@ -113,6 +119,7 @@ Mash::Mash(QString name) :
 Mash::Mash(NamedParameterBundle const & namedParameterBundle) :
    NamedEntity                {namedParameterBundle},
    FolderPropertyBase<Mash>{namedParameterBundle},
+   LockablePropertyBase<Mash>{namedParameterBundle},
    StepOwnerBase<Mash, MashStep>{},
    SET_REGULAR_FROM_NPB(m_grainTemp_c          , namedParameterBundle, PropertyNames::Mash::grainTemp_c          ),
    SET_REGULAR_FROM_NPB(m_notes                , namedParameterBundle, PropertyNames::Mash::notes                , ""),
@@ -121,7 +128,8 @@ Mash::Mash(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB(m_ph                   , namedParameterBundle, PropertyNames::Mash::ph                   ),
    SET_REGULAR_FROM_NPB(m_tunWeight_kg         , namedParameterBundle, PropertyNames::Mash::tunWeight_kg         ),
    SET_REGULAR_FROM_NPB(m_tunSpecificHeat_calGC, namedParameterBundle, PropertyNames::Mash::tunSpecificHeat_calGC),
-   SET_REGULAR_FROM_NPB(m_equipAdjust          , namedParameterBundle, PropertyNames::Mash::equipAdjust          ) {
+   SET_REGULAR_FROM_NPB(m_equipAdjust          , namedParameterBundle, PropertyNames::Mash::equipAdjust          ),
+   SET_REGULAR_FROM_NPB(m_autoAdjust           , namedParameterBundle, PropertyNames::Mash::autoAdjust           , false) {
 
    //
    // TUN_TEMP is a required field in BeerXML, and Brewtarget 5.1.x and earlier wrote 0°C when it was not set (because
@@ -141,6 +149,7 @@ Mash::Mash(NamedParameterBundle const & namedParameterBundle) :
 Mash::Mash(Mash const & other) :
    NamedEntity{other},
    FolderPropertyBase<Mash>{other},
+   LockablePropertyBase<Mash>{other},
    StepOwnerBase<Mash, MashStep>{other},
    m_grainTemp_c          {other.m_grainTemp_c          },
    m_notes                {other.m_notes                },
@@ -149,7 +158,8 @@ Mash::Mash(Mash const & other) :
    m_ph                   {other.m_ph                   },
    m_tunWeight_kg         {other.m_tunWeight_kg         },
    m_tunSpecificHeat_calGC{other.m_tunSpecificHeat_calGC},
-   m_equipAdjust          {other.m_equipAdjust          } {
+   m_equipAdjust          {other.m_equipAdjust          },
+   m_autoAdjust           {other.m_autoAdjust           } {
 
    CONSTRUCTOR_END
    return;
@@ -166,6 +176,7 @@ std::optional<double> Mash::ph                   () const { return this->m_ph   
 std::optional<double> Mash::tunWeight_kg         () const { return this->m_tunWeight_kg         ; }
 std::optional<double> Mash::tunSpecificHeat_calGC() const { return this->m_tunSpecificHeat_calGC; }
 bool                  Mash::equipAdjust          () const { return this->m_equipAdjust          ; }
+bool                  Mash::autoAdjust               () const { return this->m_autoAdjust              ; }
 
 //============================================= "SETTER" MEMBER FUNCTIONS ==============================================
 void Mash::setGrainTemp_c          (double                const   val) { SET_AND_NOTIFY(PropertyNames::Mash::grainTemp_c          , this->m_grainTemp_c          , val                                              ); return; }
@@ -176,6 +187,7 @@ void Mash::setPh                   (std::optional<double> const   val) { SET_AND
 void Mash::setTunWeight_kg         (std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Mash::tunWeight_kg         , this->m_tunWeight_kg         , this->enforceMin(val, "tun weight")              ); return; }
 void Mash::setTunSpecificHeat_calGC(std::optional<double> const   val) { SET_AND_NOTIFY(PropertyNames::Mash::tunSpecificHeat_calGC, this->m_tunSpecificHeat_calGC, this->enforceMin(val, "specific heat")           ); return; }
 void Mash::setEquipAdjust          (bool                  const   val) { SET_AND_NOTIFY(PropertyNames::Mash::equipAdjust          , this->m_equipAdjust          , val                                              ); return; }
+void Mash::setAutoAdjust               (bool                  const   val) { SET_AND_NOTIFY(PropertyNames::Mash::autoAdjust           , this->m_autoAdjust           , val                                              ); return; }
 
 // === other methods ===
 double Mash::totalMashWater_l() const {
@@ -241,6 +253,9 @@ IMPLEMENT_NUM_RECIPES_USED_IN(Mash)
 
 // Boilerplate code for FolderPropertyBase
 FOLDER_BASE_COMMON_CODE(Mash)
+
+// Boilerplate code for LockablePropertyBase
+LOCKABLE_BASE_COMMON_CODE(Mash)
 
 // Insert boiler-plate wrapper functions that call down to StepOwnerBase
 STEP_OWNER_COMMON_CODE(Mash, mash)

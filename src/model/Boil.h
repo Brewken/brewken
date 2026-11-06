@@ -25,6 +25,7 @@
 
 #include "model/BoilStep.h"
 #include "model/FolderPropertyBase.h"
+#include "model/LockablePropertyBase.h"
 #include "model/NamedEntity.h"
 #include "model/StepOwnerBase.h"
 
@@ -70,14 +71,19 @@ AddPropertyName(boilTime_mins)
  */
 class Boil : public NamedEntity,
              public FolderPropertyBase<Boil>,
+             public LockablePropertyBase<Boil>,
              public StepOwnerBase<Boil, BoilStep> {
    Q_OBJECT
 
    FOLDER_BASE_DECL(Boil)
+
+   LOCKABLE_BASE_DECL(Boil)
    STEP_OWNER_COMMON_DECL(Boil, boil)
    // See model/FolderPropertyBase.h for info, getters and setters for these properties
    Q_PROPERTY(int     containedInFolderId     READ containedInFolderId     WRITE setContainedInFolderId  )
    Q_PROPERTY(QString containedInFolderPath   READ containedInFolderPath   WRITE setContainedInFolderPath)
+   // See model/LockablePropertyBase.h for info, getters and setters for this property
+   Q_PROPERTY(bool    locked                  READ locked                  WRITE setLocked               )
    // See model/StepOwnerBase.h for info, getters and setters for these properties
    Q_PROPERTY(QList<std::shared_ptr<BoilStep>> steps   READ steps   WRITE setSteps   STORED false)
    Q_PROPERTY(unsigned int numSteps   READ numSteps   STORED false)

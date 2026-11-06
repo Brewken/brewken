@@ -293,6 +293,8 @@ namespace {
       {
          {ObjectStore::FieldType::Int   , {"id"                     }, PropertyNames::NamedEntity::key                       },
          {ObjectStore::FieldType::Int   , {"contained_in_folder_id" }, PropertyNames::FolderPropertyBase::containedInFolderId, &PRIMARY_TABLE<Folder<Mash>>},
+         {ObjectStore::FieldType::Bool  , {"locked"                 }, PropertyNames::LockablePropertyBase::locked           },
+         {ObjectStore::FieldType::Bool  , {"auto_adjust"            }, PropertyNames::Mash::autoAdjust                       },
          {ObjectStore::FieldType::Bool  , {"equip_adjust"           }, PropertyNames::Mash::equipAdjust                      },
          {ObjectStore::FieldType::Double, {"grain_temp"             }, PropertyNames::Mash::grainTemp_c                      },
          {ObjectStore::FieldType::String, {"notes"                  }, PropertyNames::Mash::notes                            },
@@ -332,6 +334,8 @@ namespace {
          {ObjectStore::FieldType::Double, {"liquor_to_grist_ratio_lkg"}, PropertyNames::   MashStep::liquorToGristRatio_lKg},
          {ObjectStore::FieldType::Double, {"start_acidity_ph"         }, PropertyNames::       Step::startAcidity_pH       },
          {ObjectStore::FieldType::Double, {"end_acidity_ph"           }, PropertyNames::       Step::endAcidity_pH         },
+         {ObjectStore::FieldType::Bool  , {"amount_fixed"             }, PropertyNames::   MashStep::amountFixed           },
+         {ObjectStore::FieldType::Bool  , {"infuse_temp_fixed"        }, PropertyNames::   MashStep::infuseTempFixed       },
       },
       {&NAMED_ENTITY_COMMON_FIELDS}
    };
@@ -346,6 +350,7 @@ namespace {
       {
          {ObjectStore::FieldType::Int   , {"id"                    }, PropertyNames::NamedEntity::key                       },
          {ObjectStore::FieldType::Int   , {"contained_in_folder_id"}, PropertyNames::FolderPropertyBase::containedInFolderId, &PRIMARY_TABLE<Folder<Boil>>},
+         {ObjectStore::FieldType::Bool  , {"locked"                }, PropertyNames::LockablePropertyBase::locked           },
          {ObjectStore::FieldType::String, {"description"           }, PropertyNames::Boil::description                      },
          {ObjectStore::FieldType::String, {"notes"                 }, PropertyNames::Boil::notes                            },
          {ObjectStore::FieldType::Double, {"pre_boil_size_l"       }, PropertyNames::Boil::preBoilSize_l                    },
@@ -390,6 +395,7 @@ namespace {
       {
          {ObjectStore::FieldType::Int   , {"id"                    }, PropertyNames::NamedEntity::key                       },
          {ObjectStore::FieldType::Int   , {"contained_in_folder_id"}, PropertyNames::FolderPropertyBase::containedInFolderId, &PRIMARY_TABLE<Folder<Fermentation>>},
+         {ObjectStore::FieldType::Bool  , {"locked"                }, PropertyNames::LockablePropertyBase::locked           },
          {ObjectStore::FieldType::String, {"description"           }, PropertyNames::Fermentation::description              },
          {ObjectStore::FieldType::String, {"notes"                 }, PropertyNames::Fermentation::notes                    },
       },

@@ -39,6 +39,12 @@ private slots:
     *        scratch at the latest schema version, and that its data is self-consistent.
     */
    void testUpgradeBrewtarget231Database();
+
+   /**
+    * \brief Check the logic for things (eg Mash) that can be shared between Recipes and locked -- see
+    *        \c model/LockablePropertyBase.h and the related functions in \c model/RecipeUtils.h.
+    */
+   void testLockingAndSharing();
 };
 
 #endif

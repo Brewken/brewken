@@ -31,6 +31,11 @@
 #include "config.h"
 #include "database/Database.h"
 #include "database/DatabaseSchemaHelper.h"
+#include "database/ObjectStoreWrapper.h"
+#include "model/Mash.h"
+#include "model/MashStep.h"
+#include "model/Recipe.h"
+#include "model/RecipeUtils.h"
 #include "unitTests/TestEnvironment.h"
 #include "unitTests/TestRegistry.h"
 
@@ -250,6 +255,74 @@ void DatabaseTests::testUpgradeBrewtarget231Database() {
       );
    }
    QVERIFY2(foreignKeyErrors.isEmpty(), qPrintable("Foreign key errors: " + foreignKeyErrors.join(", ")));
+
+   return;
+}
+
+void DatabaseTests::testLockingAndSharing() {
+   // We don't want the changes below to create new versions of Recipes
+   RecipeUtils::SuspendRecipeVersioning suspendRecipeVersioning;
+
+   //
+   // Set up a mash, with a couple of steps, used by two recipes
+   //
+   auto mash = std::make_shared<Mash>("Test Shared Mash");
+   ObjectStoreWrapper::insert(mash);
+   for (char const * const stepName : {"Test Sacch Rest", "Test Mash Out"}) {
+      mash->add(std::make_shared<MashStep>(stepName));
+   }
+   QCOMPARE(mash->numSteps(), 2u);
+
+   auto recipeA = std::make_shared<Recipe>("Test Locking Recipe A");
+   auto recipeB = std::make_shared<Recipe>("Test Locking Recipe B");
+   ObjectStoreWrapper::insert(recipeA);
+   ObjectStoreWrapper::insert(recipeB);
+   recipeA->setMash(mash);
+   recipeB->setMash(mash);
+
+   QCOMPARE(RecipeUtils::recipesUsing(*mash).size(), 2);
+   QVERIFY(RecipeUtils::lockReason(*mash) == RecipeUtils::LockReason::NotLocked);
+   QString description = RecipeUtils::describeSharingAndLocking(*mash, recipeA.get());
+   QVERIFY2(description.contains(recipeB->name()) && !description.contains(recipeA->name()), qPrintable(description));
+
+   //
+   // Locking the mash should be stored in the database (not just in the object)
+   //
+   mash->setLocked(true);
+   QVERIFY(RecipeUtils::lockReason(*mash) == RecipeUtils::LockReason::ItemLocked);
+   {
+      QSqlQuery query{Database::instance().sqlDatabase()};
+      query.prepare("SELECT locked FROM mash WHERE id = ?");
+      query.addBindValue(mash->key());
+      QVERIFY2(query.exec() && query.next(), qPrintable(query.lastError().text()));
+      QVERIFY(query.value(0).toBool());
+   }
+
+   //
+   // Making a copy for recipe A should give an unlocked copy, with the same steps, which only recipe A uses
+   //
+   std::shared_ptr<Mash> const copy = RecipeUtils::useCopyFor<Mash>(*recipeA);
+   QVERIFY(copy);
+   QVERIFY(copy->key() > 0 && copy->key() != mash->key());
+   QVERIFY(!copy->locked());
+   QCOMPARE(copy->numSteps(), mash->numSteps());
+   QVERIFY2(copy->name().contains(recipeA->name()), qPrintable(copy->name()));
+   QCOMPARE(recipeA->mash()->key(), copy->key());
+   QCOMPARE(RecipeUtils::recipesUsing(*copy).size(), 1);
+   QCOMPARE(RecipeUtils::recipesUsing(*mash).size(), 1);
+   QVERIFY(RecipeUtils::lockReason(*copy) == RecipeUtils::LockReason::NotLocked);
+
+   //
+   // A mash used by a locked recipe is, in effect, locked, even though its own flag isn't set
+   //
+   mash->setLocked(false);
+   QVERIFY(RecipeUtils::lockReason(*mash) == RecipeUtils::LockReason::NotLocked);
+   recipeB->setLocked(true);
+   QVERIFY(RecipeUtils::lockReason(*mash) == RecipeUtils::LockReason::UsedByLockedRecipe);
+   description = RecipeUtils::describeSharingAndLocking(*mash, nullptr);
+   QVERIFY2(description.contains(recipeB->name()), qPrintable(description));
+   // But it doesn't affect the copy
+   QVERIFY(RecipeUtils::lockReason(*copy) == RecipeUtils::LockReason::NotLocked);
 
    return;
 }
