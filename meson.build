@@ -832,6 +832,7 @@ commonSourceFiles = files([
    'src/Localization.cpp',
    'src/Logging.cpp',
    'src/MainWindow.cpp',
+   'src/MashCalculator.cpp',
    'src/MashDesigner.cpp',
    'src/MashWizard.cpp',
    'src/OptionDialog.cpp',
@@ -1074,6 +1075,7 @@ applicationMainSourceFile = files([
 unitTestExtraSourceFiles = files([
    'src/unitTests/CoreTests.cpp',
    'src/unitTests/DatabaseTests.cpp',
+   'src/unitTests/MashCalculatorTests.cpp',
    'src/unitTests/MeasurementTests.cpp',
    'src/unitTests/RecipeCalcTests.cpp',
    'src/unitTests/SerializationTests.cpp',
@@ -1284,6 +1286,7 @@ mocHeaders = files([
 unitTestMocHeaders = files([
    'src/unitTests/CoreTests.h',
    'src/unitTests/DatabaseTests.h',
+   'src/unitTests/MashCalculatorTests.h',
    'src/unitTests/MeasurementTests.h',
    'src/unitTests/RecipeCalcTests.h',
    'src/unitTests/SerializationTests.h',
@@ -1974,6 +1977,14 @@ test('Test MultiVector'                      , testRunner, args : ['CoreTests', 
 test('Test log rotation'                     , testRunner, args : ['CoreTests', 'testLogRotation'                            ], suite : 'core', timeout : 60)
 test('Test DB upgrade from Brewtarget 2.3.1'  , testRunner, args : ['DatabaseTests', 'testUpgradeBrewtarget231Database'      ], suite : 'database')
 test('Test locking and sharing'              , testRunner, args : ['DatabaseTests', 'testLockingAndSharing'                 ], suite : 'database')
+test('Test mash calc strike water'           , testRunner, args : ['MashCalculatorTests', 'testStrikeWater'        ], suite : 'mash')
+test('Test mash calc fixed values'           , testRunner, args : ['MashCalculatorTests', 'testFixedValues'        ], suite : 'mash')
+test('Test mash calc step infusions'         , testRunner, args : ['MashCalculatorTests', 'testStepInfusions'      ], suite : 'mash')
+test('Test mash calc decoction'              , testRunner, args : ['MashCalculatorTests', 'testDecoction'          ], suite : 'mash')
+test('Test mash calc sparge'                 , testRunner, args : ['MashCalculatorTests', 'testSparge'             ], suite : 'mash')
+test('Test mash calc no sparge'              , testRunner, args : ['MashCalculatorTests', 'testNoSparge'           ], suite : 'mash')
+test('Test mash calc errors and warnings'    , testRunner, args : ['MashCalculatorTests', 'testErrorsAndWarnings'  ], suite : 'mash')
+test('Test mash calc with recipe'            , testRunner, args : ['MashCalculatorTests', 'testWithRecipe'         ], suite : 'mash')
 test('Test unit conversions'                 , testRunner, args : ['MeasurementTests', 'testUnitConversions'                 ], suite : 'measurement')
 test('Test unit inverses'                    , testRunner, args : ['MeasurementTests', 'testUnitInverses'                    ], suite : 'measurement')
 test('Test number display and parsing'       , testRunner, args : ['MeasurementTests', 'testNumberDisplayAndParsing'         ], suite : 'measurement')

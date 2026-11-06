@@ -60,6 +60,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/Localization.cpp
     ${repoDir}/src/Logging.cpp
     ${repoDir}/src/MainWindow.cpp
+    ${repoDir}/src/MashCalculator.cpp
     ${repoDir}/src/MashDesigner.cpp
     ${repoDir}/src/MashWizard.cpp
     ${repoDir}/src/OptionDialog.cpp
@@ -297,6 +298,7 @@ set(filesToCompile_cpp
 set(unitTestFiles_cpp
     ${repoDir}/src/unitTests/CoreTests.cpp
     ${repoDir}/src/unitTests/DatabaseTests.cpp
+    ${repoDir}/src/unitTests/MashCalculatorTests.cpp
     ${repoDir}/src/unitTests/MeasurementTests.cpp
     ${repoDir}/src/unitTests/RecipeCalcTests.cpp
     ${repoDir}/src/unitTests/SerializationTests.cpp

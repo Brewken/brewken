@@ -4897,6 +4897,137 @@ If you need help, please open an issue at %1</source>
     </message>
 </context>
 <context>
+    <name>MashCalculator</name>
+    <message>
+        <source>%1: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Batch Sparge %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fly Sparge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There are no mash steps.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There are no grains in the mash.  You need some mash-stage fermentable additions before the mash can be calculated.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The first step must be an infusion (ie adding the strike water).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sparge steps must come after all the other steps.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The mash thickness must be positive.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The infusion temperature is marked as fixed, but has not been set.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>With no sparge, this step has to make up the total water needed (%1), but the other steps already add %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot reach %1 with water at %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The infusion amount must be more than zero.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This infusion does not change the temperature of the mash, so its amount cannot be calculated.  It needs to be set and marked as fixed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try a thinner mash (ie more water).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try more water or a lower step temperature.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The water would need to be at %1, which is above boiling point (%2).  %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The water would need to be at %1, which is below freezing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 of water at %2 will give a mash temperature of %3 rather than %4.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The mash is already at boiling point.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The decoction amount (%1) must be between zero and the volume of the mash (%2).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A decoction of %1 will give a mash temperature of %2 rather than %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A decoction cannot lower the temperature of the mash.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot reach %1 by decoction, even by boiling the whole mash.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>At its fullest, the mash will be about %1, which is more than the capacity of the mash tun (%2).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The infusions add up to %1 of water, but %2 is needed in total.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There is no water left for sparging: the total water needed is %1, but the mash steps already add %2%3.  You will collect more wort than needed.  Try a thicker mash (ie less water).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> and the fixed sparge amounts add %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The mash and sparge water add up to %1, but %2 is needed in total.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The sparge water temperature is marked as fixed, but has not been set.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 of water at %2 will give a grain bed temperature of %3 rather than %4.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The sparge water would need to be at %1, which is above boiling point (%2).  Try a lower sparge temperature or more sparge water.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MashDesigner</name>
     <message>
         <source>No Fermentables</source>
@@ -5087,11 +5218,11 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Bad thickness</source>
-        <translation>Falsche Dichte</translation>
+        <translation type="vanished">Falsche Dichte</translation>
     </message>
     <message>
         <source>You must have a positive mash thickness.</source>
-        <translation>Sie benötigen eine Maischedichte über 1.</translation>
+        <translation type="vanished">Sie benötigen eine Maischedichte über 1.</translation>
     </message>
     <message>
         <source>No steps</source>
@@ -5103,15 +5234,15 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>First step</source>
-        <translation>Erster Schritt</translation>
+        <translation type="vanished">Erster Schritt</translation>
     </message>
     <message>
         <source>Your first mash step must be an infusion.</source>
-        <translation>Ihr erster Maischschritt muß ein Aufguß sein.</translation>
+        <translation type="vanished">Ihr erster Maischschritt muß ein Aufguß sein.</translation>
     </message>
     <message>
         <source>Mash too thick</source>
-        <translation>Maische zu dick</translation>
+        <translation type="vanished">Maische zu dick</translation>
     </message>
     <message>
         <source>Your mash is too thick for desired temp. at first step.</source>
@@ -5119,15 +5250,15 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Decoction error</source>
-        <translation>Sudfehler</translation>
+        <translation type="vanished">Sudfehler</translation>
     </message>
     <message>
         <source>Something went wrong in decoction calculation.</source>
-        <translation>Ein Fehler trat bei der Absudberechnung auf.</translation>
+        <translation type="vanished">Ein Fehler trat bei der Absudberechnung auf.</translation>
     </message>
     <message>
         <source>Sparge temp.</source>
-        <translation>Anschwänztemp.</translation>
+        <translation type="vanished">Anschwänztemp.</translation>
     </message>
     <message>
         <source>In order to hit your sparge temp, the sparge water must be above boiling. Lower your sparge temp, or allow for more sparge water.</source>
@@ -5135,66 +5266,22 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Too much wort</source>
-        <translation>Zu viel Würze</translation>
+        <translation type="vanished">Zu viel Würze</translation>
     </message>
     <message>
         <source>You have too much wort from the mash for your boil size. I suggest increasing the boil size by increasing the boil time, or reducing your mash thickness.</source>
         <translation type="vanished">Sie haben zu viel Würze aus ihrer Maische für ihren Ansatz. Vergrößern Sie den Ansatz indem Sie die Kochzeit erhöhen oder reduzieren Sie die Maischedichte.</translation>
     </message>
     <message>
-        <source>Batch Sparge %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fly Sparge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Infusion temp.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No grains in the mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Check the &apos;Fermentables&apos; tab.  You need some mash-stage grain additions before you can run the wizard.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No mash steps</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You need to have mash steps before you can run the wizard.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your mash is too thick for desired temperature at first step.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Too much water</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cannot adjust volume of last step to meet target runoff volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>In order to hit your target temp on the final step, the infusion water would need to be above boiling.  Lower your initial infusion volume.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>In order to hit your sparge temp, the sparge water must be above boiling.  Lower your sparge temp, or allow for more sparge water.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You have too much wort from the mash for your boil size.  Try increasing the boil size by increasing the boil time, or reducing your mash thickness.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The Mash Wizard changes the amounts and temperatures of the steps of the recipe&apos;s mash, based on this recipe&apos;s grain bill and equipment.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot calculate mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please check the mash</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
