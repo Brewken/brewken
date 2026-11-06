@@ -599,6 +599,8 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
       if (!step.amountFixed) {
          step.amount_l = spargeAmount_l;
       }
+      // Set if we know the grain bed won't reach the step temperature
+      std::optional<double> bedTemp_c = std::nullopt;
       double const targetTemp_c = step.startTemp_c;
 
       if (step.infuseTempFixed && !step.infuseTemp_c) {
@@ -622,8 +624,21 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
                   showVolume(step.amount_l), showTemp(*step.infuseTemp_c), showTemp(actualTemp_c), showTemp(targetTemp_c)
                ));
             }
+            bedTemp_c = actualTemp_c;
          } else {
             step.infuseTemp_c = bed.waterTempFor(targetTemp_c, step.amount_l);
+            if (*step.infuseTemp_c > inputs.boilingPoint_c) {
+               //
+               // Not enough sparge water in this batch to heat the grain bed all the way to the target temperature.
+               // This isn't critical (the grain bed temperature is less important for a batch sparge than for a fly
+               // sparge), so we use boiling water and tell the user what temperature the bed will reach.
+               //
+               step.infuseTemp_c = inputs.boilingPoint_c;
+               bedTemp_c = bed.finalTemp_c(step.amount_l, inputs.boilingPoint_c);
+               warn(ii, tr("Even with boiling water, the grain bed will only reach %1 rather than %2.  This is usually "
+                           "fine for a batch sparge, but you could use fewer batches (ie more water per batch) or a "
+                           "lower sparge temperature.").arg(showTemp(*bedTemp_c), showTemp(targetTemp_c)));
+            }
          }
       } else if (!step.infuseTempFixed) {
          // No water, so no water temperature
@@ -637,7 +652,7 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
          ));
       }
 
-      priorTemp_c = step.finalTemp_c();
+      priorTemp_c = bedTemp_c.value_or(step.finalTemp_c());
    }
 
    return result;

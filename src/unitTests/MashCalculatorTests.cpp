@@ -422,13 +422,32 @@ void MashCalculatorTests::testSparge() {
    QVERIFY(infusionBalances(6.0, 98.5, {{9.0, 61.0}}, 76.0));
 
    //
-   // With the default 10 °C heat loss, two equal batches of 7 L: first batch water = 76 + 9 × 20 / 7 = 101.7 °C, which
-   // is above boiling
+   // With the default 2 °C heat loss, two equal batches of 7 L:
+   //    First batch: bed at 66 - 2 = 64 °C.  Water temp = 76 + 9 × 12 / 7 = 91.43 °C
+   //    Second batch: bed at 76 - 2 = 74 °C.  Water temp = 76 + 9 × 2 / 7 = 78.57 °C
    //
    steps[2].amountFixed = false;
    auto const result2 = MashCalculator::calculate(makeInputs(), steps, thickness(3.0));
-   QVERIFY(!result2.ok());
-   QVERIFY(hasMessage(result2, Severity::Error, "Batch Sparge 1"));
+   QVERIFY(result2.ok());
+   QCOMPARE(numMessages(result2, Severity::Warning), 0);
+   QVERIFY(fuzzyComp(result2.steps.at(1).amount_l, 7.0, tolerance));
+   QVERIFY(fuzzyComp(result2.steps.at(2).amount_l, 7.0, tolerance));
+   QVERIFY(fuzzyComp(*result2.steps.at(1).infuseTemp_c, 76.0 + 9.0 * 12.0 / 7.0, tolerance));
+   QVERIFY(fuzzyComp(*result2.steps.at(2).infuseTemp_c, 76.0 + 9.0 *  2.0 / 7.0, tolerance));
+
+   //
+   // With a 10 °C heat loss (as the old Mash Wizard assumed), the first batch would need water at
+   // 76 + 9 × 20 / 7 = 101.7 °C.  So we use boiling water, and warn that the bed only gets to
+   // (7 × 100 + 9 × 56) / (7 + 9) = 75.25 °C.  The second batch then starts from that (less the heat loss), so needs
+   // water at 76 + 9 × (76 - 65.25) / 7 = 89.82 °C.
+   //
+   options.spargeHeatLoss_c = 10.0;
+   auto const result2a = MashCalculator::calculate(makeInputs(), steps, options);
+   QVERIFY(result2a.ok());
+   QCOMPARE(numMessages(result2a, Severity::Warning), 1);
+   QVERIFY(hasMessage(result2a, Severity::Warning, "Batch Sparge 1"));
+   QCOMPARE(*result2a.steps.at(1).infuseTemp_c, 100.0);
+   QVERIFY(fuzzyComp(*result2a.steps.at(2).infuseTemp_c, 76.0 + 9.0 * (76.0 - 65.25) / 7.0, tolerance));
 
    //
    // Changing to fly sparge replaces the batch sparges with one fly sparge step, which gets all the sparge water, at

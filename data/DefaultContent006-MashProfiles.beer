@@ -53,6 +53,19 @@
               "value": 15
             },
             "step_description": "Add sparge water, stir, rest, then drain"
+          },
+          {
+            "name": "Batch Sparge 2",
+            "step_type": "drain mash tun",
+            "start_temperature": {
+              "unit": "C",
+              "value": 76
+            },
+            "step_time": {
+              "unit": "min",
+              "value": 15
+            },
+            "step_description": "Add sparge water, stir, rest, then drain"
           }
         ]
       },
@@ -95,6 +108,19 @@
               "value": 15
             },
             "step_description": "Add sparge water, stir, rest, then drain"
+          },
+          {
+            "name": "Batch Sparge 2",
+            "step_type": "drain mash tun",
+            "start_temperature": {
+              "unit": "C",
+              "value": 76
+            },
+            "step_time": {
+              "unit": "min",
+              "value": 15
+            },
+            "step_description": "Add sparge water, stir, rest, then drain"
           }
         ]
       },
@@ -127,6 +153,19 @@
           },
           {
             "name": "Batch Sparge 1",
+            "step_type": "drain mash tun",
+            "start_temperature": {
+              "unit": "C",
+              "value": 76
+            },
+            "step_time": {
+              "unit": "min",
+              "value": 15
+            },
+            "step_description": "Add sparge water, stir, rest, then drain"
+          },
+          {
+            "name": "Batch Sparge 2",
             "step_type": "drain mash tun",
             "start_temperature": {
               "unit": "C",

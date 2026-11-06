@@ -72,8 +72,9 @@ class Recipe;
  *          - Sparge steps: the total sparge water is whatever is needed, on top of the infusions, to give the target
  *            total mash water (see \c Recipe::targetTotalMashVol_l).  It is split equally between the sparge steps that
  *            don't have a fixed amount.  For a batch sparge, the water temperature is calculated so that, when added to
- *            the drained grain bed, the bed reaches the step temperature.  For a fly sparge, we just use the step
- *            temperature.
+ *            the drained grain bed, the bed reaches the step temperature -- or, if that would need water above
+ *            boiling, we use boiling water and warn that the bed won't quite reach the step temperature.  For a fly
+ *            sparge, we just use the step temperature.
  *
  *          - No sparge (ie there are no sparge steps): all the water has to go in as infusions, so, instead of using
  *            the mash thickness, the last infusion that doesn't have a fixed amount makes up the total.  (If it's the
@@ -174,9 +175,13 @@ public:
       std::optional<double> thickness_LKg  = std::nullopt;
       /**
        * \brief How much we assume the grain bed cools between draining the mash (or the previous batch sparge) and
-       *        adding a batch of sparge water.  This was hard-coded in the old Mash Wizard and Mash Designer.
+       *        adding a batch of sparge water.
+       *
+       *        The old Mash Wizard and Mash Designer used 10 °C.  That is a lot more than an insulated mash tun loses
+       *        while draining, and, with two batch sparges (which is common), meant the first batch would often need
+       *        water above boiling.  A couple of degrees is more realistic.
        */
-      double                spargeHeatLoss_c = 10.0;
+      double                spargeHeatLoss_c = 2.0;
    };
 
    struct Problem {

@@ -22,6 +22,7 @@
 #include "qtModels/tableModels/MashStepTableModel.h"
 
 #include <QHeaderView>
+#include <QIcon>
 #include <QModelIndex>
 #include <QTableView>
 #include <QVariant>
@@ -72,6 +73,27 @@ void MashStepTableModel::removed([[maybe_unused]] std::shared_ptr<MashStep> item
 void MashStepTableModel::updateTotals()                                      { return; }
 
 QVariant MashStepTableModel::data(QModelIndex const & index, int role) const {
+   //
+   // Show a pin icon on amounts and infusion temperatures that are "fixed", ie that will not be changed when
+   // calculating the mash (see MashCalculator and MashEditor::calculate).
+   //
+   if (this->m_itemOwnerObs && (role == Qt::DecorationRole || role == Qt::ToolTipRole) && this->indexOk(index)) {
+      auto const columnIndex = static_cast<MashStepTableModel::ColumnIndex>(index.column());
+      auto const & row = this->m_rows[index.row()];
+      bool const isFixed =
+         (columnIndex == MashStepTableModel::ColumnIndex::Amount && row->amountFixed()) ||
+         (columnIndex == MashStepTableModel::ColumnIndex::Temp   && row->infuseTempFixed() &&
+                                                                    row->type() != MashStep::Type::Decoction);
+      if (isFixed) {
+         if (role == Qt::DecorationRole) {
+            static QIcon const pinIcon{":/images/smallPin.svg"};
+            return pinIcon;
+         }
+         return tr("Fixed: not changed when calculating the mash");
+      }
+      return QVariant();
+   }
+
    if (!this->m_itemOwnerObs || !this->indexAndRoleOk(index, role)) {
       return QVariant();
    }
