@@ -3349,7 +3349,7 @@ double Recipe::targetCollectedWortVol_l() const {
 
    //
    // NOTE: We used to subtract Equipment::getLauteringDeadspaceLoss_l() here.  But this is the wrong way round: wort
-   // that is lost in the mash/lauter tun means we need to collect _more_ from the mash, not less.  (MashWizard then
+   // that is lost in the mash/lauter tun means we need to collect _more_ from the mash, not less.  (The old Mash Wizard then
    // added the loss back on when working out sparge water, so the two cancelled out, and the loss was never actually
    // allowed for.  Thus the pre-boil volume came out short by the amount of the loss.)  Now, this function is about
    // what reaches the kettle, and targetTotalMashVol_l adds on the losses.

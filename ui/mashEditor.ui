@@ -96,6 +96,93 @@
         </widget>
        </item>
 
+       <item row="11" column="1" colspan="5">
+        <widget class="QGroupBox" name="groupBox_calculate">
+         <property name="title">
+          <string>Calculate water amounts and temperatures</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_calculate">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_spargeMethod">
+            <property name="text">
+             <string>Sparge</string>
+            </property>
+            <property name="buddy">
+             <cstring>comboBox_spargeMethod</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="comboBox_spargeMethod">
+            <property name="toolTip">
+             <string>How the grain will be rinsed after the mash.  Changing this and clicking Calculate replaces any existing sparge steps.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_numBatches">
+            <property name="text">
+             <string>Batches</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBox_numBatches</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QSpinBox" name="spinBox_numBatches">
+            <property name="toolTip">
+             <string>Number of batch sparges</string>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="SmartLabel" name="label_thickness">
+            <property name="text">
+             <string>Mash thickness</string>
+            </property>
+            <property name="buddy">
+             <cstring>lineEdit_thickness</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="SmartLineEdit" name="lineEdit_thickness">
+            <property name="toolTip">
+             <string>Volume of strike water per mass of grain (not counting any water that sits below the grain bed).  Most often around 2.5 to 3.2 L/kg (1.2 to 1.5 qt/lb).  Not used if there is no sparge, as then all the water goes in the mash.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QPushButton" name="pushButton_calculate">
+            <property name="toolTip">
+             <string>Work out the amounts and temperatures of the strike water and other infusions, the amounts of any decoctions, and the amounts and temperatures of sparge water, using this recipe's grain bill and equipment.  Values you have marked as fixed in a step are not changed.</string>
+            </property>
+            <property name="text">
+             <string>Calculate</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="4">
+           <widget class="QLabel" name="label_calculateInfo">
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+            <property name="textFormat">
+             <enum>Qt::RichText</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+
        <item row="13" column="0">
         <widget class="InfoButton" name="infoButton_id"></widget>
        </item>
@@ -169,7 +256,7 @@
           <cstring>infoButton_tunTemp</cstring>
          </property>
          <property name="text">
-          <string>Initial temperature of the mash tun.  Used in the Mash Wizard and the Mash Designer, when calculating strike water temperature, to allow for the strike water heating up the mash tun.  If left blank, the tun is assumed to be at the same temperature as the grain.</string>
+          <string>Initial temperature of the mash tun.  Used when calculating the strike water temperature, to allow for the strike water heating up the mash tun.  If left blank, the tun is assumed to be at the same temperature as the grain.</string>
          </property>
         </widget>
        </item>
@@ -203,7 +290,7 @@
           <cstring>infoButton_spargeTemp</cstring>
          </property>
          <property name="text">
-          <string>Used in the Mash Wizard.  It is better to set this on the sparge step itself.</string>
+          <string>Used as the target grain bed temperature for new sparge steps when calculating water.  It is better to set this on the sparge step itself.</string>
          </property>
         </widget>
        </item>

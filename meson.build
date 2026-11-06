@@ -833,8 +833,6 @@ commonSourceFiles = files([
    'src/Logging.cpp',
    'src/MainWindow.cpp',
    'src/MashCalculator.cpp',
-   'src/MashDesigner.cpp',
-   'src/MashWizard.cpp',
    'src/OptionDialog.cpp',
    'src/PersistentSettings.cpp',
    'src/PrintAndPreviewDialog.cpp',
@@ -1108,8 +1106,6 @@ mocHeaders = files([
    'src/IbuGuSlider.h',
    'src/LatestReleaseFinder.h',
    'src/MainWindow.h',
-   'src/MashDesigner.h',
-   'src/MashWizard.h',
    'src/OptionDialog.h',
    'src/PrintAndPreviewDialog.h',
    'src/RangedSlider.h',
@@ -1312,10 +1308,8 @@ uiFiles = files([
    'ui/fermentationStepEditor.ui',
    'ui/hopEditor.ui',
    'ui/mainWindow.ui',
-   'ui/mashDesigner.ui',
    'ui/mashEditor.ui',
    'ui/mashStepEditor.ui',
-   'ui/mashWizard.ui',
    'ui/miscEditor.ui',
    'ui/ogCorrectionTool.ui',
    'ui/optionsDialog.ui',
@@ -1385,6 +1379,7 @@ filesToInstall_data = files([
    'data/DefaultContent003-Ingredients-Hops-Yeasts.json',
    'data/DefaultContent004-MoreYeasts.json',
    'data/DefaultContent005-Fermentables-Recipes.beer',
+   'data/DefaultContent006-MashProfiles.beer',
 ])
 
 filesToInstall_icons = files([
@@ -1985,6 +1980,7 @@ test('Test mash calc sparge'                 , testRunner, args : ['MashCalculat
 test('Test mash calc no sparge'              , testRunner, args : ['MashCalculatorTests', 'testNoSparge'           ], suite : 'mash')
 test('Test mash calc errors and warnings'    , testRunner, args : ['MashCalculatorTests', 'testErrorsAndWarnings'  ], suite : 'mash')
 test('Test mash calc with recipe'            , testRunner, args : ['MashCalculatorTests', 'testWithRecipe'         ], suite : 'mash')
+test('Test mash calc example profiles'       , testRunner, args : ['MashCalculatorTests', 'testExampleProfiles'    ], suite : 'mash')
 test('Test unit conversions'                 , testRunner, args : ['MeasurementTests', 'testUnitConversions'                 ], suite : 'measurement')
 test('Test unit inverses'                    , testRunner, args : ['MeasurementTests', 'testUnitInverses'                    ], suite : 'measurement')
 test('Test number display and parsing'       , testRunner, args : ['MeasurementTests', 'testNumberDisplayAndParsing'         ], suite : 'measurement')

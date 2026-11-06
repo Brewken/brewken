@@ -57,6 +57,12 @@ private slots:
 
    //! \brief \c MashCalculator::Inputs::fromRecipe and \c MashCalculator::apply, including applying to a copy of a mash
    void testWithRecipe();
+
+   /**
+    * \brief The example mash profiles in \c data/DefaultContent006-MashProfiles.beer import as locked, and can be
+    *        calculated for a typical recipe
+    */
+   void testExampleProfiles();
 };
 
 #endif

@@ -16,12 +16,7 @@
 #include "widgets/LockAndShareBar.h"
 
 #include <QHBoxLayout>
-#include <QMessageBox>
 #include <QPalette>
-
-#include "model/Mash.h"
-#include "model/Recipe.h"
-#include "model/RecipeUtils.h"
 
 #ifdef MANUALLY_INCLUDE_MOC
    // Explicitly doing this include reduces potential problems with AUTOMOC when compiling with CMake
@@ -89,45 +84,3 @@ void LockAndShareBar::setState(QString const & text,
    this->m_text->setForegroundRole(needsAttention ? QPalette::ToolTipText : QPalette::WindowText);
    return;
 }
-
-template<class NE>
-std::shared_ptr<NE> LockAndShare::getChangeable(QWidget * parent, Recipe & recipe, QString const & whyChange) {
-   std::shared_ptr<NE> const item = recipe.get<NE>();
-   if (!item) {
-      return nullptr;
-   }
-
-   bool const canChange = RecipeUtils::lockReason(*item) == RecipeUtils::LockReason::NotLocked;
-   bool const isShared  = RecipeUtils::recipesUsing(*item).size() > 1;
-   if (canChange && !isShared) {
-      return item;
-   }
-
-   QString const itemType = NE::localisedName().toLower();
-   if (recipe.locked()) {
-      QMessageBox::information(
-         parent,
-         NE::tr("Recipe is locked"),
-         NE::tr("This recipe is locked, so its %1 cannot be changed.").arg(itemType)
-      );
-      return nullptr;
-   }
-
-   QMessageBox messageBox{parent};
-   messageBox.setIcon(QMessageBox::Question);
-   messageBox.setWindowTitle(NE::tr("Make a copy of %1?").arg(itemType));
-   messageBox.setText(RecipeUtils::describeSharingAndLocking(*item, &recipe));
-   messageBox.setInformativeText(
-      NE::tr("%1\n\nDo you want to make a copy of this %2 for this recipe, so that you can continue without affecting "
-             "anything else?").arg(whyChange, itemType)
-   );
-   QPushButton * copyButton = messageBox.addButton(NE::tr("Make a copy"), QMessageBox::AcceptRole);
-   messageBox.addButton(QMessageBox::Cancel);
-   messageBox.setDefaultButton(copyButton);
-   messageBox.exec();
-   if (messageBox.clickedButton() != copyButton) {
-      return nullptr;
-   }
-   return RecipeUtils::useCopyFor<NE>(recipe);
-}
-template std::shared_ptr<Mash> LockAndShare::getChangeable<Mash>(QWidget * parent, Recipe & recipe, QString const & whyChange);

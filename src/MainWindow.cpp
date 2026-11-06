@@ -77,9 +77,7 @@
 #include "BtTabWidget.h"
 #include "HelpDialog.h"
 #include "Html.h"
-#include "MashDesigner.h"
 #include "model/RecipeUtils.h"
-#include "MashWizard.h"
 #include "OptionDialog.h"
 #include "PersistentSettings.h"
 #include "PrintAndPreviewDialog.h"
@@ -345,7 +343,6 @@ public:
       // Other
       m_aboutDialog                = std::make_unique<AboutDialog               >(&m_self);
       m_helpDialog                 = std::make_unique<HelpDialog                >(&m_self);
-      m_mashWizard                 = std::make_unique<MashWizard                >(&m_self);
       m_stockWindow                = std::make_unique<StockWindow               >(&m_self);
       m_optionDialog               = std::make_unique<OptionDialog              >(&m_self);
       m_recipeScaler               = std::make_unique<ScaleRecipeTool           >(&m_self);
@@ -359,7 +356,6 @@ public:
       m_primingDialog              = std::make_unique<PrimingDialog             >(&m_self);
       m_strikeWaterDialog          = std::make_unique<StrikeWaterDialog         >(&m_self);
       m_refractoDialog             = std::make_unique<RefractoDialog            >(&m_self);
-      m_mashDesigner               = std::make_unique<MashDesigner              >(&m_self);
       m_pitchDialog                = std::make_unique<PitchDialog               >(&m_self);
       m_btDatePopup                = std::make_unique<BtDatePopup               >(&m_self);
       m_ancestorDialog             = std::make_unique<AncestorDialog            >(&m_self);
@@ -900,13 +896,11 @@ public:
    std::unique_ptr<UnitConversionTool   > m_unitConversionTool   ;
    std::unique_ptr<HelpDialog           > m_helpDialog           ;
    std::unique_ptr<HydrometerTool       > m_hydrometerTool       ;
-   std::unique_ptr<MashDesigner         > m_mashDesigner         ;
 
    // See updateSharingAndLocking
    QMetaObject::Connection m_mashSharingConnection;
    QMetaObject::Connection m_boilSharingConnection;
    QMetaObject::Connection m_fermentationSharingConnection;
-   std::unique_ptr<MashWizard           > m_mashWizard           ;
    std::unique_ptr<OgCorrectionTool     > m_ogCorrectionTool     ;
    std::unique_ptr<OptionDialog         > m_optionDialog         ;
    std::unique_ptr<PitchDialog          > m_pitchDialog          ;
@@ -1398,8 +1392,7 @@ void MainWindow::setupClicks() {
    connect(this->pushButton_editMisc      , &QAbstractButton::clicked, this, &MainWindow::editMiscOfSelectedMiscAddition              );
    connect(this->pushButton_editYeast     , &QAbstractButton::clicked, this, &MainWindow::editYeastOfSelectedYeastAddition            );
 
-   connect(this->pushButton_mashWizard, &QAbstractButton::clicked, this->pimpl->m_mashWizard.get()  , &MashWizard::show  );
-   connect(this->pushButton_mashDesigner   , &QAbstractButton::clicked, this->pimpl->m_mashDesigner.get(), &MashDesigner::show);
+   connect(this->pushButton_calculateMash, &QAbstractButton::clicked, this, &MainWindow::calculateRecipeMash);
 
    return;
 }
@@ -1509,13 +1502,11 @@ void MainWindow::setRecipe(Recipe * recipe) {
    this->pimpl->closeAllBrewLogTabs();
 
    // Tell some of our other widgets to observe the new recipe.
-   this->pimpl->m_mashWizard->setRecipe(recipe);
    this->brewDayScrollWidget->setRecipe(recipe);
    this->pimpl->m_recipeFormatter->setRecipe(recipe);
    this->pimpl->m_ogCorrectionTool->setRecipe(recipe);
    this->recipeExtrasWidget->setRecipe(recipe);
    this->waterAdjuster->setRecipe(recipe);
-   this->pimpl->m_mashDesigner->setRecipe(recipe);
    this->equipmentComboBox->setItem(recipe->equipment());
    if (recipe->equipment()) {
       this->pimpl->m_equipmentEditor->setEditItem(recipe->equipment());
@@ -1647,12 +1638,11 @@ void MainWindow::lockRecipe(int const state) {
 
    //
    // A locked recipe's mash, boil and fermentation are, in effect, locked too (see RecipeUtils::lockReason), as is
-   // the choice of which mash etc the recipe uses.  The Mash Designer and Mash Wizard change the recipe's mash, so
-   // they are not available either.
+   // the choice of which mash etc the recipe uses.  Calculating the mash changes the recipe's mash, so that is not
+   // available either.
    //
    this->pimpl->updateAllSharingAndLocking();
-   this->pushButton_mashDesigner->setEnabled(enabled);
-   this->pushButton_mashWizard  ->setEnabled(enabled);
+   this->pushButton_calculateMash->setEnabled(enabled);
    return;
 }
 
@@ -2393,6 +2383,13 @@ void MainWindow::editRecipeStyle() {
 void MainWindow::editRecipeMash() {
    // If the recipe doesn't have a mash, this will create one for the user to edit
    this->pimpl->m_mashEditor->doEditForRecipe(this->pimpl->m_recipeObs);
+   return;
+}
+
+void MainWindow::calculateRecipeMash() {
+   // As editRecipeMash, but take the user straight to the part of the editor that calculates the mash water
+   this->pimpl->m_mashEditor->doEditForRecipe(this->pimpl->m_recipeObs);
+   this->pimpl->m_mashEditor->focusCalculator();
    return;
 }
 

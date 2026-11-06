@@ -1338,19 +1338,12 @@
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButton_mashDesigner">
-                  <property name="text">
-                   <string>Mash Designer</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButton_mashWizard">
+                 <widget class="QPushButton" name="pushButton_calculateMash">
                   <property name="toolTip">
-                   <string>Invoke the mash wizard</string>
+                   <string>Work out the amounts and temperatures of the mash water for this recipe (in the Mash Editor)</string>
                   </property>
                   <property name="text">
-                   <string>Mash Wizard</string>
+                   <string>Calculate Water…</string>
                   </property>
                  </widget>
                 </item>
@@ -2325,8 +2318,7 @@
   <tabstop>mashStepsWidget</tabstop>
   <tabstop>mashComboBox</tabstop>
   <tabstop>pushButton_editMash</tabstop>
-  <tabstop>pushButton_mashDesigner</tabstop>
-  <tabstop>pushButton_mashWizard</tabstop>
+  <tabstop>pushButton_calculateMash</tabstop>
   <tabstop>boilComboBox</tabstop>
   <tabstop>pushButton_editBoil</tabstop>
   <tabstop>fermentationComboBox</tabstop>

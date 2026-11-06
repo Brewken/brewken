@@ -16,9 +16,12 @@
 #include "unitTests/MashCalculatorTests.h"
 
 #include <QDebug>
+#include <QDir>
+#include <QTextStream>
 #include <QtTest/QtTest>
 
 #include "MashCalculator.h"
+#include "config.h"
 #include "database/ObjectStoreWrapper.h"
 #include "measurement/PhysicalConstants.h"
 #include "model/Boil.h"
@@ -29,6 +32,7 @@
 #include "model/Recipe.h"
 #include "model/RecipeAdditionFermentable.h"
 #include "model/RecipeUtils.h"
+#include "serialization/json/dotBeer/DotBeer.h"
 #include "unitTests/TestData.h"
 #include "unitTests/TestRegistry.h"
 
@@ -129,9 +133,21 @@ void MashCalculatorTests::testStrikeWater() {
    QVERIFY(strike.infuseTemp_c);
    QVERIFY(fuzzyComp(*strike.infuseTemp_c, 77.5, tolerance));
    QVERIFY(infusionBalances(16.0, *strike.infuseTemp_c, {{2.0, 20.0}, {2.0, 20.0}}, 66.0));
+   // The thickness is recorded on the step
+   QVERIFY(strike.liquorToGristRatio_lKg);
+   QVERIFY(fuzzyComp(*strike.liquorToGristRatio_lKg, 3.0, tolerance));
 
    //
-   // Without a thickness option, we use the thickness of the existing strike water if there is any...
+   // Without a thickness option, we use the step's liquor-to-grist ratio if it has one...
+   //
+   steps[0].liquorToGristRatio_lKg = 2.5;
+   auto const result1 = MashCalculator::calculate(makeInputs(), steps);
+   QVERIFY(result1.ok());
+   QVERIFY(fuzzyComp(result1.steps.at(0).amount_l, 13.5, tolerance));
+   steps[0].liquorToGristRatio_lKg = std::nullopt;
+
+   //
+   // ...otherwise the thickness of the existing strike water if there is any...
    //
    steps[0].amount_l = 11.0; // = 2 L/kg × 5 kg + 1 L
    auto const result2 = MashCalculator::calculate(makeInputs(), steps);
@@ -668,5 +684,51 @@ void MashCalculatorTests::testWithRecipe() {
    QVERIFY(fuzzyComp(copy->totalMashWater_l(), recipe->targetTotalMashVol_l(), tolerance));
    QCOMPARE(*copySteps.at(1)->infuseTemp_c(), 75.0);
    QCOMPARE(copySteps.at(1)->startTemp_c(), 75.0);
+   return;
+}
+
+void MashCalculatorTests::testExampleProfiles() {
+   QString const filePath{QDir{CONFIG_TEST_DATA_DIR}.filePath("../data/DefaultContent006-MashProfiles.beer")};
+   QString userMessage;
+   QTextStream userMessageAsStream{&userMessage};
+   bool const imported = DotBeer::import("", filePath, userMessageAsStream);
+   userMessageAsStream.flush();
+   QVERIFY2(imported, qPrintable(userMessage));
+
+   QStringList const names{
+      "Single Infusion, Light Body, Batch Sparge",
+      "Single Infusion, Medium Body, Batch Sparge",
+      "Single Infusion, Full Body, Batch Sparge",
+      "Single Infusion, Medium Body, Fly Sparge",
+      "Single Infusion, Medium Body, No Sparge",
+      "Step Mash with Protein Rest, Fly Sparge",
+      "Step Mash, Direct Heat, No Sparge",
+      "Double Decoction, Fly Sparge",
+   };
+   for (auto const & name : names) {
+      qDebug() << Q_FUNC_INFO << "Checking" << name;
+      auto const mash = UnitTests::findByName<Mash>(name);
+      QVERIFY2(mash, qPrintable(name));
+      QVERIFY2(mash->locked(), qPrintable(name));
+      QVERIFY2(mash->mashSteps().size() >= 2, qPrintable(name));
+
+      //
+      // The profiles don't have water amounts -- they need to be calculated for a recipe.  Here we check that works
+      // without errors or warnings for a typical recipe.  (We use the defaults for the thickness, so that any thickness
+      // stored in the profile is used.)
+      //
+      auto const result = MashCalculator::calculate(makeInputs(), MashCalculator::stepsFrom(*mash));
+      QVERIFY2(result.ok(), qPrintable(name + ": " + result.messages(Severity::Error).join("; ")));
+      QVERIFY2(numMessages(result, Severity::Warning) == 0,
+               qPrintable(name + ": " + result.messages(Severity::Warning).join("; ")));
+      // All the water is accounted for
+      double totalWater_l = 0.0;
+      for (auto const & step : result.steps) {
+         if (step.isInfusion() || step.isSparge()) {
+            totalWater_l += step.amount_l;
+         }
+      }
+      QVERIFY2(fuzzyComp(totalWater_l, makeInputs().targetTotalWater_l, tolerance), qPrintable(name));
+   }
    return;
 }

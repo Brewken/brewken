@@ -17,14 +17,10 @@
 #define WIDGETS_LOCKANDSHAREBAR_H
 #pragma once
 
-#include <memory>
-
 #include <QFrame>
 #include <QLabel>
 #include <QPushButton>
 #include <QString>
-
-class Recipe;
 
 /**
  * \brief A bar shown at the top of the editor for something that can be shared between recipes and/or locked (ie, at
@@ -63,27 +59,5 @@ private:
    QPushButton * m_lockOrUnlock;
    bool          m_itemLocked = false;
 };
-
-namespace LockAndShare {
-   /**
-    * \brief Call this before a tool (eg the Mash Wizard) makes changes to \c recipe's \c NE (eg its \c Mash) on the
-    *        user's behalf.  If the \c NE is not used by any other recipe and is not locked (see
-    *        \c RecipeUtils::lockReason), it is returned as-is.  Otherwise, we explain the situation to the user and
-    *        offer to make a copy for \c recipe (see \c RecipeUtils::useCopyFor).
-    *
-    *        Explicitly instantiated for \c Mash.  (Add others as needed.)
-    *
-    * \param parent For the message box
-    * \param recipe
-    * \param whyChange Translated text explaining what the tool wants to do, eg "The Mash Wizard changes the amounts and
-    *                  temperatures of the steps of the recipe's mash."
-    *
-    * \return The \c NE that the tool can change (which might be a new copy), or \c nullptr if \c recipe has no
-    *         \c NE, or the user declined to make a copy, or \c recipe is locked (so we cannot change which \c NE it
-    *         uses).
-    */
-   template<class NE>
-   std::shared_ptr<NE> getChangeable(QWidget * parent, Recipe & recipe, QString const & whyChange);
-}
 
 #endif

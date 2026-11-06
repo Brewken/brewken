@@ -207,6 +207,8 @@ public slots:
    void editRecipeEquipment();
    void editRecipeStyle();
    void editRecipeMash();
+   //! As \c editRecipeMash, but go straight to calculating the mash water
+   void calculateRecipeMash();
    void editRecipeBoil();
    void editRecipeFermentation();
 

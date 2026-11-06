@@ -117,6 +117,23 @@ namespace {
 
 }
 
+MashCalculator::Inputs MashCalculator::Inputs::fromRecipe(Recipe const & recipe, Mash const & mash) {
+   Inputs inputs = fromRecipe(recipe);
+   //
+   // This mirrors Recipe::mashTunHeatCapacity_kcalC and Recipe::mashTunTemp_c, but for the supplied mash
+   //
+   inputs.grainTemp_c = mash.grainTemp_c();
+   inputs.tunTemp_c   = mash.initialTunTemp_c().value_or(mash.grainTemp_c());
+   auto const equipment = recipe.equipment();
+   std::optional<double> const equipmentHeatCapacity_kcalC =
+      equipment ? equipment->mashVesselHeatCapacity_kcalC() : std::nullopt;
+   inputs.tunHeatCapacity_kcalC = equipmentHeatCapacity_kcalC.value_or(
+      // kg × cal/(g·°C) = kcal/°C
+      mash.tunWeight_kg().value_or(0.0) * mash.tunSpecificHeat_calGC().value_or(0.0)
+   );
+   return inputs;
+}
+
 MashCalculator::Inputs MashCalculator::Inputs::fromRecipe(Recipe const & recipe) {
    Inputs inputs;
    auto const equipment = recipe.equipment();
@@ -190,6 +207,7 @@ QList<MashCalculator::Step> MashCalculator::stepsFrom(Mash const & mash) {
          .infuseTemp_c    = mashStep->infuseTemp_c(),
          .amountFixed     = mashStep->amountFixed(),
          .infuseTempFixed = mashStep->infuseTempFixed(),
+         .liquorToGristRatio_lKg = mashStep->liquorToGristRatio_lKg(),
       });
    }
    return steps;
@@ -321,6 +339,8 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
       if (thickness_LKg <= 0.0) {
          return error(-1, tr("The mash thickness must be positive."));
       }
+   } else if (steps.first().liquorToGristRatio_lKg && *steps.first().liquorToGristRatio_lKg > 0.0) {
+      thickness_LKg = *steps.first().liquorToGristRatio_lKg;
    } else if (steps.first().amount_l > inputs.strikeWaterAllowance_l) {
       thickness_LKg = (steps.first().amount_l - inputs.strikeWaterAllowance_l) / inputs.grain_kg;
    }
@@ -450,6 +470,7 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
                step.amount_l     = *amount_l;
                step.infuseTemp_c = *waterTemp_c;
                water_l += *amount_l;
+               step.liquorToGristRatio_lKg = std::max(water_l - inputs.strikeWaterAllowance_l, 0.0) / inputs.grain_kg;
             }
             break;
 
@@ -657,6 +678,9 @@ void MashCalculator::apply(QList<Step> const & steps, Mash & mash) {
       if (mashStep.infuseTemp_c() != step.infuseTemp_c) {
          mashStep.setInfuseTemp_c(step.infuseTemp_c);
       }
+      if (mashStep.liquorToGristRatio_lKg() != step.liquorToGristRatio_lKg) {
+         mashStep.setLiquorToGristRatio_lKg(step.liquorToGristRatio_lKg);
+      }
    }
 
    bool stepsAddedOrRemoved = false;
@@ -680,6 +704,7 @@ void MashCalculator::apply(QList<Step> const & steps, Mash & mash) {
       mashStep->setInfuseTemp_c   (step.infuseTemp_c   );
       mashStep->setAmountFixed    (step.amountFixed    );
       mashStep->setInfuseTempFixed(step.infuseTempFixed);
+      mashStep->setLiquorToGristRatio_lKg(step.liquorToGristRatio_lKg);
       // Setting of step owner and storing in DB ultimately happens in OwnedSet::extend()
       mash.add(mashStep);
       stepsAddedOrRemoved = true;

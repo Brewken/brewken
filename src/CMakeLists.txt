@@ -61,8 +61,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/Logging.cpp
     ${repoDir}/src/MainWindow.cpp
     ${repoDir}/src/MashCalculator.cpp
-    ${repoDir}/src/MashDesigner.cpp
-    ${repoDir}/src/MashWizard.cpp
     ${repoDir}/src/OptionDialog.cpp
     ${repoDir}/src/PersistentSettings.cpp
     ${repoDir}/src/PrintAndPreviewDialog.cpp

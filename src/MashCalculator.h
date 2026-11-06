@@ -33,7 +33,7 @@ class Recipe;
  *        the amounts of decoctions, and the amounts and temperatures of sparge water.
  *
  *        This replaces the calculations that were previously spread (with some differences between them) across the
- *        Mash Wizard and the Mash Designer.  It has no UI, and, apart from \c Inputs::fromRecipe and \c apply, does not
+ *        old Mash Wizard and Mash Designer.  It has no UI, and, apart from \c Inputs::fromRecipe and \c apply, does not
  *        touch the model, so it is easy to unit test.
  *
  *        Usage is:
@@ -43,7 +43,7 @@ class Recipe;
  *          3. Call \c calculate, which returns the steps with all the values that are not "fixed" (see below) worked
  *             out, plus any problems.
  *          4. If there were no errors, call \c apply to write the results back to the \c Mash.  (It is the caller's
- *             job to make sure the mash can be changed -- see \c LockAndShare::getChangeable.)
+ *             job to make sure the mash can be changed -- see \c MashEditor::calculate.)
  *
  *        Which values get calculated:
  *
@@ -113,6 +113,12 @@ public:
       //! See \c Equipment::mashVesselVolume_l.  If not set, we don't check whether the mash fits in the vessel.
       std::optional<double> mashVesselVolume_l = std::nullopt;
 
+      /**
+       * \brief Get the inputs for calculating \c mash for \c recipe.  Normally \c mash is the recipe's mash, but it
+       *        doesn't have to be (eg it might be a new mash that will be used by the recipe once it is saved).
+       */
+      static Inputs fromRecipe(Recipe const & recipe, Mash const & mash);
+      //! As above, for the recipe's own mash (or default values for the mash-related inputs if it doesn't have one)
       static Inputs fromRecipe(Recipe const & recipe);
    };
 
@@ -137,6 +143,13 @@ public:
       std::optional<double> infuseTemp_c    = std::nullopt;
       bool                  amountFixed     = false;
       bool                  infuseTempFixed = false;
+      /**
+       * \brief See \c MashStep::liquorToGristRatio_lKg.  For the first step, if set (and \c Options::thickness_LKg is
+       *        not), this is the mash thickness we use for the strike water.  The calculation sets it on all the
+       *        infusion steps (based on the water in the mash at the end of the step, not counting the strike water
+       *        allowance), so the mash "remembers" its thickness.
+       */
+      std::optional<double> liquorToGristRatio_lKg = std::nullopt;
 
       bool isInfusion() const;
       bool isSparge  () const;
@@ -154,8 +167,9 @@ public:
    struct Options {
       /**
        * \brief The mash thickness (see \c Recipe::targetStrikeWater_l) to use for the strike water, if its amount is
-       *        neither fixed nor determined by there being no sparge.  If not set, we use the thickness of the existing
-       *        strike water, or, if there isn't any, \c defaultThickness_LKg.
+       *        neither fixed nor determined by there being no sparge.  If not set, we use the first step's
+       *        \c liquorToGristRatio_lKg, or, if that's not set, the thickness of the existing strike water, or, if
+       *        there isn't any, \c defaultThickness_LKg.
        */
       std::optional<double> thickness_LKg  = std::nullopt;
       /**
