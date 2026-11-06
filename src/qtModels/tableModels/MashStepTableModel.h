@@ -55,6 +55,12 @@ class MashStepTableModel : public BtTableModel,
    TABLE_MODEL_COMMON_DECL(MashStep)
    ENUMERATED_ITEM_TABLE_MODEL_COMMON_DECL(MashStep, Mash)
 
+public slots:
+   /**
+    * \brief Context menu for a cell in the table.  For the amount and infusion temperature columns, this allows the user
+    *        to toggle whether the value is "fixed", ie not changed when calculating the mash (see \c MashCalculator).
+    */
+   void cellContextMenu(QPoint const & point);
 };
 
 //============================================ CLASS MashStepItemDelegate ==============================================

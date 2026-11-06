@@ -1979,6 +1979,7 @@ test('Test mash calc decoction'              , testRunner, args : ['MashCalculat
 test('Test mash calc sparge'                 , testRunner, args : ['MashCalculatorTests', 'testSparge'             ], suite : 'mash')
 test('Test mash calc no sparge'              , testRunner, args : ['MashCalculatorTests', 'testNoSparge'           ], suite : 'mash')
 test('Test mash calc errors and warnings'    , testRunner, args : ['MashCalculatorTests', 'testErrorsAndWarnings'  ], suite : 'mash')
+test('Test mash calc sensible temperatures'  , testRunner, args : ['MashCalculatorTests', 'testSensibleTemperatures'], suite : 'mash')
 test('Test mash calc with recipe'            , testRunner, args : ['MashCalculatorTests', 'testWithRecipe'         ], suite : 'mash')
 test('Test mash calc example profiles'       , testRunner, args : ['MashCalculatorTests', 'testExampleProfiles'    ], suite : 'mash')
 test('Test unit conversions'                 , testRunner, args : ['MeasurementTests', 'testUnitConversions'                 ], suite : 'measurement')

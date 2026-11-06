@@ -1131,6 +1131,7 @@ add_test(NAME MashCalculatorTests.testDecoction                      COMMAND ./$
 add_test(NAME MashCalculatorTests.testSparge                         COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testSparge)
 add_test(NAME MashCalculatorTests.testNoSparge                       COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testNoSparge)
 add_test(NAME MashCalculatorTests.testErrorsAndWarnings              COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testErrorsAndWarnings)
+add_test(NAME MashCalculatorTests.testSensibleTemperatures           COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testSensibleTemperatures)
 add_test(NAME MashCalculatorTests.testWithRecipe                     COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testWithRecipe)
 add_test(NAME MashCalculatorTests.testExampleProfiles                COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testExampleProfiles)
 add_test(NAME MeasurementTests.testUnitConversions                 COMMAND ./${fileName_unitTestRunner} MeasurementTests   testUnitConversions              )

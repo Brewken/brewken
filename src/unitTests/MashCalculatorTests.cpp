@@ -591,6 +591,75 @@ void MashCalculatorTests::testErrorsAndWarnings() {
    return;
 }
 
+void MashCalculatorTests::testSensibleTemperatures() {
+   QList<MashCalculator::Step> steps{makeStep("Saccharification", MashStep::Type::Infusion, 66.0)};
+   MashCalculator::setSparge(steps, MashCalculator::SpargeMethod::FlySparge, 1);
+
+   // Grain temperature of 0 °C (which used to be the default for a new mash) almost certainly means "not set"
+   auto coldGrain = makeInputs();
+   coldGrain.grainTemp_c = 0.0;
+   auto const coldGrainResult = MashCalculator::calculate(coldGrain, steps, thickness(3.0));
+   QVERIFY(!coldGrainResult.ok());
+   QVERIFY(hasMessage(coldGrainResult, Severity::Error, "initial grain temperature"));
+
+   // Step temperatures have to be between freezing and boiling
+   auto badStepTemp = steps;
+   badStepTemp[1].startTemp_c = 0.0;
+   QVERIFY(!MashCalculator::calculate(makeInputs(), badStepTemp, thickness(3.0)).ok());
+   badStepTemp[1].startTemp_c = 100.0;
+   QVERIFY(!MashCalculator::calculate(makeInputs(), badStepTemp, thickness(3.0)).ok());
+
+   //
+   // Fixed amount that would need water colder than the coldest available (20 °C).  Strike to 70 °C, then cool to 60 °C
+   // with a fixed 1 L: mash heat capacity is 2 + 2 + 16 = 20 kcal/°C, so we'd need water at 60 - 20 × 10 / 1 = -140 °C.
+   //
+   QList<MashCalculator::Step> coolingSteps{
+      makeStep("Strike" , MashStep::Type::Infusion, 70.0),
+      makeStep("Cooling", MashStep::Type::Infusion, 60.0),
+   };
+   coolingSteps[1].amount_l    = 1.0;
+   coolingSteps[1].amountFixed = true;
+   MashCalculator::setSparge(coolingSteps, MashCalculator::SpargeMethod::FlySparge, 1);
+   auto const coolingResult = MashCalculator::calculate(makeInputs(), coolingSteps, thickness(3.0));
+   QVERIFY(!coolingResult.ok());
+   QVERIFY(hasMessage(coolingResult, Severity::Error, "Cooling"));
+   QVERIFY(hasMessage(coolingResult, Severity::Error, "coldest water available"));
+   // Without the fixed amount, it works, using water at 20 °C: 200 / (60 - 20) = 5 L
+   coolingSteps[1].amountFixed = false;
+   auto const coolingResult2 = MashCalculator::calculate(makeInputs(), coolingSteps, thickness(3.0));
+   QVERIFY(coolingResult2.ok());
+   QVERIFY(fuzzyComp(coolingResult2.steps.at(1).amount_l, 5.0, tolerance));
+   QCOMPARE(*coolingResult2.steps.at(1).infuseTemp_c, 20.0);
+
+   //
+   // With no sparge, the last infusion has to make up the rest of the water.  Strike 16 L to 66 °C, then 14 L to 40 °C
+   // would need water at 40 - 20 × 26 / 14 = 2.9 °C.
+   //
+   QList<MashCalculator::Step> noSpargeSteps{
+      makeStep("Strike"  , MashStep::Type::Infusion, 66.0),
+      makeStep("Make up" , MashStep::Type::Infusion, 40.0),
+   };
+   auto const noSpargeResult = MashCalculator::calculate(makeInputs(), noSpargeSteps, thickness(3.0));
+   QVERIFY(!noSpargeResult.ok());
+   QVERIFY(hasMessage(noSpargeResult, Severity::Error, "no sparge"));
+
+   //
+   // Batch sparge after a hot mash out.  Mash at 80 °C, so the drained bed is at 78 °C, which is already above the
+   // 76 °C sparge temperature.  We use water at 76 °C, and warn that the bed will be at (7 × 76 + 9 × 78) / 16 = 77.1 °C.
+   //
+   QList<MashCalculator::Step> hotSteps{makeStep("Strike", MashStep::Type::Infusion, 80.0)};
+   MashCalculator::setSparge(hotSteps, MashCalculator::SpargeMethod::BatchSparge, 2);
+   auto const hotResult = MashCalculator::calculate(makeInputs(), hotSteps, thickness(3.0));
+   QVERIFY(hotResult.ok());
+   QCOMPARE(*hotResult.steps.at(1).infuseTemp_c, 76.0);
+   QVERIFY(hasMessage(hotResult, Severity::Warning, "already hotter"));
+   for (auto const & step : hotResult.steps) {
+      QVERIFY(*step.infuseTemp_c >= 20.0);
+      QVERIFY(*step.infuseTemp_c <= 100.0);
+   }
+   return;
+}
+
 void MashCalculatorTests::testWithRecipe() {
    double const grain_kg      = 5.0;
    double const thickness_LKg = 3.0;

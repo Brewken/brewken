@@ -247,11 +247,13 @@ void MashEditor::calculate() {
    auto const spargeMethod =
       static_cast<MashCalculator::SpargeMethod>(this->comboBox_spargeMethod->currentData().toInt());
    QList<MashCalculator::Step> steps = MashCalculator::stepsFrom(mash);
+   // Older mashes might have a sparge temperature of 0 °C, which really means "not set"
+   std::optional<double> const spargeTemp_c = this->lineEdit_spargeTemp->getOptCanonicalQty();
    MashCalculator::setSparge(
       steps,
       spargeMethod,
       this->spinBox_numBatches->value(),
-      this->lineEdit_spargeTemp->getOptCanonicalQty().value_or(MashCalculator::defaultSpargeTemp_c)
+      (spargeTemp_c && *spargeTemp_c > 0.0) ? *spargeTemp_c : MashCalculator::defaultSpargeTemp_c
    );
 
    MashCalculator::Options options;

@@ -101,10 +101,10 @@ Mash::Mash(QString name) :
    FolderPropertyBase<Mash>{},
    LockablePropertyBase<Mash>{},
    StepOwnerBase<Mash, MashStep>{},
-   m_grainTemp_c          {0.0 },
+   m_grainTemp_c          {20.0},
    m_notes                {""  },
    m_initialTunTemp_c     {std::nullopt},
-   m_spargeTemp_c         {0.0 },
+   m_spargeTemp_c         {std::nullopt},
    m_ph                   {0.0 },
    // Not set means use the figures from the equipment -- see Recipe::mashTunHeatCapacity_kcalC
    m_tunWeight_kg         {std::nullopt},

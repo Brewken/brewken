@@ -304,6 +304,22 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
       return error(-1, tr("There are no grains in the mash.  You need some mash-stage fermentable additions before the "
                           "mash can be calculated."));
    }
+   //
+   // We treat the initial grain temperature as the temperature of the room, and therefore also of the coldest water
+   // available (eg for an infusion to cool the mash).  New mashes used to have it as 0 °C, which is almost certainly
+   // not what the user meant.
+   //
+   if (inputs.grainTemp_c <= 0.0 || inputs.grainTemp_c >= inputs.boilingPoint_c) {
+      return error(-1, tr("The initial grain temperature is %1.  Please set it to the temperature of the grain before "
+                          "mashing, which is normally room temperature.").arg(showTemp(inputs.grainTemp_c)));
+   }
+   for (qsizetype ii = 0; ii < steps.size(); ++ii) {
+      if (steps[ii].startTemp_c <= 0.0 || steps[ii].startTemp_c >= inputs.boilingPoint_c) {
+         return error(ii, tr("The step temperature is %1, which needs to be between freezing and boiling point (%2).").arg(
+            showTemp(steps[ii].startTemp_c), showTemp(inputs.boilingPoint_c)
+         ));
+      }
+   }
    if (!steps.first().isInfusion()) {
       return error(0, tr("The first step must be an infusion (ie adding the strike water)."));
    }
@@ -452,10 +468,28 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
                      )
                   );
                }
-               if (*waterTemp_c < 0.0) {
-                  return error(ii, tr("The water would need to be at %1, which is below freezing.").arg(
-                     showTemp(*waterTemp_c)
-                  ));
+               if (!step.infuseTempFixed && *waterTemp_c < inputs.grainTemp_c - 1e-6) {
+                  //
+                  // We can't supply water colder than the cold water we have, which we take to be at the initial grain
+                  // temperature (see above).  This can happen, eg, if the amount is fixed (or, with no sparge, has to
+                  // make up the rest of the water) and is more than is needed to reach the step temperature.
+                  //
+                  QString const reason = contents.heatNeeded_kcal(targetTemp_c) < 0.0 ?
+                     tr("The mash would already be hotter than %1 at this point.").arg(showTemp(targetTemp_c)) :
+                     tr("This is more water than is needed to reach %1.").arg(showTemp(targetTemp_c));
+                  QString const advice =
+                     step.amountFixed     ? tr("Try a smaller fixed amount, or not fixing the amount.") :
+                     ii == balancingIndex ? tr("With no sparge, this step has to add the rest of the water needed.  Try "
+                                               "having a sparge, or more water in the earlier steps.") :
+                                            tr("Try a thicker mash (ie less water).");
+                  return error(
+                     ii,
+                     tr("To reach %1 with %2 of water, the water would need to be at %3, which is colder than the "
+                        "coldest water available (taken to be at the initial grain temperature, %4).  %5  %6").arg(
+                        showTemp(targetTemp_c), showVolume(*amount_l), showTemp(*waterTemp_c),
+                        showTemp(inputs.grainTemp_c), reason, advice
+                     )
+                  );
                }
 
                if (bothGiven) {
@@ -627,6 +661,19 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
             bedTemp_c = actualTemp_c;
          } else {
             step.infuseTemp_c = bed.waterTempFor(targetTemp_c, step.amount_l);
+            if (*step.infuseTemp_c < targetTemp_c) {
+               //
+               // The grain bed is already hotter than the step temperature (eg after a hot mash out).  It doesn't make
+               // sense to use cold water to cool it, so we use water at the step temperature, and the bed will end up a
+               // bit warmer than the step temperature.
+               //
+               step.infuseTemp_c = targetTemp_c;
+               bedTemp_c = bed.finalTemp_c(step.amount_l, targetTemp_c);
+               if (*bedTemp_c > targetTemp_c + temperatureTolerance_c) {
+                  warn(ii, tr("The grain bed is already hotter than %1, so we use water at that temperature, and the bed "
+                              "will be at about %2.").arg(showTemp(targetTemp_c), showTemp(*bedTemp_c)));
+               }
+            }
             if (*step.infuseTemp_c > inputs.boilingPoint_c) {
                //
                // Not enough sparge water in this batch to heat the grain bed all the way to the target temperature.

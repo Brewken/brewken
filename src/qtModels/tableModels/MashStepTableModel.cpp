@@ -23,12 +23,14 @@
 
 #include <QHeaderView>
 #include <QIcon>
+#include <QMenu>
 #include <QModelIndex>
 #include <QTableView>
 #include <QVariant>
 #include <QWidget>
 
 #include "model/MashStep.h"
+#include "model/RecipeUtils.h"
 #include "qtModels/tableModels/BtTableModel.h"
 
 #ifdef MANUALLY_INCLUDE_MOC
@@ -59,6 +61,8 @@ MashStepTableModel::MashStepTableModel(QTableView * parent, bool editable) :
 
    QHeaderView* headerView = m_parentTableWidget->horizontalHeader();
    connect(headerView, &QWidget::customContextMenuRequested, this, &MashStepTableModel::contextMenu);
+   m_parentTableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+   connect(m_parentTableWidget, &QWidget::customContextMenuRequested, this, &MashStepTableModel::cellContextMenu);
    //
    // See comment in qtModels/tableModels/BoilStepTableModel.cpp for why we don't listen directly to signals from
    // ObjectStore.
@@ -108,6 +112,53 @@ QVariant MashStepTableModel::data(QModelIndex const & index, int role) const {
 
    // No other special handling required for any of our other columns
    return this->readDataFromModel(index, role);
+}
+
+void MashStepTableModel::cellContextMenu(QPoint const & point) {
+   if (!this->m_itemOwnerObs) {
+      return;
+   }
+   QModelIndex const index = this->m_parentTableWidget->indexAt(point);
+   if (!index.isValid() || index.row() >= static_cast<int>(this->m_rows.size())) {
+      return;
+   }
+   auto const columnIndex = static_cast<MashStepTableModel::ColumnIndex>(index.column());
+   std::shared_ptr<MashStep> const step = this->m_rows[index.row()];
+
+   QString actionText;
+   bool isFixed = false;
+   if (columnIndex == MashStepTableModel::ColumnIndex::Amount) {
+      actionText = tr("Fixed amount (not changed when calculating the mash)");
+      isFixed = step->amountFixed();
+   } else if (columnIndex == MashStepTableModel::ColumnIndex::Temp &&
+              step->type() != MashStep::Type::Decoction &&
+              step->type() != MashStep::Type::Temperature) {
+      actionText = tr("Fixed infusion temperature (not changed when calculating the mash)");
+      isFixed = step->infuseTempFixed();
+   } else {
+      // No menu for other cells
+      return;
+   }
+
+   QMenu menu{this->m_parentTableWidget};
+   QAction * fixedAction = menu.addAction(QIcon{":/images/smallPin.svg"}, actionText);
+   fixedAction->setCheckable(true);
+   fixedAction->setChecked(isFixed);
+   // Same rules as for editing the cell
+   bool const canChange =
+      this->m_editable &&
+      RecipeUtils::lockReason(*this->m_itemOwnerObs) == RecipeUtils::LockReason::NotLocked;
+   fixedAction->setEnabled(canChange);
+
+   if (menu.exec(this->m_parentTableWidget->viewport()->mapToGlobal(point)) != fixedAction) {
+      return;
+   }
+   if (columnIndex == MashStepTableModel::ColumnIndex::Amount) {
+      step->setAmountFixed(!isFixed);
+   } else {
+      step->setInfuseTempFixed(!isFixed);
+   }
+   return;
 }
 
 bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & value, int role) {
