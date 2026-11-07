@@ -69,6 +69,11 @@ MashEditor::MashEditor(QWidget* parent, QString const editorName) :
    this->comboBox_spargeMethod->addItem(tr("Fly sparge"  ), static_cast<int>(MashCalculator::SpargeMethod::FlySparge  ));
    this->connect(this->comboBox_spargeMethod, &QComboBox::currentIndexChanged, this, &MashEditor::updateCalculatorControls);
    this->connect(this->pushButton_calculate , &QAbstractButton::clicked      , this, &MashEditor::calculate               );
+   this->connect(this->enumeratedItemsWidget->tableModel(),
+                 &MashStepTableModel::validationChanged,
+                 this,
+                 &MashEditor::updateMashProblems);
+   this->updateMashProblems();
    this->refreshCalculator();
 
    return;
@@ -173,6 +178,27 @@ void MashEditor::updateCalculatorControls() {
       static_cast<MashCalculator::SpargeMethod>(this->comboBox_spargeMethod->currentData().toInt());
    this->spinBox_numBatches->setEnabled(enabled && spargeMethod == MashCalculator::SpargeMethod::BatchSparge);
    this->lineEdit_thickness->setEnabled(enabled && spargeMethod != MashCalculator::SpargeMethod::NoSparge);
+   return;
+}
+
+void MashEditor::updateMashProblems() {
+   MashStepTableModel const & model = *this->enumeratedItemsWidget->tableModel();
+   if (!model.hasProblems()) {
+      this->label_mashProblems->clear();
+      this->label_mashProblems->setVisible(false);
+      return;
+   }
+   QString text = tr("⚠ These steps don't all make sense for the recipe that uses them.  Hover over a highlighted step "
+                     "for details.").toHtmlEscaped();
+   if (!model.mashOverallProblems().isEmpty()) {
+      text += "<ul>";
+      for (auto const & problem : model.mashOverallProblems()) {
+         text += QString{"<li>%1</li>"}.arg(problem.toHtmlEscaped());
+      }
+      text += "</ul>";
+   }
+   this->label_mashProblems->setText(text);
+   this->label_mashProblems->setVisible(true);
    return;
 }
 

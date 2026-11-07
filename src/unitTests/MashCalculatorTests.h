@@ -58,6 +58,9 @@ private slots:
    //! \brief We don't calculate water temperatures that don't make sense (eg colder than the coldest water available)
    void testSensibleTemperatures();
 
+   //! \brief \c MashCalculator::check finds steps that don't make sense, without changing anything
+   void testCheck();
+
    //! \brief \c MashCalculator::Inputs::fromRecipe and \c MashCalculator::apply, including applying to a copy of a mash
    void testWithRecipe();
 

@@ -21,15 +21,21 @@
  =====================================================================================================================*/
 #include "qtModels/tableModels/MashStepTableModel.h"
 
+#include <QBrush>
+#include <QColor>
 #include <QHeaderView>
 #include <QIcon>
 #include <QMenu>
 #include <QModelIndex>
 #include <QTableView>
+#include <QTimer>
 #include <QVariant>
 #include <QWidget>
 
+#include "MashCalculator.h"
+#include "model/Equipment.h"
 #include "model/MashStep.h"
+#include "model/Recipe.h"
 #include "model/RecipeUtils.h"
 #include "qtModels/tableModels/BtTableModel.h"
 
@@ -63,6 +69,17 @@ MashStepTableModel::MashStepTableModel(QTableView * parent, bool editable) :
    connect(headerView, &QWidget::customContextMenuRequested, this, &MashStepTableModel::contextMenu);
    m_parentTableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
    connect(m_parentTableWidget, &QWidget::customContextMenuRequested, this, &MashStepTableModel::cellContextMenu);
+
+   //
+   // Re-check the steps whenever they change.  (Changes to the mash, recipe and equipment are handled in validate().)
+   // Note that validate() itself emits dataChanged if the results change, which means we'll check one more time, but
+   // that will find nothing has changed, so won't emit anything.
+   //
+   connect(this, &QAbstractItemModel::modelReset  , this, &MashStepTableModel::scheduleValidation);
+   connect(this, &QAbstractItemModel::rowsInserted, this, &MashStepTableModel::scheduleValidation);
+   connect(this, &QAbstractItemModel::rowsRemoved , this, &MashStepTableModel::scheduleValidation);
+   connect(this, &QAbstractItemModel::rowsMoved   , this, &MashStepTableModel::scheduleValidation);
+   connect(this, &QAbstractItemModel::dataChanged , this, &MashStepTableModel::scheduleValidation);
    //
    // See comment in qtModels/tableModels/BoilStepTableModel.cpp for why we don't listen directly to signals from
    // ObjectStore.
@@ -81,19 +98,48 @@ QVariant MashStepTableModel::data(QModelIndex const & index, int role) const {
    // Show a pin icon on amounts and infusion temperatures that are "fixed", ie that will not be changed when
    // calculating the mash (see MashCalculator and MashEditor::calculate).
    //
-   if (this->m_itemOwnerObs && (role == Qt::DecorationRole || role == Qt::ToolTipRole) && this->indexOk(index)) {
+   // Also, if a step doesn't make sense (see validate()), tint its row and explain why in the tool tip.
+   //
+   if (this->m_itemOwnerObs &&
+       (role == Qt::DecorationRole || role == Qt::ToolTipRole || role == Qt::BackgroundRole) &&
+       this->indexOk(index)) {
       auto const columnIndex = static_cast<MashStepTableModel::ColumnIndex>(index.column());
       auto const & row = this->m_rows[index.row()];
       bool const isFixed =
          (columnIndex == MashStepTableModel::ColumnIndex::Amount && row->amountFixed()) ||
          (columnIndex == MashStepTableModel::ColumnIndex::Temp   && row->infuseTempFixed() &&
                                                                     row->type() != MashStep::Type::Decoction);
-      if (isFixed) {
-         if (role == Qt::DecorationRole) {
-            static QIcon const pinIcon{":/images/smallPin.svg"};
-            return pinIcon;
-         }
-         return tr("Fixed: not changed when calculating the mash");
+      auto const problems = this->m_stepProblems.constFind(row.get());
+      bool const hasProblems = (problems != this->m_stepProblems.cend());
+      switch (role) {
+         case Qt::DecorationRole:
+            if (isFixed) {
+               static QIcon const pinIcon{":/images/smallPin.svg"};
+               return pinIcon;
+            }
+            break;
+         case Qt::BackgroundRole:
+            if (hasProblems) {
+               // Semi-transparent, so that it works with light and dark themes
+               return QBrush{problems->isError ? QColor{230, 40, 40, 70} : QColor{240, 170, 0, 70}};
+            }
+            break;
+         case Qt::ToolTipRole:
+            {
+               QStringList toolTip;
+               if (isFixed) {
+                  toolTip.append(tr("Fixed: not changed when calculating the mash"));
+               }
+               if (hasProblems) {
+                  toolTip.append(problems->messages);
+               }
+               if (!toolTip.isEmpty()) {
+                  return toolTip.join("\n");
+               }
+            }
+            break;
+         default:
+            break;
       }
       return QVariant();
    }
@@ -159,6 +205,102 @@ void MashStepTableModel::cellContextMenu(QPoint const & point) {
       step->setInfuseTempFixed(!isFixed);
    }
    return;
+}
+
+void MashStepTableModel::scheduleValidation() {
+   if (!this->m_validationScheduled) {
+      this->m_validationScheduled = true;
+      QTimer::singleShot(0, this, [this]() {
+         this->m_validationScheduled = false;
+         this->validate();
+         return;
+      });
+   }
+   return;
+}
+
+void MashStepTableModel::validate() {
+   for (auto const & connection : this->m_validationConnections) {
+      QObject::disconnect(connection);
+   }
+   this->m_validationConnections.clear();
+
+   QHash<MashStep const *, StepProblems> stepProblems;
+   QStringList mashProblems;
+   Recipe * recipe = nullptr;
+   if (this->m_itemOwnerObs) {
+      Mash const & mash = *this->m_itemOwnerObs;
+      auto reValidate = [this]([[maybe_unused]] QMetaProperty prop, [[maybe_unused]] QVariant val) {
+         this->scheduleValidation();
+         return;
+      };
+      // The mash could get used by another recipe (or stop being used by one), and its own fields (eg grain temperature)
+      // affect the checks.
+      this->m_validationConnections.append(
+         connect(this->m_itemOwnerObs.get(), &NamedEntity::changed, this, reValidate)
+      );
+      QList<Recipe *> const recipes = RecipeUtils::recipesUsing(mash);
+      if (recipes.size() == 1) {
+         recipe = recipes.first();
+         this->m_validationConnections.append(connect(recipe, &NamedEntity::changed, this, reValidate));
+         if (auto const equipment = recipe->equipment()) {
+            this->m_validationConnections.append(connect(equipment.get(), &NamedEntity::changed, this, reValidate));
+         }
+
+         MashCalculator::Result const result = MashCalculator::check(MashCalculator::Inputs::fromRecipe(*recipe, mash),
+                                                                     MashCalculator::stepsFrom(mash));
+         QList<std::shared_ptr<MashStep>> const mashSteps = mash.mashSteps();
+         for (auto const & problem : result.problems) {
+            bool const isError = problem.severity == MashCalculator::Problem::Severity::Error;
+            if (problem.stepIndex >= 0 && problem.stepIndex < mashSteps.size()) {
+               StepProblems & entry = stepProblems[mashSteps.at(problem.stepIndex).get()];
+               entry.isError |= isError;
+               entry.messages.append(problem.message);
+            } else {
+               mashProblems.append(problem.message);
+            }
+         }
+      }
+   }
+
+   if (stepProblems != this->m_stepProblems ||
+       mashProblems != this->m_mashProblems ||
+       recipe       != this->m_validationRecipe) {
+      this->m_stepProblems     = stepProblems;
+      this->m_mashProblems     = mashProblems;
+      this->m_validationRecipe = recipe;
+      if (this->rowCount() > 0) {
+         emit this->dataChanged(this->index(0, 0), this->index(this->rowCount() - 1, this->columnCount() - 1));
+      }
+      emit this->validationChanged();
+   }
+   return;
+}
+
+bool MashStepTableModel::isValidating() const {
+   return this->m_validationRecipe != nullptr;
+}
+
+bool MashStepTableModel::hasProblems() const {
+   return !this->m_stepProblems.isEmpty() || !this->m_mashProblems.isEmpty();
+}
+
+[[nodiscard]] QStringList const & MashStepTableModel::mashOverallProblems() const {
+   return this->m_mashProblems;
+}
+
+[[nodiscard]] QString MashStepTableModel::allProblemsDisplayable() const {
+   QStringList lines;
+   for (auto const & row : this->m_rows) {
+      auto const problems = this->m_stepProblems.constFind(row.get());
+      if (problems != this->m_stepProblems.cend()) {
+         for (auto const & message : problems->messages) {
+            lines.append(tr("%1: %2").arg(row->name(), message));
+         }
+      }
+   }
+   lines.append(this->m_mashProblems);
+   return lines.join("\n");
 }
 
 bool MashStepTableModel::setData(QModelIndex const & index, QVariant const & value, int role) {

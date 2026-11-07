@@ -32,12 +32,17 @@ namespace {
    double constexpr cW = PhysicalConstants::waterSpecificHeat_calGC;
    double constexpr cG = PhysicalConstants::grainSpecificHeat_calGC;
 
-   //! For messages to the user
-   QString showTemp(double const temp_c) {
-      return Measurement::displayAmount(Measurement::Amount{temp_c, Measurement::Units::celsius});
+   /**
+    * \brief Display temperature or volume for messages to the user.
+    *
+    *        We set 1 decimal place as the default precision, but, as always, this can be overridden by the user's
+    *        global preferences for temperature or volume.
+    */
+   [[nodiscard]] QString displayTemp(double const temp_c) {
+      return Measurement::displayAmount(Measurement::Amount{temp_c, Measurement::Units::celsius}, 1);
    }
-   QString showVolume(double const volume_l) {
-      return Measurement::displayAmount(Measurement::Amount{volume_l, Measurement::Units::liters});
+   [[nodiscard]] QString displayVolume(double const volume_l) {
+      return Measurement::displayAmount(Measurement::Amount{volume_l, Measurement::Units::liters}, 1);
    }
 
    /**
@@ -311,12 +316,12 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
    //
    if (inputs.grainTemp_c <= 0.0 || inputs.grainTemp_c >= inputs.boilingPoint_c) {
       return error(-1, tr("The initial grain temperature is %1.  Please set it to the temperature of the grain before "
-                          "mashing, which is normally room temperature.").arg(showTemp(inputs.grainTemp_c)));
+                          "mashing, which is normally room temperature.").arg(displayTemp(inputs.grainTemp_c)));
    }
    for (qsizetype ii = 0; ii < steps.size(); ++ii) {
       if (steps[ii].startTemp_c <= 0.0 || steps[ii].startTemp_c >= inputs.boilingPoint_c) {
          return error(ii, tr("The step temperature is %1, which needs to be between freezing and boiling point (%2).").arg(
-            showTemp(steps[ii].startTemp_c), showTemp(inputs.boilingPoint_c)
+            displayTemp(steps[ii].startTemp_c), displayTemp(inputs.boilingPoint_c)
          ));
       }
    }
@@ -412,14 +417,14 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
                      return error(
                         ii,
                         tr("With no sparge, this step has to make up the total water needed (%1), but the other steps "
-                           "already add %2.").arg(showVolume(inputs.targetTotalWater_l), showVolume(waterInOtherSteps_l))
+                           "already add %2.").arg(displayVolume(inputs.targetTotalWater_l), displayVolume(waterInOtherSteps_l))
                      );
                   }
                } else if (waterTemp_c) {
                   amount_l = contents.amountFor(targetTemp_c, *waterTemp_c);
                   if (!amount_l) {
-                     return error(ii, tr("Cannot reach %1 with water at %2.").arg(showTemp(targetTemp_c),
-                                                                                    showTemp(*waterTemp_c)));
+                     return error(ii, tr("Cannot reach %1 with water at %2.").arg(displayTemp(targetTemp_c),
+                                                                                  displayTemp(*waterTemp_c)));
                   }
                } else if (ii == 0) {
                   amount_l = thickness_LKg * inputs.grain_kg + inputs.strikeWaterAllowance_l;
@@ -432,8 +437,8 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
                   double const usualWaterTemp_c = heating ? inputs.boilingPoint_c : inputs.grainTemp_c;
                   amount_l = contents.amountFor(targetTemp_c, usualWaterTemp_c);
                   if (!amount_l) {
-                     return error(ii, tr("Cannot reach %1 with water at %2.").arg(showTemp(targetTemp_c),
-                                                                                    showTemp(usualWaterTemp_c)));
+                     return error(ii, tr("Cannot reach %1 with water at %2.").arg(displayTemp(targetTemp_c),
+                                                                                  displayTemp(usualWaterTemp_c)));
                   }
                   waterTemp_c = usualWaterTemp_c;
                }
@@ -464,7 +469,7 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
                   return error(
                      ii,
                      tr("The water would need to be at %1, which is above boiling point (%2).  %3").arg(
-                        showTemp(*waterTemp_c), showTemp(inputs.boilingPoint_c), advice
+                        displayTemp(*waterTemp_c), displayTemp(inputs.boilingPoint_c), advice
                      )
                   );
                }
@@ -475,8 +480,8 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
                   // make up the rest of the water) and is more than is needed to reach the step temperature.
                   //
                   QString const reason = contents.heatNeeded_kcal(targetTemp_c) < 0.0 ?
-                     tr("The mash would already be hotter than %1 at this point.").arg(showTemp(targetTemp_c)) :
-                     tr("This is more water than is needed to reach %1.").arg(showTemp(targetTemp_c));
+                     tr("The mash would already be hotter than %1 at this point.").arg(displayTemp(targetTemp_c)) :
+                     tr("This is more water than is needed to reach %1.").arg(displayTemp(targetTemp_c));
                   QString const advice =
                      step.amountFixed     ? tr("Try a smaller fixed amount, or not fixing the amount.") :
                      ii == balancingIndex ? tr("With no sparge, this step has to add the rest of the water needed.  Try "
@@ -486,8 +491,8 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
                      ii,
                      tr("To reach %1 with %2 of water, the water would need to be at %3, which is colder than the "
                         "coldest water available (taken to be at the initial grain temperature, %4).  %5  %6").arg(
-                        showTemp(targetTemp_c), showVolume(*amount_l), showTemp(*waterTemp_c),
-                        showTemp(inputs.grainTemp_c), reason, advice
+                        displayTemp(targetTemp_c), displayVolume(*amount_l), displayTemp(*waterTemp_c),
+                        displayTemp(inputs.grainTemp_c), reason, advice
                      )
                   );
                }
@@ -496,7 +501,7 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
                   double const actualTemp_c = contents.finalTemp_c(*amount_l, *waterTemp_c);
                   if (std::abs(actualTemp_c - targetTemp_c) > temperatureTolerance_c) {
                      warn(ii, tr("%1 of water at %2 will give a mash temperature of %3 rather than %4.").arg(
-                        showVolume(*amount_l), showTemp(*waterTemp_c), showTemp(actualTemp_c), showTemp(targetTemp_c)
+                        displayVolume(*amount_l), displayTemp(*waterTemp_c), displayTemp(actualTemp_c), displayTemp(targetTemp_c)
                      ));
                   }
                }
@@ -532,13 +537,13 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
                   double const ratio = step.amount_l / mashVolume_l;
                   if (ratio < 0.0 || ratio > 1.0) {
                      return error(ii, tr("The decoction amount (%1) must be between zero and the volume of the mash "
-                                         "(%2).").arg(showVolume(step.amount_l), showVolume(mashVolume_l)));
+                                         "(%2).").arg(displayVolume(step.amount_l), displayVolume(mashVolume_l)));
                   }
                   double const actualTemp_c =
                      priorTemp_c + ratio * waterAndGrainHeatCapacity_kcalC * boilingDiff_c / totalHeatCapacity_kcalC;
                   if (std::abs(actualTemp_c - targetTemp_c) > temperatureTolerance_c) {
                      warn(ii, tr("A decoction of %1 will give a mash temperature of %2 rather than %3.").arg(
-                        showVolume(step.amount_l), showTemp(actualTemp_c), showTemp(targetTemp_c)
+                        displayVolume(step.amount_l), displayTemp(actualTemp_c), displayTemp(targetTemp_c)
                      ));
                   }
                } else {
@@ -549,7 +554,7 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
                                        (waterAndGrainHeatCapacity_kcalC * boilingDiff_c);
                   if (ratio > 1.0) {
                      return error(ii, tr("Cannot reach %1 by decoction, even by boiling the whole mash.").arg(
-                        showTemp(targetTemp_c)
+                        displayTemp(targetTemp_c)
                      ));
                   }
                   step.amount_l = ratio * mashVolume_l;
@@ -577,14 +582,14 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
 
    if (inputs.mashVesselVolume_l && maxMashVolume_l > *inputs.mashVesselVolume_l + volumeTolerance_l) {
       warn(-1, tr("At its fullest, the mash will be about %1, which is more than the capacity of the mash tun (%2).").arg(
-         showVolume(maxMashVolume_l), showVolume(*inputs.mashVesselVolume_l)
+         displayVolume(maxMashVolume_l), displayVolume(*inputs.mashVesselVolume_l)
       ));
    }
 
    if (noSparge) {
       if (balancingIndex < 0 && std::abs(water_l - inputs.targetTotalWater_l) > volumeTolerance_l) {
          warn(-1, tr("The infusions add up to %1 of water, but %2 is needed in total.").arg(
-            showVolume(water_l), showVolume(inputs.targetTotalWater_l)
+            displayVolume(water_l), displayVolume(inputs.targetTotalWater_l)
          ));
       }
       return result;
@@ -608,9 +613,9 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
       if (remainingWater_l < volumeTolerance_l) {
          warn(-1, tr("There is no water left for sparging: the total water needed is %1, but the mash steps already "
                      "add %2%3.  You will collect more wort than needed.  Try a thicker mash (ie less water).").arg(
-            showVolume(inputs.targetTotalWater_l),
-            showVolume(water_l),
-            fixedSpargeWater_l > 0.0 ? tr(" and the fixed sparge amounts add %1").arg(showVolume(fixedSpargeWater_l)) :
+            displayVolume(inputs.targetTotalWater_l),
+            displayVolume(water_l),
+            fixedSpargeWater_l > 0.0 ? tr(" and the fixed sparge amounts add %1").arg(displayVolume(fixedSpargeWater_l)) :
                                        QString{}
          ));
       } else {
@@ -618,7 +623,7 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
       }
    } else if (std::abs(remainingWater_l) > volumeTolerance_l) {
       warn(-1, tr("The mash and sparge water add up to %1, but %2 is needed in total.").arg(
-         showVolume(water_l + fixedSpargeWater_l), showVolume(inputs.targetTotalWater_l)
+         displayVolume(water_l + fixedSpargeWater_l), displayVolume(inputs.targetTotalWater_l)
       ));
    }
 
@@ -655,7 +660,7 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
             double const actualTemp_c = bed.finalTemp_c(step.amount_l, *step.infuseTemp_c);
             if (std::abs(actualTemp_c - targetTemp_c) > temperatureTolerance_c) {
                warn(ii, tr("%1 of water at %2 will give a grain bed temperature of %3 rather than %4.").arg(
-                  showVolume(step.amount_l), showTemp(*step.infuseTemp_c), showTemp(actualTemp_c), showTemp(targetTemp_c)
+                  displayVolume(step.amount_l), displayTemp(*step.infuseTemp_c), displayTemp(actualTemp_c), displayTemp(targetTemp_c)
                ));
             }
             bedTemp_c = actualTemp_c;
@@ -671,7 +676,7 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
                bedTemp_c = bed.finalTemp_c(step.amount_l, targetTemp_c);
                if (*bedTemp_c > targetTemp_c + temperatureTolerance_c) {
                   warn(ii, tr("The grain bed is already hotter than %1, so we use water at that temperature, and the bed "
-                              "will be at about %2.").arg(showTemp(targetTemp_c), showTemp(*bedTemp_c)));
+                              "will be at about %2.").arg(displayTemp(targetTemp_c), displayTemp(*bedTemp_c)));
                }
             }
             if (*step.infuseTemp_c > inputs.boilingPoint_c) {
@@ -684,7 +689,7 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
                bedTemp_c = bed.finalTemp_c(step.amount_l, inputs.boilingPoint_c);
                warn(ii, tr("Even with boiling water, the grain bed will only reach %1 rather than %2.  This is usually "
                            "fine for a batch sparge, but you could use fewer batches (ie more water per batch) or a "
-                           "lower sparge temperature.").arg(showTemp(*bedTemp_c), showTemp(targetTemp_c)));
+                           "lower sparge temperature.").arg(displayTemp(*bedTemp_c), displayTemp(targetTemp_c)));
             }
          }
       } else if (!step.infuseTempFixed) {
@@ -695,13 +700,30 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
       if (step.infuseTemp_c && *step.infuseTemp_c > inputs.boilingPoint_c + 1e-6) {
          return error(ii, tr("The sparge water would need to be at %1, which is above boiling point (%2).  Try a lower "
                              "sparge temperature or more sparge water.").arg(
-            showTemp(*step.infuseTemp_c), showTemp(inputs.boilingPoint_c)
+            displayTemp(*step.infuseTemp_c), displayTemp(inputs.boilingPoint_c)
          ));
       }
 
       priorTemp_c = bedTemp_c.value_or(step.finalTemp_c());
    }
 
+   return result;
+}
+
+MashCalculator::Result MashCalculator::check(Inputs const & inputs, QList<Step> const & stepsIn) {
+   QList<Step> steps = stepsIn;
+   QList<Problem> missingAmounts;
+   for (qsizetype ii = 0; ii < steps.size(); ++ii) {
+      Step & step = steps[ii];
+      bool const needsAmount = step.isInfusion() || step.isSparge() || step.type == MashStep::Type::Decoction;
+      step.amountFixed     = !needsAmount || step.amount_l > 0.0;
+      step.infuseTempFixed = step.infuseTemp_c.has_value();
+      if (!step.amountFixed) {
+         missingAmounts.append(Problem{Problem::Severity::Warning, static_cast<int>(ii), tr("No amount is set.")});
+      }
+   }
+   Result result = calculate(inputs, steps, Options{});
+   result.problems.append(missingAmounts);
    return result;
 }
 

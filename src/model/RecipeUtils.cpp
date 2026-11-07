@@ -15,6 +15,8 @@
  =====================================================================================================================*/
 #include "RecipeUtils.h"
 
+#include <type_traits>
+
 #include "PersistentSettings.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Boil.h"
@@ -208,8 +210,12 @@ template<class NE> QString RecipeUtils::describeSharingAndLocking(NE const & ite
    QStringList sentences;
    if (recipes.isEmpty()) {
       sentences.append(NE::tr("This %1 is not used by any recipe.").arg(itemType));
-   } else if (usedByCurrentRecipe && otherRecipeNames.isEmpty()) {
-      sentences.append(NE::tr("This %1 is used only by this recipe.").arg(itemType));
+   } else if (recipes.size() == 1) {
+      sentences.append(NE::tr("This %1 is used only by one recipe (%2).").arg(itemType, recipes.first()->name()));
+      if constexpr (std::is_same_v<NE, Mash>) {
+         // See MashStepTableModel::validate
+         sentences.append(NE::tr("Step validation highlighting is therefore enabled."));
+      }
    } else if (usedByCurrentRecipe) {
       sentences.append(
          NE::tr("This %1 is also used by %n other recipe(s): %2.", "", otherRecipeNames.size()).arg(
@@ -230,7 +236,7 @@ template<class NE> QString RecipeUtils::describeSharingAndLocking(NE const & ite
    if (item.locked()) {
       sentences.append(NE::tr("It is locked, so it cannot be changed."));
    } else if (currentRecipeLocked) {
-      sentences.append(NE::tr("It cannot be changed because this recipe is locked."));
+      sentences.append(NE::tr("It cannot be changed because the recipe \"%1\" is locked.").arg(currentRecipe->name()));
    } else if (!otherLockedRecipeNames.isEmpty()) {
       sentences.append(
          NE::tr("It cannot be changed because it is used by %n locked recipe(s): %1.", "", otherLockedRecipeNames.size()).arg(

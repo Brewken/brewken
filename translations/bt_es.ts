@@ -4824,6 +4824,10 @@ If you need help, please open an issue at %1</source>
         <source> · </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>⚠ Check steps</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -4971,10 +4975,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The water would need to be at %1, which is below freezing.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>%1 of water at %2 will give a mash temperature of %3 rather than %4.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5028,6 +5028,50 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>The sparge water would need to be at %1, which is above boiling point (%2).  Try a lower sparge temperature or more sparge water.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The initial grain temperature is %1.  Please set it to the temperature of the grain before mashing, which is normally room temperature.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The step temperature is %1, which needs to be between freezing and boiling point (%2).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The mash would already be hotter than %1 at this point.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is more water than is needed to reach %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try a smaller fixed amount, or not fixing the amount.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>With no sparge, this step has to add the rest of the water needed.  Try having a sparge, or more water in the earlier steps.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try a thicker mash (ie less water).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To reach %1 with %2 of water, the water would need to be at %3, which is colder than the coldest water available (taken to be at the initial grain temperature, %4).  %5  %6</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The grain bed is already hotter than %1, so we use water at that temperature, and the bed will be at about %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Even with boiling water, the grain bed will only reach %1 rather than %2.  This is usually fine for a batch sparge, but you could use fewer batches (ie more water per batch) or a lower sparge temperature.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No amount is set.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5120,6 +5164,10 @@ Do you want to make a copy of this mash for this recipe, so that you can do this
     </message>
     <message>
         <source>Mash calculated for recipe &quot;%1&quot;, but please check the following:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>⚠ These steps don&apos;t all make sense for the recipe that uses them.  Hover over a highlighted step for details.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5235,6 +5283,22 @@ Do you want to make a copy of this mash for this recipe, so that you can do this
     <message>
         <source>Time</source>
         <translation type="vanished">Tiempo</translation>
+    </message>
+    <message>
+        <source>Fixed: not changed when calculating the mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fixed amount (not changed when calculating the mash)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fixed infusion temperature (not changed when calculating the mash)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1: %2</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5666,10 +5730,6 @@ Do you want to make a copy of this mash for this recipe, so that you can do this
         <source>This %1 is not used by any recipe.</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>This %1 is used only by this recipe.</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message numerus="yes">
         <source>This %1 is also used by %n other recipe(s): %2.</source>
         <translation type="unfinished">
@@ -5688,10 +5748,6 @@ Do you want to make a copy of this mash for this recipe, so that you can do this
         <source>It is locked, so it cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>It cannot be changed because this recipe is locked.</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message numerus="yes">
         <source>It cannot be changed because it is used by %n locked recipe(s): %1.</source>
         <translation type="unfinished">
@@ -5701,6 +5757,18 @@ Do you want to make a copy of this mash for this recipe, so that you can do this
     </message>
     <message>
         <source>Any changes you make here will affect all of them.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This %1 is used only by one recipe (%2).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step validation highlighting is therefore enabled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It cannot be changed because the recipe &quot;%1&quot; is locked.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

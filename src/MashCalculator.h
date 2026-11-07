@@ -253,6 +253,20 @@ public:
    static Result calculate(Inputs const & inputs, QList<Step> const & steps);
 
    /**
+    * \brief Check whether the steps, as they are, make sense for the supplied inputs (eg the recipe that uses the mash),
+    *        without changing anything.  Used to highlight steps that don't make sense (see \c MashStepTableModel).
+    *
+    *        This is \c calculate with every value that is set treated as fixed.  So the problems are the ones the
+    *        calculation would report, eg an infusion that won't reach its step temperature, water above boiling point,
+    *        or water amounts that don't add up to what the recipe needs.  Values that are not set (eg an infusion
+    *        temperature, which can't be stored in BeerJSON) are worked out as they would be by \c calculate, and only
+    *        reported if that isn't possible.  We also warn about infusions, decoctions and sparges with no amount.
+    *
+    *        As with \c calculate, checking stops at the first error.
+    */
+   static Result check(Inputs const & inputs, QList<Step> const & steps);
+
+   /**
     * \brief Write the results of \c calculate back to the supplied \c Mash, which must either be the one we got the
     *        steps from (see \c stepsFrom) or a copy of it.  Steps with a \c sourceIndex are updated, steps of the mash
     *        that are no longer in \c steps are removed, and steps without a \c sourceIndex are added at the end.

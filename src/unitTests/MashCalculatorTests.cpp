@@ -660,6 +660,81 @@ void MashCalculatorTests::testSensibleTemperatures() {
    return;
 }
 
+void MashCalculatorTests::testCheck() {
+   //
+   // Steps that have just been calculated are fine
+   //
+   QList<MashCalculator::Step> steps{
+      makeStep("Protein rest"    , MashStep::Type::Infusion , 50.0),
+      makeStep("Saccharification", MashStep::Type::Decoction, 66.0),
+   };
+   MashCalculator::setSparge(steps, MashCalculator::SpargeMethod::BatchSparge, 2);
+   auto const calculated = MashCalculator::calculate(makeInputs(), steps, thickness(3.0));
+   QVERIFY(calculated.ok());
+   auto const checked = MashCalculator::check(makeInputs(), calculated.steps);
+   QVERIFY(checked.ok());
+   QVERIFY2(checked.problems.isEmpty(), qPrintable(checked.messages(Severity::Warning).join("; ")));
+   // Checking doesn't change anything (other than possibly filling in values that weren't set, which is not the case
+   // here)
+   for (qsizetype ii = 0; ii < steps.size(); ++ii) {
+      QCOMPARE(checked.steps.at(ii).amount_l    , calculated.steps.at(ii).amount_l    );
+      QCOMPARE(checked.steps.at(ii).infuseTemp_c, calculated.steps.at(ii).infuseTemp_c);
+   }
+
+   //
+   // Strike water that's too cold to reach the step temperature is a warning on that step
+   //
+   auto tooCold = calculated.steps;
+   *tooCold[0].infuseTemp_c -= 5.0;
+   auto const tooColdResult = MashCalculator::check(makeInputs(), tooCold);
+   QVERIFY(tooColdResult.ok());
+   QCOMPARE(tooColdResult.problems.size(), 1);
+   QCOMPARE(tooColdResult.problems.first().stepIndex, 0);
+
+   //
+   // Too small a decoction is a warning on that step
+   //
+   auto smallDecoction = calculated.steps;
+   smallDecoction[1].amount_l /= 2.0;
+   auto const smallDecoctionResult = MashCalculator::check(makeInputs(), smallDecoction);
+   QVERIFY(smallDecoctionResult.ok());
+   QCOMPARE(smallDecoctionResult.problems.size(), 1);
+   QCOMPARE(smallDecoctionResult.problems.first().stepIndex, 1);
+
+   //
+   // Water that doesn't add up is a warning about the mash as a whole
+   //
+   auto tooLittleWater = calculated.steps;
+   tooLittleWater[2].amount_l -= 2.0;
+   auto const tooLittleWaterResult = MashCalculator::check(makeInputs(), tooLittleWater);
+   QVERIFY(tooLittleWaterResult.ok());
+   QVERIFY(std::any_of(tooLittleWaterResult.problems.cbegin(), tooLittleWaterResult.problems.cend(),
+                       [](auto const & problem) { return problem.stepIndex < 0; }));
+
+   //
+   // A missing infusion temperature (eg from a BeerJSON file, which can't hold it) is worked out, so is not a problem
+   // as long as it can be, but a missing amount is a warning
+   //
+   auto missingValues = calculated.steps;
+   missingValues[0].infuseTemp_c = std::nullopt;
+   missingValues[2].amount_l     = 0.0;
+   missingValues[3].amount_l     = 0.0;
+   auto const missingValuesResult = MashCalculator::check(makeInputs(), missingValues);
+   QVERIFY(missingValuesResult.ok());
+   QCOMPARE(missingValuesResult.problems.size(), 2);
+   QVERIFY(hasMessage(missingValuesResult, Severity::Warning, "Batch Sparge 1"));
+   QVERIFY(hasMessage(missingValuesResult, Severity::Warning, "No amount"));
+
+   //
+   // Water above boiling is an error
+   //
+   auto tooHot = calculated.steps;
+   tooHot[0].infuseTemp_c = std::nullopt;
+   tooHot[0].amount_l     = 2.0;
+   QVERIFY(!MashCalculator::check(makeInputs(), tooHot).ok());
+   return;
+}
+
 void MashCalculatorTests::testWithRecipe() {
    double const grain_kg      = 5.0;
    double const thickness_LKg = 3.0;

@@ -20,6 +20,10 @@
 #define TABLEMODELS_MASHSTEPTABLEMODEL_H
 #pragma once
 
+#include <QHash>
+#include <QList>
+#include <QMetaObject>
+#include <QStringList>
 #include <QStyledItemDelegate>
 
 #include "model/MashStep.h"
@@ -28,6 +32,8 @@
 #include "qtModels/tableModels/EnumeratedItemTableModelBase.h"
 #include "qtModels/tableModels/ItemDelegate.h"
 #include "qtModels/tableModels/TableModelBase.h"
+
+class Recipe;
 
 // Define the columns on this table
 COLUMN_NAMES(MashStepTableModel, Name        ,
@@ -61,6 +67,55 @@ public slots:
     *        to toggle whether the value is "fixed", ie not changed when calculating the mash (see \c MashCalculator).
     */
    void cellContextMenu(QPoint const & point);
+
+   /**
+    * \brief Re-check the steps (see \c validate) the next time we get back to the event loop.  Multiple calls before
+    *        then result in only one check.
+    */
+   void scheduleValidation();
+
+signals:
+   //! Emitted when the results of checking the steps (see \c validate) change
+   void validationChanged();
+
+public:
+   /**
+    * \return \c true if the steps are being checked, ie the mash is used by exactly one recipe
+    */
+   bool isValidating() const;
+
+   //! \return \c true if checking the steps found any problems, either with individual steps or the mash as a whole
+   bool hasProblems() const;
+
+   /**
+    * \return Description of all the problems found when checking the steps, one per line, plus any overall problems
+    *         with the mash, for showing to the user
+    */
+   [[nodiscard]] QString allProblemsDisplayable() const;
+
+   //! \return Problems found with the mash as a whole (eg the water not adding up to what the recipe needs)
+   [[nodiscard]] QStringList const & mashOverallProblems() const;
+
+private:
+   /**
+    * \brief If the mash is used by exactly one recipe, check whether its steps make sense for that recipe (see
+    *        \c MashCalculator::check), so we can highlight the ones that don't.  (If the mash is used by more than one
+    *        recipe, it might make sense for some and not others.)
+    *
+    *        We re-check whenever the steps, the mash, the recipe or the recipe's equipment change.
+    */
+   void validate();
+
+   struct StepProblems {
+      bool        isError  = false;
+      QStringList messages = {};
+      bool operator==(StepProblems const & other) const = default;
+   };
+   QHash<MashStep const *, StepProblems> m_stepProblems;
+   QStringList                           m_mashProblems;
+   Recipe *                              m_validationRecipe    = nullptr;
+   bool                                  m_validationScheduled = false;
+   QList<QMetaObject::Connection>        m_validationConnections;
 };
 
 //============================================ CLASS MashStepItemDelegate ==============================================

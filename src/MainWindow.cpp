@@ -492,8 +492,17 @@ public:
       if (numOtherRecipes > 0) {
          summary.append(MainWindow::tr("Shared with %n other recipe(s)", "", numOtherRecipes));
       }
+      QString toolTip = RecipeUtils::describeSharingAndLocking(*item, this->m_recipeObs);
+      if constexpr (std::is_same_v<NE, Mash>) {
+         // See MashStepTableModel::validate
+         MashStepTableModel const * const model = this->m_self.mashStepsWidget->tableModel();
+         if (model && model->hasProblems()) {
+            summary.append(MainWindow::tr("⚠ Check steps"));
+            toolTip += "\n\n" + model->allProblemsDisplayable();
+         }
+      }
       label.setText(summary.join(MainWindow::tr(" · ")));
-      label.setToolTip(RecipeUtils::describeSharingAndLocking(*item, this->m_recipeObs));
+      label.setToolTip(toolTip);
       steps.setEnabled(lockReason == RecipeUtils::LockReason::NotLocked);
       return;
    }
@@ -1393,6 +1402,11 @@ void MainWindow::setupClicks() {
    connect(this->pushButton_editYeast     , &QAbstractButton::clicked, this, &MainWindow::editYeastOfSelectedYeastAddition            );
 
    connect(this->pushButton_calculateMash, &QAbstractButton::clicked, this, &MainWindow::calculateRecipeMash);
+   // Show in the summary next to the mash if any of its steps don't make sense (see MashStepTableModel::validate)
+   connect(this->mashStepsWidget->tableModel(),
+           &MashStepTableModel::validationChanged,
+           this,
+           [this]() { this->pimpl->updateSharingAndLocking<Mash>(); return; });
 
    return;
 }

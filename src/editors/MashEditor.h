@@ -65,6 +65,9 @@ public slots:
    //! Enable/disable the calculation controls that depend on the selected sparge method
    void updateCalculatorControls();
 
+   //! Show (or hide) the summary of any problems found when checking the steps (see \c MashStepTableModel::validate)
+   void updateMashProblems();
+
 protected:
    virtual void showEvent(QShowEvent * event) override;
 
