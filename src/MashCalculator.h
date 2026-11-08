@@ -18,6 +18,7 @@
 #pragma once
 
 #include <optional>
+#include <variant>
 
 #include <QCoreApplication> // For Q_DECLARE_TR_FUNCTIONS
 #include <QList>
@@ -182,6 +183,16 @@ public:
        *        water above boiling.  A couple of degrees is more realistic.
        */
       double                spargeHeatLoss_c = 2.0;
+      /**
+       * \brief Target grain bed temperature to use for any sparge step whose own step temperature doesn't make sense
+       *        (eg 0 °C, which older versions of the software could give a sparge step).  See \c Mash::spargeTemp_c.
+       */
+      double                spargeTemp_c     = defaultSpargeTemp_c;
+      /**
+       * \brief Set by \c check.  We're checking the steps as they are, rather than adjusting them, so, eg, we report a
+       *        sparge step temperature that doesn't make sense rather than changing it.
+       */
+      bool                  checkOnly        = false;
    };
 
    struct Problem {
@@ -191,9 +202,28 @@ public:
          //! The calculation could not be completed, so the results must not be used
          Error
       };
+      /**
+       * The step the problem relates to, counted from 0, or -1 if it relates to the mash as a whole.  The struct
+       * wrapper is to make \c location below more self-describing at point of use.
+       */
+      struct StepScope {
+         int stepIndex;
+      };
+      /**
+       * \brief If the problem is with one of the fields of the \c Mash itself (eg the initial grain temperature), the
+       *        name of the property (eg \c PropertyNames::Mash::grainTemp_c), otherwise empty.  (\c stepIndex will be
+       *        -1 in this case.)  The struct wrapper is for the same reason as StepIndex.
+       */
+      struct MashPropertyScope {
+         QString  mashProperty = "";
+      };
+      //! This is used in \c location when there is a general problem with the mash -- eg it has no steps
+      struct MashScope {};
+
+      using Scope = std::variant<StepScope, MashPropertyScope, MashScope>;
+
       Severity severity;
-      //! The step the problem relates to, counted from 0, or -1 if it relates to the mash as a whole
-      int      stepIndex;
+      Scope scope;
       QString  message;
    };
 
@@ -215,6 +245,17 @@ public:
    static constexpr double temperatureTolerance_c = 0.5;
    //! As \c temperatureTolerance_c but for volumes
    static constexpr double volumeTolerance_l      = 0.1;
+   /**
+    * \brief How far a calculated water temperature can be outside the range we accept (ie from the coldest water
+    *        available up to boiling point) before we treat it as a problem.
+    *
+    *        A value that is exactly at one end of the range (eg the boiling water we use for later infusions) can come
+    *        out slightly beyond it when worked back from a stored amount, both from floating-point rounding and,
+    *        mainly, because amounts may have been rounded when stored (eg in a file with only two decimal places).  Eg
+    *        an infusion amount of 9.41176 L of boiling water stored as 9.41 L works back to 100.006 °C.  A tenth of a
+    *        degree is well below what anyone can measure or control when brewing.
+    */
+   static constexpr double temperatureRangeTolerance_c = 0.1;
 
    /**
     * \brief Get the steps of the supplied \c Mash in the form the calculator needs
@@ -276,6 +317,35 @@ public:
     *        \c setSparge.)
     */
    static void apply(QList<Step> const & steps, Mash & mash);
+
+   /**
+    * \brief If \c recipe has a mash that is set to adjust automatically (see \c Mash::autoAdjust), and the mash can be
+    *        changed (ie is not locked or used by a locked recipe) and is used only by \c recipe, recalculate it (with
+    *        default \c Options, so the mash thickness comes from the first step -- see \c Step::liquorToGristRatio_lKg)
+    *        and, if there are no errors, apply the results.
+    *
+    *        Called (via \c Recipe::scheduleMashAutoAdjust) when something the mash calculation depends on changes,
+    *        eg the grain bill or the equipment.  If there are errors, nothing is changed, but the problems will be
+    *        shown to the user by the step validation in \c MashStepTableModel.
+    *
+    * \return The result of the calculation, or \c std::nullopt if the mash was not recalculated
+    */
+   static std::optional<Result> autoAdjust(Recipe & recipe);
 };
 
+inline QDebug operator<<(QDebug debug, MashCalculator::Problem::Scope const & scope) {
+   return std::visit([&debug](auto const & value) -> QDebug {
+      using T = std::decay_t<decltype(value)>;
+
+      if constexpr (std::is_same_v<T, MashCalculator::Problem::StepScope>) {
+         debug << "StepScope{" << value.stepIndex << "}";
+      } else if constexpr (std::is_same_v<T, MashCalculator::Problem::MashPropertyScope>) {
+         debug << "MashPropertyScope{" << value.mashProperty << "}";
+      } else if constexpr (std::is_same_v<T, MashCalculator::Problem::MashScope>) {
+         debug << "MashScope{}";
+      }
+
+      return debug;
+   }, scope);
+}
 #endif

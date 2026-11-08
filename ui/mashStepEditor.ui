@@ -147,17 +147,17 @@
        <item>
         <widget class="QCheckBox" name="checkBox_amountFixed">
          <property name="toolTip">
-          <string>If ticked, calculating water in the Mash Editor will not change this amount (but will use it to work out other values, eg the water temperature).</string>
+          <string>If ticked, adjusting the mash (in the Mash Editor) will not change this amount (but will use it to work out other values, eg the water temperature).</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="label_amountFixed">
          <property name="text">
-          <string>Fixed</string>
+          <string>Pinned</string>
          </property>
          <property name="toolTip">
-          <string>If ticked, calculating water in the Mash Editor will not change this amount (but will use it to work out other values, eg the water temperature).</string>
+          <string>If ticked, adjusting the mash (in the Mash Editor) will not change this amount (but will use it to work out other values, eg the water temperature).</string>
          </property>
          <property name="buddy">
           <cstring>checkBox_amountFixed</cstring>
@@ -211,17 +211,17 @@
        <item>
         <widget class="QCheckBox" name="checkBox_infuseTempFixed">
          <property name="toolTip">
-          <string>If ticked, calculating water in the Mash Editor will not change this temperature (but will use it to work out other values, eg the amount of water).</string>
+          <string>If ticked, adjusting the mash (in the Mash Editor) will not change this temperature (but will use it to work out other values, eg the amount of water).</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="label_infuseTempFixed">
          <property name="text">
-          <string>Fixed</string>
+          <string>Pinned</string>
          </property>
          <property name="toolTip">
-          <string>If ticked, calculating water in the Mash Editor will not change this temperature (but will use it to work out other values, eg the amount of water).</string>
+          <string>If ticked, adjusting the mash (in the Mash Editor) will not change this temperature (but will use it to work out other values, eg the amount of water).</string>
          </property>
          <property name="buddy">
           <cstring>checkBox_infuseTempFixed</cstring>

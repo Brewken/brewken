@@ -294,7 +294,7 @@ namespace {
          {ObjectStore::FieldType::Int   , {"id"                     }, PropertyNames::NamedEntity::key                       },
          {ObjectStore::FieldType::Int   , {"contained_in_folder_id" }, PropertyNames::FolderPropertyBase::containedInFolderId, &PRIMARY_TABLE<Folder<Mash>>},
          {ObjectStore::FieldType::Bool  , {"locked"                 }, PropertyNames::LockablePropertyBase::locked           },
-         {ObjectStore::FieldType::Bool  , {"auto_adjust"            }, PropertyNames::Mash::autoAdjust                       },
+         {ObjectStore::FieldType::Bool  , {"auto_adjust"            }, PropertyNames::Mash::keptInSync                       },
          {ObjectStore::FieldType::Bool  , {"equip_adjust"           }, PropertyNames::Mash::equipAdjust                      },
          {ObjectStore::FieldType::Double, {"grain_temp"             }, PropertyNames::Mash::grainTemp_c                      },
          {ObjectStore::FieldType::String, {"notes"                  }, PropertyNames::Mash::notes                            },

@@ -1318,10 +1318,14 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_mashSharing">
+                 <widget class="QLabel" name="label_mashStatus">
                   <property name="toolTip">
-                   <string>Whether this mash is shared with other recipes and/or locked</string>
+                   <string>Info about, and any problems with, this mash</string>
                   </property>
+                  <!-- Temporarily add colour for debugging
+                  <property name="styleSheet">
+                   <string notr="true">color: white; background-color: #148263;</string>
+                  </property -->
                  </widget>
                 </item>
                 <item>
@@ -1336,16 +1340,6 @@
                    </size>
                   </property>
                  </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButton_calculateMash">
-                  <property name="toolTip">
-                   <string>Work out the amounts and temperatures of the mash water for this recipe (in the Mash Editor)</string>
-                  </property>
-                  <property name="text">
-                   <string>Calculate Water…</string>
-                  </property>
-                 </widget>
                 </item>
                </layout>
               </item>
@@ -1407,9 +1401,9 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_boilSharing">
+                 <widget class="QLabel" name="label_boilStatus">
                   <property name="toolTip">
-                   <string>Whether this boil is shared with other recipes and/or locked</string>
+                   <string>Info about, and any problems with, this boil</string>
                   </property>
                  </widget>
                 </item>
@@ -1486,9 +1480,9 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_fermentationSharing">
+                 <widget class="QLabel" name="label_fermentationStatus">
                   <property name="toolTip">
-                   <string>Whether this fermentation is shared with other recipes and/or locked</string>
+                   <string>Info about, and any problems with, this fermentation</string>
                   </property>
                  </widget>
                 </item>

@@ -61,6 +61,9 @@ private slots:
    //! \brief \c MashCalculator::check finds steps that don't make sense, without changing anything
    void testCheck();
 
+   //! \brief Values that have been rounded (eg when stored in a file) don't cause spurious problems
+   void testRoundedValues();
+
    //! \brief \c MashCalculator::Inputs::fromRecipe and \c MashCalculator::apply, including applying to a copy of a mash
    void testWithRecipe();
 
@@ -69,6 +72,9 @@ private slots:
     *        calculated for a typical recipe
     */
    void testExampleProfiles();
+
+   //! \brief Mash adjusts automatically when the recipe changes (if set to), and is copied rather than shared
+   void testAutoAdjust();
 };
 
 #endif

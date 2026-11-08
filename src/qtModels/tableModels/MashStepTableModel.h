@@ -20,6 +20,8 @@
 #define TABLEMODELS_MASHSTEPTABLEMODEL_H
 #pragma once
 
+#include <functional>
+
 #include <QHash>
 #include <QList>
 #include <QMetaObject>
@@ -27,6 +29,7 @@
 #include <QStyledItemDelegate>
 
 #include "model/MashStep.h"
+#include "MashCalculator.h"
 #include "model/Mash.h"
 #include "qtModels/tableModels/BtTableModel.h"
 #include "qtModels/tableModels/EnumeratedItemTableModelBase.h"
@@ -64,7 +67,7 @@ class MashStepTableModel : public BtTableModel,
 public slots:
    /**
     * \brief Context menu for a cell in the table.  For the amount and infusion temperature columns, this allows the user
-    *        to toggle whether the value is "fixed", ie not changed when calculating the mash (see \c MashCalculator).
+    *        to toggle whether the value is "pinned" (aka "fixed"), ie not changed when adjusting the mash (see \c MashCalculator).
     */
    void cellContextMenu(QPoint const & point);
 
@@ -96,6 +99,19 @@ public:
    //! \return Problems found with the mash as a whole (eg the water not adding up to what the recipe needs)
    [[nodiscard]] QStringList const & mashOverallProblems() const;
 
+   /**
+    * \return Problems found with particular fields of the mash itself (eg initial grain temperature), keyed by property
+    *         name (eg \c PropertyNames::Mash::grainTemp_c), so that an editor can highlight the relevant fields
+    */
+   [[nodiscard]] QHash<QString, QStringList> const & mashFieldProblems() const;
+
+   /**
+    * \brief Normally we check the steps using the mash's stored values (eg initial grain temperature).  The Mash Editor
+    *        uses this to substitute the values the user has entered but not yet saved, so the checks reflect what the
+    *        user sees.  (It should call \c scheduleValidation when those values change.)
+    */
+   void setInputsAdjuster(std::function<void(MashCalculator::Inputs &)> adjuster);
+
 private:
    /**
     * \brief If the mash is used by exactly one recipe, check whether its steps make sense for that recipe (see
@@ -113,6 +129,8 @@ private:
    };
    QHash<MashStep const *, StepProblems> m_stepProblems;
    QStringList                           m_mashProblems;
+   QHash<QString, QStringList>           m_mashFieldProblems;
+   std::function<void(MashCalculator::Inputs &)> m_inputsAdjuster;
    Recipe *                              m_validationRecipe    = nullptr;
    bool                                  m_validationScheduled = false;
    QList<QMetaObject::Connection>        m_validationConnections;

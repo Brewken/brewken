@@ -2,7 +2,7 @@
 // data/DefaultContent006-MashProfiles.beer
 //
 // Example mash profiles.  They are locked (so they can be shared between recipes without being changed by accident) and
-// they don't specify water amounts or temperatures, as these depend on the recipe.  The user calculates these in the
+// they don't specify water amounts or temperatures, as these depend on the recipe.  The user adjusts these in the
 // Mash Editor (which, for a locked mash, means making a copy for the recipe).
 //
 // Comments such as this one are part of the dotBeer format (which is JSON with comments allowed -- see "File format
@@ -22,7 +22,7 @@
           "unit": "C",
           "value": 20
         },
-        "notes": "Single infusion at the low end of the saccharification range, favouring beta amylase, for a more fermentable wort and a drier, lighter-bodied beer.  Suitable for most modern well-modified malts.\n\nWater amounts and temperatures depend on the recipe, so are not set here.  To use this profile, select it on a recipe's Mash tab and click \"Calculate Water…\".  (As the profile is locked, you will be asked whether to make a copy for the recipe, which you can then change as you wish.)",
+        "notes": "Single infusion at the low end of the saccharification range, favouring beta amylase, for a more fermentable wort and a drier, lighter-bodied beer.  Suitable for most modern well-modified malts.\n\nWater amounts and temperatures depend on the recipe, so are not set here.  To use this profile, select it on a recipe's Mash tab and click \"Adjust Mash…\".  (As the profile is locked, you will be asked whether to make a copy for the recipe, which you can then change as you wish.)",
         "mash_steps": [
           {
             "name": "Saccharification rest",
@@ -77,7 +77,7 @@
           "unit": "C",
           "value": 20
         },
-        "notes": "Single infusion in the middle of the saccharification range, for a balanced wort.  Suitable for most modern well-modified malts and most beer styles.\n\nWater amounts and temperatures depend on the recipe, so are not set here.  To use this profile, select it on a recipe's Mash tab and click \"Calculate Water…\".  (As the profile is locked, you will be asked whether to make a copy for the recipe, which you can then change as you wish.)",
+        "notes": "Single infusion in the middle of the saccharification range, for a balanced wort.  Suitable for most modern well-modified malts and most beer styles.\n\nWater amounts and temperatures depend on the recipe, so are not set here.  To use this profile, select it on a recipe's Mash tab and click \"Adjust Mash…\".  (As the profile is locked, you will be asked whether to make a copy for the recipe, which you can then change as you wish.)",
         "mash_steps": [
           {
             "name": "Saccharification rest",
@@ -132,7 +132,7 @@
           "unit": "C",
           "value": 20
         },
-        "notes": "Single infusion at the high end of the saccharification range, favouring alpha amylase, for a less fermentable wort and a sweeter, fuller-bodied beer.\n\nWater amounts and temperatures depend on the recipe, so are not set here.  To use this profile, select it on a recipe's Mash tab and click \"Calculate Water…\".  (As the profile is locked, you will be asked whether to make a copy for the recipe, which you can then change as you wish.)",
+        "notes": "Single infusion at the high end of the saccharification range, favouring alpha amylase, for a less fermentable wort and a sweeter, fuller-bodied beer.\n\nWater amounts and temperatures depend on the recipe, so are not set here.  To use this profile, select it on a recipe's Mash tab and click \"Adjust Mash…\".  (As the profile is locked, you will be asked whether to make a copy for the recipe, which you can then change as you wish.)",
         "mash_steps": [
           {
             "name": "Saccharification rest",
@@ -187,7 +187,7 @@
           "unit": "C",
           "value": 20
         },
-        "notes": "As \"Single Infusion, Medium Body, Batch Sparge\" but with a continuous (fly) sparge.\n\nWater amounts and temperatures depend on the recipe, so are not set here.  To use this profile, select it on a recipe's Mash tab and click \"Calculate Water…\".  (As the profile is locked, you will be asked whether to make a copy for the recipe, which you can then change as you wish.)",
+        "notes": "As \"Single Infusion, Medium Body, Batch Sparge\" but with a continuous (fly) sparge.\n\nWater amounts and temperatures depend on the recipe, so are not set here.  To use this profile, select it on a recipe's Mash tab and click \"Adjust Mash…\".  (As the profile is locked, you will be asked whether to make a copy for the recipe, which you can then change as you wish.)",
         "mash_steps": [
           {
             "name": "Saccharification rest",
@@ -229,7 +229,7 @@
           "unit": "C",
           "value": 20
         },
-        "notes": "Full-volume mash with no sparge, eg for brew-in-a-bag (BIAB) or some all-in-one systems: all the water goes into the mash.  The mash out is by direct heat.\n\nWater amounts and temperatures depend on the recipe, so are not set here.  To use this profile, select it on a recipe's Mash tab and click \"Calculate Water…\".  (As the profile is locked, you will be asked whether to make a copy for the recipe, which you can then change as you wish.)",
+        "notes": "Full-volume mash with no sparge, eg for brew-in-a-bag (BIAB) or some all-in-one systems: all the water goes into the mash.  The mash out is by direct heat.\n\nWater amounts and temperatures depend on the recipe, so are not set here.  To use this profile, select it on a recipe's Mash tab and click \"Adjust Mash…\".  (As the profile is locked, you will be asked whether to make a copy for the recipe, which you can then change as you wish.)",
         "mash_steps": [
           {
             "name": "Saccharification rest",
@@ -271,7 +271,7 @@
           "unit": "C",
           "value": 20
         },
-        "notes": "Infusion step mash for less well-modified malts, or grain bills with a lot of wheat, oats or other adjuncts.  Starts thick, with each later step raised by adding boiling water.\n\nWater amounts and temperatures depend on the recipe, so are not set here.  To use this profile, select it on a recipe's Mash tab and click \"Calculate Water…\".  (As the profile is locked, you will be asked whether to make a copy for the recipe, which you can then change as you wish.)",
+        "notes": "Infusion step mash for less well-modified malts, or grain bills with a lot of wheat, oats or other adjuncts.  Starts thick, with each later step raised by adding boiling water.\n\nWater amounts and temperatures depend on the recipe, so are not set here.  To use this profile, select it on a recipe's Mash tab and click \"Adjust Mash…\".  (As the profile is locked, you will be asked whether to make a copy for the recipe, which you can then change as you wish.)",
         "mash_steps": [
           {
             "name": "Protein rest",
@@ -339,7 +339,7 @@
           "unit": "C",
           "value": 20
         },
-        "notes": "Step mash for systems that can heat the mash directly (eg recirculating or all-in-one systems), with all the water in the mash.\n\nWater amounts and temperatures depend on the recipe, so are not set here.  To use this profile, select it on a recipe's Mash tab and click \"Calculate Water…\".  (As the profile is locked, you will be asked whether to make a copy for the recipe, which you can then change as you wish.)",
+        "notes": "Step mash for systems that can heat the mash directly (eg recirculating or all-in-one systems), with all the water in the mash.\n\nWater amounts and temperatures depend on the recipe, so are not set here.  To use this profile, select it on a recipe's Mash tab and click \"Adjust Mash…\".  (As the profile is locked, you will be asked whether to make a copy for the recipe, which you can then change as you wish.)",
         "mash_steps": [
           {
             "name": "Protein rest",
@@ -415,7 +415,7 @@
           "unit": "C",
           "value": 20
         },
-        "notes": "Traditional decoction mash, eg for continental lagers.  Each later step is reached by drawing off part of the mash (mostly grain), boiling it and returning it to the main mash.\n\nWater amounts and temperatures depend on the recipe, so are not set here.  To use this profile, select it on a recipe's Mash tab and click \"Calculate Water…\".  (As the profile is locked, you will be asked whether to make a copy for the recipe, which you can then change as you wish.)",
+        "notes": "Traditional decoction mash, eg for continental lagers.  Each later step is reached by drawing off part of the mash (mostly grain), boiling it and returning it to the main mash.\n\nWater amounts and temperatures depend on the recipe, so are not set here.  To use this profile, select it on a recipe's Mash tab and click \"Adjust Mash…\".  (As the profile is locked, you will be asked whether to make a copy for the recipe, which you can then change as you wish.)",
         "mash_steps": [
           {
             "name": "Protein rest",

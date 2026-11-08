@@ -601,13 +601,57 @@ void MashCalculatorTests::testSensibleTemperatures() {
    auto const coldGrainResult = MashCalculator::calculate(coldGrain, steps, thickness(3.0));
    QVERIFY(!coldGrainResult.ok());
    QVERIFY(hasMessage(coldGrainResult, Severity::Error, "initial grain temperature"));
+   // The problem is flagged against the mash's grain temperature field, so the editor can highlight it
+   QCOMPARE(coldGrainResult.problems.size(), 1);
+   auto const * coldGrainResultScope = std::get_if<MashCalculator::Problem::MashPropertyScope>(
+      &coldGrainResult.problems.first().scope
+   );
+   QVERIFY(coldGrainResultScope != nullptr);
+   QCOMPARE(coldGrainResultScope->mashProperty, QString{*PropertyNames::Mash::grainTemp_c});
 
-   // Step temperatures have to be between freezing and boiling
+   // Same for the tun temperature
+   auto hotTun = makeInputs();
+   hotTun.tunTemp_c = 120.0;
+   auto const hotTunResult = MashCalculator::calculate(hotTun, steps, thickness(3.0));
+   QVERIFY(!hotTunResult.ok());
+   auto const * hotTunResultScope = std::get_if<MashCalculator::Problem::MashPropertyScope>(
+      &hotTunResult.problems.first().scope
+   );
+   QVERIFY(hotTunResultScope != nullptr);
+   QCOMPARE(hotTunResultScope->mashProperty, QString{*PropertyNames::Mash::initialTunTemp_c});
+
+   //
+   // Mash step temperatures have to be between freezing and boiling.  We can't guess what the user wanted, so it's an
+   // error.
+   //
    auto badStepTemp = steps;
-   badStepTemp[1].startTemp_c = 0.0;
+   badStepTemp[0].startTemp_c = 0.0;
    QVERIFY(!MashCalculator::calculate(makeInputs(), badStepTemp, thickness(3.0)).ok());
-   badStepTemp[1].startTemp_c = 100.0;
+   badStepTemp[0].startTemp_c = 100.0;
    QVERIFY(!MashCalculator::calculate(makeInputs(), badStepTemp, thickness(3.0)).ok());
+
+   //
+   // But a sparge step's temperature is just the target for the grain bed, so if it doesn't make sense, adjusting the
+   // mash sets it to the sparge temperature (with a warning)...
+   //
+   auto badSpargeTemp = steps;
+   badSpargeTemp[1].startTemp_c = 0.0;
+   MashCalculator::Options options = thickness(3.0);
+   options.spargeTemp_c = 77.0;
+   auto const badSpargeTempResult = MashCalculator::calculate(makeInputs(), badSpargeTemp, options);
+   QVERIFY(badSpargeTempResult.ok());
+   QCOMPARE(badSpargeTempResult.steps.at(1).startTemp_c, 77.0);
+   QCOMPARE(*badSpargeTempResult.steps.at(1).infuseTemp_c, 77.0);
+   QVERIFY(hasMessage(badSpargeTempResult, Severity::Warning, "Fly Sparge"));
+   // ...or, if that doesn't make sense either, the default
+   options.spargeTemp_c = 0.0;
+   QCOMPARE(MashCalculator::calculate(makeInputs(), badSpargeTemp, options).steps.at(1).startTemp_c,
+            MashCalculator::defaultSpargeTemp_c);
+   // ...whereas checking the steps as they are reports it as an error
+   auto const badSpargeTempCheck = MashCalculator::check(makeInputs(), badSpargeTempResult.steps.mid(0, 1) +
+                                                                        badSpargeTemp.mid(1));
+   QVERIFY(!badSpargeTempCheck.ok());
+   QVERIFY(hasMessage(badSpargeTempCheck, Severity::Error, "Fly Sparge"));
 
    //
    // Fixed amount that would need water colder than the coldest available (20 °C).  Strike to 70 °C, then cool to 60 °C
@@ -689,7 +733,11 @@ void MashCalculatorTests::testCheck() {
    auto const tooColdResult = MashCalculator::check(makeInputs(), tooCold);
    QVERIFY(tooColdResult.ok());
    QCOMPARE(tooColdResult.problems.size(), 1);
-   QCOMPARE(tooColdResult.problems.first().stepIndex, 0);
+   auto const * tooColdResultScope = std::get_if<MashCalculator::Problem::StepScope>(
+      &tooColdResult.problems.first().scope
+   );
+   QVERIFY(tooColdResultScope != nullptr);
+   QCOMPARE(tooColdResultScope->stepIndex, 0);
 
    //
    // Too small a decoction is a warning on that step
@@ -699,7 +747,11 @@ void MashCalculatorTests::testCheck() {
    auto const smallDecoctionResult = MashCalculator::check(makeInputs(), smallDecoction);
    QVERIFY(smallDecoctionResult.ok());
    QCOMPARE(smallDecoctionResult.problems.size(), 1);
-   QCOMPARE(smallDecoctionResult.problems.first().stepIndex, 1);
+   auto const * smallDecoctionResultScope = std::get_if<MashCalculator::Problem::StepScope>(
+      &smallDecoctionResult.problems.first().scope
+   );
+   QVERIFY(smallDecoctionResultScope != nullptr);
+   QCOMPARE(smallDecoctionResultScope->stepIndex, 1);
 
    //
    // Water that doesn't add up is a warning about the mash as a whole
@@ -708,8 +760,18 @@ void MashCalculatorTests::testCheck() {
    tooLittleWater[2].amount_l -= 2.0;
    auto const tooLittleWaterResult = MashCalculator::check(makeInputs(), tooLittleWater);
    QVERIFY(tooLittleWaterResult.ok());
-   QVERIFY(std::any_of(tooLittleWaterResult.problems.cbegin(), tooLittleWaterResult.problems.cend(),
-                       [](auto const & problem) { return problem.stepIndex < 0; }));
+   QVERIFY(
+      std::any_of(
+         tooLittleWaterResult.problems.cbegin(),
+         tooLittleWaterResult.problems.cend(),
+         [](auto const & problem) {
+            auto const * tooLittleWaterResultScope = std::get_if<MashCalculator::Problem::MashScope>(
+               &problem.scope
+            );
+            return tooLittleWaterResultScope != nullptr;
+         }
+      )
+   );
 
    //
    // A missing infusion temperature (eg from a BeerJSON file, which can't hold it) is worked out, so is not a problem
@@ -732,6 +794,43 @@ void MashCalculatorTests::testCheck() {
    tooHot[0].infuseTemp_c = std::nullopt;
    tooHot[0].amount_l     = 2.0;
    QVERIFY(!MashCalculator::check(makeInputs(), tooHot).ok());
+   return;
+}
+
+void MashCalculatorTests::testRoundedValues() {
+   //
+   // Strike to 50 °C, then infusion with boiling water to 66 °C.  The second infusion is 320 / 34 = 9.41176 L.  If that
+   // amount is stored rounded (eg as 9.41 L in a file), working the water temperature back from it gives 100.006 °C,
+   // which is above boiling, but only by a meaningless amount, so should not be a problem.
+   //
+   QList<MashCalculator::Step> steps{
+      makeStep("Protein rest"    , MashStep::Type::Infusion, 50.0),
+      makeStep("Saccharification", MashStep::Type::Infusion, 66.0),
+   };
+   MashCalculator::setSparge(steps, MashCalculator::SpargeMethod::FlySparge, 1);
+   auto const calculated = MashCalculator::calculate(makeInputs(), steps, thickness(3.0));
+   QVERIFY(calculated.ok());
+   QCOMPARE(*calculated.steps.at(1).infuseTemp_c, 100.0);
+
+   auto rounded = calculated.steps;
+   rounded[1].amount_l     = std::round(rounded[1].amount_l * 100.0) / 100.0;
+   rounded[1].infuseTemp_c = std::nullopt;
+   QVERIFY(rounded[1].amount_l < calculated.steps.at(1).amount_l);
+
+   // Checking the steps as they are is fine, and works out the water at (no more than) boiling
+   auto const checked = MashCalculator::check(makeInputs(), rounded);
+   QVERIFY2(checked.ok(), qPrintable(checked.messages(Severity::Error).join("; ")));
+   QCOMPARE(*checked.steps.at(1).infuseTemp_c, 100.0);
+
+   // So is adjusting the mash with the rounded amount pinned
+   rounded[1].amountFixed = true;
+   auto const adjusted = MashCalculator::calculate(makeInputs(), rounded, thickness(3.0));
+   QVERIFY2(adjusted.ok(), qPrintable(adjusted.messages(Severity::Error).join("; ")));
+   QCOMPARE(*adjusted.steps.at(1).infuseTemp_c, 100.0);
+
+   // But something meaningfully above boiling is still an error
+   rounded[1].amount_l = 9.0;
+   QVERIFY(!MashCalculator::calculate(makeInputs(), rounded, thickness(3.0)).ok());
    return;
 }
 
@@ -893,5 +992,112 @@ void MashCalculatorTests::testExampleProfiles() {
       }
       QVERIFY2(fuzzyComp(totalWater_l, makeInputs().targetTotalWater_l, tolerance), qPrintable(name));
    }
+   return;
+}
+
+void MashCalculatorTests::testAutoAdjust() {
+   auto twoRow = UnitTests::makeFermentable_TwoRow();
+   ObjectStoreWrapper::insert(twoRow);
+
+   auto equipment = std::make_shared<Equipment>("Auto adjust test equipment");
+   equipment->setKettleBoilSize_l(30.0);
+   equipment->setFvBatchSize_l(23.0);
+   equipment->setMashTunVolume_l(40.0);
+   equipment->setMashTunWeight_kg(5.0);
+   equipment->setMashTunSpecificHeat_calGC(0.4);
+   equipment->setGrainAbsorption_LKg(1.0);
+   equipment->setBoilingPoint_c(100.0);
+   ObjectStoreWrapper::insert(equipment);
+
+   auto recipe = std::make_shared<Recipe>("Auto adjust test recipe");
+   ObjectStoreWrapper::insert(recipe);
+   recipe->setBatchSize_l(23.0);
+   recipe->setEquipment(equipment);
+   auto boil = recipe->nonOptBoil();
+   boil->setPreBoilSize_l(30.0);
+   boil->setBoilTime_mins(60.0);
+   auto grain = std::make_shared<RecipeAdditionFermentable>("Auto adjust test grain");
+   grain->setFermentable(twoRow.get());
+   grain->setStage(RecipeAddition::Stage::Mash);
+   grain->setQuantity(5.0);
+   grain->setMeasure(Measurement::PhysicalQuantity::Mass);
+   recipe->addAddition(grain);
+
+   auto mash = std::make_shared<Mash>("Auto adjust test mash");
+   mash->setGrainTemp_c(20.0);
+   ObjectStoreWrapper::insert(mash);
+   auto strike = std::make_shared<MashStep>("Strike");
+   strike->setType(MashStep::Type::Infusion);
+   strike->setStartTemp_c(66.0);
+   strike->setStepTime_mins(60.0);
+   strike->setLiquorToGristRatio_lKg(3.0);
+   mash->add(strike);
+   auto sparge = std::make_shared<MashStep>("Sparge");
+   sparge->setType(MashStep::Type::FlySparge);
+   sparge->setStartTemp_c(76.0);
+   sparge->setStepTime_mins(30.0);
+   mash->add(sparge);
+   recipe->setMash(mash);
+
+   auto settle = []() {
+      for (int ii = 0; ii < 3; ++ii) {
+         QCoreApplication::processEvents();
+      }
+   };
+
+   //
+   // Without auto-adjust, changing the grain bill doesn't change the mash
+   //
+   settle();
+   QCOMPARE(strike->amount_l(), 0.0);
+   grain->setQuantity(6.0);
+   settle();
+   QCOMPARE(strike->amount_l(), 0.0);
+
+   //
+   // Turning on auto-adjust adjusts the mash
+   //
+   mash->setKeptInSync(true);
+   settle();
+   QVERIFY(fuzzyComp(strike->amount_l(), recipe->targetStrikeWater_l(3.0), tolerance));
+   QVERIFY(fuzzyComp(mash->totalMashWater_l(), recipe->targetTotalMashVol_l(), tolerance));
+
+   //
+   // Now changing the grain bill does change the mash
+   //
+   double const strikeFor6kg_l = strike->amount_l();
+   grain->setQuantity(5.0);
+   settle();
+   QVERIFY(strike->amount_l() < strikeFor6kg_l);
+   QVERIFY(fuzzyComp(strike->amount_l(), recipe->targetStrikeWater_l(3.0), tolerance));
+   QVERIFY(fuzzyComp(mash->totalMashWater_l(), recipe->targetTotalMashVol_l(), tolerance));
+
+   //
+   // But not if the mash is locked
+   //
+   double const strikeFor5kg_l = strike->amount_l();
+   mash->setLocked(true);
+   grain->setQuantity(6.0);
+   settle();
+   QCOMPARE(strike->amount_l(), strikeFor5kg_l);
+   mash->setLocked(false);
+   settle();
+
+   //
+   // Copying the recipe gives the copy its own copy of the mash, as an auto-adjusting mash can't be shared
+   //
+   std::shared_ptr<Recipe> const recipeCopy = ObjectStoreWrapper::insertCopyOf(*recipe);
+   QVERIFY(recipeCopy->mash());
+   QVERIFY(recipeCopy->mash().get() != mash.get());
+   QVERIFY(recipeCopy->mash()->keptInSync());
+   QCOMPARE(recipe->mash().get(), mash.get());
+   QCOMPARE(RecipeUtils::recipesUsing(*mash).size(), 1);
+
+   //
+   // Whereas a mash that doesn't auto-adjust is shared as normal
+   //
+   recipeCopy->mash()->setKeptInSync(false);
+   std::shared_ptr<Recipe> const recipeCopy2 = ObjectStoreWrapper::insertCopyOf(*recipeCopy);
+   QCOMPARE(recipeCopy2->mash().get(), recipeCopy->mash().get());
    return;
 }

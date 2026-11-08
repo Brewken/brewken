@@ -28,6 +28,7 @@
 #include <QVariant>
 #include "ui_mashEditor.h"
 
+#include "MashCalculator.h"
 #include "editors/EditorBase.h"
 #include "model/Mash.h"
 
@@ -49,10 +50,10 @@ public:
    void postSetEditItem();
 
    /**
-    * \brief Show the "Calculate water" part of the editor, with the focus on the Calculate button.  Used when the user
+    * \brief Show the "Auto Adjust" part of the editor, with the focus on the Auto-Adjust button.  Used when the user
     *        asks to calculate the mash from the main window.
     */
-   void focusCalculator();
+   void focusAutoAdjust();
 
 public slots:
    /**
@@ -60,29 +61,54 @@ public slots:
     *        the current recipe.  If the mash is locked or shared with other recipes, we first offer to make a copy for
     *        the current recipe.
     */
-   void calculate();
+   void autoAdjust();
 
-   //! Enable/disable the calculation controls that depend on the selected sparge method
-   void updateCalculatorControls();
+   //! Enable/disable the auto-adjust controls that depend on the selected sparge method
+   void updateAutoAdjustControls();
 
    //! Show (or hide) the summary of any problems found when checking the steps (see \c MashStepTableModel::validate)
+   //  and highlight any of the mash's own fields that have problems
    void updateMashProblems();
+
+   /**
+    * \brief Turn on or off "Keep in sync with recipe" (see \c Mash::keepInSync).  When turning it on, if the
+    *        mash is locked or shared, we first offer to make a copy (as for \c autoAdjust), and we adjust the mash
+    *        straight away.
+    */
+   void keptInSyncToggled(bool const checked);
 
 protected:
    virtual void showEvent(QShowEvent * event) override;
 
 private:
    /**
-    * \return The recipe whose grain bill and equipment we use to calculate the mash -- ie the current recipe, if it
+    * \return The recipe whose grain bill and equipment we use to auto-adjust the mash -- ie the current recipe, if it
     *         uses the mash being edited (or the mash is a new one for the recipe) -- or \c nullptr if there isn't one.
     */
-   Recipe * recipeForCalculation() const;
+   Recipe * recipeForAutoAdjust() const;
 
-   //! Set up the calculation controls for the current edit item and recipe
-   void refreshCalculator();
+   //! Set up the auto-adjust controls for the current edit item and recipe
+   void refreshAutoAdjust();
 
-   //! Show the result of a calculation (or why it couldn't be done)
-   void showCalculatorMessage(QString const & heading, QStringList const & details = {});
+   /**
+    * \brief Replace values in \c inputs that come from the mash's own fields (eg initial grain temperature) with what
+    *        the user has entered in the editor, which might not yet have been saved.
+    */
+   void useFieldValues(MashCalculator::Inputs & inputs) const;
+
+   /**
+    * \brief Before adjusting the mash for \c recipe, check that it can be changed and is not shared with another
+    *        recipe.  If it is locked or shared, offer the user a copy for \c recipe.
+    *
+    * \return \c true if the mash being edited can now be adjusted, \c false if not (eg the user declined the copy)
+    */
+   bool ensureChangeableForRecipe(Recipe & recipe);
+
+   //! Highlight \c field (with \c problems in its tool tip) or, if \c problems is empty, remove any highlighting
+   static void highlightField(QWidget & field, QStringList const & problems);
+
+   //! Show the result of an auto-adjust (or why it couldn't be done)
+   void showAutoAdjustMessage(QString const & heading, QStringList const & details = {});
 
    //
    // TBD: We used to have the following function invoked by a button:

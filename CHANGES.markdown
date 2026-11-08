@@ -12,7 +12,8 @@ happens, so I'm now setting it to a slightly arbitrary time early in the morning
 ### New Features
 * TODO: Additional methods for calculating IBU
 * Shopping Lists
-* Mash water calculation (strike water, other infusions, decoctions and sparge water) is now done in the Mash Editor, replacing the Mash Wizard and Mash Designer.  Individual amounts and temperatures can be marked as fixed so that only the rest are calculated.
+* Mash water amounts and temperatures (strike water, other infusions, decoctions and sparge water) can now be adjusted to suit the recipe in the Mash Editor, replacing the Mash Wizard and Mash Designer.  Individual amounts and temperatures can be pinned so that only the rest are adjusted.  Optionally, the mash can adjust automatically whenever the recipe changes.
+* Mash steps (and mash fields) that don't make sense for the recipe are highlighted
 * Example mash profiles, which are locked so they can be shared between recipes
 * We'll list other new features here...
 

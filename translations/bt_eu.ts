@@ -3641,7 +3641,7 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>⚠ Check steps</source>
+        <source>⚠ Mash has problems</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3711,6 +3711,10 @@ If you need help, please open an issue at %1</source>
         <source>Automatically Adjust</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>%1 (copy for %2)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MashCalculator</name>
@@ -3751,10 +3755,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The infusion temperature is marked as fixed, but has not been set.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>With no sparge, this step has to make up the total water needed (%1), but the other steps already add %2.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3764,10 +3764,6 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>The infusion amount must be more than zero.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This infusion does not change the temperature of the mash, so its amount cannot be calculated.  It needs to be set and marked as fixed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3819,15 +3815,7 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> and the fixed sparge amounts add %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The mash and sparge water add up to %1, but %2 is needed in total.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The sparge water temperature is marked as fixed, but has not been set.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3855,10 +3843,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Try a smaller fixed amount, or not fixing the amount.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>With no sparge, this step has to add the rest of the water needed.  Try having a sparge, or more water in the earlier steps.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3882,6 +3866,34 @@ If you need help, please open an issue at %1</source>
         <source>No amount is set.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>The initial mash tun temperature is %1, which needs to be between freezing and boiling point (%2).  (If it is not set, we assume the tun is at the same temperature as the grain.)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The step temperature was %1, which doesn&apos;t make sense, so it has been set to %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The infusion temperature is pinned, but has not been set.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This infusion does not change the temperature of the mash, so its amount cannot be calculated.  It needs to be set and pinned.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try a smaller pinned amount, or unpinning it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> and the pinned sparge amounts add %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The sparge water temperature is pinned, but has not been set.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MashEditor</name>
@@ -3898,19 +3910,7 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>To calculate water, edit this mash from a recipe that uses it (eg with the Edit button on the recipe&apos;s Mash tab), as the calculation depends on the recipe&apos;s grain bill and equipment.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Calculates for the grain bill and equipment of recipe &quot;%1&quot;.  Values you have marked as fixed in a step are not changed.  Steps are changed straight away (ie without clicking Save).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Recipe is locked</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This recipe is locked, so its mash cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3918,29 +3918,41 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Calculating water changes the steps of the mash, based on this recipe&apos;s grain bill and equipment.
-
-Do you want to make a copy of this mash for this recipe, so that you can do this without affecting anything else?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Make a copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Could not calculate the mash, so nothing has been changed:</source>
+        <source>To adjust the mash, edit it from a recipe that uses it (eg with the Edit button on the recipe&apos;s Mash tab), as the amounts and temperatures depend on the recipe&apos;s grain bill and equipment.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Mash calculated for recipe &quot;%1&quot;.</source>
+        <source>Adjusts the water amounts and temperatures in the steps to suit the grain bill and equipment of recipe &quot;%1&quot;.  Pinned values are not changed.  Changes to the steps take effect straight away (ie without clicking Save).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Mash calculated for recipe &quot;%1&quot;, but please check the following:</source>
+        <source>⚠ This mash has problems.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>⚠ These steps don&apos;t all make sense for the recipe that uses them.  Hover over a highlighted step for details.</source>
+        <source>The recipe &quot;%1&quot; is locked, so its mash cannot be changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjusting the mash changes its steps to suit the grain bill and equipment of recipe &quot;%1&quot;.
+
+Do you want to make a copy of this mash for that recipe, so that you can do this without affecting anything else?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not adjust the mash, so nothing has been changed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash adjusted for recipe &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash adjusted for recipe &quot;%1&quot;, but please check the following:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4034,19 +4046,19 @@ Do you want to make a copy of this mash for this recipe, so that you can do this
         <translation type="vanished">Denbora</translation>
     </message>
     <message>
-        <source>Fixed: not changed when calculating the mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fixed amount (not changed when calculating the mash)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fixed infusion temperature (not changed when calculating the mash)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>%1: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pinned: not changed when adjusting the mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pinned amount (not changed when adjusting the mash)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pinned infusion temperature (not changed when adjusting the mash)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4283,6 +4295,22 @@ Do you want to make a copy of this mash for this recipe, so that you can do this
     </message>
     <message>
         <source>It cannot be changed because the recipe &quot;%1&quot; is locked.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use a copy of mash?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The mash &quot;%1&quot; adjusts automatically to the recipe that uses it (&quot;%2&quot;), so it can&apos;t be shared with another recipe.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you want to use a copy of it for this recipe?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use a copy</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9757,11 +9785,11 @@ Tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Work out the amounts and temperatures of the mash water for this recipe (in the Mash Editor)</source>
+        <source>Adjust the amounts and temperatures of the mash water for this recipe (in the Mash Editor)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Calculate Water…</source>
+        <source>Adjust Mash…</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9875,15 +9903,7 @@ Tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Calculate water amounts and temperatures</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Sparge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>How the grain will be rinsed after the mash.  Changing this and clicking Calculate replaces any existing sparge steps.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9903,19 +9923,35 @@ Tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Work out the amounts and temperatures of the strike water and other infusions, the amounts of any decoctions, and the amounts and temperatures of sparge water, using this recipe&apos;s grain bill and equipment.  Values you have marked as fixed in a step are not changed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Calculate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Initial temperature of the mash tun.  Used when calculating the strike water temperature, to allow for the strike water heating up the mash tun.  If left blank, the tun is assumed to be at the same temperature as the grain.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Used as the target grain bed temperature for new sparge steps when calculating water.  It is better to set this on the sparge step itself.</source>
+        <source>Adjust water amounts and temperatures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>How the grain will be rinsed after the mash.  Changing this and clicking Adjust Now replaces any existing sparge steps.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change the amounts and temperatures of the strike water and other infusions, the amounts of any decoctions, and the amounts and temperatures of sparge water, to suit this recipe&apos;s grain bill and equipment.  Values you have pinned in a step are not changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjust Now</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjust the mash automatically whenever something it depends on changes, eg the recipe&apos;s grain bill or equipment.  (Changing the steps themselves does not trigger an adjustment, so pin any values you want to keep.)  A mash that adjusts automatically can only be used by one recipe, so it is copied if you use it in another recipe.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjust automatically whenever the recipe changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Used as the target grain bed temperature for new sparge steps when adjusting the mash.  It is better to set this on the sparge step itself.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10030,15 +10066,15 @@ Tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>If ticked, calculating water in the Mash Editor will not change this amount (but will use it to work out other values, eg the water temperature).</source>
+        <source>If ticked, adjusting the mash (in the Mash Editor) will not change this amount (but will use it to work out other values, eg the water temperature).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fixed</source>
+        <source>Pinned</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>If ticked, calculating water in the Mash Editor will not change this temperature (but will use it to work out other values, eg the amount of water).</source>
+        <source>If ticked, adjusting the mash (in the Mash Editor) will not change this temperature (but will use it to work out other values, eg the amount of water).</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

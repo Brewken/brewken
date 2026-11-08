@@ -67,14 +67,23 @@ MashEditor::MashEditor(QWidget* parent, QString const editorName) :
    this->comboBox_spargeMethod->addItem(tr("No sparge"   ), static_cast<int>(MashCalculator::SpargeMethod::NoSparge   ));
    this->comboBox_spargeMethod->addItem(tr("Batch sparge"), static_cast<int>(MashCalculator::SpargeMethod::BatchSparge));
    this->comboBox_spargeMethod->addItem(tr("Fly sparge"  ), static_cast<int>(MashCalculator::SpargeMethod::FlySparge  ));
-   this->connect(this->comboBox_spargeMethod, &QComboBox::currentIndexChanged, this, &MashEditor::updateCalculatorControls);
-   this->connect(this->pushButton_calculate , &QAbstractButton::clicked      , this, &MashEditor::calculate               );
-   this->connect(this->enumeratedItemsWidget->tableModel(),
-                 &MashStepTableModel::validationChanged,
-                 this,
-                 &MashEditor::updateMashProblems);
+   this->connect(this->comboBox_spargeMethod, &QComboBox::currentIndexChanged, this, &MashEditor::updateAutoAdjustControls);
+   this->connect(this->pushButton_autoAdjust , &QAbstractButton::clicked      , this, &MashEditor::autoAdjust               );
+   this->connect(this->checkBox_keptInSync   , &QAbstractButton::toggled      , this, &MashEditor::keptInSyncToggled       );
+
+   //
+   // Step validation (see MashStepTableModel::validate) should use the values the user has entered for the mash's own
+   // fields, even if they haven't yet been saved, and should be redone when those values change.
+   //
+   MashStepTableModel * const tableModel = this->enumeratedItemsWidget->tableModel();
+   tableModel->setInputsAdjuster([this](MashCalculator::Inputs & inputs) { this->useFieldValues(inputs); return; });
+   for (SmartLineEdit * field : {this->lineEdit_grainTemp, this->lineEdit_tunTemp}) {
+      this->connect(field, &QLineEdit::textChanged, tableModel, &MashStepTableModel::scheduleValidation);
+   }
+   this->connect(tableModel, &MashStepTableModel::validationChanged, this, &MashEditor::updateMashProblems);
+   this->connect(this->tabWidget_editor, &QTabWidget::currentChanged, this, &MashEditor::updateMashProblems);
    this->updateMashProblems();
-   this->refreshCalculator();
+   this->refreshAutoAdjust();
 
    return;
 }
@@ -85,25 +94,27 @@ MashEditor::~MashEditor() = default;
 EDITOR_COMMON_CODE(Mash)
 
 void MashEditor::postSetEditItem() {
-   this->refreshCalculator();
+   this->refreshAutoAdjust();
    return;
 }
 
 void MashEditor::showEvent(QShowEvent * event) {
    // When we're editing a new mash for a recipe, m_newItemForRecipe is set after setEditItem, so we need to refresh here
    // too.
-   this->refreshCalculator();
+   this->refreshAutoAdjust();
    this->QDialog::showEvent(event);
+   // Which fields are visible affects what we show (see updateMashProblems)
+   this->updateMashProblems();
    return;
 }
 
-void MashEditor::focusCalculator() {
+void MashEditor::focusAutoAdjust() {
    this->tabWidget_editor->setCurrentWidget(this->tab_main);
-   this->pushButton_calculate->setFocus();
+   this->pushButton_autoAdjust->setFocus();
    return;
 }
 
-Recipe * MashEditor::recipeForCalculation() const {
+Recipe * MashEditor::recipeForAutoAdjust() const {
    if (!this->m_editItem || !this->m_recipeObs) {
       return nullptr;
    }
@@ -114,8 +125,8 @@ Recipe * MashEditor::recipeForCalculation() const {
    return this->currentRecipeIfItUsesEditItem();
 }
 
-void MashEditor::refreshCalculator() {
-   Recipe const * const recipe = this->recipeForCalculation();
+void MashEditor::refreshAutoAdjust() {
+   Recipe const * const recipe = this->recipeForAutoAdjust();
    QList<MashCalculator::Step> const steps =
       this->m_editItem ? MashCalculator::stepsFrom(*this->m_editItem) : QList<MashCalculator::Step>{};
 
@@ -153,27 +164,33 @@ void MashEditor::refreshCalculator() {
    this->lineEdit_thickness->setQuantity(thickness_LKg);
 
    this->comboBox_spargeMethod->setEnabled(recipe != nullptr);
-   this->pushButton_calculate ->setEnabled(recipe != nullptr);
-   this->updateCalculatorControls();
+   this->pushButton_autoAdjust ->setEnabled(recipe != nullptr);
+   this->checkBox_keptInSync  ->setEnabled(recipe != nullptr);
+   {
+      QSignalBlocker const blocker{this->checkBox_keptInSync};
+      this->checkBox_keptInSync->setChecked(this->m_editItem && this->m_editItem->keptInSync());
+   }
+   this->updateAutoAdjustControls();
 
    if (!this->m_editItem) {
       this->label_calculateInfo->clear();
    } else if (!recipe) {
-      this->showCalculatorMessage(
-         tr("To calculate water, edit this mash from a recipe that uses it (eg with the Edit button on the recipe's "
-            "Mash tab), as the calculation depends on the recipe's grain bill and equipment.")
+      this->showAutoAdjustMessage(
+         tr("To adjust the mash, edit it from a recipe that uses it (eg with the Edit button on the recipe's Mash tab), "
+            "as the amounts and temperatures depend on the recipe's grain bill and equipment.")
       );
    } else {
-      this->showCalculatorMessage(
-         tr("Calculates for the grain bill and equipment of recipe \"%1\".  Values you have marked as fixed in a step "
-            "are not changed.  Steps are changed straight away (ie without clicking Save).").arg(recipe->name())
+      this->showAutoAdjustMessage(
+         tr("Adjusts the water amounts and temperatures in the steps to suit the grain bill and equipment of recipe "
+            "\"%1\".  Pinned values are not changed.  Changes to the steps take effect straight away (ie without "
+            "clicking Save).").arg(recipe->name())
       );
    }
    return;
 }
 
-void MashEditor::updateCalculatorControls() {
-   bool const enabled = (this->recipeForCalculation() != nullptr);
+void MashEditor::updateAutoAdjustControls() {
+   bool const enabled = (this->recipeForAutoAdjust() != nullptr);
    auto const spargeMethod =
       static_cast<MashCalculator::SpargeMethod>(this->comboBox_spargeMethod->currentData().toInt());
    this->spinBox_numBatches->setEnabled(enabled && spargeMethod == MashCalculator::SpargeMethod::BatchSparge);
@@ -183,17 +200,44 @@ void MashEditor::updateCalculatorControls() {
 
 void MashEditor::updateMashProblems() {
    MashStepTableModel const & model = *this->enumeratedItemsWidget->tableModel();
+
+   //
+   // Highlight any of the mash's own fields that have problems, with the problems in the tool tip.  (Problems with
+   // individual steps are highlighted in the steps table by MashStepTableModel.)
+   //
+   QHash<QString, QStringList> const & fieldProblems = model.mashFieldProblems();
+   std::initializer_list<std::pair<BtStringConst const &, QWidget *>> const fields{
+      {PropertyNames::Mash::grainTemp_c     , this->lineEdit_grainTemp},
+      {PropertyNames::Mash::initialTunTemp_c, this->lineEdit_tunTemp  },
+   };
+   // Problems with fields the user can't currently see (eg because they're on another tab) get listed below
+   QStringList hiddenFieldProblems;
+   for (auto const & [propertyName, field] : fields) {
+      QStringList const problems = fieldProblems.value(*propertyName);
+      MashEditor::highlightField(*field, problems);
+      if (!field->isVisible()) {
+         hiddenFieldProblems.append(problems);
+      }
+   }
+
    if (!model.hasProblems()) {
       this->label_mashProblems->clear();
       this->label_mashProblems->setVisible(false);
       return;
    }
-   QString text = tr("⚠ These steps don't all make sense for the recipe that uses them.  Hover over a highlighted step "
-                     "for details.").toHtmlEscaped();
-   if (!model.mashOverallProblems().isEmpty()) {
+   QString text = tr("⚠ This mash has problems.").toHtmlEscaped();
+   //
+   // Problems with steps or fields are shown by highlighting them.  Problems with the mash as a whole (eg the water
+   // not adding up) have nowhere else to go, so we list them here.  So do problems with fields that are not on the tab
+   // the user is looking at.
+   //
+   QStringList overallProblems = model.mashOverallProblems();
+   overallProblems.append(hiddenFieldProblems);
+   if (!overallProblems.isEmpty()) {
+      text += tr("  General problems are:");
       text += "<ul>";
-      for (auto const & problem : model.mashOverallProblems()) {
-         text += QString{"<li>%1</li>"}.arg(problem.toHtmlEscaped());
+      for (auto const & detail : overallProblems) {
+         text += QString{"<li>%1</li>"}.arg(detail.toHtmlEscaped());
       }
       text += "</ul>";
    }
@@ -202,7 +246,104 @@ void MashEditor::updateMashProblems() {
    return;
 }
 
-void MashEditor::showCalculatorMessage(QString const & heading, QStringList const & details) {
+void MashEditor::highlightField(QWidget & field, QStringList const & problems) {
+   //
+   // We stash the field's normal tool tip in a dynamic property the first time we need to change it, so we can put it
+   // back when the problem goes away.
+   //
+   char const * const normalToolTipProperty = "normalToolTip";
+   QVariant const normalToolTip = field.property(normalToolTipProperty);
+   if (!normalToolTip.isValid()) {
+      field.setProperty(normalToolTipProperty, field.toolTip());
+   }
+   QString const toolTip = field.property(normalToolTipProperty).toString();
+
+   if (problems.isEmpty()) {
+      field.setStyleSheet("");
+      field.setToolTip(toolTip);
+   } else {
+      // Same semi-transparent red as for steps with errors in MashStepTableModel, so it works with light and dark themes
+      field.setStyleSheet("background-color: rgba(230, 40, 40, 70);");
+      field.setToolTip(
+         problems.join("\n") + (toolTip.isEmpty() ? QString{} : QString{"\n\n"} + toolTip)
+      );
+   }
+   return;
+}
+
+void MashEditor::useFieldValues(MashCalculator::Inputs & inputs) const {
+   bool grainTempOk = false;
+   double const grainTemp_c = this->lineEdit_grainTemp->getNonOptCanonicalQty(&grainTempOk);
+   if (grainTempOk) {
+      inputs.grainTemp_c = grainTemp_c;
+   }
+   inputs.tunTemp_c = this->lineEdit_tunTemp->getOptCanonicalQty().value_or(inputs.grainTemp_c);
+   return;
+}
+
+bool MashEditor::ensureChangeableForRecipe(Recipe & recipe) {
+   //
+   // Adjusting is for this recipe, so we mustn't change a mash that other recipes use (as the results would be wrong
+   // for them), nor one that is locked.  In either case, we offer to make a copy for this recipe.  (A new mash for the
+   // recipe is not yet used by anything, so is fine.)
+   //
+   if (this->m_newItemForRecipe == this->m_editItem) {
+      return true;
+   }
+   bool const canChange = RecipeUtils::lockReason(*this->m_editItem) == RecipeUtils::LockReason::NotLocked;
+   bool const isShared  = RecipeUtils::recipesUsing(*this->m_editItem).size() > 1;
+   if (canChange && !isShared) {
+      return true;
+   }
+   if (recipe.locked()) {
+      QMessageBox::information(this,
+                               tr("Recipe is locked"),
+                               tr("The recipe \"%1\" is locked, so its mash cannot be changed.").arg(recipe.name()));
+      return false;
+   }
+   QMessageBox messageBox{this};
+   messageBox.setIcon(QMessageBox::Question);
+   messageBox.setWindowTitle(tr("Make a copy of mash?"));
+   messageBox.setText(RecipeUtils::describeSharingAndLocking(*this->m_editItem, &recipe));
+   messageBox.setInformativeText(
+      tr("Adjusting the mash changes its steps to suit the grain bill and equipment of recipe \"%1\".\n\n"
+         "Do you want to make a copy of this mash for that recipe, so that you can do this without affecting anything "
+         "else?").arg(recipe.name())
+   );
+   QPushButton * copyButton = messageBox.addButton(tr("Make a copy"), QMessageBox::AcceptRole);
+   messageBox.addButton(QMessageBox::Cancel);
+   messageBox.setDefaultButton(copyButton);
+   messageBox.exec();
+   if (messageBox.clickedButton() != copyButton) {
+      return false;
+   }
+   this->makeCopyForRecipe();
+   return true;
+}
+
+void MashEditor::keptInSyncToggled(bool const checked) {
+   Recipe * const recipe = this->recipeForAutoAdjust();
+   if (!this->m_editItem || !recipe) {
+      // Check box should have been disabled
+      return;
+   }
+   if (checked && !this->ensureChangeableForRecipe(*recipe)) {
+      QSignalBlocker const blocker{this->checkBox_keptInSync};
+      this->checkBox_keptInSync->setChecked(false);
+      return;
+   }
+   //
+   // Like the steps, this takes effect straight away, because it's about how the mash relates to the recipe rather
+   // than a field the user is editing.  Turning it on also adjusts the mash immediately.
+   //
+   this->m_editItem->setKeptInSync(checked);
+   if (checked) {
+      this->autoAdjust();
+   }
+   return;
+}
+
+void MashEditor::showAutoAdjustMessage(QString const & heading, QStringList const & details) {
    QString text = heading.toHtmlEscaped();
    if (!details.isEmpty()) {
       text += "<ul>";
@@ -215,47 +356,16 @@ void MashEditor::showCalculatorMessage(QString const & heading, QStringList cons
    return;
 }
 
-void MashEditor::calculate() {
-   Recipe * const recipe = this->recipeForCalculation();
+void MashEditor::autoAdjust() {
+   Recipe * const recipe = this->recipeForAutoAdjust();
    if (!recipe || !this->m_editItem) {
       // Button should have been disabled
       qWarning() << Q_FUNC_INFO << "No recipe or no mash";
       return;
    }
 
-   //
-   // The calculation is for this recipe, so we mustn't change a mash that other recipes use (as the results would be
-   // wrong for them), nor one that is locked.  In either case, we offer to make a copy for this recipe.  (A new mash
-   // for the recipe is not yet used by anything, so is fine.)
-   //
-   if (this->m_newItemForRecipe != this->m_editItem) {
-      bool const canChange = RecipeUtils::lockReason(*this->m_editItem) == RecipeUtils::LockReason::NotLocked;
-      bool const isShared  = RecipeUtils::recipesUsing(*this->m_editItem).size() > 1;
-      if (!canChange || isShared) {
-         if (recipe->locked()) {
-            QMessageBox::information(this,
-                                     tr("Recipe is locked"),
-                                     tr("This recipe is locked, so its mash cannot be changed."));
-            return;
-         }
-         QMessageBox messageBox{this};
-         messageBox.setIcon(QMessageBox::Question);
-         messageBox.setWindowTitle(tr("Make a copy of mash?"));
-         messageBox.setText(RecipeUtils::describeSharingAndLocking(*this->m_editItem, recipe));
-         messageBox.setInformativeText(
-            tr("Calculating water changes the steps of the mash, based on this recipe's grain bill and equipment.\n\n"
-               "Do you want to make a copy of this mash for this recipe, so that you can do this without affecting "
-               "anything else?")
-         );
-         QPushButton * copyButton = messageBox.addButton(tr("Make a copy"), QMessageBox::AcceptRole);
-         messageBox.addButton(QMessageBox::Cancel);
-         messageBox.setDefaultButton(copyButton);
-         messageBox.exec();
-         if (messageBox.clickedButton() != copyButton) {
-            return;
-         }
-         this->makeCopyForRecipe();
-      }
+   if (!this->ensureChangeableForRecipe(*recipe)) {
+      return;
    }
    Mash & mash = *this->m_editItem;
 
@@ -263,33 +373,26 @@ void MashEditor::calculate() {
    // Use the values in the editor for the mash's own fields, as the user might have changed them without (yet) saving.
    //
    MashCalculator::Inputs inputs = MashCalculator::Inputs::fromRecipe(*recipe, mash);
-   bool grainTempOk = false;
-   double const grainTemp_c = this->lineEdit_grainTemp->getNonOptCanonicalQty(&grainTempOk);
-   if (grainTempOk) {
-      inputs.grainTemp_c = grainTemp_c;
-   }
-   inputs.tunTemp_c = this->lineEdit_tunTemp->getOptCanonicalQty().value_or(inputs.grainTemp_c);
+   this->useFieldValues(inputs);
 
    auto const spargeMethod =
       static_cast<MashCalculator::SpargeMethod>(this->comboBox_spargeMethod->currentData().toInt());
    QList<MashCalculator::Step> steps = MashCalculator::stepsFrom(mash);
    // Older mashes might have a sparge temperature of 0 °C, which really means "not set"
    std::optional<double> const spargeTemp_c = this->lineEdit_spargeTemp->getOptCanonicalQty();
-   MashCalculator::setSparge(
-      steps,
-      spargeMethod,
-      this->spinBox_numBatches->value(),
-      (spargeTemp_c && *spargeTemp_c > 0.0) ? *spargeTemp_c : MashCalculator::defaultSpargeTemp_c
-   );
+   double const targetSpargeTemp_c =
+      (spargeTemp_c && *spargeTemp_c > 0.0) ? *spargeTemp_c : MashCalculator::defaultSpargeTemp_c;
+   MashCalculator::setSparge(steps, spargeMethod, this->spinBox_numBatches->value(), targetSpargeTemp_c);
 
    MashCalculator::Options options;
+   options.spargeTemp_c = targetSpargeTemp_c;
    if (spargeMethod != MashCalculator::SpargeMethod::NoSparge) {
       options.thickness_LKg = this->lineEdit_thickness->getOptCanonicalQty();
    }
 
    MashCalculator::Result const result = MashCalculator::calculate(inputs, steps, options);
    if (!result.ok()) {
-      this->showCalculatorMessage(tr("Could not calculate the mash, so nothing has been changed:"),
+      this->showAutoAdjustMessage(tr("Could not adjust the mash, so nothing has been changed:"),
                                   result.messages(MashCalculator::Problem::Severity::Error));
       return;
    }
@@ -303,9 +406,9 @@ void MashEditor::calculate() {
 
    QStringList const warnings = result.messages(MashCalculator::Problem::Severity::Warning);
    if (warnings.isEmpty()) {
-      this->showCalculatorMessage(tr("Mash calculated for recipe \"%1\".").arg(recipe->name()));
+      this->showAutoAdjustMessage(tr("Mash adjusted for recipe \"%1\".").arg(recipe->name()));
    } else {
-      this->showCalculatorMessage(tr("Mash calculated for recipe \"%1\", but please check the following:").arg(
+      this->showAutoAdjustMessage(tr("Mash adjusted for recipe \"%1\", but please check the following:").arg(
                                      recipe->name()
                                   ),
                                   warnings);

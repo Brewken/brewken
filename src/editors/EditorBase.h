@@ -462,16 +462,16 @@ public:
       this->setFieldsEditable(canChange);
 
       //
-      // An auto-adjusting mash only makes sense when it is used by a recipe.  If it's no longer used by any recipe (eg
+      // An kept-in-sync mash only makes sense when it is used by a recipe.  If it's no longer used by any recipe (eg
       // because the recipe was deleted or now uses a different mash), turn the flag off.  (Nothing breaks if we leave it
       // on, but it would be confusing if the mash was later used by a different recipe.)
       //
       if constexpr (std::is_same_v<NE, Mash>) {
-         if (numRecipesUsing == 0 && canChange && this->m_editItem->autoAdjust()) {
+         if (numRecipesUsing == 0 && canChange && this->m_editItem->keptInSync()) {
             qInfo() <<
-               Q_FUNC_INFO << "Turning off auto-adjust on Mash #" << this->m_editItem->key() << "as it is not used "
+               Q_FUNC_INFO << "Turning off keep-in-sync on Mash #" << this->m_editItem->key() << "as it is not used "
                "by any recipe";
-            this->m_editItem->setAutoAdjust(false);
+            this->m_editItem->setKeptInSync(false);
          }
       }
       return;
