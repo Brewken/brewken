@@ -507,7 +507,7 @@ void RecipeCalcTests::testMashWaterVolumes() {
    };
 
    //
-   // Single-step infusion with a batch sparge, with the strike and sparge water set the same way MashWizard does it
+   // Single-step infusion with a batch sparge, with the strike and sparge water set the same way MashCalculator does it
    //
    auto addMash = [&](Recipe & recipe) {
       auto mash = std::make_shared<Mash>(recipe.name() + " mash");
@@ -580,8 +580,8 @@ void RecipeCalcTests::testMashWaterVolumes() {
             "Foundation volume should be added to the strike water");
    QVERIFY(fuzzyComp(recipeThreeVessel->targetStrikeWater_l(thickness_LKg),
                      thickness_LKg * grain_kg + mashTunLoss_l, 0.0001));
-   // And going back the other way should give us the same thickness (otherwise MashWizard would change the strike
-   // water each time it was run on a no-sparge mash)
+   // And going back the other way should give us the same thickness (otherwise recalculating the mash would change the
+   // strike water each time)
    auto const thickness = recipeFoundation->mashThicknessForStrikeWater_LKg(
       recipeFoundation->targetStrikeWater_l(thickness_LKg)
    );

@@ -35,10 +35,12 @@
 #include <QInputDialog>
 #include <QList>
 #include <QObject>
+#include <QTimer>
 
 #include "Algorithms.h"
 #include "database/ObjectStoreWrapper.h"
 #include "Localization.h"
+#include "MashCalculator.h"
 #include "measurement/Amount.h"
 #include "measurement/ColorMethods.h"
 #include "measurement/IbuMethods.h"
@@ -302,6 +304,8 @@ public:
       emit this->m_self.changed(this->m_self.metaProperty(*property), QVariant::fromValue<NE *>(val.get()));
 
       this->m_self.recalcAll();
+      // Eg a new mash or new equipment means the mash might need adjusting (if it is set to adjust automatically)
+      this->m_self.scheduleMashAutoAdjust();
       return;
    }
 
@@ -1914,6 +1918,26 @@ void Recipe::setKey(int key) {
    this->m_brewLogs            .doSetKey(key);
    this->m_instructions        .doSetKey(key);
 
+   //
+   // A mash that adjusts automatically to its recipe (see Mash::autoAdjust) can't be shared between recipes.  So, if we
+   // are a copy of a recipe that has one (eg because the user copied the recipe, or we are a new version of it), we
+   // need our own copy of the mash.
+   //
+   if (auto const mash = this->mash(); mash && mash->keptInSync()) {
+      QList<Recipe *> const otherRecipesUsingMash = ObjectStoreWrapper::findAllMatching<Recipe>(
+         [this, &mash](Recipe const * recipe) {
+            // NB: Can't use Recipe::uses<Mash> here as it is specialised further down this file
+            return recipe != this && !recipe->deleted() && recipe->m_mashId == mash->key();
+         }
+      );
+      if (!otherRecipesUsingMash.isEmpty()) {
+         std::shared_ptr<Mash> copy = ObjectStoreWrapper::insertCopyOf(*mash);
+         copy->setName(Mash::tr("%1 (copy for %2)").arg(mash->name(), this->name()));
+         qInfo() << Q_FUNC_INFO << "Recipe #" << key << "using" << *copy << "instead of auto-adjusting" << *mash;
+         this->setMash(copy);
+      }
+   }
+
    // By convention, a new Recipe with no ancestor should have itself as its own ancestor.  So we need to check whether
    // to set that default here (which will then result in a DB update).  Otherwise, ancestor ID would remain as null.
    //
@@ -2396,6 +2420,7 @@ void Recipe::setBatchSize_l(double var) {
    // boil/batch volumes depend on the target volumes when there are no mash
    // steps to actually provide an estimate for the volumes.
    recalcAll();
+   this->scheduleMashAutoAdjust();
 }
 
 void Recipe::setEfficiency_pct(double val) {
@@ -2787,6 +2812,13 @@ double Recipe::roWaterSparge_pct() const { return m_roWaterSparge_pct; }
 
 void Recipe::recalcIfNeeded(QString classNameOfWhatWasAddedOrChanged) {
    qDebug() << Q_FUNC_INFO << classNameOfWhatWasAddedOrChanged;
+
+   // Changes to the grain bill (or equipment) might mean the mash needs adjusting, if it's set to adjust automatically
+   if (classNameOfWhatWasAddedOrChanged ==                 Equipment::staticMetaObject.className() ||
+       classNameOfWhatWasAddedOrChanged ==               Fermentable::staticMetaObject.className() ||
+       classNameOfWhatWasAddedOrChanged == RecipeAdditionFermentable::staticMetaObject.className()) {
+      this->scheduleMashAutoAdjust();
+   }
    // We could just compare with "Hop", "Equipment", etc but there's then no compile-time checking of typos.  Using
    // ::staticMetaObject.className() is a bit more clunky but it's safer.
 
@@ -2811,6 +2843,28 @@ void Recipe::recalcIfNeeded(QString classNameOfWhatWasAddedOrChanged) {
       return;
    }
 
+   return;
+}
+
+void Recipe::scheduleMashAutoAdjust() {
+   if (this->key() <= 0 || this->m_mashAutoAdjustScheduled) {
+      return;
+   }
+   auto const mash = this->mash();
+   if (!mash || !mash->keptInSync()) {
+      return;
+   }
+   this->m_mashAutoAdjustScheduled = true;
+   // The timer is owned by us, so won't fire if we are destroyed in the meantime
+   QTimer::singleShot(
+      0,
+      this,
+      [this]() {
+         this->m_mashAutoAdjustScheduled = false;
+         MashCalculator::autoAdjust(*this);
+         return;
+      }
+   );
    return;
 }
 
@@ -3242,6 +3296,24 @@ void Recipe::acceptChangeToContainedObject(QMetaProperty prop, QVariant val) {
    //
    // If it's the equipment that changed then we have some extra stuff to do...
    //
+   //
+   // If our mash is set to adjust automatically, changes to the equipment or boil (eg pre-boil size) mean it might need
+   // adjusting, as do changes to some of the mash's own fields.  (But not changes to its steps, as the user would not
+   // expect to have those changes overwritten.)
+   //
+   if (qobject_cast<Equipment *>(signalSender) || qobject_cast<Boil *>(signalSender)) {
+      this->scheduleMashAutoAdjust();
+   } else if (qobject_cast<Mash *>(signalSender)) {
+      if (propName == *PropertyNames::Mash::keptInSync            ||
+          propName == *PropertyNames::Mash::grainTemp_c           ||
+          propName == *PropertyNames::Mash::initialTunTemp_c      ||
+          propName == *PropertyNames::Mash::spargeTemp_c          ||
+          propName == *PropertyNames::Mash::tunWeight_kg          ||
+          propName == *PropertyNames::Mash::tunSpecificHeat_calGC) {
+         this->scheduleMashAutoAdjust();
+      }
+   }
+
    if (Equipment const * equipment = qobject_cast<Equipment *>(signalSender)) {
       qDebug() << Q_FUNC_INFO << "Equipment #" << equipment->key() << "(ours=" << this->m_equipmentId << ")";
       Q_ASSERT(equipment->key() == this->m_equipmentId);
@@ -3349,7 +3421,7 @@ double Recipe::targetCollectedWortVol_l() const {
 
    //
    // NOTE: We used to subtract Equipment::getLauteringDeadspaceLoss_l() here.  But this is the wrong way round: wort
-   // that is lost in the mash/lauter tun means we need to collect _more_ from the mash, not less.  (MashWizard then
+   // that is lost in the mash/lauter tun means we need to collect _more_ from the mash, not less.  (The old Mash Wizard then
    // added the loss back on when working out sparge water, so the two cancelled out, and the loss was never actually
    // allowed for.  Thus the pre-boil volume came out short by the amount of the loss.)  Now, this function is about
    // what reaches the kettle, and targetTotalMashVol_l adds on the losses.

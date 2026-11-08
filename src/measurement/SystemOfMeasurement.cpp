@@ -71,10 +71,10 @@ QString Measurement::getDisplayName(Measurement::SystemOfMeasurement const syste
       case Measurement::SystemOfMeasurement::BrewingConcentration        : return QObject::tr("Brewing Concentration"              );
       case Measurement::SystemOfMeasurement::SpecificHeatCapacityCalories: return QObject::tr("Specific Heat Capacity Calories per");
       case Measurement::SystemOfMeasurement::SpecificHeatCapacityJoules  : return QObject::tr("Specific Heat Capacity Joules per"  );
-      case Measurement::SystemOfMeasurement::SpecificHeatCapacityBtus    : return QObject::tr("Specific Heat Capacity Btus per"    );
+      case Measurement::SystemOfMeasurement::SpecificHeatCapacityBtus    : return QObject::tr("Specific Heat Capacity BTUs per"    );
       case Measurement::SystemOfMeasurement::HeatCapacityKilocalories    : return QObject::tr("Heat Capacity Kilocalories per"     );
       case Measurement::SystemOfMeasurement::HeatCapacityJoules          : return QObject::tr("Heat Capacity Joules per"           );
-      case Measurement::SystemOfMeasurement::HeatCapacityBtus            : return QObject::tr("Heat Capacity Btus per"             );
+      case Measurement::SystemOfMeasurement::HeatCapacityBtus            : return QObject::tr("Heat Capacity BTUs per"             );
    }
    // It's a coding error if we get here
    Q_UNREACHABLE();

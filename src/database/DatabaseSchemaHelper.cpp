@@ -20,6 +20,7 @@
 #include "database/DatabaseSchemaHelper.h"
 
 #include <algorithm> // For std::sort and std::set_difference
+#include <utility>   // For std::pair
 
 #include <QDebug>
 #include <QMessageBox>
@@ -37,7 +38,7 @@
 #include "database/DbTransaction.h"
 #include "database/ObjectStoreTyped.h"
 
-int constexpr DatabaseSchemaHelper::latestVersion = 21;
+int constexpr DatabaseSchemaHelper::latestVersion = 23;
 
 // Default namespace hides functions from everything outside this file.
 namespace {
@@ -3478,6 +3479,55 @@ namespace {
       return executeSqlQueries(q, migrationQueries);
    }
 
+   /**
+    * \brief Fix bugs in migrate_to_21
+    */
+   bool migrate_to_22([[maybe_unused]] Database & db, BtSqlQuery & q) {
+      //
+      // The brew_log columns we rename here only have the old names in databases that were upgraded from an older
+      // schema.  A database that was created from scratch at version 21 (by DatabaseSchemaHelper::create, which makes
+      // tables from the ObjectStore definitions rather than by running the migrations) already has the new names, and
+      // trying to rename a non-existent column is an error that would make the whole migration fail.  So, as in
+      // migrate_to_21, we have to check ourselves which columns exist.
+      //
+      QVector<QueryAndParameters> migrationQueries;
+      QSqlRecord const brewLogColumns = q.driver()->record("brew_log");
+      for (auto const & [oldName, newName] : {
+         std::pair{"expected_volume_into_fermentor_l", "expected_volume_into_fv_l"},
+         std::pair{"measured_volume_into_fermentor_l", "measured_volume_into_fv_l"}
+      }) {
+         if (brewLogColumns.contains(oldName)) {
+            migrationQueries.append({QString("ALTER TABLE brew_log RENAME COLUMN %1 TO %2").arg(oldName, newName)});
+         }
+      }
+      return executeSqlQueries(q, migrationQueries);
+   }
+
+   /**
+    * \brief Add:
+    *          - "locked" flag to mash, boil and fermentation (see model/LockablePropertyBase.h)
+    *          - "auto adjust" flag to mash
+    *          - "amount fixed" and "infuse temp fixed" flags to mash_step
+    *
+    *        All of these default to false for existing records.
+    */
+   bool migrate_to_23(Database & db, BtSqlQuery & q) {
+      QString const boolType = db.getDbNativeTypeName<bool>();
+      QVector<QueryAndParameters> const migrationQueries{
+         {QString("ALTER TABLE mash         ADD COLUMN locked            %1").arg(boolType)},
+         {QString("ALTER TABLE mash         ADD COLUMN auto_adjust       %1").arg(boolType)},
+         {QString("ALTER TABLE boil         ADD COLUMN locked            %1").arg(boolType)},
+         {QString("ALTER TABLE fermentation ADD COLUMN locked            %1").arg(boolType)},
+         {QString("ALTER TABLE mash_step    ADD COLUMN amount_fixed      %1").arg(boolType)},
+         {QString("ALTER TABLE mash_step    ADD COLUMN infuse_temp_fixed %1").arg(boolType)},
+         {QString("UPDATE mash         SET locked = ?, auto_adjust = ?"            ), {QVariant{false}, QVariant{false}}},
+         {QString("UPDATE boil         SET locked = ?"                             ), {QVariant{false}}},
+         {QString("UPDATE fermentation SET locked = ?"                             ), {QVariant{false}}},
+         {QString("UPDATE mash_step    SET amount_fixed = ?, infuse_temp_fixed = ?"), {QVariant{false}, QVariant{false}}},
+      };
+      return executeSqlQueries(q, migrationQueries);
+   }
+
    //
    // At some future point:
    //   - maybe fix remaining issues listed in ObjectStore legacyBadTypes
@@ -3514,6 +3564,8 @@ namespace {
          case 18: ret &= migrate_to_19 (database, sqlQuery); break;
          case 19: ret &= migrate_to_20 (database, sqlQuery); break;
          case 20: ret &= migrate_to_21 (database, sqlQuery); break;
+         case 21: ret &= migrate_to_22 (database, sqlQuery); break;
+         case 22: ret &= migrate_to_23 (database, sqlQuery); break;
          default:
             qCritical() << QString("Unknown version %1").arg(oldVersion);
             return false;

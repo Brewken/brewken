@@ -189,7 +189,7 @@
 #
 #
 project('brewken', 'cpp',
-        version: '5.2.0',
+        version: '5.2.1',
         license: 'GPL-3.0-or-later',
         meson_version: '>=0.63.0',
         default_options : ['cpp_std=c++23',
@@ -369,6 +369,24 @@ if compiler.get_id() == 'gcc'
       add_global_arguments     ('-rdynamic', language : 'cpp')
       add_global_link_arguments('-rdynamic', language : 'cpp')
    endif
+endif
+
+#
+# On x86-64, we want to be explicit that we are building for the baseline instruction set (ie the original AMD64 spec,
+# sometimes called x86-64-v1), so that the resulting binaries run on older CPUs.  Otherwise, we are at the mercy of
+# whatever the compiler's default target is on the build machine.  Eg, the GitHub ubuntu-26.04 runner image is an
+# amd64v3 install whose toolchain targets x86-64-v3 (AVX2, BMI2, FMA, etc), and binaries built there fail on
+# pre-Haswell CPUs with "CPU ISA level is lower than required".  See https://github.com/Brewtarget/brewtarget/issues/1179
+#
+# We need the flags at link time as well as compile time because, with LTO, code generation happens at the link step.
+#
+# Note that this does not protect against pre-compiled objects that we link in from the build system (eg static
+# libraries or C runtime objects) having been built for a higher ISA level, which is why we also check the packaged
+# binaries in CI.
+#
+if host_machine.cpu_family() == 'x86_64' and compiler.get_id() in ['gcc', 'clang']
+   add_global_arguments     (['-march=x86-64', '-mtune=generic'], language : 'cpp')
+   add_global_link_arguments(['-march=x86-64', '-mtune=generic'], language : 'cpp')
 endif
 
 if host_machine.system() == 'darwin'
@@ -642,7 +660,9 @@ message('OpenSSL Library:', openSslDependency.name(), 'found =', openSslDependen
 #
 # We periodically need to run the following, to update to the latest version of Blaze:
 #
-#    git submodule update --remote
+#    git submodule update --remote third-party/blaze
+#    git add third-party/blaze
+#    git commit -m "Update Blaze submodule"
 #
 # In order for Meson to find Blaze as a dependency, we need to "outsource" things to CMake's `find_package()` command
 # (via the `method : 'cmake'` option on Meson's `dependency()` command).  This is a bit fiddly because Blaze consists of
@@ -812,8 +832,7 @@ commonSourceFiles = files([
    'src/Localization.cpp',
    'src/Logging.cpp',
    'src/MainWindow.cpp',
-   'src/MashDesigner.cpp',
-   'src/MashWizard.cpp',
+   'src/MashCalculator.cpp',
    'src/OptionDialog.cpp',
    'src/PersistentSettings.cpp',
    'src/PrintAndPreviewDialog.cpp',
@@ -1027,6 +1046,7 @@ commonSourceFiles = files([
    'src/widgets/CommonContextMenus.cpp',
    'src/widgets/EnumeratedItemsWidget.cpp',
    'src/widgets/InfoButton.cpp',
+   'src/widgets/LockAndShareBar.cpp',
    'src/widgets/InfoText.cpp',
    'src/widgets/SelectionControl.cpp',
    'src/widgets/SmartAmountSettings.cpp',
@@ -1052,6 +1072,8 @@ applicationMainSourceFile = files([
 #
 unitTestExtraSourceFiles = files([
    'src/unitTests/CoreTests.cpp',
+   'src/unitTests/DatabaseTests.cpp',
+   'src/unitTests/MashCalculatorTests.cpp',
    'src/unitTests/MeasurementTests.cpp',
    'src/unitTests/RecipeCalcTests.cpp',
    'src/unitTests/SerializationTests.cpp',
@@ -1084,8 +1106,6 @@ mocHeaders = files([
    'src/IbuGuSlider.h',
    'src/LatestReleaseFinder.h',
    'src/MainWindow.h',
-   'src/MashDesigner.h',
-   'src/MashWizard.h',
    'src/OptionDialog.h',
    'src/PrintAndPreviewDialog.h',
    'src/RangedSlider.h',
@@ -1247,6 +1267,7 @@ mocHeaders = files([
    'src/widgets/BtOptionalDateEdit.h',
    'src/widgets/EnumeratedItemsWidget.h',
    'src/widgets/InfoButton.h',
+   'src/widgets/LockAndShareBar.h',
    'src/widgets/InfoText.h',
    'src/widgets/SelectionControl.h',
    'src/widgets/SmartDigitWidget.h',
@@ -1260,6 +1281,8 @@ mocHeaders = files([
 
 unitTestMocHeaders = files([
    'src/unitTests/CoreTests.h',
+   'src/unitTests/DatabaseTests.h',
+   'src/unitTests/MashCalculatorTests.h',
    'src/unitTests/MeasurementTests.h',
    'src/unitTests/RecipeCalcTests.h',
    'src/unitTests/SerializationTests.h',
@@ -1285,10 +1308,8 @@ uiFiles = files([
    'ui/fermentationStepEditor.ui',
    'ui/hopEditor.ui',
    'ui/mainWindow.ui',
-   'ui/mashDesigner.ui',
    'ui/mashEditor.ui',
    'ui/mashStepEditor.ui',
-   'ui/mashWizard.ui',
    'ui/miscEditor.ui',
    'ui/ogCorrectionTool.ui',
    'ui/optionsDialog.ui',
@@ -1358,6 +1379,7 @@ filesToInstall_data = files([
    'data/DefaultContent003-Ingredients-Hops-Yeasts.json',
    'data/DefaultContent004-MoreYeasts.json',
    'data/DefaultContent005-Fermentables-Recipes.beer',
+   'data/DefaultContent006-MashProfiles.beer',
 ])
 
 filesToInstall_icons = files([
@@ -1948,10 +1970,26 @@ test('Test type lookups'                     , testRunner, args : ['CoreTests', 
 test('Test MultiVector'                      , testRunner, args : ['CoreTests', 'testMultiVector'                            ], suite : 'core')
 # Need a bit longer than the default 30 second timeout for the log rotation test on some platforms
 test('Test log rotation'                     , testRunner, args : ['CoreTests', 'testLogRotation'                            ], suite : 'core', timeout : 60)
+test('Test DB upgrade from Brewtarget 2.3.1'  , testRunner, args : ['DatabaseTests', 'testUpgradeBrewtarget231Database'      ], suite : 'database')
+test('Test locking and sharing'              , testRunner, args : ['DatabaseTests', 'testLockingAndSharing'                 ], suite : 'database')
+test('Test mash calc strike water'           , testRunner, args : ['MashCalculatorTests', 'testStrikeWater'        ], suite : 'mash')
+test('Test mash calc fixed values'           , testRunner, args : ['MashCalculatorTests', 'testFixedValues'        ], suite : 'mash')
+test('Test mash calc step infusions'         , testRunner, args : ['MashCalculatorTests', 'testStepInfusions'      ], suite : 'mash')
+test('Test mash calc decoction'              , testRunner, args : ['MashCalculatorTests', 'testDecoction'          ], suite : 'mash')
+test('Test mash calc sparge'                 , testRunner, args : ['MashCalculatorTests', 'testSparge'             ], suite : 'mash')
+test('Test mash calc no sparge'              , testRunner, args : ['MashCalculatorTests', 'testNoSparge'           ], suite : 'mash')
+test('Test mash calc errors and warnings'    , testRunner, args : ['MashCalculatorTests', 'testErrorsAndWarnings'  ], suite : 'mash')
+test('Test mash calc sensible temperatures'  , testRunner, args : ['MashCalculatorTests', 'testSensibleTemperatures'], suite : 'mash')
+test('Test mash calc check'                  , testRunner, args : ['MashCalculatorTests', 'testCheck'              ], suite : 'mash')
+test('Test mash calc rounded values'         , testRunner, args : ['MashCalculatorTests', 'testRoundedValues'      ], suite : 'mash')
+test('Test mash calc with recipe'            , testRunner, args : ['MashCalculatorTests', 'testWithRecipe'         ], suite : 'mash')
+test('Test mash calc example profiles'       , testRunner, args : ['MashCalculatorTests', 'testExampleProfiles'    ], suite : 'mash')
+test('Test mash auto adjust'                 , testRunner, args : ['MashCalculatorTests', 'testAutoAdjust'         ], suite : 'mash')
 test('Test unit conversions'                 , testRunner, args : ['MeasurementTests', 'testUnitConversions'                 ], suite : 'measurement')
 test('Test unit inverses'                    , testRunner, args : ['MeasurementTests', 'testUnitInverses'                    ], suite : 'measurement')
 test('Test number display and parsing'       , testRunner, args : ['MeasurementTests', 'testNumberDisplayAndParsing'         ], suite : 'measurement')
 test('Test algorithms'                       , testRunner, args : ['MeasurementTests', 'testAlgorithms'                      ], suite : 'measurement')
+test('Test percentage decimal places'        , testRunner, args : ['MeasurementTests', 'testPercentageDecimalPlaces'         ], suite : 'measurement')
 test('Test recipe calculations - all grain'  , testRunner, args : ['RecipeCalcTests', 'recipeCalcTest_allGrain'              ], suite : 'recipe')
 test('Test post boil loss OG'                , testRunner, args : ['RecipeCalcTests', 'postBoilLossOgTest'                   ], suite : 'recipe')
 test('Test boil addition timing'             , testRunner, args : ['RecipeCalcTests', 'testBoilAdditionTiming'               ], suite : 'recipe')
@@ -1967,6 +2005,7 @@ test('Test dotBeer addition step correction' , testRunner, args : ['Serializatio
 test('Test brew log calcs'                   , testRunner, args : ['SerializationTests', 'testBrewLogCalcs'                  ], suite : 'serialization')
 test('Test dotBeer version handling'         , testRunner, args : ['SerializationTests', 'testDotBeerVersionHandling'        ], suite : 'serialization')
 test('Test dotBeer export'                   , testRunner, args : ['SerializationTests', 'testDotBeerExport'                 ], suite : 'serialization')
+test('Test dotBeer locked'                   , testRunner, args : ['SerializationTests', 'testDotBeerLocked'                 ], suite : 'serialization')
 test('Test clear unused optional vessels'    , testRunner, args : ['SerializationTests', 'testClearUnusedOptionalVessels'    ], suite : 'serialization')
 test('Test BeerXML null yield'               , testRunner, args : ['SerializationTests', 'testBeerXmlNullYield'              ], suite : 'serialization')
 test('Test NullSentinel'                     , testRunner, args : ['SerializationTests', 'testNullSentinel'                  ], suite : 'serialization')

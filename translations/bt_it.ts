@@ -2823,6 +2823,10 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <source>Contained in Folder Path</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Locked</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Derived::StockUseClass</name>
@@ -4528,6 +4532,33 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
 </context>
 <context>
+    <name>LockAndShareBar</name>
+    <message>
+        <source>Make a copy for this recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Make a copy that this recipe will use instead, so you can change it without affecting anything else.  Any changes you have already made in this editor are kept, and will be saved to the copy when you click Save.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unlock…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow this to be changed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Prevent this from being changed.  You will still be able to use it in recipes, and to make copies of it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Open</source>
@@ -4813,6 +4844,29 @@ If you need help, please open an issue at %1</source>
         <source>Primary fermentation for %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Used by a locked recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>Shared with %n other recipe(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source> · </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>⚠ Mash has problems</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -4884,12 +4938,199 @@ If you need help, please open an issue at %1</source>
         <source>Mash Water</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Automatically Adjust</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 (copy for %2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MashCalculator</name>
+    <message>
+        <source>%1: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Batch Sparge %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fly Sparge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There are no mash steps.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There are no grains in the mash.  You need some mash-stage fermentable additions before the mash can be calculated.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The first step must be an infusion (ie adding the strike water).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sparge steps must come after all the other steps.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The mash thickness must be positive.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>With no sparge, this step has to make up the total water needed (%1), but the other steps already add %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot reach %1 with water at %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The infusion amount must be more than zero.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try a thinner mash (ie more water).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try more water or a lower step temperature.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The water would need to be at %1, which is above boiling point (%2).  %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 of water at %2 will give a mash temperature of %3 rather than %4.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The mash is already at boiling point.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The decoction amount (%1) must be between zero and the volume of the mash (%2).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A decoction of %1 will give a mash temperature of %2 rather than %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A decoction cannot lower the temperature of the mash.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot reach %1 by decoction, even by boiling the whole mash.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>At its fullest, the mash will be about %1, which is more than the capacity of the mash tun (%2).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The infusions add up to %1 of water, but %2 is needed in total.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There is no water left for sparging: the total water needed is %1, but the mash steps already add %2%3.  You will collect more wort than needed.  Try a thicker mash (ie less water).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The mash and sparge water add up to %1, but %2 is needed in total.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 of water at %2 will give a grain bed temperature of %3 rather than %4.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The sparge water would need to be at %1, which is above boiling point (%2).  Try a lower sparge temperature or more sparge water.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The initial grain temperature is %1.  Please set it to the temperature of the grain before mashing, which is normally room temperature.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The step temperature is %1, which needs to be between freezing and boiling point (%2).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The mash would already be hotter than %1 at this point.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is more water than is needed to reach %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>With no sparge, this step has to add the rest of the water needed.  Try having a sparge, or more water in the earlier steps.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try a thicker mash (ie less water).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To reach %1 with %2 of water, the water would need to be at %3, which is colder than the coldest water available (taken to be at the initial grain temperature, %4).  %5  %6</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The grain bed is already hotter than %1, so we use water at that temperature, and the bed will be at about %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Even with boiling water, the grain bed will only reach %1 rather than %2.  This is usually fine for a batch sparge, but you could use fewer batches (ie more water per batch) or a lower sparge temperature.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No amount is set.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The initial mash tun temperature is %1, which needs to be between freezing and boiling point (%2).  (If it is not set, we assume the tun is at the same temperature as the grain.)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The step temperature was %1, which doesn&apos;t make sense, so it has been set to %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The infusion temperature is pinned, but has not been set.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This infusion does not change the temperature of the mash, so its amount cannot be calculated.  It needs to be set and pinned.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try a smaller pinned amount, or unpinning it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> and the pinned sparge amounts add %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The sparge water temperature is pinned, but has not been set.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MashDesigner</name>
     <message>
         <source>No Fermentables</source>
-        <translation>Non fermentabili</translation>
+        <translation type="vanished">Non fermentabili</translation>
     </message>
     <message>
         <source>Your recipe must have fermentables to design a mash.</source>
@@ -4897,34 +5138,87 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>No Equipment</source>
-        <translation>Nessuna attrezzatura</translation>
+        <translation type="vanished">Nessuna attrezzatura</translation>
     </message>
     <message>
         <source>You have not set an equipment for this recipe. We really cannot continue without one.</source>
-        <translation>Non è stata impostata un&apos; apparecchiatura per questa ricetta. Non possiamo continuare senza.</translation>
+        <translation type="vanished">Non è stata impostata un&apos; apparecchiatura per questa ricetta. Non possiamo continuare senza.</translation>
     </message>
     <message>
         <source>Tun Temp</source>
-        <translation>Temperatura Tun</translation>
+        <translation type="vanished">Temperatura Tun</translation>
     </message>
     <message>
         <source>Enter the temperature of the tun before your first infusion.</source>
-        <translation>Inserisci la temperatura del tun prima della prima infusione.</translation>
+        <translation type="vanished">Inserisci la temperatura del tun prima della prima infusione.</translation>
     </message>
     <message>
         <source>Decoction error</source>
-        <translation>Errore Decotto</translation>
+        <translation type="vanished">Errore Decotto</translation>
     </message>
     <message>
         <source>The first mash step cannot be a decoction.</source>
         <translation type="vanished">Il primo mash non può essere decotto.</translation>
     </message>
+</context>
+<context>
+    <name>MashEditor</name>
     <message>
-        <source>Your recipe must have fermentables to design a m_mash.</source>
+        <source>No sparge</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The first m_mash step cannot be a decoction.</source>
+        <source>Batch sparge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fly sparge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe is locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Make a copy of mash?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Make a copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To adjust the mash, edit it from a recipe that uses it (eg with the Edit button on the recipe&apos;s Mash tab), as the amounts and temperatures depend on the recipe&apos;s grain bill and equipment.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjusts the water amounts and temperatures in the steps to suit the grain bill and equipment of recipe &quot;%1&quot;.  Pinned values are not changed.  Changes to the steps take effect straight away (ie without clicking Save).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>⚠ This mash has problems.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The recipe &quot;%1&quot; is locked, so its mash cannot be changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjusting the mash changes its steps to suit the grain bill and equipment of recipe &quot;%1&quot;.
+
+Do you want to make a copy of this mash for that recipe, so that you can do this without affecting anything else?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not adjust the mash, so nothing has been changed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash adjusted for recipe &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash adjusted for recipe &quot;%1&quot;, but please check the following:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4994,6 +5288,22 @@ If you need help, please open an issue at %1</source>
         <source>Water:Grain</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Amount Fixed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Infuse Temperature Fixed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished">No</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished">Si</translation>
+    </message>
 </context>
 <context>
     <name>MashStepTableModel</name>
@@ -5029,6 +5339,22 @@ If you need help, please open an issue at %1</source>
         <source>Time</source>
         <translation type="vanished">Tempo</translation>
     </message>
+    <message>
+        <source>%1: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pinned: not changed when adjusting the mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pinned amount (not changed when adjusting the mash)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pinned infusion temperature (not changed when adjusting the mash)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MashTableModel</name>
@@ -5041,35 +5367,35 @@ If you need help, please open an issue at %1</source>
     <name>MashWizard</name>
     <message>
         <source>Mash thickness (%1/%2)</source>
-        <translation>Mash spessore (%1/%2)</translation>
+        <translation type="vanished">Mash spessore (%1/%2)</translation>
     </message>
     <message>
         <source>Bad thickness</source>
-        <translation>Cattivo Spessore</translation>
+        <translation type="vanished">Cattivo Spessore</translation>
     </message>
     <message>
         <source>You must have a positive mash thickness.</source>
-        <translation>È necessario avere uno spessore positivo mash.</translation>
+        <translation type="vanished">È necessario avere uno spessore positivo mash.</translation>
     </message>
     <message>
         <source>No steps</source>
-        <translation>Non ci sono passaggi</translation>
+        <translation type="vanished">Non ci sono passaggi</translation>
     </message>
     <message>
         <source>There must be at least one mash step to run the wizard.</source>
-        <translation>Ci deve essere almeno un mash per eseguire la procedura guidata.</translation>
+        <translation type="vanished">Ci deve essere almeno un mash per eseguire la procedura guidata.</translation>
     </message>
     <message>
         <source>First step</source>
-        <translation>Primo passo</translation>
+        <translation type="vanished">Primo passo</translation>
     </message>
     <message>
         <source>Your first mash step must be an infusion.</source>
-        <translation>Il primo passo deve essere una mescolanza di infusione.</translation>
+        <translation type="vanished">Il primo passo deve essere una mescolanza di infusione.</translation>
     </message>
     <message>
         <source>Mash too thick</source>
-        <translation>Mash troppo spesso</translation>
+        <translation type="vanished">Mash troppo spesso</translation>
     </message>
     <message>
         <source>Your mash is too thick for desired temp. at first step.</source>
@@ -5077,15 +5403,15 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Decoction error</source>
-        <translation>Errore Decozione</translation>
+        <translation type="vanished">Errore Decozione</translation>
     </message>
     <message>
         <source>Something went wrong in decoction calculation.</source>
-        <translation>Qualcosa è andato storto nel calcolo decotto.</translation>
+        <translation type="vanished">Qualcosa è andato storto nel calcolo decotto.</translation>
     </message>
     <message>
         <source>Sparge temp.</source>
-        <translation>Temperatura di Sparge.</translation>
+        <translation type="vanished">Temperatura di Sparge.</translation>
     </message>
     <message>
         <source>In order to hit your sparge temp, the sparge water must be above boiling. Lower your sparge temp, or allow for more sparge water.</source>
@@ -5093,63 +5419,11 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Too much wort</source>
-        <translation>Troppo Mosto</translation>
+        <translation type="vanished">Troppo Mosto</translation>
     </message>
     <message>
         <source>You have too much wort from the mash for your boil size. I suggest increasing the boil size by increasing the boil time, or reducing your mash thickness.</source>
         <translation type="vanished">Hai mosto troppo dal mash per il formato ebollizione. Suggerisco l&apos;aumento delle dimensioni ebollizione aumentando il tempo di ebollizione, o ridurre lo spessore mash.</translation>
-    </message>
-    <message>
-        <source>Batch Sparge %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fly Sparge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Infusion temp.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No grains in the mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Check the &apos;Fermentables&apos; tab.  You need some mash-stage grain additions before you can run the wizard.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No mash steps</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You need to have mash steps before you can run the wizard.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your mash is too thick for desired temperature at first step.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Too much water</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cannot adjust volume of last step to meet target runoff volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>In order to hit your target temp on the final step, the infusion water would need to be above boiling.  Lower your initial infusion volume.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>In order to hit your sparge temp, the sparge water must be above boiling.  Lower your sparge temp, or allow for more sparge water.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You have too much wort from the mash for your boil size.  Try increasing the boil size by increasing the boil time, or reducing your mash thickness.</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5473,6 +5747,105 @@ If you need help, please open an issue at %1</source>
         <source>%1 #%2</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>This new %1 will be used by this recipe when you click Save.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unlock %1?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Are you sure you want to unlock &quot;%1&quot;?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locking is there to stop this %1 being changed by accident.  If you want to make changes for one recipe, it is usually better to make a copy for that recipe instead.
+
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unlock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recipe is locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This recipe is locked, so you cannot add a %1 to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 for %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 (copy for %2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This %1 is not used by any recipe.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>This %1 is also used by %n other recipe(s): %2.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>This %1 is used by %n recipe(s): %2.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>It is locked, so it cannot be changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>It cannot be changed because it is used by %n locked recipe(s): %1.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Any changes you make here will affect all of them.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This %1 is used only by one recipe (%2).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step validation highlighting is therefore enabled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It cannot be changed because the recipe &quot;%1&quot; is locked.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use a copy of mash?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The mash &quot;%1&quot; adjusts automatically to the recipe that uses it (&quot;%2&quot;), so it can&apos;t be shared with another recipe.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you want to use a copy of it for this recipe?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use a copy</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NamedEntity</name>
@@ -5665,28 +6038,20 @@ If you need help, please open an issue at %1</source>
         <translation type="vanished">Cinese</translation>
     </message>
     <message>
-        <source>US traditional units</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>British imperial units</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Celsius</source>
-        <translation type="unfinished">Celsius</translation>
+        <translation type="obsolete">Celsius</translation>
     </message>
     <message>
         <source>Fahrenheit</source>
-        <translation type="unfinished">Fahrenheit</translation>
+        <translation type="obsolete">Fahrenheit</translation>
     </message>
     <message>
         <source>20C/20C Specific Gravity</source>
-        <translation type="unfinished">20C/20C Densità Specifica</translation>
+        <translation type="obsolete">20C/20C Densità Specifica</translation>
     </message>
     <message>
         <source>Plato/Brix/Balling</source>
-        <translation type="unfinished">Plato/Brix/Balling</translation>
+        <translation type="obsolete">Plato/Brix/Balling</translation>
     </message>
     <message>
         <source>mm-dd-YYYY</source>
@@ -5702,11 +6067,11 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>SRM</source>
-        <translation type="unfinished">SRM</translation>
+        <translation type="obsolete">SRM</translation>
     </message>
     <message>
         <source>EBC</source>
-        <translation type="unfinished">EBC</translation>
+        <translation type="obsolete">EBC</translation>
     </message>
     <message>
         <source>Tinseth&apos;s approximation</source>
@@ -5745,18 +6110,6 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Metric / SI units</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lintner</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>WK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Choose User Data Directory</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5785,15 +6138,15 @@ If you need help, please open an issue at %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Lovibond</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Conversion Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Data transfer failed.  See log file for more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6543,10 +6896,6 @@ Log file may contain more details.</source>
         <translation type="obsolete">Aggiungi ingredienti selezionati alla ricetta</translation>
     </message>
     <message>
-        <source>Specific Heat Capacity Btus per</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>BTU/lb·F</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6879,10 +7228,6 @@ Program will now exit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Heat Capacity Btus per</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>kc/C</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7088,6 +7433,14 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Primary fermentation for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specific Heat Capacity BTUs per</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Heat Capacity BTUs per</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9396,6 +9749,10 @@ Il Volume finale del primo è %1.</translation>
     <name>UnitAndScalePopUpMenu</name>
     <message>
         <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Decimal Places</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12509,7 +12866,7 @@ Tabs</source>
     </message>
     <message>
         <source>Invoke the mash wizard</source>
-        <translation>Richiamare la procedura guidata del mosto</translation>
+        <translation type="vanished">Richiamare la procedura guidata del mosto</translation>
     </message>
     <message>
         <source>Mash wiz</source>
@@ -12925,11 +13282,11 @@ Tabs</source>
     </message>
     <message>
         <source>Mash Designer</source>
-        <translation type="unfinished">Progettazione Ammostamenti</translation>
+        <translation type="obsolete">Progettazione Ammostamenti</translation>
     </message>
     <message>
         <source>Mash Wizard</source>
-        <translation type="unfinished">Mash Wizard</translation>
+        <translation type="obsolete">Mash Wizard</translation>
     </message>
     <message>
         <source>Inventory</source>
@@ -12999,12 +13356,32 @@ Tabs</source>
         <source>Calculated preboil volume - See Boil tab below</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Whether this mash is shared with other recipes and/or locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether this boil is shared with other recipes and/or locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether this fermentation is shared with other recipes and/or locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjust the amounts and temperatures of the mash water for this recipe (in the Mash Editor)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjust Mash…</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>mashDesigner</name>
     <message>
         <source>Mash Designer</source>
-        <translation>Progettazione Ammostamenti</translation>
+        <translation type="vanished">Progettazione Ammostamenti</translation>
     </message>
     <message>
         <source>Name</source>
@@ -13020,7 +13397,7 @@ Tabs</source>
     </message>
     <message>
         <source>Time</source>
-        <translation>Tempo</translation>
+        <translation type="vanished">Tempo</translation>
     </message>
     <message>
         <source>Batch Sparge</source>
@@ -13028,63 +13405,51 @@ Tabs</source>
     </message>
     <message>
         <source>Next</source>
-        <translation>Prossimo</translation>
+        <translation type="vanished">Prossimo</translation>
     </message>
     <message>
         <source>Finish</source>
-        <translation>Fine</translation>
+        <translation type="vanished">Fine</translation>
     </message>
     <message>
         <source>Infusion/Decoction Amount</source>
-        <translation>Importo di Infusione/Decotto</translation>
+        <translation type="vanished">Importo di Infusione/Decotto</translation>
     </message>
     <message>
         <source>min</source>
-        <translation>min</translation>
+        <translation type="vanished">min</translation>
     </message>
     <message>
         <source>max</source>
-        <translation>max</translation>
+        <translation type="vanished">max</translation>
     </message>
     <message>
         <source>0</source>
-        <translation>0</translation>
+        <translation type="vanished">0</translation>
     </message>
     <message>
         <source>Infusion Temp</source>
-        <translation>Temperatura di infusione</translation>
+        <translation type="vanished">Temperatura di infusione</translation>
     </message>
     <message>
         <source>Total Collected Wort</source>
-        <translation>Totale Mosto Raccolto</translation>
+        <translation type="vanished">Totale Mosto Raccolto</translation>
     </message>
     <message>
         <source>vol</source>
-        <translation>Vol</translation>
+        <translation type="vanished">Vol</translation>
     </message>
     <message>
         <source>Tun Fullness</source>
-        <translation>Pienezza del tino</translation>
+        <translation type="vanished">Pienezza del tino</translation>
     </message>
     <message>
         <source>tunVol</source>
-        <translation>Vol tino</translation>
+        <translation type="vanished">Vol tino</translation>
     </message>
     <message>
         <source>thickness</source>
-        <translation>Spessore</translation>
-    </message>
-    <message>
-        <source>&amp;Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tar&amp;get temp.</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Spessore</translation>
     </message>
 </context>
 <context>
@@ -13198,19 +13563,67 @@ Tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Used in the Mash Wizard.  It is better to set this on the sparge step itself.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>It is better to set this on the sparge step itself.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Initial temperature of the mash tun.  Used in the Mash Wizard and the Mash Designer, when calculating strike water temperature, to allow for the strike water heating up the mash tun.  If left blank, the tun is assumed to be at the same temperature as the grain.</source>
+        <source>It is better to set this on the Equipment (Mash Tun tab).  This value is only used if the recipe&apos;s equipment has a mash tun with no weight and specific heat set.  It is ignored if the equipment has no separate mash tun (ie the mash happens in the kettle), because the strike water is then heated in the same vessel as the mash.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>It is better to set this on the Equipment (Mash Tun tab).  This value is only used if the recipe&apos;s equipment has a mash tun with no weight and specific heat set.  It is ignored if the equipment has no separate mash tun (ie the mash happens in the kettle), because the strike water is then heated in the same vessel as the mash.</source>
+        <source>Sparge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Batches</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of batch sparges</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash thickness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Volume of strike water per mass of grain (not counting any water that sits below the grain bed).  Most often around 2.5 to 3.2 L/kg (1.2 to 1.5 qt/lb).  Not used if there is no sparge, as then all the water goes in the mash.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calculate</source>
+        <translation type="obsolete">Calcola</translation>
+    </message>
+    <message>
+        <source>Initial temperature of the mash tun.  Used when calculating the strike water temperature, to allow for the strike water heating up the mash tun.  If left blank, the tun is assumed to be at the same temperature as the grain.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjust water amounts and temperatures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>How the grain will be rinsed after the mash.  Changing this and clicking Adjust Now replaces any existing sparge steps.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change the amounts and temperatures of the strike water and other infusions, the amounts of any decoctions, and the amounts and temperatures of sparge water, to suit this recipe&apos;s grain bill and equipment.  Values you have pinned in a step are not changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjust Now</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjust the mash automatically whenever something it depends on changes, eg the recipe&apos;s grain bill or equipment.  (Changing the steps themselves does not trigger an adjustment, so pin any values you want to keep.)  A mash that adjusts automatically can only be used by one recipe, so it is copied if you use it in another recipe.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjust automatically whenever the recipe changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Used as the target grain bed temperature for new sparge steps when adjusting the mash.  It is better to set this on the sparge step itself.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13352,40 +13765,32 @@ Tabs</source>
         <source>Step Number</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>If ticked, adjusting the mash (in the Mash Editor) will not change this amount (but will use it to work out other values, eg the water temperature).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pinned</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If ticked, adjusting the mash (in the Mash Editor) will not change this temperature (but will use it to work out other values, eg the amount of water).</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>mashWizard</name>
     <message>
         <source>Mash Wizard</source>
-        <translation>Mash Wizard</translation>
+        <translation type="vanished">Mash Wizard</translation>
     </message>
     <message>
         <source>Mash thickness (L/kg)</source>
-        <translation>Spessore Mash (L/kg)</translation>
+        <translation type="vanished">Spessore Mash (L/kg)</translation>
     </message>
     <message>
         <source>Mash thickness (do not enter any units)</source>
         <translation type="vanished">Mash spessore (non inserire alcuna unità)</translation>
-    </message>
-    <message>
-        <source>No Spar&amp;ge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fl&amp;y Sparge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ba&amp;tch Sparge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Batches</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This wizard calculates the correct mash temperatures and volumes for a single batch sparge mash.</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -13884,7 +14289,7 @@ Tabs</source>
     </message>
     <message>
         <source>Weight</source>
-        <translation>peso</translation>
+        <translation type="vanished">peso</translation>
     </message>
     <message>
         <source>Use SI units</source>
@@ -13900,7 +14305,7 @@ Tabs</source>
     </message>
     <message>
         <source>Temperature</source>
-        <translation>Temperatura</translation>
+        <translation type="vanished">Temperatura</translation>
     </message>
     <message>
         <source>Celsius</source>
@@ -13912,11 +14317,11 @@ Tabs</source>
     </message>
     <message>
         <source>Volume</source>
-        <translation>Volume</translation>
+        <translation type="vanished">Volume</translation>
     </message>
     <message>
         <source>Gravity</source>
-        <translation>Densità</translation>
+        <translation type="vanished">Densità</translation>
     </message>
     <message>
         <source>20C/20C Specific Gravity</source>
@@ -14159,10 +14564,6 @@ Tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Diastatic power</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Logging</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14250,6 +14651,14 @@ Tabs</source>
     </message>
     <message>
         <source>Show snapshots by default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Units &amp;&amp; Precision</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Decimal places</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

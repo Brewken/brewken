@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/NonPhysicalQuantity.cpp is part of Brewken, and is copyright the following authors 2022-2025:
+ * measurement/NonPhysicalQuantity.cpp is part of Brewken, and is copyright the following authors 2022-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -18,6 +18,25 @@
 #include <QDebug>
 #include <qglobal.h> // For Q_ASSERT and Q_UNREACHABLE
 
+std::optional<int> GetUltimateDefaultDecimalPlaces(NonPhysicalQuantity const nonPhysicalQuantity) {
+   switch (nonPhysicalQuantity) {
+      case NonPhysicalQuantity::Date           : return std::nullopt;
+      case NonPhysicalQuantity::String         : return std::nullopt;
+      case NonPhysicalQuantity::Percentage     : return 1;
+      case NonPhysicalQuantity::Bool           : return std::nullopt;
+      case NonPhysicalQuantity::Enum           : return std::nullopt;
+      case NonPhysicalQuantity::OrdinalNumeral : return std::nullopt;
+      case NonPhysicalQuantity::CardinalNumber : return std::nullopt;
+      case NonPhysicalQuantity::Dimensionless  : return std::nullopt;
+      case NonPhysicalQuantity::Currency       : return std::nullopt;
+      case NonPhysicalQuantity::Objects        : return std::nullopt;
+         // As usual, we don't want a default case here as we want the compiler to warn us if we missed a physical quantity
+      default: std::unreachable();
+   }
+   // It's a coding error if we get here!
+   Q_UNREACHABLE();
+}
+
 QString GetLoggableName(NonPhysicalQuantity nonPhysicalQuantity) {
    // See comment in measurement/PhysicalQuantity.cpp for why we use a switch and not an EnumStringMapping here
    switch (nonPhysicalQuantity) {
@@ -31,8 +50,8 @@ QString GetLoggableName(NonPhysicalQuantity nonPhysicalQuantity) {
       case NonPhysicalQuantity::Dimensionless  : return "Dimensionless" ;
       case NonPhysicalQuantity::Currency       : return "Currency"      ;
       case NonPhysicalQuantity::Objects        : return "Objects"       ;
-      // In C++23, we'd add:
-      // default: std::unreachable();
+      // As usual, we don't want a default case here as we want the compiler to warn us if we missed a physical quantity
+      default: std::unreachable();
    }
    // It's a coding error if we get here!
    Q_UNREACHABLE();

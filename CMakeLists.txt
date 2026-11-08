@@ -117,13 +117,21 @@ endif()
 #=======================================================================================================================
 # It's simplest to keep the project name all lower-case as it means we can use a lot more of the default settings for
 # Linux packaging (where directory names etc are expected to be all lower-case)
-project(brewken VERSION 5.2.0 LANGUAGES CXX)
+project(brewken VERSION 5.2.1 LANGUAGES CXX)
 message(STATUS "Building ${PROJECT_NAME} version ${PROJECT_VERSION} with CMake ${CMAKE_VERSION}")
 message(STATUS "PROJECT_SOURCE_DIR is ${PROJECT_SOURCE_DIR}")
-# Sometimes we do need the capitalised version of the project name
-set(capitalisedProjectName Brewken)
+
+# (a) First letter capitalised: "myproject" -> "Myproject"
+string(SUBSTRING "${CMAKE_PROJECT_NAME}" 0 1 firstLetter)
+string(TOUPPER "${firstLetter}" firstLetter)
+string(SUBSTRING "${CMAKE_PROJECT_NAME}" 1 -1 remainder)   # -1 = to end of string
+set(CONFIG_APPLICATION_NAME_UC "${firstLetter}${remainder}")
+
+# (b) Whole thing upper case: "myproject" -> "MYPROJECT"
+string(TOUPPER "${CMAKE_PROJECT_NAME}" CONFIG_APPLICATION_NAME_AC)
+
 # We use this in the program, to tell users where to get support.
-set(CONFIG_GITHUB_URL "https://github.com/${capitalisedProjectName}/${projectName}")
+set(CONFIG_GITHUB_URL "https://github.com/${CONFIG_APPLICATION_NAME_UC}/${projectName}")
 set(CONFIG_WEBSITE_URL "https://www.brewken.com/")
 set(CONFIG_ORGANIZATION_DOMAIN "brewken.com")
 
@@ -212,7 +220,7 @@ endif()
 #=======================================================================================================================
 if(APPLE)
    # Use capital letters. Don't question the APPLE.
-   set(fileName_executable "${capitalisedProjectName}")
+   set(fileName_executable "${CONFIG_APPLICATION_NAME_UC}")
 else()
    set(fileName_executable "${PROJECT_NAME}")
 endif()
@@ -314,6 +322,15 @@ endif()
 # flag for both Clang and GCC.
 #
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto=auto")
+
+#
+# On x86-64, build for the baseline instruction set so that the binaries run on older CPUs, rather than relying on the
+# compiler's default target on the build machine.  See comments in meson.build for more details.  Because we use LTO,
+# CMAKE_CXX_FLAGS is the right place, as it is used for linking as well as compiling.
+#
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64|amd64)$" AND NOT MSVC)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=x86-64 -mtune=generic")
+endif()
 
 #
 # On Ubuntu 22.04, the packages for Qt6 differ from those for Qt5 in that they require you to build with the PIC option,
@@ -783,7 +800,8 @@ set(filesToInstall_data ${repoDir}/data/default_db.sqlite
                         ${repoDir}/data/DefaultContent002-BJCP_2021_Styles.json
                         ${repoDir}/data/DefaultContent003-Ingredients-Hops-Yeasts.json
                         ${repoDir}/data/DefaultContent004-MoreYeasts.json
-                        ${repoDir}/data/DefaultContent005-Fermentables-Recipes.beer)
+                        ${repoDir}/data/DefaultContent005-Fermentables-Recipes.beer
+                        ${repoDir}/data/DefaultContent006-MashProfiles.beer)
 
 # Desktop files to install.
 #
@@ -980,7 +998,7 @@ if(APPLE)
 
    # Sets the CFBundleName bundle property.  "This name can contain up to 15 characters. The system may display it to
    # users if CFBundleDisplayName isn't set."  (I can't see a way in CMake for us to set CFBundleDisplayName.)
-   set(MACOSX_BUNDLE_BUNDLE_NAME "${capitalisedProjectName}")
+   set(MACOSX_BUNDLE_BUNDLE_NAME "${CONFIG_APPLICATION_NAME_UC}")
 
    # Sets the CFBundleIdentifier bundle property which is a case-insensitive string that "uniquely identifies a single
    # app throughout the system ... Typically ... a reverse-DNS format".  It is used when "applying specified
@@ -1104,10 +1122,26 @@ add_test(NAME CoreTests.testNamedParameterBundle                   COMMAND ./${f
 add_test(NAME CoreTests.testTypeLookups                            COMMAND ./${fileName_unitTestRunner} CoreTests          testTypeLookups                  )
 add_test(NAME CoreTests.testMultiVector                            COMMAND ./${fileName_unitTestRunner} CoreTests          testMultiVector                  )
 add_test(NAME CoreTests.testLogRotation                            COMMAND ./${fileName_unitTestRunner} CoreTests          testLogRotation                  )
+add_test(NAME DatabaseTests.testUpgradeBrewtarget231Database       COMMAND ./${fileName_unitTestRunner} DatabaseTests      testUpgradeBrewtarget231Database )
+add_test(NAME DatabaseTests.testLockingAndSharing                  COMMAND ./${fileName_unitTestRunner} DatabaseTests      testLockingAndSharing            )
+add_test(NAME MashCalculatorTests.testStrikeWater                    COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testStrikeWater)
+add_test(NAME MashCalculatorTests.testFixedValues                    COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testFixedValues)
+add_test(NAME MashCalculatorTests.testStepInfusions                  COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testStepInfusions)
+add_test(NAME MashCalculatorTests.testDecoction                      COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testDecoction)
+add_test(NAME MashCalculatorTests.testSparge                         COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testSparge)
+add_test(NAME MashCalculatorTests.testNoSparge                       COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testNoSparge)
+add_test(NAME MashCalculatorTests.testErrorsAndWarnings              COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testErrorsAndWarnings)
+add_test(NAME MashCalculatorTests.testSensibleTemperatures           COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testSensibleTemperatures)
+add_test(NAME MashCalculatorTests.testCheck                          COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testCheck)
+add_test(NAME MashCalculatorTests.testRoundedValues                  COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testRoundedValues)
+add_test(NAME MashCalculatorTests.testWithRecipe                     COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testWithRecipe)
+add_test(NAME MashCalculatorTests.testExampleProfiles                COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testExampleProfiles)
+add_test(NAME MashCalculatorTests.testAutoAdjust                     COMMAND ./${fileName_unitTestRunner} MashCalculatorTests testAutoAdjust)
 add_test(NAME MeasurementTests.testUnitConversions                 COMMAND ./${fileName_unitTestRunner} MeasurementTests   testUnitConversions              )
 add_test(NAME MeasurementTests.testUnitInverses                    COMMAND ./${fileName_unitTestRunner} MeasurementTests   testUnitInverses                 )
 add_test(NAME MeasurementTests.testNumberDisplayAndParsing         COMMAND ./${fileName_unitTestRunner} MeasurementTests   testNumberDisplayAndParsing      )
 add_test(NAME MeasurementTests.testAlgorithms                      COMMAND ./${fileName_unitTestRunner} MeasurementTests   testAlgorithms                   )
+add_test(NAME MeasurementTests.testPercentageDecimalPlaces         COMMAND ./${fileName_unitTestRunner} MeasurementTests   testPercentageDecimalPlaces      )
 add_test(NAME RecipeCalcTests.recipeCalcTest_allGrain              COMMAND ./${fileName_unitTestRunner} RecipeCalcTests    recipeCalcTest_allGrain          )
 add_test(NAME RecipeCalcTests.postBoilLossOgTest                   COMMAND ./${fileName_unitTestRunner} RecipeCalcTests    postBoilLossOgTest               )
 add_test(NAME RecipeCalcTests.testBoilAdditionTiming               COMMAND ./${fileName_unitTestRunner} RecipeCalcTests    testBoilAdditionTiming           )
@@ -1123,6 +1157,7 @@ add_test(NAME SerializationTests.testDotBeerAdditionStepCorrection COMMAND ./${f
 add_test(NAME SerializationTests.testBrewLogCalcs                  COMMAND ./${fileName_unitTestRunner} SerializationTests testBrewLogCalcs                 )
 add_test(NAME SerializationTests.testDotBeerVersionHandling        COMMAND ./${fileName_unitTestRunner} SerializationTests testDotBeerVersionHandling       )
 add_test(NAME SerializationTests.testDotBeerExport                 COMMAND ./${fileName_unitTestRunner} SerializationTests testDotBeerExport                )
+add_test(NAME SerializationTests.testDotBeerLocked                 COMMAND ./${fileName_unitTestRunner} SerializationTests testDotBeerLocked                )
 add_test(NAME SerializationTests.testClearUnusedOptionalVessels    COMMAND ./${fileName_unitTestRunner} SerializationTests testClearUnusedOptionalVessels   )
 add_test(NAME SerializationTests.testBeerXmlNullYield              COMMAND ./${fileName_unitTestRunner} SerializationTests testBeerXmlNullYield             )
 add_test(NAME SerializationTests.testNullSentinel                  COMMAND ./${fileName_unitTestRunner} SerializationTests testNullSentinel                 )
@@ -1210,7 +1245,7 @@ endif()
 #
 add_custom_target(
    FinalMessage ALL
-   ${CMAKE_COMMAND} -E cmake_echo_color --bold --green "⭐⭐⭐ Finished compiling ${capitalisedProjectName}.  Please run  sudo make install  to install locally. ⭐⭐⭐"
+   ${CMAKE_COMMAND} -E cmake_echo_color --bold --green "⭐⭐⭐ Finished compiling ${CONFIG_APPLICATION_NAME_UC}.  Please run  sudo make install  to install locally. ⭐⭐⭐"
    COMMENT "Final Message"
 )
 add_dependencies(FinalMessage ${fileName_executable})

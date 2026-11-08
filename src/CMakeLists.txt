@@ -60,8 +60,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/Localization.cpp
     ${repoDir}/src/Logging.cpp
     ${repoDir}/src/MainWindow.cpp
-    ${repoDir}/src/MashDesigner.cpp
-    ${repoDir}/src/MashWizard.cpp
+    ${repoDir}/src/MashCalculator.cpp
     ${repoDir}/src/OptionDialog.cpp
     ${repoDir}/src/PersistentSettings.cpp
     ${repoDir}/src/PrintAndPreviewDialog.cpp
@@ -275,6 +274,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/widgets/CommonContextMenus.cpp
     ${repoDir}/src/widgets/EnumeratedItemsWidget.cpp
     ${repoDir}/src/widgets/InfoButton.cpp
+    ${repoDir}/src/widgets/LockAndShareBar.cpp
     ${repoDir}/src/widgets/InfoText.cpp
     ${repoDir}/src/widgets/SelectionControl.cpp
     ${repoDir}/src/widgets/SmartAmountSettings.cpp
@@ -295,6 +295,8 @@ set(filesToCompile_cpp
 #
 set(unitTestFiles_cpp
     ${repoDir}/src/unitTests/CoreTests.cpp
+    ${repoDir}/src/unitTests/DatabaseTests.cpp
+    ${repoDir}/src/unitTests/MashCalculatorTests.cpp
     ${repoDir}/src/unitTests/MeasurementTests.cpp
     ${repoDir}/src/unitTests/RecipeCalcTests.cpp
     ${repoDir}/src/unitTests/SerializationTests.cpp

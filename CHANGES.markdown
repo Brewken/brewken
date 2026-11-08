@@ -3,14 +3,58 @@
 This change log is for high-level user-visible changes to Brewken, intended for consumption by the typical end-user.
 Note however that we also process it into a Debian-compliant text change log, so we need to keep the format consistent.
 In particular, the Release Timestamp section is needed as part of this (and you need to be meticulous about the date
-format therein).
+format therein, otherwise you'll get, eg, no-changelogname-tag error from rpmlint).  You get problems if you set the
+release timestamp to be a date in the future, and I'm guessing nobody cares about the exact time of day a release
+happens, so I'm now setting it to a slightly arbitrary time early in the morning.
 
 ## Forthcoming in v5.3.0
 
 ### New Features
 * TODO: Additional methods for calculating IBU
 * Shopping Lists
+* Mash water amounts and temperatures (strike water, other infusions, decoctions and sparge water) can now be adjusted to suit the recipe in the Mash Editor, replacing the Mash Wizard and Mash Designer.  Individual amounts and temperatures can be pinned so that only the rest are adjusted.  Optionally, the mash can adjust automatically whenever the recipe changes.
+* Mash steps (and mash fields) that don't make sense for the recipe are highlighted
+* Example mash profiles, which are locked so they can be shared between recipes
 * We'll list other new features here...
+
+## v5.2.3
+More bug fixes.
+
+### New Features
+* Remainder of work on: Enhancement - allow per-field selection of displayed decimal places [1098](https://github.com/Brewtarget/brewtarget/issues/1098)
+* Input values with more than 1 decimal round to 1 place [1142](https://github.com/Brewtarget/brewtarget/issues/1142)
+
+### Bug Fixes
+* v5.2.0 not working on some older hardware [1179](https://github.com/Brewtarget/brewtarget/issues/1179)
+* "Error Loading Data" and Recipe UI issue on 5.2.0 [1180](https://github.com/Brewtarget/brewtarget/issues/1180)
+
+### Release Timestamp
+Thu, 5 Nov 2026 05:02:05 +0100
+
+## v5.2.2
+Fix some key bugs in 5.2.0 release.  Start of work on improving decimal place handling.
+
+### New Features
+* Enhancement - allow per-field selection of displayed decimal places [1098](https://github.com/Brewtarget/brewtarget/issues/1098)
+
+### Bug Fixes
+* v5.2.0 not working on some older hardware [1179](https://github.com/Brewtarget/brewtarget/issues/1179)
+* "Error Loading Data" and Recipe UI issue on 5.2.0 [1180](https://github.com/Brewtarget/brewtarget/issues/1180)
+
+### Release Timestamp
+Wed, 4 Nov 2026 05:02:02 +0100
+
+## v5.2.1
+Fix Mac packaging
+
+### New Features
+None
+
+### Bug Fixes
+* macOS release bundles fail to launch on clean Apple Silicon systems [1176](https://github.com/Brewtarget/brewtarget/issues/1176)
+
+### Release Timestamp
+Mon, 1 Nov 2026 05:02:01 +0100
 
 ## v5.2.0
 This release changes the version numbering to match that of Brewtarget.  We include various fixes and enhancements, including:

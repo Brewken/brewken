@@ -25,91 +25,126 @@
 #include "measurement/SystemOfMeasurement.h"
 #include "measurement/Unit.h"
 #include "measurement/UnitSystem.h"
+#include "utils/TypeInfo.h"
 
 namespace {
    /**
-    * \brief Used by \c generateAction to put \c std::optional<Measurement::SystemOfMeasurement> or
-    *        \c std::optional<Measurement::UnitSystem::RelativeScale> into a QVariant
-    */
-   template<typename T>
-   QVariant toQVariant(std::optional<T> data) {
-      //
-      // We could use a null-value QVariant to represent "default", eg by constructing QVariant(QVariant::Int) but it's
-      // a bit risky as, if you forget to check, an int QVariant will convert null to 0.  Eg operator== returns true
-      // for the test QVariant(QVariant::Int) == QVariant(0) because a null state QVariant "if accessed will return a
-      // default constructed value of the type".
-      //
-      // So, instead, we use a negative value int to mean "default" and assert that none of the enums we're using here
-      // takes a negative value.
-      //
-      // Either way, users of UnitAndScalePopUpMenu don't need to know or worry about how data is stored in menu items.
-      //
-      if (data) {
-         int raw = static_cast<int>(*data);
-         Q_ASSERT(raw >= 0);
-         return QVariant(raw);
-      }
-      return QVariant(-1);
-   }
-
-   /**
-    * \brief Used by UnitAndScalePopUpMenu constructor
+    * \brief Used by \c UnitAndScalePopUpMenu::create to add an item to a menu
+    *
+    *        We store the whole \c UnitAndScalePopUpMenu::Selection in the item's data.  This means that, when the user
+    *        picks an item, we know not just its value but also which (sub-)menu it came from, without having to look at
+    *        the menu hierarchy or names.  It also avoids having to encode "Default" (ie \c std::nullopt) as some special
+    *        int value.
     *
     * \param menu The menu to which we are adding an item/action
     * \param text The translated descriptive text for the item/action
     * \param data The data to return/store if this item/action is clicked by the user
     * \param currentVal The data for the currently selected item/action
-    * \param actionGroup
+    * \param actionGroup The (exclusive) group for the items in \c menu.  Each (sub-)menu needs its own group, otherwise
+    *                    only one item in the whole menu hierarchy could be checked.
     */
    template<typename T>
-   void generateAction(QMenu * menu,
-                       QString text,
-                       std::optional<T> data,
-                       std::optional<T> currentVal,
-                       QActionGroup* actionGroup) {
-      QAction * action = new QAction(menu);
+   void generateAction(QMenu & menu,
+                       QString const & text,
+                       std::optional<T> const data,
+                       std::optional<T> const currentVal,
+                       QActionGroup & actionGroup) {
+      // Using new here is OK as menu will own this QAction
+      QAction * action = new QAction(&menu);
 
       action->setText(text);
-      action->setData(toQVariant(data));
+      action->setData(QVariant::fromValue(UnitAndScalePopUpMenu::Selection{data}));
       action->setCheckable(true);
       action->setChecked(currentVal == data);
-      if (actionGroup) {
-         actionGroup->addAction(action);
-      }
+      actionGroup.addAction(action);
 
-      menu->addAction(action);
+      menu.addAction(action);
+      return;
+   }
+
+   /**
+    * \brief Make a new action group for \c menu.  We are OK to use raw pointers here because \c menu will own the
+    *        new \c QActionGroup and its destructor will destroy it.
+    */
+   QActionGroup & newActionGroup(QMenu & menu) {
+      return *new QActionGroup{&menu};
+   }
+
+   /**
+    * \brief Add a sub-menu to allow the user to override the number of decimal places shown in a field.  (See comment
+    *        on physicalQuantityToUserSpecifiedDecimalPlaces in measurement/Measurement.cpp for the hierarchy of
+    *        preferences for number of decimal places shown.)
+    */
+   void addDecimalPlacesSubMenu(QMenu & menu, std::optional<Measurement::NumDecimalPlaces> const forcedDecimalPlaces) {
+      // As in UnitAndScalePopUpMenu::create, menu owns the sub-menu, so it's fine to use new here
+      QMenu & decimalPlacesSubMenu = *new QMenu(&menu);
+      QActionGroup & actionGroup = newActionGroup(decimalPlacesSubMenu);
+      generateAction(decimalPlacesSubMenu,
+                     QApplication::translate("UnitAndScalePopUpMenu", "Default"),
+                     std::optional<Measurement::NumDecimalPlaces>{std::nullopt},
+                     forcedDecimalPlaces,
+                     actionGroup);
+      for (int numDecimalPlaces = 0; numDecimalPlaces <= Measurement::NumDecimalPlaces::maxValue; ++numDecimalPlaces) {
+         generateAction(decimalPlacesSubMenu,
+                        QString::number(numDecimalPlaces),
+                        std::optional<Measurement::NumDecimalPlaces>{Measurement::NumDecimalPlaces{numDecimalPlaces}},
+                        forcedDecimalPlaces,
+                        actionGroup);
+      }
+      decimalPlacesSubMenu.setTitle(QApplication::translate("UnitAndScalePopUpMenu", "Decimal Places"));
+      menu.addMenu(&decimalPlacesSubMenu);
       return;
    }
 }
 
-template<typename T>
-std::optional<T> UnitAndScalePopUpMenu::dataFromQAction(QAction const & action) {
-   QVariant const data = action.data();
-   Q_ASSERT(data.typeId() == QMetaType::Type::Int);
-   int raw = data.toInt();
-   if (raw < 0) {
-      qDebug() << Q_FUNC_INFO << "Raw" << raw << "= null";
+bool UnitAndScalePopUpMenu::isAvailableFor(TypeInfo const & typeInfo) {
+   // It's a coding error to call this for a field with no type
+   Q_ASSERT(typeInfo.fieldType);
+   if (!std::holds_alternative<NonPhysicalQuantity>(*typeInfo.fieldType)) {
+      return true;
+   }
+   NonPhysicalQuantity const nonPhysicalQuantity = std::get<NonPhysicalQuantity>(*typeInfo.fieldType);
+   // GetUltimateDefaultDecimalPlaces returns std::nullopt for NonPhysicalQuantity values that don't have decimal places
+   return typeInfo.typeIndex == TypeInfo::Index::Double &&
+          GetUltimateDefaultDecimalPlaces(nonPhysicalQuantity).has_value();
+}
+
+std::unique_ptr<QMenu> UnitAndScalePopUpMenu::create(
+   QWidget * parent,
+   [[maybe_unused]] NonPhysicalQuantity const nonPhysicalQuantity,
+   std::optional<Measurement::NumDecimalPlaces> const forcedDecimalPlaces
+) {
+   // It's a coding error to ask for a menu for something that can't have decimal places
+   Q_ASSERT(GetUltimateDefaultDecimalPlaces(nonPhysicalQuantity).has_value());
+   std::unique_ptr<QMenu> menu = std::make_unique<QMenu>(parent);
+   addDecimalPlacesSubMenu(*menu, forcedDecimalPlaces);
+   return menu;
+}
+
+std::optional<UnitAndScalePopUpMenu::Selection> UnitAndScalePopUpMenu::exec(QMenu & menu,
+                                                                             QPoint const & globalPosition) {
+   // This shows the menu and returns when the user either selects something or dismisses the menu
+   QAction const * invoked = menu.exec(globalPosition);
+   if (!invoked) {
       return std::nullopt;
    }
-   qDebug() << Q_FUNC_INFO << "Raw" << raw << "=" << static_cast<T>(raw);
-   return static_cast<T>(raw);
+
+   QVariant const data = invoked->data();
+   // It's a coding error if the action wasn't created by generateAction
+   Q_ASSERT(data.canConvert<UnitAndScalePopUpMenu::Selection>());
+   auto const selection = data.value<UnitAndScalePopUpMenu::Selection>();
+   qDebug() << Q_FUNC_INFO << "Selected item" << invoked->text() << "from menu" << selection.index();
+   return selection;
 }
-//
-// Instantiate the above template function for the types that are going to use it
-// (This is just a trick to allow the template definition to be here in the .cpp file and not in the header.)
-//
-template std::optional<Measurement::SystemOfMeasurement> UnitAndScalePopUpMenu::dataFromQAction(QAction const & action);
-template std::optional<Measurement::UnitSystem::RelativeScale> UnitAndScalePopUpMenu::dataFromQAction(QAction const & action);
 
-std::unique_ptr<QMenu> UnitAndScalePopUpMenu::create(QWidget * parent,
-                                                     Measurement::PhysicalQuantities physicalQuantities,
-                                                     std::optional<Measurement::SystemOfMeasurement> forcedSystemOfMeasurement,
-                                                     std::optional<Measurement::UnitSystem::RelativeScale> forcedRelativeScale) {
+std::unique_ptr<QMenu> UnitAndScalePopUpMenu::create(
+   QWidget * parent,
+   Measurement::PhysicalQuantities const physicalQuantities,
+   std::optional<Measurement::SystemOfMeasurement      > const forcedSystemOfMeasurement,
+   std::optional<Measurement::UnitSystem::RelativeScale> const forcedRelativeScale,
+   std::optional<Measurement::NumDecimalPlaces         > const forcedDecimalPlaces
+) {
    std::unique_ptr<QMenu> menu = std::make_unique<QMenu>(parent);
-
-   // We are OK to use raw pointers here because menu will own actionGroup and menu's destructor will destroy it.  Since
-   // we want actionGroup and menu to have the same lifetime, there is no mileage in adding a smart pointer wrapper.
-   QActionGroup * actionGroup = new QActionGroup{menu.get()};
 
    //
    // In most circumstances, for a given PhysicalQuantity, it would be simplest to largely ignore SystemOfMeasurement
@@ -143,15 +178,16 @@ std::unique_ptr<QMenu> UnitAndScalePopUpMenu::create(QWidget * parent,
       std::holds_alternative<Measurement::PhysicalQuantity>(physicalQuantities) ?
          std::get<Measurement::PhysicalQuantity>(physicalQuantities) :
          Measurement::defaultPhysicalQuantity(std::get<Measurement::ChoiceOfPhysicalQuantity>(physicalQuantities));
-   auto unitSystems = Measurement::UnitSystem::getUnitSystems(physicalQuantity);
-   if (unitSystems.size() > 1) {
-      generateAction(menu.get(),
+   if (auto const unitSystems = Measurement::UnitSystem::getUnitSystems(physicalQuantity);
+       unitSystems.size() > 1) {
+      QActionGroup & actionGroup = newActionGroup(*menu);
+      generateAction(*menu,
                      QApplication::translate("UnitAndScalePopUpMenu", "Default"),
                      std::optional<Measurement::SystemOfMeasurement>{std::nullopt},
                      forcedSystemOfMeasurement,
                      actionGroup);
-      for (auto system : unitSystems) {
-         generateAction(menu.get(),
+      for (auto const system : unitSystems) {
+         generateAction(*menu,
                         Measurement::getDisplayName(system->systemOfMeasurement),
                         std::optional<Measurement::SystemOfMeasurement>{system->systemOfMeasurement},
                         forcedSystemOfMeasurement,
@@ -159,37 +195,39 @@ std::unique_ptr<QMenu> UnitAndScalePopUpMenu::create(QWidget * parent,
       }
    }
 
-   // Don't even think about a scale menu for "mixed" as there isn't a sensible way to combine the Mass and Volume
-   // scales (or the MassConcentration and VolumeConcentration ones)!
-   if (std::holds_alternative<Measurement::ChoiceOfPhysicalQuantity>(physicalQuantities)) {
-      return menu;
-   }
-
    // If the UnitSystem/SystemOfMeasurement currently used to display the field has more than one Unit, allow the user
-   // to select a forced Unit for the scale
+   // to select a forced Unit for the scale.
+   //
+   // But don't even think about a scale menu for "mixed" as there isn't a sensible way to combine the Mass and Volume
+   // scales (or the MassConcentration and VolumeConcentration ones)!  (We do still want the decimal places sub-menu
+   // below though.)
    Measurement::UnitSystem const & unitSystem{
       forcedSystemOfMeasurement ?
          Measurement::UnitSystem::getInstance(*forcedSystemOfMeasurement, physicalQuantity) :
          Measurement::getDisplayUnitSystem(physicalQuantity)
    };
-   auto relativeScales = unitSystem.getRelativeScales();
-   if (relativeScales.size() > 1) {
-      QMenu * subMenu = new QMenu(menu.get());
-      generateAction(subMenu,
+   if (auto const relativeScales = unitSystem.getRelativeScales();
+       std::holds_alternative<Measurement::PhysicalQuantity>(physicalQuantities) && relativeScales.size() > 1) {
+      QMenu & scalesSubMenu = *new QMenu(menu.get());
+      QActionGroup & actionGroup = newActionGroup(scalesSubMenu);
+      generateAction(scalesSubMenu,
                      QApplication::translate("UnitAndScalePopUpMenu", "Default"),
                      std::optional<Measurement::UnitSystem::RelativeScale>{std::nullopt},
                      forcedRelativeScale,
                      actionGroup);
       for (auto scale : relativeScales) {
-         generateAction(subMenu,
+         generateAction(scalesSubMenu,
                         unitSystem.scaleUnit(scale)->getDisplayAbbreviation(),
                         std::optional<Measurement::UnitSystem::RelativeScale>{scale},
                         forcedRelativeScale,
                         actionGroup);
       }
-      subMenu->setTitle(QApplication::translate("UnitSystem", "Scale"));
-      menu->addMenu(subMenu);
+      scalesSubMenu.setTitle(QApplication::translate("UnitSystem", "Scale"));
+      menu->addMenu(&scalesSubMenu);
    }
+
+   // Allow the user to override the number of decimal places shown in this field
+   addDecimalPlacesSubMenu(*menu, forcedDecimalPlaces);
 
    return menu;
 }

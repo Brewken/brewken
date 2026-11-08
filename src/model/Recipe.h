@@ -1009,6 +1009,14 @@ public:
     */
    template<class Owned> void acceptChange(QMetaProperty prop, QVariant val);
 
+   /**
+    * \brief If our mash is set to adjust automatically (see \c Mash::autoAdjust), arrange for \c
+    *        MashCalculator::autoAdjust to be called the next time we get back to the event loop.  (Multiple calls before
+    *        then result in only one adjustment.)  Called when something the mash calculation depends on changes, eg the
+    *        grain bill, the equipment or the boil.
+    */
+   void scheduleMashAutoAdjust();
+
 signals:
    //! Emitted when the number (or order) of instructions changes, or when you should call instructions() again.
    void ownedItemsChanged();
@@ -1099,6 +1107,8 @@ private:
 
    bool m_locked       = false;
    bool m_calcsEnabled = true;
+   //! See \c scheduleMashAutoAdjust
+   bool m_mashAutoAdjustScheduled = false;
 
    // True when constructed, indicates whether recalcAll has been called.
    bool   m_uninitializedCalcs      = true;
