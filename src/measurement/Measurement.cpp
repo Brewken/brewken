@@ -24,7 +24,7 @@
 #include <QMap>
 #include <QString>
 
-#include "Algorithms.h"
+#include "calculations/Algorithms.h"
 #include "Localization.h"
 #include "measurement/PhysicalQuantity.h"
 #include "measurement/UnitSystem.h"

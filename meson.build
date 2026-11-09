@@ -813,7 +813,6 @@ endif
 #
 commonSourceFiles = files([
    'src/AboutDialog.cpp',
-   'src/Algorithms.cpp',
    'src/Application.cpp',
    'src/BeerColorWidget.cpp',
    'src/BrewDayFormatter.cpp',
@@ -853,6 +852,8 @@ commonSourceFiles = files([
    'src/buttons/MashButton.cpp',
    'src/buttons/RecipeAttributeButton.cpp',
    'src/buttons/StyleButton.cpp',
+   'src/calculations/Algorithms.cpp',
+   'src/calculations/MashFermentability.cpp',
    'src/catalogs/BoilCatalog.cpp',
    'src/catalogs/EquipmentCatalog.cpp',
    'src/catalogs/FermentableCatalog.cpp',
@@ -1076,6 +1077,7 @@ unitTestExtraSourceFiles = files([
    'src/unitTests/CoreTests.cpp',
    'src/unitTests/DatabaseTests.cpp',
    'src/unitTests/MashAutoAdjusterTests.cpp',
+   'src/unitTests/MashFermentabilityTests.cpp',
    'src/unitTests/MeasurementTests.cpp',
    'src/unitTests/RecipeCalcTests.cpp',
    'src/unitTests/SerializationTests.cpp',
@@ -1286,6 +1288,7 @@ unitTestMocHeaders = files([
    'src/unitTests/CoreTests.h',
    'src/unitTests/DatabaseTests.h',
    'src/unitTests/MashAutoAdjusterTests.h',
+   'src/unitTests/MashFermentabilityTests.h',
    'src/unitTests/MeasurementTests.h',
    'src/unitTests/RecipeCalcTests.h',
    'src/unitTests/SerializationTests.h',
@@ -1991,6 +1994,13 @@ test('Test mash auto with recipe'            , testRunner, args : ['MashAutoAdju
 test('Test mash auto example profiles'       , testRunner, args : ['MashAutoAdjusterTests', 'testExampleProfiles'    ], suite : 'mash')
 test('Test mash auto adjust'                 , testRunner, args : ['MashAutoAdjusterTests', 'testAutoAdjust'         ], suite : 'mash')
 test('Test mash auto undo'                   , testRunner, args : ['MashAutoAdjusterTests', 'testUndo'               ], suite : 'mash')
+test('Test mash fermentability paper'        , testRunner, args : ['MashFermentabilityTests', 'testReproducesPaper'   ], suite : 'mash')
+test('Test mash fermentability temp and time', testRunner, args : ['MashFermentabilityTests', 'testTemperatureAndTime'], suite : 'mash')
+test('Test mash fermentability profile'      , testRunner, args : ['MashFermentabilityTests', 'testBuildProfile'      ], suite : 'mash')
+test('Test mash fermentability step mashes'  , testRunner, args : ['MashFermentabilityTests', 'testStepMashes'        ], suite : 'mash')
+test('Test mash fermentability continuity'   , testRunner, args : ['MashFermentabilityTests', 'testNoDiscontinuities' ], suite : 'mash')
+test('Test mash fermentability enzymes'      , testRunner, args : ['MashFermentabilityTests', 'testEnzymeLevels'      ], suite : 'mash')
+test('Test mash fermentability limits'       , testRunner, args : ['MashFermentabilityTests', 'testLimits'            ], suite : 'mash')
 test('Test water auto salt chemistry'      , testRunner, args : ['WaterAutoAdjusterTests', 'testSaltChemistry'             ], suite : 'water')
 test('Test water auto exact amounts'       , testRunner, args : ['WaterAutoAdjusterTests', 'testExactAmounts'              ], suite : 'water')
 test('Test water auto default salts'       , testRunner, args : ['WaterAutoAdjusterTests', 'testDefaultSalts'              ], suite : 'water')

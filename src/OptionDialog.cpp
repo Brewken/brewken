@@ -612,6 +612,7 @@ public:
          PersistentSettings::value_ck(PersistentSettings::Names::defaultEfficiency_pct,
                                       QVariant::fromValue(Recipe::default_efficiency_pct)).toDouble()
       );
+      this->m_self.checkBox_defaultFgCalcUsesMash->setChecked(Recipe::defaultFgCalcUsesMash());
 
       return;
    }
@@ -625,6 +626,8 @@ public:
                                     this->m_self.lineEdit_defaultBoilTime->getNonOptCanonicalAmt().quantity);
       PersistentSettings::insert_ck(PersistentSettings::Names::defaultEfficiency_pct,
                                     this->m_self.lineEdit_defaultEfficiency->getNonOptValue<double>());
+      PersistentSettings::insert_ck(PersistentSettings::Names::defaultFgCalcUsesMash,
+                                    this->m_self.checkBox_defaultFgCalcUsesMash->isChecked());
       return;
    }
 

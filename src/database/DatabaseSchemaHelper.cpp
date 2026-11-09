@@ -3515,6 +3515,8 @@ namespace {
     *          - "target mash pH" (see Recipe::targetMashAcidity_pH), which is NULL (ie not set) for existing records,
     *            meaning water auto-adjust leaves acids alone
     *          - "water kept in sync" flag (see Recipe::waterKeptInSync), which is false for existing records
+    *          - "FG calculation uses mash" flag (see Recipe::fgCalcUsesMash), which is false for existing records, so
+    *            that upgrading does not change the FG (and ABV etc) of anyone's existing recipes
     */
    bool migrate_to_23(Database & db, BtSqlQuery & q) {
       QString const boolType = db.getDbNativeTypeName<bool>();
@@ -3532,6 +3534,8 @@ namespace {
          {QString("ALTER TABLE recipe ADD COLUMN target_mash_ph     %1").arg(db.getDbNativeTypeName<double>())},
          {QString("ALTER TABLE recipe ADD COLUMN water_kept_in_sync %1").arg(db.getDbNativeTypeName<bool>  ())},
          {QString("UPDATE recipe SET water_kept_in_sync = ?"), {QVariant{false}}},
+         {QString("ALTER TABLE recipe ADD COLUMN fg_calc_uses_mash  %1").arg(db.getDbNativeTypeName<bool>  ())},
+         {QString("UPDATE recipe SET fg_calc_uses_mash = ?"), {QVariant{false}}},
       };
       return executeSqlQueries(q, migrationQueries);
    }

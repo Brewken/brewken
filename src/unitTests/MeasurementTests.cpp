@@ -27,7 +27,7 @@
 #include <QVector>
 #include <QWidget>
 
-#include "Algorithms.h"
+#include "calculations/Algorithms.h"
 #include "Localization.h"
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"

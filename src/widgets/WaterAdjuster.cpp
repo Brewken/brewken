@@ -23,7 +23,7 @@
 #include <cmath>
 #include <limits>
 
-#include <Algorithms.h>
+#include <calculations/Algorithms.h>
 #include <QButtonGroup>
 #include <QComboBox>
 #include <QFont>

@@ -1341,6 +1341,16 @@
                   </property>
                  </spacer>
                 </item>
+                <item>
+                 <widget class="QCheckBox" name="checkBox_fgCalcUsesMash">
+                  <property name="text">
+                   <string>Use mash profile in FG calculation</string>
+                  </property>
+                  <property name="toolTip">
+                   <string>Allow for how the mash temperatures and times make the wort more or less fermentable when estimating final gravity.  Leave this off if you have set yeast attenuation to reflect your own mash.</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </item>
              </layout>

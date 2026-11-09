@@ -4569,6 +4569,10 @@ If you need help, please open an issue at %1</source>
         <source>⚠ Problems found</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Change Use Mash Profile in FG Calculation</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -7732,6 +7736,10 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Keep Water in Sync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Mash Profile in FG Calculation</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12414,6 +12422,14 @@ Tabs</source>
         <source>Info about, and any problems with, this fermentation</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Use mash profile in FG calculation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow for how the mash temperatures and times make the wort more or less fermentable when estimating final gravity.  Leave this off if you have set yeast attenuation to reflect your own mash.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>mashDesigner</name>
@@ -13290,6 +13306,14 @@ Tabs</source>
     </message>
     <message>
         <source>Decimal places</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By default, use mash profile in FG calculation for new and imported recipes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whether new and imported recipes take account of the mash temperatures and times when estimating final gravity.  (This can be changed for each recipe on its Mash tab.)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14364,6 +14388,14 @@ Tabs</source>
     </message>
     <message>
         <source>Things to check after the last Auto-Adjust, eg ions that couldn&apos;t be brought close to the target, and why</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water Agents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Acid Malts</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

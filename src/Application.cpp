@@ -45,7 +45,7 @@
 #include <QThread>
 #include <QUrl>
 
-#include "Algorithms.h"
+#include "calculations/Algorithms.h"
 #include "BtSplashScreen.h"
 #include "config.h"
 #include "database/Database.h"

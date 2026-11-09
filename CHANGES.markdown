@@ -19,6 +19,7 @@ happens, so I'm now setting it to a slightly arbitrary time early in the morning
 * Clicking Auto-Adjust (for the mash or the water) can be undone and redone in one step
 * Twelve style target water profiles (eg "Pale, Hoppy", "Black, Dry") that Auto-Adjust can match from RO water, and starting profiles for the tap water of eleven well-known cities
 * Target mash pH is saved in dotBeer files (as `target_mash_pH` on recipes, new in dotBeer 1.1.0), and defaults to any pH set on the recipe's mash
+* Optionally, estimated final gravity (and hence ABV etc) can take account of the mash profile -- temperatures, rest times and ramps, over any number of steps -- using a published kinetic model of starch conversion (Brandam et al 2003), as well as the diastatic power of the grain bill and the mash thickness (Brewtarget [779](https://github.com/Brewtarget/brewtarget/issues/779)).  Turn on "Use mash profile in FG calculation" on the recipe's Mash tab.  Existing recipes are unchanged; whether new and imported recipes use it is set in Options > Default Values.
 * We'll list other new features here...
 
 ### Bug Fixes

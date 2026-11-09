@@ -874,6 +874,8 @@ namespace {
          {JsonRecordDefinition::FieldType::SingleUnitValue     , "ro_water_mash"          , PropertyNames::Recipe::roWaterMash_pct  , &DOT_BEER_PERCENT_UNIT      },
          {JsonRecordDefinition::FieldType::SingleUnitValue     , "ro_water_sparge"        , PropertyNames::Recipe::roWaterSparge_pct, &DOT_BEER_PERCENT_UNIT      },
          // NB: Recipe::waterKeptInSync is deliberately not stored in dotBeer, in the same way as Mash::keptInSync
+         // NB: Recipe::fgCalcUsesMash is also deliberately not stored in dotBeer, as it is a preference about how we
+         //     calculate FG, not part of the recipe
          {JsonRecordDefinition::FieldType::SingleUnitValue     , "target_mash_pH"         , PropertyNames::Recipe::targetMashAcidity_pH, &DOT_BEER_ACIDITY_UNIT   },
          {JsonRecordDefinition::FieldType::LocalId             , "mash_id"                , PropertyNames::Recipe::mashId        , &Mash::staticMetaObject},
          {JsonRecordDefinition::FieldType::String              , "notes"                  , PropertyNames::Recipe::notes         },
