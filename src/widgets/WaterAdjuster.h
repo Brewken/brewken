@@ -92,6 +92,13 @@ private:
     */
    void doAutoAdjust(bool const turnOnKeepInSync);
 
+   /**
+    * \brief Show the result of an auto-adjust: \c heading goes under the Auto-Adjust button, and \c details (eg ions
+    *        we couldn't get close to the target) go in the "Auto-Adjust Notes" tab.  Empty \c heading and \c details
+    *        clears both.
+    */
+   void showAutoAdjustMessage(QString const & heading, QStringList const & details = {});
+
    // Private implementation details - see https://herbsutter.com/gotw/_100/
    class impl;
    std::unique_ptr<impl> pimpl;

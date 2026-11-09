@@ -873,6 +873,8 @@ namespace {
          {JsonRecordDefinition::FieldType::LocalId             , "water_target_id"        , PropertyNames::Recipe::waterTargetId    , &Water::staticMetaObject},
          {JsonRecordDefinition::FieldType::SingleUnitValue     , "ro_water_mash"          , PropertyNames::Recipe::roWaterMash_pct  , &DOT_BEER_PERCENT_UNIT      },
          {JsonRecordDefinition::FieldType::SingleUnitValue     , "ro_water_sparge"        , PropertyNames::Recipe::roWaterSparge_pct, &DOT_BEER_PERCENT_UNIT      },
+         // NB: Recipe::waterKeptInSync is deliberately not stored in dotBeer, in the same way as Mash::keptInSync
+         {JsonRecordDefinition::FieldType::SingleUnitValue     , "target_mash_pH"         , PropertyNames::Recipe::targetMashAcidity_pH, &DOT_BEER_ACIDITY_UNIT   },
          {JsonRecordDefinition::FieldType::LocalId             , "mash_id"                , PropertyNames::Recipe::mashId        , &Mash::staticMetaObject},
          {JsonRecordDefinition::FieldType::String              , "notes"                  , PropertyNames::Recipe::notes         },
          {JsonRecordDefinition::FieldType::MeasurementWithUnits, "original_gravity"       , PropertyNames::Recipe::og            , &DOT_BEER_DENSITY_UNIT_MAPPER},

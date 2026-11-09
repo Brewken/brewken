@@ -952,7 +952,7 @@ void MashAutoAdjusterTests::testWithRecipe() {
 }
 
 void MashAutoAdjusterTests::testExampleProfiles() {
-   QString const filePath{QDir{CONFIG_TEST_DATA_DIR}.filePath("../data/DefaultContent006-MashProfiles.beer")};
+   QString const filePath{QDir{CONFIG_TEST_DATA_DIR}.filePath("../data/DefaultContent006-MashAndWaterProfiles.beer")};
    QString userMessage;
    QTextStream userMessageAsStream{&userMessage};
    bool const imported = DotBeer::import("", filePath, userMessageAsStream);

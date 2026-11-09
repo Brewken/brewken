@@ -68,6 +68,15 @@ private slots:
     *        \c UndoableAutoAdjust)
     */
    void testRecipeUndoAndKeepInSync();
+
+   //! \brief Suggested target mash pH from the pH set on the recipe's mash steps
+   void testSuggestedTargetMashPh();
+
+   /**
+    * \brief The water profiles in \c data/DefaultContent006-MashAndWaterProfiles.beer import, and Auto-Adjust can
+    *        match all the style target profiles from RO water using its default salts
+    */
+   void testExampleProfiles();
 };
 
 #endif

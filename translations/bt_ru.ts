@@ -9903,14 +9903,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Could not adjust the water agents yet:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Could not adjust the water agents, so nothing has been changed:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Predicted mash pH is %1.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9930,8 +9922,28 @@ The final volume in the primary is %1.</source>
         <source>Water agents adjusted to match %1.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message numerus="yes">
+        <source>See the &lt;i&gt;Auto-Adjust Notes&lt;/i&gt; tab below for details (%n item(s)).</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
     <message>
-        <source>Water agents adjusted for %1, but please check the following:</source>
+        <source>The value shown is the pH set on the recipe&apos;s mash.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not adjust the water agents yet: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not adjust the water agents, so nothing has been changed: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water agents adjusted for %1, but some things need checking.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -15791,6 +15803,14 @@ Tabs</source>
     </message>
     <message>
         <source>Keep water agents in sync with recipe changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto-Adjust Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Things to check after the last Auto-Adjust, eg ions that couldn&apos;t be brought close to the target, and why</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

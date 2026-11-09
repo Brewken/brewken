@@ -801,7 +801,7 @@ set(filesToInstall_data ${repoDir}/data/default_db.sqlite
                         ${repoDir}/data/DefaultContent003-Ingredients-Hops-Yeasts.json
                         ${repoDir}/data/DefaultContent004-MoreYeasts.json
                         ${repoDir}/data/DefaultContent005-Fermentables-Recipes.beer
-                        ${repoDir}/data/DefaultContent006-MashProfiles.beer)
+                        ${repoDir}/data/DefaultContent006-MashAndWaterProfiles.beer)
 
 # Desktop files to install.
 #
@@ -1159,6 +1159,7 @@ add_test(NAME SerializationTests.testBrewLogCalcs                  COMMAND ./${f
 add_test(NAME SerializationTests.testDotBeerVersionHandling        COMMAND ./${fileName_unitTestRunner} SerializationTests testDotBeerVersionHandling       )
 add_test(NAME SerializationTests.testDotBeerExport                 COMMAND ./${fileName_unitTestRunner} SerializationTests testDotBeerExport                )
 add_test(NAME SerializationTests.testDotBeerLocked                 COMMAND ./${fileName_unitTestRunner} SerializationTests testDotBeerLocked                )
+add_test(NAME SerializationTests.testDotBeerTargetMashPh           COMMAND ./${fileName_unitTestRunner} SerializationTests testDotBeerTargetMashPh          )
 add_test(NAME SerializationTests.testClearUnusedOptionalVessels    COMMAND ./${fileName_unitTestRunner} SerializationTests testClearUnusedOptionalVessels   )
 add_test(NAME SerializationTests.testBeerXmlNullYield              COMMAND ./${fileName_unitTestRunner} SerializationTests testBeerXmlNullYield             )
 add_test(NAME SerializationTests.testNullSentinel                  COMMAND ./${fileName_unitTestRunner} SerializationTests testNullSentinel                 )
@@ -1180,6 +1181,8 @@ add_test(NAME WaterAutoAdjusterTests.testAcidChemistry                  COMMAND 
 add_test(NAME WaterAutoAdjusterTests.testMashPh                         COMMAND ./${fileName_unitTestRunner} WaterAutoAdjusterTests testMashPh)
 add_test(NAME WaterAutoAdjusterTests.testAcidAmounts                    COMMAND ./${fileName_unitTestRunner} WaterAutoAdjusterTests testAcidAmounts)
 add_test(NAME WaterAutoAdjusterTests.testRecipeUndoAndKeepInSync        COMMAND ./${fileName_unitTestRunner} WaterAutoAdjusterTests testRecipeUndoAndKeepInSync)
+add_test(NAME WaterAutoAdjusterTests.testSuggestedTargetMashPh          COMMAND ./${fileName_unitTestRunner} WaterAutoAdjusterTests testSuggestedTargetMashPh)
+add_test(NAME WaterAutoAdjusterTests.testExampleProfiles                COMMAND ./${fileName_unitTestRunner} WaterAutoAdjusterTests testExampleProfiles)
 
 #=================================Installs=====================================
 

@@ -1383,7 +1383,7 @@ filesToInstall_data = files([
    'data/DefaultContent003-Ingredients-Hops-Yeasts.json',
    'data/DefaultContent004-MoreYeasts.json',
    'data/DefaultContent005-Fermentables-Recipes.beer',
-   'data/DefaultContent006-MashProfiles.beer',
+   'data/DefaultContent006-MashAndWaterProfiles.beer',
 ])
 
 filesToInstall_icons = files([
@@ -2001,6 +2001,8 @@ test('Test water auto acid chemistry'      , testRunner, args : ['WaterAutoAdjus
 test('Test water auto mash pH'             , testRunner, args : ['WaterAutoAdjusterTests', 'testMashPh'                    ], suite : 'water')
 test('Test water auto acid amounts'        , testRunner, args : ['WaterAutoAdjusterTests', 'testAcidAmounts'               ], suite : 'water')
 test('Test water auto undo and keep in sync', testRunner, args : ['WaterAutoAdjusterTests', 'testRecipeUndoAndKeepInSync'  ], suite : 'water')
+test('Test water auto suggested target pH' , testRunner, args : ['WaterAutoAdjusterTests', 'testSuggestedTargetMashPh'    ], suite : 'water')
+test('Test water auto example profiles'    , testRunner, args : ['WaterAutoAdjusterTests', 'testExampleProfiles'          ], suite : 'water')
 test('Test unit conversions'                 , testRunner, args : ['MeasurementTests', 'testUnitConversions'                 ], suite : 'measurement')
 test('Test unit inverses'                    , testRunner, args : ['MeasurementTests', 'testUnitInverses'                    ], suite : 'measurement')
 test('Test number display and parsing'       , testRunner, args : ['MeasurementTests', 'testNumberDisplayAndParsing'         ], suite : 'measurement')
@@ -2022,6 +2024,7 @@ test('Test brew log calcs'                   , testRunner, args : ['Serializatio
 test('Test dotBeer version handling'         , testRunner, args : ['SerializationTests', 'testDotBeerVersionHandling'        ], suite : 'serialization')
 test('Test dotBeer export'                   , testRunner, args : ['SerializationTests', 'testDotBeerExport'                 ], suite : 'serialization')
 test('Test dotBeer locked'                   , testRunner, args : ['SerializationTests', 'testDotBeerLocked'                 ], suite : 'serialization')
+test('Test dotBeer target mash pH'           , testRunner, args : ['SerializationTests', 'testDotBeerTargetMashPh'           ], suite : 'serialization')
 test('Test clear unused optional vessels'    , testRunner, args : ['SerializationTests', 'testClearUnusedOptionalVessels'    ], suite : 'serialization')
 test('Test BeerXML null yield'               , testRunner, args : ['SerializationTests', 'testBeerXmlNullYield'              ], suite : 'serialization')
 test('Test NullSentinel'                     , testRunner, args : ['SerializationTests', 'testNullSentinel'                  ], suite : 'serialization')

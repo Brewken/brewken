@@ -17,6 +17,8 @@ happens, so I'm now setting it to a slightly arbitrary time early in the morning
 * Example mash profiles, which are locked so they can be shared between recipes
 * Auto-Adjust on the Water tab works out the brewing salts needed to match the target water profile and, optionally, the acid needed to reach a target mash pH.  Optionally, the water agents can adjust automatically whenever the recipe changes.
 * Clicking Auto-Adjust (for the mash or the water) can be undone and redone in one step
+* Twelve style target water profiles (eg "Pale, Hoppy", "Black, Dry") that Auto-Adjust can match from RO water, and starting profiles for the tap water of eleven well-known cities
+* Target mash pH is saved in dotBeer files (as `target_mash_pH` on recipes, new in dotBeer 1.1.0), and defaults to any pH set on the recipe's mash
 * We'll list other new features here...
 
 ### Bug Fixes

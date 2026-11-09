@@ -253,6 +253,9 @@ public:
 
    //! Position on the undo stack just after our last auto-adjust, so we know when it's been undone, or -1 if none
    int m_autoAdjustUndoIndex = -1;
+
+   //! The tool tip for the target mash pH spin box from the .ui file, to which we sometimes add more information
+   QString m_targetMashPhToolTip;
 };
 
 WaterAdjuster::WaterAdjuster(QWidget* parent) :
@@ -359,7 +362,7 @@ void WaterAdjuster::init() {
    //
    connect(&Undoable::getStack(), &QUndoStack::indexChanged, this, [this](int const index) {
       if (this->pimpl->m_autoAdjustUndoIndex >= 0 && index < this->pimpl->m_autoAdjustUndoIndex) {
-         this->label_autoAdjustInfo->setText(tr("Auto-Adjust undone."));
+         this->showAutoAdjustMessage(tr("Auto-Adjust undone."));
          this->pimpl->m_autoAdjustUndoIndex = -1;
       }
       this->refreshAutoAdjustControls();
@@ -416,7 +419,7 @@ void WaterAdjuster::setRecipe(Recipe * rec) {
    this->pimpl->m_rec = rec;
    // Changes to eg the grain bill or the mash affect the predicted mash pH and ion concentrations
    this->connect(this->pimpl->m_rec, &NamedEntity::changed, this, &WaterAdjuster::recipeChanged);
-   this->label_autoAdjustInfo->clear();
+   this->showAutoAdjustMessage("");
    this->pimpl->m_autoAdjustUndoIndex = -1;
    this->refreshAutoAdjustControls();
 
@@ -523,6 +526,31 @@ void WaterAdjuster::recipeChanged(QMetaProperty prop, [[maybe_unused]] QVariant 
    return;
 }
 
+void WaterAdjuster::showAutoAdjustMessage(QString const & heading, QStringList const & details) {
+   //
+   // The one-line summary goes under the Auto-Adjust button, and the details go in the Auto-Adjust Notes tab, as there
+   // can be quite a lot of them, and they would otherwise make the top of the display rather crowded.
+   //
+   // NB: We don't put the number of notes in the tab title, as it then doesn't fit alongside the other tabs
+   if (details.isEmpty()) {
+      this->label_autoAdjustInfo->setText(heading.toHtmlEscaped());
+      this->textBrowser_autoAdjustNotes->clear();
+      return;
+   }
+
+   this->label_autoAdjustInfo->setText(
+      QString{"%1 %2"}.arg(heading.toHtmlEscaped(),
+                           tr("See the <i>Auto-Adjust Notes</i> tab below for details (%n item(s)).", "", details.size()))
+   );
+   QString notes = QString{"<p>%1</p><ul>"}.arg(heading.toHtmlEscaped());
+   for (auto const & detail : details) {
+      notes += QString{"<li>%1</li>"}.arg(detail.toHtmlEscaped());
+   }
+   notes += "</ul>";
+   this->textBrowser_autoAdjustNotes->setHtml(notes);
+   return;
+}
+
 void WaterAdjuster::refreshAutoAdjustControls() {
    Recipe const * const recipe = this->pimpl->m_rec;
    bool const enabled = recipe && !recipe->locked();
@@ -539,9 +567,26 @@ void WaterAdjuster::refreshAutoAdjustControls() {
       QSignalBlocker const blockSpinBox   {this->doubleSpinBox_targetMashPh};
       this->checkBox_keptInSync  ->setChecked(recipe && recipe->waterKeptInSync());
       this->checkBox_targetMashPh->setChecked(target_pH.has_value());
+      //
+      // If the recipe doesn't have a target, but its mash has a pH set on one of its steps, show that, so it's what we
+      // use if the user ticks the box.  (We never write anything back to the mash -- see
+      // WaterAutoAdjuster::suggestedTargetMashPh.)
+      //
+      std::optional<double> const suggested_pH =
+         (recipe && !target_pH) ? WaterAutoAdjuster::suggestedTargetMashPh(*recipe) : std::nullopt;
       if (target_pH) {
          this->doubleSpinBox_targetMashPh->setValue(*target_pH);
+      } else if (suggested_pH) {
+         this->doubleSpinBox_targetMashPh->setValue(*suggested_pH);
       }
+      if (this->pimpl->m_targetMashPhToolTip.isNull()) {
+         this->pimpl->m_targetMashPhToolTip = this->doubleSpinBox_targetMashPh->toolTip();
+      }
+      this->doubleSpinBox_targetMashPh->setToolTip(
+         suggested_pH ? this->pimpl->m_targetMashPhToolTip + "\n\n" +
+                        tr("The value shown is the pH set on the recipe's mash.") :
+                        this->pimpl->m_targetMashPhToolTip
+      );
    }
    this->doubleSpinBox_targetMashPh->setEnabled(enabled && target_pH.has_value());
    return;
@@ -593,15 +638,8 @@ void WaterAdjuster::doAutoAdjust(bool const turnOnKeepInSync) {
    }
 
    auto showMessage = [this](QString const & heading, QStringList const & details = {}) {
-      QString text = heading.toHtmlEscaped();
-      if (!details.isEmpty()) {
-         text += "<ul>";
-         for (auto const & detail : details) {
-            text += QString{"<li>%1</li>"}.arg(detail.toHtmlEscaped());
-         }
-         text += "</ul>";
-      }
-      this->label_autoAdjustInfo->setText(text);
+      this->showAutoAdjustMessage(heading, details);
+      return;
    };
 
    //
@@ -627,9 +665,9 @@ void WaterAdjuster::doAutoAdjust(bool const turnOnKeepInSync) {
          // We still turn on keep in sync, as the user asked for it.  The adjustment will happen when the problem is fixed.
          Undoable::doOrRedoUpdate(command.release());
          this->pimpl->m_autoAdjustUndoIndex = Undoable::getStack().index();
-         showMessage(tr("Could not adjust the water agents yet:"), {preparation.result.error});
+         showMessage(tr("Could not adjust the water agents yet: %1").arg(preparation.result.error));
       } else {
-         showMessage(tr("Could not adjust the water agents, so nothing has been changed:"), {preparation.result.error});
+         showMessage(tr("Could not adjust the water agents, so nothing has been changed: %1").arg(preparation.result.error));
       }
       return;
    }
@@ -646,9 +684,6 @@ void WaterAdjuster::doAutoAdjust(bool const turnOnKeepInSync) {
    WaterAutoAdjuster::Result const & result = preparation.result;
    QStringList details = result.warnings;
    details.append(preparation.notes);
-   if (result.predictedMash_pH) {
-      details.append(tr("Predicted mash pH is %1.").arg(QString::number(*result.predictedMash_pH, 'f', 2)));
-   }
    QString const what = recipe->waterTarget() ? tr("target profile \"%1\"").arg(recipe->waterTarget()->name()) :
                                                 tr("target mash pH");
    QString heading;
@@ -657,7 +692,10 @@ void WaterAdjuster::doAutoAdjust(bool const turnOnKeepInSync) {
    } else if (result.warnings.isEmpty()) {
       heading = tr("Water agents adjusted to match %1.").arg(what);
    } else {
-      heading = tr("Water agents adjusted for %1, but please check the following:").arg(what);
+      heading = tr("Water agents adjusted for %1, but some things need checking.").arg(what);
+   }
+   if (result.predictedMash_pH) {
+      heading += " " + tr("Predicted mash pH is %1.").arg(QString::number(*result.predictedMash_pH, 'f', 2));
    }
    showMessage(heading, details);
    return;

@@ -28,6 +28,7 @@
 #include "measurement/Unit.h"
 #include "model/Fermentable.h"
 #include "model/Mash.h"
+#include "model/MashStep.h"
 #include "model/Recipe.h"
 #include "model/RecipeAdditionFermentable.h"
 #include "model/RecipeAdditionMisc.h"
@@ -880,6 +881,25 @@ std::optional<WaterAutoAdjuster::Prediction> WaterAutoAdjuster::predict(Recipe c
       .ions_ppm = predict(inputs, {}),
       .mash_pH  = mashPh(inputs, {}, 0.0),
    };
+}
+
+std::optional<double> WaterAutoAdjuster::suggestedTargetMashPh(Recipe const & recipe) {
+   auto const mash = recipe.mash();
+   if (!mash) {
+      return std::nullopt;
+   }
+   for (auto const & mashStep : mash->mashSteps()) {
+      if (mashStep->isSparge()) {
+         continue;
+      }
+      if (auto const pH = mashStep->startAcidity_pH(); pH) {
+         return pH;
+      }
+      if (auto const pH = mashStep->endAcidity_pH(); pH) {
+         return pH;
+      }
+   }
+   return std::nullopt;
 }
 
 WaterAutoAdjuster::Preparation WaterAutoAdjuster::prepare(Recipe & recipe, QUndoCommand & parent) {

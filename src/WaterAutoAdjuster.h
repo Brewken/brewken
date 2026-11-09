@@ -311,6 +311,16 @@ public:
    static std::optional<Prediction> predict(Recipe const & recipe);
 
    /**
+    * \brief If the recipe doesn't have a target mash pH, this is what we suggest as a starting point: the pH of the
+    *        first non-sparge step of the recipe's mash that has one set (\c Step::startAcidity_pH, or failing that
+    *        \c Step::endAcidity_pH).  We only ever read this -- we don't write the recipe's target back to the mash,
+    *        as the mash can be shared between recipes, and mash pH depends on the recipe's grain bill and water.
+    *
+    * \return \c std::nullopt if there's no mash or none of its (non-sparge) steps has a pH set
+    */
+   static std::optional<double> suggestedTargetMashPh(Recipe const & recipe);
+
+   /**
     * \brief The outcome of \c prepare
     */
    struct Preparation {

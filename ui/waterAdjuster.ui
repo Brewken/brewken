@@ -409,6 +409,23 @@
            </item>
           </layout>
          </widget>
+         <widget class="QWidget" name="tab_autoAdjustNotes">
+          <attribute name="title">
+           <string>Auto-Adjust Notes</string>
+          </attribute>
+          <attribute name="toolTip">
+           <string>Things to check after the last Auto-Adjust, eg ions that couldn't be brought close to the target, and why</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_autoAdjustNotes">
+           <item>
+            <widget class="QTextBrowser" name="textBrowser_autoAdjustNotes">
+             <property name="openLinks">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
 
         </widget>
        </item>

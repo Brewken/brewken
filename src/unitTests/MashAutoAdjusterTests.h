@@ -68,8 +68,8 @@ private slots:
    void testWithRecipe();
 
    /**
-    * \brief The example mash profiles in \c data/DefaultContent006-MashProfiles.beer import as locked, and can be
-    *        calculated for a typical recipe
+    * \brief The example mash profiles in \c data/DefaultContent006-MashAndWaterProfiles.beer import as locked, and
+    *        can be calculated for a typical recipe
     */
    void testExampleProfiles();
 

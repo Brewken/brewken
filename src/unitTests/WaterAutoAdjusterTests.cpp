@@ -16,10 +16,13 @@
 #include "unitTests/WaterAutoAdjusterTests.h"
 
 #include <QDebug>
+#include <QDir>
+#include <QTextStream>
 #include <QtTest/QtTest>
 #include <QUndoStack>
 
 #include "WaterAutoAdjuster.h"
+#include "config.h"
 #include "database/ObjectStoreWrapper.h"
 #include "measurement/PhysicalConstants.h"
 #include "measurement/Unit.h"
@@ -32,6 +35,7 @@
 #include "model/RecipeAdditionMisc.h"
 #include "model/Water.h"
 #include "undoRedo/SimpleUndoableUpdate.h"
+#include "serialization/json/dotBeer/DotBeer.h"
 #include "undoRedo/UndoableAutoAdjust.h"
 #include "unitTests/TestData.h"
 #include "unitTests/TestRegistry.h"
@@ -735,5 +739,112 @@ void WaterAutoAdjusterTests::testRecipeUndoAndKeepInSync() {
    recipe->setLocked(false);
    recipe->setWaterKeptInSync(false);
    undoStack.clear();
+   return;
+}
+
+void WaterAutoAdjusterTests::testSuggestedTargetMashPh() {
+   auto recipe = std::make_shared<Recipe>("Suggested target pH test recipe");
+   ObjectStoreWrapper::insert(recipe);
+   QVERIFY(!WaterAutoAdjuster::suggestedTargetMashPh(*recipe));
+
+   auto mash = std::make_shared<Mash>("Suggested target pH test mash");
+   ObjectStoreWrapper::insert(mash);
+   auto makeStep = [&mash](QString const & name, MashStep::Type const type) {
+      auto step = std::make_shared<MashStep>(name);
+      step->setType(type);
+      step->setStartTemp_c(65.0);
+      step->setStepTime_mins(30.0);
+      mash->add(step);
+      return step;
+   };
+   // Sparge steps don't count, even if they come first
+   auto sparge = makeStep("Odd sparge", MashStep::Type::BatchSparge);
+   sparge->setStartAcidity_pH(5.8);
+   auto strike = makeStep("Strike", MashStep::Type::Infusion);
+   auto rest   = makeStep("Rest"  , MashStep::Type::Temperature);
+   recipe->setMash(mash);
+   QVERIFY(!WaterAutoAdjuster::suggestedTargetMashPh(*recipe));
+
+   // End pH is used if there's no start pH
+   rest->setEndAcidity_pH(5.3);
+   QCOMPARE(*WaterAutoAdjuster::suggestedTargetMashPh(*recipe), 5.3);
+
+   // The first step with a pH wins
+   strike->setStartAcidity_pH(5.4);
+   QCOMPARE(*WaterAutoAdjuster::suggestedTargetMashPh(*recipe), 5.4);
+
+   // We only ever read the mash
+   QVERIFY(!recipe->targetMashAcidity_pH());
+   return;
+}
+
+void WaterAutoAdjusterTests::testExampleProfiles() {
+   QString const filePath{QDir{CONFIG_TEST_DATA_DIR}.filePath("../data/DefaultContent006-MashAndWaterProfiles.beer")};
+   QString userMessage;
+   QTextStream userMessageAsStream{&userMessage};
+   bool const imported = DotBeer::import("", filePath, userMessageAsStream);
+   userMessageAsStream.flush();
+   QVERIFY2(imported, qPrintable(userMessage));
+
+   QStringList const targetNames{
+      "Light and malty",
+      "Pale, Soft (Pilsner, Helles)",
+      "Pale, Balanced (Blonde, Kölsch, Wheat)",
+      "Pale, Hoppy (Pale Ale, West Coast IPA)",
+      "Pale, Juicy (New England IPA)",
+      "Amber, Hoppy (Bitter, ESB, Amber Ale)",
+      "Amber, Balanced (Vienna, Altbier)",
+      "Amber, Malty (Märzen, Scottish, Bock)",
+      "Brown, Balanced (Brown Ale, Porter)",
+      "Brown, Malty (Dunkel, Dubbel)",
+      "Black, Dry (Dry Stout, Black IPA)",
+      "Black, Full (Sweet & Imperial Stout)",
+   };
+   for (auto const & name : targetNames) {
+      auto const water = UnitTests::findByName<Water>(name);
+      QVERIFY2(water, qPrintable(name));
+      QVERIFY2(!water->notes().isEmpty(), qPrintable(name));
+
+      //
+      // Each style target is designed to be reachable from RO water with the salts Auto-Adjust uses by default, so we
+      // should hit every ion (within the warning tolerance) with no warnings.
+      //
+      WaterAutoAdjuster::Inputs inputs = roWater(30.0);
+      for (auto const ion : WaterAutoAdjuster::ions) {
+         inputs.target_ppm[ion] = water->ionConcentration_ppm(ion).value_or(0.0);
+      }
+      inputs.salts = WaterAutoAdjuster::defaultSalts;
+      WaterAutoAdjuster::Result const result = WaterAutoAdjuster::calculate(inputs);
+      QVERIFY2(result.ok(), qPrintable(name + ": " + result.error));
+      QVERIFY2(result.warnings.isEmpty(), qPrintable(name + ": " + result.warnings.join("; ")));
+      for (auto const ion : WaterAutoAdjuster::ions) {
+         QVERIFY2(fuzzyComp(result.predicted_ppm.value(ion), inputs.target_ppm.value(ion), 2.0),
+                  qPrintable(QString{"%1: %2 is %3, target %4"}.arg(name)
+                                                              .arg(Water::ionDisplayNames[ion])
+                                                              .arg(result.predicted_ppm.value(ion))
+                                                              .arg(inputs.target_ppm.value(ion))));
+      }
+   }
+
+   QStringList const cityNames{
+      "Paris tap water (2026)",
+      "Amsterdam tap water (2025)",
+      "Berlin tap water (2025)",
+      "Munich tap water (2026)",
+      "New York City tap water (2024)",
+      "Denver tap water, South system (2025)",
+      "Denver tap water, North system (2025)",
+      "San Diego tap water (2025)",
+      "Seattle tap water (2026)",
+      "San Francisco tap water (2025)",
+      "Melbourne tap water (2025)",
+   };
+   for (auto const & name : cityNames) {
+      auto const water = UnitTests::findByName<Water>(name);
+      QVERIFY2(water, qPrintable(name));
+      // Every city profile says where its figures came from
+      QVERIFY2(water->notes().startsWith("Source: "), qPrintable(name));
+      QVERIFY2(water->ionConcentration_ppm(Water::MineralIon::Calcium).value_or(0.0) > 0.0, qPrintable(name));
+   }
    return;
 }
