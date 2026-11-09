@@ -39,6 +39,7 @@
 #endif
 
 #include <algorithm>
+#include <cmath>
 #include <memory>
 #include <mutex> // For std::once_flag etc
 
@@ -1817,10 +1818,23 @@ void MainWindow::displayRangesEtcForCurrentRecipeStyle() {
 }
 
 //
-// TODO: Would be good to harmonise how these updateRecipeFoo and dropRecipeFoo functions work
+// This is used both when the user picks something from one of the drop-downs on the recipe tab (via
+// updateRecipeFromSelected) and when they drag it onto the recipe (via droppedRecipeEquipment etc), so that the two
+// behave the same way.
 //
-
 template<class NE> void MainWindow::setForRecipe(std::shared_ptr<NE> val) {
+   if (!val || !this->pimpl->m_recipeObs) {
+      return;
+   }
+
+   //
+   // The drop-downs emit QComboBox::activated even when the user re-selects the item already chosen.  Nothing would
+   // change, but we don't want to put a no-op on the undo stack, or (for equipment) ask about batch size etc.
+   //
+   if (auto const current = this->pimpl->m_recipeObs->get<NE>(); current && current->key() == val->key()) {
+      return;
+   }
+
    if constexpr (std::is_same_v<NE, Mash>) {
       //
       // A mash that adjusts automatically to the recipe that uses it (see Mash::autoAdjust) can't be shared with another
@@ -1854,18 +1868,73 @@ template<class NE> void MainWindow::setForRecipe(std::shared_ptr<NE> val) {
       }
    }
 
-   if (val) {
-      Undoable::doOrRedoUpdate(
-         newRelationalUndoableUpdate(
-            *this->pimpl->m_recipeObs,
-            &Recipe::set<NE>,
-            this->pimpl->m_recipeObs->get<NE>(),
-            val,
-            callbackFunctionFor<NE>(),
-            tr("Change %1 on %2 Recipe").arg(NE::localisedName()).arg(this->pimpl->m_recipeObs->name())
-         )
-      );
+   // We need to hang on to this QUndoCommand pointer because there might be other updates linked to it - see below
+   auto update = newRelationalUndoableUpdate(
+      *this->pimpl->m_recipeObs,
+      &Recipe::set<NE>,
+      this->pimpl->m_recipeObs->get<NE>(),
+      val,
+      callbackFunctionFor<NE>(),
+      tr("Change %1 on %2 Recipe").arg(NE::localisedName()).arg(this->pimpl->m_recipeObs->name())
+   );
+
+   if constexpr (std::is_same_v<NE, Equipment>) {
+      //
+      // Offer to make the recipe's batch size and pre-boil size match the new equipment.  (We don't ask if they already
+      // match.)
+      //
+      // NB: We used to copy the mash tun weight and specific heat from the equipment to the mash here.  We no longer
+      // need to, as calculations now take them from the recipe's equipment (falling back to the deprecated fields on
+      // the Mash only if the equipment doesn't have them) -- see Recipe::mashTunHeatCapacity_kcalC.
+      //
+      Recipe & recipe = *this->pimpl->m_recipeObs;
+      auto const existingBoil = recipe.boil();
+      // See comment in Equipment::defaultPreBoilSize_l for why we pass in the boil time
+      double const boilTime_mins = existingBoil ? existingBoil->boilTime_mins() : Boil::default_boilTime_mins;
+      double const newBatchSize_l   = val->fvBatchSize_l();
+      double const newPreBoilSize_l = val->defaultPreBoilSize_l(boilTime_mins);
+
+      static constexpr double tolerance_l = 0.001;
+      bool const batchSizeMatches   = std::abs(recipe.batchSize_l() - newBatchSize_l) < tolerance_l;
+      std::optional<double> const existingPreBoilSize_l =
+         existingBoil ? existingBoil->preBoilSize_l() : std::nullopt;
+      bool const preBoilSizeMatches =
+         existingPreBoilSize_l && std::abs(*existingPreBoilSize_l - newPreBoilSize_l) < tolerance_l;
+
+      if (!batchSizeMatches || !preBoilSizeMatches) {
+         QMessageBox::StandardButton const answer = QMessageBox::question(
+            this,
+            tr("Use equipment sizes?"),
+            tr("Would you like to set the recipe's batch size to %1 and pre-boil size to %2, as specified by the "
+               "equipment \"%3\"?").arg(
+               Measurement::displayAmount(Measurement::Amount{newBatchSize_l  , Measurement::Units::liters}),
+               Measurement::displayAmount(Measurement::Amount{newPreBoilSize_l, Measurement::Units::liters}),
+               val->name()
+            ),
+            QMessageBox::Yes | QMessageBox::No,
+            QMessageBox::Yes
+         );
+         if (answer == QMessageBox::Yes) {
+            //
+            // We want these updates to undo/redo if and when the equipment change is undone/redone.  Setting the parent
+            // field on a QUndoCommand makes that parent the owner, responsible for invoking, deleting, etc.
+            // Technically the descriptions of these subcommands won't ever be seen by the user, but there's no harm in
+            // setting them.
+            //
+            if (!batchSizeMatches) {
+               new SimpleUndoableUpdate(recipe, TYPE_INFO(Recipe, batchSize_l), newBatchSize_l,
+                                        tr("Change Batch Size"), update);
+            }
+            if (!preBoilSizeMatches) {
+               new SimpleUndoableUpdate(*recipe.nonOptBoil(), TYPE_INFO(Boil, preBoilSize_l), newPreBoilSize_l,
+                                        tr("Change Boil Size"), update);
+            }
+         }
+      }
    }
+
+   // This will do the update and any related ones - see above
+   Undoable::doOrRedoUpdate(update);
    return;
 }
 
@@ -1944,51 +2013,13 @@ void MainWindow::updateFermentationInUi() {
 }
 
 void MainWindow::droppedRecipeEquipment(Equipment * kitRaw) {
-   if (this->pimpl->m_recipeObs == nullptr) {
-      return;
-   }
-
    // equip may be null.
    if (!kitRaw) {
       return;
    }
 
-   auto kit = ObjectStoreWrapper::getSharedFromRaw(kitRaw);
-
-   // We need to hang on to this QUndoCommand pointer because there might be other updates linked to it - see below
-   auto equipmentUpdate = newRelationalUndoableUpdate(*this->pimpl->m_recipeObs,
-                                                      &Recipe::setEquipment,
-                                                      this->pimpl->m_recipeObs->equipment(),
-                                                      kit,
-                                                      &MainWindow::updateEquipmentInUi,
-                                                      tr("Change Recipe Kit"));
-
-   //
-   // NB: We used to copy the mash tun weight and specific heat from the equipment to the mash here.  We no longer need
-   // to, as calculations now take them from the recipe's equipment (falling back to the deprecated fields on the Mash
-   // only if the equipment doesn't have them) -- see Recipe::mashTunHeatCapacity_kcalC.
-   //
-
-   if (QMessageBox::question(this,
-                             tr("Equipment request"),
-                             tr("Would you like to set the batch size, boil size and time to that requested by the equipment?"),
-                             QMessageBox::Yes,
-                             QMessageBox::No) == QMessageBox::Yes) {
-      // If we do update batch size etc as a result of the equipment change, then we want those updates to undo/redo
-      // if and when the equipment change is undone/redone.  Setting the parent field on a QUndoCommand makes that
-      // parent the owner, responsible for invoking, deleting, etc.  Technically the descriptions of these subcommands
-      // won't ever be seen by the user, but there's no harm in setting them.
-      // (The previous call here to this->pimpl->m_mashEditor->setRecipe() was a roundabout way of calling setTunWeight_kg() and
-      // setMashTunSpecificHeat_calGC() on the mash.)
-      new SimpleUndoableUpdate(*this->pimpl->m_recipeObs, TYPE_INFO(Recipe, batchSize_l), kit->fvBatchSize_l(), tr("Change Batch Size"), equipmentUpdate);
-
-      auto const boil = this->pimpl->m_recipeObs->nonOptBoil();
-      // See comment in Equipment::defaultPreBoilSize_l for why we pass in the boil time
-      new SimpleUndoableUpdate(*boil, TYPE_INFO(Boil, preBoilSize_l), kit->defaultPreBoilSize_l(boil->boilTime_mins()), tr("Change Boil Size"), equipmentUpdate);
-   }
-
-   // This will do the equipment update and any related updates - see above
-   Undoable::doOrRedoUpdate(equipmentUpdate);
+   // Same behaviour as choosing the equipment from the drop-down on the recipe tab
+   this->setForRecipe(ObjectStoreWrapper::getSharedFromRaw(kitRaw));
    return;
 }
 

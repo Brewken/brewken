@@ -25,6 +25,7 @@ happens, so I'm now setting it to a slightly arbitrary time early in the morning
 * Predicted mash pH on the Water tab was wildly wrong if the recipe had any lactic acid (or acidulated malt or phosphoric acid), as acid amounts were converted with the wrong units.  The mash pH model has also been corrected to scale by the weight of grain rather than mash thickness, and to count all specialty malts rather than just the last one.
 * Water agent figures for gypsum (calcium overstated by about 26%), magnesium chloride (no chloride, and a possible crash) and pickling lime were wrong
 * Water tab didn't update predicted mash pH when the grain bill changed, and could give wrong figures after switching between recipes
+* Choosing equipment from the drop-down on the recipe tab now offers to set the recipe's batch size and pre-boil size to match it, as dragging the equipment onto the recipe already did (Brewtarget [531](https://github.com/Brewtarget/brewtarget/issues/531)).  Re-selecting the recipe's current equipment (or style, mash, etc) no longer adds an empty step to the undo history.
 
 ## v5.2.3
 More bug fixes.
