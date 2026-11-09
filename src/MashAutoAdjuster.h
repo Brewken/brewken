@@ -210,6 +210,11 @@ public:
        */
       struct StepScope {
          int stepIndex;
+         /**
+          * If we know which value in the step is the cause of the problem (eg the infusion temperature), the name of
+          * the property (eg \c PropertyNames::MashStep::infuseTemp_c), so the UI can highlight it; otherwise empty.
+          */
+         QString stepProperty = "";
       };
       /**
        * \brief If the problem is with one of the fields of the \c Mash itself (eg the initial grain temperature), the
@@ -357,7 +362,7 @@ inline QDebug operator<<(QDebug debug, MashAutoAdjuster::Problem::Scope const & 
       using T = std::decay_t<decltype(value)>;
 
       if constexpr (std::is_same_v<T, MashAutoAdjuster::Problem::StepScope>) {
-         debug << "StepScope{" << value.stepIndex << "}";
+         debug << "StepScope{" << value.stepIndex << "," << value.stepProperty << "}";
       } else if constexpr (std::is_same_v<T, MashAutoAdjuster::Problem::MashPropertyScope>) {
          debug << "MashPropertyScope{" << value.mashProperty << "}";
       } else if constexpr (std::is_same_v<T, MashAutoAdjuster::Problem::MashScope>) {

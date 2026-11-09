@@ -1124,6 +1124,7 @@ add_test(NAME CoreTests.testMultiVector                            COMMAND ./${f
 add_test(NAME CoreTests.testLogRotation                            COMMAND ./${fileName_unitTestRunner} CoreTests          testLogRotation                  )
 add_test(NAME DatabaseTests.testUpgradeBrewtarget231Database       COMMAND ./${fileName_unitTestRunner} DatabaseTests      testUpgradeBrewtarget231Database )
 add_test(NAME DatabaseTests.testLockingAndSharing                  COMMAND ./${fileName_unitTestRunner} DatabaseTests      testLockingAndSharing            )
+add_test(NAME DatabaseTests.testAutomaticVersioning                COMMAND ./${fileName_unitTestRunner} DatabaseTests      testAutomaticVersioning          )
 add_test(NAME MashAutoAdjusterTests.testStrikeWater                    COMMAND ./${fileName_unitTestRunner} MashAutoAdjusterTests testStrikeWater)
 add_test(NAME MashAutoAdjusterTests.testFixedValues                    COMMAND ./${fileName_unitTestRunner} MashAutoAdjusterTests testFixedValues)
 add_test(NAME MashAutoAdjusterTests.testStepInfusions                  COMMAND ./${fileName_unitTestRunner} MashAutoAdjusterTests testStepInfusions)

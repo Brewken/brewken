@@ -35,6 +35,7 @@
 #include "model/MashStep.h"
 #include "model/Recipe.h"
 #include "model/RecipeUtils.h"
+#include "qtModels/tableModels/MashStepTableModel.h"
 #include "undoRedo/Undoable.h"
 #include "undoRedo/UndoableAutoAdjust.h"
 #include "widgets/SmartAmounts.h"
@@ -269,8 +270,17 @@ void MashEditor::highlightField(QWidget & field, QStringList const & problems) {
       field.setStyleSheet("");
       field.setToolTip(toolTip);
    } else {
-      // Same semi-transparent red as for steps with errors in MashStepTableModel, so it works with light and dark themes
-      field.setStyleSheet("background-color: rgba(230, 40, 40, 70);");
+      //
+      // Same semi-transparent red as for steps with errors in MashStepTableModel, so it works with light and dark
+      // themes.  (We don't build this string as a namespace-level constant because MashStepTableModel::errorRowColor
+      // is defined in another translation unit, so might not yet be initialised when such a constant would be.)
+      //
+      QColor const & color = MashStepTableModel::errorRowColor;
+      field.setStyleSheet(
+         QString{"background-color: rgba(%1, %2, %3, %4);"}.arg(color.red()).arg(color.green()).arg(color.blue()).arg(
+            color.alpha()
+         )
+      );
       field.setToolTip(
          problems.join("\n") + (toolTip.isEmpty() ? QString{} : QString{"\n\n"} + toolTip)
       );

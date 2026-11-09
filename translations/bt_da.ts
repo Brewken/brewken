@@ -4280,11 +4280,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Equipment request</source>
-        <translation>Udstyr forespørgsel</translation>
+        <translation type="vanished">Udstyr forespørgsel</translation>
     </message>
     <message>
         <source>Would you like to set the batch size, boil size and time to that requested by the equipment?</source>
-        <translation>Ønsker du at sætte volumen af portion, volumen før kogning og varighed til udstyrets værdier?</translation>
+        <translation type="vanished">Ønsker du at sætte volumen af portion, volumen før kogning og varighed til udstyrets værdier?</translation>
     </message>
     <message>
         <source>HTML files (*.html)</source>
@@ -4480,7 +4480,7 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>Change Recipe Kit</source>
-        <translation>Ændr opskriftskit</translation>
+        <translation type="vanished">Ændr opskriftskit</translation>
     </message>
     <message>
         <source>Change Tun Weight</source>
@@ -4496,7 +4496,7 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>Change Boil Size</source>
-        <translation>Ændr kogevolumen</translation>
+        <translation type="vanished">Ændr kogevolumen</translation>
     </message>
     <message>
         <source>Change Boil Time</source>
@@ -5664,6 +5664,22 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     <message>
         <source>Use a copy</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use equipment sizes?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Would you like to set the recipe&apos;s batch size to %1 and pre-boil size to %2, as specified by the equipment &quot;%3&quot;?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Batch Size</source>
+        <translation type="unfinished">Ændr volumen af portion</translation>
+    </message>
+    <message>
+        <source>Change Boil Size</source>
+        <translation type="unfinished">Ændr kogevolumen</translation>
     </message>
 </context>
 <context>

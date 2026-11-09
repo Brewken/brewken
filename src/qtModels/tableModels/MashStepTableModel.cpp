@@ -59,6 +59,12 @@ COLUMN_INFOS(
    TABLE_MODEL_HEADER(MashStep, WaterToGrain, PropertyNames::MashStep::liquorToGristRatio_lKg), // "Water:Grain"
 )
 
+// See comment in header.  The fourth parameter is alpha (ie 0 = fully transparent, 255 = fully opaque).
+QColor const MashStepTableModel::errorRowColor   {230,  40,  40,  70};
+QColor const MashStepTableModel::errorCellColor  {230,  40,  40, 160};
+QColor const MashStepTableModel::warningRowColor {240, 170,   0,  70};
+QColor const MashStepTableModel::warningCellColor{240, 170,   0, 160};
+
 MashStepTableModel::MashStepTableModel(QTableView * parent, bool editable) :
    BtTableModel{parent, editable},
    TableModelBase<MashStepTableModel, MashStep>{},
@@ -98,7 +104,8 @@ QVariant MashStepTableModel::data(QModelIndex const & index, int role) const {
    // Show a pin icon on amounts and infusion temperatures that are "pinned" (aka "fixed"), ie that will not be changed when
    // adjusting the mash (see MashAutoAdjuster and MashEditor::calculate).
    //
-   // Also, if a step doesn't make sense (see validate()), tint its row and explain why in the tool tip.
+   // Also, if a step doesn't make sense (see validate()), tint its row and explain why in the tool tip.  Where we know
+   // which value in the step causes the problem, we tint that cell more strongly.
    //
    if (this->m_itemOwnerObs &&
        (role == Qt::DecorationRole || role == Qt::ToolTipRole || role == Qt::BackgroundRole) &&
@@ -120,8 +127,12 @@ QVariant MashStepTableModel::data(QModelIndex const & index, int role) const {
             break;
          case Qt::BackgroundRole:
             if (hasProblems) {
-               // Semi-transparent, so that it works with light and dark themes
-               return QBrush{problems->isError ? QColor{230, 40, 40, 70} : QColor{240, 170, 0, 70}};
+               QString const cellProperty = this->get_ColumnInfo(columnIndex).propertyPath.asXPath();
+               if (auto const cellProblem = problems->propertyIsError.constFind(cellProperty);
+                   cellProblem != problems->propertyIsError.cend()) {
+                  return QBrush{cellProblem.value() ? errorCellColor : warningCellColor};
+               }
+               return QBrush{problems->isError ? errorRowColor : warningRowColor};
             }
             break;
          case Qt::ToolTipRole:
@@ -265,8 +276,12 @@ void MashStepTableModel::validate() {
                      StepProblems & entry = stepProblems[mashSteps.at(scope.stepIndex).get()];
                      entry.isError |= isError;
                      entry.messages.append(problem.message);
+                     if (!scope.stepProperty.isEmpty()) {
+                        // Note that QHash::operator[] default-constructs bool to false if the key isn't already present
+                        entry.propertyIsError[scope.stepProperty] |= isError;
+                     }
                   } else if constexpr (std::is_same_v<T, MashAutoAdjuster::Problem::MashPropertyScope>) {
-                        mashFieldProblems[scope.mashProperty].append(problem.message);
+                     mashFieldProblems[scope.mashProperty].append(problem.message);
                   } else if constexpr (std::is_same_v<T, MashAutoAdjuster::Problem::MashScope>) {
                      mashProblems.append(problem.message);
                   }
