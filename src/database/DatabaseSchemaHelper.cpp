@@ -3510,6 +3510,11 @@ namespace {
     *          - "amount fixed" and "infuse temp fixed" flags to mash_step
     *
     *        All of these default to false for existing records.
+    *
+    *        Add to recipe:
+    *          - "target mash pH" (see Recipe::targetMashAcidity_pH), which is NULL (ie not set) for existing records,
+    *            meaning water auto-adjust leaves acids alone
+    *          - "water kept in sync" flag (see Recipe::waterKeptInSync), which is false for existing records
     */
    bool migrate_to_23(Database & db, BtSqlQuery & q) {
       QString const boolType = db.getDbNativeTypeName<bool>();
@@ -3524,6 +3529,9 @@ namespace {
          {QString("UPDATE boil         SET locked = ?"                             ), {QVariant{false}}},
          {QString("UPDATE fermentation SET locked = ?"                             ), {QVariant{false}}},
          {QString("UPDATE mash_step    SET amount_fixed = ?, infuse_temp_fixed = ?"), {QVariant{false}, QVariant{false}}},
+         {QString("ALTER TABLE recipe ADD COLUMN target_mash_ph     %1").arg(db.getDbNativeTypeName<double>())},
+         {QString("ALTER TABLE recipe ADD COLUMN water_kept_in_sync %1").arg(db.getDbNativeTypeName<bool>  ())},
+         {QString("UPDATE recipe SET water_kept_in_sync = ?"), {QVariant{false}}},
       };
       return executeSqlQueries(q, migrationQueries);
    }

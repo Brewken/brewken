@@ -101,6 +101,8 @@ AddPropertyName(primingSugarEquiv      )
 AddPropertyName(primingSugarName       )
 AddPropertyName(roWaterMash_pct        )
 AddPropertyName(roWaterSparge_pct      )
+AddPropertyName(targetMashAcidity_pH   )
+AddPropertyName(waterKeptInSync        )
 AddPropertyName(style                  )
 AddPropertyName(styleId                )
 AddPropertyName(tasteNotes             )
@@ -219,6 +221,8 @@ public:
    static QString localisedName_primingSugarName       ();
    static QString localisedName_roWaterMash_pct        ();
    static QString localisedName_roWaterSparge_pct      ();
+   static QString localisedName_targetMashAcidity_pH   ();
+   static QString localisedName_waterKeptInSync        ();
    static QString localisedName_style                  ();
    static QString localisedName_styleId                ();
    static QString localisedName_tasteNotes             ();
@@ -505,6 +509,18 @@ public:
    Q_PROPERTY(double roWaterMash_pct       READ roWaterMash_pct       WRITE setRoWaterMash_pct)
    //! \brief percent of the sparge water that is RO (reverse osmosis)
    Q_PROPERTY(double roWaterSparge_pct     READ roWaterSparge_pct     WRITE setRoWaterSparge_pct)
+   /**
+    * \brief The mash pH we are aiming for.  If set, the water "Auto-Adjust" (see \c WaterAutoAdjuster) works out how
+    *        much acid to add to get it.  If not set, acids are left alone.
+    */
+   Q_PROPERTY(std::optional<double> targetMashAcidity_pH READ targetMashAcidity_pH WRITE setTargetMashAcidity_pH)
+   /**
+    * \brief Whether the water agents (salts and, if \c targetMashAcidity_pH is set, acid) should be recalculated
+    *        automatically (see \c WaterAutoAdjuster::autoAdjust) when something they depend on changes -- eg the water
+    *        profiles, the amount of water in the mash or the grain bill.  This is the water equivalent of
+    *        \c Mash::keptInSync, and is shown as "Keep in sync with recipe" on the Water tab.
+    */
+   Q_PROPERTY(bool waterKeptInSync READ waterKeptInSync WRITE setWaterKeptInSync)
 
    // These QList properties should only emit changed() when their size changes, or when
    // one of their elements is replaced by another with a different key.
@@ -652,6 +668,8 @@ public:
 
    double roWaterMash_pct  () const;
    double roWaterSparge_pct() const;
+   std::optional<double> targetMashAcidity_pH() const;
+   bool waterKeptInSync() const;
 
    // === Calculated getters ===
    double        points                  () const;
@@ -826,6 +844,8 @@ public:
 
    void setRoWaterMash_pct  (double const val);
    void setRoWaterSparge_pct(double const val);
+   void setTargetMashAcidity_pH(std::optional<double> const val);
+   void setWaterKeptInSync(bool const val);
 
    // Other junk.
    bool hasAncestors() const;
@@ -1011,11 +1031,21 @@ public:
 
    /**
     * \brief If our mash is set to adjust automatically (see \c Mash::autoAdjust), arrange for \c
-    *        MashCalculator::autoAdjust to be called the next time we get back to the event loop.  (Multiple calls before
+    *        MashAutoAdjuster::autoAdjust to be called the next time we get back to the event loop.  (Multiple calls before
     *        then result in only one adjustment.)  Called when something the mash calculation depends on changes, eg the
     *        grain bill, the equipment or the boil.
     */
    void scheduleMashAutoAdjust();
+
+   /**
+    * \brief Water equivalent of \c scheduleMashAutoAdjust.  If \c waterKeptInSync is set, arrange for
+    *        \c WaterAutoAdjuster::autoAdjust to be called the next time we get back to the event loop.
+    *
+    *        NB: Changes to the water agents themselves do not trigger this, as the adjustment changes them!  (Also, the
+    *        user would not expect their own changes to be overwritten immediately, and undoing an auto-adjust would
+    *        otherwise redo it straight away.)
+    */
+   void scheduleWaterAutoAdjust();
 
 signals:
    //! Emitted when the number (or order) of instructions changes, or when you should call instructions() again.
@@ -1072,6 +1102,8 @@ private:
 
    double m_roWaterMash_pct     = 0.0;
    double m_roWaterSparge_pct   = 0.0;
+   std::optional<double> m_targetMashAcidity_pH = std::nullopt;
+   bool m_waterKeptInSync       = false;
 
    OwnedSet<Recipe, RecipeAdditionFermentable, PropertyNames::Recipe::fermentableAdditions, &Recipe::acceptChangeToRecipeAdditionFermentable> m_fermentableAdditions;
    OwnedSet<Recipe, RecipeAdditionHop        , PropertyNames::Recipe::hopAdditions        , &Recipe::acceptChangeToRecipeAdditionHop        > m_hopAdditions        ;
@@ -1109,6 +1141,8 @@ private:
    bool m_calcsEnabled = true;
    //! See \c scheduleMashAutoAdjust
    bool m_mashAutoAdjustScheduled = false;
+   //! See \c scheduleWaterAutoAdjust
+   bool m_waterAutoAdjustScheduled = false;
 
    // True when constructed, indicates whether recalcAll has been called.
    bool   m_uninitializedCalcs      = true;

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * unitTests/MashCalculatorTests.cpp is part of Brewken, and is copyright the following authors 2026:
+ * unitTests/MashAutoAdjusterTests.cpp is part of Brewken, and is copyright the following authors 2026:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,14 +13,15 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "unitTests/MashCalculatorTests.h"
+#include "unitTests/MashAutoAdjusterTests.h"
 
 #include <QDebug>
 #include <QDir>
 #include <QTextStream>
 #include <QtTest/QtTest>
+#include <QUndoStack>
 
-#include "MashCalculator.h"
+#include "MashAutoAdjuster.h"
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"
 #include "measurement/PhysicalConstants.h"
@@ -33,14 +34,15 @@
 #include "model/RecipeAdditionFermentable.h"
 #include "model/RecipeUtils.h"
 #include "serialization/json/dotBeer/DotBeer.h"
+#include "undoRedo/UndoableAutoAdjust.h"
 #include "unitTests/TestData.h"
 #include "unitTests/TestRegistry.h"
 
-REGISTER_TEST_CLASS(MashCalculatorTests)
+REGISTER_TEST_CLASS(MashAutoAdjusterTests)
 
 namespace {
    using UnitTests::fuzzyComp;
-   using Severity = MashCalculator::Problem::Severity;
+   using Severity = MashAutoAdjuster::Problem::Severity;
 
    double constexpr tolerance = 0.001;
 
@@ -50,8 +52,8 @@ namespace {
    //    - With a thickness of 3 L/kg, strike water = 3 × 5 + 1 = 16 L
    //    - Drained grain bed heat capacity = 2 (grain) + 5 × 1 (absorbed water) + 2 (tun) = 9 kcal/°C
    //
-   MashCalculator::Inputs makeInputs() {
-      return MashCalculator::Inputs{
+   MashAutoAdjuster::Inputs makeInputs() {
+      return MashAutoAdjuster::Inputs{
          .grain_kg               =  5.0,
          .grainTemp_c            = 20.0,
          .tunHeatCapacity_kcalC  =  2.0,
@@ -64,8 +66,8 @@ namespace {
       };
    }
 
-   MashCalculator::Step makeStep(QString const & name, MashStep::Type const type, double const startTemp_c) {
-      return MashCalculator::Step{
+   MashAutoAdjuster::Step makeStep(QString const & name, MashStep::Type const type, double const startTemp_c) {
+      return MashAutoAdjuster::Step{
          .name          = name,
          .type          = type,
          .startTemp_c   = startTemp_c,
@@ -73,12 +75,12 @@ namespace {
       };
    }
 
-   MashCalculator::Options thickness(double const thickness_LKg) {
-      return MashCalculator::Options{.thickness_LKg = thickness_LKg};
+   MashAutoAdjuster::Options thickness(double const thickness_LKg) {
+      return MashAutoAdjuster::Options{.thickness_LKg = thickness_LKg};
    }
 
    //! \return \c true if one of the messages of the given severity contains \c text
-   bool hasMessage(MashCalculator::Result const & result, Severity const severity, QString const & text) {
+   bool hasMessage(MashAutoAdjuster::Result const & result, Severity const severity, QString const & text) {
       QStringList const messages = result.messages(severity);
       bool const found = std::any_of(messages.cbegin(), messages.cend(),
                                      [&text](QString const & message) { return message.contains(text); });
@@ -88,7 +90,7 @@ namespace {
       return found;
    }
 
-   int numMessages(MashCalculator::Result const & result, Severity const severity) {
+   int numMessages(MashAutoAdjuster::Result const & result, Severity const severity) {
       return result.messages(severity).size();
    }
 
@@ -110,16 +112,16 @@ namespace {
    }
 }
 
-MashCalculatorTests::MashCalculatorTests() = default;
+MashAutoAdjusterTests::MashAutoAdjusterTests() = default;
 
-MashCalculatorTests::~MashCalculatorTests() = default;
+MashAutoAdjusterTests::~MashAutoAdjusterTests() = default;
 
-void MashCalculatorTests::testStrikeWater() {
-   QList<MashCalculator::Step> steps{makeStep("Saccharification", MashStep::Type::Infusion, 66.0)};
-   MashCalculator::setSparge(steps, MashCalculator::SpargeMethod::BatchSparge, 1);
+void MashAutoAdjusterTests::testStrikeWater() {
+   QList<MashAutoAdjuster::Step> steps{makeStep("Saccharification", MashStep::Type::Infusion, 66.0)};
+   MashAutoAdjuster::setSparge(steps, MashAutoAdjuster::SpargeMethod::BatchSparge, 1);
    QCOMPARE(steps.size(), 2);
 
-   auto const result = MashCalculator::calculate(makeInputs(), steps, thickness(3.0));
+   auto const result = MashAutoAdjuster::calculate(makeInputs(), steps, thickness(3.0));
    QVERIFY(result.ok());
    QCOMPARE(numMessages(result, Severity::Warning), 0);
 
@@ -141,7 +143,7 @@ void MashCalculatorTests::testStrikeWater() {
    // Without a thickness option, we use the step's liquor-to-grist ratio if it has one...
    //
    steps[0].liquorToGristRatio_lKg = 2.5;
-   auto const result1 = MashCalculator::calculate(makeInputs(), steps);
+   auto const result1 = MashAutoAdjuster::calculate(makeInputs(), steps);
    QVERIFY(result1.ok());
    QVERIFY(fuzzyComp(result1.steps.at(0).amount_l, 13.5, tolerance));
    steps[0].liquorToGristRatio_lKg = std::nullopt;
@@ -150,15 +152,15 @@ void MashCalculatorTests::testStrikeWater() {
    // ...otherwise the thickness of the existing strike water if there is any...
    //
    steps[0].amount_l = 11.0; // = 2 L/kg × 5 kg + 1 L
-   auto const result2 = MashCalculator::calculate(makeInputs(), steps);
+   auto const result2 = MashAutoAdjuster::calculate(makeInputs(), steps);
    QVERIFY(result2.ok());
    QVERIFY(fuzzyComp(result2.steps.at(0).amount_l, 11.0, tolerance));
 
    // ...otherwise the default
    steps[0].amount_l = 0.0;
-   auto const result3 = MashCalculator::calculate(makeInputs(), steps);
+   auto const result3 = MashAutoAdjuster::calculate(makeInputs(), steps);
    QVERIFY(result3.ok());
-   QVERIFY(fuzzyComp(result3.steps.at(0).amount_l, MashCalculator::defaultThickness_LKg * 5.0 + 1.0, tolerance));
+   QVERIFY(fuzzyComp(result3.steps.at(0).amount_l, MashAutoAdjuster::defaultThickness_LKg * 5.0 + 1.0, tolerance));
 
    //
    // If the tun starts at a different temperature from the grain, that's taken into account.  Eg with the tun
@@ -166,15 +168,15 @@ void MashCalculatorTests::testStrikeWater() {
    //
    auto inputs = makeInputs();
    inputs.tunTemp_c = 66.0;
-   auto const result4 = MashCalculator::calculate(inputs, steps, thickness(3.0));
+   auto const result4 = MashAutoAdjuster::calculate(inputs, steps, thickness(3.0));
    QVERIFY(result4.ok());
    QVERIFY(fuzzyComp(*result4.steps.at(0).infuseTemp_c, 71.75, tolerance));
    return;
 }
 
-void MashCalculatorTests::testFixedValues() {
+void MashAutoAdjusterTests::testFixedValues() {
    auto makeSteps = [](std::optional<double> const amount_l, std::optional<double> const waterTemp_c) {
-      QList<MashCalculator::Step> steps{makeStep("Strike", MashStep::Type::Infusion, 66.0)};
+      QList<MashAutoAdjuster::Step> steps{makeStep("Strike", MashStep::Type::Infusion, 66.0)};
       if (amount_l) {
          steps[0].amount_l    = *amount_l;
          steps[0].amountFixed = true;
@@ -183,13 +185,13 @@ void MashCalculatorTests::testFixedValues() {
          steps[0].infuseTemp_c    = *waterTemp_c;
          steps[0].infuseTempFixed = true;
       }
-      MashCalculator::setSparge(steps, MashCalculator::SpargeMethod::FlySparge, 1);
+      MashAutoAdjuster::setSparge(steps, MashAutoAdjuster::SpargeMethod::FlySparge, 1);
       return steps;
    };
 
    // Amount fixed at 20 L (so thickness ignored): water temp = 66 + 184 / 20 = 75.2 °C
    {
-      auto const result = MashCalculator::calculate(makeInputs(), makeSteps(20.0, std::nullopt), thickness(3.0));
+      auto const result = MashAutoAdjuster::calculate(makeInputs(), makeSteps(20.0, std::nullopt), thickness(3.0));
       QVERIFY(result.ok());
       QCOMPARE(result.steps.at(0).amount_l, 20.0);
       QVERIFY(fuzzyComp(*result.steps.at(0).infuseTemp_c, 75.2, tolerance));
@@ -199,7 +201,7 @@ void MashCalculatorTests::testFixedValues() {
 
    // Temp fixed at 74 °C: amount = 184 / (74 - 66) = 23 L
    {
-      auto const result = MashCalculator::calculate(makeInputs(), makeSteps(std::nullopt, 74.0), thickness(3.0));
+      auto const result = MashAutoAdjuster::calculate(makeInputs(), makeSteps(std::nullopt, 74.0), thickness(3.0));
       QVERIFY(result.ok());
       QVERIFY(fuzzyComp(result.steps.at(0).amount_l, 23.0, tolerance));
       QCOMPARE(*result.steps.at(0).infuseTemp_c, 74.0);
@@ -207,7 +209,7 @@ void MashCalculatorTests::testFixedValues() {
 
    // Both fixed and consistent: no warning
    {
-      auto const result = MashCalculator::calculate(makeInputs(), makeSteps(23.0, 74.0));
+      auto const result = MashAutoAdjuster::calculate(makeInputs(), makeSteps(23.0, 74.0));
       QVERIFY(result.ok());
       QCOMPARE(numMessages(result, Severity::Warning), 0);
    }
@@ -217,7 +219,7 @@ void MashCalculatorTests::testFixedValues() {
    // (16 × 70 + 2 × 20 + 2 × 20) / (16 + 2 + 2) = 60 °C
    //
    {
-      auto const result = MashCalculator::calculate(makeInputs(), makeSteps(16.0, 70.0));
+      auto const result = MashAutoAdjuster::calculate(makeInputs(), makeSteps(16.0, 70.0));
       QVERIFY(result.ok());
       QCOMPARE(numMessages(result, Severity::Warning), 1);
       QVERIFY(hasMessage(result, Severity::Warning, "Strike"));
@@ -229,20 +231,20 @@ void MashCalculatorTests::testFixedValues() {
    {
       auto steps = makeSteps(std::nullopt, 74.0);
       steps[0].infuseTemp_c = std::nullopt;
-      auto const result = MashCalculator::calculate(makeInputs(), steps);
+      auto const result = MashAutoAdjuster::calculate(makeInputs(), steps);
       QVERIFY(!result.ok());
    }
 
    // Water temp fixed below the step temp can't heat the mash
    {
-      auto const result = MashCalculator::calculate(makeInputs(), makeSteps(std::nullopt, 60.0));
+      auto const result = MashAutoAdjuster::calculate(makeInputs(), makeSteps(std::nullopt, 60.0));
       QVERIFY(!result.ok());
    }
    return;
 }
 
-void MashCalculatorTests::testStepInfusions() {
-   QList<MashCalculator::Step> steps{
+void MashAutoAdjusterTests::testStepInfusions() {
+   QList<MashAutoAdjuster::Step> steps{
       makeStep("Protein rest"    , MashStep::Type::Infusion, 50.0),
       makeStep("Saccharification", MashStep::Type::Infusion, 66.0),
       makeStep("Mash out"        , MashStep::Type::Infusion, 72.0),
@@ -250,7 +252,7 @@ void MashCalculatorTests::testStepInfusions() {
    // Mash out with water at 90 °C
    steps[2].infuseTemp_c    = 90.0;
    steps[2].infuseTempFixed = true;
-   MashCalculator::setSparge(steps, MashCalculator::SpargeMethod::FlySparge, 1);
+   MashAutoAdjuster::setSparge(steps, MashAutoAdjuster::SpargeMethod::FlySparge, 1);
 
    //
    // With three infusions, we need more water in total than in the other tests, otherwise there's none left for the
@@ -259,7 +261,7 @@ void MashCalculatorTests::testStepInfusions() {
    auto inputs = makeInputs();
    inputs.targetTotalWater_l = 40.0;
    inputs.mashVesselVolume_l = 50.0;
-   auto const result = MashCalculator::calculate(inputs, steps, thickness(3.0));
+   auto const result = MashAutoAdjuster::calculate(inputs, steps, thickness(3.0));
    QVERIFY(result.ok());
    QCOMPARE(numMessages(result, Severity::Warning), 0);
 
@@ -294,7 +296,7 @@ void MashCalculatorTests::testStepInfusions() {
    // second infusion has to provide 20 × 18 = 360 kcal.
    //
    steps[0].endTemp_c = 48.0;
-   auto const result2 = MashCalculator::calculate(makeInputs(), steps, thickness(3.0));
+   auto const result2 = MashAutoAdjuster::calculate(makeInputs(), steps, thickness(3.0));
    QVERIFY(result2.ok());
    QVERIFY(fuzzyComp(result2.steps.at(1).amount_l, 360.0 / 34.0, tolerance));
 
@@ -302,12 +304,12 @@ void MashCalculatorTests::testStepInfusions() {
    // An infusion can also cool the mash, in which case we use water at the grain temperature (20 °C).  Going from
    // 50 °C to 45 °C needs 20 × 5 = 100 kcal taken out, so amount = 100 / (45 - 20) = 4 L
    //
-   QList<MashCalculator::Step> coolingSteps{
+   QList<MashAutoAdjuster::Step> coolingSteps{
       makeStep("Strike" , MashStep::Type::Infusion, 50.0),
       makeStep("Cooling", MashStep::Type::Infusion, 45.0),
    };
-   MashCalculator::setSparge(coolingSteps, MashCalculator::SpargeMethod::FlySparge, 1);
-   auto const result3 = MashCalculator::calculate(makeInputs(), coolingSteps, thickness(3.0));
+   MashAutoAdjuster::setSparge(coolingSteps, MashAutoAdjuster::SpargeMethod::FlySparge, 1);
+   auto const result3 = MashAutoAdjuster::calculate(makeInputs(), coolingSteps, thickness(3.0));
    QVERIFY(result3.ok());
    QVERIFY(fuzzyComp(result3.steps.at(1).amount_l, 4.0, tolerance));
    QCOMPARE(*result3.steps.at(1).infuseTemp_c, 20.0);
@@ -316,27 +318,27 @@ void MashCalculatorTests::testStepInfusions() {
    // A temperature step (ie direct heat) doesn't need any calculation, but the following infusion starts from its
    // temperature
    //
-   QList<MashCalculator::Step> directHeatSteps{
+   QList<MashAutoAdjuster::Step> directHeatSteps{
       makeStep("Strike"     , MashStep::Type::Infusion   , 50.0),
       makeStep("Direct heat", MashStep::Type::Temperature, 60.0),
       makeStep("Infusion"   , MashStep::Type::Infusion   , 66.0),
    };
-   MashCalculator::setSparge(directHeatSteps, MashCalculator::SpargeMethod::FlySparge, 1);
-   auto const result4 = MashCalculator::calculate(makeInputs(), directHeatSteps, thickness(3.0));
+   MashAutoAdjuster::setSparge(directHeatSteps, MashAutoAdjuster::SpargeMethod::FlySparge, 1);
+   auto const result4 = MashAutoAdjuster::calculate(makeInputs(), directHeatSteps, thickness(3.0));
    QVERIFY(result4.ok());
    QCOMPARE(result4.steps.at(1).amount_l, 0.0);
    QVERIFY(fuzzyComp(result4.steps.at(2).amount_l, 20.0 * 6.0 / 34.0, tolerance));
    return;
 }
 
-void MashCalculatorTests::testDecoction() {
-   QList<MashCalculator::Step> steps{
+void MashAutoAdjusterTests::testDecoction() {
+   QList<MashAutoAdjuster::Step> steps{
       makeStep("Protein rest"    , MashStep::Type::Infusion , 50.0),
       makeStep("Saccharification", MashStep::Type::Decoction, 66.0),
    };
-   MashCalculator::setSparge(steps, MashCalculator::SpargeMethod::FlySparge, 1);
+   MashAutoAdjuster::setSparge(steps, MashAutoAdjuster::SpargeMethod::FlySparge, 1);
 
-   auto const result = MashCalculator::calculate(makeInputs(), steps, thickness(3.0));
+   auto const result = MashAutoAdjuster::calculate(makeInputs(), steps, thickness(3.0));
    QVERIFY(result.ok());
 
    //
@@ -359,36 +361,36 @@ void MashCalculatorTests::testDecoction() {
    //
    steps[1].amount_l    = 5.0;
    steps[1].amountFixed = true;
-   auto const result2 = MashCalculator::calculate(makeInputs(), steps, thickness(3.0));
+   auto const result2 = MashAutoAdjuster::calculate(makeInputs(), steps, thickness(3.0));
    QVERIFY(result2.ok());
    QCOMPARE(numMessages(result2, Severity::Warning), 1);
    QCOMPARE(result2.steps.at(1).amount_l, 5.0);
 
    // More than the whole mash is an error
    steps[1].amount_l = 50.0;
-   QVERIFY(!MashCalculator::calculate(makeInputs(), steps, thickness(3.0)).ok());
+   QVERIFY(!MashAutoAdjuster::calculate(makeInputs(), steps, thickness(3.0)).ok());
 
    // A decoction can't cool the mash
    steps[1].amountFixed = false;
    steps[1].startTemp_c = 45.0;
-   QVERIFY(!MashCalculator::calculate(makeInputs(), steps, thickness(3.0)).ok());
+   QVERIFY(!MashAutoAdjuster::calculate(makeInputs(), steps, thickness(3.0)).ok());
 
    // A decoction can't be the first step
-   QList<MashCalculator::Step> badSteps{makeStep("Decoction", MashStep::Type::Decoction, 66.0)};
-   QVERIFY(!MashCalculator::calculate(makeInputs(), badSteps, thickness(3.0)).ok());
+   QList<MashAutoAdjuster::Step> badSteps{makeStep("Decoction", MashStep::Type::Decoction, 66.0)};
+   QVERIFY(!MashAutoAdjuster::calculate(makeInputs(), badSteps, thickness(3.0)).ok());
    return;
 }
 
-void MashCalculatorTests::testSparge() {
-   QList<MashCalculator::Step> steps{makeStep("Saccharification", MashStep::Type::Infusion, 66.0)};
+void MashAutoAdjusterTests::testSparge() {
+   QList<MashAutoAdjuster::Step> steps{makeStep("Saccharification", MashStep::Type::Infusion, 66.0)};
 
    //
    // setSparge
    //
-   QCOMPARE(MashCalculator::spargeMethod(steps), MashCalculator::SpargeMethod::NoSparge);
-   MashCalculator::setSparge(steps, MashCalculator::SpargeMethod::BatchSparge, 2, 76.0);
+   QCOMPARE(MashAutoAdjuster::spargeMethod(steps), MashAutoAdjuster::SpargeMethod::NoSparge);
+   MashAutoAdjuster::setSparge(steps, MashAutoAdjuster::SpargeMethod::BatchSparge, 2, 76.0);
    QCOMPARE(steps.size(), 3);
-   QCOMPARE(MashCalculator::spargeMethod(steps), MashCalculator::SpargeMethod::BatchSparge);
+   QCOMPARE(MashAutoAdjuster::spargeMethod(steps), MashAutoAdjuster::SpargeMethod::BatchSparge);
    QCOMPARE(steps.at(1).type, MashStep::Type::BatchSparge);
    QCOMPARE(steps.at(2).type, MashStep::Type::BatchSparge);
    QCOMPARE(steps.at(1).startTemp_c, 76.0);
@@ -397,7 +399,7 @@ void MashCalculatorTests::testSparge() {
    // Asking for what's already there leaves the steps alone (so fixed values are kept)
    steps[2].amountFixed = true;
    steps[2].amount_l    = 8.0;
-   MashCalculator::setSparge(steps, MashCalculator::SpargeMethod::BatchSparge, 2, 70.0);
+   MashAutoAdjuster::setSparge(steps, MashAutoAdjuster::SpargeMethod::BatchSparge, 2, 70.0);
    QCOMPARE(steps.size(), 3);
    QVERIFY(steps.at(2).amountFixed);
    QCOMPARE(steps.at(1).startTemp_c, 76.0);
@@ -410,9 +412,9 @@ void MashCalculatorTests::testSparge() {
    //    First batch: bed at 66 - 5 = 61 °C.  Water temp = 76 + 9 × (76 - 61) / 6 = 98.5 °C
    //    Second batch: bed at 76 - 5 = 71 °C.  Water temp = 76 + 9 × (76 - 71) / 8 = 81.625 °C
    //
-   MashCalculator::Options options = thickness(3.0);
+   MashAutoAdjuster::Options options = thickness(3.0);
    options.spargeHeatLoss_c = 5.0;
-   auto const result = MashCalculator::calculate(makeInputs(), steps, options);
+   auto const result = MashAutoAdjuster::calculate(makeInputs(), steps, options);
    QVERIFY(result.ok());
    QCOMPARE(numMessages(result, Severity::Warning), 0);
    QVERIFY(fuzzyComp(result.steps.at(1).amount_l, 6.0, tolerance));
@@ -427,7 +429,7 @@ void MashCalculatorTests::testSparge() {
    //    Second batch: bed at 76 - 2 = 74 °C.  Water temp = 76 + 9 × 2 / 7 = 78.57 °C
    //
    steps[2].amountFixed = false;
-   auto const result2 = MashCalculator::calculate(makeInputs(), steps, thickness(3.0));
+   auto const result2 = MashAutoAdjuster::calculate(makeInputs(), steps, thickness(3.0));
    QVERIFY(result2.ok());
    QCOMPARE(numMessages(result2, Severity::Warning), 0);
    QVERIFY(fuzzyComp(result2.steps.at(1).amount_l, 7.0, tolerance));
@@ -442,7 +444,7 @@ void MashCalculatorTests::testSparge() {
    // water at 76 + 9 × (76 - 65.25) / 7 = 89.82 °C.
    //
    options.spargeHeatLoss_c = 10.0;
-   auto const result2a = MashCalculator::calculate(makeInputs(), steps, options);
+   auto const result2a = MashAutoAdjuster::calculate(makeInputs(), steps, options);
    QVERIFY(result2a.ok());
    QCOMPARE(numMessages(result2a, Severity::Warning), 1);
    QVERIFY(hasMessage(result2a, Severity::Warning, "Batch Sparge 1"));
@@ -453,34 +455,34 @@ void MashCalculatorTests::testSparge() {
    // Changing to fly sparge replaces the batch sparges with one fly sparge step, which gets all the sparge water, at
    // the target grain bed temperature
    //
-   MashCalculator::setSparge(steps, MashCalculator::SpargeMethod::FlySparge, 1, 77.0);
+   MashAutoAdjuster::setSparge(steps, MashAutoAdjuster::SpargeMethod::FlySparge, 1, 77.0);
    QCOMPARE(steps.size(), 2);
-   QCOMPARE(MashCalculator::spargeMethod(steps), MashCalculator::SpargeMethod::FlySparge);
-   auto const result3 = MashCalculator::calculate(makeInputs(), steps, thickness(3.0));
+   QCOMPARE(MashAutoAdjuster::spargeMethod(steps), MashAutoAdjuster::SpargeMethod::FlySparge);
+   auto const result3 = MashAutoAdjuster::calculate(makeInputs(), steps, thickness(3.0));
    QVERIFY(result3.ok());
    QVERIFY(fuzzyComp(result3.steps.at(1).amount_l, 14.0, tolerance));
    QCOMPARE(*result3.steps.at(1).infuseTemp_c, 77.0);
 
    // And to no sparge removes it
-   MashCalculator::setSparge(steps, MashCalculator::SpargeMethod::NoSparge, 1);
+   MashAutoAdjuster::setSparge(steps, MashAutoAdjuster::SpargeMethod::NoSparge, 1);
    QCOMPARE(steps.size(), 1);
 
    // Sparge steps must come at the end
-   QList<MashCalculator::Step> badSteps{
+   QList<MashAutoAdjuster::Step> badSteps{
       makeStep("Strike"  , MashStep::Type::Infusion  , 66.0),
       makeStep("Sparge"  , MashStep::Type::FlySparge , 76.0),
       makeStep("Mash out", MashStep::Type::Infusion  , 76.0),
    };
-   QVERIFY(!MashCalculator::calculate(makeInputs(), badSteps, thickness(3.0)).ok());
+   QVERIFY(!MashAutoAdjuster::calculate(makeInputs(), badSteps, thickness(3.0)).ok());
    return;
 }
 
-void MashCalculatorTests::testNoSparge() {
+void MashAutoAdjusterTests::testNoSparge() {
    //
    // Single infusion: all 30 L of water goes in as strike water, regardless of thickness.  Water temp = 66 + 184 / 30
    //
-   QList<MashCalculator::Step> steps{makeStep("Saccharification", MashStep::Type::Infusion, 66.0)};
-   auto const result = MashCalculator::calculate(makeInputs(), steps, thickness(3.0));
+   QList<MashAutoAdjuster::Step> steps{makeStep("Saccharification", MashStep::Type::Infusion, 66.0)};
+   auto const result = MashAutoAdjuster::calculate(makeInputs(), steps, thickness(3.0));
    QVERIFY(result.ok());
    QVERIFY(fuzzyComp(result.steps.at(0).amount_l, 30.0, tolerance));
    QVERIFY(fuzzyComp(*result.steps.at(0).infuseTemp_c, 66.0 + 184.0 / 30.0, tolerance));
@@ -489,11 +491,11 @@ void MashCalculatorTests::testNoSparge() {
    // Two infusions: the strike water comes from the thickness (16 L) and the second infusion makes up the rest (14 L).
    // Its temperature = 66 + 20 × (66 - 50) / 14
    //
-   QList<MashCalculator::Step> twoSteps{
+   QList<MashAutoAdjuster::Step> twoSteps{
       makeStep("Protein rest"    , MashStep::Type::Infusion, 50.0),
       makeStep("Saccharification", MashStep::Type::Infusion, 66.0),
    };
-   auto const result2 = MashCalculator::calculate(makeInputs(), twoSteps, thickness(3.0));
+   auto const result2 = MashAutoAdjuster::calculate(makeInputs(), twoSteps, thickness(3.0));
    QVERIFY(result2.ok());
    QVERIFY(fuzzyComp(result2.steps.at(0).amount_l, 16.0, tolerance));
    QVERIFY(fuzzyComp(result2.steps.at(1).amount_l, 14.0, tolerance));
@@ -504,43 +506,43 @@ void MashCalculatorTests::testNoSparge() {
    //
    twoSteps[1].amount_l    = 12.0;
    twoSteps[1].amountFixed = true;
-   auto const result3 = MashCalculator::calculate(makeInputs(), twoSteps, thickness(3.0));
+   auto const result3 = MashAutoAdjuster::calculate(makeInputs(), twoSteps, thickness(3.0));
    QVERIFY(result3.ok());
    QVERIFY(fuzzyComp(result3.steps.at(0).amount_l, 18.0, tolerance));
 
    // If that leaves nothing for the strike water, it's an error
    twoSteps[1].amount_l = 31.0;
-   QVERIFY(!MashCalculator::calculate(makeInputs(), twoSteps, thickness(3.0)).ok());
+   QVERIFY(!MashAutoAdjuster::calculate(makeInputs(), twoSteps, thickness(3.0)).ok());
 
    // If all the amounts are fixed and don't add up to the total, it's a warning
    twoSteps[0].amount_l    = 16.0;
    twoSteps[0].amountFixed = true;
    twoSteps[1].amount_l    = 12.0;
-   auto const result4 = MashCalculator::calculate(makeInputs(), twoSteps, thickness(3.0));
+   auto const result4 = MashAutoAdjuster::calculate(makeInputs(), twoSteps, thickness(3.0));
    QVERIFY(result4.ok());
    QCOMPARE(numMessages(result4, Severity::Warning), 1);
    return;
 }
 
-void MashCalculatorTests::testErrorsAndWarnings() {
-   QList<MashCalculator::Step> steps{makeStep("Saccharification", MashStep::Type::Infusion, 66.0)};
-   MashCalculator::setSparge(steps, MashCalculator::SpargeMethod::FlySparge, 1);
+void MashAutoAdjusterTests::testErrorsAndWarnings() {
+   QList<MashAutoAdjuster::Step> steps{makeStep("Saccharification", MashStep::Type::Infusion, 66.0)};
+   MashAutoAdjuster::setSparge(steps, MashAutoAdjuster::SpargeMethod::FlySparge, 1);
 
    // No steps
-   QVERIFY(!MashCalculator::calculate(makeInputs(), {}).ok());
+   QVERIFY(!MashAutoAdjuster::calculate(makeInputs(), {}).ok());
 
    // No grain
    auto noGrain = makeInputs();
    noGrain.grain_kg = 0.0;
-   QVERIFY(!MashCalculator::calculate(noGrain, steps).ok());
+   QVERIFY(!MashAutoAdjuster::calculate(noGrain, steps).ok());
 
    // Bad thickness
-   QVERIFY(!MashCalculator::calculate(makeInputs(), steps, thickness(0.0)).ok());
+   QVERIFY(!MashAutoAdjuster::calculate(makeInputs(), steps, thickness(0.0)).ok());
 
    //
    // Mash too thick: 0.8 L/kg gives 5 L, needing water at 66 + 184 / 5 = 102.8 °C.  Nothing should be changed.
    //
-   auto const tooThick = MashCalculator::calculate(makeInputs(), steps, thickness(0.8));
+   auto const tooThick = MashAutoAdjuster::calculate(makeInputs(), steps, thickness(0.8));
    QVERIFY(!tooThick.ok());
    QVERIFY(hasMessage(tooThick, Severity::Error, "Saccharification"));
    QVERIFY(hasMessage(tooThick, Severity::Error, "thinner"));
@@ -549,16 +551,16 @@ void MashCalculatorTests::testErrorsAndWarnings() {
    // Lower boiling point (eg at altitude) makes a difference: 1.2 L/kg gives 7 L, needing water at 66 + 184 / 7 =
    // 92.3 °C, which is OK at sea level but not if water boils at 90 °C
    //
-   QVERIFY(MashCalculator::calculate(makeInputs(), steps, thickness(1.2)).ok());
+   QVERIFY(MashAutoAdjuster::calculate(makeInputs(), steps, thickness(1.2)).ok());
    auto highAltitude = makeInputs();
    highAltitude.boilingPoint_c = 90.0;
-   QVERIFY(!MashCalculator::calculate(highAltitude, steps, thickness(1.2)).ok());
+   QVERIFY(!MashAutoAdjuster::calculate(highAltitude, steps, thickness(1.2)).ok());
 
    //
    // Mash too thin: 6 L/kg gives 31 L of strike water, more than the 30 L needed in total.  This is a warning (as the
    // user might be happy to have extra wort), and the sparge gets no water.
    //
-   auto const tooThin = MashCalculator::calculate(makeInputs(), steps, thickness(6.0));
+   auto const tooThin = MashAutoAdjuster::calculate(makeInputs(), steps, thickness(6.0));
    QVERIFY(tooThin.ok());
    QVERIFY(hasMessage(tooThin, Severity::Warning, "no water left for sparging"));
    QCOMPARE(tooThin.steps.at(1).amount_l, 0.0);
@@ -568,42 +570,42 @@ void MashCalculatorTests::testErrorsAndWarnings() {
    //
    auto smallTun = makeInputs();
    smallTun.mashVesselVolume_l = 20.0;
-   auto const overflow = MashCalculator::calculate(smallTun, steps, thickness(3.0));
+   auto const overflow = MashAutoAdjuster::calculate(smallTun, steps, thickness(3.0));
    QVERIFY(overflow.ok());
    QVERIFY(hasMessage(overflow, Severity::Warning, "capacity of the mash tun"));
    // But we don't check if we don't know the tun size
    smallTun.mashVesselVolume_l = std::nullopt;
-   QCOMPARE(numMessages(MashCalculator::calculate(smallTun, steps, thickness(3.0)), Severity::Warning), 0);
+   QCOMPARE(numMessages(MashAutoAdjuster::calculate(smallTun, steps, thickness(3.0)), Severity::Warning), 0);
 
    // An infusion that doesn't change the temperature can't have its amount calculated
-   QList<MashCalculator::Step> sameTempSteps{
+   QList<MashAutoAdjuster::Step> sameTempSteps{
       makeStep("Strike"     , MashStep::Type::Infusion, 66.0),
       makeStep("More water" , MashStep::Type::Infusion, 66.0),
    };
-   MashCalculator::setSparge(sameTempSteps, MashCalculator::SpargeMethod::FlySparge, 1);
-   QVERIFY(!MashCalculator::calculate(makeInputs(), sameTempSteps, thickness(3.0)).ok());
+   MashAutoAdjuster::setSparge(sameTempSteps, MashAutoAdjuster::SpargeMethod::FlySparge, 1);
+   QVERIFY(!MashAutoAdjuster::calculate(makeInputs(), sameTempSteps, thickness(3.0)).ok());
    // But it's fine if its amount is fixed
    sameTempSteps[1].amount_l    = 2.0;
    sameTempSteps[1].amountFixed = true;
-   auto const sameTemp = MashCalculator::calculate(makeInputs(), sameTempSteps, thickness(3.0));
+   auto const sameTemp = MashAutoAdjuster::calculate(makeInputs(), sameTempSteps, thickness(3.0));
    QVERIFY(sameTemp.ok());
    QVERIFY(fuzzyComp(*sameTemp.steps.at(1).infuseTemp_c, 66.0, tolerance));
    return;
 }
 
-void MashCalculatorTests::testSensibleTemperatures() {
-   QList<MashCalculator::Step> steps{makeStep("Saccharification", MashStep::Type::Infusion, 66.0)};
-   MashCalculator::setSparge(steps, MashCalculator::SpargeMethod::FlySparge, 1);
+void MashAutoAdjusterTests::testSensibleTemperatures() {
+   QList<MashAutoAdjuster::Step> steps{makeStep("Saccharification", MashStep::Type::Infusion, 66.0)};
+   MashAutoAdjuster::setSparge(steps, MashAutoAdjuster::SpargeMethod::FlySparge, 1);
 
    // Grain temperature of 0 °C (which used to be the default for a new mash) almost certainly means "not set"
    auto coldGrain = makeInputs();
    coldGrain.grainTemp_c = 0.0;
-   auto const coldGrainResult = MashCalculator::calculate(coldGrain, steps, thickness(3.0));
+   auto const coldGrainResult = MashAutoAdjuster::calculate(coldGrain, steps, thickness(3.0));
    QVERIFY(!coldGrainResult.ok());
    QVERIFY(hasMessage(coldGrainResult, Severity::Error, "initial grain temperature"));
    // The problem is flagged against the mash's grain temperature field, so the editor can highlight it
    QCOMPARE(coldGrainResult.problems.size(), 1);
-   auto const * coldGrainResultScope = std::get_if<MashCalculator::Problem::MashPropertyScope>(
+   auto const * coldGrainResultScope = std::get_if<MashAutoAdjuster::Problem::MashPropertyScope>(
       &coldGrainResult.problems.first().scope
    );
    QVERIFY(coldGrainResultScope != nullptr);
@@ -612,9 +614,9 @@ void MashCalculatorTests::testSensibleTemperatures() {
    // Same for the tun temperature
    auto hotTun = makeInputs();
    hotTun.tunTemp_c = 120.0;
-   auto const hotTunResult = MashCalculator::calculate(hotTun, steps, thickness(3.0));
+   auto const hotTunResult = MashAutoAdjuster::calculate(hotTun, steps, thickness(3.0));
    QVERIFY(!hotTunResult.ok());
-   auto const * hotTunResultScope = std::get_if<MashCalculator::Problem::MashPropertyScope>(
+   auto const * hotTunResultScope = std::get_if<MashAutoAdjuster::Problem::MashPropertyScope>(
       &hotTunResult.problems.first().scope
    );
    QVERIFY(hotTunResultScope != nullptr);
@@ -626,9 +628,9 @@ void MashCalculatorTests::testSensibleTemperatures() {
    //
    auto badStepTemp = steps;
    badStepTemp[0].startTemp_c = 0.0;
-   QVERIFY(!MashCalculator::calculate(makeInputs(), badStepTemp, thickness(3.0)).ok());
+   QVERIFY(!MashAutoAdjuster::calculate(makeInputs(), badStepTemp, thickness(3.0)).ok());
    badStepTemp[0].startTemp_c = 100.0;
-   QVERIFY(!MashCalculator::calculate(makeInputs(), badStepTemp, thickness(3.0)).ok());
+   QVERIFY(!MashAutoAdjuster::calculate(makeInputs(), badStepTemp, thickness(3.0)).ok());
 
    //
    // But a sparge step's temperature is just the target for the grain bed, so if it doesn't make sense, adjusting the
@@ -636,19 +638,19 @@ void MashCalculatorTests::testSensibleTemperatures() {
    //
    auto badSpargeTemp = steps;
    badSpargeTemp[1].startTemp_c = 0.0;
-   MashCalculator::Options options = thickness(3.0);
+   MashAutoAdjuster::Options options = thickness(3.0);
    options.spargeTemp_c = 77.0;
-   auto const badSpargeTempResult = MashCalculator::calculate(makeInputs(), badSpargeTemp, options);
+   auto const badSpargeTempResult = MashAutoAdjuster::calculate(makeInputs(), badSpargeTemp, options);
    QVERIFY(badSpargeTempResult.ok());
    QCOMPARE(badSpargeTempResult.steps.at(1).startTemp_c, 77.0);
    QCOMPARE(*badSpargeTempResult.steps.at(1).infuseTemp_c, 77.0);
    QVERIFY(hasMessage(badSpargeTempResult, Severity::Warning, "Fly Sparge"));
    // ...or, if that doesn't make sense either, the default
    options.spargeTemp_c = 0.0;
-   QCOMPARE(MashCalculator::calculate(makeInputs(), badSpargeTemp, options).steps.at(1).startTemp_c,
-            MashCalculator::defaultSpargeTemp_c);
+   QCOMPARE(MashAutoAdjuster::calculate(makeInputs(), badSpargeTemp, options).steps.at(1).startTemp_c,
+            MashAutoAdjuster::defaultSpargeTemp_c);
    // ...whereas checking the steps as they are reports it as an error
-   auto const badSpargeTempCheck = MashCalculator::check(makeInputs(), badSpargeTempResult.steps.mid(0, 1) +
+   auto const badSpargeTempCheck = MashAutoAdjuster::check(makeInputs(), badSpargeTempResult.steps.mid(0, 1) +
                                                                         badSpargeTemp.mid(1));
    QVERIFY(!badSpargeTempCheck.ok());
    QVERIFY(hasMessage(badSpargeTempCheck, Severity::Error, "Fly Sparge"));
@@ -657,20 +659,20 @@ void MashCalculatorTests::testSensibleTemperatures() {
    // Fixed amount that would need water colder than the coldest available (20 °C).  Strike to 70 °C, then cool to 60 °C
    // with a fixed 1 L: mash heat capacity is 2 + 2 + 16 = 20 kcal/°C, so we'd need water at 60 - 20 × 10 / 1 = -140 °C.
    //
-   QList<MashCalculator::Step> coolingSteps{
+   QList<MashAutoAdjuster::Step> coolingSteps{
       makeStep("Strike" , MashStep::Type::Infusion, 70.0),
       makeStep("Cooling", MashStep::Type::Infusion, 60.0),
    };
    coolingSteps[1].amount_l    = 1.0;
    coolingSteps[1].amountFixed = true;
-   MashCalculator::setSparge(coolingSteps, MashCalculator::SpargeMethod::FlySparge, 1);
-   auto const coolingResult = MashCalculator::calculate(makeInputs(), coolingSteps, thickness(3.0));
+   MashAutoAdjuster::setSparge(coolingSteps, MashAutoAdjuster::SpargeMethod::FlySparge, 1);
+   auto const coolingResult = MashAutoAdjuster::calculate(makeInputs(), coolingSteps, thickness(3.0));
    QVERIFY(!coolingResult.ok());
    QVERIFY(hasMessage(coolingResult, Severity::Error, "Cooling"));
    QVERIFY(hasMessage(coolingResult, Severity::Error, "coldest water available"));
    // Without the fixed amount, it works, using water at 20 °C: 200 / (60 - 20) = 5 L
    coolingSteps[1].amountFixed = false;
-   auto const coolingResult2 = MashCalculator::calculate(makeInputs(), coolingSteps, thickness(3.0));
+   auto const coolingResult2 = MashAutoAdjuster::calculate(makeInputs(), coolingSteps, thickness(3.0));
    QVERIFY(coolingResult2.ok());
    QVERIFY(fuzzyComp(coolingResult2.steps.at(1).amount_l, 5.0, tolerance));
    QCOMPARE(*coolingResult2.steps.at(1).infuseTemp_c, 20.0);
@@ -679,11 +681,11 @@ void MashCalculatorTests::testSensibleTemperatures() {
    // With no sparge, the last infusion has to make up the rest of the water.  Strike 16 L to 66 °C, then 14 L to 40 °C
    // would need water at 40 - 20 × 26 / 14 = 2.9 °C.
    //
-   QList<MashCalculator::Step> noSpargeSteps{
+   QList<MashAutoAdjuster::Step> noSpargeSteps{
       makeStep("Strike"  , MashStep::Type::Infusion, 66.0),
       makeStep("Make up" , MashStep::Type::Infusion, 40.0),
    };
-   auto const noSpargeResult = MashCalculator::calculate(makeInputs(), noSpargeSteps, thickness(3.0));
+   auto const noSpargeResult = MashAutoAdjuster::calculate(makeInputs(), noSpargeSteps, thickness(3.0));
    QVERIFY(!noSpargeResult.ok());
    QVERIFY(hasMessage(noSpargeResult, Severity::Error, "no sparge"));
 
@@ -691,9 +693,9 @@ void MashCalculatorTests::testSensibleTemperatures() {
    // Batch sparge after a hot mash out.  Mash at 80 °C, so the drained bed is at 78 °C, which is already above the
    // 76 °C sparge temperature.  We use water at 76 °C, and warn that the bed will be at (7 × 76 + 9 × 78) / 16 = 77.1 °C.
    //
-   QList<MashCalculator::Step> hotSteps{makeStep("Strike", MashStep::Type::Infusion, 80.0)};
-   MashCalculator::setSparge(hotSteps, MashCalculator::SpargeMethod::BatchSparge, 2);
-   auto const hotResult = MashCalculator::calculate(makeInputs(), hotSteps, thickness(3.0));
+   QList<MashAutoAdjuster::Step> hotSteps{makeStep("Strike", MashStep::Type::Infusion, 80.0)};
+   MashAutoAdjuster::setSparge(hotSteps, MashAutoAdjuster::SpargeMethod::BatchSparge, 2);
+   auto const hotResult = MashAutoAdjuster::calculate(makeInputs(), hotSteps, thickness(3.0));
    QVERIFY(hotResult.ok());
    QCOMPARE(*hotResult.steps.at(1).infuseTemp_c, 76.0);
    QVERIFY(hasMessage(hotResult, Severity::Warning, "already hotter"));
@@ -704,18 +706,18 @@ void MashCalculatorTests::testSensibleTemperatures() {
    return;
 }
 
-void MashCalculatorTests::testCheck() {
+void MashAutoAdjusterTests::testCheck() {
    //
    // Steps that have just been calculated are fine
    //
-   QList<MashCalculator::Step> steps{
+   QList<MashAutoAdjuster::Step> steps{
       makeStep("Protein rest"    , MashStep::Type::Infusion , 50.0),
       makeStep("Saccharification", MashStep::Type::Decoction, 66.0),
    };
-   MashCalculator::setSparge(steps, MashCalculator::SpargeMethod::BatchSparge, 2);
-   auto const calculated = MashCalculator::calculate(makeInputs(), steps, thickness(3.0));
+   MashAutoAdjuster::setSparge(steps, MashAutoAdjuster::SpargeMethod::BatchSparge, 2);
+   auto const calculated = MashAutoAdjuster::calculate(makeInputs(), steps, thickness(3.0));
    QVERIFY(calculated.ok());
-   auto const checked = MashCalculator::check(makeInputs(), calculated.steps);
+   auto const checked = MashAutoAdjuster::check(makeInputs(), calculated.steps);
    QVERIFY(checked.ok());
    QVERIFY2(checked.problems.isEmpty(), qPrintable(checked.messages(Severity::Warning).join("; ")));
    // Checking doesn't change anything (other than possibly filling in values that weren't set, which is not the case
@@ -730,10 +732,10 @@ void MashCalculatorTests::testCheck() {
    //
    auto tooCold = calculated.steps;
    *tooCold[0].infuseTemp_c -= 5.0;
-   auto const tooColdResult = MashCalculator::check(makeInputs(), tooCold);
+   auto const tooColdResult = MashAutoAdjuster::check(makeInputs(), tooCold);
    QVERIFY(tooColdResult.ok());
    QCOMPARE(tooColdResult.problems.size(), 1);
-   auto const * tooColdResultScope = std::get_if<MashCalculator::Problem::StepScope>(
+   auto const * tooColdResultScope = std::get_if<MashAutoAdjuster::Problem::StepScope>(
       &tooColdResult.problems.first().scope
    );
    QVERIFY(tooColdResultScope != nullptr);
@@ -744,10 +746,10 @@ void MashCalculatorTests::testCheck() {
    //
    auto smallDecoction = calculated.steps;
    smallDecoction[1].amount_l /= 2.0;
-   auto const smallDecoctionResult = MashCalculator::check(makeInputs(), smallDecoction);
+   auto const smallDecoctionResult = MashAutoAdjuster::check(makeInputs(), smallDecoction);
    QVERIFY(smallDecoctionResult.ok());
    QCOMPARE(smallDecoctionResult.problems.size(), 1);
-   auto const * smallDecoctionResultScope = std::get_if<MashCalculator::Problem::StepScope>(
+   auto const * smallDecoctionResultScope = std::get_if<MashAutoAdjuster::Problem::StepScope>(
       &smallDecoctionResult.problems.first().scope
    );
    QVERIFY(smallDecoctionResultScope != nullptr);
@@ -758,14 +760,14 @@ void MashCalculatorTests::testCheck() {
    //
    auto tooLittleWater = calculated.steps;
    tooLittleWater[2].amount_l -= 2.0;
-   auto const tooLittleWaterResult = MashCalculator::check(makeInputs(), tooLittleWater);
+   auto const tooLittleWaterResult = MashAutoAdjuster::check(makeInputs(), tooLittleWater);
    QVERIFY(tooLittleWaterResult.ok());
    QVERIFY(
       std::any_of(
          tooLittleWaterResult.problems.cbegin(),
          tooLittleWaterResult.problems.cend(),
          [](auto const & problem) {
-            auto const * tooLittleWaterResultScope = std::get_if<MashCalculator::Problem::MashScope>(
+            auto const * tooLittleWaterResultScope = std::get_if<MashAutoAdjuster::Problem::MashScope>(
                &problem.scope
             );
             return tooLittleWaterResultScope != nullptr;
@@ -781,7 +783,7 @@ void MashCalculatorTests::testCheck() {
    missingValues[0].infuseTemp_c = std::nullopt;
    missingValues[2].amount_l     = 0.0;
    missingValues[3].amount_l     = 0.0;
-   auto const missingValuesResult = MashCalculator::check(makeInputs(), missingValues);
+   auto const missingValuesResult = MashAutoAdjuster::check(makeInputs(), missingValues);
    QVERIFY(missingValuesResult.ok());
    QCOMPARE(missingValuesResult.problems.size(), 2);
    QVERIFY(hasMessage(missingValuesResult, Severity::Warning, "Batch Sparge 1"));
@@ -793,22 +795,22 @@ void MashCalculatorTests::testCheck() {
    auto tooHot = calculated.steps;
    tooHot[0].infuseTemp_c = std::nullopt;
    tooHot[0].amount_l     = 2.0;
-   QVERIFY(!MashCalculator::check(makeInputs(), tooHot).ok());
+   QVERIFY(!MashAutoAdjuster::check(makeInputs(), tooHot).ok());
    return;
 }
 
-void MashCalculatorTests::testRoundedValues() {
+void MashAutoAdjusterTests::testRoundedValues() {
    //
    // Strike to 50 °C, then infusion with boiling water to 66 °C.  The second infusion is 320 / 34 = 9.41176 L.  If that
    // amount is stored rounded (eg as 9.41 L in a file), working the water temperature back from it gives 100.006 °C,
    // which is above boiling, but only by a meaningless amount, so should not be a problem.
    //
-   QList<MashCalculator::Step> steps{
+   QList<MashAutoAdjuster::Step> steps{
       makeStep("Protein rest"    , MashStep::Type::Infusion, 50.0),
       makeStep("Saccharification", MashStep::Type::Infusion, 66.0),
    };
-   MashCalculator::setSparge(steps, MashCalculator::SpargeMethod::FlySparge, 1);
-   auto const calculated = MashCalculator::calculate(makeInputs(), steps, thickness(3.0));
+   MashAutoAdjuster::setSparge(steps, MashAutoAdjuster::SpargeMethod::FlySparge, 1);
+   auto const calculated = MashAutoAdjuster::calculate(makeInputs(), steps, thickness(3.0));
    QVERIFY(calculated.ok());
    QCOMPARE(*calculated.steps.at(1).infuseTemp_c, 100.0);
 
@@ -818,23 +820,23 @@ void MashCalculatorTests::testRoundedValues() {
    QVERIFY(rounded[1].amount_l < calculated.steps.at(1).amount_l);
 
    // Checking the steps as they are is fine, and works out the water at (no more than) boiling
-   auto const checked = MashCalculator::check(makeInputs(), rounded);
+   auto const checked = MashAutoAdjuster::check(makeInputs(), rounded);
    QVERIFY2(checked.ok(), qPrintable(checked.messages(Severity::Error).join("; ")));
    QCOMPARE(*checked.steps.at(1).infuseTemp_c, 100.0);
 
    // So is adjusting the mash with the rounded amount pinned
    rounded[1].amountFixed = true;
-   auto const adjusted = MashCalculator::calculate(makeInputs(), rounded, thickness(3.0));
+   auto const adjusted = MashAutoAdjuster::calculate(makeInputs(), rounded, thickness(3.0));
    QVERIFY2(adjusted.ok(), qPrintable(adjusted.messages(Severity::Error).join("; ")));
    QCOMPARE(*adjusted.steps.at(1).infuseTemp_c, 100.0);
 
    // But something meaningfully above boiling is still an error
    rounded[1].amount_l = 9.0;
-   QVERIFY(!MashCalculator::calculate(makeInputs(), rounded, thickness(3.0)).ok());
+   QVERIFY(!MashAutoAdjuster::calculate(makeInputs(), rounded, thickness(3.0)).ok());
    return;
 }
 
-void MashCalculatorTests::testWithRecipe() {
+void MashAutoAdjusterTests::testWithRecipe() {
    double const grain_kg      = 5.0;
    double const thickness_LKg = 3.0;
 
@@ -896,7 +898,7 @@ void MashCalculatorTests::testWithRecipe() {
    //
    // Inputs come from the recipe, equipment and mash
    //
-   auto const inputs = MashCalculator::Inputs::fromRecipe(*recipe);
+   auto const inputs = MashAutoAdjuster::Inputs::fromRecipe(*recipe);
    QVERIFY(fuzzyComp(inputs.grain_kg              , recipe->grainsInMash_kg()          , tolerance));
    QVERIFY(fuzzyComp(inputs.grainTemp_c           , 18.0                               , tolerance));
    QVERIFY(fuzzyComp(inputs.tunHeatCapacity_kcalC , 2.0                                , tolerance));
@@ -907,16 +909,16 @@ void MashCalculatorTests::testWithRecipe() {
    QVERIFY(fuzzyComp(inputs.targetTotalWater_l    , recipe->targetTotalMashVol_l()     , tolerance));
    QVERIFY(inputs.mashVesselVolume_l);
 
-   auto steps = MashCalculator::stepsFrom(*mash);
+   auto steps = MashAutoAdjuster::stepsFrom(*mash);
    QCOMPARE(steps.size(), 3);
-   QCOMPARE(MashCalculator::spargeMethod(steps), MashCalculator::SpargeMethod::BatchSparge);
+   QCOMPARE(MashAutoAdjuster::spargeMethod(steps), MashAutoAdjuster::SpargeMethod::BatchSparge);
    QCOMPARE(steps.at(2).sourceIndex, 2);
 
    //
    // Switch to fly sparge and calculate
    //
-   MashCalculator::setSparge(steps, MashCalculator::SpargeMethod::FlySparge, 1, *mash->spargeTemp_c());
-   auto const result = MashCalculator::calculate(inputs, steps, MashCalculator::Options{.thickness_LKg = thickness_LKg});
+   MashAutoAdjuster::setSparge(steps, MashAutoAdjuster::SpargeMethod::FlySparge, 1, *mash->spargeTemp_c());
+   auto const result = MashAutoAdjuster::calculate(inputs, steps, MashAutoAdjuster::Options{.thickness_LKg = thickness_LKg});
    QVERIFY(result.ok());
 
    //
@@ -928,7 +930,7 @@ void MashCalculatorTests::testWithRecipe() {
    QVERIFY(copy);
    QVERIFY(copy.get() != mash.get());
    QCOMPARE(recipe->mash().get(), copy.get());
-   MashCalculator::apply(result.steps, *copy);
+   MashAutoAdjuster::apply(result.steps, *copy);
 
    QCOMPARE(mash->mashSteps().size(), 3);
    QCOMPARE(mash->mashSteps().at(0)->amount_l(), 1.0);
@@ -949,8 +951,8 @@ void MashCalculatorTests::testWithRecipe() {
    return;
 }
 
-void MashCalculatorTests::testExampleProfiles() {
-   QString const filePath{QDir{CONFIG_TEST_DATA_DIR}.filePath("../data/DefaultContent006-MashProfiles.beer")};
+void MashAutoAdjusterTests::testExampleProfiles() {
+   QString const filePath{QDir{CONFIG_TEST_DATA_DIR}.filePath("../data/DefaultContent006-MashAndWaterProfiles.beer")};
    QString userMessage;
    QTextStream userMessageAsStream{&userMessage};
    bool const imported = DotBeer::import("", filePath, userMessageAsStream);
@@ -979,7 +981,7 @@ void MashCalculatorTests::testExampleProfiles() {
       // without errors or warnings for a typical recipe.  (We use the defaults for the thickness, so that any thickness
       // stored in the profile is used.)
       //
-      auto const result = MashCalculator::calculate(makeInputs(), MashCalculator::stepsFrom(*mash));
+      auto const result = MashAutoAdjuster::calculate(makeInputs(), MashAutoAdjuster::stepsFrom(*mash));
       QVERIFY2(result.ok(), qPrintable(name + ": " + result.messages(Severity::Error).join("; ")));
       QVERIFY2(numMessages(result, Severity::Warning) == 0,
                qPrintable(name + ": " + result.messages(Severity::Warning).join("; ")));
@@ -995,7 +997,7 @@ void MashCalculatorTests::testExampleProfiles() {
    return;
 }
 
-void MashCalculatorTests::testAutoAdjust() {
+void MashAutoAdjusterTests::testAutoAdjust() {
    auto twoRow = UnitTests::makeFermentable_TwoRow();
    ObjectStoreWrapper::insert(twoRow);
 
@@ -1099,5 +1101,145 @@ void MashCalculatorTests::testAutoAdjust() {
    recipeCopy->mash()->setKeptInSync(false);
    std::shared_ptr<Recipe> const recipeCopy2 = ObjectStoreWrapper::insertCopyOf(*recipeCopy);
    QCOMPARE(recipeCopy2->mash().get(), recipeCopy->mash().get());
+   return;
+}
+void MashAutoAdjusterTests::testUndo() {
+   auto settle = []() {
+      for (int ii = 0; ii < 3; ++ii) {
+         QCoreApplication::processEvents();
+      }
+   };
+
+   auto twoRow = UnitTests::makeFermentable_TwoRow();
+   ObjectStoreWrapper::insert(twoRow);
+
+   auto equipment = std::make_shared<Equipment>("Undo test equipment");
+   equipment->setKettleBoilSize_l(30.0);
+   equipment->setFvBatchSize_l(23.0);
+   equipment->setMashTunVolume_l(40.0);
+   equipment->setMashTunWeight_kg(5.0);
+   equipment->setMashTunSpecificHeat_calGC(0.4);
+   equipment->setGrainAbsorption_LKg(1.0);
+   equipment->setBoilingPoint_c(100.0);
+   ObjectStoreWrapper::insert(equipment);
+
+   auto recipe = std::make_shared<Recipe>("Undo test recipe");
+   ObjectStoreWrapper::insert(recipe);
+   recipe->setBatchSize_l(23.0);
+   recipe->setEquipment(equipment);
+   auto boil = recipe->nonOptBoil();
+   boil->setPreBoilSize_l(30.0);
+   boil->setBoilTime_mins(60.0);
+   auto grain = std::make_shared<RecipeAdditionFermentable>("Undo test grain");
+   grain->setFermentable(twoRow.get());
+   grain->setStage(RecipeAddition::Stage::Mash);
+   grain->setQuantity(5.0);
+   grain->setMeasure(Measurement::PhysicalQuantity::Mass);
+   recipe->addAddition(grain);
+
+   auto mash = std::make_shared<Mash>("Undo test mash");
+   mash->setGrainTemp_c(20.0);
+   ObjectStoreWrapper::insert(mash);
+   auto strike = std::make_shared<MashStep>("Strike");
+   strike->setType(MashStep::Type::Infusion);
+   strike->setStartTemp_c(66.0);
+   strike->setStepTime_mins(60.0);
+   strike->setLiquorToGristRatio_lKg(3.0);
+   strike->setAmount_l(12.3);
+   mash->add(strike);
+   auto sparge = std::make_shared<MashStep>("Sparge");
+   sparge->setType(MashStep::Type::FlySparge);
+   sparge->setStartTemp_c(76.0);
+   sparge->setStepTime_mins(30.0);
+   sparge->setAmount_l(4.5);
+   mash->add(sparge);
+   recipe->setMash(mash);
+   settle();
+
+   //
+   // Switching from fly sparge to batch sparge (in two batches) removes the fly sparge step and adds two batch sparge
+   // steps, as well as changing the amounts.
+   //
+   auto makeCommand = [&]() {
+      QList<MashAutoAdjuster::Step> steps = MashAutoAdjuster::stepsFrom(*mash);
+      MashAutoAdjuster::setSparge(steps, MashAutoAdjuster::SpargeMethod::BatchSparge, 2, 76.0);
+      MashAutoAdjuster::Result const result =
+         MashAutoAdjuster::calculate(MashAutoAdjuster::Inputs::fromRecipe(*recipe, *mash), steps, {});
+      if (!result.ok()) {
+         qCritical() << Q_FUNC_INFO << result.messages(MashAutoAdjuster::Problem::Severity::Error);
+      }
+      auto * command = new UndoableAutoAdjust(
+         "Test auto-adjust",
+         [mash]() { return mash->keptInSync(); },
+         [mash](bool const val) { mash->setKeptInSync(val); return; }
+      );
+      MashAutoAdjuster::makeApplyCommand(result.steps, mash, command);
+      return command;
+   };
+
+   QList<std::shared_ptr<MashStep>> const stepsBefore = mash->mashSteps();
+   QCOMPARE(stepsBefore.size(), 2);
+
+   QUndoStack undoStack;
+   undoStack.push(makeCommand());
+   QList<std::shared_ptr<MashStep>> const stepsAfter = mash->mashSteps();
+   QCOMPARE(stepsAfter.size(), 3);
+   QCOMPARE(stepsAfter.at(0), strike);
+   QCOMPARE(stepsAfter.at(1)->type(), MashStep::Type::BatchSparge);
+   QCOMPARE(stepsAfter.at(2)->type(), MashStep::Type::BatchSparge);
+   double const strikeAfter_l = strike->amount_l();
+   QVERIFY(strikeAfter_l != 12.3);
+   QVERIFY(fuzzyComp(mash->totalMashWater_l(), recipe->targetTotalMashVol_l(), tolerance));
+   double const batch1After_l = stepsAfter.at(1)->amount_l();
+
+   //
+   // Undo puts back the same step objects, in the same order, with the same values
+   //
+   undoStack.undo();
+   QCOMPARE(mash->mashSteps(), stepsBefore);
+   QCOMPARE(strike->amount_l(), 12.3);
+   QCOMPARE(sparge->amount_l(), 4.5);
+   QCOMPARE(sparge->type(), MashStep::Type::FlySparge);
+   QVERIFY(sparge->key() > 0);
+   QCOMPARE(sparge->ownerId(), mash->key());
+
+   //
+   // Redo puts back the same new steps
+   //
+   undoStack.redo();
+   QCOMPARE(mash->mashSteps(), stepsAfter);
+   QCOMPARE(strike->amount_l(), strikeAfter_l);
+   QCOMPARE(stepsAfter.at(1)->amount_l(), batch1After_l);
+
+   // And we can go round again
+   undoStack.undo();
+   QCOMPARE(mash->mashSteps(), stepsBefore);
+   undoStack.redo();
+   QCOMPARE(mash->mashSteps(), stepsAfter);
+
+   //
+   // If keep in sync is on when the user undoes an auto-adjust, undo turns it off (so the restored values don't get
+   // overwritten) and redo turns it back on
+   //
+   undoStack.undo();
+   mash->setKeptInSync(true);
+   settle();
+   auto * command = makeCommand();
+   undoStack.push(command);
+   QCOMPARE(mash->mashSteps().size(), 3);
+   undoStack.undo();
+   QVERIFY(!mash->keptInSync());
+   QVERIFY(command->undoTurnedOffKeepInSync());
+   QCOMPARE(mash->mashSteps().size(), 2);
+   // With keep in sync off, a change to the grain bill doesn't re-adjust the mash
+   double const strikeAfterUndo_l = strike->amount_l();
+   grain->setQuantity(6.0);
+   settle();
+   QCOMPARE(strike->amount_l(), strikeAfterUndo_l);
+   undoStack.redo();
+   QVERIFY(mash->keptInSync());
+   QCOMPARE(mash->mashSteps().size(), 3);
+   mash->setKeptInSync(false);
+   undoStack.clear();
    return;
 }

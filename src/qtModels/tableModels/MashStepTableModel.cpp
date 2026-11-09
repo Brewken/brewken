@@ -32,7 +32,7 @@
 #include <QVariant>
 #include <QWidget>
 
-#include "MashCalculator.h"
+#include "MashAutoAdjuster.h"
 #include "model/Equipment.h"
 #include "model/MashStep.h"
 #include "model/Recipe.h"
@@ -96,7 +96,7 @@ void MashStepTableModel::updateTotals()                                      { r
 QVariant MashStepTableModel::data(QModelIndex const & index, int role) const {
    //
    // Show a pin icon on amounts and infusion temperatures that are "pinned" (aka "fixed"), ie that will not be changed when
-   // adjusting the mash (see MashCalculator and MashEditor::calculate).
+   // adjusting the mash (see MashAutoAdjuster and MashEditor::calculate).
    //
    // Also, if a step doesn't make sense (see validate()), tint its row and explain why in the tool tip.
    //
@@ -248,26 +248,26 @@ void MashStepTableModel::validate() {
             this->m_validationConnections.append(connect(equipment.get(), &NamedEntity::changed, this, reValidate));
          }
 
-         MashCalculator::Inputs inputs = MashCalculator::Inputs::fromRecipe(*recipe, mash);
+         MashAutoAdjuster::Inputs inputs = MashAutoAdjuster::Inputs::fromRecipe(*recipe, mash);
          if (this->m_inputsAdjuster) {
             this->m_inputsAdjuster(inputs);
          }
-         MashCalculator::Result const result = MashCalculator::check(inputs, MashCalculator::stepsFrom(mash));
+         MashAutoAdjuster::Result const result = MashAutoAdjuster::check(inputs, MashAutoAdjuster::stepsFrom(mash));
          QList<std::shared_ptr<MashStep>> const mashSteps = mash.mashSteps();
          for (auto const & problem : result.problems) {
-            bool const isError = problem.severity == MashCalculator::Problem::Severity::Error;
+            bool const isError = problem.severity == MashAutoAdjuster::Problem::Severity::Error;
 
             std::visit(
                [&](auto const & scope) {
                   using T = std::decay_t<decltype(scope)>;
 
-                  if constexpr (std::is_same_v<T, MashCalculator::Problem::StepScope>) {
+                  if constexpr (std::is_same_v<T, MashAutoAdjuster::Problem::StepScope>) {
                      StepProblems & entry = stepProblems[mashSteps.at(scope.stepIndex).get()];
                      entry.isError |= isError;
                      entry.messages.append(problem.message);
-                  } else if constexpr (std::is_same_v<T, MashCalculator::Problem::MashPropertyScope>) {
+                  } else if constexpr (std::is_same_v<T, MashAutoAdjuster::Problem::MashPropertyScope>) {
                         mashFieldProblems[scope.mashProperty].append(problem.message);
-                  } else if constexpr (std::is_same_v<T, MashCalculator::Problem::MashScope>) {
+                  } else if constexpr (std::is_same_v<T, MashAutoAdjuster::Problem::MashScope>) {
                      mashProblems.append(problem.message);
                   }
                },
@@ -305,7 +305,7 @@ bool MashStepTableModel::hasProblems() const {
    return this->m_mashFieldProblems;
 }
 
-void MashStepTableModel::setInputsAdjuster(std::function<void(MashCalculator::Inputs &)> adjuster) {
+void MashStepTableModel::setInputsAdjuster(std::function<void(MashAutoAdjuster::Inputs &)> adjuster) {
    this->m_inputsAdjuster = std::move(adjuster);
    this->scheduleValidation();
    return;

@@ -461,6 +461,7 @@
         "water_target_id": "water_pale_ale_target",
         "ro_water_mash": { "unit": "%", "value": 50.0 },
         "ro_water_sparge": { "unit": "%", "value": 50.0 },
+        "target_mash_pH": { "unit": "pH", "value": 5.35 },
         "mash_id": "mash_single_infusion",
         "boil_id": "boil_60_whirlpool",
         "fermentation_id": "ferm_ale_two_stage",

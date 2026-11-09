@@ -222,38 +222,6 @@ Measurement::Amount RecipeAdditionMiscTableModel::total(Misc::WaterAgentType con
    return totalAmount;
 }
 
-double RecipeAdditionMiscTableModel::totalAcid_kg(Misc::WaterAgentType const waterAgentType) const {
-   constexpr double H3PO4_density  = 1.685;
-   constexpr double lactic_density = 1.2;
-
-   // .:TODO:. There are assumptions in here about measurement being by weight or by volume.  We should check or assert
-   //          these.
-   double ret = 0.0;
-   for (auto const & miscAddition : this->m_rows) {
-      if (auto const misc = miscAddition->misc();
-          misc->type() == Misc::Type::WaterAgent && misc->waterAgentType() == waterAgentType) {
-
-         double const mult  = 1000.0;
-         auto const waterAgentAcid_pct = misc->waterAgentPercentAcid();
-         if (waterAgentAcid_pct) {
-            if (waterAgentType == Misc::WaterAgentType::Other) {
-               ret += 1000.0 * miscAddition->amount().quantity * *waterAgentAcid_pct;
-            } else if (waterAgentType == Misc::WaterAgentType::LacticAcid) {
-               // Lactic acid isn't quite so easy
-               double const density = *waterAgentAcid_pct/88.0 * (lactic_density - 1.0) + 1.0;
-               double const lactic_wgt = 1000.0 * miscAddition->amount().quantity * mult * density;
-               ret += (*waterAgentAcid_pct/100.0) * lactic_wgt;
-            } else if (waterAgentType == Misc::WaterAgentType::PhosphoricAcid) {
-               double const density = *waterAgentAcid_pct/85.0 * (H3PO4_density - 1.0) + 1.0;
-               double const H3PO4_wgt = 1000.0 * miscAddition->amount().quantity * density;
-               ret += (*waterAgentAcid_pct/100.0) * H3PO4_wgt;
-            }
-         }
-      }
-   }
-   return ret;
-}
-
 // Insert the boilerplate stuff that we cannot do in TableModelBase
 TABLE_MODEL_COMMON_CODE(RecipeAdditionMisc, recipeAdditionMisc, PropertyNames::Recipe::miscAdditions)
 //=============================================== CLASS RecipeAdditionMiscItemDelegate ================================================

@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * unitTests/MashCalculatorTests.h is part of Brewken, and is copyright the following authors 2026:
+ * unitTests/MashAutoAdjusterTests.h is part of Brewken, and is copyright the following authors 2026:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,25 +13,25 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef UNITTESTS_MASHCALCULATORTESTS_H
-#define UNITTESTS_MASHCALCULATORTESTS_H
+#ifndef UNITTESTS_MASHAUTOADJUSTERTESTS_H
+#define UNITTESTS_MASHAUTOADJUSTERTESTS_H
 #pragma once
 
 #include "unitTests/TestClassBase.h"
 
 /**
- * \brief Unit tests for \c MashCalculator.  Apart from \c testWithRecipe, these use \c MashCalculator::Inputs set
+ * \brief Unit tests for \c MashAutoAdjuster.  Apart from \c testWithRecipe, these use \c MashAutoAdjuster::Inputs set
  *        directly, so they don't need any model objects and we can check the results against figures worked out by
  *        hand.
  *
  *        See comment in \c unitTests/TestRegistry.h for how to add new tests.
  */
-class MashCalculatorTests : public UnitTests::TestClassBase {
+class MashAutoAdjusterTests : public UnitTests::TestClassBase {
    Q_OBJECT
 
 public:
-   MashCalculatorTests();
-   virtual ~MashCalculatorTests();
+   MashAutoAdjusterTests();
+   virtual ~MashAutoAdjusterTests();
 
 private slots:
    //! \brief Strike water amount from mash thickness, and its temperature
@@ -46,7 +46,7 @@ private slots:
    //! \brief Decoction amounts
    void testDecoction();
 
-   //! \brief Batch and fly sparge amounts and temperatures, and \c MashCalculator::setSparge
+   //! \brief Batch and fly sparge amounts and temperatures, and \c MashAutoAdjuster::setSparge
    void testSparge();
 
    //! \brief With no sparge, all the water goes in as infusions
@@ -58,23 +58,29 @@ private slots:
    //! \brief We don't calculate water temperatures that don't make sense (eg colder than the coldest water available)
    void testSensibleTemperatures();
 
-   //! \brief \c MashCalculator::check finds steps that don't make sense, without changing anything
+   //! \brief \c MashAutoAdjuster::check finds steps that don't make sense, without changing anything
    void testCheck();
 
    //! \brief Values that have been rounded (eg when stored in a file) don't cause spurious problems
    void testRoundedValues();
 
-   //! \brief \c MashCalculator::Inputs::fromRecipe and \c MashCalculator::apply, including applying to a copy of a mash
+   //! \brief \c MashAutoAdjuster::Inputs::fromRecipe and \c MashAutoAdjuster::apply, including applying to a copy of a mash
    void testWithRecipe();
 
    /**
-    * \brief The example mash profiles in \c data/DefaultContent006-MashProfiles.beer import as locked, and can be
-    *        calculated for a typical recipe
+    * \brief The example mash profiles in \c data/DefaultContent006-MashAndWaterProfiles.beer import as locked, and
+    *        can be calculated for a typical recipe
     */
    void testExampleProfiles();
 
    //! \brief Mash adjusts automatically when the recipe changes (if set to), and is copied rather than shared
    void testAutoAdjust();
+
+   /**
+    * \brief Undo and redo of an auto-adjust (see \c MashAutoAdjuster::makeApplyCommand and \c UndoableAutoAdjust),
+    *        including when it adds and removes steps, and how it interacts with keep in sync
+    */
+   void testUndo();
 };
 
 #endif

@@ -507,7 +507,7 @@ void RecipeCalcTests::testMashWaterVolumes() {
    };
 
    //
-   // Single-step infusion with a batch sparge, with the strike and sparge water set the same way MashCalculator does it
+   // Single-step infusion with a batch sparge, with the strike and sparge water set the same way MashAutoAdjuster does it
    //
    auto addMash = [&](Recipe & recipe) {
       auto mash = std::make_shared<Mash>(recipe.name() + " mash");

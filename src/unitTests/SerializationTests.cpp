@@ -465,6 +465,14 @@ void SerializationTests::testDotBeerExport() {
       auto const * const style = findExported(root, "styles", halfRangeStyleName);
       QVERIFY2(style, "Style with half-set range not exported");
       QVERIFY2(!style->contains("alcohol_by_volume"), "Half-set ABV range written");
+
+      // Target mash pH (added in dotBeer 1.1.0) should be written if set (as it is for this recipe from the examples)
+      auto const * const recipe = findExported(root, "recipes", "Cascade Pale Ale");
+      QVERIFY2(recipe, "Cascade Pale Ale not exported");
+      QVERIFY2(recipe->contains("target_mash_pH"), "Target mash pH not written");
+      QVERIFY(fuzzyComp(recipe->at("target_mash_pH").at("value").to_number<double>(), 5.35, 0.0001));
+      // But "keep water in sync" is deliberately not part of dotBeer
+      QVERIFY2(!recipe->contains("water_kept_in_sync"), "Keep water in sync should not be written");
    }
    QString message;
    bool const reimportOk = importDotBeerFile(exportFilePath, message);
@@ -1094,5 +1102,25 @@ void SerializationTests::testDotBeerLocked() {
    auto const boil = UnitTests::findByName<Boil>("60 Minute Boil with Whirlpool");
    QVERIFY(boil);
    QVERIFY(!boil->locked());
+   return;
+}
+
+void SerializationTests::testDotBeerTargetMashPh() {
+   QString const filePath{
+      QDir{CONFIG_TEST_DATA_DIR}.filePath("dotBeer/examples/recipes/AmericanPaleAle.beer")
+   };
+   QString message;
+   QVERIFY2(importDotBeerFile(filePath, message), qPrintable(message));
+
+   // This example recipe has a target mash pH; others don't
+   auto const withTarget = UnitTests::findByName<Recipe>("Cascade Pale Ale");
+   QVERIFY(withTarget);
+   QVERIFY(withTarget->targetMashAcidity_pH());
+   QCOMPARE(*withTarget->targetMashAcidity_pH(), 5.35);
+   auto const withoutTarget = UnitTests::findByName<Recipe>("Cold Crash Pils");
+   QVERIFY(withoutTarget);
+   QVERIFY(!withoutTarget->targetMashAcidity_pH());
+
+   // Writing it out is checked in testDotBeerExport
    return;
 }

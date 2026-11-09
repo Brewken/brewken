@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MashCalculator.h is part of Brewken, and is copyright the following authors 2026:
+ * MashAutoAdjuster.h is part of Brewken, and is copyright the following authors 2026:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,10 +13,11 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef MASHCALCULATOR_H
-#define MASHCALCULATOR_H
+#ifndef MASHAUTOADJUSTER_H
+#define MASHAUTOADJUSTER_H
 #pragma once
 
+#include <memory>
 #include <optional>
 #include <variant>
 
@@ -27,6 +28,7 @@
 #include "model/MashStep.h"
 
 class Mash;
+class QUndoCommand;
 class Recipe;
 
 /**
@@ -87,8 +89,8 @@ class Recipe;
  *        and, from the end of the first step, is at the same temperature as the mash.  When a step has an end
  *        temperature, the next step starts from that, otherwise from the step's start temperature.
  */
-class MashCalculator {
-   Q_DECLARE_TR_FUNCTIONS(MashCalculator)
+class MashAutoAdjuster {
+   Q_DECLARE_TR_FUNCTIONS(MashAutoAdjuster)
 
 public:
    /**
@@ -319,6 +321,23 @@ public:
    static void apply(QList<Step> const & steps, Mash & mash);
 
    /**
+    * \brief Undoable version of \c apply.  Returns a command that, when first redone (which happens when it is pushed
+    *        on to the undo stack), does exactly what \c apply does.  Undoing it puts the mash back how it was, including
+    *        putting back (in the same positions) the same \c MashStep objects for any steps that \c apply removed,
+    *        which means other commands on the undo stack that refer to those steps still work.
+    *
+    *        Normally, this will be a child of an \c UndoableAutoAdjust (see \c MashEditor::autoAdjust).
+    *
+    * \param steps  As for \c apply
+    * \param mash   As for \c apply.  NB: The steps are taken from the mash when this function is called, so the caller
+    *               must not change the mash between calling this function and pushing the returned command.
+    * \param parent
+    */
+   static QUndoCommand * makeApplyCommand(QList<Step> const & steps,
+                                          std::shared_ptr<Mash> mash,
+                                          QUndoCommand * parent = nullptr);
+
+   /**
     * \brief If \c recipe has a mash that is set to adjust automatically (see \c Mash::autoAdjust), and the mash can be
     *        changed (ie is not locked or used by a locked recipe) and is used only by \c recipe, recalculate it (with
     *        default \c Options, so the mash thickness comes from the first step -- see \c Step::liquorToGristRatio_lKg)
@@ -333,15 +352,15 @@ public:
    static std::optional<Result> autoAdjust(Recipe & recipe);
 };
 
-inline QDebug operator<<(QDebug debug, MashCalculator::Problem::Scope const & scope) {
+inline QDebug operator<<(QDebug debug, MashAutoAdjuster::Problem::Scope const & scope) {
    return std::visit([&debug](auto const & value) -> QDebug {
       using T = std::decay_t<decltype(value)>;
 
-      if constexpr (std::is_same_v<T, MashCalculator::Problem::StepScope>) {
+      if constexpr (std::is_same_v<T, MashAutoAdjuster::Problem::StepScope>) {
          debug << "StepScope{" << value.stepIndex << "}";
-      } else if constexpr (std::is_same_v<T, MashCalculator::Problem::MashPropertyScope>) {
+      } else if constexpr (std::is_same_v<T, MashAutoAdjuster::Problem::MashPropertyScope>) {
          debug << "MashPropertyScope{" << value.mashProperty << "}";
-      } else if constexpr (std::is_same_v<T, MashCalculator::Problem::MashScope>) {
+      } else if constexpr (std::is_same_v<T, MashAutoAdjuster::Problem::MashScope>) {
          debug << "MashScope{}";
       }
 

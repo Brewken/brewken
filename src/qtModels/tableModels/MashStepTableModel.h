@@ -29,7 +29,7 @@
 #include <QStyledItemDelegate>
 
 #include "model/MashStep.h"
-#include "MashCalculator.h"
+#include "MashAutoAdjuster.h"
 #include "model/Mash.h"
 #include "qtModels/tableModels/BtTableModel.h"
 #include "qtModels/tableModels/EnumeratedItemTableModelBase.h"
@@ -67,7 +67,7 @@ class MashStepTableModel : public BtTableModel,
 public slots:
    /**
     * \brief Context menu for a cell in the table.  For the amount and infusion temperature columns, this allows the user
-    *        to toggle whether the value is "pinned" (aka "fixed"), ie not changed when adjusting the mash (see \c MashCalculator).
+    *        to toggle whether the value is "pinned" (aka "fixed"), ie not changed when adjusting the mash (see \c MashAutoAdjuster).
     */
    void cellContextMenu(QPoint const & point);
 
@@ -110,12 +110,12 @@ public:
     *        uses this to substitute the values the user has entered but not yet saved, so the checks reflect what the
     *        user sees.  (It should call \c scheduleValidation when those values change.)
     */
-   void setInputsAdjuster(std::function<void(MashCalculator::Inputs &)> adjuster);
+   void setInputsAdjuster(std::function<void(MashAutoAdjuster::Inputs &)> adjuster);
 
 private:
    /**
     * \brief If the mash is used by exactly one recipe, check whether its steps make sense for that recipe (see
-    *        \c MashCalculator::check), so we can highlight the ones that don't.  (If the mash is used by more than one
+    *        \c MashAutoAdjuster::check), so we can highlight the ones that don't.  (If the mash is used by more than one
     *        recipe, it might make sense for some and not others.)
     *
     *        We re-check whenever the steps, the mash, the recipe or the recipe's equipment change.
@@ -130,7 +130,7 @@ private:
    QHash<MashStep const *, StepProblems> m_stepProblems;
    QStringList                           m_mashProblems;
    QHash<QString, QStringList>           m_mashFieldProblems;
-   std::function<void(MashCalculator::Inputs &)> m_inputsAdjuster;
+   std::function<void(MashAutoAdjuster::Inputs &)> m_inputsAdjuster;
    Recipe *                              m_validationRecipe    = nullptr;
    bool                                  m_validationScheduled = false;
    QList<QMetaObject::Connection>        m_validationConnections;

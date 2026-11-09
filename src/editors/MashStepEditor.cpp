@@ -52,7 +52,7 @@ MashStepEditor::MashStepEditor(QWidget* parent, QString const editorName) :
       EDITOR_FIELD_NORM(MashStep, label_endAcidity  , lineEdit_endAcidity  , Step::endAcidity_pH             , 1),
       EDITOR_FIELD_NORM(MashStep, label_thickness   , lineEdit_thickness   , MashStep::liquorToGristRatio_lKg, 1),
       EDITOR_FIELD_ENUM(MashStep, label_mashStepType, comboBox_mashStepType, MashStep::type                     ),
-      // These are only used when calculating the mash in MashEditor (see MashCalculator)
+      // These are only used when calculating the mash in MashEditor (see MashAutoAdjuster)
       EDITOR_FIELD_NORM(MashStep, label_amountFixed       , checkBox_amountFixed    , MashStep::amountFixed    ),
       EDITOR_FIELD_NORM(MashStep, label_infuseTempFixed   , checkBox_infuseTempFixed, MashStep::infuseTempFixed),
    });

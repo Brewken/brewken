@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * MashCalculator.cpp is part of Brewken, and is copyright the following authors 2026:
+ * MashAutoAdjuster.cpp is part of Brewken, and is copyright the following authors 2026:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,13 +13,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "MashCalculator.h"
+#include "MashAutoAdjuster.h"
 
 #include <algorithm>
 #include <cmath>
 
 #include <QDebug>
 #include <QSet>
+#include <QUndoCommand>
 
 #include "measurement/Measurement.h"
 #include "measurement/PhysicalConstants.h"
@@ -123,7 +124,7 @@ namespace {
 
 }
 
-MashCalculator::Inputs MashCalculator::Inputs::fromRecipe(Recipe const & recipe, Mash const & mash) {
+MashAutoAdjuster::Inputs MashAutoAdjuster::Inputs::fromRecipe(Recipe const & recipe, Mash const & mash) {
    Inputs inputs = fromRecipe(recipe);
    //
    // This mirrors Recipe::mashTunHeatCapacity_kcalC and Recipe::mashTunTemp_c, but for the supplied mash
@@ -140,7 +141,7 @@ MashCalculator::Inputs MashCalculator::Inputs::fromRecipe(Recipe const & recipe,
    return inputs;
 }
 
-MashCalculator::Inputs MashCalculator::Inputs::fromRecipe(Recipe const & recipe) {
+MashAutoAdjuster::Inputs MashAutoAdjuster::Inputs::fromRecipe(Recipe const & recipe) {
    Inputs inputs;
    auto const equipment = recipe.equipment();
    auto const mash      = recipe.mash();
@@ -160,19 +161,19 @@ MashCalculator::Inputs MashCalculator::Inputs::fromRecipe(Recipe const & recipe)
    return inputs;
 }
 
-bool MashCalculator::Step::isInfusion() const {
+bool MashAutoAdjuster::Step::isInfusion() const {
    return this->type == MashStep::Type::Infusion;
 }
 
-bool MashCalculator::Step::isSparge() const {
+bool MashAutoAdjuster::Step::isSparge() const {
    return this->type == MashStep::Type::BatchSparge || this->type == MashStep::Type::FlySparge;
 }
 
-double MashCalculator::Step::finalTemp_c() const {
+double MashAutoAdjuster::Step::finalTemp_c() const {
    return this->endTemp_c.value_or(this->startTemp_c);
 }
 
-bool MashCalculator::Result::ok() const {
+bool MashAutoAdjuster::Result::ok() const {
    return std::none_of(
       this->problems.cbegin(),
       this->problems.cend(),
@@ -180,7 +181,7 @@ bool MashCalculator::Result::ok() const {
    );
 }
 
-QStringList MashCalculator::Result::messages(Problem::Severity const severity) const {
+QStringList MashAutoAdjuster::Result::messages(Problem::Severity const severity) const {
    QStringList messages;
    for (auto const & problem : this->problems) {
       if (problem.severity != severity) {
@@ -201,7 +202,7 @@ QStringList MashCalculator::Result::messages(Problem::Severity const severity) c
    return messages;
 }
 
-QList<MashCalculator::Step> MashCalculator::stepsFrom(Mash const & mash) {
+QList<MashAutoAdjuster::Step> MashAutoAdjuster::stepsFrom(Mash const & mash) {
    QList<Step> steps;
    int index = 0;
    for (auto const & mashStep : mash.mashSteps()) {
@@ -222,7 +223,7 @@ QList<MashCalculator::Step> MashCalculator::stepsFrom(Mash const & mash) {
    return steps;
 }
 
-MashCalculator::SpargeMethod MashCalculator::spargeMethod(QList<Step> const & steps) {
+MashAutoAdjuster::SpargeMethod MashAutoAdjuster::spargeMethod(QList<Step> const & steps) {
    bool hasFlySparge = false;
    for (auto const & step : steps) {
       if (step.type == MashStep::Type::BatchSparge) {
@@ -235,7 +236,7 @@ MashCalculator::SpargeMethod MashCalculator::spargeMethod(QList<Step> const & st
    return hasFlySparge ? SpargeMethod::FlySparge : SpargeMethod::NoSparge;
 }
 
-void MashCalculator::setSparge(QList<Step> & steps,
+void MashAutoAdjuster::setSparge(QList<Step> & steps,
                                SpargeMethod const method,
                                int const numBatches,
                                double const spargeTemp_c) {
@@ -287,7 +288,7 @@ void MashCalculator::setSparge(QList<Step> & steps,
    return;
 }
 
-MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
+MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs,
                                                  QList<Step> const & stepsIn,
                                                  Options const & options) {
    Result result{.steps = stepsIn, .problems = {}};
@@ -855,7 +856,7 @@ MashCalculator::Result MashCalculator::calculate(Inputs const & inputs,
    return result;
 }
 
-MashCalculator::Result MashCalculator::check(Inputs const & inputs, QList<Step> const & stepsIn) {
+MashAutoAdjuster::Result MashAutoAdjuster::check(Inputs const & inputs, QList<Step> const & stepsIn) {
    QList<Step> steps = stepsIn;
    QList<Problem> missingAmounts;
    for (qsizetype ii = 0; ii < steps.size(); ++ii) {
@@ -876,11 +877,11 @@ MashCalculator::Result MashCalculator::check(Inputs const & inputs, QList<Step> 
    return result;
 }
 
-MashCalculator::Result MashCalculator::calculate(Inputs const & inputs, QList<Step> const & steps) {
+MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs, QList<Step> const & steps) {
    return calculate(inputs, steps, Options{});
 }
 
-void MashCalculator::apply(QList<Step> const & steps, Mash & mash) {
+void MashAutoAdjuster::apply(QList<Step> const & steps, Mash & mash) {
    QList<std::shared_ptr<MashStep>> const existingSteps = mash.mashSteps();
 
    QSet<int> kept;
@@ -953,7 +954,140 @@ void MashCalculator::apply(QList<Step> const & steps, Mash & mash) {
    return;
 }
 
-std::optional<MashCalculator::Result> MashCalculator::autoAdjust(Recipe & recipe) {
+namespace {
+   /**
+    * \brief One step of a mash, as it was at a particular point, for \c ApplyStepsCommand
+    */
+   struct StepState {
+      std::shared_ptr<MashStep> mashStep;
+      //! NB: \c sourceIndex is not used here
+      MashAutoAdjuster::Step    values;
+   };
+
+   QList<StepState> snapshot(Mash const & mash) {
+      QList<StepState> result;
+      QList<std::shared_ptr<MashStep>> const mashSteps = mash.mashSteps();
+      QList<MashAutoAdjuster::Step> const steps = MashAutoAdjuster::stepsFrom(mash);
+      Q_ASSERT(mashSteps.size() == steps.size());
+      for (qsizetype ii = 0; ii < mashSteps.size(); ++ii) {
+         result.append(StepState{mashSteps.at(ii), steps.at(ii)});
+      }
+      return result;
+   }
+
+   //! Set the fields of \c mashStep that have a different value in \c step.  (We don't want lots of spurious signals.)
+   void setFields(MashStep & mashStep, MashAutoAdjuster::Step const & step) {
+      if (mashStep.name           () != step.name           ) { mashStep.setName           (step.name           ); }
+      if (mashStep.type           () != step.type           ) { mashStep.setType           (step.type           ); }
+      if (mashStep.startTemp_c    () != step.startTemp_c    ) { mashStep.setStartTemp_c    (step.startTemp_c    ); }
+      if (mashStep.endTemp_c      () != step.endTemp_c      ) { mashStep.setEndTemp_c      (step.endTemp_c      ); }
+      if (mashStep.stepTime_mins  () != step.stepTime_mins  ) { mashStep.setStepTime_mins  (step.stepTime_mins  ); }
+      if (mashStep.amount_l       () != step.amount_l       ) { mashStep.setAmount_l       (step.amount_l       ); }
+      if (mashStep.infuseTemp_c   () != step.infuseTemp_c   ) { mashStep.setInfuseTemp_c   (step.infuseTemp_c   ); }
+      if (mashStep.amountFixed    () != step.amountFixed    ) { mashStep.setAmountFixed    (step.amountFixed    ); }
+      if (mashStep.infuseTempFixed() != step.infuseTempFixed) { mashStep.setInfuseTempFixed(step.infuseTempFixed); }
+      if (mashStep.liquorToGristRatio_lKg() != step.liquorToGristRatio_lKg) {
+         mashStep.setLiquorToGristRatio_lKg(step.liquorToGristRatio_lKg);
+      }
+      return;
+   }
+
+   /**
+    * \brief Put \c mash back to how it was when we took \c state (see \c snapshot)
+    */
+   void restore(Mash & mash, QList<StepState> const & state) {
+      bool stepsAddedOrRemoved = false;
+
+      QList<std::shared_ptr<MashStep>> wanted;
+      for (auto const & stepState : state) {
+         wanted.append(stepState.mashStep);
+      }
+      for (auto const & mashStep : mash.mashSteps()) {
+         if (!wanted.contains(mashStep)) {
+            mash.remove(mashStep);
+            stepsAddedOrRemoved = true;
+         }
+      }
+
+      //
+      // Now put back any steps that are missing, in the right places.  (NB: Mash::insert counts from 1.)  Steps that are
+      // in the mash but in the wrong place shouldn't happen, as we only ever remove and add steps, but we handle it for
+      // completeness.
+      //
+      for (qsizetype ii = 0; ii < state.size(); ++ii) {
+         QList<std::shared_ptr<MashStep>> const current = mash.mashSteps();
+         std::shared_ptr<MashStep> const & mashStep = state.at(ii).mashStep;
+         if (ii < current.size() && current.at(ii) == mashStep) {
+            continue;
+         }
+         if (current.contains(mashStep)) {
+            qWarning() << Q_FUNC_INFO << "Moving" << *mashStep << "back to position" << ii + 1;
+            mash.remove(mashStep);
+         }
+         mash.insert(mashStep, static_cast<int>(ii + 1));
+         stepsAddedOrRemoved = true;
+      }
+
+      for (auto const & stepState : state) {
+         setFields(*stepState.mashStep, stepState.values);
+      }
+
+      if (stepsAddedOrRemoved) {
+         emit mash.ownedItemsChanged();
+      }
+      return;
+   }
+
+   /**
+    * \brief See \c MashAutoAdjuster::makeApplyCommand
+    */
+   class ApplyStepsCommand : public QUndoCommand {
+   public:
+      ApplyStepsCommand(QList<MashAutoAdjuster::Step> const & steps,
+                        std::shared_ptr<Mash> mash,
+                        QUndoCommand * parent) :
+         QUndoCommand{MashAutoAdjuster::tr("Change mash steps"), parent},
+         m_steps {steps},
+         m_mash  {std::move(mash)},
+         m_before{snapshot(*m_mash)},
+         m_after {std::nullopt} {
+         return;
+      }
+
+      void redo() override {
+         this->QUndoCommand::redo();
+         if (!this->m_after) {
+            // First time round, we do the real work
+            MashAutoAdjuster::apply(this->m_steps, *this->m_mash);
+            this->m_after = snapshot(*this->m_mash);
+         } else {
+            restore(*this->m_mash, *this->m_after);
+         }
+         return;
+      }
+
+      void undo() override {
+         this->QUndoCommand::undo();
+         restore(*this->m_mash, this->m_before);
+         return;
+      }
+
+   private:
+      QList<MashAutoAdjuster::Step>   const m_steps;
+      std::shared_ptr<Mash>           const m_mash;
+      QList<StepState>                const m_before;
+      std::optional<QList<StepState>>       m_after;
+   };
+}
+
+QUndoCommand * MashAutoAdjuster::makeApplyCommand(QList<Step> const & steps,
+                                                  std::shared_ptr<Mash> mash,
+                                                  QUndoCommand * parent) {
+   Q_ASSERT(mash);
+   return new ApplyStepsCommand(steps, std::move(mash), parent);
+}
+
+std::optional<MashAutoAdjuster::Result> MashAutoAdjuster::autoAdjust(Recipe & recipe) {
    std::shared_ptr<Mash> const mash = recipe.mash();
    if (!mash || !mash->keptInSync() || mash->mashSteps().isEmpty()) {
       return std::nullopt;

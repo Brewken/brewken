@@ -832,7 +832,7 @@ commonSourceFiles = files([
    'src/Localization.cpp',
    'src/Logging.cpp',
    'src/MainWindow.cpp',
-   'src/MashCalculator.cpp',
+   'src/MashAutoAdjuster.cpp',
    'src/OptionDialog.cpp',
    'src/PersistentSettings.cpp',
    'src/PrintAndPreviewDialog.cpp',
@@ -845,6 +845,7 @@ commonSourceFiles = files([
    'src/StyleRangeWidget.cpp',
    'src/TimerListDialog.cpp',
    'src/TimerWidget.cpp',
+   'src/WaterAutoAdjuster.cpp',
    'src/BoilTimer.cpp',
    'src/buttons/BoilButton.cpp',
    'src/buttons/EquipmentButton.cpp',
@@ -1018,6 +1019,7 @@ commonSourceFiles = files([
    'src/trees/TreeView.cpp',
    'src/undoRedo/SimpleUndoableUpdate.cpp',
    'src/undoRedo/Undoable.cpp',
+   'src/undoRedo/UndoableAutoAdjust.cpp',
    'src/utils/BtException.cpp',
    'src/utils/BtStringConst.cpp',
    'src/utils/BtStringStream.cpp',
@@ -1073,7 +1075,7 @@ applicationMainSourceFile = files([
 unitTestExtraSourceFiles = files([
    'src/unitTests/CoreTests.cpp',
    'src/unitTests/DatabaseTests.cpp',
-   'src/unitTests/MashCalculatorTests.cpp',
+   'src/unitTests/MashAutoAdjusterTests.cpp',
    'src/unitTests/MeasurementTests.cpp',
    'src/unitTests/RecipeCalcTests.cpp',
    'src/unitTests/SerializationTests.cpp',
@@ -1081,6 +1083,7 @@ unitTestExtraSourceFiles = files([
    'src/unitTests/TestData.cpp',
    'src/unitTests/TestEnvironment.cpp',
    'src/unitTests/TestMain.cpp',
+   'src/unitTests/WaterAutoAdjusterTests.cpp',
 ])
 
 #
@@ -1282,11 +1285,12 @@ mocHeaders = files([
 unitTestMocHeaders = files([
    'src/unitTests/CoreTests.h',
    'src/unitTests/DatabaseTests.h',
-   'src/unitTests/MashCalculatorTests.h',
+   'src/unitTests/MashAutoAdjusterTests.h',
    'src/unitTests/MeasurementTests.h',
    'src/unitTests/RecipeCalcTests.h',
    'src/unitTests/SerializationTests.h',
    'src/unitTests/TestClassBase.h',
+   'src/unitTests/WaterAutoAdjusterTests.h',
 ])
 
 #
@@ -1379,7 +1383,7 @@ filesToInstall_data = files([
    'data/DefaultContent003-Ingredients-Hops-Yeasts.json',
    'data/DefaultContent004-MoreYeasts.json',
    'data/DefaultContent005-Fermentables-Recipes.beer',
-   'data/DefaultContent006-MashProfiles.beer',
+   'data/DefaultContent006-MashAndWaterProfiles.beer',
 ])
 
 filesToInstall_icons = files([
@@ -1972,19 +1976,33 @@ test('Test MultiVector'                      , testRunner, args : ['CoreTests', 
 test('Test log rotation'                     , testRunner, args : ['CoreTests', 'testLogRotation'                            ], suite : 'core', timeout : 60)
 test('Test DB upgrade from Brewtarget 2.3.1'  , testRunner, args : ['DatabaseTests', 'testUpgradeBrewtarget231Database'      ], suite : 'database')
 test('Test locking and sharing'              , testRunner, args : ['DatabaseTests', 'testLockingAndSharing'                 ], suite : 'database')
-test('Test mash calc strike water'           , testRunner, args : ['MashCalculatorTests', 'testStrikeWater'        ], suite : 'mash')
-test('Test mash calc fixed values'           , testRunner, args : ['MashCalculatorTests', 'testFixedValues'        ], suite : 'mash')
-test('Test mash calc step infusions'         , testRunner, args : ['MashCalculatorTests', 'testStepInfusions'      ], suite : 'mash')
-test('Test mash calc decoction'              , testRunner, args : ['MashCalculatorTests', 'testDecoction'          ], suite : 'mash')
-test('Test mash calc sparge'                 , testRunner, args : ['MashCalculatorTests', 'testSparge'             ], suite : 'mash')
-test('Test mash calc no sparge'              , testRunner, args : ['MashCalculatorTests', 'testNoSparge'           ], suite : 'mash')
-test('Test mash calc errors and warnings'    , testRunner, args : ['MashCalculatorTests', 'testErrorsAndWarnings'  ], suite : 'mash')
-test('Test mash calc sensible temperatures'  , testRunner, args : ['MashCalculatorTests', 'testSensibleTemperatures'], suite : 'mash')
-test('Test mash calc check'                  , testRunner, args : ['MashCalculatorTests', 'testCheck'              ], suite : 'mash')
-test('Test mash calc rounded values'         , testRunner, args : ['MashCalculatorTests', 'testRoundedValues'      ], suite : 'mash')
-test('Test mash calc with recipe'            , testRunner, args : ['MashCalculatorTests', 'testWithRecipe'         ], suite : 'mash')
-test('Test mash calc example profiles'       , testRunner, args : ['MashCalculatorTests', 'testExampleProfiles'    ], suite : 'mash')
-test('Test mash auto adjust'                 , testRunner, args : ['MashCalculatorTests', 'testAutoAdjust'         ], suite : 'mash')
+test('Test mash auto strike water'           , testRunner, args : ['MashAutoAdjusterTests', 'testStrikeWater'        ], suite : 'mash')
+test('Test mash auto fixed values'           , testRunner, args : ['MashAutoAdjusterTests', 'testFixedValues'        ], suite : 'mash')
+test('Test mash auto step infusions'         , testRunner, args : ['MashAutoAdjusterTests', 'testStepInfusions'      ], suite : 'mash')
+test('Test mash auto decoction'              , testRunner, args : ['MashAutoAdjusterTests', 'testDecoction'          ], suite : 'mash')
+test('Test mash auto sparge'                 , testRunner, args : ['MashAutoAdjusterTests', 'testSparge'             ], suite : 'mash')
+test('Test mash auto no sparge'              , testRunner, args : ['MashAutoAdjusterTests', 'testNoSparge'           ], suite : 'mash')
+test('Test mash auto errors and warnings'    , testRunner, args : ['MashAutoAdjusterTests', 'testErrorsAndWarnings'  ], suite : 'mash')
+test('Test mash auto sensible temperatures'  , testRunner, args : ['MashAutoAdjusterTests', 'testSensibleTemperatures'], suite : 'mash')
+test('Test mash auto check'                  , testRunner, args : ['MashAutoAdjusterTests', 'testCheck'              ], suite : 'mash')
+test('Test mash auto rounded values'         , testRunner, args : ['MashAutoAdjusterTests', 'testRoundedValues'      ], suite : 'mash')
+test('Test mash auto with recipe'            , testRunner, args : ['MashAutoAdjusterTests', 'testWithRecipe'         ], suite : 'mash')
+test('Test mash auto example profiles'       , testRunner, args : ['MashAutoAdjusterTests', 'testExampleProfiles'    ], suite : 'mash')
+test('Test mash auto adjust'                 , testRunner, args : ['MashAutoAdjusterTests', 'testAutoAdjust'         ], suite : 'mash')
+test('Test mash auto undo'                   , testRunner, args : ['MashAutoAdjusterTests', 'testUndo'               ], suite : 'mash')
+test('Test water auto salt chemistry'      , testRunner, args : ['WaterAutoAdjusterTests', 'testSaltChemistry'             ], suite : 'water')
+test('Test water auto exact amounts'       , testRunner, args : ['WaterAutoAdjusterTests', 'testExactAmounts'              ], suite : 'water')
+test('Test water auto default salts'       , testRunner, args : ['WaterAutoAdjusterTests', 'testDefaultSalts'              ], suite : 'water')
+test('Test water auto base water and fixed', testRunner, args : ['WaterAutoAdjusterTests', 'testBaseWaterAndFixedAdditions'], suite : 'water')
+test('Test water auto unreachable target'  , testRunner, args : ['WaterAutoAdjusterTests', 'testUnreachableTarget'         ], suite : 'water')
+test('Test water auto minimum addition'    , testRunner, args : ['WaterAutoAdjusterTests', 'testMinimumAddition'           ], suite : 'water')
+test('Test water auto errors'              , testRunner, args : ['WaterAutoAdjusterTests', 'testErrors'                    ], suite : 'water')
+test('Test water auto acid chemistry'      , testRunner, args : ['WaterAutoAdjusterTests', 'testAcidChemistry'             ], suite : 'water')
+test('Test water auto mash pH'             , testRunner, args : ['WaterAutoAdjusterTests', 'testMashPh'                    ], suite : 'water')
+test('Test water auto acid amounts'        , testRunner, args : ['WaterAutoAdjusterTests', 'testAcidAmounts'               ], suite : 'water')
+test('Test water auto undo and keep in sync', testRunner, args : ['WaterAutoAdjusterTests', 'testRecipeUndoAndKeepInSync'  ], suite : 'water')
+test('Test water auto suggested target pH' , testRunner, args : ['WaterAutoAdjusterTests', 'testSuggestedTargetMashPh'    ], suite : 'water')
+test('Test water auto example profiles'    , testRunner, args : ['WaterAutoAdjusterTests', 'testExampleProfiles'          ], suite : 'water')
 test('Test unit conversions'                 , testRunner, args : ['MeasurementTests', 'testUnitConversions'                 ], suite : 'measurement')
 test('Test unit inverses'                    , testRunner, args : ['MeasurementTests', 'testUnitInverses'                    ], suite : 'measurement')
 test('Test number display and parsing'       , testRunner, args : ['MeasurementTests', 'testNumberDisplayAndParsing'         ], suite : 'measurement')
@@ -2006,6 +2024,7 @@ test('Test brew log calcs'                   , testRunner, args : ['Serializatio
 test('Test dotBeer version handling'         , testRunner, args : ['SerializationTests', 'testDotBeerVersionHandling'        ], suite : 'serialization')
 test('Test dotBeer export'                   , testRunner, args : ['SerializationTests', 'testDotBeerExport'                 ], suite : 'serialization')
 test('Test dotBeer locked'                   , testRunner, args : ['SerializationTests', 'testDotBeerLocked'                 ], suite : 'serialization')
+test('Test dotBeer target mash pH'           , testRunner, args : ['SerializationTests', 'testDotBeerTargetMashPh'           ], suite : 'serialization')
 test('Test clear unused optional vessels'    , testRunner, args : ['SerializationTests', 'testClearUnusedOptionalVessels'    ], suite : 'serialization')
 test('Test BeerXML null yield'               , testRunner, args : ['SerializationTests', 'testBeerXmlNullYield'              ], suite : 'serialization')
 test('Test NullSentinel'                     , testRunner, args : ['SerializationTests', 'testNullSentinel'                  ], suite : 'serialization')

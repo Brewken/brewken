@@ -40,7 +40,8 @@
 #include "Algorithms.h"
 #include "database/ObjectStoreWrapper.h"
 #include "Localization.h"
-#include "MashCalculator.h"
+#include "MashAutoAdjuster.h"
+#include "WaterAutoAdjuster.h"
 #include "measurement/Amount.h"
 #include "measurement/ColorMethods.h"
 #include "measurement/IbuMethods.h"
@@ -306,6 +307,8 @@ public:
       this->m_self.recalcAll();
       // Eg a new mash or new equipment means the mash might need adjusting (if it is set to adjust automatically)
       this->m_self.scheduleMashAutoAdjust();
+      // Similarly, a new mash or new water profile means the water agents might need adjusting
+      this->m_self.scheduleWaterAutoAdjust();
       return;
    }
 
@@ -1588,6 +1591,8 @@ QString Recipe::localisedName_primingSugarEquiv      () { return tr("Priming Sug
 QString Recipe::localisedName_primingSugarName       () { return tr("Priming Sugar Name"     ); }
 QString Recipe::localisedName_roWaterMash_pct        () { return tr("Percentage reverse-osmosis water in mash"  ); }
 QString Recipe::localisedName_roWaterSparge_pct      () { return tr("Percentage reverse-osmosis water in sparge"); }
+QString Recipe::localisedName_targetMashAcidity_pH   () { return tr("Target Mash pH"         ); }
+QString Recipe::localisedName_waterKeptInSync        () { return tr("Keep Water in Sync"     ); }
 QString Recipe::localisedName_style                  () { return tr("Style"                  ); }
 QString Recipe::localisedName_styleId                () { return tr("Style ID"               ); }
 QString Recipe::localisedName_tasteNotes             () { return tr("Taste Notes"            ); }
@@ -1740,6 +1745,8 @@ TypeLookup const Recipe::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(Recipe, apparentAttenuation_pct, m_apparentAttenuation_pct,           NonPhysicalQuantity::Percentage),
       PROPERTY_TYPE_LOOKUP_ENTRY(Recipe, roWaterMash_pct      , m_roWaterMash_pct  ,           NonPhysicalQuantity::Percentage        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(Recipe, roWaterSparge_pct    , m_roWaterSparge_pct,           NonPhysicalQuantity::Percentage        ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(Recipe, targetMashAcidity_pH , m_targetMashAcidity_pH, Measurement::PhysicalQuantity::Acidity      ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(Recipe, waterKeptInSync      , m_waterKeptInSync  , BOOL_INFO(tr("No"), tr("Yes"))                ),
 
    },
    // Parent classes lookup
@@ -1798,6 +1805,8 @@ Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_apparentAttenuation_pct, namedParameterBundle, PropertyNames::Recipe::apparentAttenuation_pct, std::nullopt),
    SET_REGULAR_FROM_NPB (m_roWaterMash_pct        , namedParameterBundle, PropertyNames::Recipe::roWaterMash_pct        , 0.0),
    SET_REGULAR_FROM_NPB (m_roWaterSparge_pct      , namedParameterBundle, PropertyNames::Recipe::roWaterSparge_pct      , 0.0),
+   SET_REGULAR_FROM_NPB (m_targetMashAcidity_pH   , namedParameterBundle, PropertyNames::Recipe::targetMashAcidity_pH   , std::nullopt),
+   SET_REGULAR_FROM_NPB (m_waterKeptInSync        , namedParameterBundle, PropertyNames::Recipe::waterKeptInSync        , false),
 
    // See comment in model/OwnedSet.h for why an OwnedSet never needs to read from NamedParameterBundle
    m_fermentableAdditions{*this},
@@ -1862,6 +1871,8 @@ Recipe::Recipe(Recipe const & other) :
    m_apparentAttenuation_pct{other.m_apparentAttenuation_pct},
    m_roWaterMash_pct        {other.m_roWaterMash_pct        },
    m_roWaterSparge_pct      {other.m_roWaterSparge_pct      },
+   m_targetMashAcidity_pH   {other.m_targetMashAcidity_pH   },
+   m_waterKeptInSync        {other.m_waterKeptInSync        },
    // Owned sets need the correct owner, but otherwise can handle whatever deep copying is needed.
    m_fermentableAdditions   {*this, other.m_fermentableAdditions},
    m_hopAdditions           {*this, other.m_hopAdditions        },
@@ -1964,6 +1975,13 @@ void Recipe::connectSignals() {
    auto mash = this->mash();
    if (mash) {
       connect(mash.get(), &NamedEntity::changed, this, &Recipe::acceptChangeToContainedObject);
+   }
+
+   // Changes to the water profiles affect the water agents if they are kept in sync (see scheduleWaterAutoAdjust)
+   for (auto const & water : {this->waterBase(), this->waterTarget()}) {
+      if (water) {
+         connect(water.get(), &NamedEntity::changed, this, &Recipe::acceptChangeToContainedObject);
+      }
    }
 
    auto boil = this->boil();
@@ -2511,8 +2529,10 @@ void Recipe::setKegPrimingFactor(double val) {
 
 void Recipe::setBeerAcidity_pH         (std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::Recipe::beerAcidity_pH         , this->m_beerAcidity_pH         , val); return; }
 void Recipe::setApparentAttenuation_pct(std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::Recipe::apparentAttenuation_pct, this->m_apparentAttenuation_pct, val); return; }
-void Recipe::setRoWaterMash_pct  (double const val) { SET_AND_NOTIFY(PropertyNames::Recipe::roWaterMash_pct  , this->m_roWaterMash_pct  , val); return; }
-void Recipe::setRoWaterSparge_pct(double const val) { SET_AND_NOTIFY(PropertyNames::Recipe::roWaterSparge_pct, this->m_roWaterSparge_pct, val); return; }
+void Recipe::setRoWaterMash_pct  (double const val) { SET_AND_NOTIFY(PropertyNames::Recipe::roWaterMash_pct  , this->m_roWaterMash_pct  , val); this->scheduleWaterAutoAdjust(); return; }
+void Recipe::setRoWaterSparge_pct(double const val) { SET_AND_NOTIFY(PropertyNames::Recipe::roWaterSparge_pct, this->m_roWaterSparge_pct, val); this->scheduleWaterAutoAdjust(); return; }
+void Recipe::setTargetMashAcidity_pH(std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::Recipe::targetMashAcidity_pH, this->m_targetMashAcidity_pH, val); this->scheduleWaterAutoAdjust(); return; }
+void Recipe::setWaterKeptInSync(bool const val) { SET_AND_NOTIFY(PropertyNames::Recipe::waterKeptInSync, this->m_waterKeptInSync, val); this->scheduleWaterAutoAdjust(); return; }
 
 void Recipe::setLocked(bool const isLocked) {
    // Locking a Recipe doesn't count as changing it for the purposes of versioning or the UI, so no call to setAndNotify
@@ -2807,6 +2827,8 @@ std::optional<double> Recipe::apparentAttenuation_pct() const { return m_apparen
 
 double Recipe::roWaterMash_pct  () const { return m_roWaterMash_pct  ; }
 double Recipe::roWaterSparge_pct() const { return m_roWaterSparge_pct; }
+std::optional<double> Recipe::targetMashAcidity_pH() const { return m_targetMashAcidity_pH; }
+bool Recipe::waterKeptInSync() const { return m_waterKeptInSync; }
 
 //==============================Recalculators==================================
 
@@ -2818,6 +2840,16 @@ void Recipe::recalcIfNeeded(QString classNameOfWhatWasAddedOrChanged) {
        classNameOfWhatWasAddedOrChanged ==               Fermentable::staticMetaObject.className() ||
        classNameOfWhatWasAddedOrChanged == RecipeAdditionFermentable::staticMetaObject.className()) {
       this->scheduleMashAutoAdjust();
+   }
+   //
+   // The water agents depend on the grain bill (for mash pH), the amount of water in the mash, and the water profiles.
+   // NB: Not on the water agents (ie RecipeAdditionMisc) themselves -- see comment in header for scheduleWaterAutoAdjust.
+   //
+   if (classNameOfWhatWasAddedOrChanged ==               Fermentable::staticMetaObject.className() ||
+       classNameOfWhatWasAddedOrChanged == RecipeAdditionFermentable::staticMetaObject.className() ||
+       classNameOfWhatWasAddedOrChanged ==                      Mash::staticMetaObject.className() ||
+       classNameOfWhatWasAddedOrChanged ==                     Water::staticMetaObject.className()) {
+      this->scheduleWaterAutoAdjust();
    }
    // We could just compare with "Hop", "Equipment", etc but there's then no compile-time checking of typos.  Using
    // ::staticMetaObject.className() is a bit more clunky but it's safer.
@@ -2861,7 +2893,28 @@ void Recipe::scheduleMashAutoAdjust() {
       this,
       [this]() {
          this->m_mashAutoAdjustScheduled = false;
-         MashCalculator::autoAdjust(*this);
+         MashAutoAdjuster::autoAdjust(*this);
+         return;
+      }
+   );
+   return;
+}
+
+void Recipe::scheduleWaterAutoAdjust() {
+   if (this->key() <= 0 || this->m_waterAutoAdjustScheduled || !this->m_waterKeptInSync) {
+      return;
+   }
+   this->m_waterAutoAdjustScheduled = true;
+   // As in scheduleMashAutoAdjust, the timer is owned by us, so won't fire if we are destroyed in the meantime.
+   // Because both use a zero timer, and the mash one is always scheduled at least as early as this one for any given
+   // change, the mash gets adjusted before the water, which is what we want, as the water depends on the mash volumes.
+   // (If the mash adjustment changes the volumes, we'll get scheduled again anyway.)
+   QTimer::singleShot(
+      0,
+      this,
+      [this]() {
+         this->m_waterAutoAdjustScheduled = false;
+         WaterAutoAdjuster::autoAdjust(*this);
          return;
       }
    );

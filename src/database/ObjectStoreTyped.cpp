@@ -598,6 +598,8 @@ namespace {
          {ObjectStore::FieldType::Int   , {"water_target"            }, PropertyNames::Recipe::waterTargetId                  , &PRIMARY_TABLE<Water>},
          {ObjectStore::FieldType::Double, {"ro_water_mash_pct"       }, PropertyNames::Recipe::roWaterMash_pct                },
          {ObjectStore::FieldType::Double, {"ro_water_sparge_pct"     }, PropertyNames::Recipe::roWaterSparge_pct              },
+         {ObjectStore::FieldType::Double, {"target_mash_ph"          }, PropertyNames::Recipe::targetMashAcidity_pH           },
+         {ObjectStore::FieldType::Bool  , {"water_kept_in_sync"      }, PropertyNames::Recipe::waterKeptInSync                },
       },
       {&NAMED_ENTITY_COMMON_FIELDS}
    };
