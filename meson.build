@@ -1976,6 +1976,7 @@ test('Test MultiVector'                      , testRunner, args : ['CoreTests', 
 test('Test log rotation'                     , testRunner, args : ['CoreTests', 'testLogRotation'                            ], suite : 'core', timeout : 60)
 test('Test DB upgrade from Brewtarget 2.3.1'  , testRunner, args : ['DatabaseTests', 'testUpgradeBrewtarget231Database'      ], suite : 'database')
 test('Test locking and sharing'              , testRunner, args : ['DatabaseTests', 'testLockingAndSharing'                 ], suite : 'database')
+test('Test automatic recipe versioning'      , testRunner, args : ['DatabaseTests', 'testAutomaticVersioning'               ], suite : 'database')
 test('Test mash auto strike water'           , testRunner, args : ['MashAutoAdjusterTests', 'testStrikeWater'        ], suite : 'mash')
 test('Test mash auto fixed values'           , testRunner, args : ['MashAutoAdjusterTests', 'testFixedValues'        ], suite : 'mash')
 test('Test mash auto step infusions'         , testRunner, args : ['MashAutoAdjusterTests', 'testStepInfusions'      ], suite : 'mash')

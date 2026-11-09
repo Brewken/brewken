@@ -19,6 +19,7 @@
 #include <QDir>
 #include <QFile>
 #include <QMap>
+#include <QScopeGuard>
 #include <QSet>
 #include <QSqlDatabase>
 #include <QSqlError>
@@ -32,9 +33,12 @@
 #include "database/Database.h"
 #include "database/DatabaseSchemaHelper.h"
 #include "database/ObjectStoreWrapper.h"
+#include "model/BrewLog.h"
 #include "model/Mash.h"
 #include "model/MashStep.h"
+#include "model/Misc.h"
 #include "model/Recipe.h"
+#include "model/RecipeAdditionMisc.h"
 #include "model/RecipeUtils.h"
 #include "unitTests/TestEnvironment.h"
 #include "unitTests/TestRegistry.h"
@@ -323,6 +327,93 @@ void DatabaseTests::testLockingAndSharing() {
    QVERIFY2(description.contains(recipeB->name()), qPrintable(description));
    // But it doesn't affect the copy
    QVERIFY(RecipeUtils::lockReason(*copy) == RecipeUtils::LockReason::NotLocked);
+
+   return;
+}
+
+void DatabaseTests::testAutomaticVersioning() {
+   bool const savedVersioning = RecipeUtils::getAutomaticVersioningEnabled();
+   RecipeUtils::setAutomaticVersioningEnabled(true);
+   auto restoreVersioning = qScopeGuard([savedVersioning]() {
+      RecipeUtils::setAutomaticVersioningEnabled(savedVersioning);
+   });
+
+   //
+   // A recipe with something in it that we can change.  (Changes to a Recipe's own fields don't trigger versioning --
+   // see NamedEntity::owningRecipe -- so we make our changes to the Misc addition.)
+   //
+   auto recipe = std::make_shared<Recipe>("Test Versioning Recipe");
+   ObjectStoreWrapper::insert(recipe);
+   auto misc = std::make_shared<Misc>("Test Versioning Misc");
+   ObjectStoreWrapper::insert(misc);
+   auto addition = std::make_shared<RecipeAdditionMisc>(*recipe, *misc);
+   recipe->addAddition(addition);
+
+   //
+   // Changing a recipe that has not been brewed does not create a new version
+   //
+   addition->setName("Test Versioning Addition - Change 1");
+   QVERIFY(!recipe->hasAncestors());
+
+   //
+   // Brew the recipe, then fill in the brew log.  This does not create a new version, because the brew log is not part
+   // of the recipe.
+   //
+   auto brewLog1 = std::make_shared<BrewLog>(*recipe);
+   brewLog1->populateNote(recipe.get());
+   ObjectStoreWrapper::insert(brewLog1);
+   QCOMPARE(recipe->brewLogs().size(), 1);
+   brewLog1->setMeasuredPreBoilGravity_sg(1.042);
+   brewLog1->setNotes("Test Versioning Brew Log 1");
+   QVERIFY(!recipe->hasAncestors());
+
+   //
+   // Now changing the recipe should create a new version, ie the recipe gets an ancestor (aka previous version), which
+   // is locked and has the brew log.
+   //
+   addition->setName("Test Versioning Addition - Change 2");
+   QVERIFY(recipe->hasAncestors());
+   QCOMPARE(recipe->ancestors().size(), 1);
+   std::shared_ptr<Recipe> const firstVersion = recipe->ancestors().first();
+   QVERIFY(firstVersion->locked());
+   QVERIFY(!recipe->locked());
+   QVERIFY(recipe->brewLogs().isEmpty());
+   QCOMPARE(firstVersion->brewLogs().size(), 1);
+   QCOMPARE(firstVersion->brewLogs().first()->key(), brewLog1->key());
+   QCOMPARE(RecipeUtils::brewLogsForRecipeAndAncestors(*recipe).size(), 1);
+   // The snapshot has the recipe as it was before the change
+   QCOMPARE(firstVersion->miscAdditions().size(), 1);
+   QCOMPARE(firstVersion->miscAdditions().first()->name(), QString{"Test Versioning Addition - Change 1"});
+
+   //
+   // Further changes, before the recipe is brewed again, do not create more versions
+   //
+   addition->setName("Test Versioning Addition - Change 3");
+   addition->setName("Test Versioning Addition - Change 4");
+   QCOMPARE(recipe->ancestors().size(), 1);
+
+   //
+   // Brew it again.  As before, creating and filling in the brew log does not create a new version.
+   //
+   auto brewLog2 = std::make_shared<BrewLog>(*recipe);
+   brewLog2->populateNote(recipe.get());
+   ObjectStoreWrapper::insert(brewLog2);
+   brewLog2->setNotes("Test Versioning Brew Log 2");
+   QCOMPARE(recipe->ancestors().size(), 1);
+   QCOMPARE(recipe->brewLogs().size(), 1);
+
+   //
+   // The next change creates a second version, which gets the second brew log
+   //
+   addition->setName("Test Versioning Addition - Change 5");
+   QCOMPARE(recipe->ancestors().size(), 2);
+   std::shared_ptr<Recipe> const secondVersion = recipe->ancestors().first();
+   QVERIFY(secondVersion->key() != firstVersion->key());
+   QVERIFY(recipe->brewLogs().isEmpty());
+   QCOMPARE(secondVersion->brewLogs().size(), 1);
+   QCOMPARE(secondVersion->brewLogs().first()->key(), brewLog2->key());
+   QCOMPARE(firstVersion->brewLogs().size(), 1);
+   QCOMPARE(RecipeUtils::brewLogsForRecipeAndAncestors(*recipe).size(), 2);
 
    return;
 }

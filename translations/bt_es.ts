@@ -4535,11 +4535,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Equipment request</source>
-        <translation>Solicitud de equipo</translation>
+        <translation type="vanished">Solicitud de equipo</translation>
     </message>
     <message>
         <source>Would you like to set the batch size, boil size and time to that requested by the equipment?</source>
-        <translation>¿Quieres cambiar el tamaño de lote, tamaño de hervido y tiempo, a las que pide el equipo?</translation>
+        <translation type="vanished">¿Quieres cambiar el tamaño de lote, tamaño de hervido y tiempo, a las que pide el equipo?</translation>
     </message>
     <message>
         <source>HTML files (*.html)</source>
@@ -4694,15 +4694,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Recipe Kit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change Batch Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change Boil Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5833,6 +5825,22 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Use a copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use equipment sizes?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Would you like to set the recipe&apos;s batch size to %1 and pre-boil size to %2, as specified by the equipment &quot;%3&quot;?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Batch Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Boil Size</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -312,6 +312,9 @@
         <widget class="BtTabWidget" name="tabWidget_adjustments">
          <widget class="QWidget" name="tab_waterAgents">
           <attribute name="title">
+           <string>Water Agents</string>
+          </attribute>
+          <attribute name="toolTip">
            <string>Water Agents (Miscellaneous)</string>
           </attribute>
           <layout class="QHBoxLayout" name="horizontalLayout_waterAgents">
@@ -362,6 +365,9 @@
 
          <widget class="QWidget" name="tab_acidMalts">
           <attribute name="title">
+           <string>Acid Malts</string>
+          </attribute>
+          <attribute name="toolTip">
            <string>Acid Malts (Fermentables)</string>
           </attribute>
           <layout class="QHBoxLayout" name="horizontalLayout_acidMalts">

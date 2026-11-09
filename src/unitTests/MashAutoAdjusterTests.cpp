@@ -754,6 +754,24 @@ void MashAutoAdjusterTests::testCheck() {
    );
    QVERIFY(smallDecoctionResultScope != nullptr);
    QCOMPARE(smallDecoctionResultScope->stepIndex, 1);
+   // Neither of the problems above can be pinned on one particular value in the step
+   QVERIFY(tooColdResultScope->stepProperty.isEmpty());
+   QVERIFY(smallDecoctionResultScope->stepProperty.isEmpty());
+
+   //
+   // A decoction with no amount is a warning on the amount of that step
+   //
+   auto noDecoctionAmount = calculated.steps;
+   noDecoctionAmount[1].amount_l = 0.0;
+   auto const noDecoctionAmountResult = MashAutoAdjuster::check(makeInputs(), noDecoctionAmount);
+   QVERIFY(noDecoctionAmountResult.ok());
+   QCOMPARE(noDecoctionAmountResult.problems.size(), 1);
+   auto const * noDecoctionAmountResultScope = std::get_if<MashAutoAdjuster::Problem::StepScope>(
+      &noDecoctionAmountResult.problems.first().scope
+   );
+   QVERIFY(noDecoctionAmountResultScope != nullptr);
+   QCOMPARE(noDecoctionAmountResultScope->stepIndex, 1);
+   QCOMPARE(noDecoctionAmountResultScope->stepProperty, QString{*PropertyNames::MashStep::amount_l});
 
    //
    // Water that doesn't add up is a warning about the mash as a whole

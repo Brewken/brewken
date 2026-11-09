@@ -44,6 +44,15 @@ void RecipeUtils::prepareForPropertyChange(NamedEntity & ne, BtStringConst const
       Q_FUNC_INFO << "Modifying: " << ne.metaObject()->className() << "#" << ne.key() << "property" << propertyName;
 
    //
+   // A BrewLog belongs to a Recipe, but it is a record of brewing the Recipe rather than part of the Recipe itself.  So
+   // filling in a BrewLog (eg with measurements on brew day) is not a change to the Recipe and must not create a new
+   // version of it.  (Amongst other things, this used to cause https://github.com/Brewtarget/brewtarget/issues/730.)
+   //
+   if (qobject_cast<BrewLog const *>(&ne)) {
+      return;
+   }
+
+   //
    // If the object we're about to change a property on is a Recipe or is used in a Recipe, then it might need a new
    // version -- unless it's already being versioned.
    //
@@ -59,6 +68,9 @@ void RecipeUtils::prepareForPropertyChange(NamedEntity & ne, BtStringConst const
    //
    // Automatic versioning means that, once a recipe is brewed, it is "soft locked" and the first change should spawn a
    // new version.  Any subsequent change should not spawn a new version until it is brewed again.
+   //
+   // Because we move the BrewLogs to the snapshot when we version (see below), "has BrewLogs" means "has been brewed
+   // since the last time it was versioned".
    //
    if (owningRecipe->brewLogs().empty()) {
       // Recipe hasn't been brewed
@@ -97,6 +109,21 @@ void RecipeUtils::prepareForPropertyChange(NamedEntity & ne, BtStringConst const
    // We assert that the newly created version of the recipe has not yet been brewed (and therefore will not get
    // automatically versioned on subsequent changes before it is brewed).
    Q_ASSERT(spawn->brewLogs().empty());
+
+   //
+   // The BrewLogs are records of brewing the Recipe as it was before the change we're about to make, so they belong
+   // with the snapshot (which is what was actually brewed) rather than with the Recipe that's about to change.  This
+   // also means the Recipe now has no BrewLogs, so the check above stops further changes spawning more versions until
+   // the Recipe is brewed again.
+   //
+   // (Changing the BrewLog's Recipe ID won't trigger versioning, because of the check for BrewLog above, and anyway
+   // owningRecipe is marked as being modified.)
+   //
+   for (auto const & brewLog : owningRecipe->brewLogs()) {
+      qDebug() << Q_FUNC_INFO << "Moving" << *brewLog << "to Recipe #" << spawn->key();
+      brewLog->setRecipeId(spawn->key());
+   }
+   Q_ASSERT(owningRecipe->brewLogs().empty());
 
    //
    // By default, copying a Recipe does not copy all its ancestry.  Here, we want the copy to become our ancestor (ie

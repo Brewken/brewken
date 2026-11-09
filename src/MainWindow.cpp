@@ -2725,15 +2725,13 @@ void MainWindow::brewLogDeleted([[maybe_unused]] int brewLogId, std::shared_ptr<
    // This function receives the ObjectStore::signalObjectDeleted signal when a BrewLog is deleted
    //
    BrewLog * deletedBrewLog = std::static_pointer_cast<BrewLog>(object).get();
-   Recipe * recipe = ObjectStoreWrapper::getByIdRaw<Recipe>(deletedBrewLog->recipeId());
-   qDebug() << Q_FUNC_INFO << "BrewLog" << *deletedBrewLog << "deleted on Recipe" << *recipe;
+   qDebug() << Q_FUNC_INFO << "BrewLog" << *deletedBrewLog << "deleted on Recipe #" << deletedBrewLog->recipeId();
 
-   // If this isn't the focused recipe, do nothing because there are no tabs
-   // to close.
-   if (recipe != this->pimpl->m_recipeObs) {
-      return;
-   }
-
+   //
+   // We don't check whether the BrewLog belongs to the current Recipe, because, with versioning, BrewLogs belong to
+   // the version of the Recipe that was brewed -- ie, often, one of the current Recipe's ancestors -- and those can
+   // also be open in tabs (see setBrewLogByIndex).  If the BrewLog isn't open in a tab, closeBrewLogTab does nothing.
+   //
    this->pimpl->closeBrewLogTab(*deletedBrewLog);
 
    return;

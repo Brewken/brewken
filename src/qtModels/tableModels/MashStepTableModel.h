@@ -22,6 +22,7 @@
 
 #include <functional>
 
+#include <QColor>
 #include <QHash>
 #include <QList>
 #include <QMetaObject>
@@ -82,6 +83,18 @@ signals:
    void validationChanged();
 
 public:
+   //
+   // Colors used to highlight problems found by checking the steps (see \c validate).  They are semi-transparent, so
+   // that they work with both light and dark themes.  A row with a problem is tinted with the "row" color, and, where
+   // we know which value in the row is the cause of the problem, that cell is tinted with the stronger "cell" color.
+   //
+   // MashEditor uses the same colors for highlighting problems with fields of the mash itself.
+   //
+   static QColor const errorRowColor;
+   static QColor const errorCellColor;
+   static QColor const warningRowColor;
+   static QColor const warningCellColor;
+
    /**
     * \return \c true if the steps are being checked, ie the mash is used by exactly one recipe
     */
@@ -125,6 +138,12 @@ private:
    struct StepProblems {
       bool        isError  = false;
       QStringList messages = {};
+      /**
+       * For problems where we know which value in the step is the cause (see
+       * \c MashAutoAdjuster::Problem::StepScope::stepProperty), the name of the property, mapped to whether any of the
+       * problems it causes is an error (rather than a warning).
+       */
+      QHash<QString, bool> propertyIsError = {};
       bool operator==(StepProblems const & other) const = default;
    };
    QHash<MashStep const *, StepProblems> m_stepProblems;

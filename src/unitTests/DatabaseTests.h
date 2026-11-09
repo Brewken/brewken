@@ -45,6 +45,12 @@ private slots:
     *        \c model/LockablePropertyBase.h and the related functions in \c model/RecipeUtils.h.
     */
    void testLockingAndSharing();
+
+   /**
+    * \brief Check automatic Recipe versioning (see \c RecipeUtils::prepareForPropertyChange): changing a brewed Recipe
+    *        creates one new version (to which the BrewLogs move), and nothing else does.
+    */
+   void testAutomaticVersioning();
 };
 
 #endif

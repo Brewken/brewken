@@ -191,8 +191,7 @@ QStringList MashAutoAdjuster::Result::messages(Problem::Severity const severity)
       if (!std::holds_alternative<Problem::StepScope>(problem.scope)) {
          messages.append(problem.message);
       } else {
-         // Structured bindings FTW!
-         auto const [stepIndex] = std::get<Problem::StepScope>(problem.scope);
+         int const stepIndex = std::get<Problem::StepScope>(problem.scope).stepIndex;
          QString const & stepName = this->steps.at(stepIndex).name;
          messages.append(
             tr("%1: %2").arg(stepName.isEmpty() ? tr("Step %1").arg(stepIndex + 1) : stepName, problem.message)
@@ -375,7 +374,7 @@ MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs,
          double const newTemp_c =
             temperatureMakesSense(options.spargeTemp_c) ? options.spargeTemp_c : defaultSpargeTemp_c;
          appendWarningToResult(
-            Problem::StepScope{static_cast<int>(ii)},
+            Problem::StepScope{static_cast<int>(ii), *PropertyNames::StepBase::startTemp_c},
             tr("The step temperature was %1, which doesn't make sense, so it has been set to %2.").arg(
                displayTemp(step.startTemp_c),
                displayTemp(newTemp_c)
@@ -385,7 +384,7 @@ MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs,
          continue;
       }
       return appendErrorToResult(
-         Problem::StepScope{static_cast<int>(ii)},
+         Problem::StepScope{static_cast<int>(ii), *PropertyNames::StepBase::startTemp_c},
          tr("The step temperature is %1, which needs to be between freezing and boiling point (%2).").arg(
             displayTemp(step.startTemp_c),
             displayTemp(inputs.boilingPoint_c)
@@ -394,7 +393,7 @@ MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs,
    }
    if (!steps.first().isInfusion()) {
       return appendErrorToResult(
-         Problem::StepScope{0},
+         Problem::StepScope{0, *PropertyNames::MashStep::type},
          tr("The first step must be an infusion (ie adding the strike water).")
       );
    }
@@ -407,7 +406,7 @@ MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs,
    for (qsizetype ii = numMashSteps; ii < steps.size(); ++ii) {
       if (!steps[ii].isSparge()) {
          return appendErrorToResult(
-            Problem::StepScope{static_cast<int>(ii)},
+            Problem::StepScope{static_cast<int>(ii), *PropertyNames::MashStep::type},
             tr("Sparge steps must come after all the other steps.")
          );
       }
@@ -468,7 +467,7 @@ MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs,
                if (step.infuseTempFixed) {
                   if (!step.infuseTemp_c) {
                      return appendErrorToResult(
-                        Problem::StepScope{static_cast<int>(ii)},
+                        Problem::StepScope{static_cast<int>(ii), *PropertyNames::MashStep::infuseTemp_c},
                         tr("The infusion temperature is pinned, but has not been set.")
                      );
                   }
@@ -500,7 +499,7 @@ MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs,
                   amount_l = contents.amountFor(targetTemp_c, *waterTemp_c);
                   if (!amount_l) {
                      return appendErrorToResult(
-                        Problem::StepScope{static_cast<int>(ii)},
+                        Problem::StepScope{static_cast<int>(ii), *PropertyNames::MashStep::infuseTemp_c},
                         tr("Cannot reach %1 with water at %2.").arg(displayTemp(targetTemp_c),
                                                                     displayTemp(*waterTemp_c))
                      );
@@ -517,7 +516,7 @@ MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs,
                   amount_l = contents.amountFor(targetTemp_c, usualWaterTemp_c);
                   if (!amount_l) {
                      return appendErrorToResult(
-                        Problem::StepScope{static_cast<int>(ii)},
+                        Problem::StepScope{static_cast<int>(ii), *PropertyNames::StepBase::startTemp_c},
                         tr("Cannot reach %1 with water at %2.").arg(displayTemp(targetTemp_c),
                                                                     displayTemp(usualWaterTemp_c))
                      );
@@ -528,7 +527,7 @@ MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs,
                if (*amount_l <= 0.0) {
                   if (step.amountFixed) {
                      return appendErrorToResult(
-                        Problem::StepScope{static_cast<int>(ii)},
+                        Problem::StepScope{static_cast<int>(ii), *PropertyNames::MashStep::amount_l},
                         tr("The infusion amount must be more than zero.")
                      );
                   }
@@ -537,7 +536,7 @@ MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs,
                   // as the previous one, in which case the amount of water is up to the brewer.
                   //
                   return appendErrorToResult(
-                     Problem::StepScope{static_cast<int>(ii)},
+                     Problem::StepScope{static_cast<int>(ii), *PropertyNames::MashStep::amount_l},
                      tr("This infusion does not change the temperature of the mash, so its amount cannot "
                         "be calculated.  It needs to be set and pinned.")
                   );
@@ -555,7 +554,7 @@ MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs,
                   QString const advice = (ii == 0 && !step.amountFixed && ii != balancingIndex) ?
                      tr("Try a thinner mash (ie more water).") : tr("Try more water or a lower step temperature.");
                   return appendErrorToResult(
-                     Problem::StepScope{static_cast<int>(ii)},
+                     Problem::StepScope{static_cast<int>(ii), *PropertyNames::MashStep::infuseTemp_c},
                      tr("The water would need to be at %1, which is above boiling point (%2).  %3").arg(
                         displayTemp(*waterTemp_c), displayTemp(inputs.boilingPoint_c), advice
                      )
@@ -576,7 +575,7 @@ MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs,
                                                "having a sparge, or more water in the earlier steps.") :
                                             tr("Try a thicker mash (ie less water).");
                   return appendErrorToResult(
-                     Problem::StepScope{static_cast<int>(ii)},
+                     Problem::StepScope{static_cast<int>(ii), *PropertyNames::MashStep::infuseTemp_c},
                      tr("To reach %1 with %2 of water, the water would need to be at %3, which is colder than the "
                         "coldest water available (taken to be at the initial grain temperature, %4).  %5  %6").arg(
                         displayTemp(targetTemp_c), displayVolume(*amount_l), displayTemp(*waterTemp_c),
@@ -637,7 +636,7 @@ MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs,
                   double const ratio = step.amount_l / mashVolume_l;
                   if (ratio < 0.0 || ratio > 1.0) {
                      return appendErrorToResult(
-                        Problem::StepScope{static_cast<int>(ii)},
+                        Problem::StepScope{static_cast<int>(ii), *PropertyNames::MashStep::amount_l},
                         tr("The decoction amount (%1) must be between zero and the volume of the mash "
                            "(%2).").arg(displayVolume(step.amount_l), displayVolume(mashVolume_l))
                      );
@@ -655,7 +654,7 @@ MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs,
                } else {
                   if (targetTemp_c < priorTemp_c) {
                      return appendErrorToResult(
-                        Problem::StepScope{static_cast<int>(ii)},
+                        Problem::StepScope{static_cast<int>(ii), *PropertyNames::StepBase::startTemp_c},
                         tr("A decoction cannot lower the temperature of the mash.")
                      );
                   }
@@ -663,7 +662,7 @@ MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs,
                                        (waterAndGrainHeatCapacity_kcalC * boilingDiff_c);
                   if (ratio > 1.0) {
                      return appendErrorToResult(
-                        Problem::StepScope{static_cast<int>(ii)},
+                        Problem::StepScope{static_cast<int>(ii), *PropertyNames::StepBase::startTemp_c},
                         tr("Cannot reach %1 by decoction, even by boiling the whole mash.").arg(
                            displayTemp(targetTemp_c)
                         )
@@ -769,7 +768,7 @@ MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs,
 
       if (step.infuseTempFixed && !step.infuseTemp_c) {
          return appendErrorToResult(
-            Problem::StepScope{static_cast<int>(ii)},
+            Problem::StepScope{static_cast<int>(ii), *PropertyNames::MashStep::infuseTemp_c},
             tr("The sparge water temperature is pinned, but has not been set.")
          );
       }
@@ -842,7 +841,7 @@ MashAutoAdjuster::Result MashAutoAdjuster::calculate(Inputs const & inputs,
 
       if (step.infuseTemp_c && *step.infuseTemp_c > inputs.boilingPoint_c + temperatureRangeTolerance_c) {
          return appendErrorToResult(
-            Problem::StepScope{static_cast<int>(ii)},
+            Problem::StepScope{static_cast<int>(ii), *PropertyNames::MashStep::infuseTemp_c},
             tr("The sparge water would need to be at %1, which is above boiling point (%2).  Try a lower "
                "sparge temperature or more sparge water.").arg(
                displayTemp(*step.infuseTemp_c), displayTemp(inputs.boilingPoint_c)
@@ -867,7 +866,7 @@ MashAutoAdjuster::Result MashAutoAdjuster::check(Inputs const & inputs, QList<St
       if (!step.amountFixed) {
          missingAmounts.append(
             Problem{.severity = Problem::Severity::Warning,
-                    .scope = Problem::StepScope{static_cast<int>(ii)},
+                    .scope = Problem::StepScope{static_cast<int>(ii), *PropertyNames::MashStep::amount_l},
                     .message = tr("No amount is set.")}
          );
       }
