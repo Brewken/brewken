@@ -140,22 +140,6 @@ bool RecipeAdditionFermentableTableModel::setData(QModelIndex const & index, QVa
    return this->doSetDataDefault<true>(index, value, role);
 }
 
-double RecipeAdditionFermentableTableModel::totalLacticAcid_kg() const {
-   double totalLacticAcid_kg = 0.0;
-   for (auto const & fermentableAddition : this->m_rows) {
-      auto const fermentable = fermentableAddition->fermentable();
-      if (auto const lacticAcidByWeight_pct = fermentable->lacticAcidByWeight_pct();
-          lacticAcidByWeight_pct && *lacticAcidByWeight_pct > 0.0) {
-         totalLacticAcid_kg += *lacticAcidByWeight_pct * fermentableAddition->amount().quantity;
-         if (fermentableAddition->amount().unit->getPhysicalQuantity() != Measurement::PhysicalQuantity::Mass) {
-            qWarning() << Q_FUNC_INFO << fermentableAddition->amount() << "is not a mass!";
-         }
-      }
-   }
-   return totalLacticAcid_kg;
-}
-
-
 // Insert the boilerplate stuff that we cannot do in TableModelBase
 TABLE_MODEL_COMMON_CODE(RecipeAdditionFermentable, recipeAdditionFermentable, PropertyNames::Recipe::fermentableAdditions)
 //=============================================== CLASS RecipeAdditionFermentableItemDelegate ================================================

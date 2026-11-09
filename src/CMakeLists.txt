@@ -60,7 +60,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/Localization.cpp
     ${repoDir}/src/Logging.cpp
     ${repoDir}/src/MainWindow.cpp
-    ${repoDir}/src/MashCalculator.cpp
+    ${repoDir}/src/MashAutoAdjuster.cpp
     ${repoDir}/src/OptionDialog.cpp
     ${repoDir}/src/PersistentSettings.cpp
     ${repoDir}/src/PrintAndPreviewDialog.cpp
@@ -73,6 +73,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/StyleRangeWidget.cpp
     ${repoDir}/src/TimerListDialog.cpp
     ${repoDir}/src/TimerWidget.cpp
+    ${repoDir}/src/WaterAutoAdjuster.cpp
     ${repoDir}/src/BoilTimer.cpp
     ${repoDir}/src/buttons/BoilButton.cpp
     ${repoDir}/src/buttons/EquipmentButton.cpp
@@ -246,6 +247,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/trees/TreeView.cpp
     ${repoDir}/src/undoRedo/SimpleUndoableUpdate.cpp
     ${repoDir}/src/undoRedo/Undoable.cpp
+    ${repoDir}/src/undoRedo/UndoableAutoAdjust.cpp
     ${repoDir}/src/utils/BtException.cpp
     ${repoDir}/src/utils/BtStringConst.cpp
     ${repoDir}/src/utils/BtStringStream.cpp
@@ -296,7 +298,7 @@ set(filesToCompile_cpp
 set(unitTestFiles_cpp
     ${repoDir}/src/unitTests/CoreTests.cpp
     ${repoDir}/src/unitTests/DatabaseTests.cpp
-    ${repoDir}/src/unitTests/MashCalculatorTests.cpp
+    ${repoDir}/src/unitTests/MashAutoAdjusterTests.cpp
     ${repoDir}/src/unitTests/MeasurementTests.cpp
     ${repoDir}/src/unitTests/RecipeCalcTests.cpp
     ${repoDir}/src/unitTests/SerializationTests.cpp
@@ -304,4 +306,5 @@ set(unitTestFiles_cpp
     ${repoDir}/src/unitTests/TestData.cpp
     ${repoDir}/src/unitTests/TestEnvironment.cpp
     ${repoDir}/src/unitTests/TestMain.cpp
+    ${repoDir}/src/unitTests/WaterAutoAdjusterTests.cpp
 )

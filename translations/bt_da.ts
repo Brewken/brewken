@@ -4610,7 +4610,11 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>⚠ Mash has problems</source>
+        <source>Used only by this recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>⚠ Problems found</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4690,7 +4694,7 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
 </context>
 <context>
-    <name>MashCalculator</name>
+    <name>MashAutoAdjuster</name>
     <message>
         <source>%1: %2</source>
         <translation type="unfinished"></translation>
@@ -4716,6 +4720,22 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>The initial grain temperature is %1.  Please set it to the temperature of the grain before mashing, which is normally room temperature.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The initial mash tun temperature is %1, which needs to be between freezing and boiling point (%2).  (If it is not set, we assume the tun is at the same temperature as the grain.)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The step temperature was %1, which doesn&apos;t make sense, so it has been set to %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The step temperature is %1, which needs to be between freezing and boiling point (%2).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>The first step must be an infusion (ie adding the strike water).</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4725,6 +4745,10 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>The mash thickness must be positive.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The infusion temperature is pinned, but has not been set.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4740,6 +4764,10 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>This infusion does not change the temperature of the mash, so its amount cannot be calculated.  It needs to be set and pinned.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Try a thinner mash (ie more water).</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4749,6 +4777,30 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>The water would need to be at %1, which is above boiling point (%2).  %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The mash would already be hotter than %1 at this point.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is more water than is needed to reach %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try a smaller pinned amount, or unpinning it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>With no sparge, this step has to add the rest of the water needed.  Try having a sparge, or more water in the earlier steps.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try a thicker mash (ie less water).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To reach %1 with %2 of water, the water would need to be at %3, which is colder than the coldest water available (taken to be at the initial grain temperature, %4).  %5  %6</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4788,43 +4840,19 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source> and the pinned sparge amounts add %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>The mash and sparge water add up to %1, but %2 is needed in total.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>The sparge water temperature is pinned, but has not been set.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>%1 of water at %2 will give a grain bed temperature of %3 rather than %4.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The sparge water would need to be at %1, which is above boiling point (%2).  Try a lower sparge temperature or more sparge water.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The initial grain temperature is %1.  Please set it to the temperature of the grain before mashing, which is normally room temperature.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The step temperature is %1, which needs to be between freezing and boiling point (%2).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The mash would already be hotter than %1 at this point.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This is more water than is needed to reach %1.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>With no sparge, this step has to add the rest of the water needed.  Try having a sparge, or more water in the earlier steps.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Try a thicker mash (ie less water).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>To reach %1 with %2 of water, the water would need to be at %3, which is colder than the coldest water available (taken to be at the initial grain temperature, %4).  %5  %6</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4836,36 +4864,27 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>The sparge water would need to be at %1, which is above boiling point (%2).  Try a lower sparge temperature or more sparge water.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>No amount is set.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The initial mash tun temperature is %1, which needs to be between freezing and boiling point (%2).  (If it is not set, we assume the tun is at the same temperature as the grain.)</source>
+        <source>Change mash steps</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>MashCalculator</name>
     <message>
-        <source>The step temperature was %1, which doesn&apos;t make sense, so it has been set to %2.</source>
-        <translation type="unfinished"></translation>
+        <source>Batch Sparge %1</source>
+        <translation type="obsolete">Portionsvis spargning %1</translation>
     </message>
     <message>
-        <source>The infusion temperature is pinned, but has not been set.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This infusion does not change the temperature of the mash, so its amount cannot be calculated.  It needs to be set and pinned.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Try a smaller pinned amount, or unpinning it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> and the pinned sparge amounts add %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The sparge water temperature is pinned, but has not been set.</source>
-        <translation type="unfinished"></translation>
+        <source>Fly Sparge</source>
+        <translation type="obsolete">Kontinuert spargning</translation>
     </message>
 </context>
 <context>
@@ -4969,6 +4988,30 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Mash adjusted for recipe &quot;%1&quot;, but please check the following:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  General problems are:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turn off automatic adjustment of mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto-Adjust undone.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turn on automatic adjustment of mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not adjust the mash yet:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto-adjust mash</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5094,10 +5137,6 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
         <translation type="obsolete">Varighed niveau</translation>
     </message>
     <message>
-        <source>%1: %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Pinned: not changed when adjusting the mash</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5107,6 +5146,14 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Pinned infusion temperature (not changed when adjusting the mash)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>⚠ %1: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>⚠ %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7870,6 +7917,14 @@ The final volume in the primary is %1.</source>
         <source>Primary fermentation for %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Target Mash pH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keep Water in Sync</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -9933,6 +9988,54 @@ The final volume in the primary is %1.</source>
         <source>Too high for target profile.</source>
         <translation type="unfinished">For høj til anvendt profil.</translation>
     </message>
+    <message>
+        <source>Auto-Adjust undone.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turn off keeping water agents in sync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turn on keeping water agents in sync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto-adjust water agents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not adjust the water agents yet:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not adjust the water agents, so nothing has been changed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Predicted mash pH is %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>target profile &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>target mash pH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The water agents already match %1 as closely as they can.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water agents adjusted to match %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water agents adjusted for %1, but please check the following:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WaterAdjustment</name>
@@ -10014,6 +10117,97 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Other</source>
         <translation type="obsolete">Andet</translation>
+    </message>
+</context>
+<context>
+    <name>WaterAutoAdjuster</name>
+    <message>
+        <source>The recipe&apos;s mash has no water in it, so there is nothing to add salts to.  Set up the mash first (eg with Auto-Adjust in the mash editor).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There is nothing to adjust: none of the water agents can be used to match the target profile (chalk and pickling lime are left alone), and no acid is being adjusted for mash pH.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 will be %2 ppm, compared with a target of %3 ppm.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The water already has more than this before any salts are added, so you might want to use more RO or distilled water.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The salts that add other ions also add this one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None of the salts being used adds this ion.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adding more would take other ions further from their targets.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To add both calcium and bicarbonate, you could add chalk (dissolved with CO₂) or pickling lime to the recipe yourself.  Auto-Adjust takes these into account, but doesn&apos;t work out how much to add.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The mash pH can&apos;t be worked out (there needs to be some grain and some water in the mash), so no acid has been added.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The strength of the %1 is not set, so no acid has been added.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The mash pH will be %1 without any added acid, which is already below the target of %2.  Acid can only lower the pH.  To raise it, you could use less acidulated malt or add some baking soda or pickling lime.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The recipe &quot;%1&quot; is locked, so its water agents cannot be changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please choose a target water profile and/or a target mash pH first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There is no water agent of type &quot;%1&quot; in the database, so it wasn&apos;t considered.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There is no target water profile, so only the acid has been adjusted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The strength of &quot;%1&quot; is not set, so it has been assumed to be %2%.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There is no acid (lactic, phosphoric, sulfuric or hydrochloric) in the database, so the mash pH could not be adjusted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Only the %1 has been adjusted.  The other acid in the recipe has been taken into account as it is.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change amount of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Where the same salt was added more than once, the whole amount is now in the first addition.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Where the same acid was added more than once, the whole amount is now in the first addition.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add water agents</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -13404,23 +13598,15 @@ Tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Whether this mash is shared with other recipes and/or locked</source>
+        <source>Info about, and any problems with, this mash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Whether this boil is shared with other recipes and/or locked</source>
+        <source>Info about, and any problems with, this boil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Whether this fermentation is shared with other recipes and/or locked</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Adjust the amounts and temperatures of the mash water for this recipe (in the Mash Editor)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Adjust Mash…</source>
+        <source>Info about, and any problems with, this fermentation</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13658,27 +13844,27 @@ Tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>How the grain will be rinsed after the mash.  Changing this and clicking Adjust Now replaces any existing sparge steps.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change the amounts and temperatures of the strike water and other infusions, the amounts of any decoctions, and the amounts and temperatures of sparge water, to suit this recipe&apos;s grain bill and equipment.  Values you have pinned in a step are not changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Adjust Now</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Adjust the mash automatically whenever something it depends on changes, eg the recipe&apos;s grain bill or equipment.  (Changing the steps themselves does not trigger an adjustment, so pin any values you want to keep.)  A mash that adjusts automatically can only be used by one recipe, so it is copied if you use it in another recipe.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Adjust automatically whenever the recipe changes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Used as the target grain bed temperature for new sparge steps when adjusting the mash.  It is better to set this on the sparge step itself.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>How the grain will be rinsed after the mash.  Changing this and clicking Auto-Adjust replaces any existing sparge steps.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto-Adjust</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Available when mash is used by exactly one recipe.  Keep mash in sync with recipe by doing an auto-adjust whenever changes happen, eg to the recipe&apos;s grain bill or equipment.  (Changing the steps themselves does not trigger an adjustment, so pin any values you want to keep.)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keep mash in sync with recipe changes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -15852,6 +16038,34 @@ Tabs</source>
     </message>
     <message>
         <source>Remove selected acid malt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If ticked, Auto-Adjust also works out how much acid to add to get this mash pH.  It uses the acid already in the recipe if there is one, otherwise lactic acid (or another acid if there&apos;s no lactic acid in the database).  If not ticked, acids are left alone.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjust acid for mash pH of</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target mash pH.  Most brewers aim for between 5.2 and 5.6, often 5.4.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Work out the amounts of brewing salts to add to get as close as possible to the target profile and, if ticked above, the amount of acid to get the target mash pH.  If the recipe already has salts, only those are used and their amounts are changed (so remove any you don&apos;t want, or add just the ones you do want, first).  Otherwise, commonly-used salts are added as needed.  Chalk and pickling lime are left alone.  You can undo the changes in one go.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto-Adjust</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically redo Auto-Adjust whenever something it depends on changes, eg the water profiles, the amount of water in the mash or the grain bill.  Changes you make to the amounts of salts or acid yourself will then be overwritten, so this is best used once you have chosen which salts to use.  Undoing an Auto-Adjust turns this off.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keep water agents in sync with recipe changes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

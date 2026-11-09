@@ -71,8 +71,6 @@ public:
    //! \brief Reimplemented from QAbstractTableModel.
    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
-   double totalLacticAcid_kg() const;
-
 private:
    bool displayPercentages;
 

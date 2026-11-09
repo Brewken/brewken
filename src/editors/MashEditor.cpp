@@ -24,9 +24,10 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QSignalBlocker>
+#include <QUndoStack>
 #include <QWidget>
 
-#include "MashCalculator.h"
+#include "MashAutoAdjuster.h"
 #include "database/ObjectStoreWrapper.h"
 #include "measurement/Unit.h"
 #include "model/Equipment.h"
@@ -34,6 +35,8 @@
 #include "model/MashStep.h"
 #include "model/Recipe.h"
 #include "model/RecipeUtils.h"
+#include "undoRedo/Undoable.h"
+#include "undoRedo/UndoableAutoAdjust.h"
 #include "widgets/SmartAmounts.h"
 
 #ifdef MANUALLY_INCLUDE_MOC
@@ -63,10 +66,10 @@ MashEditor::MashEditor(QWidget* parent, QString const editorName) :
    // the same quantity as MashStep::liquorToGristRatio_lKg, which is where the calculation records it.
    //
    SMART_FIELD_INIT(MashEditor, label_thickness, lineEdit_thickness, MashStep, PropertyNames::MashStep::liquorToGristRatio_lKg, 2);
-   // Order here must match MashCalculator::SpargeMethod
-   this->comboBox_spargeMethod->addItem(tr("No sparge"   ), static_cast<int>(MashCalculator::SpargeMethod::NoSparge   ));
-   this->comboBox_spargeMethod->addItem(tr("Batch sparge"), static_cast<int>(MashCalculator::SpargeMethod::BatchSparge));
-   this->comboBox_spargeMethod->addItem(tr("Fly sparge"  ), static_cast<int>(MashCalculator::SpargeMethod::FlySparge  ));
+   // Order here must match MashAutoAdjuster::SpargeMethod
+   this->comboBox_spargeMethod->addItem(tr("No sparge"   ), static_cast<int>(MashAutoAdjuster::SpargeMethod::NoSparge   ));
+   this->comboBox_spargeMethod->addItem(tr("Batch sparge"), static_cast<int>(MashAutoAdjuster::SpargeMethod::BatchSparge));
+   this->comboBox_spargeMethod->addItem(tr("Fly sparge"  ), static_cast<int>(MashAutoAdjuster::SpargeMethod::FlySparge  ));
    this->connect(this->comboBox_spargeMethod, &QComboBox::currentIndexChanged, this, &MashEditor::updateAutoAdjustControls);
    this->connect(this->pushButton_autoAdjust , &QAbstractButton::clicked      , this, &MashEditor::autoAdjust               );
    this->connect(this->checkBox_keptInSync   , &QAbstractButton::toggled      , this, &MashEditor::keptInSyncToggled       );
@@ -76,7 +79,7 @@ MashEditor::MashEditor(QWidget* parent, QString const editorName) :
    // fields, even if they haven't yet been saved, and should be redone when those values change.
    //
    MashStepTableModel * const tableModel = this->enumeratedItemsWidget->tableModel();
-   tableModel->setInputsAdjuster([this](MashCalculator::Inputs & inputs) { this->useFieldValues(inputs); return; });
+   tableModel->setInputsAdjuster([this](MashAutoAdjuster::Inputs & inputs) { this->useFieldValues(inputs); return; });
    for (SmartLineEdit * field : {this->lineEdit_grainTemp, this->lineEdit_tunTemp}) {
       this->connect(field, &QLineEdit::textChanged, tableModel, &MashStepTableModel::scheduleValidation);
    }
@@ -84,6 +87,9 @@ MashEditor::MashEditor(QWidget* parent, QString const editorName) :
    this->connect(this->tabWidget_editor, &QTabWidget::currentChanged, this, &MashEditor::updateMashProblems);
    this->updateMashProblems();
    this->refreshAutoAdjust();
+
+   // Undo and redo can turn keep in sync on and off (see UndoableAutoAdjust)
+   this->connect(&Undoable::getStack(), &QUndoStack::indexChanged, this, &MashEditor::undoStackChanged);
 
    return;
 }
@@ -94,6 +100,7 @@ MashEditor::~MashEditor() = default;
 EDITOR_COMMON_CODE(Mash)
 
 void MashEditor::postSetEditItem() {
+   this->m_autoAdjustUndoIndex = -1;
    this->refreshAutoAdjust();
    return;
 }
@@ -127,13 +134,13 @@ Recipe * MashEditor::recipeForAutoAdjust() const {
 
 void MashEditor::refreshAutoAdjust() {
    Recipe const * const recipe = this->recipeForAutoAdjust();
-   QList<MashCalculator::Step> const steps =
-      this->m_editItem ? MashCalculator::stepsFrom(*this->m_editItem) : QList<MashCalculator::Step>{};
+   QList<MashAutoAdjuster::Step> const steps =
+      this->m_editItem ? MashAutoAdjuster::stepsFrom(*this->m_editItem) : QList<MashAutoAdjuster::Step>{};
 
    //
    // Show the sparge method and number of batches the mash currently has
    //
-   MashCalculator::SpargeMethod const spargeMethod = MashCalculator::spargeMethod(steps);
+   MashAutoAdjuster::SpargeMethod const spargeMethod = MashAutoAdjuster::spargeMethod(steps);
    {
       QSignalBlocker const blocker{this->comboBox_spargeMethod};
       this->comboBox_spargeMethod->setCurrentIndex(
@@ -149,15 +156,15 @@ void MashEditor::refreshAutoAdjust() {
    // Show the mash thickness the calculation would use.  (If there's no sparge, the strike water is normally all the
    // water, so its thickness isn't a useful starting point if the user switches to a sparge method.)
    //
-   double thickness_LKg = MashCalculator::defaultThickness_LKg;
-   if (!steps.isEmpty() && spargeMethod != MashCalculator::SpargeMethod::NoSparge) {
-      MashCalculator::Step const & firstStep = steps.first();
+   double thickness_LKg = MashAutoAdjuster::defaultThickness_LKg;
+   if (!steps.isEmpty() && spargeMethod != MashAutoAdjuster::SpargeMethod::NoSparge) {
+      MashAutoAdjuster::Step const & firstStep = steps.first();
       if (firstStep.liquorToGristRatio_lKg && *firstStep.liquorToGristRatio_lKg > 0.0) {
          thickness_LKg = *firstStep.liquorToGristRatio_lKg;
       } else if (recipe && firstStep.amount_l > 0.0) {
          thickness_LKg = recipe->mashThicknessForStrikeWater_LKg(firstStep.amount_l).value_or(thickness_LKg);
          if (thickness_LKg <= 0.0) {
-            thickness_LKg = MashCalculator::defaultThickness_LKg;
+            thickness_LKg = MashAutoAdjuster::defaultThickness_LKg;
          }
       }
    }
@@ -192,9 +199,9 @@ void MashEditor::refreshAutoAdjust() {
 void MashEditor::updateAutoAdjustControls() {
    bool const enabled = (this->recipeForAutoAdjust() != nullptr);
    auto const spargeMethod =
-      static_cast<MashCalculator::SpargeMethod>(this->comboBox_spargeMethod->currentData().toInt());
-   this->spinBox_numBatches->setEnabled(enabled && spargeMethod == MashCalculator::SpargeMethod::BatchSparge);
-   this->lineEdit_thickness->setEnabled(enabled && spargeMethod != MashCalculator::SpargeMethod::NoSparge);
+      static_cast<MashAutoAdjuster::SpargeMethod>(this->comboBox_spargeMethod->currentData().toInt());
+   this->spinBox_numBatches->setEnabled(enabled && spargeMethod == MashAutoAdjuster::SpargeMethod::BatchSparge);
+   this->lineEdit_thickness->setEnabled(enabled && spargeMethod != MashAutoAdjuster::SpargeMethod::NoSparge);
    return;
 }
 
@@ -271,7 +278,7 @@ void MashEditor::highlightField(QWidget & field, QStringList const & problems) {
    return;
 }
 
-void MashEditor::useFieldValues(MashCalculator::Inputs & inputs) const {
+void MashEditor::useFieldValues(MashAutoAdjuster::Inputs & inputs) const {
    bool grainTempOk = false;
    double const grainTemp_c = this->lineEdit_grainTemp->getNonOptCanonicalQty(&grainTempOk);
    if (grainTempOk) {
@@ -327,18 +334,37 @@ void MashEditor::keptInSyncToggled(bool const checked) {
       // Check box should have been disabled
       return;
    }
-   if (checked && !this->ensureChangeableForRecipe(*recipe)) {
-      QSignalBlocker const blocker{this->checkBox_keptInSync};
-      this->checkBox_keptInSync->setChecked(false);
-      return;
-   }
    //
    // Like the steps, this takes effect straight away, because it's about how the mash relates to the recipe rather
    // than a field the user is editing.  Turning it on also adjusts the mash immediately.
    //
-   this->m_editItem->setKeptInSync(checked);
    if (checked) {
-      this->autoAdjust();
+      this->doAutoAdjust(true);
+   } else {
+      Undoable::doOrRedoUpdate(*this->m_editItem,
+                               TYPE_INFO(Mash, keptInSync),
+                               false,
+                               tr("Turn off automatic adjustment of mash"));
+   }
+   // In case we didn't make the change (eg the user declined to make a copy of a shared mash)
+   this->undoStackChanged();
+   return;
+}
+
+void MashEditor::undoStackChanged() {
+   // If our last auto-adjust has been undone, the message about it no longer applies
+   if (this->m_autoAdjustUndoIndex >= 0 && Undoable::getStack().index() < this->m_autoAdjustUndoIndex) {
+      this->showAutoAdjustMessage(tr("Auto-Adjust undone."));
+      this->m_autoAdjustUndoIndex = -1;
+   }
+   QSignalBlocker const blocker{this->checkBox_keptInSync};
+   this->checkBox_keptInSync->setChecked(this->m_editItem && this->m_editItem->keptInSync());
+   if (this->m_editItem) {
+      // Undo/redo of an auto-adjust changes the steps, and hence the totals.  As in doAutoAdjust, we only re-read these
+      // fields, so as not to lose any unsaved changes to the others.
+      using Base = EditorBase<MashEditor, Mash, MashEditorOptions>;
+      this->Base::readFieldsFromEditItem(*PropertyNames::Mash::totalMashWater_l);
+      this->Base::readFieldsFromEditItem(*PropertyNames::Mash::totalTime_mins  );
    }
    return;
 }
@@ -357,6 +383,11 @@ void MashEditor::showAutoAdjustMessage(QString const & heading, QStringList cons
 }
 
 void MashEditor::autoAdjust() {
+   this->doAutoAdjust(false);
+   return;
+}
+
+void MashEditor::doAutoAdjust(bool const turnOnKeepInSync) {
    Recipe * const recipe = this->recipeForAutoAdjust();
    if (!recipe || !this->m_editItem) {
       // Button should have been disabled
@@ -372,39 +403,70 @@ void MashEditor::autoAdjust() {
    //
    // Use the values in the editor for the mash's own fields, as the user might have changed them without (yet) saving.
    //
-   MashCalculator::Inputs inputs = MashCalculator::Inputs::fromRecipe(*recipe, mash);
+   MashAutoAdjuster::Inputs inputs = MashAutoAdjuster::Inputs::fromRecipe(*recipe, mash);
    this->useFieldValues(inputs);
 
    auto const spargeMethod =
-      static_cast<MashCalculator::SpargeMethod>(this->comboBox_spargeMethod->currentData().toInt());
-   QList<MashCalculator::Step> steps = MashCalculator::stepsFrom(mash);
+      static_cast<MashAutoAdjuster::SpargeMethod>(this->comboBox_spargeMethod->currentData().toInt());
+   QList<MashAutoAdjuster::Step> steps = MashAutoAdjuster::stepsFrom(mash);
    // Older mashes might have a sparge temperature of 0 °C, which really means "not set"
    std::optional<double> const spargeTemp_c = this->lineEdit_spargeTemp->getOptCanonicalQty();
    double const targetSpargeTemp_c =
-      (spargeTemp_c && *spargeTemp_c > 0.0) ? *spargeTemp_c : MashCalculator::defaultSpargeTemp_c;
-   MashCalculator::setSparge(steps, spargeMethod, this->spinBox_numBatches->value(), targetSpargeTemp_c);
+      (spargeTemp_c && *spargeTemp_c > 0.0) ? *spargeTemp_c : MashAutoAdjuster::defaultSpargeTemp_c;
+   MashAutoAdjuster::setSparge(steps, spargeMethod, this->spinBox_numBatches->value(), targetSpargeTemp_c);
 
-   MashCalculator::Options options;
+   MashAutoAdjuster::Options options;
    options.spargeTemp_c = targetSpargeTemp_c;
-   if (spargeMethod != MashCalculator::SpargeMethod::NoSparge) {
+   if (spargeMethod != MashAutoAdjuster::SpargeMethod::NoSparge) {
       options.thickness_LKg = this->lineEdit_thickness->getOptCanonicalQty();
    }
 
-   MashCalculator::Result const result = MashCalculator::calculate(inputs, steps, options);
+   MashAutoAdjuster::Result const result = MashAutoAdjuster::calculate(inputs, steps, options);
+   std::shared_ptr<Mash> const mashPtr = this->m_editItem;
    if (!result.ok()) {
-      this->showAutoAdjustMessage(tr("Could not adjust the mash, so nothing has been changed:"),
-                                  result.messages(MashCalculator::Problem::Severity::Error));
+      if (turnOnKeepInSync) {
+         // We still turn on keep in sync, as the user asked for it, and the mash will be adjusted when the problems are
+         // fixed (eg when there is some grain in the recipe).
+         Undoable::doOrRedoUpdate(*mashPtr,
+                                  TYPE_INFO(Mash, keptInSync),
+                                  true,
+                                  tr("Turn on automatic adjustment of mash"));
+         this->m_autoAdjustUndoIndex = Undoable::getStack().index();
+         this->showAutoAdjustMessage(tr("Could not adjust the mash yet:"),
+                                     result.messages(MashAutoAdjuster::Problem::Severity::Error));
+      } else {
+         this->showAutoAdjustMessage(tr("Could not adjust the mash, so nothing has been changed:"),
+                                     result.messages(MashAutoAdjuster::Problem::Severity::Error));
+      }
       return;
    }
 
-   MashCalculator::apply(result.steps, mash);
+   //
+   // Make all the changes (including turning on keep in sync if that's what we're doing) a single undoable step.  See
+   // UndoableAutoAdjust for how undo interacts with keep in sync.
+   //
+   auto * const command = new UndoableAutoAdjust(
+      turnOnKeepInSync ? tr("Turn on automatic adjustment of mash") : tr("Auto-adjust mash"),
+      [mashPtr]() { return mashPtr->keptInSync(); },
+      [mashPtr](bool const val) { mashPtr->setKeptInSync(val); return; }
+   );
+   if (turnOnKeepInSync) {
+      new SimpleUndoableUpdate(*mashPtr,
+                               TYPE_INFO(Mash, keptInSync),
+                               true,
+                               tr("Turn on automatic adjustment of mash"),
+                               command);
+   }
+   MashAutoAdjuster::makeApplyCommand(result.steps, mashPtr, command);
+   Undoable::doOrRedoUpdate(command);
+   this->m_autoAdjustUndoIndex = Undoable::getStack().index();
 
    // Update the totals, without re-reading the other fields (which would lose any unsaved changes)
    using Base = EditorBase<MashEditor, Mash, MashEditorOptions>;
    this->Base::readFieldsFromEditItem(*PropertyNames::Mash::totalMashWater_l);
    this->Base::readFieldsFromEditItem(*PropertyNames::Mash::totalTime_mins  );
 
-   QStringList const warnings = result.messages(MashCalculator::Problem::Severity::Warning);
+   QStringList const warnings = result.messages(MashAutoAdjuster::Problem::Severity::Warning);
    if (warnings.isEmpty()) {
       this->showAutoAdjustMessage(tr("Mash adjusted for recipe \"%1\".").arg(recipe->name()));
    } else {

@@ -15,7 +15,14 @@ happens, so I'm now setting it to a slightly arbitrary time early in the morning
 * Mash water amounts and temperatures (strike water, other infusions, decoctions and sparge water) can now be adjusted to suit the recipe in the Mash Editor, replacing the Mash Wizard and Mash Designer.  Individual amounts and temperatures can be pinned so that only the rest are adjusted.  Optionally, the mash can adjust automatically whenever the recipe changes.
 * Mash steps (and mash fields) that don't make sense for the recipe are highlighted
 * Example mash profiles, which are locked so they can be shared between recipes
+* Auto-Adjust on the Water tab works out the brewing salts needed to match the target water profile and, optionally, the acid needed to reach a target mash pH.  Optionally, the water agents can adjust automatically whenever the recipe changes.
+* Clicking Auto-Adjust (for the mash or the water) can be undone and redone in one step
 * We'll list other new features here...
+
+### Bug Fixes
+* Predicted mash pH on the Water tab was wildly wrong if the recipe had any lactic acid (or acidulated malt or phosphoric acid), as acid amounts were converted with the wrong units.  The mash pH model has also been corrected to scale by the weight of grain rather than mash thickness, and to count all specialty malts rather than just the last one.
+* Water agent figures for gypsum (calcium overstated by about 26%), magnesium chloride (no chloride, and a possible crash) and pickling lime were wrong
+* Water tab didn't update predicted mash pH when the grain bill changed, and could give wrong figures after switching between recipes
 
 ## v5.2.3
 More bug fixes.

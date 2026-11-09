@@ -28,7 +28,7 @@
 #include <QVariant>
 #include "ui_mashEditor.h"
 
-#include "MashCalculator.h"
+#include "MashAutoAdjuster.h"
 #include "editors/EditorBase.h"
 #include "model/Mash.h"
 
@@ -57,9 +57,11 @@ public:
 
 public slots:
    /**
-    * \brief Use \c MashCalculator to work out the water amounts and temperatures (etc) for the mash being edited, for
+    * \brief Use \c MashAutoAdjuster to work out the water amounts and temperatures (etc) for the mash being edited, for
     *        the current recipe.  If the mash is locked or shared with other recipes, we first offer to make a copy for
     *        the current recipe.
+    *
+    *        The changes are a single undoable step (see \c UndoableAutoAdjust).
     */
    void autoAdjust();
 
@@ -73,9 +75,13 @@ public slots:
    /**
     * \brief Turn on or off "Keep in sync with recipe" (see \c Mash::keepInSync).  When turning it on, if the
     *        mash is locked or shared, we first offer to make a copy (as for \c autoAdjust), and we adjust the mash
-    *        straight away.
+    *        straight away.  Turning it on and the resulting adjustment are a single undoable step, so undo turns it
+    *        off and puts the mash back how it was.  Turning it off is also undoable.
     */
    void keptInSyncToggled(bool const checked);
+
+   //! Called when anything is done, undone or redone, as the "Keep in sync" check box might need updating
+   void undoStackChanged();
 
 protected:
    virtual void showEvent(QShowEvent * event) override;
@@ -91,10 +97,17 @@ private:
    void refreshAutoAdjust();
 
    /**
+    * \brief Does the work for \c autoAdjust and \c keptInSyncToggled
+    *
+    * \param turnOnKeepInSync If \c true, the change to turn on keep in sync is part of the same undoable step
+    */
+   void doAutoAdjust(bool const turnOnKeepInSync);
+
+   /**
     * \brief Replace values in \c inputs that come from the mash's own fields (eg initial grain temperature) with what
     *        the user has entered in the editor, which might not yet have been saved.
     */
-   void useFieldValues(MashCalculator::Inputs & inputs) const;
+   void useFieldValues(MashAutoAdjuster::Inputs & inputs) const;
 
    /**
     * \brief Before adjusting the mash for \c recipe, check that it can be changed and is not shared with another
@@ -109,6 +122,9 @@ private:
 
    //! Show the result of an auto-adjust (or why it couldn't be done)
    void showAutoAdjustMessage(QString const & heading, QStringList const & details = {});
+
+   //! Position on the undo stack just after our last auto-adjust, so we know when it's been undone, or -1 if none
+   int m_autoAdjustUndoIndex = -1;
 
    //
    // TBD: We used to have the following function invoked by a button:
