@@ -27,7 +27,7 @@
 #include <QString>
 #include <qglobal.h> // For Q_ASSERT and Q_UNREACHABLE
 
-#include "Algorithms.h"
+#include "calculations/Algorithms.h"
 #include "measurement/Unit.h"
 #include "PersistentSettings.h"
 

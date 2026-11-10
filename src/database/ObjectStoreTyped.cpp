@@ -600,6 +600,7 @@ namespace {
          {ObjectStore::FieldType::Double, {"ro_water_sparge_pct"     }, PropertyNames::Recipe::roWaterSparge_pct              },
          {ObjectStore::FieldType::Double, {"target_mash_ph"          }, PropertyNames::Recipe::targetMashAcidity_pH           },
          {ObjectStore::FieldType::Bool  , {"water_kept_in_sync"      }, PropertyNames::Recipe::waterKeptInSync                },
+         {ObjectStore::FieldType::Bool  , {"fg_calc_uses_mash"       }, PropertyNames::Recipe::fgCalcUsesMash                 },
       },
       {&NAMED_ENTITY_COMMON_FIELDS}
    };

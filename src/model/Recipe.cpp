@@ -37,10 +37,11 @@
 #include <QObject>
 #include <QTimer>
 
-#include "Algorithms.h"
+#include "calculations/Algorithms.h"
 #include "database/ObjectStoreWrapper.h"
 #include "Localization.h"
 #include "MashAutoAdjuster.h"
+#include "calculations/MashFermentability.h"
 #include "WaterAutoAdjuster.h"
 #include "measurement/Amount.h"
 #include "measurement/ColorMethods.h"
@@ -1041,8 +1042,126 @@ public:
    }
 
    /**
+    * \brief Map a \c MashStep::Type onto what \c MashFermentability needs to know about it
+    */
+   static MashFermentability::StepType fermentabilityStepType(MashStep::Type const type) {
+      switch (type) {
+         case MashStep::Type::Infusion   : return MashFermentability::StepType::Infusion   ;
+         case MashStep::Type::Temperature: return MashFermentability::StepType::Temperature;
+         case MashStep::Type::Decoction  : return MashFermentability::StepType::Decoction  ;
+         case MashStep::Type::FlySparge  : return MashFermentability::StepType::Sparge     ;
+         case MashStep::Type::BatchSparge: return MashFermentability::StepType::Sparge     ;
+         case MashStep::Type::SouringMash: return MashFermentability::StepType::Other      ;
+         case MashStep::Type::SouringWort: return MashFermentability::StepType::Other      ;
+         // NB: No default case, so that the compiler will warn us if a new MashStep::Type is added and not handled here
+      }
+      // Should be unreachable
+      return MashFermentability::StepType::Other;
+   }
+
+   /**
+    * \brief Mass-weighted average diastatic power of everything added to the mash (by weight), for
+    *        \c MashFermentability::enzymeLevels.
+    *
+    *        Things other than grains (sugars, extracts, fruit, etc) have no enzymes, so, if their diastatic power is
+    *        not set, we count it as zero.  But if a grain does not have diastatic power set, we have no idea how much
+    *        enzyme it brings, so we return \c std::nullopt, which means "assume a typical base malt".
+    */
+   std::optional<double> mashDiastaticPower_lintner() const {
+      double totalMass_kg = 0.0;
+      double totalDiastaticPowerTimesMass = 0.0;
+      for (auto const & fermentableAddition : this->m_self.fermentableAdditions()) {
+         if (fermentableAddition->stage() != RecipeAddition::Stage::Mash || !fermentableAddition->amountIsWeight()) {
+            continue;
+         }
+         auto const fermentable = fermentableAddition->fermentable();
+         if (!fermentable) {
+            continue;
+         }
+         std::optional<double> const diastaticPower_lintner = fermentable->diastaticPower_lintner();
+         if (!diastaticPower_lintner && fermentable->type() == Fermentable::Type::Grain) {
+            qDebug() <<
+               Q_FUNC_INFO << "No diastatic power for" << fermentable->name() << "so assuming typical enzyme levels";
+            return std::nullopt;
+         }
+         double const mass_kg = fermentableAddition->amount().quantity;
+         totalMass_kg += mass_kg;
+         totalDiastaticPowerTimesMass += mass_kg * diastaticPower_lintner.value_or(0.0);
+      }
+      if (totalMass_kg <= 0.0) {
+         return std::nullopt;
+      }
+      return totalDiastaticPowerTimesMass / totalMass_kg;
+   }
+
+   /**
+    * \brief Overall thickness of the mash (litres of water per kg of grain), for \c MashFermentability::enzymeLevels.
+    *
+    *        This uses all the water infused into the mash (but not sparge water), less any strike water allowance
+    *        (water under a false bottom etc, which isn't mixed with the grain), in the same way as
+    *        \c Recipe::mashThicknessForStrikeWater_LKg.  (We don't call that function as it would go via
+    *        \c Recipe::grainsInMash_kg, which can trigger a recalculation, and we're in the middle of one.)  In a mash
+    *        with several infusions, the mash gets thinner as it goes along, but, for simplicity, we just use the
+    *        thickness once all the water is in.
+    *
+    * \return \c std::nullopt if we can't work it out (eg no water amounts set), which means "assume typical"
+    */
+   std::optional<double> mashThickness_lKg(Mash const & mash) const {
+      if (this->m_grainsInMash_kg <= 0.0) {
+         return std::nullopt;
+      }
+      double const strikeWaterAllowance_l =
+         this->m_self.equipment() ? this->m_self.equipment()->strikeWaterAllowance_l() : 0.0;
+      double const water_l = mash.totalInfusionAmount_l() - strikeWaterAllowance_l;
+      if (water_l <= 0.0) {
+         return std::nullopt;
+      }
+      return water_l / this->m_grainsInMash_kg;
+   }
+
+   /**
+    * \brief If \c Recipe::fgCalcUsesMash is set, works out what to multiply yeast attenuation by to allow for the mash
+    *        profile.  See \c MashFermentability::attenuationMultiplier.
+    *
+    * \return \c std::nullopt if attenuation should not be adjusted -- eg because \c fgCalcUsesMash is off, there is no
+    *         mash, or the mash has no steps that the model can use
+    */
+   std::optional<double> mashAttenuationMultiplier() const {
+      if (!this->m_self.m_fgCalcUsesMash) {
+         return std::nullopt;
+      }
+      auto const mash = this->m_self.mash();
+      if (!mash) {
+         return std::nullopt;
+      }
+
+      std::vector<MashFermentability::Step> steps;
+      for (auto const & mashStep : mash->steps()) {
+         steps.push_back(MashFermentability::Step{
+            .kind          = fermentabilityStepType(mashStep->type()),
+            .stepTemp_c    = mashStep->startTemp_c(),
+            .endTemp_c     = mashStep->endTemp_c(),
+            .stepTime_mins = mashStep->stepTime_mins(),
+            .rampTime_mins = mashStep->rampTime_mins()
+         });
+      }
+
+      std::optional<double> const multiplier = MashFermentability::attenuationMultiplier(
+         MashFermentability::buildProfile(steps),
+         MashFermentability::enzymeLevels(this->mashDiastaticPower_lintner(), this->mashThickness_lKg(*mash))
+      );
+      if (!multiplier) {
+         qDebug() <<
+            Q_FUNC_INFO << "Recipe #" << this->m_self.key() << "(" << this->m_self.name() << ") mash" << mash->name() <<
+            "does not give a usable mash profile, so FG not adjusted for it";
+      }
+      return multiplier;
+   }
+
+   /**
     * Emits changed(og), changed(fg).
-    * Depends on: m_wortFromMash_l, m_finalVolume_l
+    * Depends on: m_wortFromMash_l, m_finalVolume_l and, if fgCalcUsesMash is set, the mash steps, m_grainsInMash_kg and
+    * the diastatic power of the fermentables in the mash
     */
    void recalcOgFg() {
 
@@ -1139,6 +1258,22 @@ public:
       // This means we have yeast, but they neglected to provide attenuation percentages.
       if (this->m_self.yeastAdditions().size() > 0 && attenuation_pct <= 0.0)  {
          attenuation_pct = Yeast::DefaultAttenuation_pct; // Use an average attenuation.
+      }
+
+      //
+      // Yeast attenuation figures implicitly assume a "typical" wort.  If the user has asked us to (see
+      // Recipe::fgCalcUsesMash), adjust for how much more or less fermentable this recipe's mash profile makes the wort
+      // than that.  See MashFermentability.h for the details.
+      //
+      if (attenuation_pct > 0.0) {
+         std::optional<double> const multiplier = this->mashAttenuationMultiplier();
+         if (multiplier) {
+            double const adjusted_pct = MashFermentability::adjustedAttenuation_pct(attenuation_pct, *multiplier);
+            qDebug() <<
+               Q_FUNC_INFO << "Recipe #" << this->m_self.key() << "(" << this->m_self.name() << ") yeast attenuation" <<
+               attenuation_pct << "% adjusted for mash profile (× " << *multiplier << ") to" << adjusted_pct << "%";
+            attenuation_pct = adjusted_pct;
+         }
       }
 
       double calculatedFg;
@@ -1593,6 +1728,7 @@ QString Recipe::localisedName_roWaterMash_pct        () { return tr("Percentage 
 QString Recipe::localisedName_roWaterSparge_pct      () { return tr("Percentage reverse-osmosis water in sparge"); }
 QString Recipe::localisedName_targetMashAcidity_pH   () { return tr("Target Mash pH"         ); }
 QString Recipe::localisedName_waterKeptInSync        () { return tr("Keep Water in Sync"     ); }
+QString Recipe::localisedName_fgCalcUsesMash         () { return tr("Use Mash Profile in FG Calculation"); }
 QString Recipe::localisedName_style                  () { return tr("Style"                  ); }
 QString Recipe::localisedName_styleId                () { return tr("Style ID"               ); }
 QString Recipe::localisedName_tasteNotes             () { return tr("Taste Notes"            ); }
@@ -1747,6 +1883,7 @@ TypeLookup const Recipe::typeLookup {
       PROPERTY_TYPE_LOOKUP_ENTRY(Recipe, roWaterSparge_pct    , m_roWaterSparge_pct,           NonPhysicalQuantity::Percentage        ),
       PROPERTY_TYPE_LOOKUP_ENTRY(Recipe, targetMashAcidity_pH , m_targetMashAcidity_pH, Measurement::PhysicalQuantity::Acidity      ),
       PROPERTY_TYPE_LOOKUP_ENTRY(Recipe, waterKeptInSync      , m_waterKeptInSync  , BOOL_INFO(tr("No"), tr("Yes"))                ),
+      PROPERTY_TYPE_LOOKUP_ENTRY(Recipe, fgCalcUsesMash       , m_fgCalcUsesMash   , BOOL_INFO(tr("No"), tr("Yes"))                ),
 
    },
    // Parent classes lookup
@@ -1761,6 +1898,7 @@ Recipe::Recipe(QString name) :
    pimpl                    {std::make_unique<impl>(*this)},
    m_assistantBrewer             {QString{"%1: free beer software"}.arg(CONFIG_APPLICATION_NAME_UC)},
    m_date                   {QDate::currentDate()}, // Date is allowed to be blank, but we default it to today
+   m_fgCalcUsesMash         {Recipe::defaultFgCalcUsesMash()},
    m_fermentableAdditions   {*this               },
    m_hopAdditions           {*this               },
    m_miscAdditions          {*this               },
@@ -1807,6 +1945,9 @@ Recipe::Recipe(NamedParameterBundle const & namedParameterBundle) :
    SET_REGULAR_FROM_NPB (m_roWaterSparge_pct      , namedParameterBundle, PropertyNames::Recipe::roWaterSparge_pct      , 0.0),
    SET_REGULAR_FROM_NPB (m_targetMashAcidity_pH   , namedParameterBundle, PropertyNames::Recipe::targetMashAcidity_pH   , std::nullopt),
    SET_REGULAR_FROM_NPB (m_waterKeptInSync        , namedParameterBundle, PropertyNames::Recipe::waterKeptInSync        , false),
+   // This will be in the bundle when we read from the database, but not when importing from a file (see comment on
+   // Recipe::fgCalcUsesMash in model/Recipe.h)
+   SET_REGULAR_FROM_NPB (m_fgCalcUsesMash         , namedParameterBundle, PropertyNames::Recipe::fgCalcUsesMash         , Recipe::defaultFgCalcUsesMash()),
 
    // See comment in model/OwnedSet.h for why an OwnedSet never needs to read from NamedParameterBundle
    m_fermentableAdditions{*this},
@@ -1873,6 +2014,7 @@ Recipe::Recipe(Recipe const & other) :
    m_roWaterSparge_pct      {other.m_roWaterSparge_pct      },
    m_targetMashAcidity_pH   {other.m_targetMashAcidity_pH   },
    m_waterKeptInSync        {other.m_waterKeptInSync        },
+   m_fgCalcUsesMash         {other.m_fgCalcUsesMash         },
    // Owned sets need the correct owner, but otherwise can handle whatever deep copying is needed.
    m_fermentableAdditions   {*this, other.m_fermentableAdditions},
    m_hopAdditions           {*this, other.m_hopAdditions        },
@@ -2533,6 +2675,12 @@ void Recipe::setRoWaterMash_pct  (double const val) { SET_AND_NOTIFY(PropertyNam
 void Recipe::setRoWaterSparge_pct(double const val) { SET_AND_NOTIFY(PropertyNames::Recipe::roWaterSparge_pct, this->m_roWaterSparge_pct, val); this->scheduleWaterAutoAdjust(); return; }
 void Recipe::setTargetMashAcidity_pH(std::optional<double> const val) { SET_AND_NOTIFY(PropertyNames::Recipe::targetMashAcidity_pH, this->m_targetMashAcidity_pH, val); this->scheduleWaterAutoAdjust(); return; }
 void Recipe::setWaterKeptInSync(bool const val) { SET_AND_NOTIFY(PropertyNames::Recipe::waterKeptInSync, this->m_waterKeptInSync, val); this->scheduleWaterAutoAdjust(); return; }
+void Recipe::setFgCalcUsesMash(bool const val) {
+   SET_AND_NOTIFY(PropertyNames::Recipe::fgCalcUsesMash, this->m_fgCalcUsesMash, val);
+   // FG changes, and so do everything that depends on it (ABV, calories, etc)
+   this->recalcAll();
+   return;
+}
 
 void Recipe::setLocked(bool const isLocked) {
    // Locking a Recipe doesn't count as changing it for the purposes of versioning or the UI, so no call to setAndNotify
@@ -2829,6 +2977,11 @@ double Recipe::roWaterMash_pct  () const { return m_roWaterMash_pct  ; }
 double Recipe::roWaterSparge_pct() const { return m_roWaterSparge_pct; }
 std::optional<double> Recipe::targetMashAcidity_pH() const { return m_targetMashAcidity_pH; }
 bool Recipe::waterKeptInSync() const { return m_waterKeptInSync; }
+bool Recipe::fgCalcUsesMash () const { return m_fgCalcUsesMash ; }
+
+bool Recipe::defaultFgCalcUsesMash() {
+   return PersistentSettings::value_ck(PersistentSettings::Names::defaultFgCalcUsesMash, false).toBool();
+}
 
 //==============================Recalculators==================================
 

@@ -41,7 +41,6 @@
 #
 set(filesToCompile_cpp
     ${repoDir}/src/AboutDialog.cpp
-    ${repoDir}/src/Algorithms.cpp
     ${repoDir}/src/Application.cpp
     ${repoDir}/src/BeerColorWidget.cpp
     ${repoDir}/src/BrewDayFormatter.cpp
@@ -81,6 +80,8 @@ set(filesToCompile_cpp
     ${repoDir}/src/buttons/MashButton.cpp
     ${repoDir}/src/buttons/RecipeAttributeButton.cpp
     ${repoDir}/src/buttons/StyleButton.cpp
+    ${repoDir}/src/calculations/Algorithms.cpp
+    ${repoDir}/src/calculations/MashFermentability.cpp
     ${repoDir}/src/catalogs/BoilCatalog.cpp
     ${repoDir}/src/catalogs/EquipmentCatalog.cpp
     ${repoDir}/src/catalogs/FermentableCatalog.cpp
@@ -299,6 +300,7 @@ set(unitTestFiles_cpp
     ${repoDir}/src/unitTests/CoreTests.cpp
     ${repoDir}/src/unitTests/DatabaseTests.cpp
     ${repoDir}/src/unitTests/MashAutoAdjusterTests.cpp
+    ${repoDir}/src/unitTests/MashFermentabilityTests.cpp
     ${repoDir}/src/unitTests/MeasurementTests.cpp
     ${repoDir}/src/unitTests/RecipeCalcTests.cpp
     ${repoDir}/src/unitTests/SerializationTests.cpp

@@ -70,7 +70,7 @@
 #include <QWidget>
 
 #include "AboutDialog.h"
-#include "Algorithms.h"
+#include "calculations/Algorithms.h"
 #include "Application.h"
 #include "BrewLogWidget.h"
 #include "BtDatePopup.h"
@@ -1387,6 +1387,8 @@ void MainWindow::setupClicks() {
    connect(this->pushButton_editMash        , &QAbstractButton::clicked, this, &MainWindow::editRecipeMash        );
    connect(this->pushButton_editBoil        , &QAbstractButton::clicked, this, &MainWindow::editRecipeBoil        );
    connect(this->pushButton_editFermentation, &QAbstractButton::clicked, this, &MainWindow::editRecipeFermentation);
+   // NB: clicked() is only emitted when the user changes the checkbox, not when we call setChecked() in showChanges()
+   connect(this->checkBox_fgCalcUsesMash    , &QAbstractButton::clicked, this, &MainWindow::updateRecipeFgCalcUsesMash);
 
    connect(this->pushButton_addFerm       , &QAbstractButton::clicked, this->pimpl-> m_fermentableCatalog.get(), &QWidget::show);
    connect(this->pushButton_addHop        , &QAbstractButton::clicked, this->pimpl->         m_hopCatalog.get(), &QWidget::show);
@@ -1608,6 +1610,7 @@ void MainWindow::lockRecipe(int const state) {
    qWidget_equipmentBox->setEnabled(enabled);
    lineEdit_batchSize->setEnabled(enabled);
    lineEdit_efficiency->setEnabled(enabled);
+   checkBox_fgCalcUsesMash->setEnabled(enabled);
 
    // locked recipes cannot be deleted
    actionDeleteSelected->setEnabled(enabled);
@@ -1701,6 +1704,7 @@ void MainWindow::showChanges(QMetaProperty* prop) {
    this->lineEdit_name      ->setCursorPosition(0);
    this->lineEdit_batchSize ->setCursorPosition(0);
    this->lineEdit_efficiency->setCursorPosition(0);
+   this->checkBox_fgCalcUsesMash->setChecked(this->pimpl->m_recipeObs->fgCalcUsesMash());
 /*
    lineEdit_calcBatchSize->setText(this->pimpl->m_recipeObs);
    lineEdit_calcBoilSize->setText(this->pimpl->m_recipeObs);
@@ -2139,6 +2143,18 @@ void MainWindow::updateRecipeBatchSize() {
                         TYPE_INFO(Recipe, batchSize_l),
                         lineEdit_batchSize->getNonOptCanonicalQty(),
                         tr("Change Batch Size"));
+   return;
+}
+
+void MainWindow::updateRecipeFgCalcUsesMash(bool const checked) {
+   if (!this->pimpl->m_recipeObs) {
+      return;
+   }
+
+   Undoable::doOrRedoUpdate(*this->pimpl->m_recipeObs,
+                        TYPE_INFO(Recipe, fgCalcUsesMash),
+                        checked,
+                        tr("Change Use Mash Profile in FG Calculation"));
    return;
 }
 

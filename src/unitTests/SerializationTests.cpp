@@ -473,6 +473,8 @@ void SerializationTests::testDotBeerExport() {
       QVERIFY(fuzzyComp(recipe->at("target_mash_pH").at("value").to_number<double>(), 5.35, 0.0001));
       // But "keep water in sync" is deliberately not part of dotBeer
       QVERIFY2(!recipe->contains("water_kept_in_sync"), "Keep water in sync should not be written");
+      // Nor is "use mash profile in FG calculation"
+      QVERIFY2(!recipe->contains("fg_calc_uses_mash"), "Use mash profile in FG calculation should not be written");
    }
    QString message;
    bool const reimportOk = importDotBeerFile(exportFilePath, message);

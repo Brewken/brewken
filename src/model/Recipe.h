@@ -80,6 +80,7 @@ AddPropertyName(fermentableAdditions   )
 AddPropertyName(fermentation           )
 AddPropertyName(fermentationId         )
 AddPropertyName(fg                     )
+AddPropertyName(fgCalcUsesMash         )
 AddPropertyName(finalVolume_l          )
 AddPropertyName(forcedCarbonation      )
 AddPropertyName(grainsInMash_kg        )
@@ -200,6 +201,7 @@ public:
    static QString localisedName_fermentation           ();
    static QString localisedName_fermentationId         ();
    static QString localisedName_fg                     ();
+   static QString localisedName_fgCalcUsesMash         ();
    static QString localisedName_finalVolume_l          ();
    static QString localisedName_forcedCarbonation      ();
    static QString localisedName_grainsInMash_kg        ();
@@ -255,6 +257,13 @@ public:
    static constexpr double default_efficiency_pct = 70.0; // See also PersistentSettings::Names::defaultEfficiency_pct
    static constexpr double default_batchSize_l    = 18.93; // 5 gallons See also PersistentSettings::Names::defaultBatchSize_l
    //! @}
+
+   /**
+    * \brief Value of \c fgCalcUsesMash for new recipes (including ones being imported from files, as BeerXML, BeerJSON
+    *        and dotBeer do not store this setting).  This is a user preference, set in the Options dialog (see
+    *        \c PersistentSettings::Names::defaultFgCalcUsesMash), which is off unless the user turns it on.
+    */
+   static bool defaultFgCalcUsesMash();
 
     //! \brief the user can select what delete means
    enum delOptions {
@@ -521,6 +530,20 @@ public:
     *        \c Mash::keptInSync, and is shown as "Keep in sync with recipe" on the Water tab.
     */
    Q_PROPERTY(bool waterKeptInSync READ waterKeptInSync WRITE setWaterKeptInSync)
+   /**
+    * \brief Whether the calculation of final gravity (and hence ABV etc) takes account of the mash profile, ie whether
+    *        the temperatures and times of the mash steps make the wort more or less fermentable than the "typical"
+    *        wort that yeast attenuation figures assume.  See \c MashFermentability for the details.  Shown on the
+    *        recipe's Mash tab as "Use mash profile in FG calculation".
+    *
+    *        If this is off, FG is calculated from the yeast attenuation alone, as it always used to be.  Brewers who
+    *        set attenuation figures on their yeast additions to reflect their own mashes will probably want it off.
+    *
+    *        This is a preference about how we do the calculation rather than part of the recipe itself, so it is not
+    *        stored in dotBeer (in the same way as \c waterKeptInSync).  Existing recipes in the database have it off,
+    *        so that upgrading does not change their FG.  New and imported recipes get \c defaultFgCalcUsesMash.
+    */
+   Q_PROPERTY(bool fgCalcUsesMash READ fgCalcUsesMash WRITE setFgCalcUsesMash)
 
    // These QList properties should only emit changed() when their size changes, or when
    // one of their elements is replaced by another with a different key.
@@ -670,6 +693,7 @@ public:
    double roWaterSparge_pct() const;
    std::optional<double> targetMashAcidity_pH() const;
    bool waterKeptInSync() const;
+   bool fgCalcUsesMash() const;
 
    // === Calculated getters ===
    double        points                  () const;
@@ -846,6 +870,7 @@ public:
    void setRoWaterSparge_pct(double const val);
    void setTargetMashAcidity_pH(std::optional<double> const val);
    void setWaterKeptInSync(bool const val);
+   void setFgCalcUsesMash(bool const val);
 
    // Other junk.
    bool hasAncestors() const;
@@ -1104,6 +1129,7 @@ private:
    double m_roWaterSparge_pct   = 0.0;
    std::optional<double> m_targetMashAcidity_pH = std::nullopt;
    bool m_waterKeptInSync       = false;
+   bool m_fgCalcUsesMash        = false;
 
    OwnedSet<Recipe, RecipeAdditionFermentable, PropertyNames::Recipe::fermentableAdditions, &Recipe::acceptChangeToRecipeAdditionFermentable> m_fermentableAdditions;
    OwnedSet<Recipe, RecipeAdditionHop        , PropertyNames::Recipe::hopAdditions        , &Recipe::acceptChangeToRecipeAdditionHop        > m_hopAdditions        ;
