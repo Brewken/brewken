@@ -7400,6 +7400,18 @@ Program will now exit.</source>
         <source>Heat Capacity BTUs per</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Garetz&apos;s approximation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Daniels&apos; approximation</source>
+        <translation type="unfinished">Danielův odhad</translation>
+    </message>
+    <message>
+        <source>SMPH</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Recipe</name>
@@ -8237,12 +8249,22 @@ Celkový objem pro hlavní kvašení je %1.</translation>
         <translation type="obsolete">Etapa</translation>
     </message>
     <message>
-        <source>%L1 IBU from the boil
-%L2 IBU after flameout (%3)</source>
+        <source>%L1 IBU from isomerization during the boil
+%L2 IBU from isomerization after flameout</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 does not model bitterness from hops added after flameout, so this addition gives no IBUs.  Select the mIBU formula in Edit &gt; Options to include it.</source>
+        <source>
+%L1 IBU from other bittering compounds (mostly oxidized alpha acids)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+(%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 does not model bitterness from hops added after flameout, so this addition gives no IBUs.  Select the mIBU or SMPH formula in Edit &gt; Options to include it.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14553,10 +14575,6 @@ Tabs</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <source>Forumulas</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mash Hop (%)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14772,6 +14790,26 @@ Tabs</source>
     </message>
     <message>
         <source>Whether new and imported recipes take account of the mash temperatures and times when estimating final gravity.  (This can be changed for each recipe on its Mash tab.)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>How bitterness (IBUs) is estimated from the recipe&apos;s hop additions.
+ • Tinseth: the most widely used formula.  Allows for boil time and wort gravity.
+ • Rager: older; generally gives higher IBUs than Tinseth.
+ • Noonan: from Greg Noonan&apos;s &quot;New Brewing Lager Beer&quot;.
+ • Garetz: from Mark Garetz&apos;s &quot;Using Hops&quot;.  Generally lower IBUs, none for 10 minutes&apos; boil or less, and allows for high hopping rates.
+ • Daniels: from Ray Daniels&apos; &quot;Designing Great Beers&quot;.  Separate figures for pellets and whole hops.
+ • mIBU: John-Paul Hosom&apos;s extension of Tinseth, adding bitterness from hops in hot wort after flameout.
+ • SMPH: Hosom&apos;s detailed model, which also allows for oxidized alpha acids, polyphenols, hopping rate, wort pH and yeast flocculation.
+Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using the post-boil steps of the boil profile.  For formulas other than Garetz, Daniels and SMPH, pellets are assumed to give 10% more IBUs than whole hops (plugs 2%).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IBUs from hops added to the mash, as a percentage of what the same hops would give if they were added at the start of the boil and boiled for its full length.  Mash hops contribute little or no bitterness, because alpha acids isomerize very slowly at mash temperatures and much of the hop material stays behind with the grain.  The default is 0%, ie mash hops are assumed to give no IBUs.  This applies whichever IBU formula is selected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IBUs from first wort hops (hops put in the kettle as the wort is run off, before the boil starts), as a percentage of what the same hops would give if they were added at the start of the boil.  The default of 110% reflects the commonly reported finding that first wort hopping gives about 10% more bitterness than a full-length boil addition.  This applies whichever IBU formula is selected.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -120,20 +120,26 @@ QVariant RecipeAdditionHopTableModel::headerData(int const section,
                                  recObs->boilAdditionTiming(*hopAddition).postBoil;
          if (IbuMethods::modelsPostBoilIsomerization(IbuMethods::formula)) {
             auto const breakdown = recObs->ibuBreakdownFromHopAddition(*hopAddition);
-            return QVariant(
-               tr("%L1 IBU from the boil\n%L2 IBU after flameout (%3)").arg(
-                  breakdown.boil_ibus, 0, 'f', 1
-               ).arg(
-                  breakdown.postBoil_ibus, 0, 'f', 1
-               ).arg(
-                  IbuMethods::localisedFormulaName()
-               )
+            QString toolTip = tr("%L1 IBU from isomerization during the boil\n"
+                                 "%L2 IBU from isomerization after flameout").arg(
+               breakdown.boil_ibus, 0, 'f', 1
+            ).arg(
+               breakdown.postBoil_ibus, 0, 'f', 1
             );
+            if (breakdown.nonIaa_ibus != 0.0) {
+               toolTip += tr("\n%L1 IBU from other bittering compounds (mostly oxidized alpha acids)").arg(
+                  breakdown.nonIaa_ibus, 0, 'f', 1
+               );
+            }
+            toolTip += tr("\n(%1)").arg(IbuMethods::localisedFormulaName());
+            return QVariant(toolTip);
          }
          if (isPostBoil) {
             return QVariant(
                tr("%1 does not model bitterness from hops added after flameout, so this addition gives no IBUs.  "
-                  "Select the mIBU formula in Edit > Options to include it.").arg(IbuMethods::localisedFormulaName())
+                  "Select the mIBU or SMPH formula in Edit > Options to include it.").arg(
+                  IbuMethods::localisedFormulaName()
+               )
             );
          }
       }

@@ -2024,6 +2024,7 @@ test('Test post boil loss OG'                , testRunner, args : ['RecipeCalcTe
 test('Test boil addition timing'             , testRunner, args : ['RecipeCalcTests', 'testBoilAdditionTiming'               ], suite : 'recipe')
 test('Test boil steps without temperatures'  , testRunner, args : ['RecipeCalcTests', 'testBoilStepsWithoutTemperatures'     ], suite : 'recipe')
 test('Test post-boil IBUs'                 , testRunner, args : ['RecipeCalcTests', 'testPostBoilIbus'                     ], suite : 'recipe')
+test('Test IBU formulas'                   , testRunner, args : ['RecipeCalcTests', 'testIbuFormulas'                      ], suite : 'recipe')
 test('Test inventory'                        , testRunner, args : ['RecipeCalcTests', 'testInventory'                        ], suite : 'recipe')
 test('Test mash water volumes'               , testRunner, args : ['RecipeCalcTests', 'testMashWaterVolumes'                 ], suite : 'recipe')
 test('Test evaporation rate'                 , testRunner, args : ['RecipeCalcTests', 'testEvaporationRate'                  ], suite : 'recipe')

@@ -52,23 +52,27 @@ namespace IbuMethods {
    /**
     * \brief The formula used to get IBUs.
     *
-    *        Tinseth, Rager and Noonan are long-established formulae.  mIBU and SMPH are more recent refinements.
+    *        Tinseth, Rager, Noonan, Garetz and Daniels are long-established formulae.  mIBU and SMPH are more recent
+    *        refinements.
     *
     *        The Tinseth, Rager and Garetz methods are explained and discussed at http://www.realbeer.com/hops/FAQ.html
+    *        Garetz and Daniels (along with Tinseth, Rager, Noonan and Mosher) are summarised in Michael L. Hall, "What's
+    *        Your IBU?", Zymurgy Special Edition, 1997.
     *
     *        The SMPH and mIBU methods are discussed by John-Paul Hosom at https://byo.com/article/ibu/ and, in more
     *        detail, at
     *         - https://alchemyoverlord.wordpress.com/2015/05/12/a-modified-ibu-measurement-especially-for-late-hopping/
+    *         - https://jphosom.github.io/alchemyoverlord/blog/11-a-summary-of-factors-affecting-ibus/alchemyoverlord-blog-content11.html
     *         - https://jphosom.github.io/alchemyoverlord/blog/31-ibus-and-the-smph-model/alchemyoverlord-blog-content31.html
     */
    enum class IbuFormula {
       Tinseth,
       Rager  ,
       Noonan ,
+      Garetz ,
+      Daniels,
       mIbu   ,
-      // TODO: Add Garetz and Daniel methods
-
-//      Smph   , // Not yet implemented
+      Smph   ,
    };
    // Note that we can't use the Q_ENUM macro here to allow storing the above enum class in a QVariant, because Q_ENUM
    // is designed to be used inside a class that derives from QObject.
@@ -139,6 +143,33 @@ namespace IbuMethods {
    };
 
    /**
+    * \brief The forms of hops that the IBU formulae distinguish between.  This is deliberately simpler than
+    *        \c Hop::Form (so we don't need to depend on the model here), and the caller does the mapping.
+    *
+    *         - \c Whole covers whole cones, including wet (fresh) hops
+    *         - \c Plug is whole cones compressed into plugs
+    *         - \c Pellet is standard (eg T-90) pellets
+    *         - \c Powder is lupulin powder / concentrated pellets (eg Cryo)
+    *         - \c Extract is CO₂ or similar extract
+    */
+   enum class HopForm {
+      Whole  ,
+      Plug   ,
+      Pellet ,
+      Powder ,
+      Extract,
+   };
+
+   /**
+    * \brief Yeast flocculation, simplified to the three levels the IBU formulae know about.
+    */
+   enum class YeastFlocculation {
+      Low   ,
+      Medium,
+      High  ,
+   };
+
+   /**
     * \brief Parameters for the various IBU calculation formulae
     *
     * \param AArating decimal alpha-acid rating of the hops added in [0,1] (0.04 means 4% AA for example)
@@ -153,7 +184,7 @@ namespace IbuMethods {
     *                             are added until flameout
     *
     * \param coolTime_minutes - How long, after flameout (or, for post-boil additions, after the hops are added) the
-    *        hops are in hot wort.  Only used by formulae that model post-boil isomerization (currently only mIbu).
+    *        hops are in hot wort.  Only used by formulae that model post-boil isomerization (mIbu and SMPH).
     *        \c std::nullopt means the caller doesn't know, and it is up to each formula to decide what to assume.
     *        (Per https://alchemyoverlord.wordpress.com/2015/05/12/a-modified-ibu-measurement-especially-for-late-hopping/
     *        if we quickly cool the wort at flameout, then the cool time is zero and the mIbu method gives the same
@@ -174,9 +205,40 @@ namespace IbuMethods {
     *                           Formulae that do not model post-boil isomerization give no IBUs for such additions.
     *                           (Note that this is not the same as \c timeInBoil_minutes being 0 -- eg Rager's formula
     *                           gives some IBUs for a hop added right at the end of the boil.)
-    * \param postBoilTemperatureProfile - (Only used in mIbu)  Wort temperature profile after flameout -- see
+    * \param postBoilTemperatureProfile - (Only used in mIbu and SMPH)  Wort temperature profile after flameout -- see
     *                                     \c PostBoilTemperatureSegment.  If empty, we assume natural cooling from
     *                                     flameout, per Hosom's model.
+    *
+    * The remaining parameters are optional, and are used only by some formulae.  Where a formula needs one that isn't
+    * set, it falls back to a documented default.
+    *
+    * \param hopForm - Used by Garetz (pellet factor), Daniels (separate utilization table for pellets) and SMPH (pellets
+    *                  produce about twice as many oxidized alpha acids during the boil as cones).  For all other
+    *                  formulae, we apply Brewken's long-standing generic adjustment (+10% for pellets, +2% for plugs).
+    *                  If not set, we assume whole hops.
+    * \param betaAcidRating - (Only used in SMPH)  Decimal beta-acid rating of the hops in [0,1].  If not set, we ignore
+    *                         oxidized beta acids (which are negligible for well-preserved hops anyway).
+    * \param sixMonthAlphaLoss - (Only used in SMPH)  Decimal proportion of alpha acids lost after six months' storage at
+    *                            room temperature (aka "Hop Stability Index" in BeerXML), from which we get the Garetz
+    *                            hop decay rate constant.  If not set, we assume no oxidation before the hops reach the
+    *                            kettle.
+    * \param polyphenolRating - (Only used in SMPH)  Decimal polyphenol content of the hops in [0,1].  If not set, we
+    *                           use Hosom's suggested 0.04.
+    * \param originalGravity_sg - (Used in Garetz and SMPH)  If not set, we use \c wortGravity_sg.
+    * \param preBoilVolume_liters - (Only used in Garetz)  Volume at the start of the boil, used for the "concentration
+    *                               factor".  If not set, we assume no concentration during the boil.
+    * \param kettleVolumeAtFlameout_liters - (Used in Garetz and SMPH)  Wort volume in the kettle at the end of the
+    *                                        boil.  If not set, we use \c postBoilVolume_liters.
+    * \param kettleAlphaAcids_ppm - (Only used in SMPH)  Concentration of alpha acids in the kettle (from this and any
+    *                               other additions already made) at the time these hops are added, used for SMPH's
+    *                               alpha-acid solubility limit.  If not set, we use the concentration from this
+    *                               addition alone.
+    * \param hoppingRateFactor - (Used in Garetz and Daniels)  The Garetz "hopping rate factor", which depends on the
+    *                            total IBUs of the recipe -- see \c garetzHoppingRateFactor.  The caller is responsible
+    *                            for working this out (because it depends on all the hop additions in the recipe).
+    * \param postBoilPh - (Only used in SMPH)  pH of the wort at the end of the boil.  If not set, we use 5.75, the
+    *                     value at which SMPH's pH loss factors are 1.0.
+    * \param yeastFlocculation - (Only used in SMPH)  If not set, we assume medium.
     */
    struct IbuCalculationParms {
       double AArating;
@@ -190,17 +252,39 @@ namespace IbuMethods {
       double                postBoilDelay_minutes     = 0.0;
       bool                  postBoilAddition          = false;
       std::vector<PostBoilTemperatureSegment> postBoilTemperatureProfile = {};
+      std::optional<HopForm>           hopForm                       = std::nullopt;
+      std::optional<double>            betaAcidRating                = std::nullopt;
+      std::optional<double>            sixMonthAlphaLoss             = std::nullopt;
+      std::optional<double>            polyphenolRating              = std::nullopt;
+      std::optional<double>            originalGravity_sg            = std::nullopt;
+      std::optional<double>            preBoilVolume_liters          = std::nullopt;
+      std::optional<double>            kettleVolumeAtFlameout_liters = std::nullopt;
+      std::optional<double>            kettleAlphaAcids_ppm          = std::nullopt;
+      double                           hoppingRateFactor             = 1.0;
+      std::optional<double>            postBoilPh                    = std::nullopt;
+      std::optional<YeastFlocculation> yeastFlocculation             = std::nullopt;
    };
 
    /**
-    * \brief IBUs split between those from isomerization during the boil proper and those from isomerization after
-    *        flameout (eg during a whirlpool or hop stand, or simply while the wort is cooling).  Formulae that do not
-    *        model post-boil isomerization always give 0 for the latter.
+    * \brief IBUs from a hop addition, split between:
+    *          - \c boil_ibus: isomerized alpha acids (IAA) from isomerization during the boil proper
+    *          - \c postBoil_ibus: IAA from isomerization after flameout (eg during a whirlpool or hop stand, or simply
+    *            while the wort is cooling).  Formulae that do not model post-boil isomerization always give 0 for this.
+    *          - \c nonIaa_ibus: "auxiliary bittering compounds" (oxidized alpha and beta acids, and polyphenols), which
+    *            dissolve quickly rather than needing isomerization.  Only SMPH models these separately -- other
+    *            formulae fold them into their utilization curves, and give 0 for this.
     */
    struct IbuBreakdown {
       double boil_ibus     = 0.0;
       double postBoil_ibus = 0.0;
-      double total() const { return this->boil_ibus + this->postBoil_ibus; }
+      double nonIaa_ibus   = 0.0;
+      double total() const { return this->boil_ibus + this->postBoil_ibus + this->nonIaa_ibus; }
+      IbuBreakdown & operator*=(double const factor) {
+         this->boil_ibus     *= factor;
+         this->postBoil_ibus *= factor;
+         this->nonIaa_ibus   *= factor;
+         return *this;
+      }
    };
 
    /**
@@ -208,6 +292,33 @@ namespace IbuMethods {
     *         stand etc additions), \c false otherwise.
     */
    bool modelsPostBoilIsomerization(IbuFormula const ibuFormula);
+
+   /**
+    * \return \c true if \c ibuFormula uses the Garetz hopping rate factor, in which case the caller needs to supply
+    *         \c IbuCalculationParms::hoppingRateFactor -- see \c garetzHoppingRateFactor.
+    */
+   bool usesHoppingRateFactor(IbuFormula const ibuFormula);
+
+   /**
+    * \brief The Garetz "hopping rate factor", HF = 1 + (CF × IBU / 260), where CF is the concentration factor (final
+    *        volume / pre-boil volume) and IBU is the total ("desired") IBUs of the recipe.  Because the total IBUs
+    *        themselves depend on HF (since every hop addition is divided by it), we solve for HF directly: if U is the
+    *        total IBUs \b before dividing by HF, then IBU = U / HF, so HF satisfies HF² - HF - (CF × U / 260) = 0.  (This
+    *        is the same as the "simplified" form of the hopping rate factor described by Michael Hall.)
+    *
+    * \param totalIbusBeforeHoppingRateFactor Sum of the IBUs of all hop additions, calculated with a hopping rate
+    *                                         factor of 1.0
+    * \param concentrationFactor Final (post-boil) volume divided by pre-boil volume
+    */
+   double garetzHoppingRateFactor(double const totalIbusBeforeHoppingRateFactor, double const concentrationFactor);
+
+   /**
+    * \brief Some formulae give some IBUs that do not come from any particular hop addition.  (Currently, this is only
+    *        SMPH, which includes the contribution of malt polyphenols.)
+    *
+    * \param originalGravity_sg
+    */
+   double recipeLevelIbus(double const originalGravity_sg);
 
    /**
     * \return IBUs according to selected algorithm, split between boil and post-boil.
@@ -255,7 +366,13 @@ template<class S> S & operator<<(S & stream, IbuMethods::IbuCalculationParms con
       parms.timeInBoil_minutes << "; Cool Time (mins):" << parms.coolTime_minutes << "; Kettle Int Diameter (cm):" <<
       parms.kettleInternalDiameter_cm << "; Kettle Opening (cm):" << parms.kettleOpeningDiameter_cm <<
       "; Post-boil delay (mins):" << parms.postBoilDelay_minutes << "; Post-boil addition:" <<
-      parms.postBoilAddition << "; Post-boil profile:";
+      parms.postBoilAddition << "; Hop form:" << (parms.hopForm ? static_cast<int>(*parms.hopForm) : -1) <<
+      "; Beta:" << parms.betaAcidRating << "; Six-month AA loss:" << parms.sixMonthAlphaLoss << "; Polyphenols:" <<
+      parms.polyphenolRating << "; OG:" << parms.originalGravity_sg << "; Pre-boil volume (l):" <<
+      parms.preBoilVolume_liters << "; Kettle volume at flameout (l):" << parms.kettleVolumeAtFlameout_liters <<
+      "; Kettle AA (ppm):" << parms.kettleAlphaAcids_ppm << "; Hopping rate factor:" << parms.hoppingRateFactor <<
+      "; Post-boil pH:" << parms.postBoilPh << "; Flocculation:" <<
+      (parms.yeastFlocculation ? static_cast<int>(*parms.yeastFlocculation) : -1) << "; Post-boil profile:";
    for (auto const & segment : parms.postBoilTemperatureProfile) {
       stream <<
          " (" << segment.duration_minutes << " mins, " << segment.startTemp_c << "°C -> " << segment.endTemp_c <<

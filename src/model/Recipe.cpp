@@ -1387,6 +1387,275 @@ public:
    /**
     * Emits changed(IBU). Depends on: _batchSize_l, _boilGrav, _boilVolume_l, _finalVolume_l
     */
+   /**
+    * \brief The inputs to IBU calculations that are the same for every hop addition in the recipe -- see
+    *        \c ibuContext().
+    */
+   struct IbuContext {
+      //! Parameters common to all additions.  The per-addition fields are filled in by \c ibuBreakdown().
+      IbuMethods::IbuCalculationParms commonParms;
+      double fwhAdjust      = 1.0;
+      double mashHopAdjust  = 0.0;
+      double hopUtilization = 1.0;
+      /**
+       * \brief For SMPH's alpha-acid solubility limit, the milligrams of alpha acids added to the kettle by each boil
+       *        addition, keyed by how many minutes before flameout it is added (negative for post-boil additions).
+       */
+      std::vector<std::pair<double, double>> kettleAlphaAcids_mg = {};
+   };
+
+   /**
+    * \brief How many minutes before flameout a boil addition is made (negative for post-boil additions).  First wort
+    *        additions count as being in the boil for the whole of the boil.
+    */
+   double minutesBeforeFlameout(RecipeAdditionHop const & hopAddition, double const boilTime_mins) const {
+      if (hopAddition.isFirstWort()) {
+         return boilTime_mins;
+      }
+      auto const timing = this->m_self.boilAdditionTiming(hopAddition);
+      return timing.postBoil ? -timing.afterFlameout_mins : timing.boilProper_mins;
+   }
+
+   /**
+    * \brief Volume of wort in the kettle a given number of minutes before flameout.  If we know the pre-boil volume, we
+    *        interpolate linearly between it and the post-boil volume.  (Post-boil, the volume is the post-boil volume.)
+    */
+   static double kettleVolume_l(IbuMethods::IbuCalculationParms const & commonParms,
+                                double const boilTime_mins,
+                                double const minutesBeforeFlameout) {
+      double const atFlameout_l = commonParms.kettleVolumeAtFlameout_liters.value_or(commonParms.postBoilVolume_liters);
+      if (!commonParms.preBoilVolume_liters || minutesBeforeFlameout <= 0.0 || boilTime_mins <= 0.0) {
+         return atFlameout_l;
+      }
+      double const proportionOfBoilRemaining = std::min(1.0, minutesBeforeFlameout / boilTime_mins);
+      return atFlameout_l + (*commonParms.preBoilVolume_liters - atFlameout_l) * proportionOfBoilRemaining;
+   }
+
+   /**
+    * \brief Work out the recipe-level inputs to the IBU calculations.  This includes, for formulae that need it, the
+    *        Garetz hopping rate factor, which depends on all the hop additions in the recipe.
+    */
+   IbuContext ibuContext() const {
+      IbuContext context;
+      context.fwhAdjust = Localization::toDouble(
+         PersistentSettings::value_ck(PersistentSettings::Names::firstWortHopAdjustment, 1.1).toString(),
+         Q_FUNC_INFO
+      );
+      context.mashHopAdjust = Localization::toDouble(
+         PersistentSettings::value_ck(PersistentSettings::Names::mashHopAdjustment, 0).toString(),
+         Q_FUNC_INFO
+      );
+
+      auto const equipment = this->m_self.equipment();
+      context.hopUtilization = getValueOrDefault<Equipment,
+                                                 &Equipment::hopUtilization_pct,
+                                                 Equipment::default_hopUtilization_pct>(equipment.get()) / 100.0;
+
+      auto const boil = this->m_self.boil();
+
+      //
+      // TBD: At the moment, we assume a default boil time if there is no boil on the recipe.  This is almost certainly
+      //      wrong.  For the moment, we leave it as a bit of a hack and say "You won't get valid numbers without a boil".
+      //      However, in future we should get rid of Boil::default_boilTime_mins and add proper support for no-boil
+      //      recipes.
+      //
+      double const boilTime_mins = boil ? boil->boilTime_mins() : Boil::default_boilTime_mins;
+
+      //
+      // For hops in the boil proper, the time in hot wort after flameout is the length of the post-boil steps (if known).
+      // If we don't know, we leave it unset, and it's up to each IBU formula what to assume.
+      //
+      auto const profile = boil ? boil->postBoilProfile() : Boil::PostBoilProfile{};
+
+      IbuMethods::IbuCalculationParms & parms = context.commonParms;
+      // For Tinseth this needs to be "volume of finished beer in liters", hence m_batchSize_l rather than
+      // m_finalVolumeNoLosses_l
+      parms.postBoilVolume_liters = this->m_self.m_batchSize_l;
+      // For Tinseth (and I think other methods) we want "the average gravity value for the entire boil to account for
+      // changes in the wort volume".
+      parms.wortGravity_sg             = this->m_boilGrav;
+      parms.timeInBoil_minutes         = boilTime_mins; // But see ibuBreakdown()
+      parms.coolTime_minutes           = profile.duration_mins;
+      parms.postBoilTemperatureProfile = profile.segments;
+      parms.originalGravity_sg         = this->m_self.m_og;
+      if (this->m_postBoilVolume_l > 0.0) {
+         parms.kettleVolumeAtFlameout_liters = this->m_postBoilVolume_l;
+      }
+      if (equipment) {
+         parms.kettleInternalDiameter_cm = equipment->kettleInternalDiameter_cm();
+         parms.kettleOpeningDiameter_cm  = equipment->kettleOpeningDiameter_cm ();
+      }
+      if (boil) {
+         parms.preBoilVolume_liters = boil->preBoilSize_l();
+         //
+         // The post-boil pH is the end pH of the last boil step, up to the end of the boil proper, that has one.
+         //
+         auto const boilSteps = boil->boilSteps();
+         int const lastBoilProperStep = boil->boilProperSteps().second; // NB: 1-based
+         for (int ii = 0; ii < std::min(lastBoilProperStep, static_cast<int>(boilSteps.size())); ++ii) {
+            if (boilSteps[ii]->endAcidity_pH()) {
+               parms.postBoilPh = boilSteps[ii]->endAcidity_pH();
+            }
+         }
+      }
+      for (auto const & yeastAddition : this->m_self.yeastAdditions()) {
+         auto const yeast = yeastAddition->yeast();
+         if (yeast && yeast->flocculation()) {
+            switch (*yeast->flocculation()) {
+               case Yeast::Flocculation::VeryLow   :
+               case Yeast::Flocculation::Low       : parms.yeastFlocculation = IbuMethods::YeastFlocculation::Low   ; break;
+               case Yeast::Flocculation::MediumLow :
+               case Yeast::Flocculation::Medium    :
+               case Yeast::Flocculation::MediumHigh: parms.yeastFlocculation = IbuMethods::YeastFlocculation::Medium; break;
+               case Yeast::Flocculation::High      :
+               case Yeast::Flocculation::VeryHigh  : parms.yeastFlocculation = IbuMethods::YeastFlocculation::High  ; break;
+            }
+            break;
+         }
+      }
+
+      for (auto const & hopAddition : this->m_self.hopAdditions()) {
+         if (hopAddition->stage() == RecipeAddition::Stage::Boil && hopAddition->amountIsWeight()) {
+            double const alphaAcids_mg = hopAddition->hop()->alpha_pct() / 100.0 * hopAddition->quantity() * 1.0e6;
+            context.kettleAlphaAcids_mg.push_back({this->minutesBeforeFlameout(*hopAddition, boilTime_mins),
+                                                   alphaAcids_mg});
+         }
+      }
+
+      if (IbuMethods::usesHoppingRateFactor(IbuMethods::formula)) {
+         // At this point, parms.hoppingRateFactor is 1.0
+         double totalIbus = 0.0;
+         for (auto const & hopAddition : this->m_self.hopAdditions()) {
+            totalIbus += this->ibuBreakdown(*hopAddition, context).total();
+         }
+         double const atFlameout_l = parms.kettleVolumeAtFlameout_liters.value_or(parms.postBoilVolume_liters);
+         double const concentrationFactor =
+            (parms.preBoilVolume_liters && *parms.preBoilVolume_liters > 0.0) ?
+            atFlameout_l / *parms.preBoilVolume_liters : 1.0;
+         parms.hoppingRateFactor = IbuMethods::garetzHoppingRateFactor(totalIbus, concentrationFactor);
+         qDebug() <<
+            Q_FUNC_INFO << "Total IBUs before hopping rate factor:" << totalIbus << ", concentration factor:" <<
+            concentrationFactor << ", hopping rate factor:" << parms.hoppingRateFactor;
+      }
+
+      return context;
+   }
+
+   /**
+    * \brief IBUs from one hop addition, given the recipe-level inputs in \c context.
+    */
+   IbuMethods::IbuBreakdown ibuBreakdown(RecipeAdditionHop const & hopAddition, IbuContext const & context) const {
+      // It's a coding error to ask one recipe about another's hop additions!  Uncomment the log statement here if the
+      // assert is firing.
+//      qDebug() << Q_FUNC_INFO << this->m_self << " / " << hopAddition << "; hopAddition.recipeId():" << hopAddition.recipeId();
+      Q_ASSERT(hopAddition.recipeId() == this->m_self.key());
+
+      auto const hop = hopAddition.hop();
+
+      // .:TBD:.  What to do if hopAddition is measured by volume?
+      //
+      // Per https://beersmith.com/blog/2016/08/31/using-hop-extracts-for-beer-brewing/, for CO2 Hop Extract, a first
+      // approximation would be 1 gram hop = 1 ml of hop extract.
+      //
+      // The same page suggests that, for Isomerized Hop Extract,
+      //    IBU = (extract_vol_ml * alpha_content_pct * 1000) / (volume_beer_liters)
+      //
+      if (!hopAddition.amountIsWeight()) {
+         qCritical() << Q_FUNC_INFO << "Using Hop volume as weight - THIS IS PROBABLY WRONG!";
+      }
+
+      // NOTE: we used to carefully calculate the average boil gravity and use it in the
+      // IBU calculations. However, due to John Palmer
+      // (http://homebrew.stackexchange.com/questions/7343/does-wort-gravity-affect-hopAddition-utilization),
+      // it seems more appropriate to just use the OG directly, since it is the total
+      // amount of break material that truly affects the IBUs.
+
+      IbuMethods::IbuCalculationParms parms = context.commonParms;
+      parms.AArating   = hop->alpha_pct() / 100.0;
+      parms.hops_grams = hopAddition.quantity() * 1000.0;
+      if (hop->beta_pct             ()) { parms.betaAcidRating    = *hop->beta_pct             () / 100.0; }
+      if (hop->sixMonthAlphaLoss_pct()) { parms.sixMonthAlphaLoss = *hop->sixMonthAlphaLoss_pct() / 100.0; }
+      if (hop->polyphenols_pct      ()) { parms.polyphenolRating  = *hop->polyphenols_pct      () / 100.0; }
+      if (hop->form()) {
+         switch (*hop->form()) {
+            case Hop::Form::Leaf   :
+            case Hop::Form::WetLeaf: parms.hopForm = IbuMethods::HopForm::Whole  ; break;
+            case Hop::Form::Plug   : parms.hopForm = IbuMethods::HopForm::Plug   ; break;
+            case Hop::Form::Pellet : parms.hopForm = IbuMethods::HopForm::Pellet ; break;
+            case Hop::Form::Powder : parms.hopForm = IbuMethods::HopForm::Powder ; break;
+            case Hop::Form::Extract: parms.hopForm = IbuMethods::HopForm::Extract; break;
+         }
+      }
+
+      qDebug() <<
+         Q_FUNC_INFO << "Hop Utilization =" << context.hopUtilization << ", Hop Addition" << hopAddition <<
+         ", stage =" << hopAddition.stage() << ", grams =" << parms.hops_grams << ", AArating = " << parms.AArating;
+
+      IbuMethods::IbuBreakdown ibus;
+      if (hopAddition.stage() == RecipeAddition::Stage::Boil) {
+         if (!hopAddition.isFirstWort()) {
+            //
+            // Note that we cannot just use hopAddition.addAtTime_mins() here, because that is measured from the end of
+            // the addition's step, which is not necessarily the boil proper.  Eg a whirlpool addition 20 minutes before
+            // the end of the post-boil step has not spent 20 minutes in the boil!  Similarly, if the addition has a
+            // step but no time, it is made at the start of that step.  See
+            // https://github.com/Brewtarget/brewtarget/issues/1167
+            //
+            auto const timing = this->m_self.boilAdditionTiming(hopAddition);
+            qDebug() <<
+               Q_FUNC_INFO << "Boil addition: postBoil =" << timing.postBoil << ", boilProper_mins =" <<
+               timing.boilProper_mins << ", afterFlameout_mins =" << timing.afterFlameout_mins <<
+               ", postBoilRemaining_mins =" << timing.postBoilRemaining_mins;
+            parms.timeInBoil_minutes = timing.boilProper_mins;
+            if (timing.postBoil) {
+               // The hops are only in the hot wort from when they are added until the end of the post-boil steps.
+               // (This only matters for formulae, such as mIBU and SMPH, that model post-boil isomerization.  Other
+               // formulae give no IBUs for post-boil additions.)  If we don't know how long that is, we leave it unset,
+               // and it's up to each IBU formula what to assume.
+               parms.postBoilAddition      = true;
+               parms.postBoilDelay_minutes = timing.afterFlameout_mins;
+               parms.coolTime_minutes      = timing.postBoilRemaining_mins;
+            }
+         }
+
+         //
+         // For SMPH's alpha-acid solubility limit, the concentration of alpha acids in the kettle when these hops are
+         // added is from all additions made up to this point (including this one), in the volume of wort at this
+         // point.
+         //
+         double const boilTime_mins = context.commonParms.timeInBoil_minutes;
+         double const thisMinutesBeforeFlameout = this->minutesBeforeFlameout(hopAddition, boilTime_mins);
+         double kettleAlphaAcids_mg = 0.0;
+         for (auto const & [addedMinutesBeforeFlameout, alphaAcids_mg] : context.kettleAlphaAcids_mg) {
+            if (addedMinutesBeforeFlameout >= thisMinutesBeforeFlameout - 1.0e-6) {
+               kettleAlphaAcids_mg += alphaAcids_mg;
+            }
+         }
+         if (kettleAlphaAcids_mg > 0.0) {
+            parms.kettleAlphaAcids_ppm =
+               kettleAlphaAcids_mg / kettleVolume_l(context.commonParms, boilTime_mins, thisMinutesBeforeFlameout);
+         }
+
+         ibus = IbuMethods::getIbuBreakdown(parms);
+         if (hopAddition.isFirstWort()) {
+            ibus *= context.fwhAdjust;
+         }
+      } else if (hopAddition.stage() == RecipeAddition::Stage::Mash && context.mashHopAdjust > 0.0) {
+         ibus = IbuMethods::getIbuBreakdown(parms);
+         ibus *= context.mashHopAdjust;
+      } else {
+         qDebug() << Q_FUNC_INFO << "No IBUs from " << hopAddition;
+      }
+
+      // Adjust for equipment hop utilization.  (Hop form is handled in IbuMethods.)
+      ibus *= context.hopUtilization;
+
+      qDebug() <<
+         Q_FUNC_INFO << "IBUs:" << ibus.boil_ibus << "(boil) +" << ibus.postBoil_ibus << "(post-boil) +" <<
+         ibus.nonIaa_ibus << "(non-IAA)";
+      return ibus;
+   }
+
    void recalcIBU() {
       qDebug() << Q_FUNC_INFO << "Recalculating IBU from" << this->m_IBU;
 
@@ -1397,13 +1666,20 @@ public:
       // Note that, normally, we don't want to take a reference to a smart pointer.  However, in this context, it's safe
       // (because the hop additions aren't going to change while we look at them) and it gets rid of a compiler warning.
       this->m_ibus.clear();
+      auto const context = this->ibuContext();
       for (auto const & hopAddition : this->m_self.hopAdditions()) {
-         double const tmp = this->m_self.ibuFromHopAddition(*hopAddition);
+         double const tmp = this->ibuBreakdown(*hopAddition, context).total();
          qDebug() << Q_FUNC_INFO << *hopAddition << "gave IBU" << tmp;
          this->m_ibus.append(tmp);
          calculatedIbu += tmp;
       }
       qDebug() << Q_FUNC_INFO << "Calculated IBU from hops" << calculatedIbu;
+
+      // Some formulae (currently only SMPH) give some IBUs that aren't from any one hop addition
+      calculatedIbu += IbuMethods::recipeLevelIbus(this->m_self.m_og);
+
+      // Note which formula we used
+      this->m_ibuFormula = IbuMethods::formula;
 
       // Bitterness due to hopped extracts...
       for (auto const & fermentableAddition : this->m_self.fermentableAdditions()) {
@@ -3024,6 +3300,8 @@ void Recipe::recalcIfNeeded(QString classNameOfWhatWasAddedOrChanged) {
        classNameOfWhatWasAddedOrChanged == RecipeAdditionYeast::staticMetaObject.className()) {
       this->pimpl->recalcOgFg();
       this->pimpl->recalcABV_pct();
+      // Yeast flocculation affects IBUs in the SMPH model
+      this->pimpl->recalcIBU();
       return;
    }
 
@@ -3295,148 +3573,7 @@ double Recipe::ibuFromHopAddition(RecipeAdditionHop const & hopAddition) const {
 }
 
 IbuMethods::IbuBreakdown Recipe::ibuBreakdownFromHopAddition(RecipeAdditionHop const & hopAddition) const {
-   auto const equipment = this->equipment();
-   IbuMethods::IbuBreakdown ibus;
-   double const fwhAdjust = Localization::toDouble(
-      PersistentSettings::value_ck(PersistentSettings::Names::firstWortHopAdjustment, 1.1).toString(),
-      Q_FUNC_INFO
-   );
-   double const mashHopAdjust = Localization::toDouble(
-      PersistentSettings::value_ck(PersistentSettings::Names::mashHopAdjustment, 0).toString(),
-      Q_FUNC_INFO
-   );
-
-   // It's a coding error to ask one recipe about another's hop additions!  Uncomment the log statement here if the
-   // assert is firing.
-//   qDebug() << Q_FUNC_INFO << *this << " / " << hopAddition << "; hopAddition.recipeId():" << hopAddition.recipeId();
-   Q_ASSERT(hopAddition.recipeId() == this->key());
-
-   double AArating = hopAddition.hop()->alpha_pct() / 100.0;
-   // .:TBD:.  What to do if hopAddition is measured by volume?
-   //
-   // Per https://beersmith.com/blog/2016/08/31/using-hop-extracts-for-beer-brewing/, for CO2 Hop Extract, a first
-   // approximation would be 1 gram hop = 1 ml of hop extract.
-   //
-   // The same page suggests that, for Isomerized Hop Extract,
-   //    IBU = (extract_vol_ml * alpha_content_pct * 1000) / (volume_beer_liters)
-   //
-   if (!hopAddition.amountIsWeight()) {
-      qCritical() << Q_FUNC_INFO << "Using Hop volume as weight - THIS IS PROBABLY WRONG!";
-   }
-   double const grams = hopAddition.quantity() * 1000.0;
-
-   // NOTE: we used to carefully calculate the average boil gravity and use it in the
-   // IBU calculations. However, due to John Palmer
-   // (http://homebrew.stackexchange.com/questions/7343/does-wort-gravity-affect-hopAddition-utilization),
-   // it seems more appropriate to just use the OG directly, since it is the total
-   // amount of break material that truly affects the IBUs.
-
-   double const hopUtilization_pct = getValueOrDefault<Equipment,
-                                                       &Equipment::hopUtilization_pct,
-                                                       Equipment::default_hopUtilization_pct>(equipment.get());
-   double hopUtilization = hopUtilization_pct / 100.0;
-
-   auto const boil = this->boil();
-
-   //
-   // TBD: At the moment, we assume a default boil time if there is no boil on the recipe.  This is almost certainly
-   //      wrong.  For the moment, we leave it as a bit of a hack and say "You won't get valid numbers without a boil".
-   //      However, in future we should get rid of Boil::default_boilTime_mins and add proper support for no-boil
-   //      recipes.
-   //
-   double const boilTime_mins = boil ? boil->boilTime_mins() : Boil::default_boilTime_mins;
-
-   //
-   // For hops in the boil proper, the time in hot wort after flameout is the length of the post-boil steps (if known).
-   // If we don't know, we leave it unset, and it's up to each IBU formula what to assume.
-   //
-   auto const profile = boil ? boil->postBoilProfile() : Boil::PostBoilProfile{};
-
-   qDebug() <<
-      Q_FUNC_INFO << "Equipment" << (equipment ? "set" : "not set") << ", Boil" << (boil ? "present" : "not present") <<
-      ", Hop Utilization =" << hopUtilization << ", Boil Time (Mins) =" << boilTime_mins << ", Hop Addition" <<
-      hopAddition << ", stage =" << hopAddition.stage() << ", grams =" << grams << ", AArating = " << AArating;
-
-   IbuMethods::IbuCalculationParms parms = {
-      .AArating              = AArating,
-      .hops_grams            = grams,
-      // For Tinseth this needs to be "volume of finished beer in liters", hence this->m_batchSize_l rather than
-      // this->pimpl->m_finalVolumeNoLosses_l
-      .postBoilVolume_liters = this->m_batchSize_l,
-      // For Tinseth (and I think other methods) we want "the average gravity value for the entire boil to account for
-      // changes in the wort volume".
-      .wortGravity_sg        = this->pimpl->m_boilGrav,
-      .timeInBoil_minutes    = boilTime_mins, // But see below
-      .coolTime_minutes      = profile.duration_mins,
-      .postBoilTemperatureProfile = profile.segments,
-   };
-   if (equipment) {
-      parms.kettleInternalDiameter_cm = equipment->kettleInternalDiameter_cm();
-      parms.kettleOpeningDiameter_cm  = equipment->kettleOpeningDiameter_cm ();
-   }
-   if (hopAddition.isFirstWort()) {
-      ibus = IbuMethods::getIbuBreakdown(parms);
-      ibus.boil_ibus     *= fwhAdjust;
-      ibus.postBoil_ibus *= fwhAdjust;
-   } else if (hopAddition.stage() == RecipeAddition::Stage::Boil) {
-      //
-      // Note that we cannot just use hopAddition.addAtTime_mins() here, because that is measured from the end of the
-      // addition's step, which is not necessarily the boil proper.  Eg a whirlpool addition 20 minutes before the end
-      // of the post-boil step has not spent 20 minutes in the boil!  Similarly, if the addition has a step but no time,
-      // it is made at the start of that step.  See https://github.com/Brewtarget/brewtarget/issues/1167
-      //
-      auto const timing = this->boilAdditionTiming(hopAddition);
-      qDebug() <<
-         Q_FUNC_INFO << "Boil addition: postBoil =" << timing.postBoil << ", boilProper_mins =" <<
-         timing.boilProper_mins << ", afterFlameout_mins =" << timing.afterFlameout_mins <<
-         ", postBoilRemaining_mins =" << timing.postBoilRemaining_mins;
-      parms.timeInBoil_minutes = timing.boilProper_mins;
-      if (timing.postBoil) {
-         // The hops are only in the hot wort from when they are added until the end of the post-boil steps.  (This
-         // only matters for formulae, such as mIBU, that model post-boil isomerization.  Other formulae give no IBUs
-         // for post-boil additions.)  If we don't know how long that is, we leave it unset, and it's up to each IBU
-         // formula what to assume.
-         parms.postBoilAddition      = true;
-         parms.postBoilDelay_minutes = timing.afterFlameout_mins;
-         parms.coolTime_minutes      = timing.postBoilRemaining_mins;
-      }
-      ibus = IbuMethods::getIbuBreakdown(parms);
-   } else if (hopAddition.stage() == RecipeAddition::Stage::Mash && mashHopAdjust > 0.0) {
-      ibus = IbuMethods::getIbuBreakdown(parms);
-      ibus.boil_ibus     *= mashHopAdjust;
-      ibus.postBoil_ibus *= mashHopAdjust;
-   } else {
-      qDebug() << Q_FUNC_INFO << "No IBUs from " << hopAddition;
-   }
-
-   qDebug() <<
-      Q_FUNC_INFO << "IBUs before adjustment for form = " << ibus.boil_ibus << "(boil) +" << ibus.postBoil_ibus <<
-      "(post-boil)";
-
-   // Adjust for hop form. Tinseth's table was created from whole cone data,
-   // and it seems other formulae are optimized that way as well. So, the
-   // utilization is considered unadjusted for whole cones, and adjusted
-   // up for plugs and pellets.
-   //
-   // - http://www.realbeer.com/hops/FAQ.html
-   // - https://groups.google.com/forum/#!topic"brewtarget.h"lp/mv2qvWBC4sU
-   auto const hopForm = hopAddition.hop()->form();
-   if (hopForm) {
-      switch (*hopForm) {
-         case Hop::Form::Plug:
-            hopUtilization *= 1.02;
-            break;
-         case Hop::Form::Pellet:
-            hopUtilization *= 1.10;
-            break;
-         default:
-            break;
-      }
-   }
-
-   // Adjust for hopAddition utilization.
-   ibus.boil_ibus     *= hopUtilization;
-   ibus.postBoil_ibus *= hopUtilization;
+   auto const ibus = this->pimpl->ibuBreakdown(hopAddition, this->pimpl->ibuContext());
 
    // Note which formula we used
    this->pimpl->m_ibuFormula = IbuMethods::formula;
