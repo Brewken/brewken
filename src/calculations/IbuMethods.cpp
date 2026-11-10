@@ -526,7 +526,8 @@ namespace {
     *         - Age of beer: 1 week, which is the default in [Calculator] and what Hosom uses in his worked examples
     *         - Hops: well-preserved, ie the alpha-acid rating is correct on brew day ([Calculator]'s "freshness
     *           factor", aka AA_decayfactor, is 1.0)
-    *         - Elevation: sea level (so boiling is 100°C)
+    *         - Boiling point: 100°C, unless the caller supplies \c IbuCalculationParms::boilingPoint_c (from the
+    *           equipment)
     *
     *        We do not (yet) model dry hopping, which [Calculator] does (albeit, per Hosom, only as a rough
     *        approximation).
@@ -563,8 +564,11 @@ namespace {
       double constexpr beerAge_weeks            = 1.0;           // See comment above
       double constexpr hopFreshnessFactor       = 1.0;           // See comment above
 
-      double constexpr boilingTemp_c            = 100.0;
-      double constexpr boilingTemp_K            = boilingTemp_c + 273.15;
+      double constexpr defaultBoilingPoint_c    = 100.0;
+
+      double boilingPoint_c(IbuMethods::IbuCalculationParms const & parms) {
+         return parms.boilingPoint_c.value_or(defaultBoilingPoint_c);
+      }
 
       //! Malowicki's rate constant (per minute) for isomerization of alpha acids [13]
       double k1(double const temp_K) { return 7.9e11 * std::exp(-11858.0 / temp_K); }
@@ -713,15 +717,17 @@ namespace {
       // we don't know how long the hops are in hot wort after flameout, we assume immediate forced cooling.
       //
       // At the same time, we work out the "effective steep time" for the gravity loss factor.  At boiling, the
-      // relative rate of isomerization is (just over) 1, so the effective steep time is the actual steep time.
+      // relative rate of isomerization is (just over) 1, so the effective steep time is the actual steep time.  (At
+      // altitude, the wort boils at a lower temperature, so it's less.)
       //
       double dissolvedAlphaAcids_ppm = alphaAcids_ppm * lossFactorHoppingRate;
       double iaa_ppm = 0.0;
       double effectiveSteepTime_minutes = 0.0;
+      double const boilingPoint_c = Smph::boilingPoint_c(parms);
       if (!parms.postBoilAddition && parms.timeInBoil_minutes > 0.0) {
-         Smph::advance(dissolvedAlphaAcids_ppm, iaa_ppm, Smph::boilingTemp_K, parms.timeInBoil_minutes);
+         Smph::advance(dissolvedAlphaAcids_ppm, iaa_ppm, boilingPoint_c + 273.15, parms.timeInBoil_minutes);
          effectiveSteepTime_minutes += parms.timeInBoil_minutes *
-                                       std::clamp(IbuMethods::relativeUtilization(Smph::boilingTemp_c), 0.0, 1.0);
+                                       std::clamp(IbuMethods::relativeUtilization(boilingPoint_c), 0.0, 1.0);
       }
       double const iaaAtFlameout_ppm = iaa_ppm;
 
@@ -734,7 +740,8 @@ namespace {
             double const midStep_minutes = parms.postBoilDelay_minutes + (ii + 0.5) * stepSize;
             double const temp_c = IbuMethods::postBoilWortTemperature_c(midStep_minutes,
                                                                        parms.postBoilTemperatureProfile,
-                                                                       b);
+                                                                       b,
+                                                                       boilingPoint_c);
             if (temp_c < Smph::minimumIsomerizationTemp_c) {
                break;
             }
@@ -981,6 +988,7 @@ std::vector<double> IbuMethods::smphDissolvedAlphaAcidsBeforeAdditions_ppm(
    );
 
    double const b = Smph::naturalCoolingRate(commonParms);
+   double const boilingPoint_c = Smph::boilingPoint_c(commonParms);
    //
    // The dissolved alpha acids are depleted by isomerization, at rate k1, which depends on the temperature.  Before
    // flameout, we're at boiling.  After flameout, we follow the post-boil temperature profile.
@@ -988,7 +996,7 @@ std::vector<double> IbuMethods::smphDissolvedAlphaAcidsBeforeAdditions_ppm(
    auto depletionFactor = [&](double const fromMinutesBeforeFlameout, double const toMinutesBeforeFlameout) {
       double exponent = 0.0;
       if (fromMinutesBeforeFlameout > 0.0) {
-         exponent += Smph::k1(Smph::boilingTemp_K) *
+         exponent += Smph::k1(boilingPoint_c + 273.15) *
                      (fromMinutesBeforeFlameout - std::max(0.0, toMinutesBeforeFlameout));
       }
       double const postBoilStart_minutes = std::max(0.0, -fromMinutesBeforeFlameout);
@@ -1000,7 +1008,8 @@ std::vector<double> IbuMethods::smphDissolvedAlphaAcidsBeforeAdditions_ppm(
          for (int ii = 0; ii < numSteps; ++ii) {
             double const temp_c = IbuMethods::postBoilWortTemperature_c(postBoilStart_minutes + (ii + 0.5) * stepSize,
                                                                        commonParms.postBoilTemperatureProfile,
-                                                                       b);
+                                                                       b,
+                                                                       boilingPoint_c);
             exponent += Smph::k1(temp_c + 273.15) * stepSize;
          }
       }
@@ -1062,25 +1071,34 @@ namespace {
    double constexpr hosomCoolingAmplitude_c = 53.70;
    double constexpr hosomCoolingAsymptote_c = 319.55 - 273.15;
    double constexpr hosomFlameoutTemp_c     = hosomCoolingAsymptote_c + hosomCoolingAmplitude_c;
+   //! The boiling point for which the above constants hold (ie sea level)
+   double constexpr hosomBoilingPoint_c     = 100.0;
 
    /**
     * \brief Natural cooling, per Hosom's curve, from a given starting temperature.  Because the curve is exponential,
     *        starting part-way along it just means scaling the amplitude.
+    *
+    *        If the wort boils below 100°C (eg at altitude), then, as in Hosom's calculators, the curve keeps the same
+    *        shape (ie amplitude and rate) but is shifted down by the difference.
     */
    double naturalCooling_c(double const startTemp_c,
                            double const elapsed_minutes,
-                           double const naturalCoolingRate_perMinute) {
+                           double const naturalCoolingRate_perMinute,
+                           double const boilingPoint_c) {
+      double const shift_c     = boilingPoint_c - hosomBoilingPoint_c;
+      double const asymptote_c = hosomCoolingAsymptote_c + shift_c;
       // If we're already at or below the asymptote, we just assume the temperature stays where it is
-      if (startTemp_c <= hosomCoolingAsymptote_c) {
+      if (startTemp_c <= asymptote_c) {
          return startTemp_c;
       }
       //
       // Anything at or above (nominal) boiling, we treat as starting from flameout on Hosom's curve.  (Otherwise
       // starting at exactly 100°C would give very slightly different results from Hosom's own formula.)
       //
-      double const effectiveStartTemp_c = (startTemp_c >= 100.0) ? hosomFlameoutTemp_c : startTemp_c;
-      return hosomCoolingAsymptote_c +
-             (effectiveStartTemp_c - hosomCoolingAsymptote_c) * exp(-naturalCoolingRate_perMinute * elapsed_minutes);
+      double const effectiveStartTemp_c =
+         (startTemp_c >= boilingPoint_c) ? hosomFlameoutTemp_c + shift_c : startTemp_c;
+      return asymptote_c +
+             (effectiveStartTemp_c - asymptote_c) * exp(-naturalCoolingRate_perMinute * elapsed_minutes);
    }
 }
 
@@ -1100,30 +1118,40 @@ double IbuMethods::relativeUtilization(double const temp_c) {
 
 double IbuMethods::postBoilWortTemperature_c(double const minutesSinceFlameout,
                                              std::vector<PostBoilTemperatureSegment> const & profile,
-                                             double const naturalCoolingRate_perMinute) {
+                                             double const naturalCoolingRate_perMinute,
+                                             double const boilingPoint_c) {
+   // The wort can't be hotter than boiling (so eg a profile segment "at boiling" means at the boiling point)
+   auto atMostBoiling = [boilingPoint_c](double const temp_c) { return std::min(temp_c, boilingPoint_c); };
    double elapsed_minutes = std::max(0.0, minutesSinceFlameout);
    // At flameout, we are at boiling
-   double temp_c = 100.0;
+   double temp_c = boilingPoint_c;
    for (auto const & segment : profile) {
       if (elapsed_minutes <= segment.duration_minutes) {
          if (segment.naturalCooling) {
-            return std::max(segment.endTemp_c,
-                            naturalCooling_c(segment.startTemp_c, elapsed_minutes, naturalCoolingRate_perMinute));
+            return atMostBoiling(std::max(segment.endTemp_c,
+                                          naturalCooling_c(segment.startTemp_c,
+                                                           elapsed_minutes,
+                                                           naturalCoolingRate_perMinute,
+                                                           boilingPoint_c)));
          }
          if (segment.duration_minutes <= 0.0) {
-            return segment.endTemp_c;
+            return atMostBoiling(segment.endTemp_c);
          }
-         return segment.startTemp_c +
-                (segment.endTemp_c - segment.startTemp_c) * elapsed_minutes / segment.duration_minutes;
+         return atMostBoiling(segment.startTemp_c +
+                              (segment.endTemp_c - segment.startTemp_c) * elapsed_minutes / segment.duration_minutes);
       }
       elapsed_minutes -= segment.duration_minutes;
       if (segment.naturalCooling) {
          temp_c = std::max(segment.endTemp_c,
-                           naturalCooling_c(segment.startTemp_c, segment.duration_minutes, naturalCoolingRate_perMinute));
+                           naturalCooling_c(segment.startTemp_c,
+                                            segment.duration_minutes,
+                                            naturalCoolingRate_perMinute,
+                                            boilingPoint_c));
       } else {
          temp_c = segment.endTemp_c;
       }
+      temp_c = atMostBoiling(temp_c);
    }
    // Beyond the end of the profile, we assume natural cooling
-   return naturalCooling_c(temp_c, elapsed_minutes, naturalCoolingRate_perMinute);
+   return naturalCooling_c(temp_c, elapsed_minutes, naturalCoolingRate_perMinute, boilingPoint_c);
 }

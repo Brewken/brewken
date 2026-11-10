@@ -2492,6 +2492,15 @@ void MainWindow::editRecipeFermentation() {
 }
 
 void MainWindow::closeEvent(QCloseEvent* /*event*/) {
+   //
+   // If the user quits with the mash, boil or fermentation editor still open, treat it as Cancel.  In particular, if the
+   // editor is showing a new item that it created for the current recipe (see EditorBase::doEditForRecipe), and the
+   // user has not saved it, this means it gets deleted rather than being left in the database, unused by any recipe.
+   //
+   if (this->pimpl->m_mashEditor        ->isVisible()) { this->pimpl->m_mashEditor        ->clearAndClose(); }
+   if (this->pimpl->m_boilEditor        ->isVisible()) { this->pimpl->m_boilEditor        ->clearAndClose(); }
+   if (this->pimpl->m_fermentationEditor->isVisible()) { this->pimpl->m_fermentationEditor->clearAndClose(); }
+
    Application::saveSystemOptions();
    PersistentSettings::insert_ck(PersistentSettings::Names::geometry, saveGeometry());
    PersistentSettings::insert_ck(PersistentSettings::Names::windowState, saveState());

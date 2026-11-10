@@ -20,6 +20,7 @@
 #include "PersistentSettings.h"
 #include "database/ObjectStoreWrapper.h"
 #include "model/Boil.h"
+#include "model/Equipment.h"
 #include "model/Fermentation.h"
 #include "model/Mash.h"
 
@@ -283,6 +284,7 @@ template<class NE> QString RecipeUtils::describeSharingAndLocking(NE const & ite
 template QList<Recipe *> RecipeUtils::recipesUsing<Mash        >(Mash         const & item);
 template QList<Recipe *> RecipeUtils::recipesUsing<Boil        >(Boil         const & item);
 template QList<Recipe *> RecipeUtils::recipesUsing<Fermentation>(Fermentation const & item);
+template QList<Recipe *> RecipeUtils::recipesUsing<Equipment   >(Equipment    const & item);
 template RecipeUtils::LockReason RecipeUtils::lockReason<Mash        >(Mash         const & item);
 template RecipeUtils::LockReason RecipeUtils::lockReason<Boil        >(Boil         const & item);
 template RecipeUtils::LockReason RecipeUtils::lockReason<Fermentation>(Fermentation const & item);

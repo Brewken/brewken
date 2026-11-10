@@ -252,6 +252,10 @@ namespace IbuMethods {
     *                     value at which SMPH's pH loss factors are 1.0 (and at which it assumes there has been no pH
     *                     adjustment, which matters for malt polyphenols -- see \c recipeLevelIbus).
     * \param yeastFlocculation - (Only used in SMPH)  If not set, we assume medium.
+    * \param boilingPoint_c - (Only used in SMPH)  The temperature at which the wort boils, which is lower at altitude
+    *                         (see \c Equipment::boilingPoint_c).  This matters because SMPH models isomerization of
+    *                         alpha acids (via Malowicki's temperature-dependent rate constants), whereas the other
+    *                         formulae are based on measurements made at (or near) sea level.  If not set, we use 100°C.
     */
    struct IbuCalculationParms {
       double AArating;
@@ -277,6 +281,7 @@ namespace IbuMethods {
       double                           hoppingRateFactor             = 1.0;
       std::optional<double>            postBoilPh                    = std::nullopt;
       std::optional<YeastFlocculation> yeastFlocculation             = std::nullopt;
+      std::optional<double>            boilingPoint_c                = std::nullopt;
    };
 
    /**
@@ -388,10 +393,15 @@ namespace IbuMethods {
     *                (or from boiling if the profile is empty).
     * \param naturalCoolingRate_perMinute The \c b parameter of Hosom's natural cooling curve -- see
     *                                     \c naturalCoolingRate.
+    * \param boilingPoint_c The temperature at which the wort boils.  The wort cannot be hotter than this (so, eg, a
+    *                       profile segment "at boiling" is at this temperature), and, at flameout, natural cooling
+    *                       starts from it.  Per Hosom's calculator, below 100°C, the natural cooling curve is the same
+    *                       shape, just shifted down by the difference.
     */
    double postBoilWortTemperature_c(double const minutesSinceFlameout,
                                     std::vector<PostBoilTemperatureSegment> const & profile,
-                                    double const naturalCoolingRate_perMinute);
+                                    double const naturalCoolingRate_perMinute,
+                                    double const boilingPoint_c = 100.0);
 
    /**
     * \brief The \c b parameter of Hosom's natural cooling curve.  Exposed mainly for unit testing.
@@ -422,7 +432,8 @@ template<class S> S & operator<<(S & stream, IbuMethods::IbuCalculationParms con
       "; Kettle dissolved AA (ppm):" << parms.kettleDissolvedAlphaAcids_ppm << "; Kettle volume at addition (l):" <<
       parms.kettleVolumeAtAddition_liters << "; Hopping rate factor:" << parms.hoppingRateFactor <<
       "; Post-boil pH:" << parms.postBoilPh << "; Flocculation:" <<
-      (parms.yeastFlocculation ? static_cast<int>(*parms.yeastFlocculation) : -1) << "; Post-boil profile:";
+      (parms.yeastFlocculation ? static_cast<int>(*parms.yeastFlocculation) : -1) << "; Boiling point (°C):" <<
+      parms.boilingPoint_c << "; Post-boil profile:";
    for (auto const & segment : parms.postBoilTemperatureProfile) {
       stream <<
          " (" << segment.duration_minutes << " mins, " << segment.startTemp_c << "°C -> " << segment.endTemp_c <<

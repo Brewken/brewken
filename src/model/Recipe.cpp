@@ -1490,6 +1490,8 @@ public:
       if (equipment) {
          parms.kettleInternalDiameter_cm = equipment->kettleInternalDiameter_cm();
          parms.kettleOpeningDiameter_cm  = equipment->kettleOpeningDiameter_cm ();
+         // Only SMPH uses this -- see comments in IbuMethods.h
+         parms.boilingPoint_c            = equipment->boilingPoint_c();
       }
       if (boil) {
          parms.preBoilVolume_liters = boil->preBoilSize_l();
@@ -3686,16 +3688,16 @@ void Recipe::acceptChangeToContainedObject(QMetaProperty prop, QVariant val) {
       }
    }
 
+   //
+   // NB: We used to set our boil's pre-boil size here whenever the equipment's kettleBoilSize_l changed.  We no longer
+   // do this, because it ignored the boil time (see Equipment::defaultPreBoilSize_l), whether the boil was locked or
+   // shared with other recipes, and whether the user had deliberately chosen a different pre-boil size for this recipe.
+   // Instead, when the user saves changes to equipment, EquipmentEditor offers to update the batch size and pre-boil
+   // size of the recipes using it -- see EquipmentEditor::offerToUpdateRecipeSizes.
+   //
    if (Equipment const * equipment = qobject_cast<Equipment *>(signalSender)) {
       qDebug() << Q_FUNC_INFO << "Equipment #" << equipment->key() << "(ours=" << this->m_equipmentId << ")";
       Q_ASSERT(equipment->key() == this->m_equipmentId);
-      if (propName == *PropertyNames::Equipment::kettleBoilSize_l) {
-         Q_ASSERT(val.canConvert<double>());
-         qDebug() << Q_FUNC_INFO << "We" << (this->boil() ? "have" : "don't have") << "a boil";
-         if (this->boil()) {
-            this->boil()->setPreBoilSize_l(val.value<double>());
-         }
-      }
    }
 
    //

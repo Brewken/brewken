@@ -583,6 +583,16 @@ void RecipeCalcTests::testPostBoilIbus() {
    QVERIFY(fuzzyComp(IbuMethods::postBoilWortTemperature_c(15.0, hold80, b),
                      46.40 + (80.0 - 46.40) * std::exp(-b * 5.0),
                      0.001));
+   // If the wort boils at a lower temperature (eg at altitude), natural cooling follows the same curve, shifted down by
+   // the difference, and nothing is hotter than boiling
+   QVERIFY(fuzzyComp(IbuMethods::postBoilWortTemperature_c(15.0, {}, b, 95.0),
+                     IbuMethods::postBoilWortTemperature_c(15.0, {}, b) - 5.0,
+                     0.001));
+   std::vector<IbuMethods::PostBoilTemperatureSegment> const holdAtBoil{
+      {.duration_minutes = 10.0, .startTemp_c = 100.0, .endTemp_c = 100.0, .naturalCooling = false}
+   };
+   QVERIFY(fuzzyComp(IbuMethods::postBoilWortTemperature_c( 5.0, holdAtBoil, b, 95.0), 95.0, 0.001));
+   QVERIFY(fuzzyComp(IbuMethods::postBoilWortTemperature_c( 5.0, hold80    , b, 95.0), 80.0, 0.001));
 
    //
    // Part 2: Recipe-level calculations.
@@ -871,6 +881,7 @@ void RecipeCalcTests::testIbuFormulas() {
       IbuMethods::YeastFlocculation flocculation;
       std::vector<CalculatorAddition> additions;
       double calculatorTotalIbus; // Including malt polyphenols
+      double boilingPoint_c = 100.0;
    };
    for (auto const & calculatorCase : {
       CalculatorCase{"Pellets, pH 5.25", 1.055, 5.25, 10.0, IbuMethods::YeastFlocculation::Medium,
@@ -890,6 +901,17 @@ void RecipeCalcTests::testIbuFormulas() {
       CalculatorCase{"Two additions at 60 minutes", 1.050, 5.75, 5.0, IbuMethods::YeastFlocculation::Medium,
                      {{0.14, 60.0, 60.0, false, 63.874},
                       {0.14, 60.0, 60.0, false, 30.345}}, 95.170},
+      // At altitude, where the wort boils at 95°C (about 1,500 m or 5,000 ft), there is less isomerization.  (In the
+      // calculator, we set "Boiling Temperature" and lower the exponential temperature-decay parameter C to match.)
+      CalculatorCase{"60 minutes, boiling at 95°C", 1.055, 5.75, 10.0, IbuMethods::YeastFlocculation::Medium,
+                     {{0.088, 56.7, 60.0, false, 35.570}}, 36.615, 95.0},
+      CalculatorCase{"Flameout, boiling at 95°C", 1.055, 5.75, 10.0, IbuMethods::YeastFlocculation::Medium,
+                     {{0.088, 56.7, 0.0, false, 11.546}}, 12.591, 95.0},
+      CalculatorCase{"Heavy hopping, four additions, boiling at 95°C", 1.065, 5.4, 15.0, IbuMethods::YeastFlocculation::Medium,
+                     {{0.12,  80.0, 60.0, false, 49.805},
+                      {0.12,  80.0, 30.0, false, 19.088},
+                      {0.10,  60.0, 10.0, true ,  6.283},
+                      {0.10, 100.0,  0.0, true ,  4.690}}, 82.172, 95.0},
    }) {
       IbuMethods::IbuCalculationParms commonParms = makeSmphParms(0.0, 0.0, 0.0);
       commonParms.wortGravity_sg     = calculatorCase.originalGravity_sg;
@@ -897,6 +919,7 @@ void RecipeCalcTests::testIbuFormulas() {
       commonParms.postBoilPh         = calculatorCase.postBoilPh;
       commonParms.coolTime_minutes   = calculatorCase.coolTime_minutes;
       commonParms.yeastFlocculation  = calculatorCase.flocculation;
+      commonParms.boilingPoint_c     = calculatorCase.boilingPoint_c;
       std::vector<IbuMethods::KettleAlphaAcidAddition> kettleAdditions;
       for (auto const & addition : calculatorCase.additions) {
          kettleAdditions.push_back({.minutesBeforeFlameout = addition.timeInBoil_minutes,

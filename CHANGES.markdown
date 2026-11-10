@@ -11,6 +11,7 @@ happens, so I'm now setting it to a slightly arbitrary time early in the morning
 
 ### New Features
 * TODO: Additional methods for calculating IBU
+* With the SMPH IBU formula, the boiling point set on the equipment (eg for brewing at altitude) is taken into account
 * Shopping Lists
 * Mash water amounts and temperatures (strike water, other infusions, decoctions and sparge water) can now be adjusted to suit the recipe in the Mash Editor, replacing the Mash Wizard and Mash Designer.  Individual amounts and temperatures can be pinned so that only the rest are adjusted.  Optionally, the mash can adjust automatically whenever the recipe changes.
 * Mash steps (and mash fields) that don't make sense for the recipe are highlighted
@@ -27,6 +28,9 @@ happens, so I'm now setting it to a slightly arbitrary time early in the morning
 * Water agent figures for gypsum (calcium overstated by about 26%), magnesium chloride (no chloride, and a possible crash) and pickling lime were wrong
 * Water tab didn't update predicted mash pH when the grain bill changed, and could give wrong figures after switching between recipes
 * Choosing equipment from the drop-down on the recipe tab now offers to set the recipe's batch size and pre-boil size to match it, as dragging the equipment onto the recipe already did (Brewtarget [531](https://github.com/Brewtarget/brewtarget/issues/531)).  Re-selecting the recipe's current equipment (or style, mash, etc) no longer adds an empty step to the undo history.
+* Saving changes to equipment now offers to update the batch size and pre-boil size of recipes using it that still had the sizes it previously specified (Brewtarget [531](https://github.com/Brewtarget/brewtarget/issues/531)).  Previously, recipes' pre-boil sizes were changed without asking (even if the recipe's boil was locked or shared) and batch sizes were not changed at all.
+* Closing the Mash, Boil or Fermentation Editor with Escape or the window's close button (or quitting with it open) no longer leaves behind the new, unsaved mash, boil or fermentation created by "Edit this mash" etc (Brewtarget [1182](https://github.com/Brewtarget/brewtarget/issues/1182))
+* Clicking "New" in the Mash, Boil or Fermentation Editor while editing the new, unsaved one for a recipe now makes the new one for that recipe, rather than one not used by any recipe
 
 ## v5.2.3
 More bug fixes.
