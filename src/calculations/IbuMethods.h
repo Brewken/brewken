@@ -64,6 +64,11 @@ namespace IbuMethods {
     *         - https://alchemyoverlord.wordpress.com/2015/05/12/a-modified-ibu-measurement-especially-for-late-hopping/
     *         - https://jphosom.github.io/alchemyoverlord/blog/11-a-summary-of-factors-affecting-ibus/alchemyoverlord-blog-content11.html
     *         - https://jphosom.github.io/alchemyoverlord/blog/31-ibus-and-the-smph-model/alchemyoverlord-blog-content31.html
+    *
+    *        For SMPH, the definitive reference is Hosom's own calculator, at
+    *        https://jphosom.github.io/alchemyoverlord/ibu_SMPH.html, whose source is
+    *        https://github.com/jphosom/alchemyoverlord/blob/master/js/ibu_SMPH.js.  It differs in a few places from the
+    *        blog posts -- see comments in IbuMethods.cpp.
     */
    enum class IbuFormula {
       Tinseth,
@@ -217,11 +222,13 @@ namespace IbuMethods {
     *                  formulae, we apply Brewken's long-standing generic adjustment (+10% for pellets, +2% for plugs).
     *                  If not set, we assume whole hops.
     * \param betaAcidRating - (Only used in SMPH)  Decimal beta-acid rating of the hops in [0,1].  If not set, we ignore
-    *                         oxidized beta acids (which are negligible for well-preserved hops anyway).
+    *                         oxidized beta acids.  (In SMPH, oxidized beta acids only come from the beta acids lost
+    *                         during storage, so they are zero for well-preserved hops, which is what we currently
+    *                         assume -- see comments in IbuMethods.cpp.)
     * \param sixMonthAlphaLoss - (Only used in SMPH)  Decimal proportion of alpha acids lost after six months' storage at
     *                            room temperature (aka "Hop Stability Index" in BeerXML), from which we get the Garetz
-    *                            hop decay rate constant.  If not set, we assume no oxidation before the hops reach the
-    *                            kettle.
+    *                            hop decay rate constant.  If not set, we use 0.32, which Hosom's calculator uses as the
+    *                            average over many varieties.
     * \param polyphenolRating - (Only used in SMPH)  Decimal polyphenol content of the hops in [0,1].  If not set, we
     *                           use Hosom's suggested 0.04.
     * \param originalGravity_sg - (Used in Garetz and SMPH)  If not set, we use \c wortGravity_sg.
@@ -229,15 +236,21 @@ namespace IbuMethods {
     *                               factor".  If not set, we assume no concentration during the boil.
     * \param kettleVolumeAtFlameout_liters - (Used in Garetz and SMPH)  Wort volume in the kettle at the end of the
     *                                        boil.  If not set, we use \c postBoilVolume_liters.
-    * \param kettleAlphaAcids_ppm - (Only used in SMPH)  Concentration of alpha acids in the kettle (from this and any
-    *                               other additions already made) at the time these hops are added, used for SMPH's
-    *                               alpha-acid solubility limit.  If not set, we use the concentration from this
-    *                               addition alone.
+    * \param kettleDissolvedAlphaAcids_ppm - (Only used in SMPH)  Concentration of dissolved (and not yet isomerized)
+    *                                        alpha acids already in the kettle, from earlier additions, immediately
+    *                                        before these hops are added.  This is used for SMPH's alpha-acid solubility
+    *                                        limit, and the caller can get it from
+    *                                        \c smphDissolvedAlphaAcidsBeforeAdditions_ppm.  If not set, we assume
+    *                                        there are none (ie this is the only kettle addition).
+    * \param kettleVolumeAtAddition_liters - (Only used in SMPH)  Wort volume in the kettle at the time these hops are
+    *                                        added, used for SMPH's alpha-acid solubility limit.  If not set, we use
+    *                                        \c kettleVolumeAtFlameout_liters.
     * \param hoppingRateFactor - (Used in Garetz and Daniels)  The Garetz "hopping rate factor", which depends on the
     *                            total IBUs of the recipe -- see \c garetzHoppingRateFactor.  The caller is responsible
     *                            for working this out (because it depends on all the hop additions in the recipe).
     * \param postBoilPh - (Only used in SMPH)  pH of the wort at the end of the boil.  If not set, we use 5.75, the
-    *                     value at which SMPH's pH loss factors are 1.0.
+    *                     value at which SMPH's pH loss factors are 1.0 (and at which it assumes there has been no pH
+    *                     adjustment, which matters for malt polyphenols -- see \c recipeLevelIbus).
     * \param yeastFlocculation - (Only used in SMPH)  If not set, we assume medium.
     */
    struct IbuCalculationParms {
@@ -259,7 +272,8 @@ namespace IbuMethods {
       std::optional<double>            originalGravity_sg            = std::nullopt;
       std::optional<double>            preBoilVolume_liters          = std::nullopt;
       std::optional<double>            kettleVolumeAtFlameout_liters = std::nullopt;
-      std::optional<double>            kettleAlphaAcids_ppm          = std::nullopt;
+      std::optional<double>            kettleDissolvedAlphaAcids_ppm = std::nullopt;
+      std::optional<double>            kettleVolumeAtAddition_liters = std::nullopt;
       double                           hoppingRateFactor             = 1.0;
       std::optional<double>            postBoilPh                    = std::nullopt;
       std::optional<YeastFlocculation> yeastFlocculation             = std::nullopt;
@@ -317,8 +331,43 @@ namespace IbuMethods {
     *        SMPH, which includes the contribution of malt polyphenols.)
     *
     * \param originalGravity_sg
+    * \param postBoilPh - (Only used in SMPH)  As \c IbuCalculationParms::postBoilPh.  Malt-derived IBUs increase as the
+    *                     pH is lowered from 5.75 (which SMPH takes to be the pH before any adjustment).
     */
-   double recipeLevelIbus(double const originalGravity_sg);
+   double recipeLevelIbus(double const originalGravity_sg, std::optional<double> const postBoilPh = std::nullopt);
+
+   /**
+    * \brief A kettle (ie boil, including first wort) hop addition, as far as SMPH's alpha-acid solubility limit is
+    *        concerned -- see \c smphDissolvedAlphaAcidsBeforeAdditions_ppm.
+    */
+   struct KettleAlphaAcidAddition {
+      //! How many minutes before flameout the hops are added (negative for post-boil additions)
+      double minutesBeforeFlameout;
+      //! Mass of alpha acids added
+      double alphaAcids_mg;
+      //! Volume of wort in the kettle when the hops are added
+      double kettleVolume_liters;
+   };
+
+   /**
+    * \brief For SMPH's alpha-acid solubility limit, work out, for each of the kettle hop additions in a recipe, the
+    *        concentration of dissolved alpha acids already in the kettle immediately before it is added (to pass in
+    *        \c IbuCalculationParms::kettleDissolvedAlphaAcids_ppm).
+    *
+    *        Per Hosom's calculator, we go through the additions in time order.  Each addition dissolves as much as the
+    *        solubility limit allows on top of what is already dissolved, and, between additions, the dissolved alpha
+    *        acids are depleted by isomerization (at a rate that depends on the wort temperature).  Additions made at
+    *        the same time are taken in the order given.
+    *
+    * \param additions All the kettle hop additions in the recipe.  The order only matters for additions made at the
+    *                  same time.
+    * \param commonParms Used for the post-boil temperature profile, and kettle dimensions and volume for natural
+    *                    cooling.
+    *
+    * \return Concentrations (ppm), in the same order as \c additions
+    */
+   std::vector<double> smphDissolvedAlphaAcidsBeforeAdditions_ppm(std::vector<KettleAlphaAcidAddition> const & additions,
+                                                                  IbuCalculationParms const & commonParms);
 
    /**
     * \return IBUs according to selected algorithm, split between boil and post-boil.
@@ -370,7 +419,8 @@ template<class S> S & operator<<(S & stream, IbuMethods::IbuCalculationParms con
       "; Beta:" << parms.betaAcidRating << "; Six-month AA loss:" << parms.sixMonthAlphaLoss << "; Polyphenols:" <<
       parms.polyphenolRating << "; OG:" << parms.originalGravity_sg << "; Pre-boil volume (l):" <<
       parms.preBoilVolume_liters << "; Kettle volume at flameout (l):" << parms.kettleVolumeAtFlameout_liters <<
-      "; Kettle AA (ppm):" << parms.kettleAlphaAcids_ppm << "; Hopping rate factor:" << parms.hoppingRateFactor <<
+      "; Kettle dissolved AA (ppm):" << parms.kettleDissolvedAlphaAcids_ppm << "; Kettle volume at addition (l):" <<
+      parms.kettleVolumeAtAddition_liters << "; Hopping rate factor:" << parms.hoppingRateFactor <<
       "; Post-boil pH:" << parms.postBoilPh << "; Flocculation:" <<
       (parms.yeastFlocculation ? static_cast<int>(*parms.yeastFlocculation) : -1) << "; Post-boil profile:";
    for (auto const & segment : parms.postBoilTemperatureProfile) {

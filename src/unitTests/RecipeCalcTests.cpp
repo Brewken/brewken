@@ -789,18 +789,28 @@ void RecipeCalcTests::testIbuFormulas() {
    //
    // and, with 2 oz of 5.26% AA hops added at flameout and instant cooling, 5.98 IBU.
    //
-   // He doesn't give the kettle dimensions or the pre-boil volume.  A kettle 33 cm across (fully open) fits the
-   // flameout results best and, for the 60 minute additions, his numbers are reproduced if the alpha-acid solubility
-   // limit is applied to the concentration in the pre-boil volume, with 1 US gallon per hour of evaporation.  We
-   // expect to be within 1% or so of all his numbers.
+   // He doesn't give the kettle dimensions or the pre-boil volume.  We assume a kettle 33 cm across (fully open), and
+   // 1 US gallon per hour of evaporation, which matter for the flameout and 60 minute additions respectively.
+   //
+   // The definitive reference for SMPH is Hosom's own calculator (https://jphosom.github.io/alchemyoverlord/ibu_SMPH.html,
+   // source at https://github.com/jphosom/alchemyoverlord/blob/master/js/ibu_SMPH.js), so we also check against the
+   // results it gives (version 1.0.7, run with the same inputs, and natural cooling at the same rate) -- both for
+   // Hosom's worked examples and for some other cases that exercise parts of the model that the worked examples don't.
+   // We expect to be within 0.5% or so of the calculator (the main difference being that its natural cooling curve
+   // starts at 100.00°C rather than 100.10°C) and within 1% or so of the worked examples (which presumably come from an
+   // earlier version of the calculator).
    //
    IbuMethods::formula = IbuMethods::IbuFormula::Smph;
    QVERIFY(IbuMethods::modelsPostBoilIsomerization(IbuMethods::IbuFormula::Smph));
    QVERIFY(!IbuMethods::usesHoppingRateFactor     (IbuMethods::IbuFormula::Smph));
    double const maltIbus = IbuMethods::recipeLevelIbus(1.055);
-   QVERIFY2(fuzzyComp(maltIbus, 1.016, 0.01), "Malt polyphenol IBUs");
-   auto makeSmphParms = [](double const aa, double const grams, double const timeInBoil_minutes) {
-      double const preBoilVolume_l = 19.87 + 3.785412 * timeInBoil_minutes / 60.0;
+   QVERIFY2(fuzzyComp(maltIbus, 1.045, 0.001), "Malt polyphenol IBUs");
+   // Malt-derived IBUs increase as the pH is lowered
+   QVERIFY2(fuzzyComp(IbuMethods::recipeLevelIbus(1.055, 5.25), 2.340, 0.001), "Malt polyphenol IBUs at pH 5.25");
+   auto kettleVolume_l = [](double const timeInBoil_minutes) {
+      return 19.87 + 3.785412 * timeInBoil_minutes / 60.0;
+   };
+   auto makeSmphParms = [&](double const aa, double const grams, double const timeInBoil_minutes) {
       IbuMethods::IbuCalculationParms smphParms{
          .AArating                  = aa,
          .hops_grams                = grams,
@@ -812,7 +822,7 @@ void RecipeCalcTests::testIbuFormulas() {
          .kettleOpeningDiameter_cm  = 33.0,
          .hopForm                   = IbuMethods::HopForm::Whole,
          .originalGravity_sg        = 1.055,
-         .kettleAlphaAcids_ppm      = aa * grams * 1000.0 / preBoilVolume_l,
+         .kettleVolumeAtAddition_liters = kettleVolume_l(timeInBoil_minutes),
       };
       return smphParms;
    };
@@ -823,29 +833,111 @@ void RecipeCalcTests::testIbuFormulas() {
       double timeInBoil_minutes;
       double coolTime_minutes;
       double hosomTotalIbus;
-      double referenceTotalIbus; // From a separate implementation of the published equations
+      double calculatorTotalIbus; // From Hosom's calculator
    };
-   for (auto const & example : {HosomExample{"2 oz at flameout"            , 0.088 ,  56.7,  0.0, 10.0, 14.65, 14.594},
-                                HosomExample{"2 oz at 60 minutes"          , 0.088 ,  56.7, 60.0, 10.0, 44.6 , 44.607},
-                                HosomExample{"6 oz at 60 minutes"          , 0.088 , 170.1, 60.0, 10.0, 90.90, 90.714},
-                                HosomExample{"6 oz at flameout"            , 0.088 , 170.1,  0.0, 10.0, 27.8 , 27.649},
-                                HosomExample{"5.26% AA, instant cooling"   , 0.0526,  56.7,  0.0,  0.0,  5.98,  5.933}}) {
+   for (auto const & example : {HosomExample{"2 oz at flameout"            , 0.088 ,  56.7,  0.0, 10.0, 14.65, 14.635},
+                                HosomExample{"2 oz at 60 minutes"          , 0.088 ,  56.7, 60.0, 10.0, 44.6 , 44.798},
+                                HosomExample{"6 oz at 60 minutes"          , 0.088 , 170.1, 60.0, 10.0, 90.90, 91.076},
+                                HosomExample{"6 oz at flameout"            , 0.088 , 170.1,  0.0, 10.0, 27.8 , 27.702},
+                                HosomExample{"5.26% AA, instant cooling"   , 0.0526,  56.7,  0.0,  0.0,  5.98,  5.983}}) {
       auto smphParms = makeSmphParms(example.aa, example.grams, example.timeInBoil_minutes);
       smphParms.coolTime_minutes = example.coolTime_minutes;
       double const total = IbuMethods::getIbus(smphParms) + maltIbus;
       qDebug() <<
          Q_FUNC_INFO << example.description << ": SMPH" << total << ", Hosom" << example.hosomTotalIbus <<
-         ", reference" << example.referenceTotalIbus;
-      QVERIFY2(fuzzyComp(total, example.referenceTotalIbus, 0.03), example.description);
+         ", calculator" << example.calculatorTotalIbus;
+      QVERIFY2(fuzzyComp(total, example.calculatorTotalIbus, example.calculatorTotalIbus * 0.005), example.description);
       QVERIFY2(fuzzyComp(total, example.hosomTotalIbus, example.hosomTotalIbus * 0.01), example.description);
    }
 
-   // Breakdown for 2 oz at flameout: 8.35 ppm IAA is 5.96 IBU; non-IAA (excluding malt) is 7.27 + 0.35 IBU
+   //
+   // Other cases, against Hosom's calculator.  In all cases, the post-boil volume is 19.87 l, there is 1 US gallon per
+   // hour of evaporation, the kettle is 33 cm across (fully open), and the hops are well preserved.  The
+   // multiple-addition cases check that the alpha-acid solubility limit is applied incrementally, addition by
+   // addition, and that, in a tie, additions are taken in order.
+   //
+   struct CalculatorAddition {
+      double aa;
+      double grams;
+      double timeInBoil_minutes;
+      bool   pellets;
+      double calculatorIbus;
+   };
+   struct CalculatorCase {
+      char const * description;
+      double originalGravity_sg;
+      double postBoilPh;
+      double coolTime_minutes;
+      IbuMethods::YeastFlocculation flocculation;
+      std::vector<CalculatorAddition> additions;
+      double calculatorTotalIbus; // Including malt polyphenols
+   };
+   for (auto const & calculatorCase : {
+      CalculatorCase{"Pellets, pH 5.25", 1.055, 5.25, 10.0, IbuMethods::YeastFlocculation::Medium,
+                     {{0.088, 56.7, 60.0, true, 41.181}}, 43.521},
+      CalculatorCase{"High flocculation, OG 1.080", 1.080, 5.75, 10.0, IbuMethods::YeastFlocculation::High,
+                     {{0.088, 56.7, 60.0, false, 36.920}}, 38.440},
+      // The gravity loss factor applies here only because of the time in hot wort after flameout
+      CalculatorCase{"35 minutes + 15 minutes cooling, OG 1.080", 1.080, 5.75, 15.0, IbuMethods::YeastFlocculation::Medium,
+                     {{0.10, 50.0, 35.0, false, 31.257}}, 32.777},
+      CalculatorCase{"Flameout + 45 minutes cooling, OG 1.080", 1.080, 5.75, 45.0, IbuMethods::YeastFlocculation::Medium,
+                     {{0.10, 100.0, 0.0, false, 29.703}}, 31.223},
+      CalculatorCase{"Heavy hopping, four additions", 1.065, 5.4, 15.0, IbuMethods::YeastFlocculation::Medium,
+                     {{0.12,  80.0, 60.0, false, 62.077},
+                      {0.12,  80.0, 30.0, false, 25.647},
+                      {0.10,  60.0, 10.0, true ,  9.898},
+                      {0.10, 100.0,  0.0, true ,  7.322}}, 107.250},
+      CalculatorCase{"Two additions at 60 minutes", 1.050, 5.75, 5.0, IbuMethods::YeastFlocculation::Medium,
+                     {{0.14, 60.0, 60.0, false, 63.874},
+                      {0.14, 60.0, 60.0, false, 30.345}}, 95.170},
+   }) {
+      IbuMethods::IbuCalculationParms commonParms = makeSmphParms(0.0, 0.0, 0.0);
+      commonParms.wortGravity_sg     = calculatorCase.originalGravity_sg;
+      commonParms.originalGravity_sg = calculatorCase.originalGravity_sg;
+      commonParms.postBoilPh         = calculatorCase.postBoilPh;
+      commonParms.coolTime_minutes   = calculatorCase.coolTime_minutes;
+      commonParms.yeastFlocculation  = calculatorCase.flocculation;
+      std::vector<IbuMethods::KettleAlphaAcidAddition> kettleAdditions;
+      for (auto const & addition : calculatorCase.additions) {
+         kettleAdditions.push_back({.minutesBeforeFlameout = addition.timeInBoil_minutes,
+                                    .alphaAcids_mg         = addition.aa * addition.grams * 1000.0,
+                                    .kettleVolume_liters   = kettleVolume_l(addition.timeInBoil_minutes)});
+      }
+      auto const dissolvedBefore_ppm =
+         IbuMethods::smphDissolvedAlphaAcidsBeforeAdditions_ppm(kettleAdditions, commonParms);
+      QCOMPARE(dissolvedBefore_ppm.size(), calculatorCase.additions.size());
+      QVERIFY(fuzzyComp(dissolvedBefore_ppm[0], 0.0, 0.0001));
+      double total = IbuMethods::recipeLevelIbus(calculatorCase.originalGravity_sg, calculatorCase.postBoilPh);
+      for (std::size_t ii = 0; ii < calculatorCase.additions.size(); ++ii) {
+         auto const & addition = calculatorCase.additions[ii];
+         auto smphParms = commonParms;
+         smphParms.AArating                      = addition.aa;
+         smphParms.hops_grams                    = addition.grams;
+         smphParms.timeInBoil_minutes            = addition.timeInBoil_minutes;
+         smphParms.hopForm                       = addition.pellets ? IbuMethods::HopForm::Pellet :
+                                                                      IbuMethods::HopForm::Whole;
+         smphParms.kettleVolumeAtAddition_liters = kettleAdditions[ii].kettleVolume_liters;
+         smphParms.kettleDissolvedAlphaAcids_ppm = dissolvedBefore_ppm[ii];
+         double const ibus = IbuMethods::getIbus(smphParms);
+         qDebug() <<
+            Q_FUNC_INFO << calculatorCase.description << "addition" << ii << ": SMPH" << ibus << ", calculator" <<
+            addition.calculatorIbus;
+         QVERIFY2(fuzzyComp(ibus, addition.calculatorIbus, addition.calculatorIbus * 0.005), calculatorCase.description);
+         total += ibus;
+      }
+      qDebug() <<
+         Q_FUNC_INFO << calculatorCase.description << ": SMPH" << total << ", calculator" <<
+         calculatorCase.calculatorTotalIbus;
+      QVERIFY2(fuzzyComp(total, calculatorCase.calculatorTotalIbus, calculatorCase.calculatorTotalIbus * 0.005),
+               calculatorCase.description);
+   }
+
+   // Breakdown for 2 oz at flameout: 8.35 ppm IAA is 5.99 IBU; non-IAA (excluding malt) is 7.27 + 0.35 IBU
    auto smphParms = makeSmphParms(0.088, 56.7, 0.0);
    auto breakdown = IbuMethods::getIbuBreakdown(smphParms);
    QVERIFY(fuzzyComp(breakdown.boil_ibus    , 0.0         , 0.0001));
-   QVERIFY(fuzzyComp(breakdown.postBoil_ibus, 8.35 * 5.0/7.0, 0.05));
-   QVERIFY(fuzzyComp(breakdown.nonIaa_ibus  , 7.27 + 0.35 , 0.02));
+   QVERIFY(fuzzyComp(breakdown.postBoil_ibus, 8.35 * 50.0/69.68, 0.05));
+   QVERIFY(fuzzyComp(breakdown.nonIaa_ibus  , 7.27 + 0.35 , 0.05));
 
    // Pellets produce twice as much oAA during the boil, but the same IAA
    smphParms.hopForm = IbuMethods::HopForm::Pellet;
@@ -861,6 +953,12 @@ void RecipeCalcTests::testIbuFormulas() {
    smphParms.postBoilPh = std::nullopt;
    smphParms.yeastFlocculation = IbuMethods::YeastFlocculation::High;
    QVERIFY(fuzzyComp(IbuMethods::getIbus(smphParms), neutralIbus * 0.95, 0.05));
+
+   // With well-preserved hops (which is what we assume), there are no oxidized beta acids, so the beta-acid rating
+   // makes no difference
+   smphParms = makeSmphParms(0.088, 56.7, 60.0);
+   smphParms.betaAcidRating = 0.08;
+   QVERIFY(fuzzyComp(IbuMethods::getIbus(smphParms), neutralIbus, 0.0001));
 
    // A hop stand at 80°C gives IAA after flameout, but less than one at boiling
    smphParms = makeSmphParms(0.088, 56.7, 0.0);

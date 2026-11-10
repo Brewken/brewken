@@ -470,17 +470,42 @@ namespace {
    /**
     * \brief Constants and helper functions for the SMPH model.
     *
-    *        The SMPH model (named after Shellhammer, Malowicki, Peacock and Hosom) was developed by John-Paul Hosom.  It
-    *        is described in "A Summary of Factors Affecting IBUs" (referred to below as [Summary]):
+    *        The SMPH model was developed by John-Paul Hosom.  (Per Hosom, the name is "simply a sequence of four
+    *        letters, not an acronym", although it acknowledges the work of Shellhammer, Malowicki and Peacock on which
+    *        the model is built.)  It is described in "A Summary of Factors Affecting IBUs" (referred to below as
+    *        [Summary]):
     *        https://jphosom.github.io/alchemyoverlord/blog/11-a-summary-of-factors-affecting-ibus/alchemyoverlord-blog-content11.html
     *        with an overview at
     *        https://jphosom.github.io/alchemyoverlord/blog/31-ibus-and-the-smph-model/alchemyoverlord-blog-content31.html
     *        Equation numbers below are those in [Summary].
     *
+    *        However, the definitive reference is Hosom's own calculator, at
+    *        https://jphosom.github.io/alchemyoverlord/ibu_SMPH.html, whose source is
+    *        https://github.com/jphosom/alchemyoverlord/blob/master/js/ibu_SMPH.js (version 1.0.7 at the time of
+    *        writing), referred to below as [Calculator].  This is the code that Hosom used to fit the model's parameters
+    *        to measured IBUs (via https://github.com/jphosom/alchemyoverlord/blob/master/js/ibu_SMPH_search.js), and it
+    *        has been updated since [Summary] was written.  Where the two differ, we follow [Calculator].  The main
+    *        differences are:
+    *
+    *         - The pH loss factor for non-IAA (1.1785 × pH − 5.776) comes from the later blog post "The Effect of pH on
+    *           Utilization and IBUs", and is only applied to oxidized alpha acids
+    *         - Oxidized beta acids are a proportion (oBA_boilFactor) of the beta acids lost during storage, with no
+    *           boil, gravity or pH loss factors (cf [40], [41] and [43])
+    *         - Hop polyphenols do not have a flocculation loss factor (cf [49])
+    *         - The gravity loss factor [26] uses an "effective steep time", which includes time in hot wort after
+    *           flameout, weighted by the relative rate of isomerization at the wort temperature (as in mIBU)
+    *         - When there are several kettle additions, the alpha-acid solubility limit ([24], [25]) is applied
+    *           incrementally (see \c IbuMethods::smphDissolvedAlphaAcidsBeforeAdditions_ppm)
+    *         - Malt polyphenol IBUs depend on the post-boil pH (cf [45]), relative to an unadjusted pH of 5.75
+    *         - The conversion from concentrations to IBUs uses 50/69.68 rather than 5/7 (cf [4])
+    *         - Post-boil isomerization stops once the wort drops below 50°C
+    *         - Various constants have slightly different values, eg the age loss factor [28] uses a maximum age of 15
+    *           rather than 16 weeks
+    *
     *        In outline:
     *
-    *          IBU = 5/7 × ([IAA]_beer + [oAA]_beer × scale_oAA + [oBA]_beer × scale_oBA + [PP_hops]_beer × scale_PPhops
-    *                       + [PP_malt]_beer × scale_PPmalt)                                                       [46]
+    *          IBU = 50/69.68 × ([IAA]_beer + [oAA]_beer × scale_oAA + [oBA]_beer × scale_oBA + [PP_hops]_beer ×
+    *                           scale_PPhops) + IBU_malt                                                      cf [46]
     *
     *        where IAA = isomerized alpha acids, oAA = oxidized alpha acids, oBA = oxidized beta acids, PP = polyphenols,
     *        all concentrations in ppm.  The malt polyphenol term doesn't depend on the hops, so we return it from
@@ -496,17 +521,15 @@ namespace {
     *
     *         - Wort clarity: average
     *         - Krausen: medium deposits on the fermenter walls (ie neither mixed back in nor blown off)
+    *         - Finings: none
     *         - Filtering: none
-    *         - Age of beer: 1 week, which is what Hosom uses in his worked examples
-    *         - Hops: well-preserved, ie the alpha-acid rating is correct on brew day (AA_decayfactor = 1.0)
+    *         - Age of beer: 1 week, which is the default in [Calculator] and what Hosom uses in his worked examples
+    *         - Hops: well-preserved, ie the alpha-acid rating is correct on brew day ([Calculator]'s "freshness
+    *           factor", aka AA_decayfactor, is 1.0)
     *         - Elevation: sea level (so boiling is 100°C)
-    *         - pH: no pH adjustment between mash and end of boil (which only matters for malt polyphenols)
     *
-    *        On the question of how the alpha-acid solubility limit applies when there are several hop additions,
-    *        [Summary] is silent.  Following Hosom's worked examples, which are reproduced if (and only if) the limit is
-    *        applied to the concentration in the kettle at the time the hops are added, we use the concentration of
-    *        alpha acids from all kettle additions made up to that point, in the volume of wort at that point -- see
-    *        \c IbuCalculationParms::kettleAlphaAcids_ppm.
+    *        We do not (yet) model dry hopping, which [Calculator] does (albeit, per Hosom, only as a rough
+    *        approximation).
     */
    namespace Smph {
       // Parameter values estimated by Hosom from 347 measured IBU values -- [Summary] section 4.3.  (Earlier versions
@@ -517,22 +540,31 @@ namespace {
       double constexpr alphaAcidLimitMin_ppm    = 200.0;
       double constexpr alphaAcidLimitMax_ppm    = 580.0;
 
-      // Other parameters from [Summary]
+      // Other parameters, per [Calculator] where it conflicts with [Summary]
       double constexpr lossFactorFerment        = 0.85;          // Section 3.3
       double constexpr scaleOAA                 = 0.9155;        // [38]
-      double constexpr oBABoilFactor            = 0.071;         // [40]
+      double constexpr oBABoilFactor            = 0.07125;       // [Calculator] vs 0.071 in [40]
       double constexpr scaleOBA                 = 0.85;          // [44]
       double constexpr defaultPolyphenolRating  = 0.04;          // Section 3.4.4
       double constexpr lossFactorPPPrecipitate  = 0.20;          // [48]
       double constexpr lossFactorPPFerment      = 0.70;          // Section 3.4.4
-      double constexpr scalePPHops              = 7.0/5.0 * 0.022; // [52]
       double constexpr pelletOAAFactor          = 2.0;           // F(form) in [35] -- Section 3.4.1
       double constexpr freshHopsDryingDays      = 3.5;           // [35]
-      double constexpr defaultPostBoilPh        = 5.75;          // Where both pH loss factors are 1.0
-      double constexpr ibuPerIaaPpm             = 5.0/7.0;       // [4]
+      double constexpr defaultSixMonthAlphaLoss = 0.32;          // "average value over many varieties"
+      double constexpr defaultPostBoilPh        = 5.75;          // Where all the pH factors are 1.0
+      double constexpr unadjustedPh             = 5.75;          // For malt polyphenols
+      double constexpr minimumIsomerizationTemp_c = 50.0;
+      //
+      // Per [Calculator], "even though 51.2 is more accurate, 50.0 is used to actually measure IBUs".  The hop
+      // polyphenol scaling factor is then 0.022 (from Parkin) × 69.68 / 50.0 (cf [52]).
+      //
+      double constexpr ibuPerIaaPpm             = 50.0/69.68;           // [Calculator] vs 5.0/7.0 in [4]
+      double constexpr scalePPHops              = 0.022 / ibuPerIaaPpm; // [Calculator] vs 7.0/5.0 * 0.022 in [52]
       double constexpr beerAge_weeks            = 1.0;           // See comment above
+      double constexpr hopFreshnessFactor       = 1.0;           // See comment above
 
-      double constexpr boilingTemp_K            = 373.15;
+      double constexpr boilingTemp_c            = 100.0;
+      double constexpr boilingTemp_K            = boilingTemp_c + 273.15;
 
       //! Malowicki's rate constant (per minute) for isomerization of alpha acids [13]
       double k1(double const temp_K) { return 7.9e11 * std::exp(-11858.0 / temp_K); }
@@ -540,38 +572,54 @@ namespace {
       double k2(double const temp_K) { return 4.1e12 * std::exp(-12994.0 / temp_K); }
 
       /**
-       * \brief Proportion of alpha acids that are available (ie dissolved), given the initial concentration, per the
-       *        "soft" solubility limit of [24] and [25].
+       * \brief The "soft" alpha-acid solubility limit of [24] and [25].  As in [Calculator], if there are already some
+       *        alpha acids dissolved in the kettle, we work out what concentration would have given that amount
+       *        dissolved, add the new alpha acids to it, and then re-apply the limit.
+       *
+       * \param alreadyDissolved_ppm Alpha acids already dissolved in the wort, before this addition
+       * \param added_ppm Alpha acids being added
+       *
+       * \return Total alpha acids dissolved after the addition
        */
-      double lossFactorHoppingRate(double const alphaAcids_ppm) {
-         if (alphaAcids_ppm <= 0.0) {
-            return 1.0;
+      double dissolvedAfterAddition_ppm(double const alreadyDissolved_ppm, double const added_ppm) {
+         double const slope = -std::log(1.0 - (alphaAcidLimitMin_ppm / alphaAcidLimitMax_ppm)) / alphaAcidLimitMin_ppm;
+         double withoutLimit_ppm = alreadyDissolved_ppm;
+         if (alreadyDissolved_ppm > alphaAcidLimitMin_ppm) {
+            // If we're already at the maximum, any further additions dissolve nothing
+            withoutLimit_ppm = (alreadyDissolved_ppm < alphaAcidLimitMax_ppm) ?
+               -std::log(1.0 - alreadyDissolved_ppm / alphaAcidLimitMax_ppm) / slope :
+               std::numeric_limits<double>::max() / 2.0;
          }
-         double const slope = std::log(1.0 - (alphaAcidLimitMin_ppm / alphaAcidLimitMax_ppm)) / alphaAcidLimitMin_ppm;
-         double const limit_ppm = alphaAcidLimitMax_ppm * (1.0 - std::exp(slope * alphaAcids_ppm));
-         return std::min(1.0, limit_ppm / alphaAcids_ppm);
+         withoutLimit_ppm += added_ppm;
+         if (withoutLimit_ppm <= alphaAcidLimitMin_ppm) {
+            return withoutLimit_ppm;
+         }
+         return alphaAcidLimitMax_ppm * (1.0 - std::exp(-slope * withoutLimit_ppm));
       }
 
-      //! Gravity loss factor [26].  \c steepTime_minutes is the time the hops are in contact with boiling wort.
-      double lossFactorGravity(double const originalGravity_sg, double const steepTime_minutes) {
-         double const s = (steepTime_minutes <= 30.0) ? 1.0 :
-                          (steepTime_minutes >= 40.0) ? 4.9 : 0.39 * (steepTime_minutes - 30.0) + 1.0;
+      /**
+       * \brief Gravity loss factor [26].  \c effectiveSteepTime_minutes is the time the hops are in contact with hot
+       *        wort, weighted by the relative rate of isomerization -- see comment above.
+       */
+      double lossFactorGravity(double const originalGravity_sg, double const effectiveSteepTime_minutes) {
          double const points = originalGravity_sg - 1.0;
-         if (points <= 0.0) {
+         if (points <= 0.0 || effectiveSteepTime_minutes <= 30.0) {
             return 1.0;
          }
+         double const s = (effectiveSteepTime_minutes >= 40.0) ? 4.91 :
+                          0.391 * (effectiveSteepTime_minutes - 30.0) + 1.0;
          return 1.0 - 2.0 * std::exp(-1.0 / (s * points));
       }
 
-      //! [28]
+      //! cf [28].  Per [Calculator], "after 15 weeks, losses seem to stabilize".
       double lossFactorAge(double const age_weeks) {
-         return 0.35 * std::exp(-0.073 * std::min(age_weeks, 16.0)) + 0.65;
+         return 0.35 * std::exp(-0.073 * std::min(age_weeks, 15.0)) + 0.65;
       }
 
-      //! Section 3.3.  (Clamped at 0 to avoid a negative loss factor at implausibly low pH.)
-      double lossFactorPhIaa   (double const pH) { return std::max(0.0, 0.071  * pH + 0.592); }
-      //! Section 3.4.2
-      double lossFactorPhNonIaa(double const pH) { return std::max(0.0, 0.8948 * pH - 4.145); }
+      //! [Summary] Section 3.3.  (Clamped at 0 to avoid a negative loss factor at implausibly low pH.)
+      double lossFactorPhIaa(double const pH) { return std::max(0.0, 0.071 * pH + 0.592); }
+      //! From "The Effect of pH on Utilization and IBUs", per [Calculator].  (Clamped as above.)
+      double lossFactorPhOAA(double const pH) { return std::max(0.0, 1.178506 * pH - 5.776411); }
 
       //! Per Garetz, as cited in [Summary] Section 3.3
       double lossFactorFlocculation(std::optional<IbuMethods::YeastFlocculation> const flocculation) {
@@ -586,21 +634,19 @@ namespace {
       }
 
       /**
-       * \brief Proportion of the hops' weight that is alpha (or beta) acids oxidized before the hops reach the kettle --
-       *        ie the "oAA_fresh + oAA_storage" part of [35] or the bracketed part of [41], divided by AA_harvest (or
-       *        BA_harvest).  With well-preserved hops (AA_decayfactor = 1), the storage part is zero, so this is just
-       *        the oxidation during drying.
+       * \brief Proportion of the alpha-acid rating that is oxidized alpha acids from before the hops reach the kettle
+       *        -- ie the "oAA_fresh + oAA_storage" part of [35], divided by AA_harvest.  With well-preserved hops
+       *        (freshness factor of 1), the storage part is zero, so this is just the oxidation during drying.
        *
-       *        The Garetz hop decay rate constant k (per day) is such that a proportion \c sixMonthAlphaLoss of alpha
-       *        acids is lost after 180 days at room temperature in loose storage.
+       *        Per [Calculator], the Garetz hop decay rate constant k (per day) is such that a proportion
+       *        \c sixMonthAlphaLoss of alpha acids is lost after half a year (182.5 days) at room temperature in loose
+       *        storage.
        */
-      double preKettleOxidation(std::optional<double> const sixMonthAlphaLoss) {
-         if (!sixMonthAlphaLoss || *sixMonthAlphaLoss <= 0.0 || *sixMonthAlphaLoss >= 1.0) {
-            return 0.0;
-         }
-         double const k_perDay = -std::log(1.0 - *sixMonthAlphaLoss) / 180.0;
-         double const alphaAcidDecayFactor = 1.0;
-         return (1.0 - std::exp(-k_perDay * freshHopsDryingDays)) + oAAAgeScale * (1.0 - alphaAcidDecayFactor);
+      double preKettleAlphaAcidOxidation(std::optional<double> const sixMonthAlphaLoss) {
+         double const loss = std::clamp(sixMonthAlphaLoss.value_or(defaultSixMonthAlphaLoss), 0.0, 0.99);
+         double const k_perDay = -std::log(1.0 - loss) / 182.5;
+         double const oAAFresh = 1.0 - std::exp(-k_perDay * freshHopsDryingDays);
+         return oAAFresh + oAAAgeScale * (1.0 - hopFreshnessFactor);
       }
 
       /**
@@ -619,6 +665,17 @@ namespace {
          alphaAcids_ppm *= decayAA;
          return;
       }
+
+      //! Step size, in minutes, for integrating over the post-boil temperature profile
+      double constexpr postBoilStep_minutes = 0.01;
+
+      double naturalCoolingRate(IbuMethods::IbuCalculationParms const & parms) {
+         return IbuMethods::naturalCoolingRate(
+            parms.kettleVolumeAtFlameout_liters.value_or(parms.postBoilVolume_liters),
+            parms.kettleInternalDiameter_cm.value_or(45.0),
+            parms.kettleOpeningDiameter_cm .value_or(45.0)
+         );
+      }
    }
 
    /*!
@@ -634,81 +691,110 @@ namespace {
       double const originalGravity_sg = parms.originalGravity_sg.value_or(parms.wortGravity_sg);
       double const postBoilPh = parms.postBoilPh.value_or(Smph::defaultPostBoilPh);
 
-      double const alphaAcids_ppm = parms.AArating * parms.hops_grams * ppmPerGramOfHops; // [17]
-      double const lossFactorHoppingRate =
-         Smph::lossFactorHoppingRate(parms.kettleAlphaAcids_ppm.value_or(alphaAcids_ppm));
+      double const alphaAcids_ppm = Smph::hopFreshnessFactor * parms.AArating * parms.hops_grams * ppmPerGramOfHops; // [17]
+
+      //
+      // Alpha-acid solubility limit.  This depends on the concentration of alpha acids in the kettle at the time the
+      // hops are added (so, for early additions, in the pre-boil volume), and on what is already dissolved from earlier
+      // additions.  We work out what proportion of this addition's alpha acids dissolve.
+      //
+      double const volumeAtAddition_liters = parms.kettleVolumeAtAddition_liters.value_or(volume_liters);
+      double const addedAtAddition_ppm =
+         Smph::hopFreshnessFactor * parms.AArating * parms.hops_grams * 1000.0 / volumeAtAddition_liters;
+      double const alreadyDissolved_ppm = std::max(0.0, parms.kettleDissolvedAlphaAcids_ppm.value_or(0.0));
+      double const lossFactorHoppingRate = (addedAtAddition_ppm > 0.0) ?
+         (Smph::dissolvedAfterAddition_ppm(alreadyDissolved_ppm, addedAtAddition_ppm) - alreadyDissolved_ppm) /
+         addedAtAddition_ppm : 1.0;
 
       //
       // Isomerized alpha acids.  During the boil proper, the temperature is constant (boiling), so we can use the exact
       // solution (equivalent to [16]).  After flameout, we step through the temperature profile, using the exact
-      // solution for each (small) step.  As with mIBU, if we don't know how long the hops are in hot wort after
-      // flameout, we assume immediate forced cooling.
+      // solution for each (small) step, until the wort is too cool for any further isomerization.  As with mIBU, if
+      // we don't know how long the hops are in hot wort after flameout, we assume immediate forced cooling.
+      //
+      // At the same time, we work out the "effective steep time" for the gravity loss factor.  At boiling, the
+      // relative rate of isomerization is (just over) 1, so the effective steep time is the actual steep time.
       //
       double dissolvedAlphaAcids_ppm = alphaAcids_ppm * lossFactorHoppingRate;
       double iaa_ppm = 0.0;
+      double effectiveSteepTime_minutes = 0.0;
       if (!parms.postBoilAddition && parms.timeInBoil_minutes > 0.0) {
          Smph::advance(dissolvedAlphaAcids_ppm, iaa_ppm, Smph::boilingTemp_K, parms.timeInBoil_minutes);
+         effectiveSteepTime_minutes += parms.timeInBoil_minutes *
+                                       std::clamp(IbuMethods::relativeUtilization(Smph::boilingTemp_c), 0.0, 1.0);
       }
       double const iaaAtFlameout_ppm = iaa_ppm;
 
       double const coolTime_minutes = std::max(0.0, parms.coolTime_minutes.value_or(0.0));
       if (coolTime_minutes > 0.0) {
-         double const b = IbuMethods::naturalCoolingRate(volume_liters,
-                                                         parms.kettleInternalDiameter_cm.value_or(45.0),
-                                                         parms.kettleOpeningDiameter_cm .value_or(45.0));
-         int    const numSteps = std::max(1, static_cast<int>(std::ceil(coolTime_minutes / 0.01)));
+         double const b = Smph::naturalCoolingRate(parms);
+         int    const numSteps = std::max(1, static_cast<int>(std::ceil(coolTime_minutes / Smph::postBoilStep_minutes)));
          double const stepSize = coolTime_minutes / numSteps;
          for (int ii = 0; ii < numSteps; ++ii) {
             double const midStep_minutes = parms.postBoilDelay_minutes + (ii + 0.5) * stepSize;
             double const temp_c = IbuMethods::postBoilWortTemperature_c(midStep_minutes,
                                                                        parms.postBoilTemperatureProfile,
                                                                        b);
+            if (temp_c < Smph::minimumIsomerizationTemp_c) {
+               break;
+            }
             Smph::advance(dissolvedAlphaAcids_ppm, iaa_ppm, temp_c + 273.15, stepSize);
+            effectiveSteepTime_minutes += stepSize * std::clamp(IbuMethods::relativeUtilization(temp_c), 0.0, 1.0);
          }
       }
 
       //
-      // Loss factors.  Note that the gravity loss factor depends on how long the hops were in boiling wort.
+      // Loss factors.  Note that the gravity loss factor depends on how long the hops were in hot wort.
       //
-      double const steepTime_minutes = parms.postBoilAddition ? 0.0 : parms.timeInBoil_minutes;
-      double const lossFactorGravity      = Smph::lossFactorGravity(originalGravity_sg, steepTime_minutes);
+      double const lossFactorGravity      = Smph::lossFactorGravity(originalGravity_sg, effectiveSteepTime_minutes);
       double const lossFactorFlocculation = Smph::lossFactorFlocculation(parms.yeastFlocculation);
       double const lossFactorAge          = Smph::lossFactorAge(Smph::beerAge_weeks);
-      // Wort clarity, krausen and filtering loss factors are all 1.0 -- see comments above
-      double const commonLossFactors = Smph::lossFactorFerment * lossFactorFlocculation * lossFactorAge;
+      // Wort clarity, krausen, finings and filtering loss factors are all 1.0 -- see comments above
+      double const lossFactorFerment      = Smph::lossFactorFerment * lossFactorFlocculation;
 
-      double const lossFactorIaa =                                                                        // [30]
-         Smph::lossFactorBoil * lossFactorGravity * Smph::lossFactorPhIaa(postBoilPh) * commonLossFactors;
+      double const lossFactorIaa =
+         Smph::lossFactorBoil * lossFactorGravity * Smph::lossFactorPhIaa(postBoilPh) * lossFactorFerment *
+         lossFactorAge;
 
-      double const lossFactorNonIaa =                                                                     // [37]
-         Smph::lossFactorBoil * lossFactorGravity * Smph::lossFactorPhNonIaa(postBoilPh) * commonLossFactors;
+      double const lossFactorOAA =
+         Smph::lossFactorBoil * lossFactorGravity * Smph::lossFactorPhOAA(postBoilPh) * lossFactorFerment *
+         lossFactorAge;
+
+      // Per [Calculator], "Assume that pH and OG have little effect on oBA" (and oBA_boilFactor already accounts for
+      // the boil)
+      double const lossFactorOBA = lossFactorFerment * lossFactorAge;
+
+      // Per [Calculator], "Assume hop [PP] doesn't change much with age, pH, or OG"
+      double const lossFactorPPHops = Smph::lossFactorPPPrecipitate * Smph::lossFactorPPFerment;
 
       //
-      // Oxidized alpha acids [35], [36] and [37].  Per Section 3.4.2, these are produced quickly when hops are added to
-      // hot wort, so (unlike IAA) they don't depend on how long the hops are in the wort.  (Hosom also found that
-      // production doesn't depend much on temperature, at least between 80°C and boiling -- see
+      // Oxidized alpha acids, cf [35], [36] and [37].  Per [Summary] Section 3.4.2, these are produced quickly when
+      // hops are added to hot wort, so (unlike IAA) they don't depend on how long the hops are in the wort.  (Hosom
+      // also found that production doesn't depend much on temperature, at least between 80°C and boiling -- see
       // https://jphosom.github.io/alchemyoverlord/blog/26-the-production-of-oxidized-alpha-acids-at-hop-stand-temperatures/alchemyoverlord-blog-content26.html)
+      // Oxidation during the boil is limited to alpha acids that have not already oxidized, hence max() rather than
+      // sum.
       //
       bool const pellets = isPelletOrPowder(parms);
-      double const preKettleOxidation = Smph::preKettleOxidation(parms.sixMonthAlphaLoss);
-      double const oAA = std::max(parms.AArating * preKettleOxidation,
-                                  parms.AArating * (pellets ? Smph::pelletOAAFactor : 1.0) *
-                                  lossFactorHoppingRate * Smph::oAABoilFactor);
-      double const oAABeer_ppm = oAA * parms.hops_grams * ppmPerGramOfHops * lossFactorNonIaa;
+      double const oAA = parms.AArating * std::max(Smph::preKettleAlphaAcidOxidation(parms.sixMonthAlphaLoss),
+                                                   Smph::hopFreshnessFactor *
+                                                   (pellets ? Smph::pelletOAAFactor : 1.0) *
+                                                   lossFactorHoppingRate * Smph::oAABoilFactor);
+      double const oAABeer_ppm = oAA * parms.hops_grams * ppmPerGramOfHops * lossFactorOAA;
 
       //
-      // Oxidized beta acids [41], [42] and [43].  Here the "boil" loss factor is 1.0, because oBA_boilFactor is already
-      // the proportion of oxidized beta acids that survive the boil.
+      // Oxidized beta acids, cf [41], [42] and [43].  Per [Calculator], these are a proportion of the beta acids lost
+      // during storage.
       //
-      double const oBA = Smph::oBABoilFactor * parms.betaAcidRating.value_or(0.0) * preKettleOxidation;
-      double const oBABeer_ppm = oBA * parms.hops_grams * ppmPerGramOfHops * lossFactorNonIaa / Smph::lossFactorBoil;
+      double const oBA = Smph::oBABoilFactor * parms.betaAcidRating.value_or(0.0) * (1.0 - Smph::hopFreshnessFactor);
+      double const oBABeer_ppm = oBA * parms.hops_grams * ppmPerGramOfHops * lossFactorOBA;
 
       //
-      // Hop polyphenols [47], [48] and [49].  (These are assumed not to be lost as the beer ages.)
+      // Hop polyphenols, cf [47], [48] and [49]
       //
       double const ppHopsBeer_ppm =
          parms.polyphenolRating.value_or(Smph::defaultPolyphenolRating) * parms.hops_grams * ppmPerGramOfHops *
-         Smph::lossFactorPPPrecipitate * Smph::lossFactorPPFerment * lossFactorFlocculation;
+         lossFactorPPHops;
 
       IbuMethods::IbuBreakdown result{
          .boil_ibus     = Smph::ibuPerIaaPpm * iaaAtFlameout_ppm * lossFactorIaa,
@@ -719,9 +805,10 @@ namespace {
       };
       qDebug() <<
          Q_FUNC_INFO << "alphaAcids_ppm:" << alphaAcids_ppm << "; lossFactorHoppingRate:" << lossFactorHoppingRate <<
-         "; iaaAtFlameout_ppm:" << iaaAtFlameout_ppm << "; iaa_ppm:" << iaa_ppm << "; lossFactorIaa:" <<
-         lossFactorIaa << "; oAABeer_ppm:" << oAABeer_ppm << "; oBABeer_ppm:" << oBABeer_ppm << "; ppHopsBeer_ppm:" <<
-         ppHopsBeer_ppm << " = " << result.boil_ibus << "+" << result.postBoil_ibus << "+" << result.nonIaa_ibus;
+         "; iaaAtFlameout_ppm:" << iaaAtFlameout_ppm << "; iaa_ppm:" << iaa_ppm << "; effectiveSteepTime_minutes:" <<
+         effectiveSteepTime_minutes << "; lossFactorIaa:" << lossFactorIaa << "; oAABeer_ppm:" << oAABeer_ppm <<
+         "; oBABeer_ppm:" << oBABeer_ppm << "; ppHopsBeer_ppm:" << ppHopsBeer_ppm << " = " << result.boil_ibus <<
+         "+" << result.postBoil_ibus << "+" << result.nonIaa_ibus;
       return result;
    }
 
@@ -856,17 +943,89 @@ double IbuMethods::garetzHoppingRateFactor(double const totalIbusBeforeHoppingRa
    return (1.0 + std::sqrt(1.0 + 4.0 * aTimesU)) / 2.0;
 }
 
-double IbuMethods::recipeLevelIbus(double const originalGravity_sg) {
+double IbuMethods::recipeLevelIbus(double const originalGravity_sg, std::optional<double> const postBoilPh) {
    if (IbuMethods::formula != IbuMethods::IbuFormula::Smph) {
       return 0.0;
    }
    //
-   // SMPH malt polyphenols, per [45] in Hosom's "A Summary of Factors Affecting IBUs".  We assume no difference between
-   // the wort pH before any pH adjustment and the post-boil pH (because we don't know the former), so the pH term is
-   // 1.0.
+   // SMPH malt polyphenols, per [Calculator] (cf [45] in Hosom's "A Summary of Factors Affecting IBUs").  Malt-derived
+   // IBUs increase as the pH is lowered from what it would be with no pH adjustment, which [Calculator] takes to be
+   // 5.75.  (The finings and filtering loss factors are 1.0 -- see comments on the Smph namespace.)
    //
-   double const scaledMaltPolyphenols_ppm = (69.68 / 51.2) * (std::max(0.0, originalGravity_sg - 1.0) * 19.0);
-   return Smph::ibuPerIaaPpm * scaledMaltPolyphenols_ppm;
+   double const points = std::max(0.0, originalGravity_sg - 1.0) * 1000.0;
+   double const pHFactor =
+      (1.7348 * (Smph::unadjustedPh - postBoilPh.value_or(Smph::defaultPostBoilPh)) / 0.70) + 1.0;
+   return points * 0.0190 * pHFactor;
+}
+
+std::vector<double> IbuMethods::smphDissolvedAlphaAcidsBeforeAdditions_ppm(
+   std::vector<IbuMethods::KettleAlphaAcidAddition> const & additions,
+   IbuMethods::IbuCalculationParms const & commonParms
+) {
+   std::vector<double> result(additions.size(), 0.0);
+
+   //
+   // Go through the additions in time order (ie largest minutesBeforeFlameout first), keeping the order of additions
+   // made at the same time
+   //
+   std::vector<std::size_t> order(additions.size());
+   for (std::size_t ii = 0; ii < order.size(); ++ii) {
+      order[ii] = ii;
+   }
+   std::stable_sort(
+      order.begin(),
+      order.end(),
+      [&additions](std::size_t const lhs, std::size_t const rhs) {
+         return additions[lhs].minutesBeforeFlameout > additions[rhs].minutesBeforeFlameout;
+      }
+   );
+
+   double const b = Smph::naturalCoolingRate(commonParms);
+   //
+   // The dissolved alpha acids are depleted by isomerization, at rate k1, which depends on the temperature.  Before
+   // flameout, we're at boiling.  After flameout, we follow the post-boil temperature profile.
+   //
+   auto depletionFactor = [&](double const fromMinutesBeforeFlameout, double const toMinutesBeforeFlameout) {
+      double exponent = 0.0;
+      if (fromMinutesBeforeFlameout > 0.0) {
+         exponent += Smph::k1(Smph::boilingTemp_K) *
+                     (fromMinutesBeforeFlameout - std::max(0.0, toMinutesBeforeFlameout));
+      }
+      double const postBoilStart_minutes = std::max(0.0, -fromMinutesBeforeFlameout);
+      double const postBoilEnd_minutes   = std::max(0.0, -toMinutesBeforeFlameout  );
+      if (postBoilEnd_minutes > postBoilStart_minutes) {
+         double const duration_minutes = postBoilEnd_minutes - postBoilStart_minutes;
+         int    const numSteps = std::max(1, static_cast<int>(std::ceil(duration_minutes / Smph::postBoilStep_minutes)));
+         double const stepSize = duration_minutes / numSteps;
+         for (int ii = 0; ii < numSteps; ++ii) {
+            double const temp_c = IbuMethods::postBoilWortTemperature_c(postBoilStart_minutes + (ii + 0.5) * stepSize,
+                                                                       commonParms.postBoilTemperatureProfile,
+                                                                       b);
+            exponent += Smph::k1(temp_c + 273.15) * stepSize;
+         }
+      }
+      return std::exp(-exponent);
+   };
+
+   double dissolvedAlphaAcids_mg = 0.0;
+   std::optional<double> previousMinutesBeforeFlameout = std::nullopt;
+   for (std::size_t const idx : order) {
+      auto const & addition = additions[idx];
+      if (previousMinutesBeforeFlameout) {
+         dissolvedAlphaAcids_mg *= depletionFactor(*previousMinutesBeforeFlameout, addition.minutesBeforeFlameout);
+      }
+      previousMinutesBeforeFlameout = addition.minutesBeforeFlameout;
+      if (addition.kettleVolume_liters <= 0.0) {
+         continue;
+      }
+      double const dissolved_ppm = dissolvedAlphaAcids_mg / addition.kettleVolume_liters;
+      result[idx] = dissolved_ppm;
+      dissolvedAlphaAcids_mg = Smph::dissolvedAfterAddition_ppm(
+         dissolved_ppm, addition.alphaAcids_mg * Smph::hopFreshnessFactor / addition.kettleVolume_liters
+      ) * addition.kettleVolume_liters;
+   }
+
+   return result;
 }
 
 IbuMethods::IbuBreakdown IbuMethods::getIbuBreakdown(IbuMethods::IbuCalculationParms const & parms) {

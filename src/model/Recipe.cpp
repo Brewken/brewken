@@ -1398,10 +1398,16 @@ public:
       double mashHopAdjust  = 0.0;
       double hopUtilization = 1.0;
       /**
-       * \brief For SMPH's alpha-acid solubility limit, the milligrams of alpha acids added to the kettle by each boil
-       *        addition, keyed by how many minutes before flameout it is added (negative for post-boil additions).
+       * \brief For SMPH's alpha-acid solubility limit, for each boil addition, the volume of wort in the kettle when it
+       *        is added and the concentration of alpha acids already dissolved in the kettle at that point.  See
+       *        \c IbuMethods::smphDissolvedAlphaAcidsBeforeAdditions_ppm.
        */
-      std::vector<std::pair<double, double>> kettleAlphaAcids_mg = {};
+      struct KettleAddition {
+         RecipeAdditionHop const * hopAddition;
+         double kettleVolume_l;
+         double dissolvedAlphaAcidsBefore_ppm;
+      };
+      std::vector<KettleAddition> kettleAdditions = {};
    };
 
    /**
@@ -1514,11 +1520,26 @@ public:
          }
       }
 
-      for (auto const & hopAddition : this->m_self.hopAdditions()) {
-         if (hopAddition->stage() == RecipeAddition::Stage::Boil && hopAddition->amountIsWeight()) {
-            double const alphaAcids_mg = hopAddition->hop()->alpha_pct() / 100.0 * hopAddition->quantity() * 1.0e6;
-            context.kettleAlphaAcids_mg.push_back({this->minutesBeforeFlameout(*hopAddition, boilTime_mins),
-                                                   alphaAcids_mg});
+      if (IbuMethods::formula == IbuMethods::IbuFormula::Smph) {
+         std::vector<IbuMethods::KettleAlphaAcidAddition> kettleAlphaAcidAdditions;
+         for (auto const & hopAddition : this->m_self.hopAdditions()) {
+            if (hopAddition->stage() == RecipeAddition::Stage::Boil && hopAddition->amountIsWeight()) {
+               double const minutesBeforeFlameout = this->minutesBeforeFlameout(*hopAddition, boilTime_mins);
+               double const volume_l = kettleVolume_l(parms, boilTime_mins, minutesBeforeFlameout);
+               kettleAlphaAcidAdditions.push_back({
+                  .minutesBeforeFlameout = minutesBeforeFlameout,
+                  .alphaAcids_mg         = hopAddition->hop()->alpha_pct() / 100.0 * hopAddition->quantity() * 1.0e6,
+                  .kettleVolume_liters   = volume_l
+               });
+               context.kettleAdditions.push_back({.hopAddition                   = hopAddition.get(),
+                                                  .kettleVolume_l                = volume_l,
+                                                  .dissolvedAlphaAcidsBefore_ppm = 0.0});
+            }
+         }
+         auto const dissolvedBefore_ppm =
+            IbuMethods::smphDissolvedAlphaAcidsBeforeAdditions_ppm(kettleAlphaAcidAdditions, parms);
+         for (std::size_t ii = 0; ii < context.kettleAdditions.size(); ++ii) {
+            context.kettleAdditions[ii].dissolvedAlphaAcidsBefore_ppm = dissolvedBefore_ppm[ii];
          }
       }
 
@@ -1619,21 +1640,15 @@ public:
          }
 
          //
-         // For SMPH's alpha-acid solubility limit, the concentration of alpha acids in the kettle when these hops are
-         // added is from all additions made up to this point (including this one), in the volume of wort at this
-         // point.
+         // For SMPH's alpha-acid solubility limit, we need the volume of wort in the kettle when these hops are added,
+         // and the concentration of alpha acids already dissolved from earlier additions.
          //
-         double const boilTime_mins = context.commonParms.timeInBoil_minutes;
-         double const thisMinutesBeforeFlameout = this->minutesBeforeFlameout(hopAddition, boilTime_mins);
-         double kettleAlphaAcids_mg = 0.0;
-         for (auto const & [addedMinutesBeforeFlameout, alphaAcids_mg] : context.kettleAlphaAcids_mg) {
-            if (addedMinutesBeforeFlameout >= thisMinutesBeforeFlameout - 1.0e-6) {
-               kettleAlphaAcids_mg += alphaAcids_mg;
+         for (auto const & kettleAddition : context.kettleAdditions) {
+            if (kettleAddition.hopAddition == &hopAddition) {
+               parms.kettleVolumeAtAddition_liters = kettleAddition.kettleVolume_l;
+               parms.kettleDissolvedAlphaAcids_ppm = kettleAddition.dissolvedAlphaAcidsBefore_ppm;
+               break;
             }
-         }
-         if (kettleAlphaAcids_mg > 0.0) {
-            parms.kettleAlphaAcids_ppm =
-               kettleAlphaAcids_mg / kettleVolume_l(context.commonParms, boilTime_mins, thisMinutesBeforeFlameout);
          }
 
          ibus = IbuMethods::getIbuBreakdown(parms);
@@ -1676,7 +1691,7 @@ public:
       qDebug() << Q_FUNC_INFO << "Calculated IBU from hops" << calculatedIbu;
 
       // Some formulae (currently only SMPH) give some IBUs that aren't from any one hop addition
-      calculatedIbu += IbuMethods::recipeLevelIbus(this->m_self.m_og);
+      calculatedIbu += IbuMethods::recipeLevelIbus(this->m_self.m_og, context.commonParms.postBoilPh);
 
       // Note which formula we used
       this->m_ibuFormula = IbuMethods::formula;
