@@ -8296,6 +8296,15 @@ Das endgültige Volumen in der Hauptgärung beträgt %1.</translation>
         <source>Stage</source>
         <translation type="obsolete">Phase</translation>
     </message>
+    <message>
+        <source>%L1 IBU from the boil
+%L2 IBU after flameout (%3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 does not model bitterness from hops added after flameout, so this addition gives no IBUs.  Select the mIBU formula in Edit &gt; Options to include it.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAdditionMisc</name>

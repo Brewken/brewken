@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/IbuMethods.cpp is part of Brewken, and is copyright the following authors 2009-2026:
+ * calculations/IbuMethods.cpp is part of Brewken, and is copyright the following authors 2009-2026:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Mattias Måhl <mattias@kejsarsten.com>
  *   • Matt Young <mfsy@yahoo.com>
@@ -16,9 +16,10 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "measurement/IbuMethods.h"
+#include "calculations/IbuMethods.h"
 
-#include <numbers> // For std::numbers::pi
+#include <algorithm> // For std::max
+#include <numbers>   // For std::numbers::pi
 
 #include <cmath>
 
@@ -96,7 +97,13 @@ namespace {
    /*!
     * \brief Calculates the IBU by Tinseth's formula, as described at http://www.realbeer.com/hops/research.html
     */
-   double tinseth(IbuMethods::IbuCalculationParms const & parms) {
+   IbuMethods::IbuBreakdown tinseth(IbuMethods::IbuCalculationParms const & parms) {
+      //
+      // Tinseth's formula only models isomerization during the boil
+      //
+      if (parms.postBoilAddition) {
+         return {};
+      }
       //
       // Tinseth's formula is:
       //
@@ -146,21 +153,40 @@ namespace {
       qDebug() <<
          Q_FUNC_INFO << "mgPerLiterOfAddedAlphaAcids: " << mgPerLiterOfAddedAlphaAcids <<
          "; decimalAlphaAcidUtilization" << decimalAlphaAcidUtilization << " = " << result;
-      return result;
+      return {.boil_ibus = result};
    }
 
-   double rager(IbuMethods::IbuCalculationParms const & parms) {
+   IbuMethods::IbuBreakdown rager(IbuMethods::IbuCalculationParms const & parms) {
+      //
+      // Rager's formula only models isomerization during the boil.  Note that, because of the shape of the tanh curve,
+      // it gives a non-zero utilization (about 5%) at 0 minutes in the boil.  That's part of the formula for additions
+      // at the end of the boil, but it would be wrong to apply it to hops added after flameout, as it would give the
+      // same IBUs regardless of how long the hops steep or at what temperature.
+      //
+      if (parms.postBoilAddition) {
+         return {};
+      }
       double const utilization = (18.11 + 13.86 * tanh((parms.timeInBoil_minutes - 31.32) / 18.17)) / 100.0;
 
       double const gravityFactor = (parms.wortGravity_sg > 1.050) ? (parms.wortGravity_sg - 1.050)/0.2 : 0.0;
 
-      return (parms.hops_grams * utilization * parms.AArating * 1000) / (parms.postBoilVolume_liters * (1 + gravityFactor));
+      return {
+         .boil_ibus =
+            (parms.hops_grams * utilization * parms.AArating * 1000) / (parms.postBoilVolume_liters * (1 + gravityFactor))
+      };
    }
 
    /*!
     * \brief Calculates the IBU by Greg Noonan's formula
     */
-   double noonan(IbuMethods::IbuCalculationParms const & parms) {
+   IbuMethods::IbuBreakdown noonan(IbuMethods::IbuCalculationParms const & parms) {
+      //
+      // As with Rager, Noonan's formula gives non-zero IBUs at 0 minutes in the boil, but does not model post-boil
+      // isomerization, so we don't want to apply it to hops added after flameout.
+      //
+      if (parms.postBoilAddition) {
+         return {};
+      }
       double const volumeFactor = (Measurement::Units::us_gallons.toCanonical(5.0).quantity)/ parms.postBoilVolume_liters;
       double const hopsFactor = parms.hops_grams/ (Measurement::Units::ounces.toCanonical(1.0).quantity * 1000.0);
       static const Polynomial p(Polynomial() << 0.7000029428 << -0.08868853463 << 0.02720809386 << -0.002340415323 << 0.00009925450081 << -0.000002102006144 << 0.00000002132644293 << -0.00000000008229488217);
@@ -185,70 +211,103 @@ namespace {
          utilizationFactor = utilizationFactorTable[3][1];
       }
 
-      return(volumeFactor * ( hopsFactor * (100 * parms.AArating) * p.eval(parms.timeInBoil_minutes) ) * utilizationFactor);
+      return {
+         .boil_ibus =
+            volumeFactor * ( hopsFactor * (100 * parms.AArating) * p.eval(parms.timeInBoil_minutes) ) * utilizationFactor
+      };
    }
 
    /**
-    * \brief Intermediate step used by mIBU formula
+    * \brief Intermediate step used by mIBU formula: the additional decimal alpha acid utilization from isomerization
+    *        after flameout.
     *
-    * \param postBoilDelay_minutes For hops added after flameout, how long after flameout they were added.  The wort
-    *                              temperature curve is measured from flameout, not from when the hops were added.
+    *        Per Hosom, the instantaneous rate of utilization is the derivative of Tinseth's utilization curve (with
+    *        respect to time since the hops were added), multiplied by a relative rate that depends on the wort
+    *        temperature -- see \c IbuMethods::relativeUtilization.  We integrate this from flameout (or, for post-boil
+    *        additions, from when the hops are added) for \c coolTime_minutes.  Per Hosom, after forced cooling, the
+    *        contribution is zero.
+    *
+    *        Also per Hosom, the relative rate is taken to be 1.0 (ie as at boiling) for the first 5 minutes after the
+    *        hops are added.  He describes this as an oversimplification to account for non-IAA components (which are
+    *        less dependent on temperature), but better than ignoring them altogether.  This only affects hops added
+    *        less than 5 minutes before flameout or after flameout.
+    *
+    * \param coolTime_minutes How long after flameout (or, for post-boil additions, after the hops are added) the hops
+    *                         are in hot wort.
     */
-   double computePostBoilUtilization(double const timeInBoil_minutes,
-                                     double const wortGravity_sg,
-                                     double const postBoilVolume_liters,
-                                     double const coolTime_minutes,
-                                     double const kettleInternalDiameter_cm,
-                                     double const kettleOpeningDiameter_cm,
-                                     double const postBoilDelay_minutes) {
-
-      double const surfaceArea_cm2 = circleAreaFromRadius(kettleInternalDiameter_cm/2.0);
-      double const openingArea_cm2 = circleAreaFromRadius(kettleOpeningDiameter_cm/2.0);
-      double const effectiveArea_cm2 = sqrt(surfaceArea_cm2 * openingArea_cm2);
-      double const b = (0.0002925 * effectiveArea_cm2 / postBoilVolume_liters) + 0.00538;
-
-      double const integrationTime = 0.001;
-      double decimalAArating = 0.0;
-      for (double time_minutes = timeInBoil_minutes;
-           time_minutes < timeInBoil_minutes + coolTime_minutes;
-           time_minutes += integrationTime) {
-         double const dU = -1.65 * pow(0.000125, (wortGravity_sg-1.0)) * -0.04 * exp(-0.04*time_minutes) / 4.15;
-         double const timeSinceFlameout_minutes = time_minutes - timeInBoil_minutes + postBoilDelay_minutes;
-         double const temp_degK = 53.70 * exp(-1.0 * b * timeSinceFlameout_minutes) + 319.55;
-         double const degreeOfUtilization =
-            // The 1.0 case accounts for nonIAA components
-            (time_minutes < 5.0) ? 1.0 : 2.39*pow(10.0,11.0)*exp(-9773.0/temp_degK);
-         double const combinedValue = dU * degreeOfUtilization;
-         decimalAArating += (combinedValue * integrationTime);
+   double computePostBoilUtilization(IbuMethods::IbuCalculationParms const & parms,
+                                     double const coolTime_minutes) {
+      if (coolTime_minutes <= 0.0) {
+         return 0.0;
       }
-      return decimalAArating;
+
+      double const b = IbuMethods::naturalCoolingRate(parms.postBoilVolume_liters,
+                                                      parms.kettleInternalDiameter_cm.value_or(45.0),
+                                                      parms.kettleOpeningDiameter_cm .value_or(45.0));
+
+      //
+      // The integrand is smooth (apart from the step at 5 minutes, and at segment boundaries), so the midpoint rule with
+      // steps of 0.01 minutes is plenty accurate.  (We used to use steps of 0.001 minutes with the left-hand rule, which
+      // was about 30,000 iterations per hop addition for a 30-minute cool time.)
+      //
+      double const bignessFactor = 1.65 * pow(0.000125, (parms.wortGravity_sg - 1.0));
+      int    const numSteps      = std::max(1, static_cast<int>(std::ceil(coolTime_minutes / 0.01)));
+      double const stepSize      = coolTime_minutes / numSteps;
+      double decimalAlphaAcidUtilization = 0.0;
+      for (int ii = 0; ii < numSteps; ++ii) {
+         double const timeIntoCooling_minutes = (ii + 0.5) * stepSize;
+         double const timeSinceAddition_minutes = parms.timeInBoil_minutes + timeIntoCooling_minutes;
+         // Derivative of Tinseth's utilization with respect to time since the hops were added
+         double const dU = bignessFactor * 0.04 * exp(-0.04 * timeSinceAddition_minutes) / 4.15;
+         double const relativeUtilization =
+            (timeSinceAddition_minutes < 5.0) ? 1.0 : IbuMethods::relativeUtilization(
+               IbuMethods::postBoilWortTemperature_c(parms.postBoilDelay_minutes + timeIntoCooling_minutes,
+                                                     parms.postBoilTemperatureProfile,
+                                                     b)
+            );
+         decimalAlphaAcidUtilization += dU * relativeUtilization * stepSize;
+      }
+      return decimalAlphaAcidUtilization;
    }
 
    /*!
     * \brief Calculates the IBU by the mIBU formula, developed by John-Paul Hosom, and described at
     *        https://alchemyoverlord.wordpress.com/2015/05/12/a-modified-ibu-measurement-especially-for-late-hopping/
     */
-   double mIbu(IbuMethods::IbuCalculationParms const & parms) {
+   IbuMethods::IbuBreakdown mIbu(IbuMethods::IbuCalculationParms const & parms) {
       //
-      // Check optional parameters available for this formula.  We supply fallback values below, but they likely
-      // won't be great.
+      // If we don't know how long the hops are in hot wort after flameout, we assume immediate forced cooling, in which
+      // case, per Hosom, mIBU gives the same results as Tinseth.
       //
-      if (!parms.coolTime_minutes         ) { qWarning() << Q_FUNC_INFO << "coolTime_minutes          not set!"; }
-      if (!parms.kettleInternalDiameter_cm) { qWarning() << Q_FUNC_INFO << "kettleInternalDiameter_cm not set!"; }
-      if (!parms.kettleOpeningDiameter_cm ) { qWarning() << Q_FUNC_INFO << "kettleOpeningDiameter_cm  not set!"; }
-      double const decimalAlphaAcidUtilization = calculateDecimalAlphaAcidUtilization(parms.wortGravity_sg,
-                                                                                      parms.timeInBoil_minutes);
-      double const postBoilUtilization = computePostBoilUtilization(parms.timeInBoil_minutes,
-                                                                    parms.wortGravity_sg,
-                                                                    parms.postBoilVolume_liters,
-                                                                    parms.coolTime_minutes.value_or(0.0),
-                                                                    parms.kettleInternalDiameter_cm.value_or(45.0),
-                                                                    parms.kettleOpeningDiameter_cm.value_or(45.0),
-                                                                    parms.postBoilDelay_minutes);
+      double const coolTime_minutes = parms.coolTime_minutes.value_or(0.0);
+      if (!parms.coolTime_minutes) {
+         qDebug() << Q_FUNC_INFO << "Cool time not set, so assuming immediate forced cooling";
+      } else if (coolTime_minutes > 0.0) {
+         //
+         // We supply fallback values below, but they likely won't be great.  (Kettle geometry only matters when we are
+         // modelling natural cooling, but it's simplest to check here.)
+         //
+         if (!parms.kettleInternalDiameter_cm) { qInfo() << Q_FUNC_INFO << "kettleInternalDiameter_cm not set!"; }
+         if (!parms.kettleOpeningDiameter_cm ) { qInfo() << Q_FUNC_INFO << "kettleOpeningDiameter_cm  not set!"; }
+      }
 
-      double const totalUtilization = decimalAlphaAcidUtilization + postBoilUtilization;
-      double const ibu = (totalUtilization * parms.AArating * parms.hops_grams * 1000.0) / parms.postBoilVolume_liters;
-      return ibu;
+      double const mgPerLiterOfAddedAlphaAcids =
+         (parms.AArating * parms.hops_grams * 1000.0) / parms.postBoilVolume_liters;
+
+      // For post-boil additions, the hops have spent no time in the boil
+      double const boilUtilization =
+         parms.postBoilAddition ? 0.0 : calculateDecimalAlphaAcidUtilization(parms.wortGravity_sg,
+                                                                             parms.timeInBoil_minutes);
+      double const postBoilUtilization = computePostBoilUtilization(parms, coolTime_minutes);
+
+      qDebug() <<
+         Q_FUNC_INFO << "boilUtilization:" << boilUtilization << "; postBoilUtilization:" << postBoilUtilization <<
+         "; mgPerLiterOfAddedAlphaAcids:" << mgPerLiterOfAddedAlphaAcids;
+
+      return {
+         .boil_ibus     = boilUtilization     * mgPerLiterOfAddedAlphaAcids,
+         .postBoil_ibus = postBoilUtilization * mgPerLiterOfAddedAlphaAcids,
+      };
    }
 
 //   /*!
@@ -315,11 +374,22 @@ void IbuMethods::saveFormula() {
    return;
 }
 
-QString IbuMethods::formulaName() {
+QString IbuMethods::localisedFormulaName() {
    return IbuMethods::formulaDisplayNames[IbuMethods::formula];
 }
 
-double IbuMethods::getIbus(IbuMethods::IbuCalculationParms const & parms) {
+bool IbuMethods::modelsPostBoilIsomerization(IbuMethods::IbuFormula const ibuFormula) {
+   switch(ibuFormula) {
+      case IbuMethods::IbuFormula::Tinseth: return false;
+      case IbuMethods::IbuFormula::Rager  : return false;
+      case IbuMethods::IbuFormula::Noonan : return false;
+      case IbuMethods::IbuFormula::mIbu   : return true;
+//      case IbuMethods::IbuFormula::Smph   : return true;
+   }
+   Q_UNREACHABLE();
+}
+
+IbuMethods::IbuBreakdown IbuMethods::getIbuBreakdown(IbuMethods::IbuCalculationParms const & parms) {
    qDebug() << Q_FUNC_INFO << "Using" << formulaDisplayNames[formula] << "with" << parms;
    switch(IbuMethods::formula) {
       case IbuMethods::IbuFormula::Tinseth: return tinseth(parms);
@@ -329,4 +399,86 @@ double IbuMethods::getIbus(IbuMethods::IbuCalculationParms const & parms) {
 //      case IbuMethods::IbuFormula::Smph   : return smph   (parms);
    }
    Q_UNREACHABLE();
+}
+
+double IbuMethods::getIbus(IbuMethods::IbuCalculationParms const & parms) {
+   return IbuMethods::getIbuBreakdown(parms).total();
+}
+
+namespace {
+   //
+   // Constants from Hosom's natural cooling curve, which is
+   //
+   //    T(t) = 53.70 * exp(-b * t) + 319.55
+   //
+   // where T is wort temperature in Kelvin and t is minutes since flameout.  So, in Celsius, the wort starts at 100.10°C
+   // at flameout and tends towards 46.40°C.
+   //
+   double constexpr hosomCoolingAmplitude_c = 53.70;
+   double constexpr hosomCoolingAsymptote_c = 319.55 - 273.15;
+   double constexpr hosomFlameoutTemp_c     = hosomCoolingAsymptote_c + hosomCoolingAmplitude_c;
+
+   /**
+    * \brief Natural cooling, per Hosom's curve, from a given starting temperature.  Because the curve is exponential,
+    *        starting part-way along it just means scaling the amplitude.
+    */
+   double naturalCooling_c(double const startTemp_c,
+                           double const elapsed_minutes,
+                           double const naturalCoolingRate_perMinute) {
+      // If we're already at or below the asymptote, we just assume the temperature stays where it is
+      if (startTemp_c <= hosomCoolingAsymptote_c) {
+         return startTemp_c;
+      }
+      //
+      // Anything at or above (nominal) boiling, we treat as starting from flameout on Hosom's curve.  (Otherwise
+      // starting at exactly 100°C would give very slightly different results from Hosom's own formula.)
+      //
+      double const effectiveStartTemp_c = (startTemp_c >= 100.0) ? hosomFlameoutTemp_c : startTemp_c;
+      return hosomCoolingAsymptote_c +
+             (effectiveStartTemp_c - hosomCoolingAsymptote_c) * exp(-naturalCoolingRate_perMinute * elapsed_minutes);
+   }
+}
+
+double IbuMethods::naturalCoolingRate(double const postBoilVolume_liters,
+                                      double const kettleInternalDiameter_cm,
+                                      double const kettleOpeningDiameter_cm) {
+   double const surfaceArea_cm2   = circleAreaFromRadius(kettleInternalDiameter_cm/2.0);
+   double const openingArea_cm2   = circleAreaFromRadius(kettleOpeningDiameter_cm /2.0);
+   double const effectiveArea_cm2 = sqrt(surfaceArea_cm2 * openingArea_cm2);
+   return (0.0002925 * effectiveArea_cm2 / postBoilVolume_liters) + 0.00538;
+}
+
+double IbuMethods::relativeUtilization(double const temp_c) {
+   double const temp_degK = temp_c + 273.15;
+   return 2.39e11 * exp(-9773.0 / temp_degK);
+}
+
+double IbuMethods::postBoilWortTemperature_c(double const minutesSinceFlameout,
+                                             std::vector<PostBoilTemperatureSegment> const & profile,
+                                             double const naturalCoolingRate_perMinute) {
+   double elapsed_minutes = std::max(0.0, minutesSinceFlameout);
+   // At flameout, we are at boiling
+   double temp_c = 100.0;
+   for (auto const & segment : profile) {
+      if (elapsed_minutes <= segment.duration_minutes) {
+         if (segment.naturalCooling) {
+            return std::max(segment.endTemp_c,
+                            naturalCooling_c(segment.startTemp_c, elapsed_minutes, naturalCoolingRate_perMinute));
+         }
+         if (segment.duration_minutes <= 0.0) {
+            return segment.endTemp_c;
+         }
+         return segment.startTemp_c +
+                (segment.endTemp_c - segment.startTemp_c) * elapsed_minutes / segment.duration_minutes;
+      }
+      elapsed_minutes -= segment.duration_minutes;
+      if (segment.naturalCooling) {
+         temp_c = std::max(segment.endTemp_c,
+                           naturalCooling_c(segment.startTemp_c, segment.duration_minutes, naturalCoolingRate_perMinute));
+      } else {
+         temp_c = segment.endTemp_c;
+      }
+   }
+   // Beyond the end of the profile, we assume natural cooling
+   return naturalCooling_c(temp_c, elapsed_minutes, naturalCoolingRate_perMinute);
 }

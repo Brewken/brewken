@@ -65,6 +65,12 @@ private slots:
     */
    void testBoilStepsWithoutTemperatures();
 
+   /**
+    * \brief Verify IBU calculations for hops in hot wort after flameout -- eg flameout, whirlpool and hop stand
+    *        additions, and boil additions while the wort cools.  See https://github.com/Brewtarget/brewtarget/issues/774
+    */
+   void testPostBoilIbus();
+
    //! \brief Unit test: verify we can set and read inventory via Qt Properties
    void testInventory();
 

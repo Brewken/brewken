@@ -38,7 +38,7 @@
 
 #include "config.h"
 #include "database/ObjectStoreWrapper.h"
-#include "measurement/IbuMethods.h"
+#include "calculations/IbuMethods.h"
 #include "model/Ingredient.h"
 #include "model/FolderPropertyBase.h"
 #include "model/NamedEntity.h"
@@ -880,6 +880,12 @@ public:
    // Helpers
    //! \brief Get the IBUs from a given \c hop addition.
    double ibuFromHopAddition(RecipeAdditionHop const & hopAddition) const;
+
+   /**
+    * \brief Get the IBUs from a given \c hop addition, split between those from isomerization during the boil and those
+    *        from isomerization after flameout.  (The sum of the two is what \c ibuFromHopAddition returns.)
+    */
+   IbuMethods::IbuBreakdown ibuBreakdownFromHopAddition(RecipeAdditionHop const & hopAddition) const;
 
    /**
     * \brief For an addition to the boil stage (ie one whose \c RecipeAddition::stage is

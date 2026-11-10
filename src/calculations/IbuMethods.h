@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * measurement/IbuMethods.h is part of Brewken, and is copyright the following authors 2009-2026:
+ * calculations/IbuMethods.h is part of Brewken, and is copyright the following authors 2009-2026:
  *   • Daniel Pettersson <pettson81@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
@@ -15,9 +15,12 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#ifndef MEASUREMENT_IBUMETHODS_H
-#define MEASUREMENT_IBUMETHODS_H
+#ifndef CALCULATIONS_IBUMETHODS_H
+#define CALCULATIONS_IBUMETHODS_H
 #pragma once
+
+#include <optional>
+#include <vector>
 
 #include "utils/BtStringConst.h"
 #include "utils/EnumStringMapping.h"
@@ -105,8 +108,35 @@ namespace IbuMethods {
     */
    void saveFormula();
 
-   //! \brief return the bitterness formula's name
-   QString formulaName();
+   /**
+    * \brief Return the localised bitterness formula's name
+    */
+   QString localisedFormulaName();
+
+   /**
+    * \brief One segment of the profile of wort temperature after flameout.  Segments are consecutive, and the first one
+    *        starts at flameout.  The caller (eg \c Recipe) builds these from the post-boil steps of the \c Boil, and is
+    *        responsible for resolving unset step temperatures (eg per dotBeer, an unset boil step temperature means
+    *        boiling).
+    *
+    *        Within a segment, the wort temperature is modelled in one of two ways:
+    *
+    *         - If \c naturalCooling is \c true, the wort cools naturally from \c startTemp_c, following John-Paul
+    *           Hosom's exponential cooling curve (which depends on the kettle geometry and the wort volume), but does
+    *           not drop below \c endTemp_c.  This is what we use for a step that starts at boiling and ends below it,
+    *           which is how a "time before forced cooling" (aka "cool time") has always been represented in a boil
+    *           profile -- see \c Boil::coolTime_mins.
+    *
+    *         - Otherwise, the temperature moves linearly from \c startTemp_c to \c endTemp_c over the segment.  So a
+    *           segment with the same start and end temperatures is a hop stand / whirlpool held at that temperature,
+    *           and a segment from, say, 80°C to 20°C is forced cooling.
+    */
+   struct PostBoilTemperatureSegment {
+      double duration_minutes;
+      double startTemp_c;
+      double endTemp_c;
+      bool   naturalCooling;
+   };
 
    /**
     * \brief Parameters for the various IBU calculation formulae
@@ -122,11 +152,14 @@ namespace IbuMethods {
     * \param timeInBoil_minutes - minutes that the hops are in the boil: usually measured from the point at which hops
     *                             are added until flameout
     *
-    * \param coolTime_minutes - (Only used in mIbu)  Time after flameout, without forced cooling.  Note per
-    *        https://alchemyoverlord.wordpress.com/2015/05/12/a-modified-ibu-measurement-especially-for-late-hopping/
-    *        that if we quickly cool the wort at flameout, then coolTime_minutes should be zero and the mIbu method
-    *        gives the same results as the original Tinseth formula.  Only when we have some time between flameout and
-    *        forced cooling do we get additional IBUs.
+    * \param coolTime_minutes - How long, after flameout (or, for post-boil additions, after the hops are added) the
+    *        hops are in hot wort.  Only used by formulae that model post-boil isomerization (currently only mIbu).
+    *        \c std::nullopt means the caller doesn't know, and it is up to each formula to decide what to assume.
+    *        (Per https://alchemyoverlord.wordpress.com/2015/05/12/a-modified-ibu-measurement-especially-for-late-hopping/
+    *        if we quickly cool the wort at flameout, then the cool time is zero and the mIbu method gives the same
+    *        results as the original Tinseth formula, so this is what mIbu assumes when the cool time is not known.)
+    *        If \c postBoilTemperatureProfile is set, this will typically be the time to the end of that profile, but
+    *        it does not have to be.  Beyond the end of the profile, we assume natural cooling.
     * \param kettleInternalDiameter_cm - (Only used in mIbu)  This is the interior diameter of the kettle at the surface
     *                                    of the wort, and is used to calculate the surface area of wort exposed to air.
     * \param kettleOpeningDiameter_cm - (Only used in mIbu)  This is the interior diameter of the opening in the kettle
@@ -137,6 +170,13 @@ namespace IbuMethods {
     *                                \c timeInBoil_minutes should be 0 and \c coolTime_minutes should be the time from
     *                                when the hops are added until forced cooling.  The delay matters because the wort
     *                                will already have cooled somewhat by the time the hops are added.
+    * \param postBoilAddition - \c true if the hops are added after flameout (eg whirlpool or hop stand additions).
+    *                           Formulae that do not model post-boil isomerization give no IBUs for such additions.
+    *                           (Note that this is not the same as \c timeInBoil_minutes being 0 -- eg Rager's formula
+    *                           gives some IBUs for a hop added right at the end of the boil.)
+    * \param postBoilTemperatureProfile - (Only used in mIbu)  Wort temperature profile after flameout -- see
+    *                                     \c PostBoilTemperatureSegment.  If empty, we assume natural cooling from
+    *                                     flameout, per Hosom's model.
     */
    struct IbuCalculationParms {
       double AArating;
@@ -148,12 +188,63 @@ namespace IbuMethods {
       std::optional<double> kettleInternalDiameter_cm = std::nullopt;
       std::optional<double> kettleOpeningDiameter_cm  = std::nullopt;
       double                postBoilDelay_minutes     = 0.0;
+      bool                  postBoilAddition          = false;
+      std::vector<PostBoilTemperatureSegment> postBoilTemperatureProfile = {};
    };
 
-   /*!
+   /**
+    * \brief IBUs split between those from isomerization during the boil proper and those from isomerization after
+    *        flameout (eg during a whirlpool or hop stand, or simply while the wort is cooling).  Formulae that do not
+    *        model post-boil isomerization always give 0 for the latter.
+    */
+   struct IbuBreakdown {
+      double boil_ibus     = 0.0;
+      double postBoil_ibus = 0.0;
+      double total() const { return this->boil_ibus + this->postBoil_ibus; }
+   };
+
+   /**
+    * \return \c true if \c ibuFormula models isomerization after flameout (and therefore gives IBUs for whirlpool, hop
+    *         stand etc additions), \c false otherwise.
+    */
+   bool modelsPostBoilIsomerization(IbuFormula const ibuFormula);
+
+   /**
+    * \return IBUs according to selected algorithm, split between boil and post-boil.
+    */
+   IbuBreakdown getIbuBreakdown(IbuCalculationParms const & parms);
+
+   /**
     * \return IBUs according to selected algorithm.
     */
    double getIbus(IbuCalculationParms const & parms);
+
+   /**
+    * \brief Wort temperature a given time after flameout.  Exposed mainly for unit testing.
+    *
+    * \param minutesSinceFlameout
+    * \param profile See \c PostBoilTemperatureSegment.  Beyond the end of the profile (including when the profile is
+    *                empty), we assume natural cooling from whatever the temperature was at the end of the profile
+    *                (or from boiling if the profile is empty).
+    * \param naturalCoolingRate_perMinute The \c b parameter of Hosom's natural cooling curve -- see
+    *                                     \c naturalCoolingRate.
+    */
+   double postBoilWortTemperature_c(double const minutesSinceFlameout,
+                                    std::vector<PostBoilTemperatureSegment> const & profile,
+                                    double const naturalCoolingRate_perMinute);
+
+   /**
+    * \brief The \c b parameter of Hosom's natural cooling curve.  Exposed mainly for unit testing.
+    */
+   double naturalCoolingRate(double const postBoilVolume_liters,
+                             double const kettleInternalDiameter_cm,
+                             double const kettleOpeningDiameter_cm);
+
+   /**
+    * \brief Hosom's relative rate of alpha acid isomerization at a given temperature, compared with at boiling.
+    *        Exposed mainly for unit testing.
+    */
+   double relativeUtilization(double const temp_c);
 }
 
 //! \brief Convenience function for logging
@@ -163,7 +254,14 @@ template<class S> S & operator<<(S & stream, IbuMethods::IbuCalculationParms con
       parms.postBoilVolume_liters << "; Wort Gravity (SG):" << parms.wortGravity_sg << "; Time in Boil (mins):" <<
       parms.timeInBoil_minutes << "; Cool Time (mins):" << parms.coolTime_minutes << "; Kettle Int Diameter (cm):" <<
       parms.kettleInternalDiameter_cm << "; Kettle Opening (cm):" << parms.kettleOpeningDiameter_cm <<
-      "; Post-boil delay (mins):" << parms.postBoilDelay_minutes << "]";
+      "; Post-boil delay (mins):" << parms.postBoilDelay_minutes << "; Post-boil addition:" <<
+      parms.postBoilAddition << "; Post-boil profile:";
+   for (auto const & segment : parms.postBoilTemperatureProfile) {
+      stream <<
+         " (" << segment.duration_minutes << " mins, " << segment.startTemp_c << "°C -> " << segment.endTemp_c <<
+         "°C" << (segment.naturalCooling ? " natural" : "") << ")";
+   }
+   stream << "]";
    return stream;
 }
 

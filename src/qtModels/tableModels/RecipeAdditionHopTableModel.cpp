@@ -32,6 +32,7 @@
 #include <QVariant>
 #include <QWidget>
 
+#include "calculations/IbuMethods.h"
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
 #include "model/StockPurchase.h"
@@ -105,6 +106,36 @@ QVariant RecipeAdditionHopTableModel::headerData(int const section,
 
       if (ibus.size() > section) {
          return QVariant(QString("%L1 IBU").arg(ibus.at(section), 0, 'f', 1));
+      }
+   }
+   if (showIBUs && recObs && orientation == Qt::Vertical && role == Qt::ToolTipRole) {
+      //
+      // Show how the IBUs for this addition split between the boil and post-boil (eg whirlpool / hop stand) -- or, if the
+      // selected formula doesn't model post-boil isomerization, explain why a post-boil addition gives no IBUs.
+      //
+      auto const hopAdditions = recObs->hopAdditions();
+      if (section < hopAdditions.size()) {
+         auto const & hopAddition = hopAdditions.at(section);
+         bool const isPostBoil = hopAddition->stage() == RecipeAddition::Stage::Boil &&
+                                 recObs->boilAdditionTiming(*hopAddition).postBoil;
+         if (IbuMethods::modelsPostBoilIsomerization(IbuMethods::formula)) {
+            auto const breakdown = recObs->ibuBreakdownFromHopAddition(*hopAddition);
+            return QVariant(
+               tr("%L1 IBU from the boil\n%L2 IBU after flameout (%3)").arg(
+                  breakdown.boil_ibus, 0, 'f', 1
+               ).arg(
+                  breakdown.postBoil_ibus, 0, 'f', 1
+               ).arg(
+                  IbuMethods::localisedFormulaName()
+               )
+            );
+         }
+         if (isPostBoil) {
+            return QVariant(
+               tr("%1 does not model bitterness from hops added after flameout, so this addition gives no IBUs.  "
+                  "Select the mIBU formula in Edit > Options to include it.").arg(IbuMethods::localisedFormulaName())
+            );
+         }
       }
    }
    return QVariant();

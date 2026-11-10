@@ -41,11 +41,10 @@
 #include "database/ObjectStoreWrapper.h"
 #include "Localization.h"
 #include "MashAutoAdjuster.h"
+#include "calculations/ColorMethods.h"
 #include "calculations/MashFermentability.h"
 #include "WaterAutoAdjuster.h"
 #include "measurement/Amount.h"
-#include "measurement/ColorMethods.h"
-#include "measurement/IbuMethods.h"
 #include "measurement/Measurement.h"
 #include "measurement/PhysicalConstants.h"
 #include "measurement/Unit.h"
@@ -3292,8 +3291,12 @@ Recipe::BoilAdditionTiming Recipe::boilAdditionTiming(RecipeAddition const & add
 }
 
 double Recipe::ibuFromHopAddition(RecipeAdditionHop const & hopAddition) const {
+   return this->ibuBreakdownFromHopAddition(hopAddition).total();
+}
+
+IbuMethods::IbuBreakdown Recipe::ibuBreakdownFromHopAddition(RecipeAdditionHop const & hopAddition) const {
    auto const equipment = this->equipment();
-   double ibus = 0.0;
+   IbuMethods::IbuBreakdown ibus;
    double const fwhAdjust = Localization::toDouble(
       PersistentSettings::value_ck(PersistentSettings::Names::firstWortHopAdjustment, 1.1).toString(),
       Q_FUNC_INFO
@@ -3343,9 +3346,11 @@ double Recipe::ibuFromHopAddition(RecipeAdditionHop const & hopAddition) const {
    //
    double const boilTime_mins = boil ? boil->boilTime_mins() : Boil::default_boilTime_mins;
 
-   double const coolTime_mins = getValueOrDefault<Boil,
-                                                  &Boil::coolTime_mins,
-                                                  Boil::default_coolTime_mins>(boil.get());
+   //
+   // For hops in the boil proper, the time in hot wort after flameout is the length of the post-boil steps (if known).
+   // If we don't know, we leave it unset, and it's up to each IBU formula what to assume.
+   //
+   auto const profile = boil ? boil->postBoilProfile() : Boil::PostBoilProfile{};
 
    qDebug() <<
       Q_FUNC_INFO << "Equipment" << (equipment ? "set" : "not set") << ", Boil" << (boil ? "present" : "not present") <<
@@ -3362,14 +3367,17 @@ double Recipe::ibuFromHopAddition(RecipeAdditionHop const & hopAddition) const {
       // changes in the wort volume".
       .wortGravity_sg        = this->pimpl->m_boilGrav,
       .timeInBoil_minutes    = boilTime_mins, // But see below
-      .coolTime_minutes      = coolTime_mins,
+      .coolTime_minutes      = profile.duration_mins,
+      .postBoilTemperatureProfile = profile.segments,
    };
    if (equipment) {
       parms.kettleInternalDiameter_cm = equipment->kettleInternalDiameter_cm();
       parms.kettleOpeningDiameter_cm  = equipment->kettleOpeningDiameter_cm ();
    }
    if (hopAddition.isFirstWort()) {
-      ibus = fwhAdjust * IbuMethods::getIbus(parms);
+      ibus = IbuMethods::getIbuBreakdown(parms);
+      ibus.boil_ibus     *= fwhAdjust;
+      ibus.postBoil_ibus *= fwhAdjust;
    } else if (hopAddition.stage() == RecipeAddition::Stage::Boil) {
       //
       // Note that we cannot just use hopAddition.addAtTime_mins() here, because that is measured from the end of the
@@ -3384,21 +3392,26 @@ double Recipe::ibuFromHopAddition(RecipeAdditionHop const & hopAddition) const {
          ", postBoilRemaining_mins =" << timing.postBoilRemaining_mins;
       parms.timeInBoil_minutes = timing.boilProper_mins;
       if (timing.postBoil) {
-         // The hops are only in the hot wort from when they are added until the end of the post-boil cooling.  (This
-         // only matters for formulae, such as mIBU, that model post-boil isomerization.)
+         // The hops are only in the hot wort from when they are added until the end of the post-boil steps.  (This
+         // only matters for formulae, such as mIBU, that model post-boil isomerization.  Other formulae give no IBUs
+         // for post-boil additions.)  If we don't know how long that is, we leave it unset, and it's up to each IBU
+         // formula what to assume.
+         parms.postBoilAddition      = true;
          parms.postBoilDelay_minutes = timing.afterFlameout_mins;
-         parms.coolTime_minutes = timing.postBoilRemaining_mins.value_or(
-            std::max(0.0, coolTime_mins - timing.afterFlameout_mins)
-         );
+         parms.coolTime_minutes      = timing.postBoilRemaining_mins;
       }
-      ibus = IbuMethods::getIbus(parms);
+      ibus = IbuMethods::getIbuBreakdown(parms);
    } else if (hopAddition.stage() == RecipeAddition::Stage::Mash && mashHopAdjust > 0.0) {
-      ibus = mashHopAdjust * IbuMethods::getIbus(parms);
+      ibus = IbuMethods::getIbuBreakdown(parms);
+      ibus.boil_ibus     *= mashHopAdjust;
+      ibus.postBoil_ibus *= mashHopAdjust;
    } else {
       qDebug() << Q_FUNC_INFO << "No IBUs from " << hopAddition;
    }
 
-   qDebug() << Q_FUNC_INFO << "IBUs before adjustment for form =" << ibus;
+   qDebug() <<
+      Q_FUNC_INFO << "IBUs before adjustment for form = " << ibus.boil_ibus << "(boil) +" << ibus.postBoil_ibus <<
+      "(post-boil)";
 
    // Adjust for hop form. Tinseth's table was created from whole cone data,
    // and it seems other formulae are optimized that way as well. So, the
@@ -3422,7 +3435,8 @@ double Recipe::ibuFromHopAddition(RecipeAdditionHop const & hopAddition) const {
    }
 
    // Adjust for hopAddition utilization.
-   ibus *= hopUtilization;
+   ibus.boil_ibus     *= hopUtilization;
+   ibus.postBoil_ibus *= hopUtilization;
 
    // Note which formula we used
    this->pimpl->m_ibuFormula = IbuMethods::formula;

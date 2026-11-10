@@ -37,8 +37,8 @@
 #include <QVersionNumber>
 
 #include "config.h"
+#include "calculations/IbuMethods.h"
 #include "database/ObjectStoreWrapper.h"
-#include "measurement/IbuMethods.h"
 #include "model/Boil.h"
 #include "model/Equipment.h"
 #include "model/Fermentable.h"

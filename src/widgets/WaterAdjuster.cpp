@@ -23,7 +23,6 @@
 #include <cmath>
 #include <limits>
 
-#include <calculations/Algorithms.h>
 #include <QButtonGroup>
 #include <QComboBox>
 #include <QFont>
@@ -34,11 +33,12 @@
 
 #include "MainWindow.h"
 #include "WaterAutoAdjuster.h"
+#include "calculations/ColorMethods.h"
+#include "calculations/Algorithms.h"
 #include "catalogs/FermentableCatalog.h"
 #include "catalogs/MiscCatalog.h"
 #include "database/ObjectStoreWrapper.h"
 #include "editors/WaterEditor.h"
-#include "measurement/ColorMethods.h"
 #include "measurement/PhysicalConstants.h"
 #include "measurement/Unit.h"
 #include "model/Fermentable.h"

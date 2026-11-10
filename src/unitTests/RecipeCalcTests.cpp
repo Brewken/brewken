@@ -18,7 +18,9 @@
 #include "unitTests/RecipeCalcTests.h"
 
 #include <cmath>
+#include <numbers> // For std::numbers::pi
 #include <optional>
+#include <vector>
 
 #include <QDebug>
 #include <QString>
@@ -26,6 +28,7 @@
 #include <QtTest/QtTest>
 
 #include "database/ObjectStoreWrapper.h"
+#include "calculations/IbuMethods.h"
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
 #include "model/Boil.h"
@@ -436,6 +439,230 @@ void RecipeCalcTests::testBoilStepsWithoutTemperatures() {
    auto const timing = recipe->boilAdditionTiming(*addition);
    QVERIFY(!timing.postBoil);
    QVERIFY2(fuzzyComp(timing.boilProper_mins, 60.0, 0.001), "Addition in step without temperatures not in boil");
+
+   return;
+}
+
+void RecipeCalcTests::testPostBoilIbus() {
+   qDebug() << Q_FUNC_INFO << "Starting";
+
+   //
+   // Make sure we put the IBU formula back to what TestEnvironment set, however we exit this function
+   //
+   struct RestoreIbuFormula {
+      IbuMethods::IbuFormula const saved = IbuMethods::formula;
+      ~RestoreIbuFormula() { IbuMethods::formula = saved; }
+   } restoreIbuFormula;
+
+   //
+   // Part 1: The IBU formulae themselves.
+   //
+   // The inputs here are those of John-Paul Hosom's worked example at
+   // https://alchemyoverlord.wordpress.com/2015/05/12/a-modified-ibu-measurement-especially-for-late-hopping/: 2 oz
+   // (56.7 g) of 10% AA hops in 5.25 gallons (19.87 litres) of wort at 1.060.  For an addition 6 minutes before flameout
+   // he gives a boil utilization of 0.0493 (14 IBU) and, with 10 minutes of natural cooling before forced cooling, a
+   // post-flameout utilization of 0.0431, giving 26 IBU in total.  He doesn't give the kettle dimensions, but a kettle
+   // with a 38 cm diameter, fully open, gives a matching result.
+   //
+   // Other expected values below come from a separate, straightforward, implementation of the equations in that post
+   // (with integration steps of 0.0001 minutes).
+   //
+   double const mgPerLiter = 0.10 * 56.7 * 1000.0 / 19.87;
+   auto makeParms = [](double const timeInBoil_minutes) {
+      return IbuMethods::IbuCalculationParms{
+         .AArating                  = 0.10,
+         .hops_grams                = 56.7,
+         .postBoilVolume_liters     = 19.87,
+         .wortGravity_sg            = 1.060,
+         .timeInBoil_minutes        = timeInBoil_minutes,
+         .kettleInternalDiameter_cm = 38.0,
+         .kettleOpeningDiameter_cm  = 38.0,
+      };
+   };
+
+   IbuMethods::formula = IbuMethods::IbuFormula::Tinseth;
+   auto parms = makeParms(6.0);
+   double const tinseth6 = IbuMethods::getIbus(parms);
+   QVERIFY2(fuzzyComp(tinseth6 / mgPerLiter, 0.0493, 0.0005), "Tinseth utilization does not match Hosom's example");
+   parms.coolTime_minutes = 10.0;
+   QVERIFY2(fuzzyComp(IbuMethods::getIbus(parms), tinseth6, 0.0001), "Tinseth should ignore cool time");
+
+   IbuMethods::formula = IbuMethods::IbuFormula::mIbu;
+   // With no cool time, mIBU assumes immediate forced cooling, and so gives the same results as Tinseth
+   parms.coolTime_minutes = std::nullopt;
+   auto breakdown = IbuMethods::getIbuBreakdown(parms);
+   QVERIFY2(fuzzyComp(breakdown.boil_ibus    , tinseth6, 0.0001), "mIBU boil IBUs differ from Tinseth");
+   QVERIFY2(fuzzyComp(breakdown.postBoil_ibus, 0.0     , 0.0001), "mIBU with unknown cool time gave post-boil IBUs");
+   parms.coolTime_minutes = 0.0;
+   QVERIFY2(fuzzyComp(IbuMethods::getIbus(parms), tinseth6, 0.0001), "mIBU with zero cool time differs from Tinseth");
+   // Hosom's example: 10 minutes of natural cooling
+   parms.coolTime_minutes = 10.0;
+   breakdown = IbuMethods::getIbuBreakdown(parms);
+   qDebug() << Q_FUNC_INFO << "Hosom example: boil" << breakdown.boil_ibus << ", post-boil" << breakdown.postBoil_ibus;
+   QVERIFY2(fuzzyComp(breakdown.boil_ibus    , tinseth6, 0.0001), "mIBU boil IBUs differ from Tinseth");
+   QVERIFY2(fuzzyComp(breakdown.postBoil_ibus / mgPerLiter, 0.0431, 0.0005), "Post-boil utilization not as Hosom");
+   QVERIFY2(fuzzyComp(breakdown.postBoil_ibus, 12.355, 0.02), "Post-boil IBUs not as reference");
+   QVERIFY2(fuzzyComp(breakdown.total(), 26.0, 0.6), "Total IBUs not as Hosom");
+
+   //
+   // Hops added at flameout (ie a post-boil addition with no delay), with 30 minutes before forced cooling and a
+   // partly-covered kettle.  Here, Hosom's 5-minute rule (relative utilization of 1.0 for the first 5 minutes after
+   // the addition) applies.
+   //
+   parms = makeParms(0.0);
+   parms.postBoilAddition         = true;
+   parms.coolTime_minutes         = 30.0;
+   parms.kettleOpeningDiameter_cm = 25.0;
+   breakdown = IbuMethods::getIbuBreakdown(parms);
+   QVERIFY2(fuzzyComp(breakdown.boil_ibus    ,  0.0  , 0.0001), "Post-boil addition gave boil IBUs");
+   QVERIFY2(fuzzyComp(breakdown.postBoil_ibus, 27.742, 0.05  ), "Flameout addition IBUs not as reference");
+   // Formulae that don't model post-boil isomerization give nothing for post-boil additions.  (In particular, Rager and
+   // Noonan would otherwise give IBUs as for a 0-minute boil addition.)
+   for (auto const formula : {IbuMethods::IbuFormula::Tinseth,
+                              IbuMethods::IbuFormula::Rager  ,
+                              IbuMethods::IbuFormula::Noonan }) {
+      IbuMethods::formula = formula;
+      QVERIFY(!IbuMethods::modelsPostBoilIsomerization(formula));
+      QVERIFY2(fuzzyComp(IbuMethods::getIbus(parms), 0.0, 0.0001), "Post-boil addition gave IBUs");
+   }
+   QVERIFY(IbuMethods::modelsPostBoilIsomerization(IbuMethods::IbuFormula::mIbu));
+   IbuMethods::formula = IbuMethods::IbuFormula::mIbu;
+
+   // Hop stand 10 minutes after flameout, for 20 minutes, with natural cooling
+   parms = makeParms(0.0);
+   parms.postBoilAddition      = true;
+   parms.postBoilDelay_minutes = 10.0;
+   parms.coolTime_minutes      = 20.0;
+   QVERIFY2(fuzzyComp(IbuMethods::getIbus(parms), 17.644, 0.05), "Natural cooling hop stand IBUs not as reference");
+
+   //
+   // Same hop stand, but with the wort held at 80°C.  Here we can work out the answer exactly: the first 5 minutes are
+   // at the boiling rate (per Hosom's 5-minute rule) and the rest at the relative rate for 80°C.
+   //
+   parms.postBoilTemperatureProfile = {{.duration_minutes = 60.0, .startTemp_c = 80.0, .endTemp_c = 80.0, .naturalCooling = false}};
+   auto tinsethUtilization = [](double const time_minutes) {
+      return 1.65 * std::pow(0.000125, 0.060) * (1.0 - std::exp(-0.04 * time_minutes)) / 4.15;
+   };
+   double const expectedHold80 = mgPerLiter * (
+      (tinsethUtilization(5.0) - tinsethUtilization(0.0)) +
+      IbuMethods::relativeUtilization(80.0) * (tinsethUtilization(20.0) - tinsethUtilization(5.0))
+   );
+   QVERIFY2(fuzzyComp(expectedHold80, 17.591, 0.01), "Test's own calculation is wrong");
+   QVERIFY2(fuzzyComp(IbuMethods::getIbus(parms), expectedHold80, 0.01), "Hop stand at 80°C gave wrong IBUs");
+   // Holding at a lower temperature gives fewer IBUs
+   parms.postBoilTemperatureProfile = {{.duration_minutes = 60.0, .startTemp_c = 70.0, .endTemp_c = 70.0, .naturalCooling = false}};
+   QVERIFY2(IbuMethods::getIbus(parms) < expectedHold80, "Hop stand at 70°C gave more IBUs than at 80°C");
+
+   //
+   // Temperature profile
+   //
+   double const b = IbuMethods::naturalCoolingRate(19.87, 38.0, 38.0);
+   QVERIFY(fuzzyComp(b, 0.0002925 * (std::numbers::pi * 19.0 * 19.0) / 19.87 + 0.00538, 0.000001));
+   // Empty profile is Hosom's natural cooling curve
+   QVERIFY(fuzzyComp(IbuMethods::postBoilWortTemperature_c(15.0, {}, b),
+                     53.70 * std::exp(-b * 15.0) + 319.55 - 273.15,
+                     0.001));
+   // Linear segment
+   std::vector<IbuMethods::PostBoilTemperatureSegment> const chillProfile{
+      {.duration_minutes = 20.0, .startTemp_c = 80.0, .endTemp_c = 20.0, .naturalCooling = false}
+   };
+   QVERIFY(fuzzyComp(IbuMethods::postBoilWortTemperature_c(10.0, chillProfile, b), 50.0, 0.001));
+   // Natural cooling segment: follows Hosom's curve, but doesn't go below the step's end temperature
+   std::vector<IbuMethods::PostBoilTemperatureSegment> const coolTo90{
+      {.duration_minutes = 30.0, .startTemp_c = 100.0, .endTemp_c = 90.0, .naturalCooling = true}
+   };
+   QVERIFY(fuzzyComp(IbuMethods::postBoilWortTemperature_c( 1.0, coolTo90, b),
+                     IbuMethods::postBoilWortTemperature_c( 1.0, {}      , b), 0.001));
+   QVERIFY(fuzzyComp(IbuMethods::postBoilWortTemperature_c(25.0, coolTo90, b), 90.0, 0.001));
+   // After the end of the profile, natural cooling from wherever we got to
+   std::vector<IbuMethods::PostBoilTemperatureSegment> const hold80{
+      {.duration_minutes = 10.0, .startTemp_c = 80.0, .endTemp_c = 80.0, .naturalCooling = false}
+   };
+   QVERIFY(fuzzyComp(IbuMethods::postBoilWortTemperature_c(15.0, hold80, b),
+                     46.40 + (80.0 - 46.40) * std::exp(-b * 5.0),
+                     0.001));
+
+   //
+   // Part 2: Recipe-level calculations.
+   //
+   // Boil profile: pre-boil, 60 minute boil proper, 10 minutes of natural cooling, 20 minute hop stand at 80°C, 15
+   // minutes of forced cooling down to 20°C.
+   //
+   auto recipe = std::make_shared<Recipe>("Post-boil IBU Test");
+   ObjectStoreWrapper::insert(recipe);
+   recipe->setBatchSize_l(20.0);
+   recipe->setEquipment(this->pimpl->m_equipFiveGalNoLoss);
+   auto boil = recipe->nonOptBoil();
+   boil->setPreBoilSize_l(24.0);
+   boil->setBoilTime_mins(60.0); // This also ensures the standard profile
+   QCOMPARE(boil->boilSteps().size(), 3);
+   boil->boilSteps()[2]->setStepTime_mins(10.0);
+   auto hopStand = std::make_shared<BoilStep>("Hop stand");
+   hopStand->setStartTemp_c(80.0);
+   hopStand->setEndTemp_c(80.0);
+   hopStand->setStepTime_mins(20.0);
+   boil->add(hopStand);
+   auto chill = std::make_shared<BoilStep>("Chill");
+   chill->setStartTemp_c(80.0);
+   chill->setEndTemp_c(20.0);
+   chill->setStepTime_mins(15.0);
+   boil->add(chill);
+   QCOMPARE(boil->boilSteps().size(), 5);
+
+   auto const profile = boil->postBoilProfile();
+   QCOMPARE(profile.segments.size(), static_cast<size_t>(3));
+   QVERIFY(profile.duration_mins && fuzzyComp(*profile.duration_mins, 45.0, 0.001));
+   QVERIFY2( profile.segments[0].naturalCooling, "Step from boil to below boil not treated as natural cooling");
+   QVERIFY2(!profile.segments[1].naturalCooling, "Hop stand treated as natural cooling");
+   QVERIFY2(!profile.segments[2].naturalCooling, "Chill step treated as natural cooling");
+
+   auto makeAddition = [&](QString const & name, int const step, std::optional<double> const addAtTime_mins) {
+      auto addition = std::make_shared<RecipeAdditionHop>(name);
+      addition->setHop(this->pimpl->m_cascade_4pct.get());
+      addition->setStage(RecipeAddition::Stage::Boil);
+      addition->setStep(step);
+      addition->setAddAtTime_mins(addAtTime_mins);
+      addition->setQuantity(0.020);
+      addition->setMeasure(Measurement::PhysicalQuantity::Mass);
+      return recipe->addAddition(addition);
+   };
+   auto const boil60        = makeAddition("Boil 60"        , 2, 60.0        );
+   auto const hopStandStart = makeAddition("Hop stand start", 4, std::nullopt);
+   auto const chillStart    = makeAddition("Chill start"    , 5, std::nullopt);
+
+   auto const hopStandTiming = recipe->boilAdditionTiming(*hopStandStart);
+   QVERIFY(hopStandTiming.postBoil);
+   QVERIFY(fuzzyComp(hopStandTiming.afterFlameout_mins, 10.0, 0.001));
+   QVERIFY(hopStandTiming.postBoilRemaining_mins && fuzzyComp(*hopStandTiming.postBoilRemaining_mins, 35.0, 0.001));
+
+   IbuMethods::formula = IbuMethods::IbuFormula::Tinseth;
+   double const tinsethBoil60 = recipe->ibuFromHopAddition(*boil60);
+   QVERIFY(tinsethBoil60 > 1.0);
+   QVERIFY2(fuzzyComp(recipe->ibuFromHopAddition(*hopStandStart), 0.0, 0.0001), "Tinseth gave IBUs for hop stand");
+
+   IbuMethods::formula = IbuMethods::IbuFormula::mIbu;
+   auto const boil60Breakdown = recipe->ibuBreakdownFromHopAddition(*boil60);
+   QVERIFY2(fuzzyComp(boil60Breakdown.boil_ibus, tinsethBoil60, 0.0001), "mIBU boil IBUs differ from Tinseth");
+   QVERIFY2(boil60Breakdown.postBoil_ibus > 0.0, "No post-boil IBUs for boil addition");
+   QVERIFY(fuzzyComp(recipe->ibuFromHopAddition(*boil60), boil60Breakdown.total(), 0.0001));
+
+   auto const hopStandBreakdown = recipe->ibuBreakdownFromHopAddition(*hopStandStart);
+   auto const chillBreakdown    = recipe->ibuBreakdownFromHopAddition(*chillStart   );
+   qDebug() <<
+      Q_FUNC_INFO << "mIBU: boil60" << boil60Breakdown.boil_ibus << "+" << boil60Breakdown.postBoil_ibus <<
+      ", hop stand" << hopStandBreakdown.postBoil_ibus << ", chill" << chillBreakdown.postBoil_ibus;
+   QVERIFY2(fuzzyComp(hopStandBreakdown.boil_ibus, 0.0, 0.0001), "Hop stand addition gave boil IBUs");
+   QVERIFY2(hopStandBreakdown.postBoil_ibus > 1.0, "Hop stand addition gave (almost) no IBUs");
+   QVERIFY2(chillBreakdown.postBoil_ibus < hopStandBreakdown.postBoil_ibus, "Addition at chill gave more IBUs than hop stand");
+
+   //
+   // If we don't know how long the post-boil steps are, mIBU falls back to assuming immediate forced cooling, ie it
+   // gives the same results as Tinseth.
+   //
+   boil->boilSteps()[2]->setStepTime_mins(std::nullopt);
+   QVERIFY(!boil->postBoilProfile().duration_mins);
+   QVERIFY2(fuzzyComp(recipe->ibuFromHopAddition(*boil60), tinsethBoil60, 0.0001),
+            "mIBU with unknown cool time differs from Tinseth");
 
    return;
 }
