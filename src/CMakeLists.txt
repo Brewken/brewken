@@ -43,6 +43,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/AboutDialog.cpp
     ${repoDir}/src/Application.cpp
     ${repoDir}/src/BeerColorWidget.cpp
+    ${repoDir}/src/BoilTimer.cpp
     ${repoDir}/src/BrewDayFormatter.cpp
     ${repoDir}/src/BrewDayScrollWidget.cpp
     ${repoDir}/src/BrewLogWidget.cpp
@@ -73,7 +74,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/TimerListDialog.cpp
     ${repoDir}/src/TimerWidget.cpp
     ${repoDir}/src/WaterAutoAdjuster.cpp
-    ${repoDir}/src/BoilTimer.cpp
     ${repoDir}/src/buttons/BoilButton.cpp
     ${repoDir}/src/buttons/EquipmentButton.cpp
     ${repoDir}/src/buttons/FermentationButton.cpp
@@ -81,6 +81,8 @@ set(filesToCompile_cpp
     ${repoDir}/src/buttons/RecipeAttributeButton.cpp
     ${repoDir}/src/buttons/StyleButton.cpp
     ${repoDir}/src/calculations/Algorithms.cpp
+    ${repoDir}/src/calculations/ColorMethods.cpp
+    ${repoDir}/src/calculations/IbuMethods.cpp
     ${repoDir}/src/calculations/MashFermentability.cpp
     ${repoDir}/src/catalogs/BoilCatalog.cpp
     ${repoDir}/src/catalogs/EquipmentCatalog.cpp
@@ -118,9 +120,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/editors/WaterEditor.cpp
     ${repoDir}/src/editors/YeastEditor.cpp
     ${repoDir}/src/measurement/Amount.cpp
-    ${repoDir}/src/measurement/ColorMethods.cpp
     ${repoDir}/src/measurement/CurrencyAmount.cpp
-    ${repoDir}/src/measurement/IbuMethods.cpp
     ${repoDir}/src/measurement/Measurement.cpp
     ${repoDir}/src/measurement/NonPhysicalQuantity.cpp
     ${repoDir}/src/measurement/PhysicalQuantity.cpp
@@ -207,8 +207,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/qtModels/tableModels/WaterTableModel.cpp
     ${repoDir}/src/qtModels/tableModels/YeastTableModel.cpp
     ${repoDir}/src/serialization/ImportExport.cpp
-    ${repoDir}/src/serialization/json/beerJson/BeerJson.cpp
-    ${repoDir}/src/serialization/json/dotBeer/DotBeer.cpp
     ${repoDir}/src/serialization/json/JsonCoding.cpp
     ${repoDir}/src/serialization/json/JsonMeasureableUnitsMapping.cpp
     ${repoDir}/src/serialization/json/JsonRecord.cpp
@@ -216,6 +214,8 @@ set(filesToCompile_cpp
     ${repoDir}/src/serialization/json/JsonSchema.cpp
     ${repoDir}/src/serialization/json/JsonUtils.cpp
     ${repoDir}/src/serialization/json/JsonXPath.cpp
+    ${repoDir}/src/serialization/json/beerJson/BeerJson.cpp
+    ${repoDir}/src/serialization/json/dotBeer/DotBeer.cpp
     ${repoDir}/src/serialization/xml/BeerXml.cpp
     ${repoDir}/src/serialization/xml/XmlCoding.cpp
     ${repoDir}/src/serialization/xml/XmlDocument.cpp
@@ -228,7 +228,6 @@ set(filesToCompile_cpp
     ${repoDir}/src/serialization/xml/XmlSchema.cpp
     ${repoDir}/src/tools/AlcoholTool.cpp
     ${repoDir}/src/tools/AncestorDialog.cpp
-    ${repoDir}/src/tools/UnitConversionTool.cpp
     ${repoDir}/src/tools/HydrometerTool.cpp
     ${repoDir}/src/tools/OgCorrectionTool.cpp
     ${repoDir}/src/tools/PitchDialog.cpp
@@ -237,6 +236,7 @@ set(filesToCompile_cpp
     ${repoDir}/src/tools/ScaleRecipeTool.cpp
     ${repoDir}/src/tools/StrikeWaterDialog.cpp
     ${repoDir}/src/tools/TimerMainDialog.cpp
+    ${repoDir}/src/tools/UnitConversionTool.cpp
     ${repoDir}/src/trees/NamedEntityTreeModel.cpp
     ${repoDir}/src/trees/NamedEntityTreeSortFilterProxyModel.cpp
     ${repoDir}/src/trees/NamedEntityTreeView.cpp
@@ -277,8 +277,8 @@ set(filesToCompile_cpp
     ${repoDir}/src/widgets/CommonContextMenus.cpp
     ${repoDir}/src/widgets/EnumeratedItemsWidget.cpp
     ${repoDir}/src/widgets/InfoButton.cpp
-    ${repoDir}/src/widgets/LockAndShareBar.cpp
     ${repoDir}/src/widgets/InfoText.cpp
+    ${repoDir}/src/widgets/LockAndShareBar.cpp
     ${repoDir}/src/widgets/SelectionControl.cpp
     ${repoDir}/src/widgets/SmartAmountSettings.cpp
     ${repoDir}/src/widgets/SmartAmounts.cpp
@@ -287,8 +287,8 @@ set(filesToCompile_cpp
     ${repoDir}/src/widgets/SmartLabel.cpp
     ${repoDir}/src/widgets/SmartLineEdit.cpp
     ${repoDir}/src/widgets/SmartValueDisplay.cpp
-    ${repoDir}/src/widgets/StockManagerIngredient.cpp
     ${repoDir}/src/widgets/StockManager.cpp
+    ${repoDir}/src/widgets/StockManagerIngredient.cpp
     ${repoDir}/src/widgets/ToggleSwitch.cpp
     ${repoDir}/src/widgets/UnitAndScalePopUpMenu.cpp
     ${repoDir}/src/widgets/WaterAdjuster.cpp

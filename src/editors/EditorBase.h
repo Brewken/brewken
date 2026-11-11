@@ -174,7 +174,7 @@ template <EditorBaseOptions eb> concept CONCEPT_FIX_UP HasNumRecipesUsing = has_
  *          - \c void \c save() public slot, which should call \c EditorBase::doSave
  *          - \c void \c clearAndClose() public slot, which should call \c EditorBase::doClearAndClose
  *          - \c void \c changed(\c QMetaProperty, \c QVariant) public slot, which should call \c EditorBase::doChanged
- *          - \c void \c clickedNew() public slot, which should call \c EditorBase::newEditItem
+ *          - \c void \c clickedNew() public slot, which should call \c EditorBase::newEditItemFromEditor
  *
  *        The code for the definition of these slot functions (which is "the same" for all editors) can be inserted in
  *        the implementation file using the EDITOR_COMMON_CODE macro.  Eg, in HopEditor, we need:
@@ -317,6 +317,15 @@ public:
       this->derived().connect(this->derived().pushButton_new   , &QAbstractButton::clicked, &this->derived(), &Derived::clickedNew   );
       this->derived().connect(this->derived().pushButton_save  , &QAbstractButton::clicked, &this->derived(), &Derived::saveAndClose );
       this->derived().connect(this->derived().pushButton_cancel, &QAbstractButton::clicked, &this->derived(), &Derived::clearAndClose);
+      //
+      // For editors with a recipe, pressing Escape or closing the window (both of which end up in QDialog::reject())
+      // needs to do the same as clicking Cancel.  Otherwise, a new item that doEditForRecipe created for the recipe
+      // (which is already in the database, so that the user can add steps to it) would be left behind, not used by any
+      // recipe, if the user did not save it.
+      //
+      if constexpr (HasRecipe<editorBaseOptions>) {
+         this->derived().connect(&this->derived(), &QDialog::rejected, &this->derived(), &Derived::clearAndClose);
+      }
       //
       // Editors for things that can be shared between recipes and locked have a LockAndShareBar
       //
@@ -619,12 +628,49 @@ public:
       return;
    }
 
+   //! \brief No-op version
+   bool replaceNewItemForRecipeIfNeeded([[maybe_unused]] std::shared_ptr<NE> ne)
+   requires (!HasRecipe<editorBaseOptions>) {
+      return false;
+   }
+
+   /**
+    * \brief If the user clicks "New" while editing the new item that \c doEditForRecipe created for the current Recipe
+    *        (eg because they clicked "Edit this mash" on a recipe without a mash), then they want a new item for that
+    *        recipe, just with the name they are about to give it.  So we replace the item we created with the new one,
+    *        which will then similarly be added to the recipe when the user clicks Save (or discarded if they click
+    *        Cancel).
+    *
+    *        Otherwise, "New" makes an item that is not used by any recipe (as it always has done), because, if the
+    *        recipe already has a mash (say), the user might well want a new mash for something else.  (If they want a
+    *        different mash for this recipe, they can choose it on the recipe tab or, if it's shared, use "Make a copy"
+    *        on the editor.)
+    *
+    * \return \c true if we replaced the new item for the recipe (in which case the caller has nothing further to do)
+    */
+   bool replaceNewItemForRecipeIfNeeded(std::shared_ptr<NE> ne) requires HasRecipe<editorBaseOptions> {
+      if (!this->m_newItemForRecipe || this->m_newItemForRecipe != this->m_editItem) {
+         return false;
+      }
+      // As in doEditForRecipe, we need to store the new item straight away, so that the user can add steps to it
+      ObjectStoreWrapper::insert(ne);
+      qDebug() <<
+         Q_FUNC_INFO << "Replacing unsaved new" << NE::staticMetaObject.className() << "#" <<
+         this->m_newItemForRecipe->key() << "with #" << ne->key();
+      // As in doEditForRecipe, we must call setEditItem (which discards the item we are replacing) _before_ setting
+      // m_newItemForRecipe
+      this->setEditItemAndShow(ne);
+      this->m_newItemForRecipe = ne;
+      this->refreshLockAndShare();
+      return true;
+   }
+
    /**
     * \brief Create a new Hop, Fermentable, etc.
     *
     *        This is also called from \c TreeView::newNamedEntity.
     */
-   void newEditItem(Folder<NE> const * folder = nullptr) requires (HasFolder<NE>) {
+   void newEditItem(Folder<NE> const * folder = nullptr, bool const fromEditor = false) requires (HasFolder<NE>) {
       // TBD Do we need to force a name to be set before we show the editor?
       QString const name = this->promptForName();
       if (name.isEmpty()) {
@@ -633,17 +679,37 @@ public:
 
       auto ne = std::make_shared<NE>(name);
       this->setFolder(ne, folder);
+      if (fromEditor && this->replaceNewItemForRecipeIfNeeded(ne)) {
+         return;
+      }
       this->setEditItemAndShow(ne);
       return;
    }
 
-   void newEditItem() requires (HasNoFolder<NE>) {
+   void newEditItem(bool const fromEditor = false) requires (HasNoFolder<NE>) {
       QString const name = this->promptForName();
       if (name.isEmpty()) {
          return;
       }
       auto ne = std::make_shared<NE>(name);
+      if (fromEditor && this->replaceNewItemForRecipeIfNeeded(ne)) {
+         return;
+      }
       this->setEditItemAndShow(ne);
+      return;
+   }
+
+   /**
+    * \brief Called when the user clicks the "New" button on the editor itself (as opposed to, eg, "New" on a tree).
+    *        Only in this case do we consider replacing the new item for the current recipe -- see
+    *        \c replaceNewItemForRecipeIfNeeded.
+    */
+   void newEditItemFromEditor() {
+      if constexpr (HasFolder<NE>) {
+         this->newEditItem(nullptr, true);
+      } else {
+         this->newEditItem(true);
+      }
       return;
    }
 
@@ -1057,7 +1123,7 @@ protected:
    void NeName##Editor::saveAndClose() { this->doSaveAndClose(); return; }                                                \
    void NeName##Editor::clearAndClose() { this->doClearAndClose(); return; }                                              \
    void NeName##Editor::changed(QMetaProperty prop, QVariant val) { this->doChanged(this->sender(), prop, val); return; } \
-   void NeName##Editor::clickedNew() { this->newEditItem(); return; }                                                     \
+   void NeName##Editor::clickedNew() { this->newEditItemFromEditor(); return; }                                           \
    void NeName##Editor::inputFieldModified() { this->doInputFieldModified(this->sender()); return; };                     \
    void NeName##Editor::showEditor() { this->doShowEditor(); }                                                            \
    void NeName##Editor::closeEditor() { this->doCloseEditor(); }                                                          \

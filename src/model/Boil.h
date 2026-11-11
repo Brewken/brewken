@@ -127,7 +127,6 @@ public:
     */
    //! @{
    static constexpr double default_boilTime_mins = 60.0; // See also PersistentSettings::Names::defaultBoilTime_mins
-   static constexpr double default_coolTime_mins = 30.0;
    static constexpr double default_preBoilSize_l = 23.47; // 6.2 gallons See also PersistentSettings::Names::defaultPreBoilSize_l
    //! @}
 
@@ -225,6 +224,28 @@ public:
     *        proper" as \c Boil::boilTime_mins.)
     */
    std::pair<int, int> boilProperSteps() const;
+
+   /**
+    * \brief The wort temperature profile after flameout, as described by the steps of the Boil after the boil proper.
+    *        Used for IBU calculations that model post-boil isomerization (eg mIBU).
+    */
+   struct PostBoilProfile {
+      /**
+       * \brief One segment per post-boil step, up to (but not including) the first step whose length is not set.
+       *        Per dotBeer, an unset boil step temperature is treated as boiling.  A step that starts at boiling and
+       *        ends below it is treated as natural cooling (see \c IbuMethods::PostBoilTemperatureSegment).
+       */
+      std::vector<IbuMethods::PostBoilTemperatureSegment> segments = {};
+
+      /**
+       * \brief Total time from flameout to the end of the post-boil steps, or \c std::nullopt if not known -- ie if
+       *        there are no post-boil steps (or no Boil) or if any post-boil step has no length set.
+       */
+      std::optional<double> duration_mins = std::nullopt;
+   };
+
+   //! \brief See comment on \c PostBoilProfile
+   PostBoilProfile postBoilProfile() const;
 
 public slots:
    void acceptSetMemberChange(QMetaProperty, QVariant);

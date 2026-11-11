@@ -70,7 +70,6 @@
 #include <QWidget>
 
 #include "AboutDialog.h"
-#include "calculations/Algorithms.h"
 #include "Application.h"
 #include "BrewLogWidget.h"
 #include "BtDatePopup.h"
@@ -78,7 +77,6 @@
 #include "BtTabWidget.h"
 #include "HelpDialog.h"
 #include "Html.h"
-#include "model/RecipeUtils.h"
 #include "OptionDialog.h"
 #include "PersistentSettings.h"
 #include "PrintAndPreviewDialog.h"
@@ -86,6 +84,8 @@
 #include "RecipeFormatter.h"
 #include "StockFormatter.h"
 #include "StockWindow.h"
+#include "calculations/Algorithms.h"
+#include "calculations/ColorMethods.h"
 #include "catalogs/BoilCatalog.h"
 #include "catalogs/EquipmentCatalog.h"
 #include "catalogs/FermentableCatalog.h"
@@ -112,9 +112,9 @@
 #include "editors/StyleEditor.h"
 #include "editors/WaterEditor.h"
 #include "editors/YeastEditor.h"
-#include "measurement/ColorMethods.h"
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
+#include "model/RecipeUtils.h"
 #include "model/Boil.h"
 #include "model/BrewLog.h"
 #include "model/Equipment.h"
@@ -2492,6 +2492,15 @@ void MainWindow::editRecipeFermentation() {
 }
 
 void MainWindow::closeEvent(QCloseEvent* /*event*/) {
+   //
+   // If the user quits with the mash, boil or fermentation editor still open, treat it as Cancel.  In particular, if the
+   // editor is showing a new item that it created for the current recipe (see EditorBase::doEditForRecipe), and the
+   // user has not saved it, this means it gets deleted rather than being left in the database, unused by any recipe.
+   //
+   if (this->pimpl->m_mashEditor        ->isVisible()) { this->pimpl->m_mashEditor        ->clearAndClose(); }
+   if (this->pimpl->m_boilEditor        ->isVisible()) { this->pimpl->m_boilEditor        ->clearAndClose(); }
+   if (this->pimpl->m_fermentationEditor->isVisible()) { this->pimpl->m_fermentationEditor->clearAndClose(); }
+
    Application::saveSystemOptions();
    PersistentSettings::insert_ck(PersistentSettings::Names::geometry, saveGeometry());
    PersistentSettings::insert_ck(PersistentSettings::Names::windowState, saveState());
