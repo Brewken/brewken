@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * model/BoilStep.h is part of Brewken, and is copyright the following authors 2023-2025:
+ * model/BoilStep.h is part of Brewken, and is copyright the following authors 2023-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -19,11 +19,11 @@
 
 #include <optional>
 
-#include "model/Boil.h"
 #include "model/StepBase.h"
 #include "model/StepExtended.h"
 #include "utils/EnumStringMapping.h"
 
+class Boil;
 class BoilStepEditor;
 class BoilStepItemDelegate;
 class BoilStepTableModel;
