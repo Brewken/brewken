@@ -34,7 +34,7 @@
 
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
-#include "model/StockPurchase.h"
+#include "model/StockPurchaseMisc.h"
 #include "model/Mash.h"
 #include "model/Recipe.h"
 
@@ -71,8 +71,7 @@ RecipeAdditionMiscTableModel::RecipeAdditionMiscTableModel(QTableView * parent, 
 
    QHeaderView * headerView = m_parentTableWidget->horizontalHeader();
    connect(headerView, &QWidget::customContextMenuRequested, this, &RecipeAdditionMiscTableModel::contextMenu);
-   connect(&ObjectStoreTyped<StockPurchaseMisc>::getInstance(), &ObjectStoreTyped<StockPurchaseMisc>::signalPropertyChanged, this,
-           &RecipeAdditionMiscTableModel::changedInventory);
+   this->connectInventorySignals<StockPurchaseMisc>();
    return;
 }
 
