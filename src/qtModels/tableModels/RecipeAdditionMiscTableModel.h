@@ -44,6 +44,7 @@ COLUMN_NAMES(RecipeAdditionMiscTableModel, Name          ,
                                            Type          ,
                                            Amount        ,
                                            Stage         ,
+                                           Step          ,
                                            Time          ,
                                            AmountType    ,
                                            TotalInventory,)

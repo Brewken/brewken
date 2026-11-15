@@ -34,7 +34,7 @@
 
 #include "measurement/Measurement.h"
 #include "measurement/Unit.h"
-#include "model/StockPurchase.h"
+#include "model/StockPurchaseFermentable.h"
 #include "model/Recipe.h"
 
 #ifdef MANUALLY_INCLUDE_MOC
@@ -59,7 +59,6 @@ COLUMN_INFOS(
                                                                                PropertyNames::Fermentable::color_srm            }, 1}),
    TABLE_MODEL_HEADER(RecipeAdditionFermentable, Amount        , PropertyNames::IngredientAmount::amount),
    TABLE_MODEL_HEADER(RecipeAdditionFermentable, Stage         , PropertyNames::RecipeAddition::stage         ),
-   // TODO: This is currently free text entry.  It should be constrained to the number of steps in Stage.
    TABLE_MODEL_HEADER(RecipeAdditionFermentable, Step          , PropertyNames::RecipeAddition::step          ),
    TABLE_MODEL_HEADER(RecipeAdditionFermentable, Time          , PropertyNames::RecipeAddition::addAtTime_mins),
    TABLE_MODEL_HEADER(RecipeAdditionFermentable, AmountType    , PropertyNames::IngredientAmount::amount, Fermentable::validMeasures),
@@ -77,8 +76,7 @@ RecipeAdditionFermentableTableModel::RecipeAdditionFermentableTableModel(QTableV
 
    QHeaderView * headerView = m_parentTableWidget->horizontalHeader();
    connect(headerView, &QWidget::customContextMenuRequested, this, &RecipeAdditionFermentableTableModel::contextMenu);
-   connect(&ObjectStoreTyped<StockPurchaseFermentable>::getInstance(), &ObjectStoreTyped<StockPurchaseFermentable>::signalPropertyChanged, this,
-           &RecipeAdditionFermentableTableModel::changedInventory);
+   this->connectInventorySignals<StockPurchaseFermentable>();
    return;
 }
 
