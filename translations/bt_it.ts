@@ -5400,6 +5400,10 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
         <source>Yes</source>
         <translation type="unfinished">Si</translation>
     </message>
+    <message>
+        <source>Mash Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MashStepTableModel</name>
@@ -5453,6 +5457,38 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>⚠ %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash tun at its fullest: %1 (%2% of its %3 capacity)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash tun at its fullest: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wort collected: %1 (%2% of the %3 needed)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wort collected: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change and pin mash step amount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change and pin mash step infusion temperature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pin mash step amount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pin mash step infusion temperature</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5959,7 +5995,7 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Boil Size</source>
+        <source>Change Pre-Boil Size</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8761,7 +8797,7 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Boil Size</source>
-        <translation>Misura bollitura</translation>
+        <translation type="vanished">Misura bollitura</translation>
     </message>
     <message>
         <source>Boil Time</source>
@@ -9031,6 +9067,10 @@ Il Volume finale del primo è %1.</translation>
         <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Pre-Boil Size</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeTableModel</name>
@@ -9067,6 +9107,92 @@ Il Volume finale del primo è %1.</translation>
     <message>
         <source>Volume</source>
         <translation type="obsolete">Volume</translation>
+    </message>
+</context>
+<context>
+    <name>RecipeWaterWidget</name>
+    <message>
+        <source>Minimum expected concentration is %1 ppm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In range for target profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maximum expected concentration is %1 ppm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PPM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Too low for target profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Too high for target profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto-Adjust undone.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>See the &lt;i&gt;Auto-Adjust Notes&lt;/i&gt; tab below for details (%n item(s)).</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>The value shown is the pH set on the recipe&apos;s mash.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turn off keeping water agents in sync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turn on keeping water agents in sync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto-adjust water agents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not adjust the water agents yet: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not adjust the water agents, so nothing has been changed: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>target profile &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>target mash pH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The water agents already match %1 as closely as they can.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water agents adjusted to match %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water agents adjusted for %1, but some things need checking.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Predicted mash pH is %1.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10181,84 +10307,6 @@ Il Volume finale del primo è %1.</translation>
     </message>
     <message>
         <source>Zinc (Zn²⁺)</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>WaterAdjuster</name>
-    <message>
-        <source>In range for target profile.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PPM</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Too low for target profile.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Too high for target profile.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Auto-Adjust undone.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Turn off keeping water agents in sync</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Turn on keeping water agents in sync</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Auto-adjust water agents</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Predicted mash pH is %1.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>target profile &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>target mash pH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The water agents already match %1 as closely as they can.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Water agents adjusted to match %1.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message numerus="yes">
-        <source>See the &lt;i&gt;Auto-Adjust Notes&lt;/i&gt; tab below for details (%n item(s)).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>The value shown is the pH set on the recipe&apos;s mash.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Could not adjust the water agents yet: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Could not adjust the water agents, so nothing has been changed: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Water agents adjusted for %1, but some things need checking.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13980,14 +14028,6 @@ Tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Mash thickness</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Volume of strike water per mass of grain (not counting any water that sits below the grain bed).  Most often around 2.5 to 3.2 L/kg (1.2 to 1.5 qt/lb).  Not used if there is no sparge, as then all the water goes in the mash.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Calculate</source>
         <translation type="obsolete">Calcola</translation>
     </message>
@@ -14021,6 +14061,18 @@ Tabs</source>
     </message>
     <message>
         <source>Keep mash in sync with recipe changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>How full the mash tun gets, and how much wort you can expect to collect from the mash, for the recipe using this mash.  Shown when the mash is used by exactly one recipe.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target mash thickness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Volume of strike water per mass of grain (not counting any water that sits below the grain bed) to aim for when adjusting the mash.  Most often around 2.5 to 3.2 L/kg (1.2 to 1.5 qt/lb).  Not used if there is no sparge, as then all the water goes in the mash, nor if the amount of strike water is pinned.  The Water:Grain column in the table of steps shows what the steps actually give.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -15391,6 +15443,133 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
 </context>
 <context>
+    <name>recipeWaterWidget</name>
+    <message>
+        <source>Base Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit base water profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>% RO in Mash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>% RO in Sparge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit target water profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If ticked, Auto-Adjust also works out how much acid to add to get this mash pH.  It uses the acid already in the recipe if there is one, otherwise lactic acid (or another acid if there&apos;s no lactic acid in the database).  If not ticked, acids are left alone.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjust acid for mash pH of</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target mash pH.  Most brewers aim for between 5.2 and 5.6, often 5.4.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Work out the amounts of brewing salts to add to get as close as possible to the target profile and, if ticked above, the amount of acid to get the target mash pH.  If the recipe already has salts, only those are used and their amounts are changed (so remove any you don&apos;t want, or add just the ones you do want, first).  Otherwise, commonly-used salts are added as needed.  Chalk and pickling lime are left alone.  You can undo the changes in one go.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto-Adjust</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically redo Auto-Adjust whenever something it depends on changes, eg the water profiles, the amount of water in the mash or the grain bill.  Changes you make to the amounts of salts or acid yourself will then be overwritten, so this is best used once you have chosen which salts to use.  Undoing an Auto-Adjust turns this off.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keep water agents in sync with recipe changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Actual</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ca</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mg</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Na</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cl</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>pH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water Agents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water Agents (Miscellaneous)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add a water agent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected water agent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Acid Malts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Acid Malts (Fermentables)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add an acid malt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected acid malt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto-Adjust Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Things to check after the last Auto-Adjust, eg ions that couldn&apos;t be brought close to the target, and why</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>refractoDialog</name>
     <message>
         <source>Refractometer Tools</source>
@@ -16145,130 +16324,6 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     <message>
         <source>Recipe</source>
         <translation type="obsolete">Ricetta</translation>
-    </message>
-    <message>
-        <source>Base Profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit base water profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Target Profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit target water profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>% RO in Mash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>% RO in Sparge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Actual</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ca</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>pH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Na</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Water Agents (Miscellaneous)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add a water agent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected water agent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Acid Malts (Fermentables)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add an acid malt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected acid malt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>If ticked, Auto-Adjust also works out how much acid to add to get this mash pH.  It uses the acid already in the recipe if there is one, otherwise lactic acid (or another acid if there&apos;s no lactic acid in the database).  If not ticked, acids are left alone.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Adjust acid for mash pH of</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Target mash pH.  Most brewers aim for between 5.2 and 5.6, often 5.4.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Work out the amounts of brewing salts to add to get as close as possible to the target profile and, if ticked above, the amount of acid to get the target mash pH.  If the recipe already has salts, only those are used and their amounts are changed (so remove any you don&apos;t want, or add just the ones you do want, first).  Otherwise, commonly-used salts are added as needed.  Chalk and pickling lime are left alone.  You can undo the changes in one go.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Auto-Adjust</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Automatically redo Auto-Adjust whenever something it depends on changes, eg the water profiles, the amount of water in the mash or the grain bill.  Changes you make to the amounts of salts or acid yourself will then be overwritten, so this is best used once you have chosen which salts to use.  Undoing an Auto-Adjust turns this off.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Keep water agents in sync with recipe changes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Auto-Adjust Notes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Things to check after the last Auto-Adjust, eg ions that couldn&apos;t be brought close to the target, and why</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Water Agents</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Acid Malts</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
