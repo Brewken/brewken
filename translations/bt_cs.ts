@@ -10038,15 +10038,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
 <context>
     <name>WaterAdjuster</name>
     <message>
-        <source>Minimum expected concentration is %1 ppm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>In range for target profile.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Maximum expected concentration is %1 ppm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

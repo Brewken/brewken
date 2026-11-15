@@ -10133,7 +10133,7 @@ The final volume in the primary is %1.</source>
     <name>WaterAdjuster</name>
     <message>
         <source>Minimum expected concentration is %1 ppm</source>
-        <translation type="unfinished">Minimum forventet koncentration er %1 ppm</translation>
+        <translation type="obsolete">Minimum forventet koncentration er %1 ppm</translation>
     </message>
     <message>
         <source>In range for target profile.</source>
@@ -10141,7 +10141,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Maximum expected concentration is %1 ppm</source>
-        <translation type="unfinished">Maksimum forventet koncentration er %1 ppm</translation>
+        <translation type="obsolete">Maksimum forventet koncentration er %1 ppm</translation>
     </message>
     <message>
         <source>PPM</source>

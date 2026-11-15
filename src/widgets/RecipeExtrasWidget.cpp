@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * RecipeExtrasWidget.cpp is part of Brewken, and is copyright the following authors 2009-2026:
+ * widgets/RecipeExtrasWidget.cpp is part of Brewken, and is copyright the following authors 2009-2026:
  *   • Brian Rower <brian.rower@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Mik Firestone <mikfire@gmail.com>
@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
  =====================================================================================================================*/
-#include "RecipeExtrasWidget.h"
+#include "widgets/RecipeExtrasWidget.h"
 
 #include <QDate>
 #include <QWidget>
