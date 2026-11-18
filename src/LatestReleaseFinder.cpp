@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * LatestReleaseFinder.cpp is part of Brewken, and is copyright the following authors 2024:
+ * LatestReleaseFinder.cpp is part of Brewken, and is copyright the following authors 2024-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *
  * Brewken is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -143,7 +143,8 @@ void LatestReleaseFinder::checkMainRespository() {
       QJsonObject jsonObject = jsonDocument.object();
 
       QString remoteVersion = jsonObject.value("tag_name").toString();
-      // Version names are usually "v3.0.2" etc, so we want to strip the 'v' off the front
+      // Version names are usually either "v3.2.1" etc or "6.5.4" etc.  In the former case, we want to strip the 'v' off
+      // the front.
       if (remoteVersion.startsWith("v", Qt::CaseInsensitive)) {
          remoteVersion.remove(0, 1);
       }

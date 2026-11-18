@@ -4971,6 +4971,10 @@ If you need help, please open an issue at %1</source>
         <source>%1 (copy for %2)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>, so step validation highlighting is enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MashAutoAdjuster</name>
@@ -5883,24 +5887,6 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This %1 is not used by any recipe.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message numerus="yes">
-        <source>This %1 is also used by %n other recipe(s): %2.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <source>This %1 is used by %n recipe(s): %2.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message>
         <source>It is locked, so it cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5913,14 +5899,6 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Any changes you make here will affect all of them.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This %1 is used only by one recipe (%2).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Step validation highlighting is therefore enabled.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5958,6 +5936,28 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     <message>
         <source>Change Pre-Boil Size</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 not used by any recipe.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 used only by one recipe (%2)%3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>%1 also used by %n other recipe(s): %2.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>%1 used by %n recipe(s): %2.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
