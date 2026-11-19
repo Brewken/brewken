@@ -242,7 +242,7 @@ jobs:
         run: |
           # The binary in the build directory normally still has its full symbol table, which lets the script say
           # exactly which functions contain any problem instructions.  The one in the .deb is what we actually ship.
-          ../scripts/checkIsaLevel.sh brewtarget packages/linux/brewtarget*.deb
+          ../scripts/checkIsaLevel.sh brewken packages/linux/brewken*.deb
 
       - name: AppImage
         if: ${{ matrix.buildContainerApps }}
@@ -261,10 +261,15 @@ jobs:
           ../bt -v flatpak
 
       - name: Snap
+        if: ${{ matrix.buildContainerApps }}
         working-directory: ${{github.workspace}}/mbuild
         shell: bash
         run: |
           umask 022
+          # Docker, which is pre-installed and running on the GitHub runners, sets the default policy of the iptables
+          # FORWARD chain to DROP.  This stops LXD containers (which snapcraft uses as its build environment) from
+          # reaching the network, so the snap build would fail when it tries to download packages.
+          sudo iptables -P FORWARD ACCEPT
           ../bt -v snap
 
       - name: Upload Linux Packages (Installers)
@@ -283,6 +288,8 @@ jobs:
             contAppPkgs/appimage/brewken*.AppImage.sha256sum
             contAppPkgs/flatpak/brewken*.flatpak
             contAppPkgs/flatpak/brewken*.flatpak.sha256sum
+            contAppPkgs/snap/brewken*.snap
+            contAppPkgs/snap/brewken*.snap.sha256sum
           retention-days: 7
 
       - name: Recover Debris Artifacts (Meson)
