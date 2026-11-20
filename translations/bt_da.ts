@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="da_DK" sourcelanguage="de_DE">
+<TS version="2.1" language="da_DK" sourcelanguage="en">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -99,7 +99,7 @@
     </message>
     <message>
         <source>a recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">en opskrift</translation>
     </message>
     <message>
         <source>Pre-Boil Size</source>
@@ -107,11 +107,11 @@
     </message>
     <message>
         <source>Boil time (mins)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kogetid (min)</translation>
     </message>
     <message>
         <source>Boil Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kogeprofiler</translation>
     </message>
     <message>
         <source>Description</source>
@@ -119,11 +119,11 @@
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Notater</translation>
     </message>
     <message>
         <source>Time At Boiling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tid ved kogepunkt</translation>
     </message>
 </context>
 <context>
@@ -142,7 +142,7 @@
     </message>
     <message>
         <source>Step time (mins)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trinvarighed (min)</translation>
     </message>
     <message>
         <source>Chilling Type</source>
@@ -303,11 +303,11 @@
     </message>
     <message>
         <source>unknown</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ukendt</translation>
     </message>
     <message>
         <source>Volume into fermentor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Volumen til gæringsbeholder</translation>
     </message>
 </context>
 <context>
@@ -426,23 +426,23 @@
     </message>
     <message>
         <source>Overwrite Existing Instructions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Overskriv eksisterende instrukser</translation>
     </message>
     <message>
         <source>Generating instructions will overwrite the existing ones.  This is not undoable.  Do you want to proceed?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Generering af instrukser overskriver de eksisterende.  Dette kan ikke fortrydes.  Vil du fortsætte?</translation>
     </message>
     <message>
         <source>not set</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ikke angivet</translation>
     </message>
     <message>
         <source>n/a</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">i/r</translation>
     </message>
     <message>
         <source>Volume into fermentor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Volumen til gæringsbeholder</translation>
     </message>
 </context>
 <context>
@@ -544,27 +544,27 @@
     </message>
     <message>
         <source>ABV</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alkohol per volumen</translation>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forgæringsgrad</translation>
     </message>
     <message>
         <source>Brew Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brygdato</translation>
     </message>
     <message>
         <source>Brewhouse Efficiency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bryghuseffektivitet</translation>
     </message>
     <message>
         <source>Efficiency Into Boil Kettle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Effektivitet til kogekar</translation>
     </message>
     <message>
         <source>Ferment Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gæringsdato</translation>
     </message>
     <message>
         <source>FG</source>
@@ -572,23 +572,23 @@
     </message>
     <message>
         <source>Final Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Slutvolumen</translation>
     </message>
     <message>
         <source>Mash Final Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskningens sluttemperatur</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Notater</translation>
     </message>
     <message>
         <source>OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Startmassefylde (OG)</translation>
     </message>
     <message>
         <source>Post-Boil Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Volumen efter kogning</translation>
     </message>
     <message>
         <source>Projected ABV</source>
@@ -596,23 +596,23 @@
     </message>
     <message>
         <source>Projected Attenuation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Planlagt forgæringsgrad</translation>
     </message>
     <message>
         <source>Projected Efficiency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Planlagt effektivitet</translation>
     </message>
     <message>
         <source>Projected Fermentation Points</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Planlagte gæringspoint</translation>
     </message>
     <message>
         <source>Projected FG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Planlagt FG</translation>
     </message>
     <message>
         <source>Projected Mash Final Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Planlagt sluttemperatur for mæskning</translation>
     </message>
     <message>
         <source>Projected OG</source>
@@ -620,11 +620,11 @@
     </message>
     <message>
         <source>Projected Strike Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Planlagt indmæskningstemperatur</translation>
     </message>
     <message>
         <source>Projected Volume Into Boil Kettle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Planlagt volumen til kogekar</translation>
     </message>
     <message>
         <source>SG</source>
@@ -632,55 +632,55 @@
     </message>
     <message>
         <source>Strike Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Indmæskningstemperatur</translation>
     </message>
     <message>
         <source>Volume Into Boil Kettle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Volumen til kogekar</translation>
     </message>
     <message>
         <source>Brew Log</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bryglog</translation>
     </message>
     <message>
         <source>Brew Log #%1 for brew on %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bryglog nr. %1 for brygning den %2</translation>
     </message>
     <message>
         <source>Expected Boil-Off</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forventet fordampning</translation>
     </message>
     <message>
         <source>Planned OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Planlagt OG</translation>
     </message>
     <message>
         <source>Expected pre-boil specific gravity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forventet massefylde før kogning</translation>
     </message>
     <message>
         <source>Measured FG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Målt FG</translation>
     </message>
     <message>
         <source>Measured Pitch Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Målt temperatur ved gærtilsætning</translation>
     </message>
     <message>
         <source>Measured pre-boil specific gravity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Målt massefylde før kogning</translation>
     </message>
     <message>
         <source>Projected Volume Into Fermentation Vessel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Planlagt volumen til gæringsbeholder</translation>
     </message>
     <message>
         <source>Volume Into Fermentation Vessel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Volumen til gæringsbeholder</translation>
     </message>
     <message>
         <source>Wort Clarity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Urtens klarhed</translation>
     </message>
 </context>
 <context>
@@ -1088,1195 +1088,1195 @@
     <message>
         <source>United Arab Emirates Dirham</source>
         <extracomment>*</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Emiratisk dirham</translation>
     </message>
     <message>
         <source>Dirham</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dirham</translation>
     </message>
     <message>
         <source>Fils</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fils</translation>
     </message>
     <message>
         <source>Afghan Afghani</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Afghansk afghani</translation>
     </message>
     <message>
         <source>Afghani</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Afghani</translation>
     </message>
     <message>
         <source>Pul</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pul</translation>
     </message>
     <message>
         <source>Albanian Lek</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Albansk lek</translation>
     </message>
     <message>
         <source>Lek</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lek</translation>
     </message>
     <message>
         <source>Qindarka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Qindarka</translation>
     </message>
     <message>
         <source>Armenian Dram</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Armensk dram</translation>
     </message>
     <message>
         <source>Dram</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dram</translation>
     </message>
     <message>
         <source>Luma</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Luma</translation>
     </message>
     <message>
         <source>Angolan Kwanza</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Angolansk kwanza</translation>
     </message>
     <message>
         <source>Kwanza</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kwanza</translation>
     </message>
     <message>
         <source>Centimo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Céntimo</translation>
     </message>
     <message>
         <source>Argentine Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Argentinsk peso</translation>
     </message>
     <message>
         <source>Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Peso</translation>
     </message>
     <message>
         <source>Centavo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Centavo</translation>
     </message>
     <message>
         <source>Australian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Australsk dollar</translation>
     </message>
     <message>
         <source>Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dollar</translation>
     </message>
     <message>
         <source>Cent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cent</translation>
     </message>
     <message>
         <source>Aruban Florin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Arubansk florin</translation>
     </message>
     <message>
         <source>Florin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Florin</translation>
     </message>
     <message>
         <source>Azerbaijani Manat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aserbajdsjansk manat</translation>
     </message>
     <message>
         <source>Manat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Manat</translation>
     </message>
     <message>
         <source>Qapik</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Qəpik</translation>
     </message>
     <message>
         <source>Bosnia-Herzegovina Convertible Mark</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bosnien-hercegovinsk konvertibel mark</translation>
     </message>
     <message>
         <source>Mark</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mark</translation>
     </message>
     <message>
         <source>Fening</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fening</translation>
     </message>
     <message>
         <source>Barbados Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Barbadisk dollar</translation>
     </message>
     <message>
         <source>Bangladeshi Taka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bangladeshisk taka</translation>
     </message>
     <message>
         <source>Taka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Taka</translation>
     </message>
     <message>
         <source>Poisha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Poisha</translation>
     </message>
     <message>
         <source>Bulgarian Lev</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bulgarsk lev</translation>
     </message>
     <message>
         <source>Lev</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lev</translation>
     </message>
     <message>
         <source>Stotinka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Stotinka</translation>
     </message>
     <message>
         <source>Bahraini Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bahrainsk dinar</translation>
     </message>
     <message>
         <source>Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dinar</translation>
     </message>
     <message>
         <source>Burundian Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Burundisk franc</translation>
     </message>
     <message>
         <source>Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Franc</translation>
     </message>
     <message>
         <source>Centime</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Centime</translation>
     </message>
     <message>
         <source>Bermudian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bermudansk dollar</translation>
     </message>
     <message>
         <source>Brunei Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bruneisk dollar</translation>
     </message>
     <message>
         <source>Bolivian Boliviano</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Boliviansk boliviano</translation>
     </message>
     <message>
         <source>Boliviano</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Boliviano</translation>
     </message>
     <message>
         <source>Brazilian Real</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brasiliansk real</translation>
     </message>
     <message>
         <source>Real</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Real</translation>
     </message>
     <message>
         <source>Bahamian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bahamansk dollar</translation>
     </message>
     <message>
         <source>Bhutanese Ngultrum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bhutansk ngultrum</translation>
     </message>
     <message>
         <source>Ngultrum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ngultrum</translation>
     </message>
     <message>
         <source>Chetrum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chetrum</translation>
     </message>
     <message>
         <source>Botswana Pula</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Botswansk pula</translation>
     </message>
     <message>
         <source>Pula</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pula</translation>
     </message>
     <message>
         <source>Thebe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Thebe</translation>
     </message>
     <message>
         <source>Belarusian Ruble</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hviderussisk rubel</translation>
     </message>
     <message>
         <source>Ruble</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rubel</translation>
     </message>
     <message>
         <source>Kapiejka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kapiejka</translation>
     </message>
     <message>
         <source>Belize Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Belizisk dollar</translation>
     </message>
     <message>
         <source>Canadian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Canadisk dollar</translation>
     </message>
     <message>
         <source>Congolese Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Congolesisk franc</translation>
     </message>
     <message>
         <source>Swiss Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Schweizisk franc</translation>
     </message>
     <message>
         <source>Chilean Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chilensk peso</translation>
     </message>
     <message>
         <source>Chinese Yuan</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kinesisk yuan</translation>
     </message>
     <message>
         <source>Yuan</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Yuan</translation>
     </message>
     <message>
         <source>Fen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fen</translation>
     </message>
     <message>
         <source>Colombian Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Colombiansk peso</translation>
     </message>
     <message>
         <source>Costa Rican Colón</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Costaricansk colón</translation>
     </message>
     <message>
         <source>Colón</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Colón</translation>
     </message>
     <message>
         <source>Cuban Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cubansk peso</translation>
     </message>
     <message>
         <source>Cabo Verdean Escudo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kapverdisk escudo</translation>
     </message>
     <message>
         <source>Escudo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Escudo</translation>
     </message>
     <message>
         <source>Czech Koruna</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tjekkisk koruna</translation>
     </message>
     <message>
         <source>Koruna</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Koruna</translation>
     </message>
     <message>
         <source>Haléř</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Haléř</translation>
     </message>
     <message>
         <source>Djiboutian Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Djiboutisk franc</translation>
     </message>
     <message>
         <source>Danish Krone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dansk krone</translation>
     </message>
     <message>
         <source>Krone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Krone</translation>
     </message>
     <message>
         <source>Øre</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Øre</translation>
     </message>
     <message>
         <source>Dominican Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dominikansk peso</translation>
     </message>
     <message>
         <source>Algerian Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Algerisk dinar</translation>
     </message>
     <message>
         <source>Santeem</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Santeem</translation>
     </message>
     <message>
         <source>Egyptian Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Egyptisk pund</translation>
     </message>
     <message>
         <source>Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pund</translation>
     </message>
     <message>
         <source>Qirsh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Qirsh</translation>
     </message>
     <message>
         <source>Eritrean Nakfa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Eritreisk nakfa</translation>
     </message>
     <message>
         <source>Nakfa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nakfa</translation>
     </message>
     <message>
         <source>Ethiopian Birr</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Etiopisk birr</translation>
     </message>
     <message>
         <source>Birr</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Birr</translation>
     </message>
     <message>
         <source>Santim</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Santim</translation>
     </message>
     <message>
         <source>Euro</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Euro</translation>
     </message>
     <message>
         <source>Fiji Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fijiansk dollar</translation>
     </message>
     <message>
         <source>Falkland Islands Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Falklandsøernes pund</translation>
     </message>
     <message>
         <source>Penny</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Penny</translation>
     </message>
     <message>
         <source>Pound Sterling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Britisk pund</translation>
     </message>
     <message>
         <source>Georgian Lari</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Georgisk lari</translation>
     </message>
     <message>
         <source>Lari</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lari</translation>
     </message>
     <message>
         <source>Tetri</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tetri</translation>
     </message>
     <message>
         <source>Ghanaian Cedi</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ghanesisk cedi</translation>
     </message>
     <message>
         <source>Cedi</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cedi</translation>
     </message>
     <message>
         <source>Pesewa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pesewa</translation>
     </message>
     <message>
         <source>Gibraltar Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gibraltarisk pund</translation>
     </message>
     <message>
         <source>Gambian Dalasi</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gambisk dalasi</translation>
     </message>
     <message>
         <source>Dalasi</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dalasi</translation>
     </message>
     <message>
         <source>Butut</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Butut</translation>
     </message>
     <message>
         <source>Guinean Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Guineansk franc</translation>
     </message>
     <message>
         <source>Guatemalan Quetzal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Guatemalansk quetzal</translation>
     </message>
     <message>
         <source>Quetzal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Quetzal</translation>
     </message>
     <message>
         <source>Guyanese Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Guyansk dollar</translation>
     </message>
     <message>
         <source>Hong Kong Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hongkongsk dollar</translation>
     </message>
     <message>
         <source>Honduran Lempira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Honduransk lempira</translation>
     </message>
     <message>
         <source>Lempira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lempira</translation>
     </message>
     <message>
         <source>Haitian Gourde</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Haitisk gourde</translation>
     </message>
     <message>
         <source>Gourde</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gourde</translation>
     </message>
     <message>
         <source>Hungarian Forint</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ungarsk forint</translation>
     </message>
     <message>
         <source>Forint</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forint</translation>
     </message>
     <message>
         <source>fillér</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">fillér</translation>
     </message>
     <message>
         <source>Indonesian Rupiah</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Indonesisk rupiah</translation>
     </message>
     <message>
         <source>Rupiah</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rupiah</translation>
     </message>
     <message>
         <source>Sen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sen</translation>
     </message>
     <message>
         <source>Israeli Shekel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Israelsk shekel</translation>
     </message>
     <message>
         <source>Shekel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Shekel</translation>
     </message>
     <message>
         <source>Agora</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Agora</translation>
     </message>
     <message>
         <source>Indian Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Indisk rupee</translation>
     </message>
     <message>
         <source>Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rupee</translation>
     </message>
     <message>
         <source>Paisa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Paisa</translation>
     </message>
     <message>
         <source>Iraqi Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Irakisk dinar</translation>
     </message>
     <message>
         <source>Iranian Rial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Iransk rial</translation>
     </message>
     <message>
         <source>Rial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rial</translation>
     </message>
     <message>
         <source>Icelandic Krona</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Islandsk krone</translation>
     </message>
     <message>
         <source>Krona</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Krone</translation>
     </message>
     <message>
         <source>Aurar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aurar</translation>
     </message>
     <message>
         <source>Jamaican Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Jamaicansk dollar</translation>
     </message>
     <message>
         <source>Jordanian Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Jordansk dinar</translation>
     </message>
     <message>
         <source>Japanese Yen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Japansk yen</translation>
     </message>
     <message>
         <source>Yen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Yen</translation>
     </message>
     <message>
         <source>Kenyan Shilling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kenyansk shilling</translation>
     </message>
     <message>
         <source>Shilling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Shilling</translation>
     </message>
     <message>
         <source>Kyrgyzstani Som</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kirgisisk som</translation>
     </message>
     <message>
         <source>Som</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Som</translation>
     </message>
     <message>
         <source>Tyiyn</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tyiyn</translation>
     </message>
     <message>
         <source>Cambodian Riel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cambodjansk riel</translation>
     </message>
     <message>
         <source>Riel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Riel</translation>
     </message>
     <message>
         <source>Comorian Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Comorisk franc</translation>
     </message>
     <message>
         <source>North Korean Won</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nordkoreansk won</translation>
     </message>
     <message>
         <source>Won</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Won</translation>
     </message>
     <message>
         <source>Chon</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chon</translation>
     </message>
     <message>
         <source>South Korean Won</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sydkoreansk won</translation>
     </message>
     <message>
         <source>Jeon</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Jeon</translation>
     </message>
     <message>
         <source>Kuwaiti Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kuwaitisk dinar</translation>
     </message>
     <message>
         <source>Cayman Islands Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Caymanøernes dollar</translation>
     </message>
     <message>
         <source>Kazakhstani Tenge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kasakhisk tenge</translation>
     </message>
     <message>
         <source>Tenge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tenge</translation>
     </message>
     <message>
         <source>Tıyn</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tıyn</translation>
     </message>
     <message>
         <source>Lao Kip</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Laotisk kip</translation>
     </message>
     <message>
         <source>Kip</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kip</translation>
     </message>
     <message>
         <source>Att</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Att</translation>
     </message>
     <message>
         <source>Lebanese Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Libanesisk pund</translation>
     </message>
     <message>
         <source>Sri Lankan Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Srilankansk rupee</translation>
     </message>
     <message>
         <source>Liberian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Liberisk dollar</translation>
     </message>
     <message>
         <source>Lesotho Loti</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lesothisk loti</translation>
     </message>
     <message>
         <source>Loti</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Loti</translation>
     </message>
     <message>
         <source>Sente</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sente</translation>
     </message>
     <message>
         <source>Libyan Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Libysk dinar</translation>
     </message>
     <message>
         <source>Moroccan Dirham</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Marokkansk dirham</translation>
     </message>
     <message>
         <source>Moldovan Leu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Moldovisk leu</translation>
     </message>
     <message>
         <source>Leu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Leu</translation>
     </message>
     <message>
         <source>Ban</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ban</translation>
     </message>
     <message>
         <source>Malagasy Ariary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Madagaskisk ariary</translation>
     </message>
     <message>
         <source>Ariary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ariary</translation>
     </message>
     <message>
         <source>Iraimbilanja</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Iraimbilanja</translation>
     </message>
     <message>
         <source>Macedonian Denar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Makedonsk denar</translation>
     </message>
     <message>
         <source>Denar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Denar</translation>
     </message>
     <message>
         <source>Deni</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Deni</translation>
     </message>
     <message>
         <source>Myanmar Kyat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Myanmarsk kyat</translation>
     </message>
     <message>
         <source>Kyat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kyat</translation>
     </message>
     <message>
         <source>Pya</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pya</translation>
     </message>
     <message>
         <source>Mongolian Tögrög</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mongolsk tögrög</translation>
     </message>
     <message>
         <source>Tögrög</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tögrög</translation>
     </message>
     <message>
         <source>möngö</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">möngö</translation>
     </message>
     <message>
         <source>Macanese Pataca</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Macaosk pataca</translation>
     </message>
     <message>
         <source>Pataca</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pataca</translation>
     </message>
     <message>
         <source>Avo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Avo</translation>
     </message>
     <message>
         <source>Mauritanian Ouguiya</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mauretansk ouguiya</translation>
     </message>
     <message>
         <source>Ouguiya</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ouguiya</translation>
     </message>
     <message>
         <source>Khoums</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Khoums</translation>
     </message>
     <message>
         <source>Mauritian Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mauritisk rupee</translation>
     </message>
     <message>
         <source>Maldivian Rufiyaa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maldivisk rufiyaa</translation>
     </message>
     <message>
         <source>Rufiyaa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rufiyaa</translation>
     </message>
     <message>
         <source>laari</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">laari</translation>
     </message>
     <message>
         <source>Malawian Kwacha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Malawisk kwacha</translation>
     </message>
     <message>
         <source>Kwacha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kwacha</translation>
     </message>
     <message>
         <source>Tambala</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tambala</translation>
     </message>
     <message>
         <source>Mexican Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mexicansk peso</translation>
     </message>
     <message>
         <source>Malaysian Ringgit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Malaysisk ringgit</translation>
     </message>
     <message>
         <source>Ringgit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ringgit</translation>
     </message>
     <message>
         <source>Mozambican Metical</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mozambikisk metical</translation>
     </message>
     <message>
         <source>Metical</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Metical</translation>
     </message>
     <message>
         <source>Namibian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Namibisk dollar</translation>
     </message>
     <message>
         <source>Nigerian Naira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nigeriansk naira</translation>
     </message>
     <message>
         <source>Naira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Naira</translation>
     </message>
     <message>
         <source>Kobo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kobo</translation>
     </message>
     <message>
         <source>Nicaraguan Córdoba</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nicaraguansk córdoba</translation>
     </message>
     <message>
         <source>Córdoba</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Córdoba</translation>
     </message>
     <message>
         <source>Norwegian Krone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Norsk krone</translation>
     </message>
     <message>
         <source>øre</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">øre</translation>
     </message>
     <message>
         <source>Nepalese Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nepalesisk rupee</translation>
     </message>
     <message>
         <source>New Zealand Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">New zealandsk dollar</translation>
     </message>
     <message>
         <source>Omani Rial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omansk rial</translation>
     </message>
     <message>
         <source>Baisa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Baisa</translation>
     </message>
     <message>
         <source>Panamanian Balboa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Panamansk balboa</translation>
     </message>
     <message>
         <source>Balboa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Balboa</translation>
     </message>
     <message>
         <source>Centésimo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Centésimo</translation>
     </message>
     <message>
         <source>Peruvian Sol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Peruviansk sol</translation>
     </message>
     <message>
         <source>Sol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sol</translation>
     </message>
     <message>
         <source>Céntimo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Céntimo</translation>
     </message>
     <message>
         <source>Papua New Guinean Kina</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Papua Ny Guinea-kina</translation>
     </message>
     <message>
         <source>Kina</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kina</translation>
     </message>
     <message>
         <source>Toea</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Toea</translation>
     </message>
     <message>
         <source>Philippine Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Filippinsk peso</translation>
     </message>
     <message>
         <source>Sentimo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sentimo</translation>
     </message>
     <message>
         <source>Pakistani Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pakistansk rupee</translation>
     </message>
     <message>
         <source>Polish Zloty</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Polsk zloty</translation>
     </message>
     <message>
         <source>Zloty</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zloty</translation>
     </message>
     <message>
         <source>Grosz</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Grosz</translation>
     </message>
     <message>
         <source>Paraguayan Guaraní</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Paraguayansk guaraní</translation>
     </message>
     <message>
         <source>Guaraní</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Guaraní</translation>
     </message>
     <message>
         <source>Qatari Riyal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Qatarsk rial</translation>
     </message>
     <message>
         <source>Riyal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rial</translation>
     </message>
     <message>
         <source>Romanian Leu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rumænsk leu</translation>
     </message>
     <message>
         <source>Serbian Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Serbisk dinar</translation>
     </message>
     <message>
         <source>Para</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Para</translation>
     </message>
     <message>
         <source>Russian Ruble</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Russisk rubel</translation>
     </message>
     <message>
         <source>Kopek</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kopek</translation>
     </message>
     <message>
         <source>Rwandan Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rwandisk franc</translation>
     </message>
     <message>
         <source>Saudi Riyal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Saudiarabisk riyal</translation>
     </message>
     <message>
         <source>Halalah</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Halalah</translation>
     </message>
     <message>
         <source>Solomon Islands Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Salomonøernes dollar</translation>
     </message>
     <message>
         <source>Seychelles Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Seychellisk rupee</translation>
     </message>
     <message>
         <source>Sudanese Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sudanesisk pund</translation>
     </message>
     <message>
         <source>Swedish Krona</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Svensk krone</translation>
     </message>
     <message>
         <source>Öre</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Öre</translation>
     </message>
     <message>
         <source>Singapore Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Singaporeansk dollar</translation>
     </message>
     <message>
         <source>Saint Helena Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sankt Helena-pund</translation>
     </message>
     <message>
         <source>Sierra Leonean New Leone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sierraleonsk ny leone</translation>
     </message>
     <message>
         <source>New Leone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ny leone</translation>
     </message>
     <message>
         <source>Somali Shilling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Somalisk shilling</translation>
     </message>
     <message>
         <source>Senti</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Senti</translation>
     </message>
     <message>
         <source>Surinamese Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Surinamsk dollar</translation>
     </message>
     <message>
         <source>South Sudanese Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sydsudanesisk pund</translation>
     </message>
     <message>
         <source>Sao Tome Dobra</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">São Tomé og Príncipe-dobra</translation>
     </message>
     <message>
         <source>Dobra</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dobra</translation>
     </message>
     <message>
         <source>Salvadoran Colón</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Salvadoransk colón</translation>
     </message>
     <message>
         <source>Syrian Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Syrisk pund</translation>
     </message>
     <message>
         <source>Swazi Lilangeni</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Swazilandsk lilangeni</translation>
     </message>
     <message>
         <source>Lilangeni</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lilangeni</translation>
     </message>
     <message>
         <source>Thai Baht</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Thailandsk baht</translation>
     </message>
     <message>
         <source>Baht</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Baht</translation>
     </message>
     <message>
         <source>Satang</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Satang</translation>
     </message>
     <message>
         <source>Tajikistani Somoni</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tadsjikisk somoni</translation>
     </message>
     <message>
         <source>Somoni</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Somoni</translation>
     </message>
     <message>
         <source>Diram</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Diram</translation>
     </message>
     <message>
         <source>Turkmenistan Manat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Turkmensk manat</translation>
     </message>
     <message>
         <source>Tunisian Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tunesisk dinar</translation>
     </message>
     <message>
         <source>Millime</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Millime</translation>
     </message>
     <message>
         <source>Tongan Pa&apos;anga</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tongansk pa&apos;anga</translation>
     </message>
     <message>
         <source>Pa&apos;anga</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pa&apos;anga</translation>
     </message>
     <message>
         <source>Seniti</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Seniti</translation>
     </message>
     <message>
         <source>Turkish Lira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tyrkisk lira</translation>
     </message>
     <message>
         <source>Lira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lira</translation>
     </message>
     <message>
         <source>Kuruş</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kuruş</translation>
     </message>
     <message>
         <source>Trinidad and Tobago Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trinidad og Tobago-dollar</translation>
     </message>
     <message>
         <source>New Taiwan Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ny taiwansk dollar</translation>
     </message>
     <message>
         <source>Tanzanian Shilling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tanzanisk shilling</translation>
     </message>
     <message>
         <source>Ukrainian Hryvnia</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ukrainsk hryvnia</translation>
     </message>
     <message>
         <source>Hryvnia</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hryvnia</translation>
     </message>
     <message>
         <source>Kopiyka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kopijka</translation>
     </message>
     <message>
         <source>Ugandan Shilling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ugandisk shilling</translation>
     </message>
     <message>
         <source>US Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Amerikansk dollar</translation>
     </message>
     <message>
         <source>Uruguayan Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uruguayansk peso</translation>
     </message>
     <message>
         <source>Uzbekistani Som</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Usbekisk som</translation>
     </message>
     <message>
         <source>Tiyin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tiyin</translation>
     </message>
     <message>
         <source>Venezuelan Bolívar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Venezuelansk bolívar</translation>
     </message>
     <message>
         <source>Bolívar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bolívar</translation>
     </message>
     <message>
         <source>Vietnamese Dong</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vietnamesisk dong</translation>
     </message>
     <message>
         <source>Dong</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dong</translation>
     </message>
     <message>
         <source>Hào</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hào</translation>
     </message>
     <message>
         <source>Vanuatu Vatu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vanuatisk vatu</translation>
     </message>
     <message>
         <source>Vatu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vatu</translation>
     </message>
     <message>
         <source>Samoan Tala</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Samoansk tala</translation>
     </message>
     <message>
         <source>Tala</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tala</translation>
     </message>
     <message>
         <source>Sene</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sene</translation>
     </message>
     <message>
         <source>Central African CFA Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Centralafrikansk CFA-franc</translation>
     </message>
     <message>
         <source>East Caribbean Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Østkaribisk dollar</translation>
     </message>
     <message>
         <source>Caribbean Guilder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Caribisk gylden</translation>
     </message>
     <message>
         <source>Guilder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gylden</translation>
     </message>
     <message>
         <source>West African CFA Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vestafrikansk CFA-franc</translation>
     </message>
     <message>
         <source>CFP Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">CFP-franc</translation>
     </message>
     <message>
         <source>No Currency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ingen valuta</translation>
     </message>
     <message>
         <source>None</source>
@@ -2284,31 +2284,31 @@
     </message>
     <message>
         <source>Yemeni Rial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Yemenitisk rial</translation>
     </message>
     <message>
         <source>South African Rand</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sydafrikansk rand</translation>
     </message>
     <message>
         <source>Rand</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rand</translation>
     </message>
     <message>
         <source>Zambian Kwacha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zambisk kwacha</translation>
     </message>
     <message>
         <source>Ngwee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ngwee</translation>
     </message>
     <message>
         <source>Zimbabwe Gold</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zimbabwisk guld</translation>
     </message>
     <message>
         <source>Gold</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Guld</translation>
     </message>
 </context>
 <context>
@@ -2443,26 +2443,29 @@ Logfil indeholder måske flere detaljer.</translation>
     </message>
     <message>
         <source>ERROR: Unsupported Database Schema</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">FEJL: Databaseskema understøttes ikke</translation>
     </message>
     <message>
         <source>Attempting to read a v%1 database, but %2 %3 only supports databases up to v%4.
 
 Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forsøger at læse en v%1-database, men %2 %3 understøtter kun databaser op til v%4.
+
+Klik på &apos;OK&apos; for at afslutte %2, så du kan opgradere til en nyere version.
+</translation>
     </message>
     <message>
         <source>No Database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ingen database</translation>
     </message>
     <message>
         <source>SQLite</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">SQLite</translation>
     </message>
     <message>
         <source>Cannot create new DB schema in file &apos;%1&apos;.  File already exists!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kan ikke oprette nyt databaseskema i filen &apos;%1&apos;.  Filen findes allerede!</translation>
     </message>
     <message>
         <source>PostgreSQL</source>
@@ -2505,11 +2508,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Enter a unique name for the copy of %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Angiv et unikt navn til kopien af %1.</translation>
     </message>
     <message>
         <source>An empty name will skip copying this %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Et tomt navn springer kopiering af denne %1 over.</translation>
     </message>
     <message>
         <source>Cancel All</source>
@@ -2541,15 +2544,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>A folder name must have at least one non-/ character in it</source>
-        <translation type="unfinished">Et mappenavn skal indeholde mindst et tegn ud over bogstaver</translation>
-    </message>
-    <message>
-        <source>Edit «%1»</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit «%1» %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Et mappenavn skal indeholde mindst ét andet tegn end /</translation>
     </message>
     <message>
         <source>Remove %1</source>
@@ -2557,17 +2552,17 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Delete %1 #%2 &quot;%3&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Slet %1 nr. %2 &quot;%3&quot;?</translation>
     </message>
     <message>
         <source>%1 in use</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 i brug</translation>
     </message>
     <message numerus="yes">
         <source>Cannot delete this %1, as it is used in %n recipe(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Kan ikke slette denne %1, da den bruges i %n opskrift</numerusform>
+            <numerusform>Kan ikke slette denne %1, da den bruges i %n opskrifter</numerusform>
         </translation>
     </message>
     <message>
@@ -2584,95 +2579,95 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Merge %1 records</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kombiner %1-poster</translation>
     </message>
     <message>
         <source>%1 records differ</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1-poster er forskellige</translation>
     </message>
     <message numerus="yes">
         <source>WARNING: %1 records to be merged have %n difference(s).  Do you want to merge anyway?</source>
         <comment>0</comment>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>ADVARSEL: %1-posterne, der skal kombineres, har %n forskel.  Vil du kombinere alligevel?</numerusform>
+            <numerusform>ADVARSEL: %1-posterne, der skal kombineres, har %n forskelle.  Vil du kombinere alligevel?</numerusform>
         </translation>
     </message>
     <message>
         <source>Attempt to merge %1 %2 records? (NOTE: &lt;b&gt;This action cannot be undone!&lt;/b&gt;  It is intended for use where the records are identical or as near as makes no difference.  Use on non-identical records risks data loss.)&lt;br&gt;&lt;br&gt;&lt;b&gt;Please make sure you have a backup of your database file before using this function!&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forsøg at kombinere %1 %2-poster? (BEMÆRK: &lt;b&gt;Denne handling kan ikke fortrydes!&lt;/b&gt;  Den er beregnet til brug, hvor posterne er identiske eller så godt som identiske.  Brug på ikke-identiske poster kan medføre tab af data.)&lt;br&gt;&lt;br&gt;&lt;b&gt;Sørg for, at du har en sikkerhedskopi af din databasefil, før du bruger denne funktion!&lt;/b&gt;</translation>
     </message>
     <message numerus="yes">
         <source>%n field(s) differ between %1 #%2 and %1 #%3.  If you continue, %1 #%3 will be deleted and all uses of it will be replaced by %1 #%2.  This &lt;b&gt;cannot&lt;/b&gt; be undone.&lt;br&gt;&lt;br&gt;%4</source>
         <comment>0</comment>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n felt er forskelligt mellem %1 nr. %2 og %1 nr. %3.  Hvis du fortsætter, slettes %1 nr. %3, og al brug af den erstattes af %1 nr. %2.  Dette kan &lt;b&gt;ikke&lt;/b&gt; fortrydes.&lt;br&gt;&lt;br&gt;%4</numerusform>
+            <numerusform>%n felter er forskellige mellem %1 nr. %2 og %1 nr. %3.  Hvis du fortsætter, slettes %1 nr. %3, og al brug af den erstattes af %1 nr. %2.  Dette kan &lt;b&gt;ikke&lt;/b&gt; fortrydes.&lt;br&gt;&lt;br&gt;%4</numerusform>
         </translation>
     </message>
     <message>
         <source>Owner ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ejer-ID</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mængde</translation>
     </message>
     <message>
         <source>Is Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Er masse</translation>
     </message>
     <message>
         <source>Measure</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mål</translation>
     </message>
     <message>
         <source>Quantity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Antal</translation>
     </message>
     <message>
         <source>Unit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enhed</translation>
     </message>
     <message>
         <source>Ramp Time</source>
-        <translation type="unfinished">Varighed niveau</translation>
+        <translation type="unfinished">Rampetid</translation>
     </message>
     <message>
         <source>Start Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Starttemperatur</translation>
     </message>
     <message>
         <source>Step Time</source>
-        <translation type="unfinished">Trin varighed</translation>
+        <translation type="unfinished">Trinvarighed</translation>
     </message>
     <message>
         <source>№ Steps</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Antal trin</translation>
     </message>
     <message>
         <source>Steps</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trin</translation>
     </message>
     <message>
         <source>Ingredient ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ingrediens-ID</translation>
     </message>
     <message>
         <source>Amount Ordered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bestilt mængde</translation>
     </message>
     <message>
         <source>Amount Received</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Modtaget mængde</translation>
     </message>
     <message>
         <source>Amount Remaining</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Resterende mængde</translation>
     </message>
     <message>
         <source>Amount Used</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brugt mængde</translation>
     </message>
     <message>
         <source>Number</source>
@@ -2680,23 +2675,23 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Quantity Remaining</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Resterende antal</translation>
     </message>
     <message>
         <source>Show only non-zero inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vis kun lagerbeholdning større end nul</translation>
     </message>
     <message>
         <source>Stock Purchase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lagerkøb</translation>
     </message>
     <message>
         <source>Add to recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Føj til opskrift</translation>
     </message>
     <message>
         <source>Set for recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Angiv for opskrift</translation>
     </message>
     <message>
         <source>Edit</source>
@@ -2704,39 +2699,39 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Show stock purchases</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vis lagerkøb</translation>
     </message>
     <message>
         <source>Merge selected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kombiner markerede</translation>
     </message>
     <message>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omdøb</translation>
     </message>
     <message>
         <source>%1 name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1-navn</translation>
     </message>
     <message>
         <source>%1 name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1-navn:</translation>
     </message>
     <message>
         <source>Change %1 Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ændr %1-navn</translation>
     </message>
     <message>
         <source>Snapshots</source>
-        <translation type="unfinished">Oversigter</translation>
+        <translation type="unfinished">Øjebliksbilleder</translation>
     </message>
     <message>
         <source>Show Snapshots</source>
-        <translation type="unfinished">Vis oversigter</translation>
+        <translation type="unfinished">Vis øjebliksbilleder</translation>
     </message>
     <message>
         <source>Hide Snapshots</source>
-        <translation type="unfinished">Skjul oversigter</translation>
+        <translation type="unfinished">Skjul øjebliksbilleder</translation>
     </message>
     <message>
         <source>Detach Recipe</source>
@@ -2744,15 +2739,15 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Snapshot Recipe</source>
-        <translation type="unfinished">Oversigt opskrift</translation>
+        <translation type="unfinished">Tag øjebliksbillede af opskrift</translation>
     </message>
     <message>
         <source>Brew It!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bryg den!</translation>
     </message>
     <message>
         <source>Brew again</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bryg igen</translation>
     </message>
     <message>
         <source>Change date</source>
@@ -2760,50 +2755,50 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Contained in Folder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ligger i mappe</translation>
     </message>
     <message>
         <source>Contained in Folder ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ligger i mappe-ID</translation>
     </message>
     <message>
         <source>Invalid Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ugyldigt navn</translation>
     </message>
     <message>
         <source>Folder name cannot be blank (and cannot contain &apos;/&apos;)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mappenavnet må ikke være tomt (og må ikke indeholde &apos;/&apos;)</translation>
     </message>
     <message>
         <source>Nothing to Export</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Intet at eksportere</translation>
     </message>
     <message>
         <source>Nothing is selected or none of the selected things can be exported</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Intet er markeret, eller intet af det markerede kan eksporteres</translation>
     </message>
     <message>
         <source>Export (to dotBeer, BeerXML or BeerJSON)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Eksporter (til dotBeer, BeerXML eller BeerJSON)</translation>
     </message>
     <message>
         <source>Import (from dotBeer, BeerXML or BeerJSON)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importer (fra dotBeer, BeerXML eller BeerJSON)</translation>
     </message>
     <message>
         <source>Contained in Folder Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sti til mappe</translation>
     </message>
     <message>
         <source>Locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Låst</translation>
     </message>
 </context>
 <context>
     <name>Derived::StockUseClass</name>
     <message>
         <source>Use of %1 in %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brug af %1 i %2</translation>
     </message>
 </context>
 <context>
@@ -2822,11 +2817,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Equipments</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Udstyr</translation>
     </message>
     <message>
         <source>Preboil</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forkogning</translation>
     </message>
     <message>
         <source>BoilTime</source>
@@ -2834,11 +2829,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Aging Vessel Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tab i lagringsbeholder</translation>
     </message>
     <message>
         <source>Aging Vessel Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lagringsbeholder notater</translation>
     </message>
     <message>
         <source>Aging Vessel Type</source>
@@ -2846,15 +2841,15 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Aging Vessel Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lagringsbeholder volumen</translation>
     </message>
     <message>
         <source>Boiling Point</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kogepunkt</translation>
     </message>
     <message>
         <source>Evaporation Rate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fordampningshastighed</translation>
     </message>
     <message>
         <source>Fermenter Notes</source>
@@ -2866,71 +2861,71 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>HLT Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tab i varmtvandsbeholder</translation>
     </message>
     <message>
         <source>HLT Notes</source>
-        <translation type="unfinished">Varm væskebeholder notater</translation>
+        <translation type="unfinished">Varmtvandsbeholder notater</translation>
     </message>
     <message>
         <source>HLT Specific Heat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Varmtvandsbeholder specifik varme</translation>
     </message>
     <message>
         <source>HLT Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Varmtvandsbeholder type</translation>
     </message>
     <message>
         <source>HLT Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Varmtvandsbeholder volumen</translation>
     </message>
     <message>
         <source>HLT Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Varmtvandsbeholder masse</translation>
     </message>
     <message>
         <source>Hop Utilization</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Humleudnyttelse</translation>
     </message>
     <message>
         <source>Kettle Evaporation Per Hour</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fordampning fra kogekar pr. time</translation>
     </message>
     <message>
         <source>Kettle Internal Diameter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kogekar indvendig diameter</translation>
     </message>
     <message>
         <source>Kettle Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kogekar notater</translation>
     </message>
     <message>
         <source>Kettle Opening Diameter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kogekar åbningsdiameter</translation>
     </message>
     <message>
         <source>Kettle Outflow Per Minute</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aftapning fra kogekar pr. minut</translation>
     </message>
     <message>
         <source>Kettle Specific Heat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kogekar specifik varme</translation>
     </message>
     <message>
         <source>Kettle Trub Chiller Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tab i kogekar til bundfald og køler</translation>
     </message>
     <message>
         <source>Kettle Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kogekar type</translation>
     </message>
     <message>
         <source>Kettle Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kogekar masse</translation>
     </message>
     <message>
         <source>Lauter Tun Deadspace Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Urtfiltreringsbeholder dødvolumentab</translation>
     </message>
     <message>
         <source>Lauter Tun Notes</source>
@@ -2938,7 +2933,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Lauter Tun Specific Heat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Urtfiltreringsbeholder specifik varme</translation>
     </message>
     <message>
         <source>Lauter Tun Type</source>
@@ -2950,11 +2945,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Lauter Tun Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Urtfiltreringsbeholder masse</translation>
     </message>
     <message>
         <source>Mash Tun Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tab i mæskekar</translation>
     </message>
     <message>
         <source>Mash Tun Notes</source>
@@ -2962,7 +2957,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Mash Tun Specific Heat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskekar specifik varme</translation>
     </message>
     <message>
         <source>Mash Tun Type</source>
@@ -2970,15 +2965,15 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Mash Tun Volume</source>
-        <translation type="unfinished">Mæskebeholder Volumen</translation>
+        <translation type="unfinished">Mæskekar volumen</translation>
     </message>
     <message>
         <source>Mash Tun Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskekar masse</translation>
     </message>
     <message>
         <source>Packaging Vessel Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tab i opbevaringsbeholder</translation>
     </message>
     <message>
         <source>Packaging Vessel Notes</source>
@@ -2990,55 +2985,55 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Packaging Vessel Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opbevaringsbeholder volumen</translation>
     </message>
     <message>
         <source>Top Up Kettle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Efterfyldning i kogekar</translation>
     </message>
     <message>
         <source>Top Up Water</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Efterfyldningsvand</translation>
     </message>
     <message>
         <source>Fermentor Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tab i gæringsbeholder</translation>
     </message>
     <message>
         <source>Fermentor Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gæringsbeholder notater</translation>
     </message>
     <message>
         <source>Fermentor Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gæringsbeholder type</translation>
     </message>
     <message>
         <source>Default Batch Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Standard batchstørrelse</translation>
     </message>
     <message>
         <source>Fermentor Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gæringsbeholder volumen</translation>
     </message>
     <message>
         <source>Default Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Standard forkogningsvolumen</translation>
     </message>
     <message>
         <source>Kettle Volume</source>
-        <translation type="unfinished">Kogekar Volumen</translation>
+        <translation type="unfinished">Kogekar volumen</translation>
     </message>
     <message>
         <source>Foundation Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bundvolumen</translation>
     </message>
     <message>
         <source>Grain Absorption</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Absorption i malt</translation>
     </message>
     <message>
         <source>Batch Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Batchstørrelse</translation>
     </message>
 </context>
 <context>
@@ -3157,51 +3152,51 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Foundation water (%1) plus mash tun loss (%2) leaves no room for the mash in a mash tun with total capacity %3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bundvand (%1) plus tab i mæskekar (%2) efterlader ingen plads til mæsken i et mæskekar med en samlet kapacitet på %3.</translation>
     </message>
     <message>
         <source>default batch size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">standard batchstørrelse</translation>
     </message>
     <message>
         <source>Foundation water (%1) leaves no room for the mash in the kettle (total capacity %2).  (As there is no separate mash tun, the mash happens in the kettle.)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bundvand (%1) efterlader ingen plads til mæsken i kogekarret (samlet kapacitet %2).  (Da der ikke er et separat mæskekar, foregår mæskningen i kogekarret.)</translation>
     </message>
     <message>
         <source>The default pre-boil volume (%1) is more than the kettle can hold (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Standardvolumen før kogning (%1) er mere, end kogekarret kan rumme (%2).</translation>
     </message>
     <message>
         <source>The default batch size (%1) is more than the fermentor can hold (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Standard batchstørrelse (%1) er mere, end gæringsbeholderen kan rumme (%2).</translation>
     </message>
     <message>
         <source>Mash tun losses</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tab i mæskekar</translation>
     </message>
     <message>
         <source>Mash tun weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskekarrets masse</translation>
     </message>
     <message>
         <source>Mash tun specific heat capacity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskekarrets specifikke varmekapacitet</translation>
     </message>
     <message>
         <source>batch size %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">batchstørrelse %1</translation>
     </message>
     <message>
         <source>pre-boil size %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">forkogningsvolumen %1</translation>
     </message>
     <message>
         <source>Update recipes?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opdater opskrifter?</translation>
     </message>
     <message>
         <source>The following recipes use equipment &quot;%1&quot; and have the batch size and/or pre-boil size that it previously specified.  Would you like to update them to match the changes you just made?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Følgende opskrifter bruger udstyret &quot;%1&quot; og har den batchstørrelse og/eller det forkogningsvolumen, som det tidligere angav.  Vil du opdatere dem, så de svarer til de ændringer, du lige har lavet?</translation>
     </message>
 </context>
 <context>
@@ -3319,19 +3314,19 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Alpha Amylase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alfa-amylase</translation>
     </message>
     <message>
         <source>Beta Glucan</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Beta-glucan</translation>
     </message>
     <message>
         <source>Coarse Fine Diff</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forskel grov/fin</translation>
     </message>
     <message>
         <source>Coarse Grind Yield</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Udbytte ved grov formaling</translation>
     </message>
     <message>
         <source>Diastatic Power</source>
@@ -3343,7 +3338,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>DMS precursors</source>
-        <translation type="unfinished">Dimethylsulfoxid udgangsstoffer</translation>
+        <translation type="unfinished">DMS-forstadier</translation>
     </message>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
@@ -3363,23 +3358,23 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Hardness Proportion Glassy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hårdhed andel glasagtig</translation>
     </message>
     <message>
         <source>Hardness Proportion Half</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hårdhed andel halvglasagtig</translation>
     </message>
     <message>
         <source>Hardness Proportion Mealy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hårdhed andel melet</translation>
     </message>
     <message>
         <source>Kernel Size Proportion Plump</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kernestørrelse andel fyldig</translation>
     </message>
     <message>
         <source>Kernel Size Proportion Thin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kernestørrelse andel tynd</translation>
     </message>
     <message>
         <source>Kolbach Index</source>
@@ -3387,15 +3382,15 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Max In Batch</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maks. i batch</translation>
     </message>
     <message>
         <source>Moisture</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vandindhold</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Notater</translation>
     </message>
     <message>
         <source>Origin</source>
@@ -3403,7 +3398,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Potential Yield</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Teoretisk udbytte</translation>
     </message>
     <message>
         <source>Producer</source>
@@ -3411,11 +3406,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Product ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Produkt-ID</translation>
     </message>
     <message>
         <source>Protein</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Protein</translation>
     </message>
     <message>
         <source>Recommend Mash</source>
@@ -3431,23 +3426,23 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Fermentable Purchases</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Køb af gærbare ingredienser</translation>
     </message>
     <message>
         <source>Yield (DBFG) %</source>
-        <translation type="unfinished">Udbytte af ekstrakt med fint kværnet malt (DBFG) %</translation>
+        <translation type="unfinished">Udbytte (DBFG) %</translation>
     </message>
     <message>
         <source>IBU Gal Per Lb</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">IBU gal pr. lb</translation>
     </message>
     <message>
         <source>Lactic Acid content (% weight)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mælkesyreindhold (% af masse)</translation>
     </message>
     <message>
         <source>Fermentable by yeast (%)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gærbar af gær (%)</translation>
     </message>
 </context>
 <context>
@@ -3547,11 +3542,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Fermentation Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gæringsprofiler</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Notater</translation>
     </message>
     <message>
         <source>Primary</source>
@@ -3563,43 +3558,43 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Tertiary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tredje</translation>
     </message>
     <message>
         <source>Krausen Handling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Krausen-håndtering</translation>
     </message>
     <message>
         <source>Mixed In</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Blandet i</translation>
     </message>
     <message>
         <source>Minor Deposits on Fermenter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lette aflejringer i gæringsbeholder</translation>
     </message>
     <message>
         <source>Medium Deposits on Fermenter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Middel aflejringer i gæringsbeholder</translation>
     </message>
     <message>
         <source>Heavy Deposits on Fermenter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kraftige aflejringer i gæringsbeholder</translation>
     </message>
     <message>
         <source>Very Heavy Deposits on Fermenter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Meget kraftige aflejringer i gæringsbeholder</translation>
     </message>
     <message>
         <source>Blown Off, Slow Fermentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Blæst ud, langsom gæring</translation>
     </message>
     <message>
         <source>Blown Off, Normal Fermentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Blæst ud, normal gæring</translation>
     </message>
     <message>
         <source>Blown Off, Vigorous Fermentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Blæst ud, kraftig gæring</translation>
     </message>
 </context>
 <context>
@@ -3610,11 +3605,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Step time (days)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trinvarighed (dage)</translation>
     </message>
     <message>
         <source>Free Rise</source>
-        <translation type="unfinished">Frivillig temp.stigning</translation>
+        <translation type="unfinished">Fri temperaturstigning</translation>
     </message>
     <message>
         <source>Vessel</source>
@@ -3622,11 +3617,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Nej</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nej</translation>
     </message>
 </context>
 <context>
@@ -3707,11 +3698,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sti</translation>
     </message>
     <message>
         <source>Full Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fuld sti</translation>
     </message>
 </context>
 <context>
@@ -3770,7 +3761,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>&lt;em&gt;If it&apos;s Brewken, we can fix it...&lt;/em&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;em&gt;Hvis det er Brewken, kan vi rette det...&lt;/em&gt;</translation>
     </message>
 </context>
 <context>
@@ -3881,19 +3872,19 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Form</translation>
     </message>
     <message>
         <source>β-Pinene</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">β-pinen</translation>
     </message>
     <message>
         <source>Caryophyllene</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Caryophyllen</translation>
     </message>
     <message>
         <source>Cohumulone</source>
-        <translation type="unfinished">Cohumulen</translation>
+        <translation type="unfinished">Cohumulon</translation>
     </message>
     <message>
         <source>Farnesene</source>
@@ -3925,7 +3916,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Notater</translation>
     </message>
     <message>
         <source>Pinene</source>
@@ -3941,7 +3932,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Product ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Produkt-ID</translation>
     </message>
     <message>
         <source>Substitutes</source>
@@ -3949,7 +3940,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Total Oil</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Samlet olie</translation>
     </message>
     <message>
         <source>Xanthohumol</source>
@@ -3961,31 +3952,31 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Hop Purchases</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Humlekøb</translation>
     </message>
     <message>
         <source>% Beta</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">% beta</translation>
     </message>
     <message>
         <source>Max % Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maks. % alfa</translation>
     </message>
     <message>
         <source>Min % Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Min. % alfa</translation>
     </message>
     <message>
         <source>Max % Beta</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maks. % beta</translation>
     </message>
     <message>
         <source>Min % Beta</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Min. % beta</translation>
     </message>
     <message>
         <source>Six Month Alpha Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alfatab over seks måneder</translation>
     </message>
 </context>
 <context>
@@ -4181,11 +4172,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Total Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Samlet lagerbeholdning</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mængdetype</translation>
     </message>
 </context>
 <context>
@@ -4199,7 +4190,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>IngredientName</name>
     <message>
         <source>Purchase of %1 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Køb af %1 </translation>
     </message>
 </context>
 <context>
@@ -4210,31 +4201,27 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Completed </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Afsluttet </translation>
     </message>
     <message>
         <source>Directions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fremgangsmåde</translation>
     </message>
     <message>
         <source>Has Timer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Har timer</translation>
     </message>
     <message>
         <source>Interval</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Interval</translation>
     </message>
     <message>
         <source>Timer Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Timerværdi</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Nej</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nej</translation>
     </message>
 </context>
 <context>
@@ -4274,50 +4261,50 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>Item</name>
     <message>
         <source>Add %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tilføj %1</translation>
     </message>
     <message>
         <source>Remove selected %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fjern markeret %1</translation>
     </message>
     <message>
         <source>Move selected %1 up</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Flyt markeret %1 op</translation>
     </message>
     <message>
         <source>Move selected %1 down</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Flyt markeret %1 ned</translation>
     </message>
     <message>
         <source>Edit selected %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rediger markeret %1</translation>
     </message>
 </context>
 <context>
     <name>LockAndShareBar</name>
     <message>
         <source>Make a copy for this recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lav en kopi til denne opskrift</translation>
     </message>
     <message>
         <source>Make a copy that this recipe will use instead, so you can change it without affecting anything else.  Any changes you have already made in this editor are kept, and will be saved to the copy when you click Save.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lav en kopi, som denne opskrift bruger i stedet, så du kan ændre den uden at påvirke noget andet.  Ændringer, du allerede har lavet i denne editor, bevares og gemmes i kopien, når du klikker på Gem.</translation>
     </message>
     <message>
         <source>Unlock…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lås op…</translation>
     </message>
     <message>
         <source>Allow this to be changed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tillad, at dette ændres</translation>
     </message>
     <message>
         <source>Lock</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lås</translation>
     </message>
     <message>
         <source>Prevent this from being changed.  You will still be able to use it in recipes, and to make copies of it.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forhindr, at dette ændres.  Du vil stadig kunne bruge det i opskrifter og lave kopier af det.</translation>
     </message>
 </context>
 <context>
@@ -4492,7 +4479,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Add %1 to recipe</source>
-        <translation>Føj %1 til opskrift</translation>
+        <translation type="vanished">Føj %1 til opskrift</translation>
     </message>
     <message>
         <source>Remove %1 from recipe</source>
@@ -4624,70 +4611,70 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>Wrote recipe to file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opskrift skrevet til fil</translation>
     </message>
     <message>
         <source>Error writing recipe to file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fejl ved skrivning af opskrift til fil</translation>
     </message>
     <message>
         <source>Change Brew Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ændr brygdato</translation>
     </message>
     <message>
         <source>Brew Log #%1 for brew on %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bryglog nr. %1 for brygning den %2</translation>
     </message>
     <message>
         <source>Brew Log for brew on %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bryglog for brygning den %1</translation>
     </message>
     <message>
         <source>Primary fermentation for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Første gæring for %1</translation>
     </message>
     <message>
         <source>Locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Låst</translation>
     </message>
     <message>
         <source>Used by a locked recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bruges af en låst opskrift</translation>
     </message>
     <message numerus="yes">
         <source>Shared with %n other recipe(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Delt med %n anden opskrift</numerusform>
+            <numerusform>Delt med %n andre opskrifter</numerusform>
         </translation>
     </message>
     <message>
         <source> · </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> · </translation>
     </message>
     <message>
         <source>Used only by this recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bruges kun af denne opskrift</translation>
     </message>
     <message>
         <source>⚠ Problems found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">⚠ Problemer fundet</translation>
     </message>
     <message>
         <source>Change Use Mash Profile in FG Calculation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ændr brug af mæskeprofil i FG-beregning</translation>
     </message>
     <message>
         <source>%1 (%2): recipe uses %3 but stock is measured by %4 -- %5 not taken from stock</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (%2): opskriften bruger %3, men lageret måles i %4 -- %5 ikke trukket fra lageret</translation>
     </message>
     <message>
         <source>Inventory not fully updated</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lagerbeholdning ikke fuldt opdateret</translation>
     </message>
     <message>
         <source>The following ingredient(s) are measured differently in the recipe and in your inventory, so the amount(s) used could not (all) be deducted from inventory.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Følgende ingrediens(er) måles forskelligt i opskriften og i din lagerbeholdning, så den/de brugte mængde(r) kunne ikke (alle) trækkes fra lagerbeholdningen.</translation>
     </message>
 </context>
 <context>
@@ -4698,11 +4685,11 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>Total Time</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Samlet tid</translation>
     </message>
     <message>
         <source>Total time (mins)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Samlet tid (min)</translation>
     </message>
     <message>
         <source>Mashes</source>
@@ -4710,23 +4697,23 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>Mash Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskeprofiler</translation>
     </message>
     <message>
         <source>Adjust For Equipment</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Juster efter udstyr</translation>
     </message>
     <message>
         <source>Mash Tun Specific Heat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskekar specifik varme</translation>
     </message>
     <message>
         <source>Mash Tun Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskekar masse</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Notater</translation>
     </message>
     <message>
         <source>pH</source>
@@ -4734,50 +4721,46 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>Sparge Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Spargningstemperatur</translation>
     </message>
     <message>
         <source>Tun Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Karrets temperatur</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Nej</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nej</translation>
     </message>
     <message>
         <source>Initial Grain Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maltens starttemperatur</translation>
     </message>
     <message>
         <source>Mash Water</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskevand</translation>
     </message>
     <message>
         <source>Automatically Adjust</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Juster automatisk</translation>
     </message>
     <message>
         <source>%1 (copy for %2)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (kopi til %2)</translation>
     </message>
     <message>
         <source>, so step validation highlighting is enabled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">, så fremhævning ved validering af trin er slået til</translation>
     </message>
 </context>
 <context>
     <name>MashAutoAdjuster</name>
     <message>
         <source>%1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1: %2</translation>
     </message>
     <message>
         <source>Step %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trin %1</translation>
     </message>
     <message>
         <source>Batch Sparge %1</source>
@@ -4789,167 +4772,167 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     </message>
     <message>
         <source>There are no mash steps.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der er ingen mæsketrin.</translation>
     </message>
     <message>
         <source>There are no grains in the mash.  You need some mash-stage fermentable additions before the mash can be calculated.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der er ingen malt i mæsken.  Du skal have nogle tilsætninger af gærbare ingredienser i mæskefasen, før mæskningen kan beregnes.</translation>
     </message>
     <message>
         <source>The initial grain temperature is %1.  Please set it to the temperature of the grain before mashing, which is normally room temperature.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maltens starttemperatur er %1.  Sæt den til maltens temperatur før mæskning, hvilket normalt er stuetemperatur.</translation>
     </message>
     <message>
         <source>The initial mash tun temperature is %1, which needs to be between freezing and boiling point (%2).  (If it is not set, we assume the tun is at the same temperature as the grain.)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskekarrets starttemperatur er %1, men den skal være mellem frysepunktet og kogepunktet (%2).  (Hvis den ikke er angivet, antager vi, at karret har samme temperatur som malten.)</translation>
     </message>
     <message>
         <source>The step temperature was %1, which doesn&apos;t make sense, so it has been set to %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trintemperaturen var %1, hvilket ikke giver mening, så den er sat til %2.</translation>
     </message>
     <message>
         <source>The step temperature is %1, which needs to be between freezing and boiling point (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trintemperaturen er %1, men den skal være mellem frysepunktet og kogepunktet (%2).</translation>
     </message>
     <message>
         <source>The first step must be an infusion (ie adding the strike water).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Det første trin skal være en infusion (dvs. tilsætning af indmæskningsvandet).</translation>
     </message>
     <message>
         <source>Sparge steps must come after all the other steps.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Spargningstrin skal komme efter alle de andre trin.</translation>
     </message>
     <message>
         <source>The mash thickness must be positive.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæsketykkelsen skal være positiv.</translation>
     </message>
     <message>
         <source>The infusion temperature is pinned, but has not been set.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Infusionstemperaturen er fastholdt, men er ikke angivet.</translation>
     </message>
     <message>
         <source>With no sparge, this step has to make up the total water needed (%1), but the other steps already add %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uden spargning skal dette trin udgøre den samlede nødvendige vandmængde (%1), men de andre trin tilsætter allerede %2.</translation>
     </message>
     <message>
         <source>Cannot reach %1 with water at %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kan ikke nå %1 med vand ved %2.</translation>
     </message>
     <message>
         <source>The infusion amount must be more than zero.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Infusionsmængden skal være større end nul.</translation>
     </message>
     <message>
         <source>This infusion does not change the temperature of the mash, so its amount cannot be calculated.  It needs to be set and pinned.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Denne infusion ændrer ikke mæskens temperatur, så dens mængde kan ikke beregnes.  Den skal angives og fastholdes.</translation>
     </message>
     <message>
         <source>Try a thinner mash (ie more water).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Prøv en tyndere mæsk (dvs. mere vand).</translation>
     </message>
     <message>
         <source>Try more water or a lower step temperature.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Prøv mere vand eller en lavere trintemperatur.</translation>
     </message>
     <message>
         <source>The water would need to be at %1, which is above boiling point (%2).  %3</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vandet skulle have en temperatur på %1, hvilket er over kogepunktet (%2).  %3</translation>
     </message>
     <message>
         <source>The mash would already be hotter than %1 at this point.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæsken ville allerede være varmere end %1 på dette tidspunkt.</translation>
     </message>
     <message>
         <source>This is more water than is needed to reach %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dette er mere vand, end der skal til for at nå %1.</translation>
     </message>
     <message>
         <source>Try a smaller pinned amount, or unpinning it.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Prøv en mindre fastholdt mængde, eller ophæv fastholdelsen.</translation>
     </message>
     <message>
         <source>With no sparge, this step has to add the rest of the water needed.  Try having a sparge, or more water in the earlier steps.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uden spargning skal dette trin tilsætte resten af den nødvendige vandmængde.  Prøv med spargning eller mere vand i de tidligere trin.</translation>
     </message>
     <message>
         <source>Try a thicker mash (ie less water).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Prøv en tykkere mæsk (dvs. mindre vand).</translation>
     </message>
     <message>
         <source>To reach %1 with %2 of water, the water would need to be at %3, which is colder than the coldest water available (taken to be at the initial grain temperature, %4).  %5  %6</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">For at nå %1 med %2 vand skulle vandet have en temperatur på %3, hvilket er koldere end det koldeste tilgængelige vand (antaget at have maltens starttemperatur, %4).  %5  %6</translation>
     </message>
     <message>
         <source>%1 of water at %2 will give a mash temperature of %3 rather than %4.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 vand ved %2 giver en mæsketemperatur på %3 i stedet for %4.</translation>
     </message>
     <message>
         <source>The mash is already at boiling point.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæsken er allerede ved kogepunktet.</translation>
     </message>
     <message>
         <source>The decoction amount (%1) must be between zero and the volume of the mash (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dekoktionsmængden (%1) skal være mellem nul og mæskens volumen (%2).</translation>
     </message>
     <message>
         <source>A decoction of %1 will give a mash temperature of %2 rather than %3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">En dekoktion på %1 giver en mæsketemperatur på %2 i stedet for %3.</translation>
     </message>
     <message>
         <source>A decoction cannot lower the temperature of the mash.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">En dekoktion kan ikke sænke mæskens temperatur.</translation>
     </message>
     <message>
         <source>Cannot reach %1 by decoction, even by boiling the whole mash.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kan ikke nå %1 ved dekoktion, selv hvis hele mæsken koges.</translation>
     </message>
     <message>
         <source>At its fullest, the mash will be about %1, which is more than the capacity of the mash tun (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Når mæskekarret er fyldt mest, vil mæsken være ca. %1, hvilket er mere end mæskekarrets kapacitet (%2).</translation>
     </message>
     <message>
         <source>The infusions add up to %1 of water, but %2 is needed in total.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Infusionerne giver i alt %1 vand, men der skal bruges %2 i alt.</translation>
     </message>
     <message>
         <source>There is no water left for sparging: the total water needed is %1, but the mash steps already add %2%3.  You will collect more wort than needed.  Try a thicker mash (ie less water).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der er intet vand tilbage til spargning: den samlede nødvendige vandmængde er %1, men mæsketrinnene tilsætter allerede %2%3.  Du vil opsamle mere urt end nødvendigt.  Prøv en tykkere mæsk (dvs. mindre vand).</translation>
     </message>
     <message>
         <source> and the pinned sparge amounts add %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> og de fastholdte spargningsmængder tilsætter %1</translation>
     </message>
     <message>
         <source>The mash and sparge water add up to %1, but %2 is needed in total.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæske- og spargningsvandet giver i alt %1, men der skal bruges %2 i alt.</translation>
     </message>
     <message>
         <source>The sparge water temperature is pinned, but has not been set.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Spargningsvandets temperatur er fastholdt, men er ikke angivet.</translation>
     </message>
     <message>
         <source>%1 of water at %2 will give a grain bed temperature of %3 rather than %4.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 vand ved %2 giver en temperatur i maltlejet på %3 i stedet for %4.</translation>
     </message>
     <message>
         <source>The grain bed is already hotter than %1, so we use water at that temperature, and the bed will be at about %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maltlejet er allerede varmere end %1, så vi bruger vand ved den temperatur, og lejet vil være ca. %2.</translation>
     </message>
     <message>
         <source>Even with boiling water, the grain bed will only reach %1 rather than %2.  This is usually fine for a batch sparge, but you could use fewer batches (ie more water per batch) or a lower sparge temperature.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Selv med kogende vand vil maltlejet kun nå %1 i stedet for %2.  Det er normalt fint ved portionsvis spargning, men du kan bruge færre portioner (dvs. mere vand pr. portion) eller en lavere spargningstemperatur.</translation>
     </message>
     <message>
         <source>The sparge water would need to be at %1, which is above boiling point (%2).  Try a lower sparge temperature or more sparge water.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Spargningsvandet skulle have en temperatur på %1, hvilket er over kogepunktet (%2).  Prøv en lavere spargningstemperatur eller mere spargningsvand.</translation>
     </message>
     <message>
         <source>No amount is set.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der er ikke angivet nogen mængde.</translation>
     </message>
     <message>
         <source>Change mash steps</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ændr mæsketrin</translation>
     </message>
 </context>
 <context>
@@ -5010,85 +4993,87 @@ Hvis du har brug for hjælp, bedes du åbne en sag (issue) på %1</translation>
     <name>MashEditor</name>
     <message>
         <source>No sparge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ingen spargning</translation>
     </message>
     <message>
         <source>Batch sparge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Portionsvis spargning</translation>
     </message>
     <message>
         <source>Fly sparge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kontinuert spargning</translation>
     </message>
     <message>
         <source>Recipe is locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opskriften er låst</translation>
     </message>
     <message>
         <source>Make a copy of mash?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lav en kopi af mæskningen?</translation>
     </message>
     <message>
         <source>Make a copy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lav en kopi</translation>
     </message>
     <message>
         <source>To adjust the mash, edit it from a recipe that uses it (eg with the Edit button on the recipe&apos;s Mash tab), as the amounts and temperatures depend on the recipe&apos;s grain bill and equipment.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">For at justere mæskningen skal du redigere den fra en opskrift, der bruger den (fx med knappen Rediger på opskriftens fane Mæskning), da mængderne og temperaturerne afhænger af opskriftens maltsammensætning og udstyr.</translation>
     </message>
     <message>
         <source>Adjusts the water amounts and temperatures in the steps to suit the grain bill and equipment of recipe &quot;%1&quot;.  Pinned values are not changed.  Changes to the steps take effect straight away (ie without clicking Save).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Justerer vandmængderne og temperaturerne i trinnene, så de passer til maltsammensætningen og udstyret i opskriften &quot;%1&quot;.  Fastholdte værdier ændres ikke.  Ændringer af trinnene træder i kraft med det samme (dvs. uden at klikke på Gem).</translation>
     </message>
     <message>
         <source>⚠ This mash has problems.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">⚠ Denne mæskning har problemer.</translation>
     </message>
     <message>
         <source>The recipe &quot;%1&quot; is locked, so its mash cannot be changed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opskriften &quot;%1&quot; er låst, så dens mæskning kan ikke ændres.</translation>
     </message>
     <message>
         <source>Adjusting the mash changes its steps to suit the grain bill and equipment of recipe &quot;%1&quot;.
 
 Do you want to make a copy of this mash for that recipe, so that you can do this without affecting anything else?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Justering af mæskningen ændrer dens trin, så de passer til maltsammensætningen og udstyret i opskriften &quot;%1&quot;.
+
+Vil du lave en kopi af denne mæskning til den opskrift, så du kan gøre dette uden at påvirke noget andet?</translation>
     </message>
     <message>
         <source>Could not adjust the mash, so nothing has been changed:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kunne ikke justere mæskningen, så intet er ændret:</translation>
     </message>
     <message>
         <source>Mash adjusted for recipe &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskning justeret til opskriften &quot;%1&quot;.</translation>
     </message>
     <message>
         <source>Mash adjusted for recipe &quot;%1&quot;, but please check the following:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskning justeret til opskriften &quot;%1&quot;, men kontroller venligst følgende:</translation>
     </message>
     <message>
         <source>  General problems are:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">  Generelle problemer:</translation>
     </message>
     <message>
         <source>Turn off automatic adjustment of mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Slå automatisk justering af mæskning fra</translation>
     </message>
     <message>
         <source>Auto-Adjust undone.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Automatisk justering fortrudt.</translation>
     </message>
     <message>
         <source>Turn on automatic adjustment of mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Slå automatisk justering af mæskning til</translation>
     </message>
     <message>
         <source>Could not adjust the mash yet:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kunne endnu ikke justere mæskningen:</translation>
     </message>
     <message>
         <source>Auto-adjust mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Juster mæskning automatisk</translation>
     </message>
 </context>
 <context>
@@ -5131,51 +5116,47 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Step time (mins)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trinvarighed (min)</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mængde</translation>
     </message>
     <message>
         <source>Decoction Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dekoktionsmængde</translation>
     </message>
     <message>
         <source>Infuse Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Infusionsmængde</translation>
     </message>
     <message>
         <source>Infuse Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Infusionstemperatur</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Type</translation>
     </message>
     <message>
         <source>Water:Grain</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vand:malt</translation>
     </message>
     <message>
         <source>Amount Fixed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mængde fastholdt</translation>
     </message>
     <message>
         <source>Infuse Temperature Fixed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Infusionstemperatur fastholdt</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Nej</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nej</translation>
     </message>
     <message>
         <source>Mash Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskevolumen</translation>
     </message>
 </context>
 <context>
@@ -5218,55 +5199,55 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Pinned: not changed when adjusting the mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fastholdt: ændres ikke ved justering af mæskningen</translation>
     </message>
     <message>
         <source>Pinned amount (not changed when adjusting the mash)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fastholdt mængde (ændres ikke ved justering af mæskningen)</translation>
     </message>
     <message>
         <source>Pinned infusion temperature (not changed when adjusting the mash)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fastholdt infusionstemperatur (ændres ikke ved justering af mæskningen)</translation>
     </message>
     <message>
         <source>⚠ %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">⚠ %1: %2</translation>
     </message>
     <message>
         <source>⚠ %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">⚠ %1</translation>
     </message>
     <message>
         <source>Mash tun at its fullest: %1 (%2% of its %3 capacity)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskekar ved største fyldning: %1 (%2% af kapaciteten på %3)</translation>
     </message>
     <message>
         <source>Mash tun at its fullest: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskekar ved største fyldning: %1</translation>
     </message>
     <message>
         <source>Wort collected: %1 (%2% of the %3 needed)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opsamlet urt: %1 (%2% af de nødvendige %3)</translation>
     </message>
     <message>
         <source>Wort collected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opsamlet urt: %1</translation>
     </message>
     <message>
         <source>Change and pin mash step amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ændr og fasthold mæsketrinnets mængde</translation>
     </message>
     <message>
         <source>Change and pin mash step infusion temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ændr og fasthold mæsketrinnets infusionstemperatur</translation>
     </message>
     <message>
         <source>Pin mash step amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fasthold mæsketrinnets mængde</translation>
     </message>
     <message>
         <source>Pin mash step infusion temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fasthold mæsketrinnets infusionstemperatur</translation>
     </message>
 </context>
 <context>
@@ -5420,7 +5401,7 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Notater</translation>
     </message>
     <message>
         <source>Producer</source>
@@ -5428,35 +5409,31 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Product ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Produkt-ID</translation>
     </message>
     <message>
         <source>Use For</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bruges til</translation>
     </message>
     <message>
         <source>Misc Purchases</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Køb af diverse ingredienser</translation>
     </message>
     <message>
         <source>Water Agent Is Acid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vandtilsætning er syre</translation>
     </message>
     <message>
         <source>Water Agent %% Acid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vandtilsætning %% syre</translation>
     </message>
     <message>
         <source>Water Agent Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vandtilsætningstype</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Nej</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nej</translation>
     </message>
     <message>
         <source>CaCl2 (Calcium chloride)</source>
@@ -5488,55 +5465,55 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Calcium Carbonate (CaCO₃)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Calciumcarbonat (CaCO₃)</translation>
     </message>
     <message>
         <source>Sodium Bicarbonate (NaHCO₃)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Natriumbicarbonat (NaHCO₃)</translation>
     </message>
     <message>
         <source>Lactic Acid (C₃H₆O₃)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mælkesyre (C₃H₆O₃)</translation>
     </message>
     <message>
         <source>Phosphoric acid (H₃PO₄)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fosforsyre (H₃PO₄)</translation>
     </message>
     <message>
         <source>Anhydrous Calcium Chloride (CaCl₂)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vandfrit calciumchlorid (CaCl₂)</translation>
     </message>
     <message>
         <source>Calcium Chloride Dihydrate (CaCl₂·2H₂O)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Calciumchlorid-dihydrat (CaCl₂·2H₂O)</translation>
     </message>
     <message>
         <source>Gypsum (CaSO₄·2H₂O)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gips (CaSO₄·2H₂O)</translation>
     </message>
     <message>
         <source>Pickling Lime (Ca(OH)₂)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Læsket kalk (Ca(OH)₂)</translation>
     </message>
     <message>
         <source>Epsom Salt (MgSO₄·7H₂O)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Epsomsalt (MgSO₄·7H₂O)</translation>
     </message>
     <message>
         <source>Magnesium Chloride Hexahydrate (MgCl₂·6H₂O)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magnesiumchlorid-hexahydrat (MgCl₂·6H₂O)</translation>
     </message>
     <message>
         <source>Regular Salt (NaCl)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Almindeligt salt (NaCl)</translation>
     </message>
     <message>
         <source>sulfuric acid (H₂SO₄)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">svovlsyre (H₂SO₄)</translation>
     </message>
     <message>
         <source>hydrochloric acid (HCl)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">saltsyre (HCl)</translation>
     </message>
 </context>
 <context>
@@ -5668,100 +5645,102 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     <name>NE</name>
     <message>
         <source>Change %1 %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ændr %1 %2</translation>
     </message>
     <message>
         <source>Change %1 on %2 Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ændr %1 i opskriften %2</translation>
     </message>
     <message>
         <source>%1 #%2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 nr. %2</translation>
     </message>
     <message>
         <source>This new %1 will be used by this recipe when you click Save.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Denne nye %1 vil blive brugt af denne opskrift, når du klikker på Gem.</translation>
     </message>
     <message>
         <source>Unlock %1?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lås %1 op?</translation>
     </message>
     <message>
         <source>Are you sure you want to unlock &quot;%1&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Er du sikker på, at du vil låse &quot;%1&quot; op?</translation>
     </message>
     <message>
         <source>Locking is there to stop this %1 being changed by accident.  If you want to make changes for one recipe, it is usually better to make a copy for that recipe instead.
 
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Låsning er til for at forhindre, at denne %1 ændres ved et uheld.  Hvis du vil lave ændringer til én opskrift, er det normalt bedre at lave en kopi til den opskrift i stedet.
+
+%2</translation>
     </message>
     <message>
         <source>Unlock</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lås op</translation>
     </message>
     <message>
         <source>Recipe is locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opskriften er låst</translation>
     </message>
     <message>
         <source>This recipe is locked, so you cannot add a %1 to it.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Denne opskrift er låst, så du kan ikke tilføje en %1 til den.</translation>
     </message>
     <message>
         <source>%1 for %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 til %2</translation>
     </message>
     <message>
         <source>%1 (copy for %2)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (kopi til %2)</translation>
     </message>
     <message>
         <source>It is locked, so it cannot be changed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Den er låst, så den kan ikke ændres.</translation>
     </message>
     <message numerus="yes">
         <source>It cannot be changed because it is used by %n locked recipe(s): %1.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Den kan ikke ændres, fordi den bruges af %n låst opskrift: %1.</numerusform>
+            <numerusform>Den kan ikke ændres, fordi den bruges af %n låste opskrifter: %1.</numerusform>
         </translation>
     </message>
     <message>
         <source>Any changes you make here will affect all of them.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ændringer, du laver her, vil påvirke dem alle.</translation>
     </message>
     <message>
         <source>It cannot be changed because the recipe &quot;%1&quot; is locked.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Den kan ikke ændres, fordi opskriften &quot;%1&quot; er låst.</translation>
     </message>
     <message>
         <source>Use a copy of mash?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brug en kopi af mæskningen?</translation>
     </message>
     <message>
         <source>The mash &quot;%1&quot; adjusts automatically to the recipe that uses it (&quot;%2&quot;), so it can&apos;t be shared with another recipe.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskningen &quot;%1&quot; justeres automatisk efter den opskrift, der bruger den (&quot;%2&quot;), så den kan ikke deles med en anden opskrift.</translation>
     </message>
     <message>
         <source>Do you want to use a copy of it for this recipe?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vil du bruge en kopi af den til denne opskrift?</translation>
     </message>
     <message>
         <source>Use a copy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brug en kopi</translation>
     </message>
     <message>
         <source>Use equipment sizes?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brug udstyrets størrelser?</translation>
     </message>
     <message>
         <source>Would you like to set the recipe&apos;s batch size to %1 and pre-boil size to %2, as specified by the equipment &quot;%3&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vil du sætte opskriftens batchstørrelse til %1 og forkogningsvolumen til %2, som angivet af udstyret &quot;%3&quot;?</translation>
     </message>
     <message>
         <source>Change Batch Size</source>
-        <translation type="unfinished">Ændr volumen af portion</translation>
+        <translation type="unfinished">Ændr batchstørrelse</translation>
     </message>
     <message>
         <source>Change Boil Size</source>
@@ -5769,28 +5748,28 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Change Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ændr forkogningsvolumen</translation>
     </message>
     <message>
         <source>%1 not used by any recipe.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 bruges ikke af nogen opskrift.</translation>
     </message>
     <message>
         <source>%1 used only by one recipe (%2)%3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 bruges kun af én opskrift (%2)%3.</translation>
     </message>
     <message numerus="yes">
         <source>%1 also used by %n other recipe(s): %2.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%1 bruges også af %n anden opskrift: %2.</numerusform>
+            <numerusform>%1 bruges også af %n andre opskrifter: %2.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>%1 used by %n recipe(s): %2.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%1 bruges af %n opskrift: %2.</numerusform>
+            <numerusform>%1 bruges af %n opskrifter: %2.</numerusform>
         </translation>
     </message>
 </context>
@@ -5802,105 +5781,105 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Deleted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Slettet</translation>
     </message>
     <message>
         <source>Key</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nøgle</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Navn</translation>
     </message>
     <message>
         <source>Subsidiary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Underordnet</translation>
     </message>
     <message>
         <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Antal opskrifter</translation>
     </message>
 </context>
 <context>
     <name>ObjectStoreUtils::NE</name>
     <message>
         <source>Unnamed %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Unavngivet %1</translation>
     </message>
 </context>
 <context>
     <name>OgCorrectionTool</name>
     <message>
         <source>You need to have a recipe open in the main window before you can use this tool.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Du skal have en opskrift åben i hovedvinduet, før du kan bruge dette værktøj.</translation>
     </message>
     <message>
         <source>Couldn&apos;t read input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kunne ikke læse input</translation>
     </message>
     <message>
         <source>Need a valid value for Measured Gravity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der skal være en gyldig værdi for målt massefylde</translation>
     </message>
     <message>
         <source>No Recipe Selected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ingen opskrift valgt</translation>
     </message>
     <message>
         <source>No Equipment on Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Intet udstyr på opskriften</translation>
     </message>
     <message>
         <source>Recipe &quot;%1&quot; has no equipment.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opskriften &quot;%1&quot; har intet udstyr.</translation>
     </message>
     <message>
         <source>No Boil on Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ingen kogning på opskriften</translation>
     </message>
     <message>
         <source>Recipe &quot;%1&quot; has no boil.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opskriften &quot;%1&quot; har ingen kogning.</translation>
     </message>
     <message>
         <source>Need a valid value for Wort Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der skal være en gyldig værdi for urtvolumen</translation>
     </message>
     <message>
         <source>- On Target -</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">- På mål -</translation>
     </message>
     <message>
         <source>↑ Above Target ↑</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">↑ Over mål ↑</translation>
     </message>
     <message>
         <source>↓ Below Target ↓</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">↓ Under mål ↓</translation>
     </message>
     <message>
         <source>Remedy: Add Water To Boil</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Løsning: Tilsæt vand til kogningen</translation>
     </message>
     <message>
         <source>Amount to Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mængde at tilsætte</translation>
     </message>
     <message>
         <source>Amount of water you need to add to hit planned OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mængde vand, du skal tilsætte for at ramme den planlagte OG</translation>
     </message>
     <message>
         <source>Remedy: Boil Down To Reduce Wort Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Løsning: Kog ind for at reducere urtvolumen</translation>
     </message>
     <message>
         <source>Amount to Boil Off</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mængde at koge væk</translation>
     </message>
     <message>
         <source>Extra wort you need to boil off to hit planned OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ekstra urt, du skal koge væk for at ramme den planlagte OG</translation>
     </message>
 </context>
 <context>
@@ -6143,15 +6122,15 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Conversion Error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Konverteringsfejl</translation>
     </message>
     <message>
         <source>Data transfer failed.  See log file for more details.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dataoverførsel mislykkedes.  Se logfilen for flere detaljer.</translation>
     </message>
     <message>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Standard</translation>
     </message>
 </context>
 <context>
@@ -6162,15 +6141,11 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Is Outline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Er disposition</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Nej</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nej</translation>
     </message>
 </context>
 <context>
@@ -6181,7 +6156,7 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Recipe ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opskrift-ID</translation>
     </message>
     <message>
         <source>Recipe</source>
@@ -6192,7 +6167,7 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     <name>Owner</name>
     <message>
         <source>Items</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Elementer</translation>
     </message>
 </context>
 <context>
@@ -6209,12 +6184,20 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
         <source>Could not open the file %1 for writing! please try again with a new filename or diretory</source>
         <translation>Kunne ikke skrive til filen %1! Prøv igen med nyt filnavn eller mappe</translation>
     </message>
+    <message>
+        <source>Print</source>
+        <translation type="unfinished">Udskriv</translation>
+    </message>
+    <message>
+        <source>Save as</source>
+        <translation type="unfinished">Gem som</translation>
+    </message>
 </context>
 <context>
     <name>QApplication</name>
     <message>
         <source>%1 is already running!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 kører allerede!</translation>
     </message>
     <message>
         <source>Another instance of %1 is already running.
@@ -6222,37 +6205,43 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
 Running two copies of the program at once may lead to data loss.
 
 Press OK to quit.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">En anden forekomst af %1 kører allerede.
+
+Hvis to kopier af programmet kører samtidig, kan det føre til tab af data.
+
+Tryk på OK for at afslutte.</translation>
     </message>
     <message>
         <source>Application terminates</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Programmet afsluttes</translation>
     </message>
     <message>
         <source>The application encountered a fatal error.
 Error message:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Programmet stødte på en alvorlig fejl.
+Fejlmeddelelse:
+%1</translation>
     </message>
     <message>
         <source>The application encountered a fatal error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Programmet stødte på en alvorlig fejl.</translation>
     </message>
     <message>
         <source>Creation of empty Database file &apos;%1&apos; %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Oprettelse af tom databasefil &apos;%1&apos; %2.</translation>
     </message>
     <message>
         <source>succeeded</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">lykkedes</translation>
     </message>
     <message>
         <source>failed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">mislykkedes</translation>
     </message>
     <message>
         <source>To use the newly-created file, rename it to &apos;%1&apos; and move it to directory %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">For at bruge den nyoprettede fil skal du omdøbe den til &apos;%1&apos; og flytte den til mappen %2.</translation>
     </message>
 </context>
 <context>
@@ -6989,7 +6978,7 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>%1 Catalog / Database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 katalog/database</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
@@ -7001,19 +6990,19 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>Create new %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opret ny %1</translation>
     </message>
     <message>
         <source>Edit selected %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rediger markeret %1</translation>
     </message>
     <message>
         <source>%1 name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1-navn</translation>
     </message>
     <message>
         <source>%1 name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1-navn:</translation>
     </message>
     <message>
         <source>No</source>
@@ -7021,7 +7010,7 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ja</translation>
     </message>
     <message>
         <source>Basque</source>
@@ -7045,7 +7034,7 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>Dutch</source>
-        <translation type="unfinished">Hollands</translation>
+        <translation type="unfinished">Nederlandsk</translation>
     </message>
     <message>
         <source>English</source>
@@ -7061,7 +7050,7 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>Galician</source>
-        <translation type="unfinished">Galisisk</translation>
+        <translation type="unfinished">Galicisk</translation>
     </message>
     <message>
         <source>German</source>
@@ -7081,7 +7070,7 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>Latvian</source>
-        <translation type="unfinished">Litauisk</translation>
+        <translation type="unfinished">Lettisk</translation>
     </message>
     <message>
         <source>Norwegian Bokmål</source>
@@ -7117,7 +7106,7 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>None!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ingen!</translation>
     </message>
     <message>
         <source>Add %1 step to recipe</source>
@@ -7125,23 +7114,23 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>pt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">pt</translation>
     </message>
     <message>
         <source>Mosher&apos;s approximation</source>
-        <translation type="unfinished">Mosher&apos;s approksimation</translation>
+        <translation type="unfinished">Moshers approksimation</translation>
     </message>
     <message>
         <source>Daniel&apos;s approximation</source>
-        <translation type="unfinished">Daniel&apos;s approksimation</translation>
+        <translation type="unfinished">Daniels approksimation</translation>
     </message>
     <message>
         <source>Morey&apos;s approximation</source>
-        <translation type="unfinished">Morey&apos;s approksimation</translation>
+        <translation type="unfinished">Moreys approksimation</translation>
     </message>
     <message>
         <source>Tinseth&apos;s approximation</source>
-        <translation type="unfinished">Tinseth&apos;s approksimation</translation>
+        <translation type="unfinished">Tinseths approksimation</translation>
     </message>
     <message>
         <source>Rager&apos;s approximation</source>
@@ -7149,59 +7138,59 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>Noonan&apos;s approximation</source>
-        <translation type="unfinished">Noonans&apos;s approksiation</translation>
+        <translation type="unfinished">Noonans approksimation</translation>
     </message>
     <message>
         <source>Filter search</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Filtrer søgning</translation>
     </message>
     <message>
         <source>Delete selected %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Slet markeret %1</translation>
     </message>
     <message>
         <source>Heat Capacity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Varmekapacitet</translation>
     </message>
     <message>
         <source>Heat Capacity Kilocalories per</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Varmekapacitet kilokalorier pr.</translation>
     </message>
     <message>
         <source>Heat Capacity Joules per</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Varmekapacitet joule pr.</translation>
     </message>
     <message>
         <source>kc/C</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kc/C</translation>
     </message>
     <message>
         <source>J/K</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">J/K</translation>
     </message>
     <message>
         <source>BTU/F</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">BTU/F</translation>
     </message>
     <message>
         <source>Set selected %1 for current recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Angiv markeret %1 for aktuel opskrift</translation>
     </message>
     <message>
         <source>Add selected %1 to current recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Føj markeret %1 til aktuel opskrift</translation>
     </message>
     <message>
         <source>Formula</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Formel</translation>
     </message>
     <message>
         <source>Could not open &quot;%1&quot; for writing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kunne ikke åbne &quot;%1&quot; til skrivning</translation>
     </message>
     <message>
         <source>Did not recognise file extension on &quot;%1&quot; so nothing read.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Filtypenavnet på &quot;%1&quot; blev ikke genkendt, så intet blev læst.</translation>
     </message>
     <message>
         <source>Salts</source>
@@ -7213,223 +7202,223 @@ Logfil indeholder evt. flere detaljer.</translation>
     </message>
     <message>
         <source>Enter filter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Angiv filter</translation>
     </message>
     <message>
         <source>Add %1 to %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Føj %1 til %2</translation>
     </message>
     <message>
         <source>Stock</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lager</translation>
     </message>
     <message>
         <source>No stock available.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Intet på lager.</translation>
     </message>
     <message>
         <source>Show stock purchases</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vis lagerkøb</translation>
     </message>
     <message>
         <source>New stock purchase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nyt lagerkøb</translation>
     </message>
     <message>
         <source>Stock Purchases (Inventory)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lagerkøb (lagerbeholdning)</translation>
     </message>
     <message>
         <source>New Data</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nye data</translation>
     </message>
     <message>
         <source>Stop bothering you about new data?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Stop med at spørge om nye data?</translation>
     </message>
     <message>
         <source>°C</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">°C</translation>
     </message>
     <message>
         <source>°F</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">°F</translation>
     </message>
     <message>
         <source>DotBeer, BeerJSON and BeerXML files (*.beer *.json *.xml);;DotBeer files (*.beer);;BeerJSON files (*.json);;BeerXML files (*.xml)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">DotBeer-, BeerJSON- og BeerXML-filer (*.beer *.json *.xml);;DotBeer-filer (*.beer);;BeerJSON-filer (*.json);;BeerXML-filer (*.xml)</translation>
     </message>
     <message>
         <source>DotBeer format (*.beer);;BeerJSON format (*.json);;BeerXML format (*.xml)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">DotBeer-format (*.beer);;BeerJSON-format (*.json);;BeerXML-format (*.xml)</translation>
     </message>
     <message>
         <source>Gravity Points</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Massefyldepoint</translation>
     </message>
     <message>
         <source>points</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">point</translation>
     </message>
     <message>
         <source>Success (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gennemført (%1)</translation>
     </message>
     <message>
         <source>Warning (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Advarsel (%1)</translation>
     </message>
     <message>
         <source>Recoverable Error (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fejl, der kan rettes (%1)</translation>
     </message>
     <message>
         <source>Fatal Error (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alvorlig fejl (%1)</translation>
     </message>
     <message>
         <source>Unrecognised (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ikke genkendt (%1)</translation>
     </message>
     <message>
         <source>List-Of-Records</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Liste-af-poster</translation>
     </message>
     <message>
         <source>Measurement-With-Units</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Måling-med-enheder</translation>
     </message>
     <message>
         <source>One-Of-Measurements-With-Units</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">En-af-målinger-med-enheder</translation>
     </message>
     <message>
         <source>Single-Unit-Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Værdi-med-én-enhed</translation>
     </message>
     <message>
         <source>Required-Constant</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nødvendig-konstant</translation>
     </message>
     <message>
         <source>Folder-Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mappesti</translation>
     </message>
     <message>
         <source>%1 errors found in JSON file.  First error at %2: schema condition %3 is violated because &quot;%4&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 fejl fundet i JSON-fil.  Første fejl ved %2: skemabetingelsen %3 er overtrådt, fordi &quot;%4&quot;</translation>
     </message>
     <message>
         <source>Local-ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lokalt-ID</translation>
     </message>
     <message>
         <source>Volume per Mass</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Volumen pr. masse</translation>
     </message>
     <message>
         <source>Energy per Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Energi pr. volumen</translation>
     </message>
     <message>
         <source>kcal/L</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kcal/L</translation>
     </message>
     <message>
         <source>kcal/50cl</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kcal/50cl</translation>
     </message>
     <message>
         <source>kcal/33cl</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kcal/33cl</translation>
     </message>
     <message>
         <source>kcal/25cl</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kcal/25cl</translation>
     </message>
     <message>
         <source>kcal/100ml</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kcal/100ml</translation>
     </message>
     <message>
         <source>kcal/pt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kcal/pt</translation>
     </message>
     <message>
         <source>kcal/12floz</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kcal/12floz</translation>
     </message>
     <message>
         <source>kJ/100ml</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kJ/100ml</translation>
     </message>
     <message>
         <source>Date-Time-With-Timezone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dato-tid-med-tidszone</translation>
     </message>
     <message>
         <source>Date-or-Date-Time-Local</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dato-eller-lokal-dato-tid</translation>
     </message>
     <message>
         <source>This file was written using version %1 of the dotBeer format, which is newer than the version this version of %2 supports (%3).  You may need a newer version of %2 to read it.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Denne fil er skrevet med version %1 af dotBeer-formatet, som er nyere end den version, denne version af %2 understøtter (%3).  Du skal muligvis bruge en nyere version af %2 for at læse den.</translation>
     </message>
     <message>
         <source>Mash step for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæsketrin for %1</translation>
     </message>
     <message>
         <source>Primary fermentation for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Første gæring for %1</translation>
     </message>
     <message>
         <source>Specific Heat Capacity BTUs per</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Specifik varmekapacitet BTU pr.</translation>
     </message>
     <message>
         <source>Heat Capacity BTUs per</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Varmekapacitet BTU pr.</translation>
     </message>
     <message>
         <source>Garetz&apos;s approximation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Garetz&apos; approksimation</translation>
     </message>
     <message>
         <source>Daniels&apos; approximation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Daniels&apos; approksimation</translation>
     </message>
     <message>
         <source>Very Clear</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Meget klar</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Klar</translation>
     </message>
     <message>
         <source>Somewhat Clear</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nogenlunde klar</translation>
     </message>
     <message>
         <source>Average</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Middel</translation>
     </message>
     <message>
         <source>Somewhat Cloudy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lidt uklar</translation>
     </message>
     <message>
         <source>Cloudy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uklar</translation>
     </message>
     <message>
         <source>Very Cloudy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Meget uklar</translation>
     </message>
     <message>
         <source>Extremely Cloudy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ekstremt uklar</translation>
     </message>
 </context>
 <context>
@@ -7755,7 +7744,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Startmassefylde (OG)</translation>
     </message>
     <message>
         <source>FG</source>
@@ -7763,7 +7752,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Farve</translation>
     </message>
     <message>
         <source>IBU</source>
@@ -7775,55 +7764,55 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>ID in DB</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID i DB</translation>
     </message>
     <message>
         <source>ABV</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alkohol per volumen</translation>
     </message>
     <message>
         <source>Age</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lagringstid</translation>
     </message>
     <message>
         <source>Age Temp</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lagringstemperatur</translation>
     </message>
     <message>
         <source>Ancestor ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forfader-ID</translation>
     </message>
     <message>
         <source>Apparent Attenuation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tilsyneladende forgæringsgrad</translation>
     </message>
     <message>
         <source>Assistant Brewer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bryggermedhjælper</translation>
     </message>
     <message>
         <source>BatchSize</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Batchstørrelse</translation>
     </message>
     <message>
         <source>Beer Acidity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ølets surhedsgrad</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kogning</translation>
     </message>
     <message>
         <source>Boil Gravity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Massefylde ved kogning</translation>
     </message>
     <message>
         <source>Boil ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kogning-ID</translation>
     </message>
     <message>
         <source>Boil Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Volumen i kogekar</translation>
     </message>
     <message>
         <source>Brewer</source>
@@ -7831,27 +7820,27 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Calculations Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Beregninger slået til</translation>
     </message>
     <message>
         <source>Calories Per 33cl</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kalorier pr. 33 cl</translation>
     </message>
     <message>
         <source>Calories Per Liter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kalorier pr. liter</translation>
     </message>
     <message>
         <source>Calories Per US 12oz</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kalorier pr. 12 US oz</translation>
     </message>
     <message>
         <source>Calories Per US Pint</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kalorier pr. US pint</translation>
     </message>
     <message>
         <source>Carbonation Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kulsyringstemperatur</translation>
     </message>
     <message>
         <source>Carbonation</source>
@@ -7871,11 +7860,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Equipment ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Udstyr-ID</translation>
     </message>
     <message>
         <source>Fermentable Additions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tilsætninger af gærbare ingredienser</translation>
     </message>
     <message>
         <source>Fermentation</source>
@@ -7883,27 +7872,27 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Fermentation ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gæring-ID</translation>
     </message>
     <message>
         <source>Final Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Slutvolumen</translation>
     </message>
     <message>
         <source>Forced Carbonation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tvangskulsyring</translation>
     </message>
     <message>
         <source>Grains In Mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Malt i mæsken</translation>
     </message>
     <message>
         <source>Grains</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Malt</translation>
     </message>
     <message>
         <source>Hop Additions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Humletilsætninger</translation>
     </message>
     <message>
         <source>IBUs</source>
@@ -7911,51 +7900,51 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Instructions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Instrukser</translation>
     </message>
     <message>
         <source>Keg Priming Factor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Primingfaktor for fustage</translation>
     </message>
     <message>
         <source>Locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Låst</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskning</translation>
     </message>
     <message>
         <source>Mash ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskning-ID</translation>
     </message>
     <message>
         <source>Misc Additions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tilsætninger af diverse ingredienser</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Notater</translation>
     </message>
     <message>
         <source>Points</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Point</translation>
     </message>
     <message>
         <source>Post Boil Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Volumen efter kogning</translation>
     </message>
     <message>
         <source>Priming Sugar Equiv</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Primingsukker-ækvivalent</translation>
     </message>
     <message>
         <source>Priming Sugar Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Primingsukkerets navn</translation>
     </message>
     <message>
         <source>Style ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Stilart-ID</translation>
     </message>
     <message>
         <source>Taste Notes</source>
@@ -7967,115 +7956,111 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Type</translation>
     </message>
     <message>
         <source>Wort From Mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Urt fra mæskning</translation>
     </message>
     <message>
         <source>Yeast Additions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gærtilsætninger</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Nej</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nej</translation>
     </message>
     <message>
         <source>Put %1 %2 into mash%3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kom %1 %2 i mæsken%3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into first wort%3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kom %1 %2 i første urt%3.</translation>
     </message>
     <message>
         <source>Steep %1 %2 in wort%3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Udblød %1 %2 i urten%3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into boil%3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kom %1 %2 i kogningen%3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into primary%3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kom %1 %2 i første gæring%3.</translation>
     </message>
     <message>
         <source>Put %1 %2 into secondary%3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kom %1 %2 i anden gæring%3.</translation>
     </message>
     <message>
         <source>Use %1 %2 at bottling%3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brug %1 %2 ved flaskning%3.</translation>
     </message>
     <message>
         <source> at end of %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> ved slutningen af %1</translation>
     </message>
     <message>
         <source> for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> i %1</translation>
     </message>
     <message>
         <source>%1 addition</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1-tilsætning</translation>
     </message>
     <message>
         <source>Brew Logs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bryglogge</translation>
     </message>
     <message>
         <source>Date Created</source>
-        <translation type="unfinished">Bryggedato</translation>
+        <translation type="unfinished">Oprettelsesdato</translation>
     </message>
     <message>
         <source>Base Water Profile</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Basisvandprofil</translation>
     </message>
     <message>
         <source>Base Water Profile ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Basisvandprofil-ID</translation>
     </message>
     <message>
         <source>Target Water Profile</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Målvandprofil</translation>
     </message>
     <message>
         <source>Target Water Profile ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Målvandprofil-ID</translation>
     </message>
     <message>
         <source>IBU Formula</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">IBU-formel</translation>
     </message>
     <message>
         <source>Percentage reverse-osmosis water in mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Procentdel omvendt osmose-vand i mæskningen</translation>
     </message>
     <message>
         <source>Percentage reverse-osmosis water in sparge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Procentdel omvendt osmose-vand i spargningen</translation>
     </message>
     <message>
         <source>Put %1 %2 into fermentor%3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kom %1 %2 i gæringsbeholderen%3.</translation>
     </message>
     <message>
         <source>Add %1 to the mash tun.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kom %1 i mæskekarret.</translation>
     </message>
     <message>
         <source>Bring %1 for upcoming infusions.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hav %1 klar til kommende infusioner.</translation>
     </message>
     <message>
         <source>Do first wort hopping with %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Udfør første urt-humling med %1.</translation>
     </message>
     <message>
         <source>%1 water to %2</source>
@@ -8083,23 +8068,23 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Primary fermentation for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Første gæring for %1</translation>
     </message>
     <message>
         <source>Target Mash pH</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mål-pH for mæskning</translation>
     </message>
     <message>
         <source>Keep Water in Sync</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hold vand synkroniseret</translation>
     </message>
     <message>
         <source>Use Mash Profile in FG Calculation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brug mæskeprofil i FG-beregning</translation>
     </message>
     <message>
         <source>Expected Wort Clarity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forventet urtklarhed</translation>
     </message>
 </context>
 <context>
@@ -8126,7 +8111,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Stage</source>
-        <translation type="unfinished">Trin</translation>
+        <translation type="unfinished">Fase</translation>
     </message>
     <message>
         <source>Step</source>
@@ -8134,23 +8119,23 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Add At Gravity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tilsæt ved massefylde</translation>
     </message>
     <message>
         <source>Add At Acidity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tilsæt ved surhedsgrad</translation>
     </message>
     <message>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Varighed</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskning</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kogning</translation>
     </message>
     <message>
         <source>Fermentation</source>
@@ -8158,19 +8143,19 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Package</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pakning</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tid</translation>
     </message>
     <message>
         <source>Step %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trin %1</translation>
     </message>
     <message>
         <source>%1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1: %2</translation>
     </message>
 </context>
 <context>
@@ -8189,11 +8174,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Addition of %1 fermentable</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tilsætning af gærbar ingrediens %1</translation>
     </message>
     <message>
         <source>Fermentable</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gærbar ingrediens</translation>
     </message>
 </context>
 <context>
@@ -8271,7 +8256,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Addition of %1 hop</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tilsætning af humle %1</translation>
     </message>
     <message>
         <source>Hop</source>
@@ -8279,11 +8264,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Use</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brug</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tid</translation>
     </message>
 </context>
 <context>
@@ -8327,21 +8312,24 @@ The final volume in the primary is %1.</source>
     <message>
         <source>%L1 IBU from isomerization during the boil
 %L2 IBU from isomerization after flameout</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%L1 IBU fra isomerisering under kogningen
+%L2 IBU fra isomerisering efter slukning</translation>
     </message>
     <message>
         <source>
 %L1 IBU from other bittering compounds (mostly oxidized alpha acids)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">
+%L1 IBU fra andre bitterstoffer (primært oxiderede alfasyrer)</translation>
     </message>
     <message>
         <source>
 (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">
+(%1)</translation>
     </message>
     <message>
         <source>%1 does not model bitterness from hops added after flameout, so this addition gives no IBUs.  Select the mIBU or SMPH formula in Edit &gt; Options to include it.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 modellerer ikke bitterhed fra humle tilsat efter slukning, så denne tilsætning giver ingen IBU.  Vælg mIBU- eller SMPH-formlen under Rediger &gt; Indstillinger for at medtage den.</translation>
     </message>
 </context>
 <context>
@@ -8380,11 +8368,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Misc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Diverse</translation>
     </message>
     <message>
         <source>Use </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brug </translation>
     </message>
 </context>
 <context>
@@ -8449,15 +8437,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Addition of %1 yeast</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tilsætning af gær %1</translation>
     </message>
     <message>
         <source>Add To Secondary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tilsæt til anden gæring</translation>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forgæringsgrad</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -8465,19 +8453,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Times Cultured</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Antal gange dyrket</translation>
     </message>
     <message>
         <source>Cell Count</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Celleantal</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Nej</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nej</translation>
     </message>
 </context>
 <context>
@@ -8641,7 +8625,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Calories/33cl</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kalorier/33cl</translation>
     </message>
     <message>
         <source>Calories/12oz</source>
@@ -8649,7 +8633,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Change Expected Wort Clarity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ændr forventet urtklarhed</translation>
     </message>
 </context>
 <context>
@@ -9045,7 +9029,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>In range for target profile.</source>
-        <translation type="unfinished">Passende til anvendt profil.</translation>
+        <translation type="unfinished">Inden for målprofilen.</translation>
     </message>
     <message>
         <source>Maximum expected concentration is %1 ppm</source>
@@ -9057,70 +9041,70 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Too low for target profile.</source>
-        <translation type="unfinished">For lav til anvendt profil.</translation>
+        <translation type="unfinished">For lav i forhold til målprofilen.</translation>
     </message>
     <message>
         <source>Too high for target profile.</source>
-        <translation type="unfinished">For høj til anvendt profil.</translation>
+        <translation type="unfinished">For høj i forhold til målprofilen.</translation>
     </message>
     <message>
         <source>Auto-Adjust undone.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Automatisk justering fortrudt.</translation>
     </message>
     <message numerus="yes">
         <source>See the &lt;i&gt;Auto-Adjust Notes&lt;/i&gt; tab below for details (%n item(s)).</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Se fanen &lt;i&gt;Noter til automatisk justering&lt;/i&gt; nedenfor for detaljer (%n punkt).</numerusform>
+            <numerusform>Se fanen &lt;i&gt;Noter til automatisk justering&lt;/i&gt; nedenfor for detaljer (%n punkter).</numerusform>
         </translation>
     </message>
     <message>
         <source>The value shown is the pH set on the recipe&apos;s mash.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Den viste værdi er den pH, der er angivet på opskriftens mæskning.</translation>
     </message>
     <message>
         <source>Turn off keeping water agents in sync</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Slå synkronisering af vandtilsætninger fra</translation>
     </message>
     <message>
         <source>Turn on keeping water agents in sync</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Slå synkronisering af vandtilsætninger til</translation>
     </message>
     <message>
         <source>Auto-adjust water agents</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Juster vandtilsætninger automatisk</translation>
     </message>
     <message>
         <source>Could not adjust the water agents yet: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kunne endnu ikke justere vandtilsætningerne: %1</translation>
     </message>
     <message>
         <source>Could not adjust the water agents, so nothing has been changed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kunne ikke justere vandtilsætningerne, så intet er ændret: %1</translation>
     </message>
     <message>
         <source>target profile &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">målprofilen &quot;%1&quot;</translation>
     </message>
     <message>
         <source>target mash pH</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">mål-pH for mæskning</translation>
     </message>
     <message>
         <source>The water agents already match %1 as closely as they can.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vandtilsætningerne svarer allerede så godt som muligt til %1.</translation>
     </message>
     <message>
         <source>Water agents adjusted to match %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vandtilsætninger justeret til at svare til %1.</translation>
     </message>
     <message>
         <source>Water agents adjusted for %1, but some things need checking.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vandtilsætninger justeret til %1, men nogle ting bør kontrolleres.</translation>
     </message>
     <message>
         <source>Predicted mash pH is %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forventet pH i mæsken er %1.</translation>
     </message>
 </context>
 <context>
@@ -9235,7 +9219,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>This wizard will help you scale a recipe to another size or efficiency.  Select another equipment with the new batch size and/or efficiency and the wizard will scale the recipe ingredients automatically.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Denne guide hjælper dig med at skalere en opskrift til en anden størrelse eller effektivitet.  Vælg et andet udstyr med den nye batchstørrelse og/eller effektivitet, så skalerer guiden opskriftens ingredienser automatisk.</translation>
     </message>
 </context>
 <context>
@@ -9280,7 +9264,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>End Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sluttemperatur</translation>
     </message>
     <message>
         <source>Start Acidity</source>
@@ -9313,15 +9297,15 @@ The final volume in the primary is %1.</source>
     <name>StockPurchase</name>
     <message>
         <source>Date Ordered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bestillingsdato</translation>
     </message>
     <message>
         <source>Date Received</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Modtagelsesdato</translation>
     </message>
     <message>
         <source>Best Before Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bedst før-dato</translation>
     </message>
     <message>
         <source>Supplier</source>
@@ -9329,19 +9313,19 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Quantity Ordered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bestilt antal</translation>
     </message>
     <message>
         <source>Purchase Price</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Købspris</translation>
     </message>
     <message>
         <source>Purchase Tax</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Moms</translation>
     </message>
     <message>
         <source>Shipping Cost</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forsendelsesomkostninger</translation>
     </message>
     <message>
         <source>Ingredient</source>
@@ -9349,36 +9333,36 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Stock Purchase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lagerkøb</translation>
     </message>
     <message>
         <source>Note</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Note</translation>
     </message>
 </context>
 <context>
     <name>StockPurchaseFermentable</name>
     <message>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Farve</translation>
     </message>
 </context>
 <context>
     <name>StockPurchaseFermentableEditor</name>
     <message>
         <source>Fermentable Stock Purchase Editor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Redigering af lagerkøb af gærbare ingredienser</translation>
     </message>
 </context>
 <context>
     <name>StockPurchaseHop</name>
     <message>
         <source>Alpha Acid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alfasyre</translation>
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Form</translation>
     </message>
     <message>
         <source>Year</source>
@@ -9389,21 +9373,21 @@ The final volume in the primary is %1.</source>
     <name>StockPurchaseHopEditor</name>
     <message>
         <source>Hop Stock Purchase Editor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Redigering af lagerkøb af humle</translation>
     </message>
 </context>
 <context>
     <name>StockPurchaseMiscEditor</name>
     <message>
         <source>Misc Stock Purchase Editor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Redigering af lagerkøb af diverse ingredienser</translation>
     </message>
 </context>
 <context>
     <name>StockPurchaseYeastEditor</name>
     <message>
         <source>Yeast Stock Purchase Editor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Redigering af lagerkøb af gær</translation>
     </message>
 </context>
 <context>
@@ -9418,31 +9402,31 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Owner ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ejer-ID</translation>
     </message>
     <message>
         <source>Quantity Used</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brugt antal</translation>
     </message>
     <message>
         <source>Reason</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Årsag</translation>
     </message>
     <message>
         <source>Used</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brugt</translation>
     </message>
     <message>
         <source>Lost</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tabt</translation>
     </message>
     <message>
         <source>Disposed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kasseret</translation>
     </message>
     <message>
         <source>Stock Use</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lagerforbrug</translation>
     </message>
     <message>
         <source>Brew Note</source>
@@ -9450,43 +9434,43 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kommentar</translation>
     </message>
     <message>
         <source>Brew Log</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bryglog</translation>
     </message>
     <message>
         <source>Brew Log ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bryglog-ID</translation>
     </message>
 </context>
 <context>
     <name>StockUseFermentableEditor</name>
     <message>
         <source>%1 Stock Use Editor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Redigering af lagerforbrug for %1</translation>
     </message>
 </context>
 <context>
     <name>StockUseHopEditor</name>
     <message>
         <source>%1 Stock Use Editor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Redigering af lagerforbrug for %1</translation>
     </message>
 </context>
 <context>
     <name>StockUseMiscEditor</name>
     <message>
         <source>%1 Stock Use Editor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Redigering af lagerforbrug for %1</translation>
     </message>
 </context>
 <context>
     <name>StockUseYeastEditor</name>
     <message>
         <source>%1 Stock Use Editor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Redigering af lagerforbrug for %1</translation>
     </message>
 </context>
 <context>
@@ -9553,15 +9537,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Type</translation>
     </message>
     <message>
         <source>Max ABV</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maks. ABV</translation>
     </message>
     <message>
         <source>Min ABV</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Min. ABV</translation>
     </message>
     <message>
         <source>Appearance</source>
@@ -9569,15 +9553,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Aroma</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aroma</translation>
     </message>
     <message>
         <source>Max Carb</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maks. kulsyre</translation>
     </message>
     <message>
         <source>Min Carb</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Min. kulsyre</translation>
     </message>
     <message>
         <source>Category Number</source>
@@ -9585,11 +9569,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Max Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maks. farve</translation>
     </message>
     <message>
         <source>Min Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Min. farve</translation>
     </message>
     <message>
         <source>Examples</source>
@@ -9597,23 +9581,23 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Max FG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maks. FG</translation>
     </message>
     <message>
         <source>Min FG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Min. FG</translation>
     </message>
     <message>
         <source>Flavor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Smag</translation>
     </message>
     <message>
         <source>Max IBU</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maks. IBU</translation>
     </message>
     <message>
         <source>Min IBU</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Min. IBU</translation>
     </message>
     <message>
         <source>Ingredients</source>
@@ -9625,15 +9609,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Notater</translation>
     </message>
     <message>
         <source>Max OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maks. OG</translation>
     </message>
     <message>
         <source>Min OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Min. OG</translation>
     </message>
     <message>
         <source>Overall Impression</source>
@@ -9649,7 +9633,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Type String</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Typestreng</translation>
     </message>
 </context>
 <context>
@@ -9684,8 +9668,8 @@ The final volume in the primary is %1.</source>
     <message numerus="yes">
         <source>Used in %n recipe(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Bruges i %n opskrift</numerusform>
+            <numerusform>Bruges i %n opskrifter</numerusform>
         </translation>
     </message>
 </context>
@@ -9846,7 +9830,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Notes...</source>
-        <translation>Notater...</translation>
+        <translation type="vanished">Notater...</translation>
     </message>
     <message>
         <source> and </source>
@@ -10000,6 +9984,13 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
+    <name>Undoable</name>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished">Føj %1 til opskrift</translation>
+    </message>
+</context>
+<context>
     <name>UnitAndScalePopUpMenu</name>
     <message>
         <source>Default</source>
@@ -10007,7 +9998,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Decimal Places</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Decimaler</translation>
     </message>
 </context>
 <context>
@@ -10022,11 +10013,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Output Units</source>
-        <translation type="unfinished">Uddata enheder</translation>
+        <translation type="unfinished">Uddataenheder</translation>
     </message>
     <message>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uddata</translation>
     </message>
     <message>
         <source>Convert</source>
@@ -10120,27 +10111,27 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Waters</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vand</translation>
     </message>
     <message>
         <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">SO&lt;sub&gt;4&lt;/sub&gt;</translation>
     </message>
     <message>
         <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">HCO&lt;sub&gt;3&lt;/sub&gt;</translation>
     </message>
     <message>
         <source>Alkalinity</source>
-        <translation type="unfinished">Basicitet</translation>
+        <translation type="unfinished">Alkalinitet</translation>
     </message>
     <message>
         <source>Alkalinity As HCO3</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alkalinitet som HCO3</translation>
     </message>
     <message>
         <source>Bicarbonate</source>
-        <translation type="unfinished">hydrogencarbonat</translation>
+        <translation type="unfinished">Hydrogencarbonat</translation>
     </message>
     <message>
         <source>Calcium</source>
@@ -10148,7 +10139,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Carbonate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Carbonat</translation>
     </message>
     <message>
         <source>Chloride</source>
@@ -10156,11 +10147,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Fluoride</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fluorid</translation>
     </message>
     <message>
         <source>Iron</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Jern</translation>
     </message>
     <message>
         <source>Magnesium</source>
@@ -10168,19 +10159,19 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Nitrate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nitrat</translation>
     </message>
     <message>
         <source>Nitrite</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nitrit</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Notater</translation>
     </message>
     <message>
         <source>Potassium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kalium</translation>
     </message>
     <message>
         <source>Sodium</source>
@@ -10188,75 +10179,71 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Sulfate</source>
-        <translation type="unfinished">sulfat</translation>
+        <translation type="unfinished">Sulfat</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Nej</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nej</translation>
     </message>
     <message>
         <source>Bicarbonate (HCO₃⁻)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hydrogencarbonat (HCO₃⁻)</translation>
     </message>
     <message>
         <source>Calcium (Ca²⁺)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Calcium (Ca²⁺)</translation>
     </message>
     <message>
         <source>Carbonate (CO₃²⁻)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Carbonat (CO₃²⁻)</translation>
     </message>
     <message>
         <source>Chloride (Cl⁻)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chlorid (Cl⁻)</translation>
     </message>
     <message>
         <source>Copper (Cu²⁺)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kobber (Cu²⁺)</translation>
     </message>
     <message>
         <source>Iron (Fe²⁺)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Jern (Fe²⁺)</translation>
     </message>
     <message>
         <source>Magnesium (Mg²⁺)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magnesium (Mg²⁺)</translation>
     </message>
     <message>
         <source>Manganese (Mn²⁺)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mangan (Mn²⁺)</translation>
     </message>
     <message>
         <source>Nitrate (NO₃⁻)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nitrat (NO₃⁻)</translation>
     </message>
     <message>
         <source>Nitrite (NO₂⁻)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nitrit (NO₂⁻)</translation>
     </message>
     <message>
         <source>Phosphate (PO₄³⁻)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fosfat (PO₄³⁻)</translation>
     </message>
     <message>
         <source>Potassium (K⁺)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kalium (K⁺)</translation>
     </message>
     <message>
         <source>Sodium (Na⁺)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Natrium (Na⁺)</translation>
     </message>
     <message>
         <source>Sulfate (SO₄²⁻)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sulfat (SO₄²⁻)</translation>
     </message>
     <message>
         <source>Zinc (Zn²⁺)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zink (Zn²⁺)</translation>
     </message>
 </context>
 <context>
@@ -10372,91 +10359,91 @@ The final volume in the primary is %1.</source>
     <name>WaterAutoAdjuster</name>
     <message>
         <source>The recipe&apos;s mash has no water in it, so there is nothing to add salts to.  Set up the mash first (eg with Auto-Adjust in the mash editor).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opskriftens mæskning har intet vand, så der er intet at tilsætte salte til.  Opsæt mæskningen først (fx med Juster automatisk i mæskeeditoren).</translation>
     </message>
     <message>
         <source>There is nothing to adjust: none of the water agents can be used to match the target profile (chalk and pickling lime are left alone), and no acid is being adjusted for mash pH.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der er intet at justere: ingen af vandtilsætningerne kan bruges til at ramme målprofilen (kridt og læsket kalk lades uberørt), og der justeres ingen syre efter mæske-pH.</translation>
     </message>
     <message>
         <source>%1 will be %2 ppm, compared with a target of %3 ppm.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 vil være %2 ppm sammenlignet med et mål på %3 ppm.</translation>
     </message>
     <message>
         <source>The water already has more than this before any salts are added, so you might want to use more RO or distilled water.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vandet indeholder allerede mere end dette, før der tilsættes salte, så du kan overveje at bruge mere RO-vand eller destilleret vand.</translation>
     </message>
     <message>
         <source>The salts that add other ions also add this one.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">De salte, der tilsætter andre ioner, tilsætter også denne.</translation>
     </message>
     <message>
         <source>None of the salts being used adds this ion.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ingen af de anvendte salte tilsætter denne ion.</translation>
     </message>
     <message>
         <source>Adding more would take other ions further from their targets.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mere ville bringe andre ioner længere væk fra deres mål.</translation>
     </message>
     <message>
         <source>To add both calcium and bicarbonate, you could add chalk (dissolved with CO₂) or pickling lime to the recipe yourself.  Auto-Adjust takes these into account, but doesn&apos;t work out how much to add.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">For at tilsætte både calcium og hydrogencarbonat kan du selv føje kridt (opløst med CO₂) eller læsket kalk til opskriften.  Automatisk justering tager højde for disse, men beregner ikke, hvor meget der skal tilsættes.</translation>
     </message>
     <message>
         <source>The mash pH can&apos;t be worked out (there needs to be some grain and some water in the mash), so no acid has been added.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskens pH kan ikke beregnes (der skal være noget malt og noget vand i mæsken), så der er ikke tilsat syre.</translation>
     </message>
     <message>
         <source>The strength of the %1 is not set, so no acid has been added.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Styrken af %1 er ikke angivet, så der er ikke tilsat syre.</translation>
     </message>
     <message>
         <source>The mash pH will be %1 without any added acid, which is already below the target of %2.  Acid can only lower the pH.  To raise it, you could use less acidulated malt or add some baking soda or pickling lime.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskens pH vil være %1 uden tilsat syre, hvilket allerede er under målet på %2.  Syre kan kun sænke pH.  For at hæve den kan du bruge mindre surmalt eller tilsætte lidt natron eller læsket kalk.</translation>
     </message>
     <message>
         <source>The recipe &quot;%1&quot; is locked, so its water agents cannot be changed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opskriften &quot;%1&quot; er låst, så dens vandtilsætninger kan ikke ændres.</translation>
     </message>
     <message>
         <source>Please choose a target water profile and/or a target mash pH first.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vælg først en målvandprofil og/eller en mål-pH for mæskning.</translation>
     </message>
     <message>
         <source>There is no water agent of type &quot;%1&quot; in the database, so it wasn&apos;t considered.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der er ingen vandtilsætning af typen &quot;%1&quot; i databasen, så den er ikke taget i betragtning.</translation>
     </message>
     <message>
         <source>There is no target water profile, so only the acid has been adjusted.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der er ingen målvandprofil, så kun syren er justeret.</translation>
     </message>
     <message>
         <source>The strength of &quot;%1&quot; is not set, so it has been assumed to be %2%.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Styrken af &quot;%1&quot; er ikke angivet, så den antages at være %2%.</translation>
     </message>
     <message>
         <source>There is no acid (lactic, phosphoric, sulfuric or hydrochloric) in the database, so the mash pH could not be adjusted.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der er ingen syre (mælkesyre, fosforsyre, svovlsyre eller saltsyre) i databasen, så mæskens pH kunne ikke justeres.</translation>
     </message>
     <message>
         <source>Only the %1 has been adjusted.  The other acid in the recipe has been taken into account as it is.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kun %1 er justeret.  Den anden syre i opskriften er taget i betragtning, som den er.</translation>
     </message>
     <message>
         <source>Change amount of %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ændr mængden af %1</translation>
     </message>
     <message>
         <source>Where the same salt was added more than once, the whole amount is now in the first addition.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hvor det samme salt blev tilsat mere end én gang, er hele mængden nu i den første tilsætning.</translation>
     </message>
     <message>
         <source>Where the same acid was added more than once, the whole amount is now in the first addition.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hvor den samme syre blev tilsat mere end én gang, er hele mængden nu i den første tilsætning.</translation>
     </message>
     <message>
         <source>Add water agents</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tilføj vandtilsætninger</translation>
     </message>
 </context>
 <context>
@@ -10538,11 +10525,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Target Profile</source>
-        <translation type="unfinished">Anvendt profil</translation>
+        <translation type="unfinished">Målprofil</translation>
     </message>
     <message>
         <source>Actual Profile</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Faktisk profil</translation>
     </message>
 </context>
 <context>
@@ -10770,7 +10757,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forgæringsgrad</translation>
     </message>
     <message>
         <source>Id</source>
@@ -10786,15 +10773,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Typical Attenuation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Typisk forgæringsgrad</translation>
     </message>
     <message>
         <source>Max Attenuation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maks. forgæringsgrad</translation>
     </message>
     <message>
         <source>Min Attenuation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Min. forgæringsgrad</translation>
     </message>
     <message>
         <source>Best For</source>
@@ -10810,51 +10797,47 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Killer Producing K1 Toxin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dræber, producerer K1-toksin</translation>
     </message>
     <message>
         <source>Killer Producing K28 Toxin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dræber, producerer K28-toksin</translation>
     </message>
     <message>
         <source>Killer Producing K2 Toxin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dræber, producerer K2-toksin</translation>
     </message>
     <message>
         <source>Killer Producing Klus Toxin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dræber, producerer Klus-toksin</translation>
     </message>
     <message>
         <source>Max Reuse</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maks. genbrug</translation>
     </message>
     <message>
         <source>Max Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maks. temperatur</translation>
     </message>
     <message>
         <source>Min Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Min. temperatur</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Notater</translation>
     </message>
     <message>
         <source>Phenolic Off Flavor Positive</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Phenolisk bismag (POF+)</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Nej</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nej</translation>
     </message>
     <message>
         <source>Yeast Purchases</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gærkøb</translation>
     </message>
 </context>
 <context>
@@ -10959,7 +10942,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>New boil</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ny kogning</translation>
     </message>
     <message>
         <source>New</source>
@@ -11159,7 +11142,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Preboil</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forkogning</translation>
     </message>
     <message>
         <source>SG</source>
@@ -11199,7 +11182,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Startmassefylde (OG)</translation>
     </message>
     <message>
         <source>Post boil gravity</source>
@@ -11243,7 +11226,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>yyyy-dd-MM</source>
-        <translation type="unfinished">yyyy-dd-mm</translation>
+        <translation type="obsolete">yyyy-dd-mm</translation>
     </message>
     <message>
         <source>Percent efficiency into boil kettle</source>
@@ -11279,7 +11262,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>ABV</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alkohol per volumen</translation>
     </message>
     <message>
         <source>Yeast attenuation based on yeast specified in recipe</source>
@@ -11299,15 +11282,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Notater</translation>
     </message>
     <message>
         <source>Brew Log</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bryglog</translation>
     </message>
     <message>
         <source>Brew Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brygdato</translation>
     </message>
     <message>
         <source>Batch Number</source>
@@ -11501,11 +11484,7 @@ The final volume in the primary is %1.</source>
     <name>editorClass</name>
     <message>
         <source>No</source>
-        <translation type="unfinished">Nej</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nej</translation>
     </message>
 </context>
 <context>
@@ -11796,11 +11775,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Fermentor Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gæringsbeholder type</translation>
     </message>
     <message>
         <source>Fermentor Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gæringsbeholder notater</translation>
     </message>
     <message>
         <source>Optional Vessel
@@ -11853,7 +11832,7 @@ Tabs</source>
     </message>
     <message>
         <source>Default Batch Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Standard batchstørrelse</translation>
     </message>
     <message>
         <source>Volume into the fermentor that new recipes using this equipment start with</source>
@@ -11873,7 +11852,7 @@ Tabs</source>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskning</translation>
     </message>
     <message>
         <source>These settings apply to whichever vessel the mash happens in: the mash tun or, if you do not have a separate mash tun (eg on an all-in-one system such as the Grainfather, or for brew in a bag), the boil kettle.</source>
@@ -12204,7 +12183,7 @@ Tabs</source>
     </message>
     <message>
         <source>Total Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Samlet lagerbeholdning</translation>
     </message>
     <message>
         <source>Total amount in inventory</source>
@@ -12685,7 +12664,7 @@ Tabs</source>
     </message>
     <message>
         <source>Total Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Samlet lagerbeholdning</translation>
     </message>
     <message>
         <source>Add Purchase</source>
@@ -12697,7 +12676,7 @@ Tabs</source>
     </message>
     <message>
         <source>Alpha Acid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alfasyre</translation>
     </message>
     <message>
         <source>Actual</source>
@@ -13792,15 +13771,15 @@ Tabs</source>
     </message>
     <message>
         <source>Mash Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mæskeprofiler</translation>
     </message>
     <message>
         <source>Boil Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kogeprofiler</translation>
     </message>
     <message>
         <source>Fermentation Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gæringsprofiler</translation>
     </message>
     <message>
         <source>&amp;Mash Profiles</source>
@@ -14098,7 +14077,7 @@ Tabs</source>
     </message>
     <message>
         <source>Total Time</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Samlet tid</translation>
     </message>
     <message>
         <source>Legacy</source>
@@ -14435,7 +14414,7 @@ Tabs</source>
     </message>
     <message>
         <source>Total Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Samlet lagerbeholdning</translation>
     </message>
     <message>
         <source>Total amount in inventory</source>
@@ -14740,15 +14719,15 @@ Tabs</source>
     </message>
     <message>
         <source>Remedy: Add Water To Boil</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Løsning: Tilsæt vand til kogningen</translation>
     </message>
     <message>
         <source>Amount to Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mængde at tilsætte</translation>
     </message>
     <message>
         <source>Amount of water you need to add to hit planned OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mængde vand, du skal tilsætte for at ramme den planlagte OG</translation>
     </message>
     <message>
         <source>-- OR --</source>
@@ -15033,7 +15012,7 @@ Tabs</source>
     </message>
     <message>
         <source>Batch Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Batchstørrelse</translation>
     </message>
     <message>
         <source>Default batch size to set on new recipes</source>
@@ -15156,7 +15135,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>MM/dd/yyyy</source>
-        <translation>mm/dd/yyyy</translation>
+        <translation type="vanished">mm/dd/yyyy</translation>
     </message>
     <message>
         <source>%</source>
@@ -15164,7 +15143,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>Tekstetiket</translation>
+        <translation type="vanished">Tekstetiket</translation>
     </message>
     <message>
         <source>Calculate Viability From Date</source>
@@ -15334,7 +15313,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>dd MMM yyyy</source>
-        <translation>dd mm yyyy</translation>
+        <translation type="vanished">dd mm yyyy</translation>
     </message>
     <message>
         <source>Carbonation Volumes</source>
@@ -15362,7 +15341,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Assistant Brewer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bryggermedhjælper</translation>
     </message>
     <message>
         <source>Calories/12oz</source>
@@ -15401,7 +15380,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Target Profile</source>
-        <translation type="unfinished">Anvendt profil</translation>
+        <translation type="unfinished">Målprofil</translation>
     </message>
     <message>
         <source>Edit target water profile</source>
@@ -15457,11 +15436,11 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>SO&lt;sub&gt;4&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">SO&lt;sub&gt;4&lt;/sub&gt;</translation>
     </message>
     <message>
         <source>HCO&lt;sub&gt;3&lt;/sub&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">HCO&lt;sub&gt;3&lt;/sub&gt;</translation>
     </message>
     <message>
         <source>pH</source>
@@ -15720,11 +15699,11 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>dd MMM yyyy</source>
-        <translation type="unfinished">dd mm yyyy</translation>
+        <translation type="obsolete">dd mm yyyy</translation>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mængde</translation>
     </message>
     <message>
         <source>Amount ordered</source>
@@ -15744,7 +15723,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mængdetype</translation>
     </message>
     <message>
         <source>Uses</source>
@@ -15752,7 +15731,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Amount Remaining</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Resterende mængde</translation>
     </message>
     <message>
         <source>Best Before</source>
@@ -15772,15 +15751,15 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Purchase Price</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Købspris</translation>
     </message>
     <message>
         <source>Purchase Tax</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Moms</translation>
     </message>
     <message>
         <source>Shipping Cost</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forsendelsesomkostninger</translation>
     </message>
     <message>
         <source>New</source>
@@ -15804,7 +15783,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Note</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Note</translation>
     </message>
 </context>
 <context>
@@ -16006,11 +15985,11 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>dd MMM yyyy</source>
-        <translation type="unfinished">dd mm yyyy</translation>
+        <translation type="obsolete">dd mm yyyy</translation>
     </message>
     <message>
         <source>Reason</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Årsag</translation>
     </message>
     <message>
         <source>Change type</source>
@@ -16018,7 +15997,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mængde</translation>
     </message>
     <message>
         <source>Amount used</source>
@@ -16054,7 +16033,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kommentar</translation>
     </message>
     <message>
         <source>Recipe</source>
@@ -16965,7 +16944,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Total Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Samlet lagerbeholdning</translation>
     </message>
     <message>
         <source>Add Purchase</source>

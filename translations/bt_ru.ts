@@ -9,30 +9,30 @@
     </message>
     <message>
         <source>About %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">О программе %1</translation>
     </message>
 </context>
 <context>
     <name>AlcoholTool</name>
     <message>
         <source>Alcohol Tool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Расчёт алкоголя</translation>
     </message>
     <message>
         <source>Original Gravity (OG)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Начальная плотность (OG)</translation>
     </message>
     <message>
         <source>ABV</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ABV</translation>
     </message>
     <message>
         <source>Final Gravity (FG)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Конечная плотность (FG)</translation>
     </message>
     <message>
         <source>Reading</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Показание</translation>
     </message>
     <message>
         <source>Temperature</source>
@@ -40,31 +40,31 @@
     </message>
     <message>
         <source>Corrected Reading</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Скорректированное показание</translation>
     </message>
     <message>
         <source>Advanced Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Расширенный режим</translation>
     </message>
     <message>
         <source>Hydrometer Calibration Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Температура калибровки ареометра</translation>
     </message>
     <message>
         <source>Initial Reading</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Начальное показание</translation>
     </message>
     <message>
         <source>Final Reading</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Конечное показание</translation>
     </message>
     <message>
         <source>Result</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Результат</translation>
     </message>
     <message>
         <source>Calculated according to the formula set by the UK Laboratory of the Government Chemist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Рассчитано по формуле Государственной химической лаборатории Великобритании (LGC)</translation>
     </message>
 </context>
 <context>
@@ -86,51 +86,51 @@
     </message>
     <message>
         <source>Pre-boil for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Предварительное кипячение %1</translation>
     </message>
     <message>
         <source>Main boil for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Основное кипячение %1</translation>
     </message>
     <message>
         <source>Post-boil for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">После кипячения %1</translation>
     </message>
     <message>
         <source>Automatically-generated pre-boil step for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Автоматически созданный этап до кипячения для %1</translation>
     </message>
     <message>
         <source>Automatically-generated boil proper step for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Автоматически созданный этап основного кипячения для %1</translation>
     </message>
     <message>
         <source>Automatically-generated post-boil step for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Автоматически созданный этап после кипячения для %1</translation>
     </message>
     <message>
         <source>a recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">рецепт</translation>
     </message>
     <message>
         <source>Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём до кипячения</translation>
     </message>
     <message>
         <source>Boil time (mins)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Время кипячения (мин)</translation>
     </message>
     <message>
         <source>Boil Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Профили кипячения</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Описание</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>Boil Time</source>
@@ -138,30 +138,30 @@
     </message>
     <message>
         <source>Time At Boiling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Время при кипении</translation>
     </message>
 </context>
 <context>
     <name>BoilStep</name>
     <message>
         <source>Boil Step</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Этап кипячения</translation>
     </message>
     <message>
         <source>Batch</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Партия</translation>
     </message>
     <message>
         <source>Inline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Проточный</translation>
     </message>
     <message>
         <source>Step time (mins)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Время этапа (мин)</translation>
     </message>
     <message>
         <source>Chilling Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Способ охлаждения</translation>
     </message>
 </context>
 <context>
@@ -172,11 +172,11 @@
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Стиль</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Дата</translation>
     </message>
     <message>
         <source>Boil Time</source>
@@ -188,15 +188,15 @@
     </message>
     <message>
         <source>Boil Volume</source>
-        <translation type="unfinished">Объем сусла до кипячения</translation>
+        <translation type="unfinished">Объём до кипячения</translation>
     </message>
     <message>
         <source>Preboil Gravity</source>
-        <translation type="unfinished">Плотность сусла до кипячения</translation>
+        <translation type="unfinished">Плотность до кипячения</translation>
     </message>
     <message>
         <source>Final Volume</source>
-        <translation type="unfinished">Объём сусла после кипячения</translation>
+        <translation type="unfinished">Конечный объём</translation>
     </message>
     <message>
         <source>Starting Gravity</source>
@@ -204,7 +204,7 @@
     </message>
     <message>
         <source>IBU</source>
-        <translation type="unfinished">Горечь IBU</translation>
+        <translation type="unfinished">IBU</translation>
     </message>
     <message>
         <source>Final Gravity</source>
@@ -212,15 +212,15 @@
     </message>
     <message>
         <source>ABV</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ABV</translation>
     </message>
     <message>
         <source>Estimated calories (per 33 cl)</source>
-        <translation type="unfinished">Приблизительно калорий (на 0,33л)</translation>
+        <translation type="unfinished">Примерная калорийность (на 33 cl)</translation>
     </message>
     <message>
         <source>Estimated calories (per 12 oz)</source>
-        <translation type="unfinished">Приблизительно калорий (на 0,33л)</translation>
+        <translation type="unfinished">Примерная калорийность (на 12 oz)</translation>
     </message>
     <message>
         <source>Instructions</source>
@@ -244,23 +244,23 @@
     </message>
     <message>
         <source>Heat water</source>
-        <translation type="unfinished">Подогрев воды</translation>
+        <translation type="unfinished">Нагреть воду</translation>
     </message>
     <message>
         <source>Actual PreBoil Volume</source>
-        <translation type="unfinished">Фактический объем сусла до кипячения</translation>
+        <translation type="unfinished">Фактический объём до кипячения</translation>
     </message>
     <message>
         <source>Actual PreBoil Gravity</source>
-        <translation type="unfinished">Фактическая плотность сусла до кипячения</translation>
+        <translation type="unfinished">Фактическая плотность до кипячения</translation>
     </message>
     <message>
         <source>PostBoil Volume</source>
-        <translation type="unfinished">Объем сусла после кипячения</translation>
+        <translation type="unfinished">Объём после кипячения</translation>
     </message>
     <message>
         <source>PostBoil Gravity</source>
-        <translation type="unfinished">Плотность сусла после кипячения</translation>
+        <translation type="unfinished">Плотность после кипячения</translation>
     </message>
     <message>
         <source>Volume into fermenter</source>
@@ -268,11 +268,11 @@
     </message>
     <message>
         <source>unknown</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">неизвестно</translation>
     </message>
     <message>
         <source>Volume into fermentor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём в ферментер</translation>
     </message>
 </context>
 <context>
@@ -383,7 +383,7 @@
     </message>
     <message>
         <source>Estimated calories (per 12 oz)</source>
-        <translation type="unfinished">Приблизительно калорий (на 0,33л)</translation>
+        <translation type="unfinished">Примерная калорийность (на 12 oz)</translation>
     </message>
     <message>
         <source>Brewday</source>
@@ -391,23 +391,23 @@
     </message>
     <message>
         <source>Overwrite Existing Instructions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Перезаписать существующие инструкции</translation>
     </message>
     <message>
         <source>Generating instructions will overwrite the existing ones.  This is not undoable.  Do you want to proceed?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Создание инструкций перезапишет существующие.  Это действие нельзя отменить.  Продолжить?</translation>
     </message>
     <message>
         <source>not set</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">не задано</translation>
     </message>
     <message>
         <source>n/a</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">н/д</translation>
     </message>
     <message>
         <source>Volume into fermentor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём в ферментер</translation>
     </message>
 </context>
 <context>
@@ -509,11 +509,11 @@
     <name>BrewLog</name>
     <message>
         <source>ABV</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ABV</translation>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Степень сбраживания</translation>
     </message>
     <message>
         <source>Brew Date</source>
@@ -521,123 +521,123 @@
     </message>
     <message>
         <source>Brewhouse Efficiency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Эффективность варочного цеха</translation>
     </message>
     <message>
         <source>Efficiency Into Boil Kettle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Эффективность до кипячения</translation>
     </message>
     <message>
         <source>Ferment Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Дата брожения</translation>
     </message>
     <message>
         <source>Final Volume</source>
-        <translation type="unfinished">Объём сусла после кипячения</translation>
+        <translation type="unfinished">Конечный объём</translation>
     </message>
     <message>
         <source>Mash Final Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Конечная температура затора</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">OG</translation>
     </message>
     <message>
         <source>Post-Boil Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём после кипячения</translation>
     </message>
     <message>
         <source>Projected ABV</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Расчётный ABV</translation>
     </message>
     <message>
         <source>Projected Attenuation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Расчётная степень сбраживания</translation>
     </message>
     <message>
         <source>Projected Efficiency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Расчётная эффективность</translation>
     </message>
     <message>
         <source>Projected Fermentation Points</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Расчётные пункты брожения</translation>
     </message>
     <message>
         <source>Projected FG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Расчётная FG</translation>
     </message>
     <message>
         <source>Projected Mash Final Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Расчётная конечная температура затора</translation>
     </message>
     <message>
         <source>Projected OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Расчётная OG</translation>
     </message>
     <message>
         <source>Projected Strike Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Расчётная температура засыпи</translation>
     </message>
     <message>
         <source>Projected Volume Into Boil Kettle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Расчётный объём в варочный котёл</translation>
     </message>
     <message>
         <source>Strike Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Температура засыпи</translation>
     </message>
     <message>
         <source>Volume Into Boil Kettle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём в варочный котёл</translation>
     </message>
     <message>
         <source>Brew Log</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Журнал варки</translation>
     </message>
     <message>
         <source>Brew Log #%1 for brew on %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Журнал варки №%1 для варки %2</translation>
     </message>
     <message>
         <source>Expected Boil-Off</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ожидаемое выкипание</translation>
     </message>
     <message>
         <source>Planned OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Плановая OG</translation>
     </message>
     <message>
         <source>Expected pre-boil specific gravity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ожидаемая плотность до кипячения</translation>
     </message>
     <message>
         <source>Measured FG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Измеренная FG</translation>
     </message>
     <message>
         <source>Measured Pitch Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Измеренная температура внесения дрожжей</translation>
     </message>
     <message>
         <source>Measured pre-boil specific gravity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Измеренная плотность до кипячения</translation>
     </message>
     <message>
         <source>Projected Volume Into Fermentation Vessel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Расчётный объём в ферментер</translation>
     </message>
     <message>
         <source>Volume Into Fermentation Vessel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём в ферментер</translation>
     </message>
     <message>
         <source>Wort Clarity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Прозрачность сусла</translation>
     </message>
 </context>
 <context>
@@ -804,7 +804,7 @@
     <name>BtPrintAndPreview</name>
     <message>
         <source>Print And Preview</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Печать и предпросмотр</translation>
     </message>
     <message>
         <source>Recipe</source>
@@ -812,27 +812,27 @@
     </message>
     <message>
         <source>Select Recipe(s)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выберите рецепт(ы)</translation>
     </message>
     <message>
         <source>Select what to include</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выберите, что включить</translation>
     </message>
     <message>
         <source>Brewday Instructions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Инструкции на день варки</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Инвентарь</translation>
+        <translation type="unfinished">Запасы</translation>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Все</translation>
     </message>
     <message>
         <source>Fermentables</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сбраживаемые</translation>
     </message>
     <message>
         <source>Hops</source>
@@ -840,7 +840,7 @@
     </message>
     <message>
         <source>Micelleneous</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Прочее</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -852,39 +852,39 @@
     </message>
     <message>
         <source>Paper</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Бумага</translation>
     </message>
     <message>
         <source>PDF</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">PDF</translation>
     </message>
     <message>
         <source>HTML</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">HTML</translation>
     </message>
     <message>
         <source>Printer Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Настройки принтера</translation>
     </message>
     <message>
         <source>Paper size: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Размер бумаги: </translation>
     </message>
     <message>
         <source>Select available Printers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выберите доступный принтер</translation>
     </message>
     <message>
         <source>Orientation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ориентация</translation>
     </message>
     <message>
         <source>Portrait</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Книжная</translation>
     </message>
     <message>
         <source>Landscape</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Альбомная</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -892,7 +892,7 @@
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Печать</translation>
     </message>
 </context>
 <context>
@@ -1116,1227 +1116,1227 @@
     <message>
         <source>United Arab Emirates Dirham</source>
         <extracomment>*</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Дирхам ОАЭ</translation>
     </message>
     <message>
         <source>Dirham</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Дирхам</translation>
     </message>
     <message>
         <source>Fils</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Филс</translation>
     </message>
     <message>
         <source>Afghan Afghani</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Афганский афгани</translation>
     </message>
     <message>
         <source>Afghani</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Афгани</translation>
     </message>
     <message>
         <source>Pul</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Пул</translation>
     </message>
     <message>
         <source>Albanian Lek</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Албанский лек</translation>
     </message>
     <message>
         <source>Lek</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Лек</translation>
     </message>
     <message>
         <source>Qindarka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Киндарка</translation>
     </message>
     <message>
         <source>Armenian Dram</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Армянский драм</translation>
     </message>
     <message>
         <source>Dram</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Драм</translation>
     </message>
     <message>
         <source>Luma</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Лума</translation>
     </message>
     <message>
         <source>Angolan Kwanza</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ангольская кванза</translation>
     </message>
     <message>
         <source>Kwanza</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кванза</translation>
     </message>
     <message>
         <source>Centimo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сентимо</translation>
     </message>
     <message>
         <source>Argentine Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Аргентинское песо</translation>
     </message>
     <message>
         <source>Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Песо</translation>
     </message>
     <message>
         <source>Centavo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сентаво</translation>
     </message>
     <message>
         <source>Australian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Австралийский доллар</translation>
     </message>
     <message>
         <source>Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Доллар</translation>
     </message>
     <message>
         <source>Cent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Цент</translation>
     </message>
     <message>
         <source>Aruban Florin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Арубанский флорин</translation>
     </message>
     <message>
         <source>Florin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Флорин</translation>
     </message>
     <message>
         <source>Azerbaijani Manat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Азербайджанский манат</translation>
     </message>
     <message>
         <source>Manat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Манат</translation>
     </message>
     <message>
         <source>Qapik</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гяпик</translation>
     </message>
     <message>
         <source>Bosnia-Herzegovina Convertible Mark</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Конвертируемая марка Боснии и Герцеговины</translation>
     </message>
     <message>
         <source>Mark</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Марка</translation>
     </message>
     <message>
         <source>Fening</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Фенинг</translation>
     </message>
     <message>
         <source>Barbados Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Барбадосский доллар</translation>
     </message>
     <message>
         <source>Bangladeshi Taka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Бангладешская така</translation>
     </message>
     <message>
         <source>Taka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Така</translation>
     </message>
     <message>
         <source>Poisha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Пойша</translation>
     </message>
     <message>
         <source>Bulgarian Lev</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Болгарский лев</translation>
     </message>
     <message>
         <source>Lev</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Лев</translation>
     </message>
     <message>
         <source>Stotinka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Стотинка</translation>
     </message>
     <message>
         <source>Bahraini Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Бахрейнский динар</translation>
     </message>
     <message>
         <source>Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Динар</translation>
     </message>
     <message>
         <source>Burundian Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Бурундийский франк</translation>
     </message>
     <message>
         <source>Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Франк</translation>
     </message>
     <message>
         <source>Centime</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сантим</translation>
     </message>
     <message>
         <source>Bermudian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Бермудский доллар</translation>
     </message>
     <message>
         <source>Brunei Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Брунейский доллар</translation>
     </message>
     <message>
         <source>Bolivian Boliviano</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Боливийский боливиано</translation>
     </message>
     <message>
         <source>Boliviano</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Боливиано</translation>
     </message>
     <message>
         <source>Brazilian Real</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Бразильский реал</translation>
     </message>
     <message>
         <source>Real</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Реал</translation>
     </message>
     <message>
         <source>Bahamian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Багамский доллар</translation>
     </message>
     <message>
         <source>Bhutanese Ngultrum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Бутанский нгултрум</translation>
     </message>
     <message>
         <source>Ngultrum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Нгултрум</translation>
     </message>
     <message>
         <source>Chetrum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Чхертум</translation>
     </message>
     <message>
         <source>Botswana Pula</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ботсванская пула</translation>
     </message>
     <message>
         <source>Pula</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Пула</translation>
     </message>
     <message>
         <source>Thebe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тхебе</translation>
     </message>
     <message>
         <source>Belarusian Ruble</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Белорусский рубль</translation>
     </message>
     <message>
         <source>Ruble</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Рубль</translation>
     </message>
     <message>
         <source>Kapiejka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Копейка</translation>
     </message>
     <message>
         <source>Belize Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Белизский доллар</translation>
     </message>
     <message>
         <source>Canadian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Канадский доллар</translation>
     </message>
     <message>
         <source>Congolese Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Конголезский франк</translation>
     </message>
     <message>
         <source>Swiss Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Швейцарский франк</translation>
     </message>
     <message>
         <source>Chilean Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Чилийское песо</translation>
     </message>
     <message>
         <source>Chinese Yuan</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Китайский юань</translation>
     </message>
     <message>
         <source>Yuan</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Юань</translation>
     </message>
     <message>
         <source>Fen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Фэнь</translation>
     </message>
     <message>
         <source>Colombian Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Колумбийское песо</translation>
     </message>
     <message>
         <source>Costa Rican Colón</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Костариканский колон</translation>
     </message>
     <message>
         <source>Colón</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Колон</translation>
     </message>
     <message>
         <source>Cuban Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кубинское песо</translation>
     </message>
     <message>
         <source>Cabo Verdean Escudo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Эскудо Кабо-Верде</translation>
     </message>
     <message>
         <source>Escudo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Эскудо</translation>
     </message>
     <message>
         <source>Czech Koruna</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Чешская крона</translation>
     </message>
     <message>
         <source>Koruna</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Крона</translation>
     </message>
     <message>
         <source>Haléř</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Геллер</translation>
     </message>
     <message>
         <source>Djiboutian Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Франк Джибути</translation>
     </message>
     <message>
         <source>Danish Krone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Датская крона</translation>
     </message>
     <message>
         <source>Krone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Крона</translation>
     </message>
     <message>
         <source>Øre</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Эре</translation>
     </message>
     <message>
         <source>Dominican Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Доминиканское песо</translation>
     </message>
     <message>
         <source>Algerian Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Алжирский динар</translation>
     </message>
     <message>
         <source>Santeem</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сантим</translation>
     </message>
     <message>
         <source>Egyptian Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Египетский фунт</translation>
     </message>
     <message>
         <source>Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Фунт</translation>
     </message>
     <message>
         <source>Qirsh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кирш</translation>
     </message>
     <message>
         <source>Eritrean Nakfa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Эритрейская накфа</translation>
     </message>
     <message>
         <source>Nakfa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Накфа</translation>
     </message>
     <message>
         <source>Ethiopian Birr</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Эфиопский быр</translation>
     </message>
     <message>
         <source>Birr</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Быр</translation>
     </message>
     <message>
         <source>Santim</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сантим</translation>
     </message>
     <message>
         <source>Euro</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Евро</translation>
     </message>
     <message>
         <source>Fiji Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Доллар Фиджи</translation>
     </message>
     <message>
         <source>Falkland Islands Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Фунт Фолклендских островов</translation>
     </message>
     <message>
         <source>Penny</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Пенни</translation>
     </message>
     <message>
         <source>Pound Sterling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Фунт стерлингов</translation>
     </message>
     <message>
         <source>Georgian Lari</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Грузинский лари</translation>
     </message>
     <message>
         <source>Lari</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Лари</translation>
     </message>
     <message>
         <source>Tetri</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тетри</translation>
     </message>
     <message>
         <source>Ghanaian Cedi</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ганский седи</translation>
     </message>
     <message>
         <source>Cedi</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Седи</translation>
     </message>
     <message>
         <source>Pesewa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Песева</translation>
     </message>
     <message>
         <source>Gibraltar Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гибралтарский фунт</translation>
     </message>
     <message>
         <source>Gambian Dalasi</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гамбийский даласи</translation>
     </message>
     <message>
         <source>Dalasi</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Даласи</translation>
     </message>
     <message>
         <source>Butut</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Бутут</translation>
     </message>
     <message>
         <source>Guinean Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гвинейский франк</translation>
     </message>
     <message>
         <source>Guatemalan Quetzal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гватемальский кетсаль</translation>
     </message>
     <message>
         <source>Quetzal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кетсаль</translation>
     </message>
     <message>
         <source>Guyanese Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гайанский доллар</translation>
     </message>
     <message>
         <source>Hong Kong Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гонконгский доллар</translation>
     </message>
     <message>
         <source>Honduran Lempira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гондурасская лемпира</translation>
     </message>
     <message>
         <source>Lempira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Лемпира</translation>
     </message>
     <message>
         <source>Haitian Gourde</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гаитянский гурд</translation>
     </message>
     <message>
         <source>Gourde</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гурд</translation>
     </message>
     <message>
         <source>Hungarian Forint</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Венгерский форинт</translation>
     </message>
     <message>
         <source>Forint</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Форинт</translation>
     </message>
     <message>
         <source>fillér</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">филлер</translation>
     </message>
     <message>
         <source>Indonesian Rupiah</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Индонезийская рупия</translation>
     </message>
     <message>
         <source>Rupiah</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Рупия</translation>
     </message>
     <message>
         <source>Sen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сен</translation>
     </message>
     <message>
         <source>Israeli Shekel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Израильский шекель</translation>
     </message>
     <message>
         <source>Shekel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Шекель</translation>
     </message>
     <message>
         <source>Agora</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Агора</translation>
     </message>
     <message>
         <source>Indian Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Индийская рупия</translation>
     </message>
     <message>
         <source>Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Рупия</translation>
     </message>
     <message>
         <source>Paisa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Пайса</translation>
     </message>
     <message>
         <source>Iraqi Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Иракский динар</translation>
     </message>
     <message>
         <source>Iranian Rial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Иранский риал</translation>
     </message>
     <message>
         <source>Rial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Риал</translation>
     </message>
     <message>
         <source>Icelandic Krona</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Исландская крона</translation>
     </message>
     <message>
         <source>Krona</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Крона</translation>
     </message>
     <message>
         <source>Aurar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Эйрир</translation>
     </message>
     <message>
         <source>Jamaican Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ямайский доллар</translation>
     </message>
     <message>
         <source>Jordanian Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Иорданский динар</translation>
     </message>
     <message>
         <source>Japanese Yen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Японская иена</translation>
     </message>
     <message>
         <source>Yen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Иена</translation>
     </message>
     <message>
         <source>Kenyan Shilling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кенийский шиллинг</translation>
     </message>
     <message>
         <source>Shilling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Шиллинг</translation>
     </message>
     <message>
         <source>Kyrgyzstani Som</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Киргизский сом</translation>
     </message>
     <message>
         <source>Som</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сом</translation>
     </message>
     <message>
         <source>Tyiyn</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тыйын</translation>
     </message>
     <message>
         <source>Cambodian Riel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Камбоджийский риель</translation>
     </message>
     <message>
         <source>Riel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Риель</translation>
     </message>
     <message>
         <source>Comorian Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Коморский франк</translation>
     </message>
     <message>
         <source>North Korean Won</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Северокорейская вона</translation>
     </message>
     <message>
         <source>Won</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вона</translation>
     </message>
     <message>
         <source>Chon</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Чон</translation>
     </message>
     <message>
         <source>South Korean Won</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Южнокорейская вона</translation>
     </message>
     <message>
         <source>Jeon</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Чон</translation>
     </message>
     <message>
         <source>Kuwaiti Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кувейтский динар</translation>
     </message>
     <message>
         <source>Cayman Islands Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Доллар Каймановых островов</translation>
     </message>
     <message>
         <source>Kazakhstani Tenge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Казахстанский тенге</translation>
     </message>
     <message>
         <source>Tenge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тенге</translation>
     </message>
     <message>
         <source>Tıyn</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тиын</translation>
     </message>
     <message>
         <source>Lao Kip</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Лаосский кип</translation>
     </message>
     <message>
         <source>Kip</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кип</translation>
     </message>
     <message>
         <source>Att</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ат</translation>
     </message>
     <message>
         <source>Lebanese Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ливанский фунт</translation>
     </message>
     <message>
         <source>Sri Lankan Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Шри-ланкийская рупия</translation>
     </message>
     <message>
         <source>Liberian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Либерийский доллар</translation>
     </message>
     <message>
         <source>Lesotho Loti</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Лоти Лесото</translation>
     </message>
     <message>
         <source>Loti</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Лоти</translation>
     </message>
     <message>
         <source>Sente</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сенте</translation>
     </message>
     <message>
         <source>Libyan Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ливийский динар</translation>
     </message>
     <message>
         <source>Moroccan Dirham</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Марокканский дирхам</translation>
     </message>
     <message>
         <source>Moldovan Leu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Молдавский лей</translation>
     </message>
     <message>
         <source>Leu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Лей</translation>
     </message>
     <message>
         <source>Ban</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Бань</translation>
     </message>
     <message>
         <source>Malagasy Ariary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Малагасийский ариари</translation>
     </message>
     <message>
         <source>Ariary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ариари</translation>
     </message>
     <message>
         <source>Iraimbilanja</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ираймбиланья</translation>
     </message>
     <message>
         <source>Macedonian Denar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Македонский денар</translation>
     </message>
     <message>
         <source>Denar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Денар</translation>
     </message>
     <message>
         <source>Deni</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Дени</translation>
     </message>
     <message>
         <source>Myanmar Kyat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Мьянманский кьят</translation>
     </message>
     <message>
         <source>Kyat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кьят</translation>
     </message>
     <message>
         <source>Pya</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Пья</translation>
     </message>
     <message>
         <source>Mongolian Tögrög</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Монгольский тугрик</translation>
     </message>
     <message>
         <source>Tögrög</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тугрик</translation>
     </message>
     <message>
         <source>möngö</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">мунгу</translation>
     </message>
     <message>
         <source>Macanese Pataca</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Патака Макао</translation>
     </message>
     <message>
         <source>Pataca</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Патака</translation>
     </message>
     <message>
         <source>Avo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Аво</translation>
     </message>
     <message>
         <source>Mauritanian Ouguiya</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Мавританская угия</translation>
     </message>
     <message>
         <source>Ouguiya</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Угия</translation>
     </message>
     <message>
         <source>Khoums</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Хумс</translation>
     </message>
     <message>
         <source>Mauritian Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Маврикийская рупия</translation>
     </message>
     <message>
         <source>Maldivian Rufiyaa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Мальдивская руфия</translation>
     </message>
     <message>
         <source>Rufiyaa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Руфия</translation>
     </message>
     <message>
         <source>laari</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">лари</translation>
     </message>
     <message>
         <source>Malawian Kwacha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Малавийская квача</translation>
     </message>
     <message>
         <source>Kwacha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Квача</translation>
     </message>
     <message>
         <source>Tambala</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тамбала</translation>
     </message>
     <message>
         <source>Mexican Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Мексиканское песо</translation>
     </message>
     <message>
         <source>Malaysian Ringgit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Малайзийский ринггит</translation>
     </message>
     <message>
         <source>Ringgit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ринггит</translation>
     </message>
     <message>
         <source>Mozambican Metical</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Мозамбикский метикал</translation>
     </message>
     <message>
         <source>Metical</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Метикал</translation>
     </message>
     <message>
         <source>Namibian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Намибийский доллар</translation>
     </message>
     <message>
         <source>Nigerian Naira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Нигерийская найра</translation>
     </message>
     <message>
         <source>Naira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Найра</translation>
     </message>
     <message>
         <source>Kobo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кобо</translation>
     </message>
     <message>
         <source>Nicaraguan Córdoba</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Никарагуанская кордоба</translation>
     </message>
     <message>
         <source>Córdoba</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кордоба</translation>
     </message>
     <message>
         <source>Norwegian Krone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Норвежская крона</translation>
     </message>
     <message>
         <source>øre</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">эре</translation>
     </message>
     <message>
         <source>Nepalese Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Непальская рупия</translation>
     </message>
     <message>
         <source>New Zealand Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Новозеландский доллар</translation>
     </message>
     <message>
         <source>Omani Rial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Оманский риал</translation>
     </message>
     <message>
         <source>Baisa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Байза</translation>
     </message>
     <message>
         <source>Panamanian Balboa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Панамский бальбоа</translation>
     </message>
     <message>
         <source>Balboa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Бальбоа</translation>
     </message>
     <message>
         <source>Centésimo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сентесимо</translation>
     </message>
     <message>
         <source>Peruvian Sol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Перуанский соль</translation>
     </message>
     <message>
         <source>Sol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Соль</translation>
     </message>
     <message>
         <source>Céntimo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сентимо</translation>
     </message>
     <message>
         <source>Papua New Guinean Kina</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кина Папуа — Новой Гвинеи</translation>
     </message>
     <message>
         <source>Kina</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кина</translation>
     </message>
     <message>
         <source>Toea</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тойя</translation>
     </message>
     <message>
         <source>Philippine Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Филиппинское песо</translation>
     </message>
     <message>
         <source>Sentimo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сентимо</translation>
     </message>
     <message>
         <source>Pakistani Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Пакистанская рупия</translation>
     </message>
     <message>
         <source>Polish Zloty</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Польский злотый</translation>
     </message>
     <message>
         <source>Zloty</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Злотый</translation>
     </message>
     <message>
         <source>Grosz</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Грош</translation>
     </message>
     <message>
         <source>Paraguayan Guaraní</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Парагвайский гуарани</translation>
     </message>
     <message>
         <source>Guaraní</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гуарани</translation>
     </message>
     <message>
         <source>Qatari Riyal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Катарский риал</translation>
     </message>
     <message>
         <source>Riyal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Риял</translation>
     </message>
     <message>
         <source>Romanian Leu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Румынский лей</translation>
     </message>
     <message>
         <source>Serbian Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сербский динар</translation>
     </message>
     <message>
         <source>Para</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Пара</translation>
     </message>
     <message>
         <source>Russian Ruble</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Российский рубль</translation>
     </message>
     <message>
         <source>Kopek</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Копейка</translation>
     </message>
     <message>
         <source>Rwandan Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Франк Руанды</translation>
     </message>
     <message>
         <source>Saudi Riyal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Саудовский риял</translation>
     </message>
     <message>
         <source>Halalah</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Халала</translation>
     </message>
     <message>
         <source>Solomon Islands Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Доллар Соломоновых островов</translation>
     </message>
     <message>
         <source>Seychelles Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сейшельская рупия</translation>
     </message>
     <message>
         <source>Sudanese Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Суданский фунт</translation>
     </message>
     <message>
         <source>Swedish Krona</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Шведская крона</translation>
     </message>
     <message>
         <source>Öre</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Эре</translation>
     </message>
     <message>
         <source>Singapore Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сингапурский доллар</translation>
     </message>
     <message>
         <source>Saint Helena Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Фунт Святой Елены</translation>
     </message>
     <message>
         <source>Sierra Leonean New Leone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Новый леоне Сьерра-Леоне</translation>
     </message>
     <message>
         <source>New Leone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Новый леоне</translation>
     </message>
     <message>
         <source>Somali Shilling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сомалийский шиллинг</translation>
     </message>
     <message>
         <source>Senti</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сенти</translation>
     </message>
     <message>
         <source>Surinamese Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Суринамский доллар</translation>
     </message>
     <message>
         <source>South Sudanese Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Южносуданский фунт</translation>
     </message>
     <message>
         <source>Sao Tome Dobra</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Добра Сан-Томе и Принсипи</translation>
     </message>
     <message>
         <source>Dobra</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Добра</translation>
     </message>
     <message>
         <source>Salvadoran Colón</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сальвадорский колон</translation>
     </message>
     <message>
         <source>Syrian Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сирийский фунт</translation>
     </message>
     <message>
         <source>Swazi Lilangeni</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Свазилендский лилангени</translation>
     </message>
     <message>
         <source>Lilangeni</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Лилангени</translation>
     </message>
     <message>
         <source>Thai Baht</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тайский бат</translation>
     </message>
     <message>
         <source>Baht</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Бат</translation>
     </message>
     <message>
         <source>Satang</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сатанг</translation>
     </message>
     <message>
         <source>Tajikistani Somoni</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Таджикский сомони</translation>
     </message>
     <message>
         <source>Somoni</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сомони</translation>
     </message>
     <message>
         <source>Diram</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Дирам</translation>
     </message>
     <message>
         <source>Turkmenistan Manat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Туркменский манат</translation>
     </message>
     <message>
         <source>Tunisian Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тунисский динар</translation>
     </message>
     <message>
         <source>Millime</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Миллим</translation>
     </message>
     <message>
         <source>Tongan Pa&apos;anga</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тонганская паанга</translation>
     </message>
     <message>
         <source>Pa&apos;anga</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Паанга</translation>
     </message>
     <message>
         <source>Seniti</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сенити</translation>
     </message>
     <message>
         <source>Turkish Lira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Турецкая лира</translation>
     </message>
     <message>
         <source>Lira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Лира</translation>
     </message>
     <message>
         <source>Kuruş</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Куруш</translation>
     </message>
     <message>
         <source>Trinidad and Tobago Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Доллар Тринидада и Тобаго</translation>
     </message>
     <message>
         <source>New Taiwan Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Новый тайваньский доллар</translation>
     </message>
     <message>
         <source>Tanzanian Shilling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Танзанийский шиллинг</translation>
     </message>
     <message>
         <source>Ukrainian Hryvnia</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Украинская гривна</translation>
     </message>
     <message>
         <source>Hryvnia</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гривна</translation>
     </message>
     <message>
         <source>Kopiyka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Копейка</translation>
     </message>
     <message>
         <source>Ugandan Shilling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Угандийский шиллинг</translation>
     </message>
     <message>
         <source>US Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Доллар США</translation>
     </message>
     <message>
         <source>Uruguayan Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Уругвайское песо</translation>
     </message>
     <message>
         <source>Uzbekistani Som</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Узбекский сум</translation>
     </message>
     <message>
         <source>Tiyin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тийин</translation>
     </message>
     <message>
         <source>Venezuelan Bolívar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Венесуэльский боливар</translation>
     </message>
     <message>
         <source>Bolívar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Боливар</translation>
     </message>
     <message>
         <source>Vietnamese Dong</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вьетнамский донг</translation>
     </message>
     <message>
         <source>Dong</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Донг</translation>
     </message>
     <message>
         <source>Hào</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Хао</translation>
     </message>
     <message>
         <source>Vanuatu Vatu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вату Вануату</translation>
     </message>
     <message>
         <source>Vatu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вату</translation>
     </message>
     <message>
         <source>Samoan Tala</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Самоанская тала</translation>
     </message>
     <message>
         <source>Tala</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тала</translation>
     </message>
     <message>
         <source>Sene</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сене</translation>
     </message>
     <message>
         <source>Central African CFA Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Центральноафриканский франк КФА</translation>
     </message>
     <message>
         <source>East Caribbean Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Восточнокарибский доллар</translation>
     </message>
     <message>
         <source>Caribbean Guilder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Карибский гульден</translation>
     </message>
     <message>
         <source>Guilder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гульден</translation>
     </message>
     <message>
         <source>West African CFA Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Западноафриканский франк КФА</translation>
     </message>
     <message>
         <source>CFP Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Франк КФП</translation>
     </message>
     <message>
         <source>No Currency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Без валюты</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished">Ничего</translation>
+        <translation type="unfinished">Нет</translation>
     </message>
     <message>
         <source>Yemeni Rial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Йеменский риал</translation>
     </message>
     <message>
         <source>South African Rand</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Южноафриканский рэнд</translation>
     </message>
     <message>
         <source>Rand</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Рэнд</translation>
     </message>
     <message>
         <source>Zambian Kwacha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Замбийская квача</translation>
     </message>
     <message>
         <source>Ngwee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Нгве</translation>
     </message>
     <message>
         <source>Zimbabwe Gold</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Зимбабвийский золотой</translation>
     </message>
     <message>
         <source>Gold</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Золото</translation>
     </message>
 </context>
 <context>
@@ -2359,58 +2359,61 @@
     </message>
     <message>
         <source>Connection failed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сбой подключения</translation>
     </message>
     <message>
         <source>Could not connect to %1 : %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось подключиться к %1 : %2</translation>
     </message>
     <message>
         <source>Success!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Успешно!</translation>
     </message>
     <message>
         <source>ERROR</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ОШИБКА</translation>
     </message>
     <message>
         <source>Successfully read new default data
 
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Новые данные по умолчанию успешно прочитаны
+
+%1</translation>
     </message>
     <message>
         <source>Filename</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Имя файла</translation>
     </message>
     <message>
         <source>Host &amp; Port</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Хост и порт</translation>
     </message>
     <message>
         <source>Database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">База данных</translation>
     </message>
     <message>
         <source>Schema</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Схема</translation>
     </message>
     <message>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Имя пользователя</translation>
     </message>
     <message>
         <source>Software Upgraded</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Программа обновлена</translation>
     </message>
     <message>
         <source>Before continuing, %1 %2 needs to upgrade your database schema (from v%3 to v%4).
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Прежде чем продолжить, %1 %2 необходимо обновить схему базы данных (с v%3 до v%4).
+</translation>
     </message>
     <message>
         <source>DON&apos;T PANIC: Your existing data will be retained!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">БЕЗ ПАНИКИ: ваши данные будут сохранены!</translation>
     </message>
     <message>
         <source>The upgrade should retain all your existing data.
@@ -2418,20 +2421,25 @@
 Even so, it&apos;s a good idea to make a manual backup of your PostgreSQL database just in case.
 
 If you didn&apos;t yet do this, click Abort.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Обновление должно сохранить все ваши данные.
+
+Тем не менее, рекомендуется на всякий случай сделать резервную копию базы данных PostgreSQL вручную.
+
+Если вы ещё этого не сделали, нажмите «Прервать».</translation>
     </message>
     <message>
         <source>Pre-upgrade database backup is in:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Резервная копия базы данных перед обновлением находится в:
+%1</translation>
     </message>
     <message>
         <source>Unable to back up database before upgrading</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось создать резервную копию базы данных перед обновлением</translation>
     </message>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось создать резервную копию базы данных перед необходимым обновлением.  Подробности смотрите в журналах.</translation>
     </message>
     <message>
         <source>Unable to import some or all of new default data
@@ -2439,34 +2447,41 @@ If you didn&apos;t yet do this, click Abort.</source>
 %1
 
 Log file may contain more details.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось импортировать некоторые или все новые данные по умолчанию
+
+%1
+
+Подробности могут быть в файле журнала.</translation>
     </message>
     <message>
         <source>ERROR: Unsupported Database Schema</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ОШИБКА: неподдерживаемая схема базы данных</translation>
     </message>
     <message>
         <source>Attempting to read a v%1 database, but %2 %3 only supports databases up to v%4.
 
 Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Попытка прочитать базу данных v%1, но %2 %3 поддерживает базы данных только до v%4.
+
+Нажмите «OK», чтобы завершить %2, после чего вы сможете обновиться до более новой версии.
+</translation>
     </message>
     <message>
         <source>No Database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Нет базы данных</translation>
     </message>
     <message>
         <source>SQLite</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">SQLite</translation>
     </message>
     <message>
         <source>Cannot create new DB schema in file &apos;%1&apos;.  File already exists!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Невозможно создать новую схему БД в файле «%1».  Файл уже существует!</translation>
     </message>
     <message>
         <source>PostgreSQL</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">PostgreSQL</translation>
     </message>
 </context>
 <context>
@@ -2504,7 +2519,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Copy %1</source>
-        <translation type="unfinished">Копирование %1</translation>
+        <translation type="unfinished">Копировать %1</translation>
     </message>
     <message>
         <source>Enter a unique name for the copy of %1.</source>
@@ -2512,7 +2527,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>An empty name will skip copying this %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Если оставить имя пустым, копирование этого %1 будет пропущено.</translation>
     </message>
     <message>
         <source>Cancel All</source>
@@ -2536,81 +2551,73 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Bad Name</source>
-        <translation type="unfinished">Неправильное наименование</translation>
+        <translation type="unfinished">Недопустимое имя</translation>
     </message>
     <message>
         <source>A folder name must have at least one non-whitespace character in it</source>
-        <translation type="unfinished">Имя папки должно содержать хотя-бы один символ</translation>
+        <translation type="unfinished">Имя папки должно содержать хотя бы один непробельный символ</translation>
     </message>
     <message>
         <source>A folder name must have at least one non-/ character in it</source>
-        <translation type="unfinished">Имя папки должно содержать хотя-бы один символ, отличающийся от /</translation>
-    </message>
-    <message>
-        <source>Edit «%1»</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit «%1» %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Имя папки должно содержать хотя бы один символ, отличный от /</translation>
     </message>
     <message>
         <source>Remove %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Убрать %1</translation>
     </message>
     <message>
         <source>Delete %1 #%2 &quot;%3&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удалить %1 №%2 «%3»?</translation>
     </message>
     <message>
         <source>%1 in use</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 используется</translation>
     </message>
     <message numerus="yes">
         <source>Cannot delete this %1, as it is used in %n recipe(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Невозможно удалить этот %1, так как он используется в %n рецепте</numerusform>
+            <numerusform>Невозможно удалить этот %1, так как он используется в %n рецептах</numerusform>
+            <numerusform>Невозможно удалить этот %1, так как он используется в %n рецептах</numerusform>
         </translation>
     </message>
     <message>
         <source>Invalid!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Недопустимо!</translation>
     </message>
     <message>
         <source>Merge %1 records</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объединить записи %1</translation>
     </message>
     <message>
         <source>%1 records differ</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Записи %1 различаются</translation>
     </message>
     <message numerus="yes">
         <source>WARNING: %1 records to be merged have %n difference(s).  Do you want to merge anyway?</source>
         <comment>0</comment>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>ВНИМАНИЕ: объединяемые записи %1 имеют %n отличие.  Всё равно объединить?</numerusform>
+            <numerusform>ВНИМАНИЕ: объединяемые записи %1 имеют %n отличия.  Всё равно объединить?</numerusform>
+            <numerusform>ВНИМАНИЕ: объединяемые записи %1 имеют %n отличий.  Всё равно объединить?</numerusform>
         </translation>
     </message>
     <message>
         <source>Attempt to merge %1 %2 records? (NOTE: &lt;b&gt;This action cannot be undone!&lt;/b&gt;  It is intended for use where the records are identical or as near as makes no difference.  Use on non-identical records risks data loss.)&lt;br&gt;&lt;br&gt;&lt;b&gt;Please make sure you have a backup of your database file before using this function!&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Попытаться объединить записи %1 %2? (ПРИМЕЧАНИЕ: &lt;b&gt;Это действие нельзя отменить!&lt;/b&gt;  Оно предназначено для случаев, когда записи идентичны или практически не отличаются.  Применение к неидентичным записям грозит потерей данных.)&lt;br&gt;&lt;br&gt;&lt;b&gt;Прежде чем использовать эту функцию, убедитесь, что у вас есть резервная копия файла базы данных!&lt;/b&gt;</translation>
     </message>
     <message numerus="yes">
         <source>%n field(s) differ between %1 #%2 and %1 #%3.  If you continue, %1 #%3 will be deleted and all uses of it will be replaced by %1 #%2.  This &lt;b&gt;cannot&lt;/b&gt; be undone.&lt;br&gt;&lt;br&gt;%4</source>
         <comment>0</comment>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n поле различается между %1 №%2 и %1 №%3.  Если продолжить, %1 №%3 будет удалён, а все его использования будут заменены на %1 №%2.  Это &lt;b&gt;нельзя&lt;/b&gt; отменить.&lt;br&gt;&lt;br&gt;%4</numerusform>
+            <numerusform>%n поля различаются между %1 №%2 и %1 №%3.  Если продолжить, %1 №%3 будет удалён, а все его использования будут заменены на %1 №%2.  Это &lt;b&gt;нельзя&lt;/b&gt; отменить.&lt;br&gt;&lt;br&gt;%4</numerusform>
+            <numerusform>%n полей различаются между %1 №%2 и %1 №%3.  Если продолжить, %1 №%3 будет удалён, а все его использования будут заменены на %1 №%2.  Это &lt;b&gt;нельзя&lt;/b&gt; отменить.&lt;br&gt;&lt;br&gt;%4</numerusform>
         </translation>
     </message>
     <message>
         <source>Owner ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID владельца</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -2618,131 +2625,131 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Is Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">По весу</translation>
     </message>
     <message>
         <source>Measure</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Мера</translation>
     </message>
     <message>
         <source>Quantity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Количество</translation>
     </message>
     <message>
         <source>Unit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Единица</translation>
     </message>
     <message>
         <source>Ramp Time</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Время нагрева</translation>
     </message>
     <message>
         <source>Start Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Начальная температура</translation>
     </message>
     <message>
         <source>Step Time</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Время этапа</translation>
     </message>
     <message>
         <source>№ Steps</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">№ этапов</translation>
     </message>
     <message>
         <source>Steps</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Этапы</translation>
     </message>
     <message>
         <source>Ingredient ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID ингредиента</translation>
     </message>
     <message>
         <source>Amount Ordered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Заказано</translation>
     </message>
     <message>
         <source>Amount Received</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Получено</translation>
     </message>
     <message>
         <source>Amount Remaining</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Остаток</translation>
     </message>
     <message>
         <source>Amount Used</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Использовано</translation>
     </message>
     <message>
         <source>Number</source>
-        <translation type="unfinished">Число</translation>
+        <translation type="unfinished">Номер</translation>
     </message>
     <message>
         <source>Quantity Remaining</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Оставшееся количество</translation>
     </message>
     <message>
         <source>Show only non-zero inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Показывать только ненулевые запасы</translation>
     </message>
     <message>
         <source>Stock Purchase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Закупка</translation>
     </message>
     <message>
         <source>Add to recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Добавить в рецепт</translation>
     </message>
     <message>
         <source>Set for recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Задать для рецепта</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить</translation>
     </message>
     <message>
         <source>Show stock purchases</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Показать закупки</translation>
     </message>
     <message>
         <source>Merge selected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объединить выбранное</translation>
     </message>
     <message>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Переименовать</translation>
     </message>
     <message>
         <source>%1 name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Название %1</translation>
     </message>
     <message>
         <source>%1 name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Название %1:</translation>
     </message>
     <message>
         <source>Change %1 Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить название %1</translation>
     </message>
     <message>
         <source>Snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Снимки</translation>
     </message>
     <message>
         <source>Show Snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Показать снимки</translation>
     </message>
     <message>
         <source>Hide Snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Скрыть снимки</translation>
     </message>
     <message>
         <source>Detach Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Отсоединить рецепт</translation>
     </message>
     <message>
         <source>Snapshot Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сделать снимок рецепта</translation>
     </message>
     <message>
         <source>Brew It!</source>
@@ -2750,58 +2757,58 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Brew again</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сварить снова</translation>
     </message>
     <message>
         <source>Change date</source>
-        <translation type="unfinished">Выбрать дату</translation>
+        <translation type="unfinished">Изменить дату</translation>
     </message>
     <message>
         <source>Contained in Folder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">В папке</translation>
     </message>
     <message>
         <source>Contained in Folder ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID папки</translation>
     </message>
     <message>
         <source>Invalid Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Недопустимое имя</translation>
     </message>
     <message>
         <source>Folder name cannot be blank (and cannot contain &apos;/&apos;)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Имя папки не может быть пустым (и не может содержать «/»)</translation>
     </message>
     <message>
         <source>Nothing to Export</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Нечего экспортировать</translation>
     </message>
     <message>
         <source>Nothing is selected or none of the selected things can be exported</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ничего не выбрано, или ни один из выбранных объектов нельзя экспортировать</translation>
     </message>
     <message>
         <source>Export (to dotBeer, BeerXML or BeerJSON)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Экспорт (в dotBeer, BeerXML или BeerJSON)</translation>
     </message>
     <message>
         <source>Import (from dotBeer, BeerXML or BeerJSON)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Импорт (из dotBeer, BeerXML или BeerJSON)</translation>
     </message>
     <message>
         <source>Contained in Folder Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Путь к папке</translation>
     </message>
     <message>
         <source>Locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Заблокирован</translation>
     </message>
 </context>
 <context>
     <name>Derived::StockUseClass</name>
     <message>
         <source>Use of %1 in %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Использование %1 в %2</translation>
     </message>
 </context>
 <context>
@@ -2816,11 +2823,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Equipments</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Оборудование</translation>
     </message>
     <message>
         <source>Preboil</source>
-        <translation type="unfinished">Перед кипячением</translation>
+        <translation type="unfinished">До кипячения</translation>
     </message>
     <message>
         <source>BoilTime</source>
@@ -2828,163 +2835,163 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Aging Vessel Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Потери в ёмкости для созревания</translation>
     </message>
     <message>
         <source>Aging Vessel Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания к ёмкости для созревания</translation>
     </message>
     <message>
         <source>Aging Vessel Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тип ёмкости для созревания</translation>
     </message>
     <message>
         <source>Aging Vessel Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём ёмкости для созревания</translation>
     </message>
     <message>
         <source>Boiling Point</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Температура кипения</translation>
     </message>
     <message>
         <source>Evaporation Rate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Скорость испарения</translation>
     </message>
     <message>
         <source>HLT Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Потери в HLT</translation>
     </message>
     <message>
         <source>HLT Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания к HLT</translation>
     </message>
     <message>
         <source>HLT Specific Heat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удельная теплоёмкость HLT</translation>
     </message>
     <message>
         <source>HLT Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тип HLT</translation>
     </message>
     <message>
         <source>HLT Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём HLT</translation>
     </message>
     <message>
         <source>HLT Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вес HLT</translation>
     </message>
     <message>
         <source>Hop Utilization</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Использование хмеля</translation>
     </message>
     <message>
         <source>Kettle Evaporation Per Hour</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Испарение из котла в час</translation>
     </message>
     <message>
         <source>Kettle Internal Diameter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Внутренний диаметр котла</translation>
     </message>
     <message>
         <source>Kettle Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания к котлу</translation>
     </message>
     <message>
         <source>Kettle Opening Diameter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Диаметр горловины котла</translation>
     </message>
     <message>
         <source>Kettle Outflow Per Minute</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Слив из котла в минуту</translation>
     </message>
     <message>
         <source>Kettle Specific Heat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удельная теплоёмкость котла</translation>
     </message>
     <message>
         <source>Kettle Trub Chiller Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Потери в котле на осадок и охладитель</translation>
     </message>
     <message>
         <source>Kettle Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тип котла</translation>
     </message>
     <message>
         <source>Kettle Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вес котла</translation>
     </message>
     <message>
         <source>Lauter Tun Deadspace Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Потери в мёртвом объёме фильтрационного чана</translation>
     </message>
     <message>
         <source>Lauter Tun Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания к фильтрационному чану</translation>
     </message>
     <message>
         <source>Lauter Tun Specific Heat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удельная теплоёмкость фильтрационного чана</translation>
     </message>
     <message>
         <source>Lauter Tun Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тип фильтрационного чана</translation>
     </message>
     <message>
         <source>Lauter Tun Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём фильтрационного чана</translation>
     </message>
     <message>
         <source>Lauter Tun Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вес фильтрационного чана</translation>
     </message>
     <message>
         <source>Mash Tun Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Потери в заторном чане</translation>
     </message>
     <message>
         <source>Mash Tun Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания к заторному чану</translation>
     </message>
     <message>
         <source>Mash Tun Specific Heat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удельная теплоёмкость заторного чана</translation>
     </message>
     <message>
         <source>Mash Tun Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тип заторного чана</translation>
     </message>
     <message>
         <source>Mash Tun Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём заторного чана</translation>
     </message>
     <message>
         <source>Mash Tun Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вес заторного чана</translation>
     </message>
     <message>
         <source>Packaging Vessel Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Потери в ёмкости для розлива</translation>
     </message>
     <message>
         <source>Packaging Vessel Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания к ёмкости для розлива</translation>
     </message>
     <message>
         <source>Packaging Vessel Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тип ёмкости для розлива</translation>
     </message>
     <message>
         <source>Packaging Vessel Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём ёмкости для розлива</translation>
     </message>
     <message>
         <source>Top Up Kettle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Доливка в котёл</translation>
     </message>
     <message>
         <source>Top Up Water</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Доливка воды</translation>
     </message>
     <message>
         <source>Boil Size</source>
@@ -2992,43 +2999,43 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Fermentor Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Потери в ферментере</translation>
     </message>
     <message>
         <source>Fermentor Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания к ферментеру</translation>
     </message>
     <message>
         <source>Fermentor Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тип ферментера</translation>
     </message>
     <message>
         <source>Default Batch Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Размер партии по умолчанию</translation>
     </message>
     <message>
         <source>Fermentor Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём ферментера</translation>
     </message>
     <message>
         <source>Default Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём до кипячения по умолчанию</translation>
     </message>
     <message>
         <source>Kettle Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём котла</translation>
     </message>
     <message>
         <source>Foundation Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вода под ложным дном</translation>
     </message>
     <message>
         <source>Grain Absorption</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Впитывание солодом</translation>
     </message>
     <message>
         <source>Batch Size</source>
-        <translation type="unfinished">Размер затора</translation>
+        <translation type="unfinished">Размер партии</translation>
     </message>
 </context>
 <context>
@@ -3203,111 +3210,111 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>The following values are not set:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Следующие значения не заданы:</translation>
     </message>
     <message>
         <source>hop utilization</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">использование хмеля</translation>
     </message>
     <message>
         <source>Calculation Warnings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Предупреждения расчёта</translation>
     </message>
     <message>
         <source>Numerical values on zero-sized &quot;optional&quot; vessels will be unset or zeroed when you save</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Числовые значения для «необязательных» ёмкостей нулевого объёма будут сброшены или обнулены при сохранении</translation>
     </message>
     <message>
         <source>The following values will be discarded:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Следующие значения будут отброшены:</translation>
     </message>
     <message>
         <source>Hot liquor tank losses</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Потери в ёмкости горячей воды</translation>
     </message>
     <message>
         <source>Hot liquor tank weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вес ёмкости горячей воды</translation>
     </message>
     <message>
         <source>Hot liquor tank specific heat capacity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удельная теплоёмкость ёмкости горячей воды</translation>
     </message>
     <message>
         <source>Lauter tun losses</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Потери в фильтрационном чане</translation>
     </message>
     <message>
         <source>Lauter tun weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вес фильтрационного чана</translation>
     </message>
     <message>
         <source>Lauter tun specific heat capacity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удельная теплоёмкость фильтрационного чана</translation>
     </message>
     <message>
         <source>Packaging vessel losses</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Потери в ёмкости для розлива</translation>
     </message>
     <message>
         <source>Aging vessel losses</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Потери в ёмкости для созревания</translation>
     </message>
     <message>
         <source>Data Discard Warnings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Предупреждения об отбрасывании данных</translation>
     </message>
     <message>
         <source>This equipment profile may break %1&apos;s maths</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Этот профиль оборудования может нарушить расчёты %1</translation>
     </message>
     <message>
         <source>Foundation water (%1) plus mash tun loss (%2) leaves no room for the mash in a mash tun with total capacity %3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вода под ложным дном (%1) плюс потери в заторном чане (%2) не оставляют места для затора в заторном чане общей вместимостью %3.</translation>
     </message>
     <message>
         <source>default batch size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">размер партии по умолчанию</translation>
     </message>
     <message>
         <source>Foundation water (%1) leaves no room for the mash in the kettle (total capacity %2).  (As there is no separate mash tun, the mash happens in the kettle.)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вода под ложным дном (%1) не оставляет места для затора в котле (общая вместимость %2).  (Поскольку отдельного заторного чана нет, затирание происходит в котле.)</translation>
     </message>
     <message>
         <source>The default pre-boil volume (%1) is more than the kettle can hold (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём до кипячения по умолчанию (%1) больше вместимости котла (%2).</translation>
     </message>
     <message>
         <source>The default batch size (%1) is more than the fermentor can hold (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Размер партии по умолчанию (%1) больше вместимости ферментера (%2).</translation>
     </message>
     <message>
         <source>Mash tun losses</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Потери в заторном чане</translation>
     </message>
     <message>
         <source>Mash tun weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вес заторного чана</translation>
     </message>
     <message>
         <source>Mash tun specific heat capacity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удельная теплоёмкость заторного чана</translation>
     </message>
     <message>
         <source>batch size %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">размер партии %1</translation>
     </message>
     <message>
         <source>pre-boil size %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">объём до кипячения %1</translation>
     </message>
     <message>
         <source>Update recipes?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Обновить рецепты?</translation>
     </message>
     <message>
         <source>The following recipes use equipment &quot;%1&quot; and have the batch size and/or pre-boil size that it previously specified.  Would you like to update them to match the changes you just made?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Следующие рецепты используют оборудование «%1» и имеют ранее заданные им размер партии и/или объём до кипячения.  Обновить их в соответствии с только что внесёнными изменениями?</translation>
     </message>
 </context>
 <context>
@@ -3338,51 +3345,51 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Fruit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Фрукты</translation>
     </message>
     <message>
         <source>Juice</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сок</translation>
     </message>
     <message>
         <source>Honey</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Мёд</translation>
     </message>
     <message>
         <source>Other Adjunct</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Прочее несоложёное сырьё</translation>
     </message>
     <message>
         <source>Base</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Базовый</translation>
     </message>
     <message>
         <source>Caramel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Карамельный</translation>
     </message>
     <message>
         <source>Flaked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Хлопья</translation>
     </message>
     <message>
         <source>Roasted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Жжёный</translation>
     </message>
     <message>
         <source>Specialty</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Специальный</translation>
     </message>
     <message>
         <source>Smoked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Копчёный</translation>
     </message>
     <message>
         <source>Adjunct</source>
-        <translation type="unfinished">Дополнение</translation>
+        <translation type="unfinished">Несоложёное сырьё</translation>
     </message>
     <message>
         <source>Fermentable</source>
-        <translation type="unfinished">Сбраживаемый</translation>
+        <translation type="unfinished">Сбраживаемый ингредиент</translation>
     </message>
     <message>
         <source>Type</source>
@@ -3394,91 +3401,91 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Fermentables</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сбраживаемые</translation>
     </message>
     <message>
         <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выход экстракта, сухое вещество, тонкий помол (DBFG)</translation>
     </message>
     <message>
         <source>Alpha Amylase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Альфа-амилаза</translation>
     </message>
     <message>
         <source>Beta Glucan</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Бета-глюкан</translation>
     </message>
     <message>
         <source>Coarse Fine Diff</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Разница грубого/тонкого помола</translation>
     </message>
     <message>
         <source>Coarse Grind Yield</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выход при грубом помоле</translation>
     </message>
     <message>
         <source>Diastatic Power</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Диастатическая сила</translation>
     </message>
     <message>
         <source>DI pH</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">pH в дист. воде</translation>
     </message>
     <message>
         <source>DMS precursors</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Предшественники ДМС</translation>
     </message>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Свободный аминный азот (FAN)</translation>
     </message>
     <message>
         <source>Fermentability</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сбраживаемость</translation>
     </message>
     <message>
         <source>Friability</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Рыхлость</translation>
     </message>
     <message>
         <source>Grain Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Группа солода</translation>
     </message>
     <message>
         <source>Hardness Proportion Glassy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Доля твёрдости: стекловидные</translation>
     </message>
     <message>
         <source>Hardness Proportion Half</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Доля твёрдости: полустекловидные</translation>
     </message>
     <message>
         <source>Hardness Proportion Mealy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Доля твёрдости: мучнистые</translation>
     </message>
     <message>
         <source>Kernel Size Proportion Plump</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Доля крупных зёрен</translation>
     </message>
     <message>
         <source>Kernel Size Proportion Thin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Доля мелких зёрен</translation>
     </message>
     <message>
         <source>Kolbach Index</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Число Кольбаха</translation>
     </message>
     <message>
         <source>Max In Batch</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Макс. в засыпи</translation>
     </message>
     <message>
         <source>Moisture</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Влажность</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>Origin</source>
@@ -3486,11 +3493,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Potential Yield</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Потенциальный выход</translation>
     </message>
     <message>
         <source>Producer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Производитель</translation>
     </message>
     <message>
         <source>Product ID</source>
@@ -3498,11 +3505,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Protein</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Белок</translation>
     </message>
     <message>
         <source>Recommend Mash</source>
-        <translation type="unfinished">Рекомендуется затереть</translation>
+        <translation type="unfinished">Рекомендуется затирать</translation>
     </message>
     <message>
         <source>Supplier</source>
@@ -3510,27 +3517,27 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Viscosity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вязкость</translation>
     </message>
     <message>
         <source>Fermentable Purchases</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Закупки сбраживаемых</translation>
     </message>
     <message>
         <source>Yield (DBFG) %</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выход (DBFG) %</translation>
     </message>
     <message>
         <source>IBU Gal Per Lb</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">IBU гал/фунт</translation>
     </message>
     <message>
         <source>Lactic Acid content (% weight)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Содержание молочной кислоты (% по массе)</translation>
     </message>
     <message>
         <source>Fermentable by yeast (%)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сбраживаемость дрожжами (%)</translation>
     </message>
 </context>
 <context>
@@ -3669,94 +3676,94 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>Fermentation</name>
     <message>
         <source>Fermentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Брожение</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Описание</translation>
     </message>
     <message>
         <source>Fermentation Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Профили брожения</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>Primary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Первичное</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вторичное</translation>
     </message>
     <message>
         <source>Tertiary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Третичное</translation>
     </message>
     <message>
         <source>Krausen Handling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Обращение с крейзеном</translation>
     </message>
     <message>
         <source>Mixed In</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Перемешан</translation>
     </message>
     <message>
         <source>Minor Deposits on Fermenter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Незначительный налёт на ферментере</translation>
     </message>
     <message>
         <source>Medium Deposits on Fermenter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Умеренный налёт на ферментере</translation>
     </message>
     <message>
         <source>Heavy Deposits on Fermenter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сильный налёт на ферментере</translation>
     </message>
     <message>
         <source>Very Heavy Deposits on Fermenter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Очень сильный налёт на ферментере</translation>
     </message>
     <message>
         <source>Blown Off, Slow Fermentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выброс, медленное брожение</translation>
     </message>
     <message>
         <source>Blown Off, Normal Fermentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выброс, нормальное брожение</translation>
     </message>
     <message>
         <source>Blown Off, Vigorous Fermentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выброс, бурное брожение</translation>
     </message>
 </context>
 <context>
     <name>FermentationStep</name>
     <message>
         <source>Fermentation Step</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Этап брожения</translation>
     </message>
     <message>
         <source>Step time (days)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Время этапа (дни)</translation>
     </message>
     <message>
         <source>Free Rise</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Свободный подъём</translation>
     </message>
     <message>
         <source>Vessel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ёмкость</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Нет</translation>
+        <translation type="obsolete">Нет</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Да</translation>
+        <translation type="obsolete">Да</translation>
     </message>
 </context>
 <context>
@@ -3793,70 +3800,70 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Путь</translation>
     </message>
     <message>
         <source>Full Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Полный путь</translation>
     </message>
 </context>
 <context>
     <name>HelpDialog</name>
     <message>
         <source>Online Help</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Онлайн-справка</translation>
     </message>
     <message>
         <source>&lt;em&gt;If it&apos;s Brewken, we can fix it...&lt;/em&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;em&gt;Если это Brewken, мы можем это исправить...&lt;/em&gt;</translation>
     </message>
     <message>
         <source>Your Data</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ваши данные</translation>
     </message>
     <message>
         <source>Recipes, ingredients and other important data are stored in one or more files in the following folder (which is configurable via the &apos;Tools &gt; Options&apos; menu):</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Рецепты, ингредиенты и другие важные данные хранятся в одном или нескольких файлах в следующей папке (её можно изменить в меню «Инструменты &gt; Параметры»):</translation>
     </message>
     <message>
         <source>It is a good idea to take regular backups of this folder.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Рекомендуется регулярно делать резервные копии этой папки.</translation>
     </message>
     <message>
         <source>Settings and Log files</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Настройки и файлы журналов</translation>
     </message>
     <message>
         <source>The contents of the following folder(s) can be helpful for diagnosing problems:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Содержимое следующих папок может помочь в диагностике проблем:</translation>
     </message>
     <message>
         <source>Configuration:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Конфигурация:</translation>
     </message>
     <message>
         <source>Logs:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Журналы:</translation>
     </message>
     <message>
         <source>The location of the log files can be configured via the &apos;Tools &gt; Options&apos; menu.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Расположение файлов журналов можно изменить в меню «Инструменты &gt; Параметры».</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Справка</translation>
     </message>
     <message>
         <source>&lt;p&gt;The %1 wiki is at &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;p&gt;Вики %1 находится по адресу &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>If you find a bug, or have an idea for an enhancement, please raise an issue at &lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Если вы нашли ошибку или у вас есть идея по улучшению, пожалуйста, создайте задачу на &lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;.</translation>
     </message>
     <message>
         <source>version %1 for %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">версия %1 для %2</translation>
     </message>
 </context>
 <context>
@@ -3903,23 +3910,23 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Flavor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вкус</translation>
     </message>
     <message>
         <source>Aroma &amp; Bittering</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Аромат и горечь</translation>
     </message>
     <message>
         <source>Bittering &amp; Flavor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Горечь и вкус</translation>
     </message>
     <message>
         <source>Aroma &amp; Flavor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Аромат и вкус</translation>
     </message>
     <message>
         <source>Aroma, Bittering &amp; Flavor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Аромат, горечь и вкус</translation>
     </message>
     <message>
         <source>Extract</source>
@@ -3931,11 +3938,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>WetLeaf</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Свежие шишки</translation>
     </message>
     <message>
         <source>Powder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Порошок</translation>
     </message>
     <message>
         <source>Type</source>
@@ -3963,7 +3970,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>β-Pinene</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">β-пинен</translation>
     </message>
     <message>
         <source>Caryophyllene</source>
@@ -3975,23 +3982,23 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Farnesene</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Фарнезен</translation>
     </message>
     <message>
         <source>Geraniol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гераниол</translation>
     </message>
     <message>
         <source>Humulene</source>
-        <translation type="unfinished">Гумулон</translation>
+        <translation type="unfinished">Гумулен</translation>
     </message>
     <message>
         <source>Limonene</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Лимонен</translation>
     </message>
     <message>
         <source>Linalool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Линалоол</translation>
     </message>
     <message>
         <source>Myrcene</source>
@@ -3999,23 +4006,23 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Nerol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Нерол</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>Pinene</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Пинен</translation>
     </message>
     <message>
         <source>Polyphenols</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Полифенолы</translation>
     </message>
     <message>
         <source>Producer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Производитель</translation>
     </message>
     <message>
         <source>Product ID</source>
@@ -4023,51 +4030,51 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Substitutes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Заменители</translation>
     </message>
     <message>
         <source>Total Oil</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Всего масел</translation>
     </message>
     <message>
         <source>Xanthohumol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ксантогумол</translation>
     </message>
     <message>
         <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Год</translation>
     </message>
     <message>
         <source>Hop Purchases</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Закупки хмеля</translation>
     </message>
     <message>
         <source>% Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">% альфа</translation>
     </message>
     <message>
         <source>% Beta</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">% бета</translation>
     </message>
     <message>
         <source>Max % Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Макс. % альфа</translation>
     </message>
     <message>
         <source>Min % Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Мин. % альфа</translation>
     </message>
     <message>
         <source>Max % Beta</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Макс. % бета</translation>
     </message>
     <message>
         <source>Min % Beta</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Мин. % бета</translation>
     </message>
     <message>
         <source>Six Month Alpha Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Потеря альфа за полгода</translation>
     </message>
 </context>
 <context>
@@ -4241,11 +4248,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>HydrometerTool</name>
     <message>
         <source>Hydrometer Tool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ареометр</translation>
     </message>
     <message>
         <source>SG Reading</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Показание SG</translation>
     </message>
     <message>
         <source>Temperature</source>
@@ -4253,7 +4260,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Adjust SG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Скорректировать SG</translation>
     </message>
     <message>
         <source>Convert</source>
@@ -4261,22 +4268,22 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Measured gravity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Измеренная плотность</translation>
     </message>
     <message>
         <source>Corrected gravity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Скорректированная плотность</translation>
     </message>
     <message>
         <source>Hydrometer Calibration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Калибровка ареометра</translation>
     </message>
 </context>
 <context>
     <name>IbuGuSlider</name>
     <message>
         <source>Cloying</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Приторное</translation>
     </message>
     <message>
         <source>Extra Malty</source>
@@ -4314,43 +4321,45 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>ImportRecordCount</name>
     <message>
         <source>Couldn&apos;t find any recognisable data in the file!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось найти в файле распознаваемых данных!</translation>
     </message>
     <message>
         <source>🗸 Read </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">🗸 Прочитано </translation>
     </message>
     <message>
         <source> record</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> запись</translation>
     </message>
     <message>
         <source> records</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> записей</translation>
     </message>
     <message>
         <source>
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">
+
+</translation>
     </message>
     <message>
         <source>↷ Skipped </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">↷ Пропущено </translation>
     </message>
 </context>
 <context>
     <name>InfoButton</name>
     <message>
         <source>i</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">i</translation>
     </message>
 </context>
 <context>
     <name>Ingredient</name>
     <message>
         <source>Ingredient</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ингредиент</translation>
     </message>
     <message>
         <source>Mass</source>
@@ -4362,53 +4371,53 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Total Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Всего в запасе</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тип количества</translation>
     </message>
 </context>
 <context>
     <name>IngredientName</name>
     <message>
         <source>Purchase of %1 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Закупка %1 </translation>
     </message>
 </context>
 <context>
     <name>Instruction</name>
     <message>
         <source>Instruction</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Инструкция</translation>
     </message>
     <message>
         <source>Completed </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выполнено </translation>
     </message>
     <message>
         <source>Directions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Указания</translation>
     </message>
     <message>
         <source>Has Timer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">С таймером</translation>
     </message>
     <message>
         <source>Interval</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Интервал</translation>
     </message>
     <message>
         <source>Timer Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Значение таймера</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Нет</translation>
+        <translation type="obsolete">Нет</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Да</translation>
+        <translation type="obsolete">Да</translation>
     </message>
 </context>
 <context>
@@ -4455,50 +4464,50 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>Item</name>
     <message>
         <source>Add %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Добавить %1</translation>
     </message>
     <message>
         <source>Remove selected %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удалить выбранный %1</translation>
     </message>
     <message>
         <source>Move selected %1 up</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Переместить выбранный %1 вверх</translation>
     </message>
     <message>
         <source>Move selected %1 down</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Переместить выбранный %1 вниз</translation>
     </message>
     <message>
         <source>Edit selected %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить выбранный %1</translation>
     </message>
 </context>
 <context>
     <name>LockAndShareBar</name>
     <message>
         <source>Make a copy for this recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сделать копию для этого рецепта</translation>
     </message>
     <message>
         <source>Make a copy that this recipe will use instead, so you can change it without affecting anything else.  Any changes you have already made in this editor are kept, and will be saved to the copy when you click Save.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Создать копию, которую будет использовать этот рецепт, чтобы её можно было изменять, не затрагивая ничего другого.  Уже внесённые в этом редакторе изменения сохранятся и будут записаны в копию при нажатии «Сохранить».</translation>
     </message>
     <message>
         <source>Unlock…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Разблокировать…</translation>
     </message>
     <message>
         <source>Allow this to be changed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Разрешить изменение</translation>
     </message>
     <message>
         <source>Lock</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Заблокировать</translation>
     </message>
     <message>
         <source>Prevent this from being changed.  You will still be able to use it in recipes, and to make copies of it.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Запретить изменение.  Вы по-прежнему сможете использовать это в рецептах и делать копии.</translation>
     </message>
 </context>
 <context>
@@ -4673,47 +4682,43 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Change Recipe Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить название рецепта</translation>
     </message>
     <message>
         <source>Change Recipe Style</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить стиль рецепта</translation>
     </message>
     <message>
         <source>Change Batch Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить размер партии</translation>
     </message>
     <message>
         <source>Change Recipe Efficiency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить эффективность рецепта</translation>
     </message>
     <message>
         <source>Undo %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Отменить %1</translation>
     </message>
     <message>
         <source>Redo %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Повторить %1</translation>
     </message>
     <message>
         <source>Error creating recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ошибка создания рецепта</translation>
     </message>
     <message>
         <source>Nothing to export</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Нечего экспортировать</translation>
     </message>
     <message>
         <source>None of the selected items is exportable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add %1 to recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ни один из выбранных элементов нельзя экспортировать</translation>
     </message>
     <message>
         <source>Error Loading Data</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ошибка загрузки данных</translation>
     </message>
     <message>
         <source>The program may not work if you ignore this error.
@@ -4721,369 +4726,373 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
 See logs for more details.
 
 If you need help, please open an issue at %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Если проигнорировать эту ошибку, программа может работать неправильно.
+
+Подробности смотрите в журналах.
+
+Если нужна помощь, создайте задачу на %1</translation>
     </message>
     <message>
         <source>Drop fermentable(s) on a recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Перетащите сбраживаемые ингредиенты на рецепт</translation>
     </message>
     <message>
         <source>Drop hop(s) on a recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Перетащите хмель на рецепт</translation>
     </message>
     <message>
         <source>Drop misc(s) on a recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Перетащите прочие ингредиенты на рецепт</translation>
     </message>
     <message>
         <source>Drop yeast(s) on a recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Перетащите дрожжи на рецепт</translation>
     </message>
     <message>
         <source>Operation failed.  See log file for more details.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Операция не удалась.  Подробности смотрите в файле журнала.</translation>
     </message>
     <message>
         <source>About %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">О программе %1</translation>
     </message>
     <message>
         <source>Please restart %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Перезапустите %1.</translation>
     </message>
     <message>
         <source>Automatically-created Boil for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Автоматически созданное кипячение для %1</translation>
     </message>
     <message>
         <source>Automatically-created Fermentation for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Автоматически созданное брожение для %1</translation>
     </message>
     <message>
         <source>Wrote recipe to file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Рецепт записан в файл</translation>
     </message>
     <message>
         <source>Error writing recipe to file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ошибка записи рецепта в файл</translation>
     </message>
     <message>
         <source>Change Brew Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить дату варки</translation>
     </message>
     <message>
         <source>Brew Log #%1 for brew on %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Журнал варки №%1 для варки %2</translation>
     </message>
     <message>
         <source>Brew Log for brew on %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Журнал варки для варки %1</translation>
     </message>
     <message>
         <source>Primary fermentation for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Первичное брожение для %1</translation>
     </message>
     <message>
         <source>Locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Заблокирован</translation>
     </message>
     <message>
         <source>Used by a locked recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Используется заблокированным рецептом</translation>
     </message>
     <message numerus="yes">
         <source>Shared with %n other recipe(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Общий с %n другим рецептом</numerusform>
+            <numerusform>Общий с %n другими рецептами</numerusform>
+            <numerusform>Общий с %n другими рецептами</numerusform>
         </translation>
     </message>
     <message>
         <source> · </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> · </translation>
     </message>
     <message>
         <source>Used only by this recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Используется только этим рецептом</translation>
     </message>
     <message>
         <source>⚠ Problems found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">⚠ Обнаружены проблемы</translation>
     </message>
     <message>
         <source>Change Use Mash Profile in FG Calculation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить учёт профиля затирания в расчёте FG</translation>
     </message>
     <message>
         <source>%1 (%2): recipe uses %3 but stock is measured by %4 -- %5 not taken from stock</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (%2): в рецепте используется %3, но запас измеряется в %4 -- %5 не списано из запасов</translation>
     </message>
     <message>
         <source>Inventory not fully updated</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Запасы обновлены не полностью</translation>
     </message>
     <message>
         <source>The following ingredient(s) are measured differently in the recipe and in your inventory, so the amount(s) used could not (all) be deducted from inventory.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Следующие ингредиенты измеряются в рецепте и в ваших запасах по-разному, поэтому использованное количество не удалось (полностью) списать из запасов.</translation>
     </message>
 </context>
 <context>
     <name>Mash</name>
     <message>
         <source>Mash</source>
-        <translation type="unfinished">Затор</translation>
+        <translation type="unfinished">Затирание</translation>
     </message>
     <message>
         <source>Total Time</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Общее время</translation>
     </message>
     <message>
         <source>Total time (mins)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Общее время (мин)</translation>
     </message>
     <message>
         <source>Mash Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Профили затирания</translation>
     </message>
     <message>
         <source>Adjust For Equipment</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Учитывать оборудование</translation>
     </message>
     <message>
         <source>Mash Tun Specific Heat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удельная теплоёмкость заторного чана</translation>
     </message>
     <message>
         <source>Mash Tun Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вес заторного чана</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>pH</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">pH</translation>
     </message>
     <message>
         <source>Sparge Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Температура промывки</translation>
     </message>
     <message>
         <source>Tun Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Температура заторного чана</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Нет</translation>
+        <translation type="obsolete">Нет</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Да</translation>
+        <translation type="obsolete">Да</translation>
     </message>
     <message>
         <source>Initial Grain Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Начальная температура солода</translation>
     </message>
     <message>
         <source>Mash Water</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вода для затирания</translation>
     </message>
     <message>
         <source>Automatically Adjust</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Автоматически подобрать</translation>
     </message>
     <message>
         <source>%1 (copy for %2)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (копия для %2)</translation>
     </message>
     <message>
         <source>, so step validation highlighting is enabled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">, поэтому подсветка проверки этапов включена</translation>
     </message>
 </context>
 <context>
     <name>MashAutoAdjuster</name>
     <message>
         <source>%1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1: %2</translation>
     </message>
     <message>
         <source>Step %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Этап %1</translation>
     </message>
     <message>
         <source>Batch Sparge %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Промывка порциями %1</translation>
     </message>
     <message>
         <source>Fly Sparge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Непрерывная промывка</translation>
     </message>
     <message>
         <source>There are no mash steps.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Нет этапов затирания.</translation>
     </message>
     <message>
         <source>There are no grains in the mash.  You need some mash-stage fermentable additions before the mash can be calculated.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">В заторе нет солода.  Прежде чем рассчитать затирание, нужно добавить сбраживаемые ингредиенты на этапе затирания.</translation>
     </message>
     <message>
         <source>The initial grain temperature is %1.  Please set it to the temperature of the grain before mashing, which is normally room temperature.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Начальная температура солода %1.  Задайте температуру солода перед затиранием — обычно это комнатная температура.</translation>
     </message>
     <message>
         <source>The initial mash tun temperature is %1, which needs to be between freezing and boiling point (%2).  (If it is not set, we assume the tun is at the same temperature as the grain.)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Начальная температура заторного чана %1, а она должна быть между точкой замерзания и точкой кипения (%2).  (Если она не задана, считается, что температура чана равна температуре солода.)</translation>
     </message>
     <message>
         <source>The step temperature was %1, which doesn&apos;t make sense, so it has been set to %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Температура этапа была %1, что не имеет смысла, поэтому она установлена в %2.</translation>
     </message>
     <message>
         <source>The step temperature is %1, which needs to be between freezing and boiling point (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Температура этапа %1, а она должна быть между точкой замерзания и точкой кипения (%2).</translation>
     </message>
     <message>
         <source>The first step must be an infusion (ie adding the strike water).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Первый этап должен быть настойным (т. е. добавлением воды для затирания).</translation>
     </message>
     <message>
         <source>Sparge steps must come after all the other steps.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Этапы промывки должны идти после всех остальных этапов.</translation>
     </message>
     <message>
         <source>The mash thickness must be positive.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гидромодуль затора должен быть положительным.</translation>
     </message>
     <message>
         <source>The infusion temperature is pinned, but has not been set.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Температура настоя закреплена, но не задана.</translation>
     </message>
     <message>
         <source>With no sparge, this step has to make up the total water needed (%1), but the other steps already add %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Без промывки этот этап должен обеспечить весь необходимый объём воды (%1), но другие этапы уже добавляют %2.</translation>
     </message>
     <message>
         <source>Cannot reach %1 with water at %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Невозможно достичь %1 водой с температурой %2.</translation>
     </message>
     <message>
         <source>The infusion amount must be more than zero.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Количество настоя должно быть больше нуля.</translation>
     </message>
     <message>
         <source>This infusion does not change the temperature of the mash, so its amount cannot be calculated.  It needs to be set and pinned.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Этот настой не меняет температуру затора, поэтому его количество невозможно рассчитать.  Его нужно задать и закрепить.</translation>
     </message>
     <message>
         <source>Try a thinner mash (ie more water).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Попробуйте более жидкий затор (т. е. больше воды).</translation>
     </message>
     <message>
         <source>Try more water or a lower step temperature.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Попробуйте больше воды или более низкую температуру этапа.</translation>
     </message>
     <message>
         <source>The water would need to be at %1, which is above boiling point (%2).  %3</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вода должна иметь температуру %1, что выше точки кипения (%2).  %3</translation>
     </message>
     <message>
         <source>The mash would already be hotter than %1 at this point.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">К этому моменту затор уже будет горячее %1.</translation>
     </message>
     <message>
         <source>This is more water than is needed to reach %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Это больше воды, чем нужно для достижения %1.</translation>
     </message>
     <message>
         <source>Try a smaller pinned amount, or unpinning it.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Попробуйте уменьшить закреплённое количество или открепить его.</translation>
     </message>
     <message>
         <source>With no sparge, this step has to add the rest of the water needed.  Try having a sparge, or more water in the earlier steps.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Без промывки этот этап должен добавить всю оставшуюся необходимую воду.  Попробуйте использовать промывку или добавить больше воды на предыдущих этапах.</translation>
     </message>
     <message>
         <source>Try a thicker mash (ie less water).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Попробуйте более густой затор (т. е. меньше воды).</translation>
     </message>
     <message>
         <source>To reach %1 with %2 of water, the water would need to be at %3, which is colder than the coldest water available (taken to be at the initial grain temperature, %4).  %5  %6</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Чтобы достичь %1 с %2 воды, вода должна иметь температуру %3, что холоднее самой холодной доступной воды (принимается равной начальной температуре солода, %4).  %5  %6</translation>
     </message>
     <message>
         <source>%1 of water at %2 will give a mash temperature of %3 rather than %4.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 воды при %2 даст температуру затора %3, а не %4.</translation>
     </message>
     <message>
         <source>The mash is already at boiling point.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Затор уже при температуре кипения.</translation>
     </message>
     <message>
         <source>The decoction amount (%1) must be between zero and the volume of the mash (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём отвара (%1) должен быть от нуля до объёма затора (%2).</translation>
     </message>
     <message>
         <source>A decoction of %1 will give a mash temperature of %2 rather than %3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Отвар %1 даст температуру затора %2, а не %3.</translation>
     </message>
     <message>
         <source>A decoction cannot lower the temperature of the mash.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Отвар не может понизить температуру затора.</translation>
     </message>
     <message>
         <source>Cannot reach %1 by decoction, even by boiling the whole mash.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Невозможно достичь %1 отварочным методом, даже если прокипятить весь затор.</translation>
     </message>
     <message>
         <source>At its fullest, the mash will be about %1, which is more than the capacity of the mash tun (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">При максимальном заполнении затор займёт около %1, что больше вместимости заторного чана (%2).</translation>
     </message>
     <message>
         <source>The infusions add up to %1 of water, but %2 is needed in total.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Добавления воды в сумме дают %1, а всего нужно %2.</translation>
     </message>
     <message>
         <source>There is no water left for sparging: the total water needed is %1, but the mash steps already add %2%3.  You will collect more wort than needed.  Try a thicker mash (ie less water).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Воды для промывки не остаётся: всего нужно %1 воды, а этапы затирания уже добавляют %2%3.  Вы соберёте больше сусла, чем нужно.  Попробуйте более густой затор (т. е. меньше воды).</translation>
     </message>
     <message>
         <source> and the pinned sparge amounts add %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">, а закреплённые объёмы промывки добавляют %1</translation>
     </message>
     <message>
         <source>The mash and sparge water add up to %1, but %2 is needed in total.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вода для затирания и промывки в сумме даёт %1, а всего нужно %2.</translation>
     </message>
     <message>
         <source>The sparge water temperature is pinned, but has not been set.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Температура воды для промывки закреплена, но не задана.</translation>
     </message>
     <message>
         <source>%1 of water at %2 will give a grain bed temperature of %3 rather than %4.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 воды при %2 даст температуру дробины %3, а не %4.</translation>
     </message>
     <message>
         <source>The grain bed is already hotter than %1, so we use water at that temperature, and the bed will be at about %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Дробина уже горячее %1, поэтому используется вода этой температуры, и дробина будет около %2.</translation>
     </message>
     <message>
         <source>Even with boiling water, the grain bed will only reach %1 rather than %2.  This is usually fine for a batch sparge, but you could use fewer batches (ie more water per batch) or a lower sparge temperature.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Даже с кипящей водой дробина нагреется только до %1, а не до %2.  Для промывки порциями это обычно нормально, но можно уменьшить число порций (т. е. больше воды на порцию) или понизить температуру промывки.</translation>
     </message>
     <message>
         <source>The sparge water would need to be at %1, which is above boiling point (%2).  Try a lower sparge temperature or more sparge water.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вода для промывки должна иметь температуру %1, что выше точки кипения (%2).  Попробуйте понизить температуру промывки или увеличить объём воды для промывки.</translation>
     </message>
     <message>
         <source>No amount is set.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Количество не задано.</translation>
     </message>
     <message>
         <source>Change mash steps</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить этапы затирания</translation>
     </message>
 </context>
 <context>
@@ -5125,92 +5134,94 @@ If you need help, please open an issue at %1</source>
     <name>MashEditor</name>
     <message>
         <source>No sparge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Без промывки</translation>
     </message>
     <message>
         <source>Batch sparge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Промывка порциями</translation>
     </message>
     <message>
         <source>Fly sparge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Непрерывная промывка</translation>
     </message>
     <message>
         <source>Recipe is locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Рецепт заблокирован</translation>
     </message>
     <message>
         <source>Make a copy of mash?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сделать копию затирания?</translation>
     </message>
     <message>
         <source>Make a copy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сделать копию</translation>
     </message>
     <message>
         <source>To adjust the mash, edit it from a recipe that uses it (eg with the Edit button on the recipe&apos;s Mash tab), as the amounts and temperatures depend on the recipe&apos;s grain bill and equipment.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Чтобы подобрать затирание, редактируйте его из рецепта, который его использует (например, кнопкой «Изменить» на вкладке «Затирание» рецепта), так как количества и температуры зависят от засыпи и оборудования рецепта.</translation>
     </message>
     <message>
         <source>Adjusts the water amounts and temperatures in the steps to suit the grain bill and equipment of recipe &quot;%1&quot;.  Pinned values are not changed.  Changes to the steps take effect straight away (ie without clicking Save).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Подбирает количество воды и температуры на этапах под засыпь и оборудование рецепта «%1».  Закреплённые значения не меняются.  Изменения этапов вступают в силу сразу (т. е. без нажатия «Сохранить»).</translation>
     </message>
     <message>
         <source>⚠ This mash has problems.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">⚠ В этом затирании есть проблемы.</translation>
     </message>
     <message>
         <source>The recipe &quot;%1&quot; is locked, so its mash cannot be changed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Рецепт «%1» заблокирован, поэтому его затирание нельзя изменить.</translation>
     </message>
     <message>
         <source>Adjusting the mash changes its steps to suit the grain bill and equipment of recipe &quot;%1&quot;.
 
 Do you want to make a copy of this mash for that recipe, so that you can do this without affecting anything else?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Подбор затирания меняет его этапы под засыпь и оборудование рецепта «%1».
+
+Сделать копию этого затирания для этого рецепта, чтобы ничего другое не затрагивалось?</translation>
     </message>
     <message>
         <source>Could not adjust the mash, so nothing has been changed:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось подобрать затирание, поэтому ничего не изменено:</translation>
     </message>
     <message>
         <source>Mash adjusted for recipe &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Затирание подобрано для рецепта «%1».</translation>
     </message>
     <message>
         <source>Mash adjusted for recipe &quot;%1&quot;, but please check the following:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Затирание подобрано для рецепта «%1», но проверьте следующее:</translation>
     </message>
     <message>
         <source>  General problems are:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">  Общие проблемы:</translation>
     </message>
     <message>
         <source>Turn off automatic adjustment of mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выключить автоматический подбор затирания</translation>
     </message>
     <message>
         <source>Auto-Adjust undone.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Автоподбор отменён.</translation>
     </message>
     <message>
         <source>Turn on automatic adjustment of mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Включить автоматический подбор затирания</translation>
     </message>
     <message>
         <source>Could not adjust the mash yet:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Пока не удалось подобрать затирание:</translation>
     </message>
     <message>
         <source>Auto-adjust mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Автоподбор затирания</translation>
     </message>
 </context>
 <context>
     <name>MashStep</name>
     <message>
         <source>Infusion</source>
-        <translation type="unfinished">Настаивание</translation>
+        <translation type="unfinished">Инфузия</translation>
     </message>
     <message>
         <source>Temperature</source>
@@ -5218,27 +5229,27 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Decoction</source>
-        <translation type="unfinished">Отвар</translation>
+        <translation type="unfinished">Декокция</translation>
     </message>
     <message>
         <source>Normal (Fly) Sparge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Обычная (непрерывная) промывка</translation>
     </message>
     <message>
         <source>Batch Sparge (Drain Mash Tun)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Промывка порциями (слив заторного чана)</translation>
     </message>
     <message>
         <source>Souring Mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Скисание затора</translation>
     </message>
     <message>
         <source>Souring Wort</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Скисание сусла</translation>
     </message>
     <message>
         <source>Mash Step</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Этап затирания</translation>
     </message>
     <message>
         <source>Step</source>
@@ -5246,7 +5257,7 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Step time (mins)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Время этапа (мин)</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -5254,15 +5265,15 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Decoction Amount</source>
-        <translation type="unfinished">Объем отварки</translation>
+        <translation type="unfinished">Объём отвара</translation>
     </message>
     <message>
         <source>Infuse Amount</source>
-        <translation type="unfinished">Объем доливки</translation>
+        <translation type="unfinished">Объём добавляемой воды</translation>
     </message>
     <message>
         <source>Infuse Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Температура добавляемой воды</translation>
     </message>
     <message>
         <source>Type</source>
@@ -5270,27 +5281,27 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Water:Grain</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вода:солод</translation>
     </message>
     <message>
         <source>Amount Fixed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Количество закреплено</translation>
     </message>
     <message>
         <source>Infuse Temperature Fixed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Температура добавляемой воды закреплена</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Нет</translation>
+        <translation type="obsolete">Нет</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Да</translation>
+        <translation type="obsolete">Да</translation>
     </message>
     <message>
         <source>Mash Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём затора</translation>
     </message>
 </context>
 <context>
@@ -5329,55 +5340,55 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Pinned: not changed when adjusting the mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Закреплено: не меняется при подборе затирания</translation>
     </message>
     <message>
         <source>Pinned amount (not changed when adjusting the mash)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Закреплённое количество (не меняется при подборе затирания)</translation>
     </message>
     <message>
         <source>Pinned infusion temperature (not changed when adjusting the mash)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Закреплённая температура добавляемой воды (не меняется при подборе затирания)</translation>
     </message>
     <message>
         <source>⚠ %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">⚠ %1: %2</translation>
     </message>
     <message>
         <source>⚠ %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">⚠ %1</translation>
     </message>
     <message>
         <source>Mash tun at its fullest: %1 (%2% of its %3 capacity)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Заторный чан при максимальном заполнении: %1 (%2% от вместимости %3)</translation>
     </message>
     <message>
         <source>Mash tun at its fullest: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Заторный чан при максимальном заполнении: %1</translation>
     </message>
     <message>
         <source>Wort collected: %1 (%2% of the %3 needed)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Собрано сусла: %1 (%2% от необходимых %3)</translation>
     </message>
     <message>
         <source>Wort collected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Собрано сусла: %1</translation>
     </message>
     <message>
         <source>Change and pin mash step amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить и закрепить количество на этапе затирания</translation>
     </message>
     <message>
         <source>Change and pin mash step infusion temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить и закрепить температуру добавляемой воды на этапе затирания</translation>
     </message>
     <message>
         <source>Pin mash step amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Закрепить количество на этапе затирания</translation>
     </message>
     <message>
         <source>Pin mash step infusion temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Закрепить температуру добавляемой воды на этапе затирания</translation>
     </message>
 </context>
 <context>
@@ -5447,15 +5458,15 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     <name>Misc</name>
     <message>
         <source>Spice</source>
-        <translation type="unfinished">Специя</translation>
+        <translation type="unfinished">Пряность</translation>
     </message>
     <message>
         <source>Fining</source>
-        <translation type="unfinished">Очистка</translation>
+        <translation type="unfinished">Осветлитель</translation>
     </message>
     <message>
         <source>Water Agent</source>
-        <translation type="unfinished">Агент воды</translation>
+        <translation type="unfinished">Добавка для воды</translation>
     </message>
     <message>
         <source>Herb</source>
@@ -5463,11 +5474,11 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Flavor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вкус</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Другое</translation>
     </message>
     <message>
         <source>Boil</source>
@@ -5491,7 +5502,7 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Wood</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Древесина</translation>
     </message>
     <message>
         <source>Miscellaneous</source>
@@ -5503,11 +5514,11 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>Producer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Производитель</translation>
     </message>
     <message>
         <source>Product ID</source>
@@ -5515,83 +5526,83 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Use For</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Назначение</translation>
     </message>
     <message>
         <source>Misc Purchases</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Закупки прочих ингредиентов</translation>
     </message>
     <message>
         <source>Water Agent Is Acid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Добавка для воды — кислота</translation>
     </message>
     <message>
         <source>Water Agent %% Acid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Добавка для воды: %% кислоты</translation>
     </message>
     <message>
         <source>Water Agent Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тип добавки для воды</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Нет</translation>
+        <translation type="obsolete">Нет</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Да</translation>
+        <translation type="obsolete">Да</translation>
     </message>
     <message>
         <source>Calcium Carbonate (CaCO₃)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Карбонат кальция (CaCO₃)</translation>
     </message>
     <message>
         <source>Sodium Bicarbonate (NaHCO₃)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гидрокарбонат натрия (NaHCO₃)</translation>
     </message>
     <message>
         <source>Lactic Acid (C₃H₆O₃)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Молочная кислота (C₃H₆O₃)</translation>
     </message>
     <message>
         <source>Phosphoric acid (H₃PO₄)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Фосфорная кислота (H₃PO₄)</translation>
     </message>
     <message>
         <source>Anhydrous Calcium Chloride (CaCl₂)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Хлорид кальция безводный (CaCl₂)</translation>
     </message>
     <message>
         <source>Calcium Chloride Dihydrate (CaCl₂·2H₂O)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Хлорид кальция дигидрат (CaCl₂·2H₂O)</translation>
     </message>
     <message>
         <source>Gypsum (CaSO₄·2H₂O)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гипс (CaSO₄·2H₂O)</translation>
     </message>
     <message>
         <source>Pickling Lime (Ca(OH)₂)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гашёная известь (Ca(OH)₂)</translation>
     </message>
     <message>
         <source>Epsom Salt (MgSO₄·7H₂O)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Английская соль (MgSO₄·7H₂O)</translation>
     </message>
     <message>
         <source>Magnesium Chloride Hexahydrate (MgCl₂·6H₂O)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Хлорид магния гексагидрат (MgCl₂·6H₂O)</translation>
     </message>
     <message>
         <source>Regular Salt (NaCl)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Поваренная соль (NaCl)</translation>
     </message>
     <message>
         <source>sulfuric acid (H₂SO₄)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">серная кислота (H₂SO₄)</translation>
     </message>
     <message>
         <source>hydrochloric acid (HCl)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">соляная кислота (HCl)</translation>
     </message>
 </context>
 <context>
@@ -5738,128 +5749,130 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     <name>NE</name>
     <message>
         <source>Change %1 %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить %1 %2</translation>
     </message>
     <message>
         <source>Change %1 on %2 Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить %1 в рецепте %2</translation>
     </message>
     <message>
         <source>%1 #%2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 №%2</translation>
     </message>
     <message>
         <source>This new %1 will be used by this recipe when you click Save.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Этот новый %1 будет использоваться этим рецептом после нажатия «Сохранить».</translation>
     </message>
     <message>
         <source>Unlock %1?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Разблокировать %1?</translation>
     </message>
     <message>
         <source>Are you sure you want to unlock &quot;%1&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вы уверены, что хотите разблокировать «%1»?</translation>
     </message>
     <message>
         <source>Locking is there to stop this %1 being changed by accident.  If you want to make changes for one recipe, it is usually better to make a copy for that recipe instead.
 
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Блокировка нужна, чтобы этот %1 не был изменён случайно.  Если нужно внести изменения для одного рецепта, обычно лучше сделать копию для этого рецепта.
+
+%2</translation>
     </message>
     <message>
         <source>Unlock</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Разблокировать</translation>
     </message>
     <message>
         <source>Recipe is locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Рецепт заблокирован</translation>
     </message>
     <message>
         <source>This recipe is locked, so you cannot add a %1 to it.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Этот рецепт заблокирован, поэтому в него нельзя добавить %1.</translation>
     </message>
     <message>
         <source>%1 for %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 для %2</translation>
     </message>
     <message>
         <source>%1 (copy for %2)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (копия для %2)</translation>
     </message>
     <message>
         <source>It is locked, so it cannot be changed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Он заблокирован, поэтому его нельзя изменить.</translation>
     </message>
     <message numerus="yes">
         <source>It cannot be changed because it is used by %n locked recipe(s): %1.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Его нельзя изменить, так как он используется в %n заблокированном рецепте: %1.</numerusform>
+            <numerusform>Его нельзя изменить, так как он используется в %n заблокированных рецептах: %1.</numerusform>
+            <numerusform>Его нельзя изменить, так как он используется в %n заблокированных рецептах: %1.</numerusform>
         </translation>
     </message>
     <message>
         <source>Any changes you make here will affect all of them.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Любые изменения здесь затронут их все.</translation>
     </message>
     <message>
         <source>It cannot be changed because the recipe &quot;%1&quot; is locked.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Его нельзя изменить, так как рецепт «%1» заблокирован.</translation>
     </message>
     <message>
         <source>Use a copy of mash?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Использовать копию затирания?</translation>
     </message>
     <message>
         <source>The mash &quot;%1&quot; adjusts automatically to the recipe that uses it (&quot;%2&quot;), so it can&apos;t be shared with another recipe.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Затирание «%1» автоматически подстраивается под рецепт, который его использует («%2»), поэтому его нельзя использовать совместно с другим рецептом.</translation>
     </message>
     <message>
         <source>Do you want to use a copy of it for this recipe?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Использовать его копию для этого рецепта?</translation>
     </message>
     <message>
         <source>Use a copy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Использовать копию</translation>
     </message>
     <message>
         <source>Use equipment sizes?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Использовать размеры оборудования?</translation>
     </message>
     <message>
         <source>Would you like to set the recipe&apos;s batch size to %1 and pre-boil size to %2, as specified by the equipment &quot;%3&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Установить размер партии рецепта %1 и объём до кипячения %2, как задано в оборудовании «%3»?</translation>
     </message>
     <message>
         <source>Change Batch Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить размер партии</translation>
     </message>
     <message>
         <source>Change Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить объём до кипячения</translation>
     </message>
     <message>
         <source>%1 not used by any recipe.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 не используется ни в одном рецепте.</translation>
     </message>
     <message>
         <source>%1 used only by one recipe (%2)%3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 используется только в одном рецепте (%2)%3.</translation>
     </message>
     <message numerus="yes">
         <source>%1 also used by %n other recipe(s): %2.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%1 также используется в %n другом рецепте: %2.</numerusform>
+            <numerusform>%1 также используется в %n других рецептах: %2.</numerusform>
+            <numerusform>%1 также используется в %n других рецептах: %2.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>%1 used by %n recipe(s): %2.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%1 используется в %n рецепте: %2.</numerusform>
+            <numerusform>%1 используется в %n рецептах: %2.</numerusform>
+            <numerusform>%1 используется в %n рецептах: %2.</numerusform>
         </translation>
     </message>
 </context>
@@ -5867,109 +5880,109 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     <name>NamedEntity</name>
     <message>
         <source>Named Entity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Именованный объект</translation>
     </message>
     <message>
         <source>Deleted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удалён</translation>
     </message>
     <message>
         <source>Key</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ключ</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Название</translation>
     </message>
     <message>
         <source>Subsidiary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вспомогательный</translation>
     </message>
     <message>
         <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кол-во рецептов</translation>
     </message>
 </context>
 <context>
     <name>ObjectStoreUtils::NE</name>
     <message>
         <source>Unnamed %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 без названия</translation>
     </message>
 </context>
 <context>
     <name>OgCorrectionTool</name>
     <message>
         <source>You need to have a recipe open in the main window before you can use this tool.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Чтобы использовать этот инструмент, нужно открыть рецепт в главном окне.</translation>
     </message>
     <message>
         <source>Couldn&apos;t read input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось прочитать ввод</translation>
     </message>
     <message>
         <source>Need a valid value for Measured Gravity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Нужно корректное значение измеренной плотности</translation>
     </message>
     <message>
         <source>No Recipe Selected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Рецепт не выбран</translation>
     </message>
     <message>
         <source>No Equipment on Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">В рецепте нет оборудования</translation>
     </message>
     <message>
         <source>Recipe &quot;%1&quot; has no equipment.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">В рецепте «%1» нет оборудования.</translation>
     </message>
     <message>
         <source>No Boil on Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">В рецепте нет кипячения</translation>
     </message>
     <message>
         <source>Recipe &quot;%1&quot; has no boil.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">В рецепте «%1» нет кипячения.</translation>
     </message>
     <message>
         <source>Need a valid value for Wort Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Нужно корректное значение объёма сусла</translation>
     </message>
     <message>
         <source>- On Target -</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">- В норме -</translation>
     </message>
     <message>
         <source>↑ Above Target ↑</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">↑ Выше цели ↑</translation>
     </message>
     <message>
         <source>↓ Below Target ↓</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">↓ Ниже цели ↓</translation>
     </message>
     <message>
         <source>Remedy: Add Water To Boil</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Решение: добавить воду при кипячении</translation>
     </message>
     <message>
         <source>Amount to Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сколько добавить</translation>
     </message>
     <message>
         <source>Amount of water you need to add to hit planned OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Количество воды, которое нужно добавить для достижения плановой OG</translation>
     </message>
     <message>
         <source>Remedy: Boil Down To Reduce Wort Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Решение: уварить сусло для уменьшения объёма</translation>
     </message>
     <message>
         <source>Amount to Boil Off</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сколько выпарить</translation>
     </message>
     <message>
         <source>Extra wort you need to boil off to hit planned OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Лишнее сусло, которое нужно выпарить для достижения плановой OG</translation>
     </message>
 </context>
 <context>
@@ -6083,15 +6096,15 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>mm-dd-YYYY</source>
-        <translation type="unfinished">мм-дд-гггг</translation>
+        <translation type="unfinished">mm-dd-YYYY</translation>
     </message>
     <message>
         <source>dd-mm-YYYY</source>
-        <translation type="unfinished">дд-мм-гггг</translation>
+        <translation type="unfinished">dd-mm-YYYY</translation>
     </message>
     <message>
         <source>YYYY-mm-dd</source>
-        <translation type="unfinished">гггг-мм-дд</translation>
+        <translation type="unfinished">YYYY-mm-dd</translation>
     </message>
     <message>
         <source>SRM</source>
@@ -6123,51 +6136,51 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>PostgreSQL</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">PostgreSQL</translation>
     </message>
     <message>
         <source>Test connection or cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Проверьте подключение или отмените</translation>
     </message>
     <message>
         <source>Transfer database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Перенести базу данных</translation>
     </message>
     <message>
         <source>Choose User Data Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выберите каталог данных пользователя</translation>
     </message>
     <message>
         <source>Choose Backups Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выберите каталог резервных копий</translation>
     </message>
     <message>
         <source>Choose Logging Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выберите каталог журналов</translation>
     </message>
     <message>
         <source>Saving the options without testing the connection can cause %1 to not restart.  Your changes have been discarded, which is likely really, really crappy UX.  Please open a bug explaining exactly how you got to this message.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сохранение параметров без проверки подключения может помешать перезапуску %1.  Ваши изменения отменены, что, вероятно, очень и очень неудобно.  Пожалуйста, сообщите об ошибке и опишите, как именно вы получили это сообщение.</translation>
     </message>
     <message>
         <source>Would you like %1 to transfer your data to the new database? NOTE: If you&apos;ve already loaded the data, say No</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Перенести ваши данные в новую базу данных с помощью %1? ПРИМЕЧАНИЕ: если вы уже загрузили данные, ответьте «Нет»</translation>
     </message>
     <message>
         <source>Please restart %1 to connect to the new database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Перезапустите %1, чтобы подключиться к новой базе данных</translation>
     </message>
     <message>
         <source>Please restart %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Перезапустите %1.</translation>
     </message>
     <message>
         <source>Conversion Error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ошибка преобразования</translation>
     </message>
     <message>
         <source>Data transfer failed.  See log file for more details.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось перенести данные.  Подробности смотрите в файле журнала.</translation>
     </message>
     <message>
         <source>Default</source>
@@ -6178,30 +6191,30 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     <name>OutlineableNamedEntity</name>
     <message>
         <source>Outlineable Named Entity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Структурируемый именованный объект</translation>
     </message>
     <message>
         <source>Is Outline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Является структурой</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Нет</translation>
+        <translation type="obsolete">Нет</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Да</translation>
+        <translation type="obsolete">Да</translation>
     </message>
 </context>
 <context>
     <name>OwnedByRecipe</name>
     <message>
         <source>Owned By Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Принадлежит рецепту</translation>
     </message>
     <message>
         <source>Recipe ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID рецепта</translation>
     </message>
     <message>
         <source>Recipe</source>
@@ -6212,43 +6225,53 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     <name>Owner</name>
     <message>
         <source>Items</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Элементы</translation>
     </message>
 </context>
 <context>
     <name>PrintAndPreviewDialog</name>
     <message>
         <source>File %1 filname &lt;&lt; could not be saved</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось сохранить файл %1</translation>
     </message>
     <message>
         <source>Error saving file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ошибка сохранения файла</translation>
     </message>
     <message>
         <source>Could not open the file %1 for writing! please try again with a new filename or diretory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось открыть файл %1 для записи! Попробуйте ещё раз с другим именем файла или каталогом</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation type="unfinished">Печать</translation>
+    </message>
+    <message>
+        <source>Save as</source>
+        <translation type="unfinished">Сохранить как</translation>
     </message>
 </context>
 <context>
     <name>QApplication</name>
     <message>
         <source>Application terminates</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Приложение завершает работу</translation>
     </message>
     <message>
         <source>The application encountered a fatal error.
 Error message:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">В приложении произошла критическая ошибка.
+Сообщение об ошибке:
+%1</translation>
     </message>
     <message>
         <source>The application encountered a fatal error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">В приложении произошла критическая ошибка.</translation>
     </message>
     <message>
         <source>%1 is already running!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 уже запущен!</translation>
     </message>
     <message>
         <source>Another instance of %1 is already running.
@@ -6256,23 +6279,27 @@ Error message:
 Running two copies of the program at once may lead to data loss.
 
 Press OK to quit.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Уже запущен другой экземпляр %1.
+
+Одновременная работа двух копий программы может привести к потере данных.
+
+Нажмите OK для выхода.</translation>
     </message>
     <message>
         <source>Creation of empty Database file &apos;%1&apos; %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Создание пустого файла базы данных «%1»: %2.</translation>
     </message>
     <message>
         <source>succeeded</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">успешно</translation>
     </message>
     <message>
         <source>failed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ошибка</translation>
     </message>
     <message>
         <source>To use the newly-created file, rename it to &apos;%1&apos; and move it to directory %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Чтобы использовать созданный файл, переименуйте его в «%1» и переместите в каталог %2.</translation>
     </message>
 </context>
 <context>
@@ -6471,7 +6498,7 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Error attempting to create directory &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ошибка при создании каталога «%1»</translation>
     </message>
     <message>
         <source>Data directory &quot;%1&quot; is missing.  Some features will be unavaliable.</source>
@@ -6483,11 +6510,11 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Connection Test</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Проверка подключения</translation>
     </message>
     <message>
         <source>Connection to database was successful</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Подключение к базе данных выполнено успешно</translation>
     </message>
     <message>
         <source>Plaintext</source>
@@ -6495,7 +6522,7 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Passwords are saved in plaintext. We make no effort to hide, obscure or otherwise protect the password. By enabling this option, you take full responsibility for any potential problems.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Пароли сохраняются открытым текстом. Мы никак не скрываем и не защищаем пароль. Включая этот параметр, вы берёте на себя полную ответственность за возможные проблемы.</translation>
     </message>
     <message>
         <source>Mash</source>
@@ -6511,95 +6538,95 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>kg</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kg</translation>
     </message>
     <message>
         <source>g</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">g</translation>
     </message>
     <message>
         <source>mg</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">mg</translation>
     </message>
     <message>
         <source>lb</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">lb</translation>
     </message>
     <message>
         <source>oz</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">oz</translation>
     </message>
     <message>
         <source>L</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">L</translation>
     </message>
     <message>
         <source>mL</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">mL</translation>
     </message>
     <message>
         <source>bbl</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">bbl</translation>
     </message>
     <message>
         <source>gal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">gal</translation>
     </message>
     <message>
         <source>qt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">qt</translation>
     </message>
     <message>
         <source>cup</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">cup</translation>
     </message>
     <message>
         <source>tbsp</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">tbsp</translation>
     </message>
     <message>
         <source>tsp</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">tsp</translation>
     </message>
     <message>
         <source>min</source>
-        <translation type="unfinished">мин.</translation>
+        <translation type="unfinished">min</translation>
     </message>
     <message>
         <source>s</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">s</translation>
     </message>
     <message>
         <source>hr</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">hr</translation>
     </message>
     <message>
         <source>C</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">C</translation>
     </message>
     <message>
         <source>F</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">F</translation>
     </message>
     <message>
         <source>srm</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">srm</translation>
     </message>
     <message>
         <source>ebc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ebc</translation>
     </message>
     <message>
         <source>sg</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">sg</translation>
     </message>
     <message>
         <source>P</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">P</translation>
     </message>
     <message>
         <source>WK</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">WK</translation>
     </message>
     <message>
         <source>British Imperial</source>
@@ -6611,19 +6638,19 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Metric</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Метрические</translation>
     </message>
     <message>
         <source>SRM (Standard Reference Method)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">SRM (Standard Reference Method)</translation>
     </message>
     <message>
         <source>EBC (European Brewery Convention)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">EBC (European Brewery Convention)</translation>
     </message>
     <message>
         <source>SG (Specific Gravity)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">SG (удельная плотность)</translation>
     </message>
     <message>
         <source>Plato</source>
@@ -6631,7 +6658,7 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Lintner</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Линтнер</translation>
     </message>
     <message>
         <source>Mass</source>
@@ -6651,7 +6678,7 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Density</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Плотность</translation>
     </message>
     <message>
         <source>Mixed</source>
@@ -6659,35 +6686,35 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Detailed (for debugging)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Подробный (для отладки)</translation>
     </message>
     <message>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Обычный</translation>
     </message>
     <message>
         <source>Warnings and Errors only</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Только предупреждения и ошибки</translation>
     </message>
     <message>
         <source>Errors only</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Только ошибки</translation>
     </message>
     <message>
         <source>Could not create new log file directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось создать новый каталог файлов журнала</translation>
     </message>
     <message>
         <source>Could not read new log file directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось прочитать новый каталог файлов журнала</translation>
     </message>
     <message>
         <source>Could not write to new log file directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось записать в новый каталог файлов журнала</translation>
     </message>
     <message>
         <source> reverting to </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> возврат к </translation>
     </message>
     <message>
         <source>Inventory</source>
@@ -6695,7 +6722,7 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Название</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -6708,24 +6735,30 @@ Press OK to quit.</source>
     <message>
         <source>Could not open PostgreSQL DB connection to %1.
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось открыть подключение к БД PostgreSQL %1.
+%2</translation>
     </message>
     <message>
         <source>Could not open SQLite DB file %1.
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось открыть файл БД SQLite %1.
+%2</translation>
     </message>
     <message>
         <source>Successfully read &quot;%1&quot;
 
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Файл «%1» успешно прочитан
+
+%2</translation>
     </message>
     <message>
         <source>Successfully wrote &quot;%1&quot;
 
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Файл «%1» успешно записан
+
+%2</translation>
     </message>
     <message>
         <source>Unable to import data from &quot;%1&quot;
@@ -6733,7 +6766,11 @@ Press OK to quit.</source>
 %2
 
 Log file may contain more details.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось импортировать данные из «%1»
+
+%2
+
+Подробности могут быть в файле журнала.</translation>
     </message>
     <message>
         <source>Unable to write data to &quot;%1&quot;
@@ -6741,99 +6778,103 @@ Log file may contain more details.</source>
 %2
 
 Log file may contain more details.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось записать данные в «%1»
+
+%2
+
+Подробности могут быть в файле журнала.</translation>
     </message>
     <message>
         <source>Could not open %1 for reading (error # %2)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось открыть %1 для чтения (ошибка № %2)</translation>
     </message>
     <message>
         <source>Universal Standard</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Универсальные стандартные</translation>
     </message>
     <message>
         <source>floz</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">floz</translation>
     </message>
     <message>
         <source>lovibond</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">lovibond</translation>
     </message>
     <message>
         <source>brix</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">brix</translation>
     </message>
     <message>
         <source>pH</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">pH</translation>
     </message>
     <message>
         <source>IBU</source>
-        <translation type="unfinished">Горечь IBU</translation>
+        <translation type="unfinished">IBU</translation>
     </message>
     <message>
         <source>vol</source>
-        <translation type="unfinished">об.</translation>
+        <translation type="unfinished">vol</translation>
     </message>
     <message>
         <source>mg/L</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">mg/L</translation>
     </message>
     <message>
         <source>ppm</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ppm</translation>
     </message>
     <message>
         <source>ppb</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ppb</translation>
     </message>
     <message>
         <source>cP</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">cP</translation>
     </message>
     <message>
         <source>mPa-s</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">mPa-s</translation>
     </message>
     <message>
         <source>Bool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bool</translation>
     </message>
     <message>
         <source>Int</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Int</translation>
     </message>
     <message>
         <source>UInt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">UInt</translation>
     </message>
     <message>
         <source>Double</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Double</translation>
     </message>
     <message>
         <source>String</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">String</translation>
     </message>
     <message>
         <source>Enum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enum</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Дата</translation>
     </message>
     <message>
         <source>RequiredConstant</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">RequiredConstant</translation>
     </message>
     <message>
         <source>Success!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Успешно!</translation>
     </message>
     <message>
         <source>ERROR</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ОШИБКА</translation>
     </message>
     <message>
         <source>Open</source>
@@ -6845,43 +6886,43 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Acidity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кислотность</translation>
     </message>
     <message>
         <source>Bitterness</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Горечь</translation>
     </message>
     <message>
         <source>Carbonation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Карбонизация</translation>
     </message>
     <message>
         <source>Viscosity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вязкость</translation>
     </message>
     <message>
         <source>Metric Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Метрические (альтернативные)</translation>
     </message>
     <message>
         <source>Lovibond</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lovibond</translation>
     </message>
     <message>
         <source>Brix</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brix</translation>
     </message>
     <message>
         <source>Windisch Kolbach</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Виндиш-Кольбах</translation>
     </message>
     <message>
         <source>Carbonation Volumes</source>
-        <translation type="unfinished">Степень карбонизации</translation>
+        <translation type="unfinished">Объёмы карбонизации</translation>
     </message>
     <message>
         <source>Carbonation Mass Per Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Карбонизация, масса на объём</translation>
     </message>
     <message>
         <source>Late</source>
@@ -6897,27 +6938,27 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Diastatic Power</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Диастатическая сила</translation>
     </message>
     <message>
         <source>Specific Heat Capacity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удельная теплоёмкость</translation>
     </message>
     <message>
         <source>Specific Heat Capacity Calories per</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удельная теплоёмкость, калорий на</translation>
     </message>
     <message>
         <source>Specific Heat Capacity Joules per</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удельная теплоёмкость, джоулей на</translation>
     </message>
     <message>
         <source>c/g·C</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">c/g·C</translation>
     </message>
     <message>
         <source>J/kg·K</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">J/kg·K</translation>
     </message>
     <message>
         <source>Add to Recipe</source>
@@ -6945,39 +6986,39 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>BTU/lb·F</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">BTU/lb·F</translation>
     </message>
     <message>
         <source>L/kg</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">L/kg</translation>
     </message>
     <message>
         <source>L/g</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">L/g</translation>
     </message>
     <message>
         <source>m^3/kg</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">m^3/kg</translation>
     </message>
     <message>
         <source>floz/oz</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">floz/oz</translation>
     </message>
     <message>
         <source>gal/lb</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">gal/lb</translation>
     </message>
     <message>
         <source>qt/lb</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">qt/lb</translation>
     </message>
     <message>
         <source>gal/oz</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">gal/oz</translation>
     </message>
     <message>
         <source>ft^3/lb</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ft^3/lb</translation>
     </message>
     <message>
         <source>Failed to update the database.
@@ -6985,119 +7026,123 @@ Log file may contain more details.</source>
 See log file for details.
 
 Program will now exit.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось обновить базу данных.
+
+Подробности смотрите в файле журнала.
+
+Программа будет закрыта.</translation>
     </message>
     <message>
         <source>Record</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Запись</translation>
     </message>
     <message>
         <source>ListOfRecords</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ListOfRecords</translation>
     </message>
     <message>
         <source>There were errors loading the following object store(s): %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ошибки при загрузке следующих хранилищ объектов: %1</translation>
     </message>
     <message>
         <source>Count</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Количество (шт.)</translation>
     </message>
     <message>
         <source>Mass or Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Масса или объём</translation>
     </message>
     <message>
         <source>Mass, Volume or Count</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Масса, объём или количество</translation>
     </message>
     <message>
         <source>(№)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">(№)</translation>
     </message>
     <message>
         <source>Weight (Mass)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вес (масса)</translation>
     </message>
     <message>
         <source>Mass Fraction or Concentration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Массовая доля или концентрация</translation>
     </message>
     <message>
         <source>Brewing Concentration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Пивоваренная концентрация</translation>
     </message>
     <message>
         <source>weeks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">weeks</translation>
     </message>
     <message>
         <source>days</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">days</translation>
     </message>
     <message>
         <source>Resource directory %1 is missing.  Without this directory and its contents, the software will not operate correctly and may terminate abruptly.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Каталог ресурсов %1 отсутствует.  Без этого каталога и его содержимого программа не будет работать правильно и может внезапно завершиться.</translation>
     </message>
     <message>
         <source>%1 Catalog / Database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Каталог / база данных %1</translation>
     </message>
     <message>
         <source>Create new %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Создать %1</translation>
     </message>
     <message>
         <source>Edit selected %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить выбранный %1</translation>
     </message>
     <message>
         <source>%1 name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Название %1</translation>
     </message>
     <message>
         <source>%1 name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Название %1:</translation>
     </message>
     <message>
         <source>Merge Database</source>
-        <translation type="unfinished">Объединение базы данных</translation>
+        <translation type="unfinished">Объединение баз данных</translation>
     </message>
     <message>
         <source>New ingredients etc are available. Would you like to add them to your database?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Доступны новые ингредиенты и т. п. Добавить их в вашу базу данных?</translation>
     </message>
     <message>
         <source>Error matching %1 file pattern in %2 directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ошибка сопоставления шаблона файлов %1 в каталоге %2</translation>
     </message>
     <message>
         <source>mIBU</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">mIBU</translation>
     </message>
     <message>
         <source>Length</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Длина</translation>
     </message>
     <message>
         <source>cm</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">cm</translation>
     </message>
     <message>
         <source>mm</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">mm</translation>
     </message>
     <message>
         <source>m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">m</translation>
     </message>
     <message>
         <source>in</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">in</translation>
     </message>
     <message>
         <source>ft</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ft</translation>
     </message>
     <message>
         <source>No</source>
@@ -7109,35 +7154,35 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Boil for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кипячение %1</translation>
     </message>
     <message>
         <source>Automatically created by BeerXML import</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Автоматически создано при импорте BeerXML</translation>
     </message>
     <message>
         <source>Fermentation for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Брожение для %1</translation>
     </message>
     <message>
         <source>Primary Fermentation Step for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Этап первичного брожения для %1</translation>
     </message>
     <message>
         <source>Secondary Fermentation Step for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Этап вторичного брожения для %1</translation>
     </message>
     <message>
         <source>Tertiary Fermentation Step for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Этап третичного брожения для %1</translation>
     </message>
     <message>
         <source>Basque</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Баскский</translation>
     </message>
     <message>
         <source>Catalan</source>
-        <translation type="unfinished">Каталонский</translation>
+        <translation type="unfinished">Каталанский</translation>
     </message>
     <message>
         <source>Chinese</source>
@@ -7149,11 +7194,11 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Danish</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Датский</translation>
     </message>
     <message>
         <source>Dutch</source>
-        <translation type="unfinished">Голландский</translation>
+        <translation type="unfinished">Нидерландский</translation>
     </message>
     <message>
         <source>English</source>
@@ -7161,7 +7206,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Estonian</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Эстонский</translation>
     </message>
     <message>
         <source>French</source>
@@ -7169,7 +7214,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Galician</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Галисийский</translation>
     </message>
     <message>
         <source>German</source>
@@ -7181,7 +7226,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Hungarian</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Венгерский</translation>
     </message>
     <message>
         <source>Italian</source>
@@ -7189,11 +7234,11 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Latvian</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Латышский</translation>
     </message>
     <message>
         <source>Norwegian Bokmål</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Норвежский (букмол)</translation>
     </message>
     <message>
         <source>Polish</source>
@@ -7209,7 +7254,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Serbian</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сербский</translation>
     </message>
     <message>
         <source>Spanish</source>
@@ -7217,19 +7262,19 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Swedish</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Шведский</translation>
     </message>
     <message>
         <source>Turkish</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Турецкий</translation>
     </message>
     <message>
         <source>None!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Нет!</translation>
     </message>
     <message>
         <source>pt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">pt</translation>
     </message>
     <message>
         <source>Mosher&apos;s approximation</source>
@@ -7237,7 +7282,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Daniel&apos;s approximation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Аппроксимация Дэниела</translation>
     </message>
     <message>
         <source>Morey&apos;s approximation</source>
@@ -7253,59 +7298,59 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Noonan&apos;s approximation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Аппроксимация Нунана</translation>
     </message>
     <message>
         <source>Filter search</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Фильтр поиска</translation>
     </message>
     <message>
         <source>Delete selected %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удалить выбранный %1</translation>
     </message>
     <message>
         <source>Heat Capacity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Теплоёмкость</translation>
     </message>
     <message>
         <source>Heat Capacity Kilocalories per</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Теплоёмкость, килокалорий на</translation>
     </message>
     <message>
         <source>Heat Capacity Joules per</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Теплоёмкость, джоулей на</translation>
     </message>
     <message>
         <source>kc/C</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kc/C</translation>
     </message>
     <message>
         <source>J/K</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">J/K</translation>
     </message>
     <message>
         <source>BTU/F</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">BTU/F</translation>
     </message>
     <message>
         <source>Set selected %1 for current recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Задать выбранный %1 для текущего рецепта</translation>
     </message>
     <message>
         <source>Add selected %1 to current recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Добавить выбранный %1 в текущий рецепт</translation>
     </message>
     <message>
         <source>Formula</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Формула</translation>
     </message>
     <message>
         <source>Could not open &quot;%1&quot; for writing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось открыть «%1» для записи</translation>
     </message>
     <message>
         <source>Did not recognise file extension on &quot;%1&quot; so nothing read.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Расширение файла «%1» не распознано, поэтому ничего не прочитано.</translation>
     </message>
     <message>
         <source>Yeasts</source>
@@ -7313,203 +7358,203 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Enter filter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Введите фильтр</translation>
     </message>
     <message>
         <source>Add %1 to %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Добавить %1 в %2</translation>
     </message>
     <message>
         <source>Stock</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Запас</translation>
     </message>
     <message>
         <source>No stock available.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Нет запасов.</translation>
     </message>
     <message>
         <source>Show stock purchases</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Показать закупки</translation>
     </message>
     <message>
         <source>New stock purchase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Новая закупка</translation>
     </message>
     <message>
         <source>Stock Purchases (Inventory)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Закупки (запасы)</translation>
     </message>
     <message>
         <source>New Data</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Новые данные</translation>
     </message>
     <message>
         <source>Stop bothering you about new data?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Больше не напоминать о новых данных?</translation>
     </message>
     <message>
         <source>°C</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">°C</translation>
     </message>
     <message>
         <source>°F</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">°F</translation>
     </message>
     <message>
         <source>DotBeer, BeerJSON and BeerXML files (*.beer *.json *.xml);;DotBeer files (*.beer);;BeerJSON files (*.json);;BeerXML files (*.xml)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Файлы DotBeer, BeerJSON и BeerXML (*.beer *.json *.xml);;Файлы DotBeer (*.beer);;Файлы BeerJSON (*.json);;Файлы BeerXML (*.xml)</translation>
     </message>
     <message>
         <source>DotBeer format (*.beer);;BeerJSON format (*.json);;BeerXML format (*.xml)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Формат DotBeer (*.beer);;Формат BeerJSON (*.json);;Формат BeerXML (*.xml)</translation>
     </message>
     <message>
         <source>Gravity Points</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Пункты плотности</translation>
     </message>
     <message>
         <source>points</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">points</translation>
     </message>
     <message>
         <source>Success (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Успешно (%1)</translation>
     </message>
     <message>
         <source>Warning (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Предупреждение (%1)</translation>
     </message>
     <message>
         <source>Recoverable Error (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Исправимая ошибка (%1)</translation>
     </message>
     <message>
         <source>Fatal Error (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Критическая ошибка (%1)</translation>
     </message>
     <message>
         <source>Unrecognised (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не распознано (%1)</translation>
     </message>
     <message>
         <source>List-Of-Records</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">List-Of-Records</translation>
     </message>
     <message>
         <source>Measurement-With-Units</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Measurement-With-Units</translation>
     </message>
     <message>
         <source>One-Of-Measurements-With-Units</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">One-Of-Measurements-With-Units</translation>
     </message>
     <message>
         <source>Single-Unit-Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Single-Unit-Value</translation>
     </message>
     <message>
         <source>Required-Constant</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Required-Constant</translation>
     </message>
     <message>
         <source>Folder-Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Folder-Path</translation>
     </message>
     <message>
         <source>%1 errors found in JSON file.  First error at %2: schema condition %3 is violated because &quot;%4&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">В файле JSON найдено ошибок: %1.  Первая ошибка в %2: нарушено условие схемы %3, так как «%4»</translation>
     </message>
     <message>
         <source>Local-ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Local-ID</translation>
     </message>
     <message>
         <source>Volume per Mass</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём на массу</translation>
     </message>
     <message>
         <source>Energy per Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Энергия на объём</translation>
     </message>
     <message>
         <source>kcal/L</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kcal/L</translation>
     </message>
     <message>
         <source>kcal/50cl</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kcal/50cl</translation>
     </message>
     <message>
         <source>kcal/33cl</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kcal/33cl</translation>
     </message>
     <message>
         <source>kcal/25cl</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kcal/25cl</translation>
     </message>
     <message>
         <source>kcal/100ml</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kcal/100ml</translation>
     </message>
     <message>
         <source>kcal/pt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kcal/pt</translation>
     </message>
     <message>
         <source>kcal/12floz</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kcal/12floz</translation>
     </message>
     <message>
         <source>kJ/100ml</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kJ/100ml</translation>
     </message>
     <message>
         <source>Date-Time-With-Timezone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Date-Time-With-Timezone</translation>
     </message>
     <message>
         <source>Date-or-Date-Time-Local</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Date-or-Date-Time-Local</translation>
     </message>
     <message>
         <source>This file was written using version %1 of the dotBeer format, which is newer than the version this version of %2 supports (%3).  You may need a newer version of %2 to read it.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Этот файл записан в версии %1 формата dotBeer, которая новее версии, поддерживаемой этой версией %2 (%3).  Для его чтения может понадобиться более новая версия %2.</translation>
     </message>
     <message>
         <source>Mash step for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Этап затирания для %1</translation>
     </message>
     <message>
         <source>Primary fermentation for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Первичное брожение для %1</translation>
     </message>
     <message>
         <source>Specific Heat Capacity BTUs per</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удельная теплоёмкость, BTU на</translation>
     </message>
     <message>
         <source>Heat Capacity BTUs per</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Теплоёмкость, BTU на</translation>
     </message>
     <message>
         <source>Garetz&apos;s approximation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Аппроксимация Гарetца</translation>
     </message>
     <message>
         <source>Daniels&apos; approximation</source>
-        <translation type="unfinished">Аппроксимация Дэниэлса</translation>
+        <translation type="unfinished">Аппроксимация Дэниелса</translation>
     </message>
     <message>
         <source>SMPH</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">SMPH</translation>
     </message>
     <message>
         <source>Very Clear</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Очень прозрачное</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Прозрачное</translation>
     </message>
     <message>
         <source>Somewhat Clear</source>
@@ -7794,7 +7839,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Другое</translation>
     </message>
     <message>
         <source>Mead</source>
@@ -7810,7 +7855,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Стиль</translation>
     </message>
     <message>
         <source>Recipes</source>
@@ -7826,7 +7871,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">OG</translation>
     </message>
     <message>
         <source>FG</source>
@@ -7838,7 +7883,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>IBU</source>
-        <translation type="unfinished">Горечь IBU</translation>
+        <translation type="unfinished">IBU</translation>
     </message>
     <message>
         <source>Remove %1 from recipe</source>
@@ -7850,7 +7895,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>ABV</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ABV</translation>
     </message>
     <message>
         <source>Age</source>
@@ -7894,7 +7939,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Boil Volume</source>
-        <translation type="unfinished">Объем сусла до кипячения</translation>
+        <translation type="unfinished">Объём до кипячения</translation>
     </message>
     <message>
         <source>Brewer</source>
@@ -7926,7 +7971,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Carbonation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Карбонизация</translation>
     </message>
     <message>
         <source>Efficiency</source>
@@ -7946,7 +7991,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Fermentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Брожение</translation>
     </message>
     <message>
         <source>Fermentation ID</source>
@@ -7954,7 +7999,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Final Volume</source>
-        <translation type="unfinished">Объём сусла после кипячения</translation>
+        <translation type="unfinished">Конечный объём</translation>
     </message>
     <message>
         <source>Forced Carbonation</source>
@@ -7986,11 +8031,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Заблокирован</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished">Затор</translation>
+        <translation type="unfinished">Затирание</translation>
     </message>
     <message>
         <source>Mash ID</source>
@@ -8002,7 +8047,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>Points</source>
@@ -8046,15 +8091,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Нет</translation>
+        <translation type="obsolete">Нет</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Да</translation>
+        <translation type="obsolete">Да</translation>
     </message>
     <message>
         <source>Snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Снимки</translation>
     </message>
     <message>
         <source>Put %1 %2 into mash%3.</source>
@@ -8154,7 +8199,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Primary fermentation for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Первичное брожение для %1</translation>
     </message>
     <message>
         <source>Target Mash pH</source>
@@ -8205,7 +8250,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished">Затор</translation>
+        <translation type="unfinished">Затирание</translation>
     </message>
     <message>
         <source>Boil</source>
@@ -8213,7 +8258,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Fermentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Брожение</translation>
     </message>
     <message>
         <source>Package</source>
@@ -8225,11 +8270,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Step %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Этап %1</translation>
     </message>
     <message>
         <source>%1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1: %2</translation>
     </message>
 </context>
 <context>
@@ -8244,7 +8289,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Fermentable</source>
-        <translation type="unfinished">Сбраживаемый</translation>
+        <translation type="unfinished">Сбраживаемый ингредиент</translation>
     </message>
 </context>
 <context>
@@ -8294,7 +8339,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished">Затор</translation>
+        <translation type="unfinished">Затирание</translation>
     </message>
     <message>
         <source>First Wort</source>
@@ -8395,7 +8440,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished">Затор</translation>
+        <translation type="unfinished">Затирание</translation>
     </message>
     <message>
         <source>First Wort</source>
@@ -8411,11 +8456,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Primary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Первичное</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вторичное</translation>
     </message>
     <message>
         <source>Bottling</source>
@@ -8500,7 +8545,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Степень сбраживания</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -8516,11 +8561,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Нет</translation>
+        <translation type="obsolete">Нет</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Да</translation>
+        <translation type="obsolete">Да</translation>
     </message>
 </context>
 <context>
@@ -8907,15 +8952,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Estimated calories (per 33 cl)</source>
-        <translation type="unfinished">Приблизительно калорий (на 0,33л)</translation>
+        <translation type="unfinished">Примерная калорийность (на 33 cl)</translation>
     </message>
     <message>
         <source>Estimated calories (per 12 oz)</source>
-        <translation type="unfinished">Приблизительно калорий (на 0,33л)</translation>
+        <translation type="unfinished">Примерная калорийность (на 12 oz)</translation>
     </message>
     <message>
         <source>Bitterness</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Горечь</translation>
     </message>
     <message>
         <source>Target</source>
@@ -8935,11 +8980,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выход экстракта, сухое вещество, тонкий помол (DBFG)</translation>
     </message>
     <message>
         <source>Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём до кипячения</translation>
     </message>
 </context>
 <context>
@@ -9000,7 +9045,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Auto-Adjust undone.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Автоподбор отменён.</translation>
     </message>
     <message numerus="yes">
         <source>See the &lt;i&gt;Auto-Adjust Notes&lt;/i&gt; tab below for details (%n item(s)).</source>
@@ -9182,7 +9227,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Описание</translation>
     </message>
     <message>
         <source>End Acidity</source>
@@ -9248,11 +9293,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Ingredient</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ингредиент</translation>
     </message>
     <message>
         <source>Stock Purchase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Закупка</translation>
     </message>
     <message>
         <source>Note</source>
@@ -9285,7 +9330,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Год</translation>
     </message>
 </context>
 <context>
@@ -9313,11 +9358,11 @@ The final volume in the primary is %1.</source>
     <name>StockUse</name>
     <message>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Дата</translation>
     </message>
     <message>
         <source>Owner ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID владельца</translation>
     </message>
     <message>
         <source>Quantity Used</source>
@@ -9349,7 +9394,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Brew Log</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Журнал варки</translation>
     </message>
     <message>
         <source>Brew Log ID</source>
@@ -9412,11 +9457,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Другое</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Стиль</translation>
     </message>
     <message>
         <source>Category</source>
@@ -9424,7 +9469,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Number</source>
-        <translation type="unfinished">Число</translation>
+        <translation type="unfinished">Номер</translation>
     </message>
     <message>
         <source>Letter</source>
@@ -9492,7 +9537,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Flavor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вкус</translation>
     </message>
     <message>
         <source>Max IBU</source>
@@ -9512,7 +9557,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>Max OG</source>
@@ -9756,10 +9801,6 @@ The final volume in the primary is %1.</source>
         <translation type="vanished">Звук</translation>
     </message>
     <message>
-        <source>Notes...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source> and </source>
         <translation type="unfinished"></translation>
     </message>
@@ -9927,6 +9968,13 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
+    <name>Undoable</name>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>UnitAndScalePopUpMenu</name>
     <message>
         <source>Default</source>
@@ -10003,7 +10051,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>pH</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">pH</translation>
     </message>
     <message>
         <source>Waters</source>
@@ -10063,7 +10111,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>Potassium</source>
@@ -10083,11 +10131,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Нет</translation>
+        <translation type="obsolete">Нет</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Да</translation>
+        <translation type="obsolete">Да</translation>
     </message>
     <message>
         <source>Bicarbonate (HCO₃⁻)</source>
@@ -10412,7 +10460,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Другое</translation>
     </message>
     <message>
         <source>Bacteria</source>
@@ -10492,7 +10540,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Степень сбраживания</translation>
     </message>
     <message>
         <source>Id</source>
@@ -10560,7 +10608,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>Phenolic Off Flavor Positive</source>
@@ -10568,11 +10616,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Нет</translation>
+        <translation type="obsolete">Нет</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Да</translation>
+        <translation type="obsolete">Да</translation>
     </message>
     <message>
         <source>Yeast Purchases</source>
@@ -10738,15 +10786,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Название</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Описание</translation>
     </message>
     <message>
         <source>Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём до кипячения</translation>
     </message>
     <message>
         <source>Boil Time</source>
@@ -10754,7 +10802,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>Save and close</source>
@@ -10797,7 +10845,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Название</translation>
     </message>
     <message>
         <source>Type</source>
@@ -10865,7 +10913,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Описание</translation>
     </message>
     <message>
         <source>New</source>
@@ -10889,7 +10937,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Chilling Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Способ охлаждения</translation>
     </message>
     <message>
         <source>Start Gravity</source>
@@ -11038,7 +11086,7 @@ The final volume in the primary is %1.</source>
     <name>brewLogWidget</name>
     <message>
         <source>Preboil</source>
-        <translation type="unfinished">Перед кипячением</translation>
+        <translation type="unfinished">До кипячения</translation>
     </message>
     <message>
         <source>SG</source>
@@ -11078,7 +11126,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">OG</translation>
     </message>
     <message>
         <source>Post boil gravity</source>
@@ -11121,10 +11169,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished">Объем пива, розлитого в кеги/бутылки</translation>
     </message>
     <message>
-        <source>yyyy-dd-MM</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Percent efficiency into boil kettle</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11134,7 +11178,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Projected OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Расчётная OG</translation>
     </message>
     <message>
         <source>Brewhouse efficiency</source>
@@ -11146,7 +11190,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Projected ABV</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Расчётный ABV</translation>
     </message>
     <message>
         <source>ABV based on user-reported FG</source>
@@ -11154,7 +11198,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>ABV</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ABV</translation>
     </message>
     <message>
         <source>Yeast attenuation based on yeast specified in recipe</source>
@@ -11170,11 +11214,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>Brew Log</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Журнал варки</translation>
     </message>
     <message>
         <source>Brew Date</source>
@@ -11348,11 +11392,11 @@ The final volume in the primary is %1.</source>
     <name>editorClass</name>
     <message>
         <source>No</source>
-        <translation type="unfinished">Нет</translation>
+        <translation type="obsolete">Нет</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Да</translation>
+        <translation type="obsolete">Да</translation>
     </message>
 </context>
 <context>
@@ -11391,7 +11435,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Название</translation>
     </message>
     <message>
         <source>Required</source>
@@ -11439,7 +11483,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>New equipment</source>
@@ -11479,11 +11523,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Specific Heat Capacity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удельная теплоёмкость</translation>
     </message>
     <message>
         <source>HLT Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания к HLT</translation>
     </message>
     <message>
         <source>Mash Tun</source>
@@ -11491,11 +11535,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Mash Tun Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тип заторного чана</translation>
     </message>
     <message>
         <source>Mash Tun Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания к заторному чану</translation>
     </message>
     <message>
         <source>Lauter Tun</source>
@@ -11503,15 +11547,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Lauter Tun Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тип фильтрационного чана</translation>
     </message>
     <message>
         <source>Lauter Tun Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём фильтрационного чана</translation>
     </message>
     <message>
         <source>Lauter Tun Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания к фильтрационному чану</translation>
     </message>
     <message>
         <source>Boil Kettle</source>
@@ -11539,11 +11583,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Aging Vessel Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тип ёмкости для созревания</translation>
     </message>
     <message>
         <source>Packaging Vessel Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания к ёмкости для розлива</translation>
     </message>
     <message>
         <source>Packaging Vessel</source>
@@ -11551,7 +11595,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Packaging Vessel Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тип ёмкости для розлива</translation>
     </message>
     <message>
         <source>General</source>
@@ -11623,11 +11667,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Fermentor Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тип ферментера</translation>
     </message>
     <message>
         <source>Fermentor Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания к ферментеру</translation>
     </message>
     <message>
         <source>Optional Vessel
@@ -11680,7 +11724,7 @@ Tabs</source>
     </message>
     <message>
         <source>Default Batch Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Размер партии по умолчанию</translation>
     </message>
     <message>
         <source>Volume into the fermentor that new recipes using this equipment start with</source>
@@ -11700,7 +11744,7 @@ Tabs</source>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished">Затор</translation>
+        <translation type="unfinished">Затирание</translation>
     </message>
     <message>
         <source>These settings apply to whichever vessel the mash happens in: the mash tun or, if you do not have a separate mash tun (eg on an all-in-one system such as the Grainfather, or for brew in a bag), the boil kettle.</source>
@@ -11915,7 +11959,7 @@ Tabs</source>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>New fermentable</source>
@@ -11943,7 +11987,7 @@ Tabs</source>
     </message>
     <message>
         <source>Producer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Производитель</translation>
     </message>
     <message>
         <source>Product ID</source>
@@ -11951,7 +11995,7 @@ Tabs</source>
     </message>
     <message>
         <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выход экстракта, сухое вещество, тонкий помол (DBFG)</translation>
     </message>
     <message>
         <source>Extract Yield Dry Basis Coarse Grind (DBCG)</source>
@@ -11963,7 +12007,7 @@ Tabs</source>
     </message>
     <message>
         <source>Kolbach Index</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Число Кольбаха</translation>
     </message>
     <message>
         <source>Percentage of malt that is &quot;glassy&quot;</source>
@@ -11987,11 +12031,11 @@ Tabs</source>
     </message>
     <message>
         <source>Friability</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Рыхлость</translation>
     </message>
     <message>
         <source>DI pH</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">pH в дист. воде</translation>
     </message>
     <message>
         <source>Viscosity of this malt in a &quot;congress mash&quot;</source>
@@ -11999,11 +12043,11 @@ Tabs</source>
     </message>
     <message>
         <source>Fermentability</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сбраживаемость</translation>
     </message>
     <message>
         <source>DMS precursors</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Предшественники ДМС</translation>
     </message>
     <message>
         <source>Beta-glucans</source>
@@ -12027,7 +12071,7 @@ Tabs</source>
     </message>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Свободный аминный азот (FAN)</translation>
     </message>
     <message>
         <source>ID in database</source>
@@ -12039,7 +12083,7 @@ Tabs</source>
     </message>
     <message>
         <source>Grain Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Группа солода</translation>
     </message>
     <message>
         <source>New</source>
@@ -12059,7 +12103,7 @@ Tabs</source>
     </message>
     <message>
         <source>Total Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Всего в запасе</translation>
     </message>
     <message>
         <source>Total amount in inventory</source>
@@ -12102,15 +12146,15 @@ Tabs</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Название</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Описание</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>Save and close</source>
@@ -12165,7 +12209,7 @@ Tabs</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Название</translation>
     </message>
     <message>
         <source>Type</source>
@@ -12233,7 +12277,7 @@ Tabs</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Описание</translation>
     </message>
     <message>
         <source>New</source>
@@ -12273,7 +12317,7 @@ Tabs</source>
     </message>
     <message>
         <source>Vessel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ёмкость</translation>
     </message>
 </context>
 <context>
@@ -12464,11 +12508,11 @@ Tabs</source>
     </message>
     <message>
         <source>Substitutes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Заменители</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>New hop</source>
@@ -12492,11 +12536,11 @@ Tabs</source>
     </message>
     <message>
         <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Год</translation>
     </message>
     <message>
         <source>Producer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Производитель</translation>
     </message>
     <message>
         <source>Product ID</source>
@@ -12508,7 +12552,7 @@ Tabs</source>
     </message>
     <message>
         <source>Linalool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Линалоол</translation>
     </message>
     <message>
         <source>Limonene %</source>
@@ -12516,7 +12560,7 @@ Tabs</source>
     </message>
     <message>
         <source>Limonene</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Лимонен</translation>
     </message>
     <message>
         <source>Nerol %</source>
@@ -12524,7 +12568,7 @@ Tabs</source>
     </message>
     <message>
         <source>Nerol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Нерол</translation>
     </message>
     <message>
         <source>Farnesene %</source>
@@ -12532,7 +12576,7 @@ Tabs</source>
     </message>
     <message>
         <source>Farnesene</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Фарнезен</translation>
     </message>
     <message>
         <source>Polyphenols %</source>
@@ -12540,7 +12584,7 @@ Tabs</source>
     </message>
     <message>
         <source>Polyphenols</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Полифенолы</translation>
     </message>
     <message>
         <source>Geraniol %</source>
@@ -12548,7 +12592,7 @@ Tabs</source>
     </message>
     <message>
         <source>Geraniol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Гераниол</translation>
     </message>
     <message>
         <source>Xanthohumol %</source>
@@ -12556,7 +12600,7 @@ Tabs</source>
     </message>
     <message>
         <source>Xanthohumol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ксантогумол</translation>
     </message>
     <message>
         <source>β-pinene %</source>
@@ -12604,7 +12648,7 @@ Tabs</source>
     </message>
     <message>
         <source>Total Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Всего в запасе</translation>
     </message>
     <message>
         <source>Add Purchase</source>
@@ -13415,7 +13459,7 @@ Tabs</source>
     </message>
     <message>
         <source>Batch Size</source>
-        <translation type="unfinished">Размер затора</translation>
+        <translation type="unfinished">Размер партии</translation>
     </message>
     <message>
         <source>Boil Size</source>
@@ -13483,7 +13527,7 @@ Tabs</source>
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Справка</translation>
     </message>
     <message>
         <source>Boil</source>
@@ -13495,7 +13539,7 @@ Tabs</source>
     </message>
     <message>
         <source>Fermentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Брожение</translation>
     </message>
     <message>
         <source>Fermentations</source>
@@ -13511,15 +13555,15 @@ Tabs</source>
     </message>
     <message>
         <source>Mash Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Профили затирания</translation>
     </message>
     <message>
         <source>Boil Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Профили кипячения</translation>
     </message>
     <message>
         <source>Fermentation Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Профили брожения</translation>
     </message>
     <message>
         <source>&amp;Mash Profiles</source>
@@ -13543,7 +13587,7 @@ Tabs</source>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Инвентарь</translation>
+        <translation type="unfinished">Запасы</translation>
     </message>
     <message>
         <source>Step-by-step instructions for brew day</source>
@@ -13805,7 +13849,7 @@ Tabs</source>
     </message>
     <message>
         <source>Total Time</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Общее время</translation>
     </message>
     <message>
         <source>Legacy</source>
@@ -13992,7 +14036,7 @@ Tabs</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Описание</translation>
     </message>
     <message>
         <source>New</source>
@@ -14158,7 +14202,7 @@ Tabs</source>
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>Save and close</source>
@@ -14170,7 +14214,7 @@ Tabs</source>
     </message>
     <message>
         <source>Producer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Производитель</translation>
     </message>
     <message>
         <source>Product ID</source>
@@ -14198,7 +14242,7 @@ Tabs</source>
     </message>
     <message>
         <source>Total Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Всего в запасе</translation>
     </message>
     <message>
         <source>Total amount in inventory</source>
@@ -14503,15 +14547,15 @@ Tabs</source>
     </message>
     <message>
         <source>Remedy: Add Water To Boil</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Решение: добавить воду при кипячении</translation>
     </message>
     <message>
         <source>Amount to Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сколько добавить</translation>
     </message>
     <message>
         <source>Amount of water you need to add to hit planned OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Количество воды, которое нужно добавить для достижения плановой OG</translation>
     </message>
     <message>
         <source>-- OR --</source>
@@ -14718,15 +14762,15 @@ Tabs</source>
     </message>
     <message>
         <source>Schema</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Схема</translation>
     </message>
     <message>
         <source>Database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">База данных</translation>
     </message>
     <message>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Имя пользователя</translation>
     </message>
     <message>
         <source>Password</source>
@@ -14844,7 +14888,7 @@ Tabs</source>
     </message>
     <message>
         <source>Batch Size</source>
-        <translation type="unfinished">Размер затора</translation>
+        <translation type="unfinished">Размер партии</translation>
     </message>
     <message>
         <source>Default batch size to set on new recipes</source>
@@ -14852,7 +14896,7 @@ Tabs</source>
     </message>
     <message>
         <source>Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Объём до кипячения</translation>
     </message>
     <message>
         <source>Default pre-boil size to set on new recipes</source>
@@ -14967,7 +15011,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>MM/dd/yyyy</source>
-        <translation>мм/дд/гггг</translation>
+        <translation type="vanished">мм/дд/гггг</translation>
     </message>
     <message>
         <source>%</source>
@@ -14975,7 +15019,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>Текстовая метка</translation>
+        <translation type="vanished">Текстовая метка</translation>
     </message>
     <message>
         <source>Calculate Viability From Date</source>
@@ -15173,7 +15217,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>dd MMM yyyy</source>
-        <translation>дд МММ гггг</translation>
+        <translation type="vanished">дд МММ гггг</translation>
     </message>
     <message>
         <source>Carbonation Volumes</source>
@@ -15304,7 +15348,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>pH</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">pH</translation>
     </message>
     <message>
         <source>Water Agents</source>
@@ -15503,11 +15547,11 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Дата</translation>
     </message>
     <message>
         <source>dd MMM yyyy</source>
-        <translation type="unfinished">дд МММ гггг</translation>
+        <translation type="obsolete">дд МММ гггг</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -15531,7 +15575,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Тип количества</translation>
     </message>
     <message>
         <source>Uses</source>
@@ -15539,7 +15583,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Amount Remaining</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Остаток</translation>
     </message>
     <message>
         <source>Best Before</source>
@@ -15697,11 +15741,11 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     <name>stockUseIngredientEditor</name>
     <message>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Дата</translation>
     </message>
     <message>
         <source>dd MMM yyyy</source>
-        <translation type="unfinished">дд МММ гггг</translation>
+        <translation type="obsolete">дд МММ гггг</translation>
     </message>
     <message>
         <source>Reason</source>
@@ -16044,7 +16088,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Flavor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вкус</translation>
     </message>
     <message>
         <source>Mouthfeel</source>
@@ -16374,7 +16418,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Примечания</translation>
     </message>
     <message>
         <source>New yeast</source>
@@ -16494,7 +16538,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Total Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Всего в запасе</translation>
     </message>
     <message>
         <source>Add Purchase</source>

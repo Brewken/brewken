@@ -9,18 +9,18 @@
     </message>
     <message>
         <source>About %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σχετικά με %1</translation>
     </message>
 </context>
 <context>
     <name>AlcoholTool</name>
     <message>
         <source>Alcohol Tool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εργαλείο αλκοόλ</translation>
     </message>
     <message>
         <source>Original Gravity (OG)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αρχική πυκνότητα (OG)</translation>
     </message>
     <message>
         <source>ABV</source>
@@ -28,11 +28,11 @@
     </message>
     <message>
         <source>Final Gravity (FG)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τελική πυκνότητα (FG)</translation>
     </message>
     <message>
         <source>Reading</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μέτρηση</translation>
     </message>
     <message>
         <source>Temperature</source>
@@ -40,31 +40,31 @@
     </message>
     <message>
         <source>Corrected Reading</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διορθωμένη μέτρηση</translation>
     </message>
     <message>
         <source>Advanced Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προχωρημένη λειτουργία</translation>
     </message>
     <message>
         <source>Hydrometer Calibration Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Θερμοκρασία βαθμονόμησης πυκνόμετρου</translation>
     </message>
     <message>
         <source>Initial Reading</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αρχική μέτρηση</translation>
     </message>
     <message>
         <source>Final Reading</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τελική μέτρηση</translation>
     </message>
     <message>
         <source>Result</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αποτέλεσμα</translation>
     </message>
     <message>
         <source>Calculated according to the formula set by the UK Laboratory of the Government Chemist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Υπολογισμένο σύμφωνα με τον τύπο του UK Laboratory of the Government Chemist</translation>
     </message>
 </context>
 <context>
@@ -90,51 +90,51 @@
     <name>Boil</name>
     <message>
         <source>Boil</source>
-        <translation type="unfinished">Στο Βράσιμο</translation>
+        <translation type="unfinished">Βρασμός</translation>
     </message>
     <message>
         <source>Pre-boil for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πριν τον βρασμό για %1</translation>
     </message>
     <message>
         <source>Main boil for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κύριος βρασμός για %1</translation>
     </message>
     <message>
         <source>Post-boil for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μετά τον βρασμό για %1</translation>
     </message>
     <message>
         <source>Automatically-generated pre-boil step for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αυτόματα δημιουργημένο βήμα πριν τον βρασμό για %1</translation>
     </message>
     <message>
         <source>Automatically-generated boil proper step for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αυτόματα δημιουργημένο βήμα κύριου βρασμού για %1</translation>
     </message>
     <message>
         <source>Automatically-generated post-boil step for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αυτόματα δημιουργημένο βήμα μετά τον βρασμό για %1</translation>
     </message>
     <message>
         <source>a recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">μια συνταγή</translation>
     </message>
     <message>
         <source>Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος πριν τον βρασμό</translation>
     </message>
     <message>
         <source>Boil time (mins)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρόνος βρασμού (λεπτά)</translation>
     </message>
     <message>
         <source>Boil Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προφίλ βρασμού</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Περιγραφή</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -146,30 +146,30 @@
     </message>
     <message>
         <source>Time At Boiling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρόνος σε βρασμό</translation>
     </message>
 </context>
 <context>
     <name>BoilStep</name>
     <message>
         <source>Boil Step</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βήμα βρασμού</translation>
     </message>
     <message>
         <source>Batch</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Παρτίδα</translation>
     </message>
     <message>
         <source>Inline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σε σειρά</translation>
     </message>
     <message>
         <source>Step time (mins)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρόνος βήματος (λεπτά)</translation>
     </message>
     <message>
         <source>Chilling Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος ψύξης</translation>
     </message>
 </context>
 <context>
@@ -224,11 +224,11 @@
     </message>
     <message>
         <source>Estimated calories (per 33 cl)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εκτιμώμενες θερμίδες (ανά 33 cl)</translation>
     </message>
     <message>
         <source>Estimated calories (per 12 oz)</source>
-        <translation type="unfinished">Θερμίδες κατά προσέγγιση</translation>
+        <translation type="unfinished">Εκτιμώμενες θερμίδες (ανά 12 oz)</translation>
     </message>
     <message>
         <source>Instructions</source>
@@ -248,7 +248,7 @@
     </message>
     <message>
         <source>Add grains</source>
-        <translation type="unfinished">Προσθέστε Σιτηρά</translation>
+        <translation type="unfinished">Προσθέστε σιτηρά</translation>
     </message>
     <message>
         <source>Heat water</source>
@@ -256,11 +256,11 @@
     </message>
     <message>
         <source>Actual PreBoil Volume</source>
-        <translation type="unfinished">Ακριβής όγκος προ βρασμού</translation>
+        <translation type="unfinished">Πραγματικός όγκος πριν τον βρασμό</translation>
     </message>
     <message>
         <source>Actual PreBoil Gravity</source>
-        <translation type="unfinished">ακριβής πυκνότητα προ βρασμού</translation>
+        <translation type="unfinished">Πραγματική πυκνότητα πριν τον βρασμό</translation>
     </message>
     <message>
         <source>PostBoil Volume</source>
@@ -276,11 +276,11 @@
     </message>
     <message>
         <source>unknown</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">άγνωστο</translation>
     </message>
     <message>
         <source>Volume into fermentor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος στον κάδο ζύμωσης</translation>
     </message>
 </context>
 <context>
@@ -387,11 +387,11 @@
     </message>
     <message>
         <source>Estimated calories (per 33 cl)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εκτιμώμενες θερμίδες (ανά 33 cl)</translation>
     </message>
     <message>
         <source>Estimated calories (per 12 oz)</source>
-        <translation type="unfinished">Θερμίδες κατά προσέγγιση</translation>
+        <translation type="unfinished">Εκτιμώμενες θερμίδες (ανά 12 oz)</translation>
     </message>
     <message>
         <source>Brewday</source>
@@ -399,23 +399,23 @@
     </message>
     <message>
         <source>Overwrite Existing Instructions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αντικατάσταση υπαρχουσών οδηγιών</translation>
     </message>
     <message>
         <source>Generating instructions will overwrite the existing ones.  This is not undoable.  Do you want to proceed?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η δημιουργία οδηγιών θα αντικαταστήσει τις υπάρχουσες.  Αυτό δεν μπορεί να αναιρεθεί.  Θέλετε να συνεχίσετε;</translation>
     </message>
     <message>
         <source>not set</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">δεν έχει οριστεί</translation>
     </message>
     <message>
         <source>n/a</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">μ/δ</translation>
     </message>
     <message>
         <source>Volume into fermentor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος στον κάδο ζύμωσης</translation>
     </message>
 </context>
 <context>
@@ -517,23 +517,23 @@
     </message>
     <message>
         <source>Attenuation</source>
-        <translation type="unfinished">αραίωση</translation>
+        <translation type="unfinished">Εξασθένηση</translation>
     </message>
     <message>
         <source>Brew Date</source>
-        <translation type="unfinished">Ημέρα Ζυθοποίησης</translation>
+        <translation type="unfinished">Ημέρα ζυθοποίησης</translation>
     </message>
     <message>
         <source>Brewhouse Efficiency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απόδοση εξοπλισμού</translation>
     </message>
     <message>
         <source>Efficiency Into Boil Kettle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απόδοση στη χύτρα βρασμού</translation>
     </message>
     <message>
         <source>Ferment Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ημερομηνία ζύμωσης</translation>
     </message>
     <message>
         <source>FG</source>
@@ -545,7 +545,7 @@
     </message>
     <message>
         <source>Mash Final Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τελική θερμοκρασία σακχαροποίησης</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -557,31 +557,31 @@
     </message>
     <message>
         <source>Post-Boil Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος μετά τον βρασμό</translation>
     </message>
     <message>
         <source>Projected ABV</source>
-        <translation type="unfinished">Προβλεπόμενοι ABV</translation>
+        <translation type="unfinished">Προβλεπόμενο ABV</translation>
     </message>
     <message>
         <source>Projected Attenuation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προβλεπόμενη εξασθένηση</translation>
     </message>
     <message>
         <source>Projected Efficiency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προβλεπόμενη απόδοση</translation>
     </message>
     <message>
         <source>Projected Fermentation Points</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προβλεπόμενοι βαθμοί ζύμωσης</translation>
     </message>
     <message>
         <source>Projected FG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προβλεπόμενη FG</translation>
     </message>
     <message>
         <source>Projected Mash Final Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προβλεπόμενη τελική θερμοκρασία σακχαροποίησης</translation>
     </message>
     <message>
         <source>Projected OG</source>
@@ -589,11 +589,11 @@
     </message>
     <message>
         <source>Projected Strike Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προβλεπόμενη θερμοκρασία νερού έναρξης</translation>
     </message>
     <message>
         <source>Projected Volume Into Boil Kettle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προβλεπόμενος όγκος στη χύτρα βρασμού</translation>
     </message>
     <message>
         <source>SG</source>
@@ -601,55 +601,55 @@
     </message>
     <message>
         <source>Strike Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Θερμοκρασία νερού έναρξης</translation>
     </message>
     <message>
         <source>Volume Into Boil Kettle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος στη χύτρα βρασμού</translation>
     </message>
     <message>
         <source>Brew Log</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ημερολόγιο ζυθοποίησης</translation>
     </message>
     <message>
         <source>Brew Log #%1 for brew on %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ημερολόγιο ζυθοποίησης #%1 για την παρτίδα της %2</translation>
     </message>
     <message>
         <source>Expected Boil-Off</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αναμενόμενη εξάτμιση</translation>
     </message>
     <message>
         <source>Planned OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προγραμματισμένη OG</translation>
     </message>
     <message>
         <source>Expected pre-boil specific gravity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αναμενόμενο ειδικό βάρος πριν τον βρασμό</translation>
     </message>
     <message>
         <source>Measured FG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μετρημένη FG</translation>
     </message>
     <message>
         <source>Measured Pitch Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μετρημένη θερμοκρασία προσθήκης μαγιάς</translation>
     </message>
     <message>
         <source>Measured pre-boil specific gravity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μετρημένο ειδικό βάρος πριν τον βρασμό</translation>
     </message>
     <message>
         <source>Projected Volume Into Fermentation Vessel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προβλεπόμενος όγκος στον κάδο ζύμωσης</translation>
     </message>
     <message>
         <source>Volume Into Fermentation Vessel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος στον κάδο ζύμωσης</translation>
     </message>
     <message>
         <source>Wort Clarity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διαύγεια γλεύκους</translation>
     </message>
 </context>
 <context>
@@ -809,7 +809,7 @@
     <name>BtPrintAndPreview</name>
     <message>
         <source>Print And Preview</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εκτύπωση και προεπισκόπηση</translation>
     </message>
     <message>
         <source>Recipe</source>
@@ -817,23 +817,23 @@
     </message>
     <message>
         <source>Select Recipe(s)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επιλογή συνταγής(-ών)</translation>
     </message>
     <message>
         <source>Select what to include</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επιλέξτε τι θα συμπεριληφθεί</translation>
     </message>
     <message>
         <source>Brewday Instructions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Οδηγίες ημέρας ζυθοποίησης</translation>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Ευρετήριο ειδών</translation>
+        <translation type="unfinished">Απόθεμα</translation>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όλα</translation>
     </message>
     <message>
         <source>Fermentables</source>
@@ -841,11 +841,11 @@
     </message>
     <message>
         <source>Hops</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λυκίσκοι</translation>
     </message>
     <message>
         <source>Micelleneous</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διάφορα</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -853,58 +853,58 @@
     </message>
     <message>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αποτέλεσμα</translation>
     </message>
     <message>
         <source>Paper</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χαρτί</translation>
     </message>
     <message>
         <source>PDF</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">PDF</translation>
     </message>
     <message>
         <source>HTML</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">HTML</translation>
     </message>
     <message>
         <source>Printer Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρυθμίσεις εκτυπωτή</translation>
     </message>
     <message>
         <source>Paper size: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μέγεθος χαρτιού: </translation>
     </message>
     <message>
         <source>Select available Printers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επιλογή διαθέσιμων εκτυπωτών</translation>
     </message>
     <message>
         <source>Orientation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προσανατολισμός</translation>
     </message>
     <message>
         <source>Portrait</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κατακόρυφος</translation>
     </message>
     <message>
         <source>Landscape</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Οριζόντιος</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εκτύπωση</translation>
     </message>
 </context>
 <context>
     <name>BtSplashScreen</name>
     <message>
         <source>Loading...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φόρτωση...</translation>
     </message>
 </context>
 <context>
@@ -1101,1227 +1101,1227 @@
     <message>
         <source>United Arab Emirates Dirham</source>
         <extracomment>*</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ντιρχάμ Ηνωμένων Αραβικών Εμιράτων</translation>
     </message>
     <message>
         <source>Dirham</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ντιρχάμ</translation>
     </message>
     <message>
         <source>Fils</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φιλς</translation>
     </message>
     <message>
         <source>Afghan Afghani</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αφγανί Αφγανιστάν</translation>
     </message>
     <message>
         <source>Afghani</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αφγανί</translation>
     </message>
     <message>
         <source>Pul</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πουλ</translation>
     </message>
     <message>
         <source>Albanian Lek</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λεκ Αλβανίας</translation>
     </message>
     <message>
         <source>Lek</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λεκ</translation>
     </message>
     <message>
         <source>Qindarka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κιντάρκα</translation>
     </message>
     <message>
         <source>Armenian Dram</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ντραμ Αρμενίας</translation>
     </message>
     <message>
         <source>Dram</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ντραμ</translation>
     </message>
     <message>
         <source>Luma</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λούμα</translation>
     </message>
     <message>
         <source>Angolan Kwanza</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κουάνζα Αγκόλας</translation>
     </message>
     <message>
         <source>Kwanza</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κουάνζα</translation>
     </message>
     <message>
         <source>Centimo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σεντίμο</translation>
     </message>
     <message>
         <source>Argentine Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πέσο Αργεντινής</translation>
     </message>
     <message>
         <source>Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πέσο</translation>
     </message>
     <message>
         <source>Centavo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σενταβό</translation>
     </message>
     <message>
         <source>Australian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Αυστραλίας</translation>
     </message>
     <message>
         <source>Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο</translation>
     </message>
     <message>
         <source>Cent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σεντ</translation>
     </message>
     <message>
         <source>Aruban Florin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φλορίνι Αρούμπα</translation>
     </message>
     <message>
         <source>Florin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φλορίνι</translation>
     </message>
     <message>
         <source>Azerbaijani Manat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μανάτ Αζερμπαϊτζάν</translation>
     </message>
     <message>
         <source>Manat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μανάτ</translation>
     </message>
     <message>
         <source>Qapik</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Καπίκ</translation>
     </message>
     <message>
         <source>Bosnia-Herzegovina Convertible Mark</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μετατρέψιμο μάρκο Βοσνίας-Ερζεγοβίνης</translation>
     </message>
     <message>
         <source>Mark</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μάρκο</translation>
     </message>
     <message>
         <source>Fening</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φένιγκ</translation>
     </message>
     <message>
         <source>Barbados Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Μπαρμπάντος</translation>
     </message>
     <message>
         <source>Bangladeshi Taka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τάκα Μπαγκλαντές</translation>
     </message>
     <message>
         <source>Taka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τάκα</translation>
     </message>
     <message>
         <source>Poisha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πόισα</translation>
     </message>
     <message>
         <source>Bulgarian Lev</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λεβ Βουλγαρίας</translation>
     </message>
     <message>
         <source>Lev</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λεβ</translation>
     </message>
     <message>
         <source>Stotinka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Στοτίνκα</translation>
     </message>
     <message>
         <source>Bahraini Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δηνάριο Μπαχρέιν</translation>
     </message>
     <message>
         <source>Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δηνάριο</translation>
     </message>
     <message>
         <source>Burundian Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φράγκο Μπουρούντι</translation>
     </message>
     <message>
         <source>Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φράγκο</translation>
     </message>
     <message>
         <source>Centime</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σαντίμ</translation>
     </message>
     <message>
         <source>Bermudian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Βερμούδων</translation>
     </message>
     <message>
         <source>Brunei Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Μπρουνέι</translation>
     </message>
     <message>
         <source>Bolivian Boliviano</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μπολιβιάνο Βολιβίας</translation>
     </message>
     <message>
         <source>Boliviano</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μπολιβιάνο</translation>
     </message>
     <message>
         <source>Brazilian Real</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρεάλ Βραζιλίας</translation>
     </message>
     <message>
         <source>Real</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρεάλ</translation>
     </message>
     <message>
         <source>Bahamian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Μπαχαμών</translation>
     </message>
     <message>
         <source>Bhutanese Ngultrum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νγκούλτρουμ Μπουτάν</translation>
     </message>
     <message>
         <source>Ngultrum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νγκούλτρουμ</translation>
     </message>
     <message>
         <source>Chetrum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τσέτρουμ</translation>
     </message>
     <message>
         <source>Botswana Pula</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πούλα Μποτσουάνας</translation>
     </message>
     <message>
         <source>Pula</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πούλα</translation>
     </message>
     <message>
         <source>Thebe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τέμπε</translation>
     </message>
     <message>
         <source>Belarusian Ruble</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρούβλι Λευκορωσίας</translation>
     </message>
     <message>
         <source>Ruble</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρούβλι</translation>
     </message>
     <message>
         <source>Kapiejka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Καπιέικα</translation>
     </message>
     <message>
         <source>Belize Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Μπελίζ</translation>
     </message>
     <message>
         <source>Canadian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Καναδά</translation>
     </message>
     <message>
         <source>Congolese Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φράγκο Κονγκό</translation>
     </message>
     <message>
         <source>Swiss Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φράγκο Ελβετίας</translation>
     </message>
     <message>
         <source>Chilean Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πέσο Χιλής</translation>
     </message>
     <message>
         <source>Chinese Yuan</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γιουάν Κίνας</translation>
     </message>
     <message>
         <source>Yuan</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γιουάν</translation>
     </message>
     <message>
         <source>Fen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φεν</translation>
     </message>
     <message>
         <source>Colombian Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πέσο Κολομβίας</translation>
     </message>
     <message>
         <source>Costa Rican Colón</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κολόν Κόστα Ρίκα</translation>
     </message>
     <message>
         <source>Colón</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κολόν</translation>
     </message>
     <message>
         <source>Cuban Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πέσο Κούβας</translation>
     </message>
     <message>
         <source>Cabo Verdean Escudo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εσκούδο Πράσινου Ακρωτηρίου</translation>
     </message>
     <message>
         <source>Escudo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εσκούδο</translation>
     </message>
     <message>
         <source>Czech Koruna</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κορόνα Τσεχίας</translation>
     </message>
     <message>
         <source>Koruna</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κορόνα</translation>
     </message>
     <message>
         <source>Haléř</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χάλερ</translation>
     </message>
     <message>
         <source>Djiboutian Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φράγκο Τζιμπουτί</translation>
     </message>
     <message>
         <source>Danish Krone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κορόνα Δανίας</translation>
     </message>
     <message>
         <source>Krone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κορόνα</translation>
     </message>
     <message>
         <source>Øre</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Έρε</translation>
     </message>
     <message>
         <source>Dominican Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πέσο Δομινικανής Δημοκρατίας</translation>
     </message>
     <message>
         <source>Algerian Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δηνάριο Αλγερίας</translation>
     </message>
     <message>
         <source>Santeem</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σαντίμ</translation>
     </message>
     <message>
         <source>Egyptian Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λίρα Αιγύπτου</translation>
     </message>
     <message>
         <source>Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λίρα</translation>
     </message>
     <message>
         <source>Qirsh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γρόσι</translation>
     </message>
     <message>
         <source>Eritrean Nakfa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νάκφα Ερυθραίας</translation>
     </message>
     <message>
         <source>Nakfa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νάκφα</translation>
     </message>
     <message>
         <source>Ethiopian Birr</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μπιρ Αιθιοπίας</translation>
     </message>
     <message>
         <source>Birr</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μπιρ</translation>
     </message>
     <message>
         <source>Santim</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σαντίμ</translation>
     </message>
     <message>
         <source>Euro</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ευρώ</translation>
     </message>
     <message>
         <source>Fiji Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Φίτζι</translation>
     </message>
     <message>
         <source>Falkland Islands Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λίρα Νήσων Φόκλαντ</translation>
     </message>
     <message>
         <source>Penny</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πένα</translation>
     </message>
     <message>
         <source>Pound Sterling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λίρα στερλίνα</translation>
     </message>
     <message>
         <source>Georgian Lari</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λάρι Γεωργίας</translation>
     </message>
     <message>
         <source>Lari</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λάρι</translation>
     </message>
     <message>
         <source>Tetri</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τετρί</translation>
     </message>
     <message>
         <source>Ghanaian Cedi</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σέντι Γκάνας</translation>
     </message>
     <message>
         <source>Cedi</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σέντι</translation>
     </message>
     <message>
         <source>Pesewa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πεσέουα</translation>
     </message>
     <message>
         <source>Gibraltar Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λίρα Γιβραλτάρ</translation>
     </message>
     <message>
         <source>Gambian Dalasi</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νταλάσι Γκάμπιας</translation>
     </message>
     <message>
         <source>Dalasi</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νταλάσι</translation>
     </message>
     <message>
         <source>Butut</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μπουτούτ</translation>
     </message>
     <message>
         <source>Guinean Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φράγκο Γουινέας</translation>
     </message>
     <message>
         <source>Guatemalan Quetzal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κετσάλ Γουατεμάλας</translation>
     </message>
     <message>
         <source>Quetzal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κετσάλ</translation>
     </message>
     <message>
         <source>Guyanese Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Γουιάνας</translation>
     </message>
     <message>
         <source>Hong Kong Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Χονγκ Κονγκ</translation>
     </message>
     <message>
         <source>Honduran Lempira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λεμπίρα Ονδούρας</translation>
     </message>
     <message>
         <source>Lempira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λεμπίρα</translation>
     </message>
     <message>
         <source>Haitian Gourde</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γκουρντ Αϊτής</translation>
     </message>
     <message>
         <source>Gourde</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γκουρντ</translation>
     </message>
     <message>
         <source>Hungarian Forint</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φιορίνι Ουγγαρίας</translation>
     </message>
     <message>
         <source>Forint</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φιορίνι</translation>
     </message>
     <message>
         <source>fillér</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">φίλερ</translation>
     </message>
     <message>
         <source>Indonesian Rupiah</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρουπία Ινδονησίας</translation>
     </message>
     <message>
         <source>Rupiah</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρουπία</translation>
     </message>
     <message>
         <source>Sen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σεν</translation>
     </message>
     <message>
         <source>Israeli Shekel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σέκελ Ισραήλ</translation>
     </message>
     <message>
         <source>Shekel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σέκελ</translation>
     </message>
     <message>
         <source>Agora</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αγκορά</translation>
     </message>
     <message>
         <source>Indian Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρουπία Ινδίας</translation>
     </message>
     <message>
         <source>Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρουπία</translation>
     </message>
     <message>
         <source>Paisa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πάισα</translation>
     </message>
     <message>
         <source>Iraqi Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δηνάριο Ιράκ</translation>
     </message>
     <message>
         <source>Iranian Rial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ριάλ Ιράν</translation>
     </message>
     <message>
         <source>Rial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ριάλ</translation>
     </message>
     <message>
         <source>Icelandic Krona</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κορόνα Ισλανδίας</translation>
     </message>
     <message>
         <source>Krona</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κορόνα</translation>
     </message>
     <message>
         <source>Aurar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Άουραρ</translation>
     </message>
     <message>
         <source>Jamaican Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Τζαμάικας</translation>
     </message>
     <message>
         <source>Jordanian Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δηνάριο Ιορδανίας</translation>
     </message>
     <message>
         <source>Japanese Yen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γιεν Ιαπωνίας</translation>
     </message>
     <message>
         <source>Yen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γιεν</translation>
     </message>
     <message>
         <source>Kenyan Shilling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σελίνι Κένυας</translation>
     </message>
     <message>
         <source>Shilling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σελίνι</translation>
     </message>
     <message>
         <source>Kyrgyzstani Som</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σομ Κιργιζίας</translation>
     </message>
     <message>
         <source>Som</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σομ</translation>
     </message>
     <message>
         <source>Tyiyn</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τιγίν</translation>
     </message>
     <message>
         <source>Cambodian Riel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ριέλ Καμπότζης</translation>
     </message>
     <message>
         <source>Riel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ριέλ</translation>
     </message>
     <message>
         <source>Comorian Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φράγκο Κομορών</translation>
     </message>
     <message>
         <source>North Korean Won</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γουόν Βόρειας Κορέας</translation>
     </message>
     <message>
         <source>Won</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γουόν</translation>
     </message>
     <message>
         <source>Chon</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τσον</translation>
     </message>
     <message>
         <source>South Korean Won</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γουόν Νότιας Κορέας</translation>
     </message>
     <message>
         <source>Jeon</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τζον</translation>
     </message>
     <message>
         <source>Kuwaiti Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δηνάριο Κουβέιτ</translation>
     </message>
     <message>
         <source>Cayman Islands Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Νήσων Κέιμαν</translation>
     </message>
     <message>
         <source>Kazakhstani Tenge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τένγκε Καζακστάν</translation>
     </message>
     <message>
         <source>Tenge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τένγκε</translation>
     </message>
     <message>
         <source>Tıyn</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τιγίν</translation>
     </message>
     <message>
         <source>Lao Kip</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κιπ Λάος</translation>
     </message>
     <message>
         <source>Kip</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κιπ</translation>
     </message>
     <message>
         <source>Att</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ατ</translation>
     </message>
     <message>
         <source>Lebanese Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λίρα Λιβάνου</translation>
     </message>
     <message>
         <source>Sri Lankan Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρουπία Σρι Λάνκα</translation>
     </message>
     <message>
         <source>Liberian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Λιβερίας</translation>
     </message>
     <message>
         <source>Lesotho Loti</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λότι Λεσότο</translation>
     </message>
     <message>
         <source>Loti</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λότι</translation>
     </message>
     <message>
         <source>Sente</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σέντε</translation>
     </message>
     <message>
         <source>Libyan Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δηνάριο Λιβύης</translation>
     </message>
     <message>
         <source>Moroccan Dirham</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ντιρχάμ Μαρόκου</translation>
     </message>
     <message>
         <source>Moldovan Leu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λέου Μολδαβίας</translation>
     </message>
     <message>
         <source>Leu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λέου</translation>
     </message>
     <message>
         <source>Ban</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μπαν</translation>
     </message>
     <message>
         <source>Malagasy Ariary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αριάρι Μαδαγασκάρης</translation>
     </message>
     <message>
         <source>Ariary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αριάρι</translation>
     </message>
     <message>
         <source>Iraimbilanja</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ιραϊμπιλάντζα</translation>
     </message>
     <message>
         <source>Macedonian Denar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δηνάριο Βόρειας Μακεδονίας</translation>
     </message>
     <message>
         <source>Denar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δηνάριο</translation>
     </message>
     <message>
         <source>Deni</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ντένι</translation>
     </message>
     <message>
         <source>Myanmar Kyat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κιάτ Μιανμάρ</translation>
     </message>
     <message>
         <source>Kyat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κιάτ</translation>
     </message>
     <message>
         <source>Pya</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πια</translation>
     </message>
     <message>
         <source>Mongolian Tögrög</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τουγκρίκ Μογγολίας</translation>
     </message>
     <message>
         <source>Tögrög</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τουγκρίκ</translation>
     </message>
     <message>
         <source>möngö</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">μόνγκο</translation>
     </message>
     <message>
         <source>Macanese Pataca</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πατάκα Μακάο</translation>
     </message>
     <message>
         <source>Pataca</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πατάκα</translation>
     </message>
     <message>
         <source>Avo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Άβο</translation>
     </message>
     <message>
         <source>Mauritanian Ouguiya</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ουγκίγια Μαυριτανίας</translation>
     </message>
     <message>
         <source>Ouguiya</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ουγκίγια</translation>
     </message>
     <message>
         <source>Khoums</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χουμς</translation>
     </message>
     <message>
         <source>Mauritian Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρουπία Μαυρικίου</translation>
     </message>
     <message>
         <source>Maldivian Rufiyaa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρουφίγια Μαλδιβών</translation>
     </message>
     <message>
         <source>Rufiyaa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρουφίγια</translation>
     </message>
     <message>
         <source>laari</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">λάαρι</translation>
     </message>
     <message>
         <source>Malawian Kwacha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κουάτσα Μαλάουι</translation>
     </message>
     <message>
         <source>Kwacha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κουάτσα</translation>
     </message>
     <message>
         <source>Tambala</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ταμπάλα</translation>
     </message>
     <message>
         <source>Mexican Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πέσο Μεξικού</translation>
     </message>
     <message>
         <source>Malaysian Ringgit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρινγκίτ Μαλαισίας</translation>
     </message>
     <message>
         <source>Ringgit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρινγκίτ</translation>
     </message>
     <message>
         <source>Mozambican Metical</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μετικάλ Μοζαμβίκης</translation>
     </message>
     <message>
         <source>Metical</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μετικάλ</translation>
     </message>
     <message>
         <source>Namibian Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Ναμίμπιας</translation>
     </message>
     <message>
         <source>Nigerian Naira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νάιρα Νιγηρίας</translation>
     </message>
     <message>
         <source>Naira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νάιρα</translation>
     </message>
     <message>
         <source>Kobo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κόμπο</translation>
     </message>
     <message>
         <source>Nicaraguan Córdoba</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κόρδοβα Νικαράγουας</translation>
     </message>
     <message>
         <source>Córdoba</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κόρδοβα</translation>
     </message>
     <message>
         <source>Norwegian Krone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κορόνα Νορβηγίας</translation>
     </message>
     <message>
         <source>øre</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">έρε</translation>
     </message>
     <message>
         <source>Nepalese Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρουπία Νεπάλ</translation>
     </message>
     <message>
         <source>New Zealand Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Νέας Ζηλανδίας</translation>
     </message>
     <message>
         <source>Omani Rial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ριάλ Ομάν</translation>
     </message>
     <message>
         <source>Baisa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μπάισα</translation>
     </message>
     <message>
         <source>Panamanian Balboa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μπαλμπόα Παναμά</translation>
     </message>
     <message>
         <source>Balboa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μπαλμπόα</translation>
     </message>
     <message>
         <source>Centésimo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σεντέσιμο</translation>
     </message>
     <message>
         <source>Peruvian Sol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σολ Περού</translation>
     </message>
     <message>
         <source>Sol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σολ</translation>
     </message>
     <message>
         <source>Céntimo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σέντιμο</translation>
     </message>
     <message>
         <source>Papua New Guinean Kina</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κίνα Παπούας Νέας Γουινέας</translation>
     </message>
     <message>
         <source>Kina</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κίνα</translation>
     </message>
     <message>
         <source>Toea</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τόεα</translation>
     </message>
     <message>
         <source>Philippine Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πέσο Φιλιππινών</translation>
     </message>
     <message>
         <source>Sentimo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σεντίμο</translation>
     </message>
     <message>
         <source>Pakistani Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρουπία Πακιστάν</translation>
     </message>
     <message>
         <source>Polish Zloty</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ζλότι Πολωνίας</translation>
     </message>
     <message>
         <source>Zloty</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ζλότι</translation>
     </message>
     <message>
         <source>Grosz</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γκρος</translation>
     </message>
     <message>
         <source>Paraguayan Guaraní</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γκουαρανί Παραγουάης</translation>
     </message>
     <message>
         <source>Guaraní</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γκουαρανί</translation>
     </message>
     <message>
         <source>Qatari Riyal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ριάλ Κατάρ</translation>
     </message>
     <message>
         <source>Riyal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ριάλ</translation>
     </message>
     <message>
         <source>Romanian Leu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λέου Ρουμανίας</translation>
     </message>
     <message>
         <source>Serbian Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δηνάριο Σερβίας</translation>
     </message>
     <message>
         <source>Para</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πάρα</translation>
     </message>
     <message>
         <source>Russian Ruble</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρούβλι Ρωσίας</translation>
     </message>
     <message>
         <source>Kopek</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Καπίκι</translation>
     </message>
     <message>
         <source>Rwandan Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φράγκο Ρουάντας</translation>
     </message>
     <message>
         <source>Saudi Riyal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ριάλ Σαουδικής Αραβίας</translation>
     </message>
     <message>
         <source>Halalah</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χαλάλα</translation>
     </message>
     <message>
         <source>Solomon Islands Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Νήσων Σολομώντα</translation>
     </message>
     <message>
         <source>Seychelles Rupee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρουπία Σεϋχελλών</translation>
     </message>
     <message>
         <source>Sudanese Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λίρα Σουδάν</translation>
     </message>
     <message>
         <source>Swedish Krona</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κορόνα Σουηδίας</translation>
     </message>
     <message>
         <source>Öre</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Έρε</translation>
     </message>
     <message>
         <source>Singapore Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Σιγκαπούρης</translation>
     </message>
     <message>
         <source>Saint Helena Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λίρα Αγίας Ελένης</translation>
     </message>
     <message>
         <source>Sierra Leonean New Leone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο λεόνε Σιέρα Λεόνε</translation>
     </message>
     <message>
         <source>New Leone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο λεόνε</translation>
     </message>
     <message>
         <source>Somali Shilling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σελίνι Σομαλίας</translation>
     </message>
     <message>
         <source>Senti</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σέντι</translation>
     </message>
     <message>
         <source>Surinamese Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Σουρινάμ</translation>
     </message>
     <message>
         <source>South Sudanese Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λίρα Νότιου Σουδάν</translation>
     </message>
     <message>
         <source>Sao Tome Dobra</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ντόμπρα Σάο Τομέ</translation>
     </message>
     <message>
         <source>Dobra</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ντόμπρα</translation>
     </message>
     <message>
         <source>Salvadoran Colón</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κολόν Ελ Σαλβαδόρ</translation>
     </message>
     <message>
         <source>Syrian Pound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λίρα Συρίας</translation>
     </message>
     <message>
         <source>Swazi Lilangeni</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λιλανγκένι Εσουατίνι</translation>
     </message>
     <message>
         <source>Lilangeni</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λιλανγκένι</translation>
     </message>
     <message>
         <source>Thai Baht</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μπατ Ταϊλάνδης</translation>
     </message>
     <message>
         <source>Baht</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μπατ</translation>
     </message>
     <message>
         <source>Satang</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σατάνγκ</translation>
     </message>
     <message>
         <source>Tajikistani Somoni</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σομόνι Τατζικιστάν</translation>
     </message>
     <message>
         <source>Somoni</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σομόνι</translation>
     </message>
     <message>
         <source>Diram</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ντιράμ</translation>
     </message>
     <message>
         <source>Turkmenistan Manat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μανάτ Τουρκμενιστάν</translation>
     </message>
     <message>
         <source>Tunisian Dinar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δηνάριο Τυνησίας</translation>
     </message>
     <message>
         <source>Millime</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μιλίμ</translation>
     </message>
     <message>
         <source>Tongan Pa&apos;anga</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Παάνγκα Τόνγκα</translation>
     </message>
     <message>
         <source>Pa&apos;anga</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Παάνγκα</translation>
     </message>
     <message>
         <source>Seniti</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σενίτι</translation>
     </message>
     <message>
         <source>Turkish Lira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λίρα Τουρκίας</translation>
     </message>
     <message>
         <source>Lira</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λίρα</translation>
     </message>
     <message>
         <source>Kuruş</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κουρούς</translation>
     </message>
     <message>
         <source>Trinidad and Tobago Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Τρινιντάντ και Τομπάγκο</translation>
     </message>
     <message>
         <source>New Taiwan Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο δολάριο Ταϊβάν</translation>
     </message>
     <message>
         <source>Tanzanian Shilling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σελίνι Τανζανίας</translation>
     </message>
     <message>
         <source>Ukrainian Hryvnia</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γρίβνα Ουκρανίας</translation>
     </message>
     <message>
         <source>Hryvnia</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γρίβνα</translation>
     </message>
     <message>
         <source>Kopiyka</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Καπίικα</translation>
     </message>
     <message>
         <source>Ugandan Shilling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σελίνι Ουγκάντας</translation>
     </message>
     <message>
         <source>US Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο ΗΠΑ</translation>
     </message>
     <message>
         <source>Uruguayan Peso</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πέσο Ουρουγουάης</translation>
     </message>
     <message>
         <source>Uzbekistani Som</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σομ Ουζμπεκιστάν</translation>
     </message>
     <message>
         <source>Tiyin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τιγίν</translation>
     </message>
     <message>
         <source>Venezuelan Bolívar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μπολίβαρ Βενεζουέλας</translation>
     </message>
     <message>
         <source>Bolívar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μπολίβαρ</translation>
     </message>
     <message>
         <source>Vietnamese Dong</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ντονγκ Βιετνάμ</translation>
     </message>
     <message>
         <source>Dong</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ντονγκ</translation>
     </message>
     <message>
         <source>Hào</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χάο</translation>
     </message>
     <message>
         <source>Vanuatu Vatu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βάτου Βανουάτου</translation>
     </message>
     <message>
         <source>Vatu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βάτου</translation>
     </message>
     <message>
         <source>Samoan Tala</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τάλα Σαμόα</translation>
     </message>
     <message>
         <source>Tala</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τάλα</translation>
     </message>
     <message>
         <source>Sene</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σένε</translation>
     </message>
     <message>
         <source>Central African CFA Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φράγκο CFA Κεντρικής Αφρικής</translation>
     </message>
     <message>
         <source>East Caribbean Dollar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δολάριο Ανατολικής Καραϊβικής</translation>
     </message>
     <message>
         <source>Caribbean Guilder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γκίλντερ Καραϊβικής</translation>
     </message>
     <message>
         <source>Guilder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γκίλντερ</translation>
     </message>
     <message>
         <source>West African CFA Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φράγκο CFA Δυτικής Αφρικής</translation>
     </message>
     <message>
         <source>CFP Franc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φράγκο CFP</translation>
     </message>
     <message>
         <source>No Currency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χωρίς νόμισμα</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished">Καμία</translation>
+        <translation type="unfinished">Κανένα</translation>
     </message>
     <message>
         <source>Yemeni Rial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ριάλ Υεμένης</translation>
     </message>
     <message>
         <source>South African Rand</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ραντ Νότιας Αφρικής</translation>
     </message>
     <message>
         <source>Rand</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ραντ</translation>
     </message>
     <message>
         <source>Zambian Kwacha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κουάτσα Ζάμπιας</translation>
     </message>
     <message>
         <source>Ngwee</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νγκουί</translation>
     </message>
     <message>
         <source>Zimbabwe Gold</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρυσό Ζιμπάμπουε</translation>
     </message>
     <message>
         <source>Gold</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρυσό</translation>
     </message>
 </context>
 <context>
@@ -2336,66 +2336,69 @@
     </message>
     <message>
         <source>Database password</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κωδικός βάσης δεδομένων</translation>
     </message>
     <message>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κωδικός πρόσβασης</translation>
     </message>
     <message>
         <source>Connection failed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η σύνδεση απέτυχε</translation>
     </message>
     <message>
         <source>Could not connect to %1 : %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αδυναμία σύνδεσης στο %1 : %2</translation>
     </message>
     <message>
         <source>Success!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επιτυχία!</translation>
     </message>
     <message>
         <source>ERROR</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ΣΦΑΛΜΑ</translation>
     </message>
     <message>
         <source>Successfully read new default data
 
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τα νέα προεπιλεγμένα δεδομένα διαβάστηκαν επιτυχώς
+
+%1</translation>
     </message>
     <message>
         <source>Filename</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όνομα αρχείου</translation>
     </message>
     <message>
         <source>Host &amp; Port</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διακομιστής &amp; θύρα</translation>
     </message>
     <message>
         <source>Database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βάση δεδομένων</translation>
     </message>
     <message>
         <source>Schema</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σχήμα</translation>
     </message>
     <message>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όνομα χρήστη</translation>
     </message>
     <message>
         <source>Software Upgraded</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Το λογισμικό αναβαθμίστηκε</translation>
     </message>
     <message>
         <source>Before continuing, %1 %2 needs to upgrade your database schema (from v%3 to v%4).
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πριν συνεχίσετε, το %1 %2 πρέπει να αναβαθμίσει το σχήμα της βάσης δεδομένων σας (από v%3 σε v%4).
+</translation>
     </message>
     <message>
         <source>DON&apos;T PANIC: Your existing data will be retained!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ΜΗΝ ΠΑΝΙΚΟΒΑΛΛΕΣΤΕ: Τα υπάρχοντα δεδομένα σας θα διατηρηθούν!</translation>
     </message>
     <message>
         <source>The upgrade should retain all your existing data.
@@ -2403,20 +2406,25 @@
 Even so, it&apos;s a good idea to make a manual backup of your PostgreSQL database just in case.
 
 If you didn&apos;t yet do this, click Abort.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η αναβάθμιση θα πρέπει να διατηρήσει όλα τα υπάρχοντα δεδομένα σας.
+
+Παρ&apos; όλα αυτά, καλό είναι να κάνετε ένα χειροκίνητο αντίγραφο ασφαλείας της βάσης δεδομένων PostgreSQL για κάθε ενδεχόμενο.
+
+Αν δεν το έχετε κάνει ακόμα, πατήστε Ματαίωση.</translation>
     </message>
     <message>
         <source>Pre-upgrade database backup is in:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Το αντίγραφο ασφαλείας της βάσης δεδομένων πριν την αναβάθμιση βρίσκεται στο:
+%1</translation>
     </message>
     <message>
         <source>Unable to back up database before upgrading</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αδυναμία δημιουργίας αντιγράφου ασφαλείας της βάσης δεδομένων πριν την αναβάθμιση</translation>
     </message>
     <message>
         <source>Could not backup database prior to required upgrade.  See logs for more details.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δεν ήταν δυνατή η δημιουργία αντιγράφου ασφαλείας της βάσης δεδομένων πριν την απαιτούμενη αναβάθμιση.  Δείτε το αρχείο καταγραφής για περισσότερες λεπτομέρειες.</translation>
     </message>
     <message>
         <source>Unable to import some or all of new default data
@@ -2424,34 +2432,41 @@ If you didn&apos;t yet do this, click Abort.</source>
 %1
 
 Log file may contain more details.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αδυναμία εισαγωγής μέρους ή όλων των νέων προεπιλεγμένων δεδομένων
+
+%1
+
+Το αρχείο καταγραφής μπορεί να περιέχει περισσότερες λεπτομέρειες.</translation>
     </message>
     <message>
         <source>ERROR: Unsupported Database Schema</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ΣΦΑΛΜΑ: Μη υποστηριζόμενο σχήμα βάσης δεδομένων</translation>
     </message>
     <message>
         <source>Attempting to read a v%1 database, but %2 %3 only supports databases up to v%4.
 
 Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γίνεται προσπάθεια ανάγνωσης βάσης δεδομένων v%1, αλλά το %2 %3 υποστηρίζει βάσεις δεδομένων μόνο έως v%4.
+
+Πατήστε &apos;OK&apos; για να τερματιστεί το %2 ώστε να αναβαθμίσετε σε νεότερη έκδοση.
+</translation>
     </message>
     <message>
         <source>No Database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χωρίς βάση δεδομένων</translation>
     </message>
     <message>
         <source>SQLite</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">SQLite</translation>
     </message>
     <message>
         <source>Cannot create new DB schema in file &apos;%1&apos;.  File already exists!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δεν είναι δυνατή η δημιουργία νέου σχήματος βάσης δεδομένων στο αρχείο &apos;%1&apos;.  Το αρχείο υπάρχει ήδη!</translation>
     </message>
     <message>
         <source>PostgreSQL</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">PostgreSQL</translation>
     </message>
 </context>
 <context>
@@ -2465,7 +2480,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>Derived</name>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο</translation>
     </message>
     <message>
         <source>Folder</source>
@@ -2493,15 +2508,15 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Enter a unique name for the copy of %1.</source>
-        <translation type="unfinished">Εισάγετε ένα μοναδικό όνομα για την αντιγραφή του %1</translation>
+        <translation type="unfinished">Εισάγετε ένα μοναδικό όνομα για το αντίγραφο του %1.</translation>
     </message>
     <message>
         <source>An empty name will skip copying this %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Με κενό όνομα θα παραλειφθεί η αντιγραφή αυτού του %1.</translation>
     </message>
     <message>
         <source>Cancel All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ακύρωση όλων</translation>
     </message>
     <message>
         <source>Delete %1</source>
@@ -2521,78 +2536,70 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Bad Name</source>
-        <translation type="unfinished">Λάθος ονομασία</translation>
+        <translation type="unfinished">Μη έγκυρο όνομα</translation>
     </message>
     <message>
         <source>A folder name must have at least one non-whitespace character in it</source>
-        <translation type="unfinished">Το όνομα του φακέλου θα πρέπει να έχει τουλάχιστον ένα χαρακτήρα δίχως κενά</translation>
+        <translation type="unfinished">Το όνομα του φακέλου πρέπει να περιέχει τουλάχιστον έναν χαρακτήρα που δεν είναι κενό</translation>
     </message>
     <message>
         <source>A folder name must have at least one non-/ character in it</source>
-        <translation type="unfinished">Ονόματα φακέλων θα πρέπει να περιέχουν τουλάχιστον ένα μή -/ χαρακτήρα</translation>
-    </message>
-    <message>
-        <source>Edit «%1»</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit «%1» %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Το όνομα του φακέλου πρέπει να περιέχει τουλάχιστον έναν χαρακτήρα εκτός από /</translation>
     </message>
     <message>
         <source>Remove %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αφαίρεση %1</translation>
     </message>
     <message>
         <source>Delete %1 #%2 &quot;%3&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διαγραφή %1 #%2 &quot;%3&quot;;</translation>
     </message>
     <message>
         <source>%1 in use</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 σε χρήση</translation>
     </message>
     <message numerus="yes">
         <source>Cannot delete this %1, as it is used in %n recipe(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Δεν είναι δυνατή η διαγραφή αυτού του %1, καθώς χρησιμοποιείται σε %n συνταγή</numerusform>
+            <numerusform>Δεν είναι δυνατή η διαγραφή αυτού του %1, καθώς χρησιμοποιείται σε %n συνταγές</numerusform>
         </translation>
     </message>
     <message>
         <source>Invalid!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μη έγκυρο!</translation>
     </message>
     <message>
         <source>Merge %1 records</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συγχώνευση εγγραφών %1</translation>
     </message>
     <message>
         <source>%1 records differ</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Οι εγγραφές %1 διαφέρουν</translation>
     </message>
     <message numerus="yes">
         <source>WARNING: %1 records to be merged have %n difference(s).  Do you want to merge anyway?</source>
         <comment>0</comment>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Οι εγγραφές %1 προς συγχώνευση έχουν %n διαφορά.  Θέλετε να γίνει η συγχώνευση παρ&apos; όλα αυτά;</numerusform>
+            <numerusform>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Οι εγγραφές %1 προς συγχώνευση έχουν %n διαφορές.  Θέλετε να γίνει η συγχώνευση παρ&apos; όλα αυτά;</numerusform>
         </translation>
     </message>
     <message>
         <source>Attempt to merge %1 %2 records? (NOTE: &lt;b&gt;This action cannot be undone!&lt;/b&gt;  It is intended for use where the records are identical or as near as makes no difference.  Use on non-identical records risks data loss.)&lt;br&gt;&lt;br&gt;&lt;b&gt;Please make sure you have a backup of your database file before using this function!&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Να γίνει απόπειρα συγχώνευσης %1 εγγραφών %2; (ΣΗΜΕΙΩΣΗ: &lt;b&gt;Αυτή η ενέργεια δεν μπορεί να αναιρεθεί!&lt;/b&gt;  Προορίζεται για περιπτώσεις όπου οι εγγραφές είναι ίδιες ή σχεδόν ίδιες.  Η χρήση σε μη ίδιες εγγραφές ενέχει κίνδυνο απώλειας δεδομένων.)&lt;br&gt;&lt;br&gt;&lt;b&gt;Βεβαιωθείτε ότι έχετε αντίγραφο ασφαλείας του αρχείου της βάσης δεδομένων πριν χρησιμοποιήσετε αυτή τη λειτουργία!&lt;/b&gt;</translation>
     </message>
     <message numerus="yes">
         <source>%n field(s) differ between %1 #%2 and %1 #%3.  If you continue, %1 #%3 will be deleted and all uses of it will be replaced by %1 #%2.  This &lt;b&gt;cannot&lt;/b&gt; be undone.&lt;br&gt;&lt;br&gt;%4</source>
         <comment>0</comment>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n πεδίο διαφέρει μεταξύ %1 #%2 και %1 #%3.  Αν συνεχίσετε, το %1 #%3 θα διαγραφεί και όλες οι χρήσεις του θα αντικατασταθούν από το %1 #%2.  Αυτό &lt;b&gt;δεν&lt;/b&gt; μπορεί να αναιρεθεί.&lt;br&gt;&lt;br&gt;%4</numerusform>
+            <numerusform>%n πεδία διαφέρουν μεταξύ %1 #%2 και %1 #%3.  Αν συνεχίσετε, το %1 #%3 θα διαγραφεί και όλες οι χρήσεις του θα αντικατασταθούν από το %1 #%2.  Αυτό &lt;b&gt;δεν&lt;/b&gt; μπορεί να αναιρεθεί.&lt;br&gt;&lt;br&gt;%4</numerusform>
         </translation>
     </message>
     <message>
         <source>Owner ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID κατόχου</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -2600,59 +2607,59 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Is Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Είναι βάρος</translation>
     </message>
     <message>
         <source>Measure</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μέτρο</translation>
     </message>
     <message>
         <source>Quantity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ποσότητα</translation>
     </message>
     <message>
         <source>Unit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μονάδα</translation>
     </message>
     <message>
         <source>Ramp Time</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρόνος ανόδου</translation>
     </message>
     <message>
         <source>Start Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Θερμοκρασία έναρξης</translation>
     </message>
     <message>
         <source>Step Time</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρόνος βήματος</translation>
     </message>
     <message>
         <source>№ Steps</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">№ βημάτων</translation>
     </message>
     <message>
         <source>Steps</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βήματα</translation>
     </message>
     <message>
         <source>Ingredient ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID συστατικού</translation>
     </message>
     <message>
         <source>Amount Ordered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ποσότητα παραγγελίας</translation>
     </message>
     <message>
         <source>Amount Received</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ποσότητα που παραλήφθηκε</translation>
     </message>
     <message>
         <source>Amount Remaining</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Υπόλοιπη ποσότητα</translation>
     </message>
     <message>
         <source>Amount Used</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ποσότητα που χρησιμοποιήθηκε</translation>
     </message>
     <message>
         <source>Number</source>
@@ -2660,79 +2667,79 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Quantity Remaining</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Υπόλοιπη ποσότητα</translation>
     </message>
     <message>
         <source>Show only non-zero inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εμφάνιση μόνο μη μηδενικού αποθέματος</translation>
     </message>
     <message>
         <source>Stock Purchase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αγορά αποθέματος</translation>
     </message>
     <message>
         <source>Add to recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προσθήκη στη συνταγή</translation>
     </message>
     <message>
         <source>Set for recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ορισμός για τη συνταγή</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επεξεργασία</translation>
     </message>
     <message>
         <source>Show stock purchases</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εμφάνιση αγορών αποθέματος</translation>
     </message>
     <message>
         <source>Merge selected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συγχώνευση επιλεγμένων</translation>
     </message>
     <message>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μετονομασία</translation>
     </message>
     <message>
         <source>%1 name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όνομα %1</translation>
     </message>
     <message>
         <source>%1 name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όνομα %1:</translation>
     </message>
     <message>
         <source>Change %1 Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αλλαγή ονόματος %1</translation>
     </message>
     <message>
         <source>Snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Στιγμιότυπα</translation>
     </message>
     <message>
         <source>Show Snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εμφάνιση στιγμιότυπων</translation>
     </message>
     <message>
         <source>Hide Snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απόκρυψη στιγμιότυπων</translation>
     </message>
     <message>
         <source>Detach Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αποσύνδεση συνταγής</translation>
     </message>
     <message>
         <source>Snapshot Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Στιγμιότυπο συνταγής</translation>
     </message>
     <message>
         <source>Brew It!</source>
-        <translation type="unfinished">Ζυθοποίησε!</translation>
+        <translation type="unfinished">Ζυθοποίηση!</translation>
     </message>
     <message>
         <source>Brew again</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέα ζυθοποίηση</translation>
     </message>
     <message>
         <source>Change date</source>
@@ -2740,50 +2747,50 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Contained in Folder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Περιέχεται στον φάκελο</translation>
     </message>
     <message>
         <source>Contained in Folder ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID φακέλου που περιέχει</translation>
     </message>
     <message>
         <source>Invalid Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μη έγκυρο όνομα</translation>
     </message>
     <message>
         <source>Folder name cannot be blank (and cannot contain &apos;/&apos;)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Το όνομα του φακέλου δεν μπορεί να είναι κενό (ούτε να περιέχει &apos;/&apos;)</translation>
     </message>
     <message>
         <source>Nothing to Export</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τίποτα για εξαγωγή</translation>
     </message>
     <message>
         <source>Nothing is selected or none of the selected things can be exported</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δεν έχει επιλεγεί τίποτα ή κανένα από τα επιλεγμένα δεν μπορεί να εξαχθεί</translation>
     </message>
     <message>
         <source>Export (to dotBeer, BeerXML or BeerJSON)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εξαγωγή (σε dotBeer, BeerXML ή BeerJSON)</translation>
     </message>
     <message>
         <source>Import (from dotBeer, BeerXML or BeerJSON)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εισαγωγή (από dotBeer, BeerXML ή BeerJSON)</translation>
     </message>
     <message>
         <source>Contained in Folder Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διαδρομή φακέλου που περιέχει</translation>
     </message>
     <message>
         <source>Locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κλειδωμένο</translation>
     </message>
 </context>
 <context>
     <name>Derived::StockUseClass</name>
     <message>
         <source>Use of %1 in %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρήση του %1 στο %2</translation>
     </message>
 </context>
 <context>
@@ -2798,7 +2805,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Equipments</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εξοπλισμοί</translation>
     </message>
     <message>
         <source>Preboil</source>
@@ -2810,163 +2817,163 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Aging Vessel Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απώλειες δοχείου ωρίμανσης</translation>
     </message>
     <message>
         <source>Aging Vessel Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σημειώσεις δοχείου ωρίμανσης</translation>
     </message>
     <message>
         <source>Aging Vessel Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος δοχείου ωρίμανσης</translation>
     </message>
     <message>
         <source>Aging Vessel Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος δοχείου ωρίμανσης</translation>
     </message>
     <message>
         <source>Boiling Point</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σημείο βρασμού</translation>
     </message>
     <message>
         <source>Evaporation Rate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρυθμός εξάτμισης</translation>
     </message>
     <message>
         <source>HLT Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απώλειες HLT</translation>
     </message>
     <message>
         <source>HLT Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σημειώσεις HLT</translation>
     </message>
     <message>
         <source>HLT Specific Heat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ειδική θερμότητα HLT</translation>
     </message>
     <message>
         <source>HLT Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος HLT</translation>
     </message>
     <message>
         <source>HLT Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος HLT</translation>
     </message>
     <message>
         <source>HLT Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βάρος HLT</translation>
     </message>
     <message>
         <source>Hop Utilization</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αξιοποίηση λυκίσκου</translation>
     </message>
     <message>
         <source>Kettle Evaporation Per Hour</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εξάτμιση χύτρας ανά ώρα</translation>
     </message>
     <message>
         <source>Kettle Internal Diameter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εσωτερική διάμετρος χύτρας</translation>
     </message>
     <message>
         <source>Kettle Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σημειώσεις χύτρας</translation>
     </message>
     <message>
         <source>Kettle Opening Diameter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διάμετρος ανοίγματος χύτρας</translation>
     </message>
     <message>
         <source>Kettle Outflow Per Minute</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εκροή χύτρας ανά λεπτό</translation>
     </message>
     <message>
         <source>Kettle Specific Heat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ειδική θερμότητα χύτρας</translation>
     </message>
     <message>
         <source>Kettle Trub Chiller Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απώλειες χύτρας σε ίζημα/ψύκτη</translation>
     </message>
     <message>
         <source>Kettle Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος χύτρας</translation>
     </message>
     <message>
         <source>Kettle Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βάρος χύτρας</translation>
     </message>
     <message>
         <source>Lauter Tun Deadspace Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νεκρός όγκος σκεύους διήθησης</translation>
     </message>
     <message>
         <source>Lauter Tun Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σημειώσεις σκεύους διήθησης</translation>
     </message>
     <message>
         <source>Lauter Tun Specific Heat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ειδική θερμότητα σκεύους διήθησης</translation>
     </message>
     <message>
         <source>Lauter Tun Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος σκεύους διήθησης</translation>
     </message>
     <message>
         <source>Lauter Tun Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος σκεύους διήθησης</translation>
     </message>
     <message>
         <source>Lauter Tun Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βάρος σκεύους διήθησης</translation>
     </message>
     <message>
         <source>Mash Tun Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απώλειες σκεύους σακχαροποίησης</translation>
     </message>
     <message>
         <source>Mash Tun Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σημειώσεις σκεύους σακχαροποίησης</translation>
     </message>
     <message>
         <source>Mash Tun Specific Heat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ειδική θερμότητα σκεύους σακχαροποίησης</translation>
     </message>
     <message>
         <source>Mash Tun Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος σκεύους σακχαροποίησης</translation>
     </message>
     <message>
         <source>Mash Tun Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος σκεύους σακχαροποίησης</translation>
     </message>
     <message>
         <source>Mash Tun Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βάρος σκεύους σακχαροποίησης</translation>
     </message>
     <message>
         <source>Packaging Vessel Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απώλειες δοχείου συσκευασίας</translation>
     </message>
     <message>
         <source>Packaging Vessel Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σημειώσεις δοχείου συσκευασίας</translation>
     </message>
     <message>
         <source>Packaging Vessel Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος δοχείου συσκευασίας</translation>
     </message>
     <message>
         <source>Packaging Vessel Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος δοχείου συσκευασίας</translation>
     </message>
     <message>
         <source>Top Up Kettle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συμπλήρωση νερού στη χύτρα</translation>
     </message>
     <message>
         <source>Top Up Water</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νερό συμπλήρωσης</translation>
     </message>
     <message>
         <source>Boil Size</source>
@@ -2974,39 +2981,39 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Fermentor Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απώλειες κάδου ζύμωσης</translation>
     </message>
     <message>
         <source>Fermentor Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σημειώσεις κάδου ζύμωσης</translation>
     </message>
     <message>
         <source>Fermentor Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος κάδου ζύμωσης</translation>
     </message>
     <message>
         <source>Default Batch Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προεπιλεγμένος όγκος παρτίδας</translation>
     </message>
     <message>
         <source>Fermentor Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος κάδου ζύμωσης</translation>
     </message>
     <message>
         <source>Default Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προεπιλεγμένος όγκος πριν τον βρασμό</translation>
     </message>
     <message>
         <source>Kettle Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος χύτρας</translation>
     </message>
     <message>
         <source>Foundation Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νερό βάσης</translation>
     </message>
     <message>
         <source>Grain Absorption</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απορρόφηση σιτηρών</translation>
     </message>
     <message>
         <source>Batch Size</source>
@@ -3185,111 +3192,111 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>The following values are not set:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Οι παρακάτω τιμές δεν έχουν οριστεί:</translation>
     </message>
     <message>
         <source>hop utilization</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">αξιοποίηση λυκίσκου</translation>
     </message>
     <message>
         <source>Calculation Warnings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προειδοποιήσεις υπολογισμού</translation>
     </message>
     <message>
         <source>Numerical values on zero-sized &quot;optional&quot; vessels will be unset or zeroed when you save</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Οι αριθμητικές τιμές σε &quot;προαιρετικά&quot; σκεύη μηδενικού μεγέθους θα διαγραφούν ή θα μηδενιστούν κατά την αποθήκευση</translation>
     </message>
     <message>
         <source>The following values will be discarded:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Οι παρακάτω τιμές θα απορριφθούν:</translation>
     </message>
     <message>
         <source>Hot liquor tank losses</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απώλειες δεξαμενής ζεστού νερού</translation>
     </message>
     <message>
         <source>Hot liquor tank weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βάρος δεξαμενής ζεστού νερού</translation>
     </message>
     <message>
         <source>Hot liquor tank specific heat capacity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ειδική θερμοχωρητικότητα δεξαμενής ζεστού νερού</translation>
     </message>
     <message>
         <source>Lauter tun losses</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απώλειες σκεύους διήθησης</translation>
     </message>
     <message>
         <source>Lauter tun weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βάρος σκεύους διήθησης</translation>
     </message>
     <message>
         <source>Lauter tun specific heat capacity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ειδική θερμοχωρητικότητα σκεύους διήθησης</translation>
     </message>
     <message>
         <source>Packaging vessel losses</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απώλειες δοχείου συσκευασίας</translation>
     </message>
     <message>
         <source>Aging vessel losses</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απώλειες δοχείου ωρίμανσης</translation>
     </message>
     <message>
         <source>Data Discard Warnings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προειδοποιήσεις απόρριψης δεδομένων</translation>
     </message>
     <message>
         <source>This equipment profile may break %1&apos;s maths</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αυτό το προφίλ εξοπλισμού μπορεί να χαλάσει τους υπολογισμούς του %1</translation>
     </message>
     <message>
         <source>Foundation water (%1) plus mash tun loss (%2) leaves no room for the mash in a mash tun with total capacity %3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Το νερό βάσης (%1) μαζί με τις απώλειες του σκεύους σακχαροποίησης (%2) δεν αφήνουν χώρο για τον χυλό σε σκεύος σακχαροποίησης συνολικής χωρητικότητας %3.</translation>
     </message>
     <message>
         <source>default batch size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">προεπιλεγμένος όγκος παρτίδας</translation>
     </message>
     <message>
         <source>Foundation water (%1) leaves no room for the mash in the kettle (total capacity %2).  (As there is no separate mash tun, the mash happens in the kettle.)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Το νερό βάσης (%1) δεν αφήνει χώρο για τον χυλό στη χύτρα (συνολική χωρητικότητα %2).  (Καθώς δεν υπάρχει ξεχωριστό σκεύος σακχαροποίησης, η σακχαροποίηση γίνεται στη χύτρα.)</translation>
     </message>
     <message>
         <source>The default pre-boil volume (%1) is more than the kettle can hold (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ο προεπιλεγμένος όγκος πριν τον βρασμό (%1) είναι μεγαλύτερος από τη χωρητικότητα της χύτρας (%2).</translation>
     </message>
     <message>
         <source>The default batch size (%1) is more than the fermentor can hold (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ο προεπιλεγμένος όγκος παρτίδας (%1) είναι μεγαλύτερος από τη χωρητικότητα του κάδου ζύμωσης (%2).</translation>
     </message>
     <message>
         <source>Mash tun losses</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απώλειες σκεύους σακχαροποίησης</translation>
     </message>
     <message>
         <source>Mash tun weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βάρος σκεύους σακχαροποίησης</translation>
     </message>
     <message>
         <source>Mash tun specific heat capacity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ειδική θερμοχωρητικότητα σκεύους σακχαροποίησης</translation>
     </message>
     <message>
         <source>batch size %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">όγκος παρτίδας %1</translation>
     </message>
     <message>
         <source>pre-boil size %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">όγκος πριν τον βρασμό %1</translation>
     </message>
     <message>
         <source>Update recipes?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ενημέρωση συνταγών;</translation>
     </message>
     <message>
         <source>The following recipes use equipment &quot;%1&quot; and have the batch size and/or pre-boil size that it previously specified.  Would you like to update them to match the changes you just made?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Οι παρακάτω συνταγές χρησιμοποιούν τον εξοπλισμό &quot;%1&quot; και έχουν τον όγκο παρτίδας ή/και τον όγκο πριν τον βρασμό που όριζε προηγουμένως.  Θέλετε να τις ενημερώσετε σύμφωνα με τις αλλαγές που μόλις κάνατε;</translation>
     </message>
 </context>
 <context>
@@ -3304,11 +3311,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Dry Extract</source>
-        <translation type="unfinished">Ξηρή Βύνη</translation>
+        <translation type="unfinished">Ξηρή βύνη</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation type="unfinished">Υγρή Βύνη</translation>
+        <translation type="unfinished">Εκχύλισμα</translation>
     </message>
     <message>
         <source>Grain</source>
@@ -3320,55 +3327,55 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Fruit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φρούτα</translation>
     </message>
     <message>
         <source>Juice</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χυμός</translation>
     </message>
     <message>
         <source>Honey</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μέλι</translation>
     </message>
     <message>
         <source>Other Adjunct</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Άλλο πρόσθετο</translation>
     </message>
     <message>
         <source>Base</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βάσης</translation>
     </message>
     <message>
         <source>Caramel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Καραμέλας</translation>
     </message>
     <message>
         <source>Flaked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νιφάδες</translation>
     </message>
     <message>
         <source>Roasted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Καβουρδισμένη</translation>
     </message>
     <message>
         <source>Specialty</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ειδική</translation>
     </message>
     <message>
         <source>Smoked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Καπνιστή</translation>
     </message>
     <message>
         <source>Adjunct</source>
-        <translation type="unfinished">Πρόσθετα</translation>
+        <translation type="unfinished">Πρόσθετο</translation>
     </message>
     <message>
         <source>Fermentable</source>
-        <translation type="unfinished">Ζυμώσιμα</translation>
+        <translation type="unfinished">Ζυμώσιμο</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος</translation>
     </message>
     <message>
         <source>Color</source>
@@ -3380,83 +3387,83 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απόδοση εκχυλίσματος σε ξηρή βάση, λεπτή άλεση (DBFG)</translation>
     </message>
     <message>
         <source>Alpha Amylase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Άλφα-αμυλάση</translation>
     </message>
     <message>
         <source>Beta Glucan</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βήτα-γλυκάνη</translation>
     </message>
     <message>
         <source>Coarse Fine Diff</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διαφορά χοντρής/λεπτής άλεσης</translation>
     </message>
     <message>
         <source>Coarse Grind Yield</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απόδοση χοντρής άλεσης</translation>
     </message>
     <message>
         <source>Diastatic Power</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διαστατική ισχύς</translation>
     </message>
     <message>
         <source>DI pH</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">pH σε απιονισμένο νερό</translation>
     </message>
     <message>
         <source>DMS precursors</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πρόδρομες ενώσεις DMS</translation>
     </message>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ελεύθερο αμινικό άζωτο (FAN)</translation>
     </message>
     <message>
         <source>Fermentability</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ζυμωσιμότητα</translation>
     </message>
     <message>
         <source>Friability</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ευθρυπτότητα</translation>
     </message>
     <message>
         <source>Grain Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ομάδα σιτηρών</translation>
     </message>
     <message>
         <source>Hardness Proportion Glassy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αναλογία σκληρότητας υαλώδης</translation>
     </message>
     <message>
         <source>Hardness Proportion Half</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αναλογία σκληρότητας ημι-υαλώδης</translation>
     </message>
     <message>
         <source>Hardness Proportion Mealy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αναλογία σκληρότητας αλευρώδης</translation>
     </message>
     <message>
         <source>Kernel Size Proportion Plump</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αναλογία μεγέθους κόκκου παχύς</translation>
     </message>
     <message>
         <source>Kernel Size Proportion Thin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αναλογία μεγέθους κόκκου λεπτός</translation>
     </message>
     <message>
         <source>Kolbach Index</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δείκτης Kolbach</translation>
     </message>
     <message>
         <source>Max In Batch</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μέγιστο ανά παρτίδα</translation>
     </message>
     <message>
         <source>Moisture</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Υγρασία</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -3468,23 +3475,23 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Potential Yield</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δυνητική απόδοση</translation>
     </message>
     <message>
         <source>Producer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Παραγωγός</translation>
     </message>
     <message>
         <source>Product ID</source>
-        <translation type="unfinished">Κωδικός προιόντος</translation>
+        <translation type="unfinished">Κωδικός προϊόντος</translation>
     </message>
     <message>
         <source>Protein</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πρωτεΐνη</translation>
     </message>
     <message>
         <source>Recommend Mash</source>
-        <translation type="unfinished">Προτείνεται κατά την σακχαροποίηση</translation>
+        <translation type="unfinished">Προτείνεται σακχαροποίηση</translation>
     </message>
     <message>
         <source>Supplier</source>
@@ -3492,27 +3499,27 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Viscosity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ιξώδες</translation>
     </message>
     <message>
         <source>Fermentable Purchases</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αγορές ζυμώσιμων</translation>
     </message>
     <message>
         <source>Yield (DBFG) %</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απόδοση (DBFG) %</translation>
     </message>
     <message>
         <source>IBU Gal Per Lb</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">IBU gal ανά lb</translation>
     </message>
     <message>
         <source>Lactic Acid content (% weight)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Περιεκτικότητα σε γαλακτικό οξύ (% κατά βάρος)</translation>
     </message>
     <message>
         <source>Fermentable by yeast (%)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ζυμώσιμο από τη μαγιά (%)</translation>
     </message>
 </context>
 <context>
@@ -3655,15 +3662,15 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>Fermentation</name>
     <message>
         <source>Fermentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ζύμωση</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Περιγραφή</translation>
     </message>
     <message>
         <source>Fermentation Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προφίλ ζύμωσης</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -3671,78 +3678,78 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Primary</source>
-        <translation type="unfinished">Κατά την πρώτη ζύμωση</translation>
+        <translation type="unfinished">Πρωτογενής</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation type="unfinished">κατά την δεύτερη ζύμωση</translation>
+        <translation type="unfinished">Δευτερογενής</translation>
     </message>
     <message>
         <source>Tertiary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τριτογενής</translation>
     </message>
     <message>
         <source>Krausen Handling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χειρισμός krausen</translation>
     </message>
     <message>
         <source>Mixed In</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αναμεμειγμένο</translation>
     </message>
     <message>
         <source>Minor Deposits on Fermenter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λίγες επικαθίσεις στον κάδο ζύμωσης</translation>
     </message>
     <message>
         <source>Medium Deposits on Fermenter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μέτριες επικαθίσεις στον κάδο ζύμωσης</translation>
     </message>
     <message>
         <source>Heavy Deposits on Fermenter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Έντονες επικαθίσεις στον κάδο ζύμωσης</translation>
     </message>
     <message>
         <source>Very Heavy Deposits on Fermenter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πολύ έντονες επικαθίσεις στον κάδο ζύμωσης</translation>
     </message>
     <message>
         <source>Blown Off, Slow Fermentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απομακρύνθηκε, αργή ζύμωση</translation>
     </message>
     <message>
         <source>Blown Off, Normal Fermentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απομακρύνθηκε, κανονική ζύμωση</translation>
     </message>
     <message>
         <source>Blown Off, Vigorous Fermentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απομακρύνθηκε, έντονη ζύμωση</translation>
     </message>
 </context>
 <context>
     <name>FermentationStep</name>
     <message>
         <source>Fermentation Step</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βήμα ζύμωσης</translation>
     </message>
     <message>
         <source>Step time (days)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρόνος βήματος (ημέρες)</translation>
     </message>
     <message>
         <source>Free Rise</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ελεύθερη άνοδος</translation>
     </message>
     <message>
         <source>Vessel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δοχείο</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Όχι</translation>
+        <translation type="obsolete">Όχι</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Ναι</translation>
+        <translation type="obsolete">Ναι</translation>
     </message>
 </context>
 <context>
@@ -3779,70 +3786,70 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διαδρομή</translation>
     </message>
     <message>
         <source>Full Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πλήρης διαδρομή</translation>
     </message>
 </context>
 <context>
     <name>HelpDialog</name>
     <message>
         <source>Online Help</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διαδικτυακή βοήθεια</translation>
     </message>
     <message>
         <source>&lt;em&gt;If it&apos;s Brewken, we can fix it...&lt;/em&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;em&gt;Αν είναι Brewken, μπορούμε να το διορθώσουμε...&lt;/em&gt;</translation>
     </message>
     <message>
         <source>Your Data</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τα δεδομένα σας</translation>
     </message>
     <message>
         <source>Recipes, ingredients and other important data are stored in one or more files in the following folder (which is configurable via the &apos;Tools &gt; Options&apos; menu):</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Οι συνταγές, τα συστατικά και άλλα σημαντικά δεδομένα αποθηκεύονται σε ένα ή περισσότερα αρχεία στον παρακάτω φάκελο (που ρυθμίζεται από το μενού &apos;Εργαλεία &gt; Επιλογές&apos;):</translation>
     </message>
     <message>
         <source>It is a good idea to take regular backups of this folder.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Καλό είναι να κρατάτε τακτικά αντίγραφα ασφαλείας αυτού του φακέλου.</translation>
     </message>
     <message>
         <source>Settings and Log files</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρυθμίσεις και αρχεία καταγραφής</translation>
     </message>
     <message>
         <source>The contents of the following folder(s) can be helpful for diagnosing problems:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τα περιεχόμενα των παρακάτω φακέλων μπορεί να βοηθήσουν στη διάγνωση προβλημάτων:</translation>
     </message>
     <message>
         <source>Configuration:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρυθμίσεις:</translation>
     </message>
     <message>
         <source>Logs:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αρχεία καταγραφής:</translation>
     </message>
     <message>
         <source>The location of the log files can be configured via the &apos;Tools &gt; Options&apos; menu.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η θέση των αρχείων καταγραφής ρυθμίζεται από το μενού &apos;Εργαλεία &gt; Επιλογές&apos;.</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βοήθεια</translation>
     </message>
     <message>
         <source>&lt;p&gt;The %1 wiki is at &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;p&gt;Το wiki του %1 βρίσκεται στο &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>If you find a bug, or have an idea for an enhancement, please raise an issue at &lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αν βρείτε κάποιο σφάλμα ή έχετε ιδέα για βελτίωση, ανοίξτε ένα θέμα στο &lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;.</translation>
     </message>
     <message>
         <source>version %1 for %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">έκδοση %1 για %2</translation>
     </message>
 </context>
 <context>
@@ -3889,27 +3896,27 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Flavor</source>
-        <translation type="unfinished">Άρωματικές Ύλες</translation>
+        <translation type="unfinished">Γεύση</translation>
     </message>
     <message>
         <source>Aroma &amp; Bittering</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Άρωμα &amp; πικράδα</translation>
     </message>
     <message>
         <source>Bittering &amp; Flavor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πικράδα &amp; γεύση</translation>
     </message>
     <message>
         <source>Aroma &amp; Flavor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Άρωμα &amp; γεύση</translation>
     </message>
     <message>
         <source>Aroma, Bittering &amp; Flavor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Άρωμα, πικράδα &amp; γεύση</translation>
     </message>
     <message>
         <source>Extract</source>
-        <translation type="unfinished">Υγρή Βύνη</translation>
+        <translation type="unfinished">Εκχύλισμα</translation>
     </message>
     <message>
         <source>Hop</source>
@@ -3917,15 +3924,15 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>WetLeaf</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νωπά φύλλα</translation>
     </message>
     <message>
         <source>Powder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σκόνη</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος</translation>
     </message>
     <message>
         <source>Origin</source>
@@ -3933,7 +3940,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Hops</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λυκίσκοι</translation>
     </message>
     <message>
         <source>Alpha</source>
@@ -3949,7 +3956,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>β-Pinene</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">β-Pinene</translation>
     </message>
     <message>
         <source>Caryophyllene</source>
@@ -3961,11 +3968,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Farnesene</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Farnesene</translation>
     </message>
     <message>
         <source>Geraniol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Geraniol</translation>
     </message>
     <message>
         <source>Humulene</source>
@@ -3973,11 +3980,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Limonene</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Limonene</translation>
     </message>
     <message>
         <source>Linalool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Linalool</translation>
     </message>
     <message>
         <source>Myrcene</source>
@@ -3985,7 +3992,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Nerol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nerol</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -3993,67 +4000,67 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Pinene</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pinene</translation>
     </message>
     <message>
         <source>Polyphenols</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πολυφαινόλες</translation>
     </message>
     <message>
         <source>Producer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Παραγωγός</translation>
     </message>
     <message>
         <source>Product ID</source>
-        <translation type="unfinished">Κωδικός προιόντος</translation>
+        <translation type="unfinished">Κωδικός προϊόντος</translation>
     </message>
     <message>
         <source>Substitutes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Υποκατάστατα</translation>
     </message>
     <message>
         <source>Total Oil</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συνολικά έλαια</translation>
     </message>
     <message>
         <source>Xanthohumol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Xanthohumol</translation>
     </message>
     <message>
         <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Έτος</translation>
     </message>
     <message>
         <source>Hop Purchases</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αγορές λυκίσκου</translation>
     </message>
     <message>
         <source>% Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">% Alpha</translation>
     </message>
     <message>
         <source>% Beta</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">% Beta</translation>
     </message>
     <message>
         <source>Max % Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μέγ. % Alpha</translation>
     </message>
     <message>
         <source>Min % Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ελάχ. % Alpha</translation>
     </message>
     <message>
         <source>Max % Beta</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μέγ. % Beta</translation>
     </message>
     <message>
         <source>Min % Beta</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ελάχ. % Beta</translation>
     </message>
     <message>
         <source>Six Month Alpha Loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απώλεια alpha σε έξι μήνες</translation>
     </message>
 </context>
 <context>
@@ -4243,11 +4250,11 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>HydrometerTool</name>
     <message>
         <source>Hydrometer Tool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εργαλείο πυκνόμετρου</translation>
     </message>
     <message>
         <source>SG Reading</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μέτρηση SG</translation>
     </message>
     <message>
         <source>Temperature</source>
@@ -4255,7 +4262,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Adjust SG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διόρθωση SG</translation>
     </message>
     <message>
         <source>Convert</source>
@@ -4263,15 +4270,15 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Measured gravity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μετρημένη πυκνότητα</translation>
     </message>
     <message>
         <source>Corrected gravity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διορθωμένη πυκνότητα</translation>
     </message>
     <message>
         <source>Hydrometer Calibration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βαθμονόμηση πυκνόμετρου</translation>
     </message>
 </context>
 <context>
@@ -4316,43 +4323,45 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>ImportRecordCount</name>
     <message>
         <source>Couldn&apos;t find any recognisable data in the file!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δεν βρέθηκαν αναγνωρίσιμα δεδομένα στο αρχείο!</translation>
     </message>
     <message>
         <source>🗸 Read </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">🗸 Διαβάστηκαν</translation>
     </message>
     <message>
         <source> record</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> εγγραφή</translation>
     </message>
     <message>
         <source> records</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> εγγραφές</translation>
     </message>
     <message>
         <source>
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">
+
+</translation>
     </message>
     <message>
         <source>↷ Skipped </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">↷ Παραλείφθηκαν </translation>
     </message>
 </context>
 <context>
     <name>InfoButton</name>
     <message>
         <source>i</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">i</translation>
     </message>
 </context>
 <context>
     <name>Ingredient</name>
     <message>
         <source>Ingredient</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συστατικό</translation>
     </message>
     <message>
         <source>Mass</source>
@@ -4364,53 +4373,53 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Total Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συνολικό απόθεμα</translation>
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Μονάδα μέτρησης</translation>
+        <translation type="unfinished">Τύπος ποσότητας</translation>
     </message>
 </context>
 <context>
     <name>IngredientName</name>
     <message>
         <source>Purchase of %1 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αγορά %1 </translation>
     </message>
 </context>
 <context>
     <name>Instruction</name>
     <message>
         <source>Instruction</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Οδηγία</translation>
     </message>
     <message>
         <source>Completed </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ολοκληρώθηκε </translation>
     </message>
     <message>
         <source>Directions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κατευθύνσεις</translation>
     </message>
     <message>
         <source>Has Timer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Έχει χρονόμετρο</translation>
     </message>
     <message>
         <source>Interval</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διάστημα</translation>
     </message>
     <message>
         <source>Timer Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τιμή χρονομέτρου</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Όχι</translation>
+        <translation type="obsolete">Όχι</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Ναι</translation>
+        <translation type="obsolete">Ναι</translation>
     </message>
 </context>
 <context>
@@ -4453,50 +4462,50 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     <name>Item</name>
     <message>
         <source>Add %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προσθήκη %1</translation>
     </message>
     <message>
         <source>Remove selected %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αφαίρεση επιλεγμένου %1</translation>
     </message>
     <message>
         <source>Move selected %1 up</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μετακίνηση επιλεγμένου %1 πάνω</translation>
     </message>
     <message>
         <source>Move selected %1 down</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μετακίνηση επιλεγμένου %1 κάτω</translation>
     </message>
     <message>
         <source>Edit selected %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επεξεργασία επιλεγμένου %1</translation>
     </message>
 </context>
 <context>
     <name>LockAndShareBar</name>
     <message>
         <source>Make a copy for this recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δημιουργία αντιγράφου για αυτή τη συνταγή</translation>
     </message>
     <message>
         <source>Make a copy that this recipe will use instead, so you can change it without affecting anything else.  Any changes you have already made in this editor are kept, and will be saved to the copy when you click Save.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δημιουργήστε ένα αντίγραφο που θα χρησιμοποιεί αυτή η συνταγή, ώστε να μπορείτε να το αλλάξετε χωρίς να επηρεάσετε τίποτα άλλο.  Όσες αλλαγές έχετε ήδη κάνει σε αυτόν τον επεξεργαστή διατηρούνται και θα αποθηκευτούν στο αντίγραφο όταν πατήσετε Αποθήκευση.</translation>
     </message>
     <message>
         <source>Unlock…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ξεκλείδωμα…</translation>
     </message>
     <message>
         <source>Allow this to be changed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Να επιτρέπεται η αλλαγή</translation>
     </message>
     <message>
         <source>Lock</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κλείδωμα</translation>
     </message>
     <message>
         <source>Prevent this from being changed.  You will still be able to use it in recipes, and to make copies of it.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αποτροπή αλλαγών.  Θα μπορείτε ακόμα να το χρησιμοποιείτε σε συνταγές και να δημιουργείτε αντίγραφά του.</translation>
     </message>
 </context>
 <context>
@@ -4663,51 +4672,47 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>An error was returned while creating %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επιστράφηκε σφάλμα κατά τη δημιουργία του %1</translation>
     </message>
     <message>
         <source>Change Recipe Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αλλαγή ονόματος συνταγής</translation>
     </message>
     <message>
         <source>Change Recipe Style</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αλλαγή στυλ συνταγής</translation>
     </message>
     <message>
         <source>Change Batch Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αλλαγή όγκου παρτίδας</translation>
     </message>
     <message>
         <source>Change Recipe Efficiency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αλλαγή απόδοσης συνταγής</translation>
     </message>
     <message>
         <source>Undo %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αναίρεση %1</translation>
     </message>
     <message>
         <source>Redo %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επανάληψη %1</translation>
     </message>
     <message>
         <source>Error creating recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σφάλμα κατά τη δημιουργία συνταγής</translation>
     </message>
     <message>
         <source>Nothing to export</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τίποτα για εξαγωγή</translation>
     </message>
     <message>
         <source>None of the selected items is exportable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add %1 to recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κανένα από τα επιλεγμένα στοιχεία δεν μπορεί να εξαχθεί</translation>
     </message>
     <message>
         <source>Error Loading Data</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σφάλμα φόρτωσης δεδομένων</translation>
     </message>
     <message>
         <source>The program may not work if you ignore this error.
@@ -4715,125 +4720,129 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
 See logs for more details.
 
 If you need help, please open an issue at %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Το πρόγραμμα μπορεί να μη λειτουργεί αν αγνοήσετε αυτό το σφάλμα.
+
+Δείτε το αρχείο καταγραφής για περισσότερες λεπτομέρειες.
+
+Αν χρειάζεστε βοήθεια, ανοίξτε ένα θέμα στο %1</translation>
     </message>
     <message>
         <source>Drop fermentable(s) on a recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αφήστε ζυμώσιμα σε μια συνταγή</translation>
     </message>
     <message>
         <source>Drop hop(s) on a recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αφήστε λυκίσκους σε μια συνταγή</translation>
     </message>
     <message>
         <source>Drop misc(s) on a recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αφήστε διάφορα σε μια συνταγή</translation>
     </message>
     <message>
         <source>Drop yeast(s) on a recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αφήστε μαγιές σε μια συνταγή</translation>
     </message>
     <message>
         <source>Operation failed.  See log file for more details.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η λειτουργία απέτυχε.  Δείτε το αρχείο καταγραφής για περισσότερες λεπτομέρειες.</translation>
     </message>
     <message>
         <source>About %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σχετικά με %1</translation>
     </message>
     <message>
         <source>Please restart %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επανεκκινήστε το %1.</translation>
     </message>
     <message>
         <source>Automatically-created Boil for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αυτόματα δημιουργημένος βρασμός για %1</translation>
     </message>
     <message>
         <source>Automatically-created Fermentation for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αυτόματα δημιουργημένη ζύμωση για %1</translation>
     </message>
     <message>
         <source>Wrote recipe to file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η συνταγή γράφτηκε στο αρχείο</translation>
     </message>
     <message>
         <source>Error writing recipe to file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σφάλμα κατά την εγγραφή της συνταγής στο αρχείο</translation>
     </message>
     <message>
         <source>Change Brew Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αλλαγή ημερομηνίας ζυθοποίησης</translation>
     </message>
     <message>
         <source>Brew Log #%1 for brew on %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ημερολόγιο ζυθοποίησης #%1 για την παρτίδα της %2</translation>
     </message>
     <message>
         <source>Brew Log for brew on %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ημερολόγιο ζυθοποίησης για την παρτίδα της %1</translation>
     </message>
     <message>
         <source>Primary fermentation for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πρωτογενής ζύμωση για %1</translation>
     </message>
     <message>
         <source>Locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κλειδωμένο</translation>
     </message>
     <message>
         <source>Used by a locked recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρησιμοποιείται από κλειδωμένη συνταγή</translation>
     </message>
     <message numerus="yes">
         <source>Shared with %n other recipe(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Κοινόχρηστο με %n άλλη συνταγή</numerusform>
+            <numerusform>Κοινόχρηστο με %n άλλες συνταγές</numerusform>
         </translation>
     </message>
     <message>
         <source> · </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> · </translation>
     </message>
     <message>
         <source>Used only by this recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρησιμοποιείται μόνο από αυτή τη συνταγή</translation>
     </message>
     <message>
         <source>⚠ Problems found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">⚠ Βρέθηκαν προβλήματα</translation>
     </message>
     <message>
         <source>Change Use Mash Profile in FG Calculation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αλλαγή χρήσης προφίλ σακχαροποίησης στον υπολογισμό FG</translation>
     </message>
     <message>
         <source>%1 (%2): recipe uses %3 but stock is measured by %4 -- %5 not taken from stock</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (%2): η συνταγή χρησιμοποιεί %3 αλλά το απόθεμα μετριέται σε %4 -- %5 δεν αφαιρέθηκε από το απόθεμα</translation>
     </message>
     <message>
         <source>Inventory not fully updated</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Το απόθεμα δεν ενημερώθηκε πλήρως</translation>
     </message>
     <message>
         <source>The following ingredient(s) are measured differently in the recipe and in your inventory, so the amount(s) used could not (all) be deducted from inventory.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τα παρακάτω συστατικά μετριούνται διαφορετικά στη συνταγή και στο απόθεμά σας, οπότε οι ποσότητες που χρησιμοποιήθηκαν δεν ήταν δυνατό να αφαιρεθούν (όλες) από το απόθεμα.</translation>
     </message>
 </context>
 <context>
     <name>Mash</name>
     <message>
         <source>Mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σακχαροποίηση</translation>
     </message>
     <message>
         <source>Total Time</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συνολικός χρόνος</translation>
     </message>
     <message>
         <source>Total time (mins)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συνολικός χρόνος (λεπτά)</translation>
     </message>
     <message>
         <source>Mashes</source>
@@ -4841,19 +4850,19 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>Mash Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προφίλ σακχαροποίησης</translation>
     </message>
     <message>
         <source>Adjust For Equipment</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προσαρμογή στον εξοπλισμό</translation>
     </message>
     <message>
         <source>Mash Tun Specific Heat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ειδική θερμότητα σκεύους σακχαροποίησης</translation>
     </message>
     <message>
         <source>Mash Tun Weight</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βάρος σκεύους σακχαροποίησης</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -4861,226 +4870,226 @@ If you need help, please open an issue at %1</source>
     </message>
     <message>
         <source>pH</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">pH</translation>
     </message>
     <message>
         <source>Sparge Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Θερμοκρασία ψεκασμού</translation>
     </message>
     <message>
         <source>Tun Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Θερμοκρασία σκεύους</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Όχι</translation>
+        <translation type="obsolete">Όχι</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Ναι</translation>
+        <translation type="obsolete">Ναι</translation>
     </message>
     <message>
         <source>Initial Grain Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αρχική θερμοκρασία σιτηρών</translation>
     </message>
     <message>
         <source>Mash Water</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νερό σακχαροποίησης</translation>
     </message>
     <message>
         <source>Automatically Adjust</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αυτόματη προσαρμογή</translation>
     </message>
     <message>
         <source>%1 (copy for %2)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (αντίγραφο για %2)</translation>
     </message>
     <message>
         <source>, so step validation highlighting is enabled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">, οπότε η επισήμανση επικύρωσης βημάτων είναι ενεργή</translation>
     </message>
 </context>
 <context>
     <name>MashAutoAdjuster</name>
     <message>
         <source>%1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1: %2</translation>
     </message>
     <message>
         <source>Step %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βήμα %1</translation>
     </message>
     <message>
         <source>Batch Sparge %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ψεκασμός παρτίδας %1</translation>
     </message>
     <message>
         <source>Fly Sparge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συνεχής ψεκασμός</translation>
     </message>
     <message>
         <source>There are no mash steps.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δεν υπάρχουν βήματα σακχαροποίησης.</translation>
     </message>
     <message>
         <source>There are no grains in the mash.  You need some mash-stage fermentable additions before the mash can be calculated.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δεν υπάρχουν σιτηρά στη σακχαροποίηση.  Χρειάζεστε προσθήκες ζυμώσιμων στο στάδιο σακχαροποίησης πριν γίνει ο υπολογισμός.</translation>
     </message>
     <message>
         <source>The initial grain temperature is %1.  Please set it to the temperature of the grain before mashing, which is normally room temperature.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η αρχική θερμοκρασία σιτηρών είναι %1.  Ορίστε τη θερμοκρασία των σιτηρών πριν τη σακχαροποίηση, που συνήθως είναι η θερμοκρασία δωματίου.</translation>
     </message>
     <message>
         <source>The initial mash tun temperature is %1, which needs to be between freezing and boiling point (%2).  (If it is not set, we assume the tun is at the same temperature as the grain.)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η αρχική θερμοκρασία του σκεύους σακχαροποίησης είναι %1, ενώ πρέπει να είναι μεταξύ σημείου πήξης και σημείου βρασμού (%2).  (Αν δεν έχει οριστεί, θεωρούμε ότι το σκεύος έχει την ίδια θερμοκρασία με τα σιτηρά.)</translation>
     </message>
     <message>
         <source>The step temperature was %1, which doesn&apos;t make sense, so it has been set to %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η θερμοκρασία του βήματος ήταν %1, κάτι που δεν έχει νόημα, οπότε ορίστηκε σε %2.</translation>
     </message>
     <message>
         <source>The step temperature is %1, which needs to be between freezing and boiling point (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η θερμοκρασία του βήματος είναι %1, ενώ πρέπει να είναι μεταξύ σημείου πήξης και σημείου βρασμού (%2).</translation>
     </message>
     <message>
         <source>The first step must be an infusion (ie adding the strike water).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Το πρώτο βήμα πρέπει να είναι έγχυση (δηλ. προσθήκη του νερού έναρξης).</translation>
     </message>
     <message>
         <source>Sparge steps must come after all the other steps.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τα βήματα ψεκασμού πρέπει να έρχονται μετά από όλα τα άλλα βήματα.</translation>
     </message>
     <message>
         <source>The mash thickness must be positive.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η πυκνότητα του χυλού πρέπει να είναι θετική.</translation>
     </message>
     <message>
         <source>The infusion temperature is pinned, but has not been set.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η θερμοκρασία έγχυσης είναι καρφιτσωμένη, αλλά δεν έχει οριστεί.</translation>
     </message>
     <message>
         <source>With no sparge, this step has to make up the total water needed (%1), but the other steps already add %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χωρίς ψεκασμό, αυτό το βήμα πρέπει να συμπληρώσει το συνολικό νερό που χρειάζεται (%1), αλλά τα άλλα βήματα προσθέτουν ήδη %2.</translation>
     </message>
     <message>
         <source>Cannot reach %1 with water at %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δεν είναι δυνατό να επιτευχθεί %1 με νερό στους %2.</translation>
     </message>
     <message>
         <source>The infusion amount must be more than zero.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η ποσότητα έγχυσης πρέπει να είναι μεγαλύτερη από μηδέν.</translation>
     </message>
     <message>
         <source>This infusion does not change the temperature of the mash, so its amount cannot be calculated.  It needs to be set and pinned.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αυτή η έγχυση δεν αλλάζει τη θερμοκρασία του χυλού, οπότε η ποσότητά της δεν μπορεί να υπολογιστεί.  Πρέπει να οριστεί και να καρφιτσωθεί.</translation>
     </message>
     <message>
         <source>Try a thinner mash (ie more water).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δοκιμάστε πιο αραιό χυλό (δηλ. περισσότερο νερό).</translation>
     </message>
     <message>
         <source>Try more water or a lower step temperature.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δοκιμάστε περισσότερο νερό ή χαμηλότερη θερμοκρασία βήματος.</translation>
     </message>
     <message>
         <source>The water would need to be at %1, which is above boiling point (%2).  %3</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Το νερό θα έπρεπε να είναι στους %1, πάνω από το σημείο βρασμού (%2).  %3</translation>
     </message>
     <message>
         <source>The mash would already be hotter than %1 at this point.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ο χυλός θα ήταν ήδη θερμότερος από %1 σε αυτό το σημείο.</translation>
     </message>
     <message>
         <source>This is more water than is needed to reach %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αυτό είναι περισσότερο νερό από όσο χρειάζεται για να επιτευχθεί %1.</translation>
     </message>
     <message>
         <source>Try a smaller pinned amount, or unpinning it.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δοκιμάστε μικρότερη καρφιτσωμένη ποσότητα ή ξεκαρφιτσώστε την.</translation>
     </message>
     <message>
         <source>With no sparge, this step has to add the rest of the water needed.  Try having a sparge, or more water in the earlier steps.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χωρίς ψεκασμό, αυτό το βήμα πρέπει να προσθέσει το υπόλοιπο νερό που χρειάζεται.  Δοκιμάστε να κάνετε ψεκασμό ή να βάλετε περισσότερο νερό στα προηγούμενα βήματα.</translation>
     </message>
     <message>
         <source>Try a thicker mash (ie less water).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δοκιμάστε πιο πηχτό χυλό (δηλ. λιγότερο νερό).</translation>
     </message>
     <message>
         <source>To reach %1 with %2 of water, the water would need to be at %3, which is colder than the coldest water available (taken to be at the initial grain temperature, %4).  %5  %6</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Για να επιτευχθεί %1 με %2 νερού, το νερό θα έπρεπε να είναι στους %3, πιο κρύο από το πιο κρύο διαθέσιμο νερό (που θεωρείται ότι είναι στην αρχική θερμοκρασία σιτηρών, %4).  %5  %6</translation>
     </message>
     <message>
         <source>%1 of water at %2 will give a mash temperature of %3 rather than %4.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 νερού στους %2 θα δώσουν θερμοκρασία χυλού %3 αντί για %4.</translation>
     </message>
     <message>
         <source>The mash is already at boiling point.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ο χυλός είναι ήδη στο σημείο βρασμού.</translation>
     </message>
     <message>
         <source>The decoction amount (%1) must be between zero and the volume of the mash (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η ποσότητα decoction (%1) πρέπει να είναι μεταξύ μηδενός και του όγκου του χυλού (%2).</translation>
     </message>
     <message>
         <source>A decoction of %1 will give a mash temperature of %2 rather than %3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ένα decoction %1 θα δώσει θερμοκρασία χυλού %2 αντί για %3.</translation>
     </message>
     <message>
         <source>A decoction cannot lower the temperature of the mash.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ένα decoction δεν μπορεί να μειώσει τη θερμοκρασία του χυλού.</translation>
     </message>
     <message>
         <source>Cannot reach %1 by decoction, even by boiling the whole mash.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δεν είναι δυνατό να επιτευχθεί %1 με decoction, ακόμα και αν βράσει όλος ο χυλός.</translation>
     </message>
     <message>
         <source>At its fullest, the mash will be about %1, which is more than the capacity of the mash tun (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Στο μέγιστό του, ο χυλός θα είναι περίπου %1, περισσότερο από τη χωρητικότητα του σκεύους σακχαροποίησης (%2).</translation>
     </message>
     <message>
         <source>The infusions add up to %1 of water, but %2 is needed in total.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Οι εγχύσεις αθροίζουν %1 νερού, αλλά χρειάζονται συνολικά %2.</translation>
     </message>
     <message>
         <source>There is no water left for sparging: the total water needed is %1, but the mash steps already add %2%3.  You will collect more wort than needed.  Try a thicker mash (ie less water).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δεν μένει νερό για ψεκασμό: το συνολικό νερό που χρειάζεται είναι %1, αλλά τα βήματα σακχαροποίησης προσθέτουν ήδη %2%3.  Θα συλλέξετε περισσότερο γλεύκος από όσο χρειάζεται.  Δοκιμάστε πιο πηχτό χυλό (δηλ. λιγότερο νερό).</translation>
     </message>
     <message>
         <source> and the pinned sparge amounts add %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> και οι καρφιτσωμένες ποσότητες ψεκασμού προσθέτουν %1</translation>
     </message>
     <message>
         <source>The mash and sparge water add up to %1, but %2 is needed in total.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Το νερό σακχαροποίησης και ψεκασμού αθροίζουν %1, αλλά χρειάζονται συνολικά %2.</translation>
     </message>
     <message>
         <source>The sparge water temperature is pinned, but has not been set.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η θερμοκρασία του νερού ψεκασμού είναι καρφιτσωμένη, αλλά δεν έχει οριστεί.</translation>
     </message>
     <message>
         <source>%1 of water at %2 will give a grain bed temperature of %3 rather than %4.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 νερού στους %2 θα δώσουν θερμοκρασία στρώματος σιτηρών %3 αντί για %4.</translation>
     </message>
     <message>
         <source>The grain bed is already hotter than %1, so we use water at that temperature, and the bed will be at about %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Το στρώμα σιτηρών είναι ήδη θερμότερο από %1, οπότε χρησιμοποιούμε νερό σε αυτή τη θερμοκρασία και το στρώμα θα είναι περίπου στους %2.</translation>
     </message>
     <message>
         <source>Even with boiling water, the grain bed will only reach %1 rather than %2.  This is usually fine for a batch sparge, but you could use fewer batches (ie more water per batch) or a lower sparge temperature.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ακόμα και με νερό που βράζει, το στρώμα σιτηρών θα φτάσει μόνο τους %1 αντί για %2.  Αυτό συνήθως είναι εντάξει για ψεκασμό παρτίδας, αλλά μπορείτε να χρησιμοποιήσετε λιγότερες παρτίδες (δηλ. περισσότερο νερό ανά παρτίδα) ή χαμηλότερη θερμοκρασία ψεκασμού.</translation>
     </message>
     <message>
         <source>The sparge water would need to be at %1, which is above boiling point (%2).  Try a lower sparge temperature or more sparge water.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Το νερό ψεκασμού θα έπρεπε να είναι στους %1, πάνω από το σημείο βρασμού (%2).  Δοκιμάστε χαμηλότερη θερμοκρασία ψεκασμού ή περισσότερο νερό ψεκασμού.</translation>
     </message>
     <message>
         <source>No amount is set.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δεν έχει οριστεί ποσότητα.</translation>
     </message>
     <message>
         <source>Change mash steps</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αλλαγή βημάτων σακχαροποίησης</translation>
     </message>
 </context>
 <context>
@@ -5122,85 +5131,87 @@ If you need help, please open an issue at %1</source>
     <name>MashEditor</name>
     <message>
         <source>No sparge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χωρίς ψεκασμό</translation>
     </message>
     <message>
         <source>Batch sparge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ψεκασμός παρτίδας</translation>
     </message>
     <message>
         <source>Fly sparge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συνεχής ψεκασμός</translation>
     </message>
     <message>
         <source>Recipe is locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η συνταγή είναι κλειδωμένη</translation>
     </message>
     <message>
         <source>Make a copy of mash?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δημιουργία αντιγράφου της σακχαροποίησης;</translation>
     </message>
     <message>
         <source>Make a copy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δημιουργία αντιγράφου</translation>
     </message>
     <message>
         <source>To adjust the mash, edit it from a recipe that uses it (eg with the Edit button on the recipe&apos;s Mash tab), as the amounts and temperatures depend on the recipe&apos;s grain bill and equipment.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Για να προσαρμόσετε τη σακχαροποίηση, επεξεργαστείτε την από μια συνταγή που τη χρησιμοποιεί (π.χ. με το κουμπί Επεξεργασία στην καρτέλα Σακχαροποίηση της συνταγής), καθώς οι ποσότητες και οι θερμοκρασίες εξαρτώνται από τα σιτηρά και τον εξοπλισμό της συνταγής.</translation>
     </message>
     <message>
         <source>Adjusts the water amounts and temperatures in the steps to suit the grain bill and equipment of recipe &quot;%1&quot;.  Pinned values are not changed.  Changes to the steps take effect straight away (ie without clicking Save).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προσαρμόζει τις ποσότητες νερού και τις θερμοκρασίες των βημάτων στα σιτηρά και τον εξοπλισμό της συνταγής &quot;%1&quot;.  Οι καρφιτσωμένες τιμές δεν αλλάζουν.  Οι αλλαγές στα βήματα ισχύουν αμέσως (δηλ. χωρίς να πατήσετε Αποθήκευση).</translation>
     </message>
     <message>
         <source>⚠ This mash has problems.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">⚠ Αυτή η σακχαροποίηση έχει προβλήματα.</translation>
     </message>
     <message>
         <source>The recipe &quot;%1&quot; is locked, so its mash cannot be changed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η συνταγή &quot;%1&quot; είναι κλειδωμένη, οπότε η σακχαροποίησή της δεν μπορεί να αλλάξει.</translation>
     </message>
     <message>
         <source>Adjusting the mash changes its steps to suit the grain bill and equipment of recipe &quot;%1&quot;.
 
 Do you want to make a copy of this mash for that recipe, so that you can do this without affecting anything else?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η προσαρμογή της σακχαροποίησης αλλάζει τα βήματά της ώστε να ταιριάζουν στα σιτηρά και τον εξοπλισμό της συνταγής &quot;%1&quot;.
+
+Θέλετε να δημιουργήσετε ένα αντίγραφο αυτής της σακχαροποίησης για εκείνη τη συνταγή, ώστε να το κάνετε χωρίς να επηρεάσετε τίποτα άλλο;</translation>
     </message>
     <message>
         <source>Could not adjust the mash, so nothing has been changed:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δεν ήταν δυνατή η προσαρμογή της σακχαροποίησης, οπότε δεν άλλαξε τίποτα:</translation>
     </message>
     <message>
         <source>Mash adjusted for recipe &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η σακχαροποίηση προσαρμόστηκε για τη συνταγή &quot;%1&quot;.</translation>
     </message>
     <message>
         <source>Mash adjusted for recipe &quot;%1&quot;, but please check the following:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η σακχαροποίηση προσαρμόστηκε για τη συνταγή &quot;%1&quot;, αλλά ελέγξτε τα εξής:</translation>
     </message>
     <message>
         <source>  General problems are:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">  Γενικά προβλήματα:</translation>
     </message>
     <message>
         <source>Turn off automatic adjustment of mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απενεργοποίηση αυτόματης προσαρμογής σακχαροποίησης</translation>
     </message>
     <message>
         <source>Auto-Adjust undone.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η αυτόματη προσαρμογή αναιρέθηκε.</translation>
     </message>
     <message>
         <source>Turn on automatic adjustment of mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ενεργοποίηση αυτόματης προσαρμογής σακχαροποίησης</translation>
     </message>
     <message>
         <source>Could not adjust the mash yet:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δεν είναι ακόμα δυνατή η προσαρμογή της σακχαροποίησης:</translation>
     </message>
     <message>
         <source>Auto-adjust mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αυτόματη προσαρμογή σακχαροποίησης</translation>
     </message>
 </context>
 <context>
@@ -5219,23 +5230,23 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Normal (Fly) Sparge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κανονικός (συνεχής) ψεκασμός</translation>
     </message>
     <message>
         <source>Batch Sparge (Drain Mash Tun)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ψεκασμός παρτίδας (άδειασμα σκεύους σακχαροποίησης)</translation>
     </message>
     <message>
         <source>Souring Mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ξίνισμα χυλού</translation>
     </message>
     <message>
         <source>Souring Wort</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ξίνισμα γλεύκους</translation>
     </message>
     <message>
         <source>Mash Step</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βήμα σακχαροποίησης</translation>
     </message>
     <message>
         <source>Step</source>
@@ -5243,7 +5254,7 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Step time (mins)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρόνος βήματος (λεπτά)</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -5259,35 +5270,35 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Infuse Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Θερμοκρασία έγχυσης</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος</translation>
     </message>
     <message>
         <source>Water:Grain</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νερό:Σιτηρά</translation>
     </message>
     <message>
         <source>Amount Fixed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σταθερή ποσότητα</translation>
     </message>
     <message>
         <source>Infuse Temperature Fixed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σταθερή θερμοκρασία έγχυσης</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Όχι</translation>
+        <translation type="obsolete">Όχι</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Ναι</translation>
+        <translation type="obsolete">Ναι</translation>
     </message>
     <message>
         <source>Mash Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος χυλού</translation>
     </message>
 </context>
 <context>
@@ -5326,55 +5337,55 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Pinned: not changed when adjusting the mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Καρφιτσωμένο: δεν αλλάζει κατά την προσαρμογή της σακχαροποίησης</translation>
     </message>
     <message>
         <source>Pinned amount (not changed when adjusting the mash)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Καρφιτσωμένη ποσότητα (δεν αλλάζει κατά την προσαρμογή της σακχαροποίησης)</translation>
     </message>
     <message>
         <source>Pinned infusion temperature (not changed when adjusting the mash)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Καρφιτσωμένη θερμοκρασία έγχυσης (δεν αλλάζει κατά την προσαρμογή της σακχαροποίησης)</translation>
     </message>
     <message>
         <source>⚠ %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">⚠ %1: %2</translation>
     </message>
     <message>
         <source>⚠ %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">⚠ %1</translation>
     </message>
     <message>
         <source>Mash tun at its fullest: %1 (%2% of its %3 capacity)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σκεύος σακχαροποίησης στο μέγιστο: %1 (%2% της χωρητικότητας %3)</translation>
     </message>
     <message>
         <source>Mash tun at its fullest: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σκεύος σακχαροποίησης στο μέγιστο: %1</translation>
     </message>
     <message>
         <source>Wort collected: %1 (%2% of the %3 needed)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γλεύκος που συλλέχθηκε: %1 (%2% των %3 που χρειάζονται)</translation>
     </message>
     <message>
         <source>Wort collected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γλεύκος που συλλέχθηκε: %1</translation>
     </message>
     <message>
         <source>Change and pin mash step amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αλλαγή και καρφίτσωμα ποσότητας βήματος σακχαροποίησης</translation>
     </message>
     <message>
         <source>Change and pin mash step infusion temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αλλαγή και καρφίτσωμα θερμοκρασίας έγχυσης βήματος σακχαροποίησης</translation>
     </message>
     <message>
         <source>Pin mash step amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Καρφίτσωμα ποσότητας βήματος σακχαροποίησης</translation>
     </message>
     <message>
         <source>Pin mash step infusion temperature</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Καρφίτσωμα θερμοκρασίας έγχυσης βήματος σακχαροποίησης</translation>
     </message>
 </context>
 <context>
@@ -5448,7 +5459,7 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Fining</source>
-        <translation type="unfinished">Βελτιωτικά</translation>
+        <translation type="unfinished">Διαυγαστικό</translation>
     </message>
     <message>
         <source>Water Agent</source>
@@ -5460,11 +5471,11 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Flavor</source>
-        <translation type="unfinished">Άρωματικές Ύλες</translation>
+        <translation type="unfinished">Γεύση</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished">&apos;Αλλο</translation>
+        <translation type="unfinished">Άλλο</translation>
     </message>
     <message>
         <source>Boil</source>
@@ -5492,7 +5503,7 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Wood</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ξύλο</translation>
     </message>
     <message>
         <source>Miscellaneous</source>
@@ -5500,7 +5511,7 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -5508,91 +5519,91 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Producer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Παραγωγός</translation>
     </message>
     <message>
         <source>Product ID</source>
-        <translation type="unfinished">Κωδικός προιόντος</translation>
+        <translation type="unfinished">Κωδικός προϊόντος</translation>
     </message>
     <message>
         <source>Use For</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρήση για</translation>
     </message>
     <message>
         <source>Misc Purchases</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αγορές διαφόρων</translation>
     </message>
     <message>
         <source>Water Agent Is Acid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ο ρυθμιστής νερού είναι οξύ</translation>
     </message>
     <message>
         <source>Water Agent %% Acid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρυθμιστής νερού %% οξέος</translation>
     </message>
     <message>
         <source>Water Agent Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος ρυθμιστή νερού</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Όχι</translation>
+        <translation type="obsolete">Όχι</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Ναι</translation>
+        <translation type="obsolete">Ναι</translation>
     </message>
     <message>
         <source>Calcium Carbonate (CaCO₃)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ανθρακικό ασβέστιο (CaCO₃)</translation>
     </message>
     <message>
         <source>Sodium Bicarbonate (NaHCO₃)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διττανθρακικό νάτριο (NaHCO₃)</translation>
     </message>
     <message>
         <source>Lactic Acid (C₃H₆O₃)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γαλακτικό οξύ (C₃H₆O₃)</translation>
     </message>
     <message>
         <source>Phosphoric acid (H₃PO₄)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φωσφορικό οξύ (H₃PO₄)</translation>
     </message>
     <message>
         <source>Anhydrous Calcium Chloride (CaCl₂)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Άνυδρο χλωριούχο ασβέστιο (CaCl₂)</translation>
     </message>
     <message>
         <source>Calcium Chloride Dihydrate (CaCl₂·2H₂O)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διένυδρο χλωριούχο ασβέστιο (CaCl₂·2H₂O)</translation>
     </message>
     <message>
         <source>Gypsum (CaSO₄·2H₂O)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Γύψος (CaSO₄·2H₂O)</translation>
     </message>
     <message>
         <source>Pickling Lime (Ca(OH)₂)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Υδροξείδιο του ασβεστίου (Ca(OH)₂)</translation>
     </message>
     <message>
         <source>Epsom Salt (MgSO₄·7H₂O)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αλάτι Epsom (MgSO₄·7H₂O)</translation>
     </message>
     <message>
         <source>Magnesium Chloride Hexahydrate (MgCl₂·6H₂O)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εξαένυδρο χλωριούχο μαγνήσιο (MgCl₂·6H₂O)</translation>
     </message>
     <message>
         <source>Regular Salt (NaCl)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κοινό αλάτι (NaCl)</translation>
     </message>
     <message>
         <source>sulfuric acid (H₂SO₄)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">θειικό οξύ (H₂SO₄)</translation>
     </message>
     <message>
         <source>hydrochloric acid (HCl)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">υδροχλωρικό οξύ (HCl)</translation>
     </message>
 </context>
 <context>
@@ -5743,125 +5754,127 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     <name>NE</name>
     <message>
         <source>Change %1 %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αλλαγή %1 %2</translation>
     </message>
     <message>
         <source>Change %1 on %2 Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αλλαγή %1 στη συνταγή %2</translation>
     </message>
     <message>
         <source>%1 #%2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 #%2</translation>
     </message>
     <message>
         <source>This new %1 will be used by this recipe when you click Save.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αυτό το νέο %1 θα χρησιμοποιηθεί από αυτή τη συνταγή όταν πατήσετε Αποθήκευση.</translation>
     </message>
     <message>
         <source>Unlock %1?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ξεκλείδωμα %1;</translation>
     </message>
     <message>
         <source>Are you sure you want to unlock &quot;%1&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Είστε βέβαιοι ότι θέλετε να ξεκλειδώσετε το &quot;%1&quot;;</translation>
     </message>
     <message>
         <source>Locking is there to stop this %1 being changed by accident.  If you want to make changes for one recipe, it is usually better to make a copy for that recipe instead.
 
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Το κλείδωμα υπάρχει για να μην αλλάξει κατά λάθος αυτό το %1.  Αν θέλετε να κάνετε αλλαγές για μία συνταγή, συνήθως είναι καλύτερο να δημιουργήσετε ένα αντίγραφο για εκείνη τη συνταγή.
+
+%2</translation>
     </message>
     <message>
         <source>Unlock</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ξεκλείδωμα</translation>
     </message>
     <message>
         <source>Recipe is locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η συνταγή είναι κλειδωμένη</translation>
     </message>
     <message>
         <source>This recipe is locked, so you cannot add a %1 to it.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αυτή η συνταγή είναι κλειδωμένη, οπότε δεν μπορείτε να της προσθέσετε %1.</translation>
     </message>
     <message>
         <source>%1 for %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 για %2</translation>
     </message>
     <message>
         <source>%1 (copy for %2)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (αντίγραφο για %2)</translation>
     </message>
     <message>
         <source>It is locked, so it cannot be changed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Είναι κλειδωμένο, οπότε δεν μπορεί να αλλάξει.</translation>
     </message>
     <message numerus="yes">
         <source>It cannot be changed because it is used by %n locked recipe(s): %1.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Δεν μπορεί να αλλάξει επειδή χρησιμοποιείται από %n κλειδωμένη συνταγή: %1.</numerusform>
+            <numerusform>Δεν μπορεί να αλλάξει επειδή χρησιμοποιείται από %n κλειδωμένες συνταγές: %1.</numerusform>
         </translation>
     </message>
     <message>
         <source>Any changes you make here will affect all of them.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όποιες αλλαγές κάνετε εδώ θα επηρεάσουν όλες.</translation>
     </message>
     <message>
         <source>It cannot be changed because the recipe &quot;%1&quot; is locked.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δεν μπορεί να αλλάξει επειδή η συνταγή &quot;%1&quot; είναι κλειδωμένη.</translation>
     </message>
     <message>
         <source>Use a copy of mash?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρήση αντιγράφου της σακχαροποίησης;</translation>
     </message>
     <message>
         <source>The mash &quot;%1&quot; adjusts automatically to the recipe that uses it (&quot;%2&quot;), so it can&apos;t be shared with another recipe.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η σακχαροποίηση &quot;%1&quot; προσαρμόζεται αυτόματα στη συνταγή που τη χρησιμοποιεί (&quot;%2&quot;), οπότε δεν μπορεί να μοιραστεί με άλλη συνταγή.</translation>
     </message>
     <message>
         <source>Do you want to use a copy of it for this recipe?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Θέλετε να χρησιμοποιήσετε ένα αντίγραφό της για αυτή τη συνταγή;</translation>
     </message>
     <message>
         <source>Use a copy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρήση αντιγράφου</translation>
     </message>
     <message>
         <source>Use equipment sizes?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρήση μεγεθών εξοπλισμού;</translation>
     </message>
     <message>
         <source>Would you like to set the recipe&apos;s batch size to %1 and pre-boil size to %2, as specified by the equipment &quot;%3&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Θέλετε να ορίσετε τον όγκο παρτίδας της συνταγής σε %1 και τον όγκο πριν τον βρασμό σε %2, όπως ορίζει ο εξοπλισμός &quot;%3&quot;;</translation>
     </message>
     <message>
         <source>Change Batch Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αλλαγή όγκου παρτίδας</translation>
     </message>
     <message>
         <source>Change Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αλλαγή όγκου πριν τον βρασμό</translation>
     </message>
     <message>
         <source>%1 not used by any recipe.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 δεν χρησιμοποιείται από καμία συνταγή.</translation>
     </message>
     <message>
         <source>%1 used only by one recipe (%2)%3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 χρησιμοποιείται μόνο από μία συνταγή (%2)%3.</translation>
     </message>
     <message numerus="yes">
         <source>%1 also used by %n other recipe(s): %2.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%1 χρησιμοποιείται επίσης από %n άλλη συνταγή: %2.</numerusform>
+            <numerusform>%1 χρησιμοποιείται επίσης από %n άλλες συνταγές: %2.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>%1 used by %n recipe(s): %2.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%1 χρησιμοποιείται από %n συνταγή: %2.</numerusform>
+            <numerusform>%1 χρησιμοποιείται από %n συνταγές: %2.</numerusform>
         </translation>
     </message>
 </context>
@@ -5869,109 +5882,109 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     <name>NamedEntity</name>
     <message>
         <source>Named Entity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ονομασμένη οντότητα</translation>
     </message>
     <message>
         <source>Deleted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διαγραμμένο</translation>
     </message>
     <message>
         <source>Key</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κλειδί</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όνομα</translation>
     </message>
     <message>
         <source>Subsidiary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Θυγατρικό</translation>
     </message>
     <message>
         <source>N° Recipes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αρ. συνταγών</translation>
     </message>
 </context>
 <context>
     <name>ObjectStoreUtils::NE</name>
     <message>
         <source>Unnamed %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 χωρίς όνομα</translation>
     </message>
 </context>
 <context>
     <name>OgCorrectionTool</name>
     <message>
         <source>You need to have a recipe open in the main window before you can use this tool.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πρέπει να έχετε ανοιχτή μια συνταγή στο κύριο παράθυρο για να χρησιμοποιήσετε αυτό το εργαλείο.</translation>
     </message>
     <message>
         <source>Couldn&apos;t read input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αδυναμία ανάγνωσης εισόδου</translation>
     </message>
     <message>
         <source>Need a valid value for Measured Gravity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απαιτείται έγκυρη τιμή για τη μετρημένη πυκνότητα</translation>
     </message>
     <message>
         <source>No Recipe Selected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δεν επιλέχθηκε συνταγή</translation>
     </message>
     <message>
         <source>No Equipment on Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η συνταγή δεν έχει εξοπλισμό</translation>
     </message>
     <message>
         <source>Recipe &quot;%1&quot; has no equipment.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η συνταγή &quot;%1&quot; δεν έχει εξοπλισμό.</translation>
     </message>
     <message>
         <source>No Boil on Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η συνταγή δεν έχει βρασμό</translation>
     </message>
     <message>
         <source>Recipe &quot;%1&quot; has no boil.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η συνταγή &quot;%1&quot; δεν έχει βρασμό.</translation>
     </message>
     <message>
         <source>Need a valid value for Wort Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απαιτείται έγκυρη τιμή για τον όγκο γλεύκους</translation>
     </message>
     <message>
         <source>- On Target -</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">- Εντός στόχου -</translation>
     </message>
     <message>
         <source>↑ Above Target ↑</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">↑ Πάνω από τον στόχο ↑</translation>
     </message>
     <message>
         <source>↓ Below Target ↓</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">↓ Κάτω από τον στόχο ↓</translation>
     </message>
     <message>
         <source>Remedy: Add Water To Boil</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λύση: Προσθήκη νερού στον βρασμό</translation>
     </message>
     <message>
         <source>Amount to Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ποσότητα για προσθήκη</translation>
     </message>
     <message>
         <source>Amount of water you need to add to hit planned OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ποσότητα νερού που πρέπει να προσθέσετε για να πετύχετε την προγραμματισμένη OG</translation>
     </message>
     <message>
         <source>Remedy: Boil Down To Reduce Wort Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λύση: Βράσιμο για μείωση του όγκου γλεύκους</translation>
     </message>
     <message>
         <source>Amount to Boil Off</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ποσότητα προς εξάτμιση</translation>
     </message>
     <message>
         <source>Extra wort you need to boil off to hit planned OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επιπλέον γλεύκος που πρέπει να εξατμιστεί για να πετύχετε την προγραμματισμένη OG</translation>
     </message>
 </context>
 <context>
@@ -6073,15 +6086,15 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>mm-dd-YYYY</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">mm-dd-YYYY</translation>
     </message>
     <message>
         <source>dd-mm-YYYY</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">dd-mm-YYYY</translation>
     </message>
     <message>
         <source>YYYY-mm-dd</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">YYYY-mm-dd</translation>
     </message>
     <message>
         <source>SRM</source>
@@ -6109,55 +6122,55 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>SQLite (default)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">SQLite (προεπιλογή)</translation>
     </message>
     <message>
         <source>PostgreSQL</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">PostgreSQL</translation>
     </message>
     <message>
         <source>Test connection or cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δοκιμάστε τη σύνδεση ή ακυρώστε</translation>
     </message>
     <message>
         <source>Transfer database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μεταφορά βάσης δεδομένων</translation>
     </message>
     <message>
         <source>Choose User Data Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επιλογή φακέλου δεδομένων χρήστη</translation>
     </message>
     <message>
         <source>Choose Backups Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επιλογή φακέλου αντιγράφων ασφαλείας</translation>
     </message>
     <message>
         <source>Choose Logging Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επιλογή φακέλου καταγραφής</translation>
     </message>
     <message>
         <source>Saving the options without testing the connection can cause %1 to not restart.  Your changes have been discarded, which is likely really, really crappy UX.  Please open a bug explaining exactly how you got to this message.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η αποθήκευση των επιλογών χωρίς δοκιμή της σύνδεσης μπορεί να εμποδίσει την επανεκκίνηση του %1.  Οι αλλαγές σας απορρίφθηκαν, κάτι που είναι μάλλον πολύ κακή εμπειρία χρήστη.  Ανοίξτε μια αναφορά σφάλματος εξηγώντας ακριβώς πώς φτάσατε σε αυτό το μήνυμα.</translation>
     </message>
     <message>
         <source>Would you like %1 to transfer your data to the new database? NOTE: If you&apos;ve already loaded the data, say No</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Θέλετε το %1 να μεταφέρει τα δεδομένα σας στη νέα βάση δεδομένων; ΣΗΜΕΙΩΣΗ: Αν έχετε ήδη φορτώσει τα δεδομένα, απαντήστε Όχι</translation>
     </message>
     <message>
         <source>Please restart %1 to connect to the new database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επανεκκινήστε το %1 για να συνδεθεί στη νέα βάση δεδομένων</translation>
     </message>
     <message>
         <source>Please restart %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επανεκκινήστε το %1.</translation>
     </message>
     <message>
         <source>Conversion Error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σφάλμα μετατροπής</translation>
     </message>
     <message>
         <source>Data transfer failed.  See log file for more details.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η μεταφορά δεδομένων απέτυχε.  Δείτε το αρχείο καταγραφής για περισσότερες λεπτομέρειες.</translation>
     </message>
     <message>
         <source>Default</source>
@@ -6168,30 +6181,30 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     <name>OutlineableNamedEntity</name>
     <message>
         <source>Outlineable Named Entity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Οντότητα με περίγραμμα</translation>
     </message>
     <message>
         <source>Is Outline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Είναι περίγραμμα</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Όχι</translation>
+        <translation type="obsolete">Όχι</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Ναι</translation>
+        <translation type="obsolete">Ναι</translation>
     </message>
 </context>
 <context>
     <name>OwnedByRecipe</name>
     <message>
         <source>Owned By Recipe</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ανήκει σε συνταγή</translation>
     </message>
     <message>
         <source>Recipe ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID συνταγής</translation>
     </message>
     <message>
         <source>Recipe</source>
@@ -6202,43 +6215,53 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     <name>Owner</name>
     <message>
         <source>Items</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Στοιχεία</translation>
     </message>
 </context>
 <context>
     <name>PrintAndPreviewDialog</name>
     <message>
         <source>File %1 filname &lt;&lt; could not be saved</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Το αρχείο %1 δεν ήταν δυνατό να αποθηκευτεί</translation>
     </message>
     <message>
         <source>Error saving file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σφάλμα αποθήκευσης αρχείου</translation>
     </message>
     <message>
         <source>Could not open the file %1 for writing! please try again with a new filename or diretory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δεν ήταν δυνατό να ανοίξει το αρχείο %1 για εγγραφή! Δοκιμάστε ξανά με νέο όνομα αρχείου ή φάκελο</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation type="unfinished">Εκτύπωση</translation>
+    </message>
+    <message>
+        <source>Save as</source>
+        <translation type="unfinished">Αποθήκευση ως</translation>
     </message>
 </context>
 <context>
     <name>QApplication</name>
     <message>
         <source>Application terminates</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τερματισμός εφαρμογής</translation>
     </message>
     <message>
         <source>The application encountered a fatal error.
 Error message:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η εφαρμογή αντιμετώπισε κρίσιμο σφάλμα.
+Μήνυμα σφάλματος:
+%1</translation>
     </message>
     <message>
         <source>The application encountered a fatal error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η εφαρμογή αντιμετώπισε κρίσιμο σφάλμα.</translation>
     </message>
     <message>
         <source>%1 is already running!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Το %1 εκτελείται ήδη!</translation>
     </message>
     <message>
         <source>Another instance of %1 is already running.
@@ -6246,15 +6269,19 @@ Error message:
 Running two copies of the program at once may lead to data loss.
 
 Press OK to quit.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ένα άλλο αντίγραφο του %1 εκτελείται ήδη.
+
+Η ταυτόχρονη εκτέλεση δύο αντιγράφων του προγράμματος μπορεί να οδηγήσει σε απώλεια δεδομένων.
+
+Πατήστε OK για έξοδο.</translation>
     </message>
     <message>
         <source>Creation of empty Database file &apos;%1&apos; %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η δημιουργία κενού αρχείου βάσης δεδομένων &apos;%1&apos; %2.</translation>
     </message>
     <message>
         <source>succeeded</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ολοκληρώθηκε επιτυχώς</translation>
     </message>
     <message>
         <source>failed</source>
@@ -6681,7 +6708,7 @@ Press OK to quit.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όνομα</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -6751,7 +6778,7 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>pH</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">pH</translation>
     </message>
     <message>
         <source>IBU</source>
@@ -6815,11 +6842,11 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Success!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επιτυχία!</translation>
     </message>
     <message>
         <source>ERROR</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ΣΦΑΛΜΑ</translation>
     </message>
     <message>
         <source>Open</source>
@@ -6843,7 +6870,7 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Viscosity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ιξώδες</translation>
     </message>
     <message>
         <source>Metric Alternate</source>
@@ -6883,7 +6910,7 @@ Log file may contain more details.</source>
     </message>
     <message>
         <source>Diastatic Power</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διαστατική ισχύς</translation>
     </message>
     <message>
         <source>Specific Heat Capacity</source>
@@ -7031,15 +7058,15 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Edit selected %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επεξεργασία επιλεγμένου %1</translation>
     </message>
     <message>
         <source>%1 name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όνομα %1</translation>
     </message>
     <message>
         <source>%1 name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όνομα %1:</translation>
     </message>
     <message>
         <source>Merge Database</source>
@@ -7311,7 +7338,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Show stock purchases</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εμφάνιση αγορών αποθέματος</translation>
     </message>
     <message>
         <source>New stock purchase</source>
@@ -7463,7 +7490,7 @@ Program will now exit.</source>
     </message>
     <message>
         <source>Primary fermentation for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πρωτογενής ζύμωση για %1</translation>
     </message>
     <message>
         <source>Specific Heat Capacity BTUs per</source>
@@ -7752,7 +7779,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Extract</source>
-        <translation type="unfinished">Υγρή Βύνη</translation>
+        <translation type="unfinished">Εκχύλισμα</translation>
     </message>
     <message>
         <source>Partial Mash</source>
@@ -7776,7 +7803,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished">&apos;Αλλο</translation>
+        <translation type="unfinished">Άλλο</translation>
     </message>
     <message>
         <source>Mead</source>
@@ -7864,7 +7891,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Boil</source>
-        <translation type="unfinished">Στο Βράσιμο</translation>
+        <translation type="unfinished">Βρασμός</translation>
     </message>
     <message>
         <source>Boil Gravity</source>
@@ -7932,7 +7959,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Fermentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ζύμωση</translation>
     </message>
     <message>
         <source>Fermentation ID</source>
@@ -7972,11 +7999,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κλειδωμένο</translation>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σακχαροποίηση</translation>
     </message>
     <message>
         <source>Mash ID</source>
@@ -8020,7 +8047,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος</translation>
     </message>
     <message>
         <source>Wort From Mash</source>
@@ -8032,15 +8059,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Όχι</translation>
+        <translation type="obsolete">Όχι</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Ναι</translation>
+        <translation type="obsolete">Ναι</translation>
     </message>
     <message>
         <source>Snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Στιγμιότυπα</translation>
     </message>
     <message>
         <source>Put %1 %2 into mash%3.</source>
@@ -8140,7 +8167,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Primary fermentation for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πρωτογενής ζύμωση για %1</translation>
     </message>
     <message>
         <source>Target Mash pH</source>
@@ -8191,15 +8218,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σακχαροποίηση</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation type="unfinished">Στο Βράσιμο</translation>
+        <translation type="unfinished">Βρασμός</translation>
     </message>
     <message>
         <source>Fermentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ζύμωση</translation>
     </message>
     <message>
         <source>Package</source>
@@ -8211,11 +8238,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Step %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βήμα %1</translation>
     </message>
     <message>
         <source>%1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1: %2</translation>
     </message>
 </context>
 <context>
@@ -8230,7 +8257,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Fermentable</source>
-        <translation type="unfinished">Ζυμώσιμα</translation>
+        <translation type="unfinished">Ζυμώσιμο</translation>
     </message>
 </context>
 <context>
@@ -8280,7 +8307,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σακχαροποίηση</translation>
     </message>
     <message>
         <source>First Wort</source>
@@ -8288,7 +8315,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Boil</source>
-        <translation type="unfinished">Στο Βράσιμο</translation>
+        <translation type="unfinished">Βρασμός</translation>
     </message>
     <message>
         <source>Post-Boil</source>
@@ -8385,7 +8412,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σακχαροποίηση</translation>
     </message>
     <message>
         <source>First Wort</source>
@@ -8393,7 +8420,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Boil</source>
-        <translation type="unfinished">Στο Βράσιμο</translation>
+        <translation type="unfinished">Βρασμός</translation>
     </message>
     <message>
         <source>Addition of %1</source>
@@ -8401,11 +8428,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Primary</source>
-        <translation type="unfinished">Κατά την πρώτη ζύμωση</translation>
+        <translation type="unfinished">Πρωτογενής</translation>
     </message>
     <message>
         <source>Secondary</source>
-        <translation type="unfinished">κατά την δεύτερη ζύμωση</translation>
+        <translation type="unfinished">Δευτερογενής</translation>
     </message>
     <message>
         <source>Bottling</source>
@@ -8479,7 +8506,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation type="unfinished">αραίωση</translation>
+        <translation type="unfinished">Εξασθένηση</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -8495,11 +8522,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Όχι</translation>
+        <translation type="obsolete">Όχι</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Ναι</translation>
+        <translation type="obsolete">Ναι</translation>
     </message>
 </context>
 <context>
@@ -8887,11 +8914,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Estimated calories (per 33 cl)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εκτιμώμενες θερμίδες (ανά 33 cl)</translation>
     </message>
     <message>
         <source>Estimated calories (per 12 oz)</source>
-        <translation type="unfinished">Θερμίδες κατά προσέγγιση</translation>
+        <translation type="unfinished">Εκτιμώμενες θερμίδες (ανά 12 oz)</translation>
     </message>
     <message>
         <source>Bitterness</source>
@@ -8915,11 +8942,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απόδοση εκχυλίσματος σε ξηρή βάση, λεπτή άλεση (DBFG)</translation>
     </message>
     <message>
         <source>Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος πριν τον βρασμό</translation>
     </message>
 </context>
 <context>
@@ -8980,7 +9007,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Auto-Adjust undone.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Η αυτόματη προσαρμογή αναιρέθηκε.</translation>
     </message>
     <message numerus="yes">
         <source>See the &lt;i&gt;Auto-Adjust Notes&lt;/i&gt; tab below for details (%n item(s)).</source>
@@ -9143,7 +9170,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Περιγραφή</translation>
     </message>
     <message>
         <source>End Acidity</source>
@@ -9209,11 +9236,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Ingredient</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συστατικό</translation>
     </message>
     <message>
         <source>Stock Purchase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αγορά αποθέματος</translation>
     </message>
     <message>
         <source>Note</source>
@@ -9246,7 +9273,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Έτος</translation>
     </message>
 </context>
 <context>
@@ -9278,7 +9305,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Owner ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID κατόχου</translation>
     </message>
     <message>
         <source>Quantity Used</source>
@@ -9310,7 +9337,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Brew Log</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ημερολόγιο ζυθοποίησης</translation>
     </message>
     <message>
         <source>Brew Log ID</source>
@@ -9373,7 +9400,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished">&apos;Αλλο</translation>
+        <translation type="unfinished">Άλλο</translation>
     </message>
     <message>
         <source>Style</source>
@@ -9405,7 +9432,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος</translation>
     </message>
     <message>
         <source>Max ABV</source>
@@ -9453,7 +9480,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Flavor</source>
-        <translation type="unfinished">Άρωματικές Ύλες</translation>
+        <translation type="unfinished">Γεύση</translation>
     </message>
     <message>
         <source>Max IBU</source>
@@ -9552,7 +9579,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
 </context>
 <context>
@@ -9712,10 +9739,6 @@ The final volume in the primary is %1.</source>
         <translation type="vanished">Ήχος</translation>
     </message>
     <message>
-        <source>Notes...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source> and </source>
         <translation type="unfinished"></translation>
     </message>
@@ -9871,6 +9894,13 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
+    <name>Undoable</name>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>UnitAndScalePopUpMenu</name>
     <message>
         <source>Default</source>
@@ -9897,7 +9927,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αποτέλεσμα</translation>
     </message>
     <message>
         <source>Convert</source>
@@ -9947,7 +9977,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>pH</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">pH</translation>
     </message>
     <message>
         <source>Waters</source>
@@ -10023,11 +10053,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Όχι</translation>
+        <translation type="obsolete">Όχι</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Ναι</translation>
+        <translation type="obsolete">Ναι</translation>
     </message>
     <message>
         <source>Bicarbonate (HCO₃⁻)</source>
@@ -10348,7 +10378,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished">&apos;Αλλο</translation>
+        <translation type="unfinished">Άλλο</translation>
     </message>
     <message>
         <source>Bacteria</source>
@@ -10408,7 +10438,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος</translation>
     </message>
     <message>
         <source>Form</source>
@@ -10416,7 +10446,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Product ID</source>
-        <translation type="unfinished">Κωδικός προιόντος</translation>
+        <translation type="unfinished">Κωδικός προϊόντος</translation>
     </message>
     <message>
         <source>Yeasts</source>
@@ -10428,7 +10458,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Attenuation</source>
-        <translation type="unfinished">αραίωση</translation>
+        <translation type="unfinished">Εξασθένηση</translation>
     </message>
     <message>
         <source>Id</source>
@@ -10504,11 +10534,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Όχι</translation>
+        <translation type="obsolete">Όχι</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Ναι</translation>
+        <translation type="obsolete">Ναι</translation>
     </message>
     <message>
         <source>Yeast Purchases</source>
@@ -10678,15 +10708,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όνομα</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Περιγραφή</translation>
     </message>
     <message>
         <source>Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος πριν τον βρασμό</translation>
     </message>
     <message>
         <source>Boil Time</source>
@@ -10710,7 +10740,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο</translation>
     </message>
     <message>
         <source>Save</source>
@@ -10718,7 +10748,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
     <message>
         <source>ID in database</source>
@@ -10737,7 +10767,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όνομα</translation>
     </message>
     <message>
         <source>Target temp.</source>
@@ -10801,11 +10831,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Περιγραφή</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο</translation>
     </message>
     <message>
         <source>Save and close</source>
@@ -10821,11 +10851,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
     <message>
         <source>Chilling Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος ψύξης</translation>
     </message>
     <message>
         <source>Start Gravity</source>
@@ -11057,10 +11087,6 @@ The final volume in the primary is %1.</source>
         <translation type="unfinished">Όγκος μπύρας σε μποτίλιες</translation>
     </message>
     <message>
-        <source>yyyy-dd-MM</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Percent efficiency into boil kettle</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11082,7 +11108,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Projected ABV</source>
-        <translation type="unfinished">Προβλεπόμενοι ABV</translation>
+        <translation type="unfinished">Προβλεπόμενο ABV</translation>
     </message>
     <message>
         <source>ABV based on user-reported FG</source>
@@ -11110,11 +11136,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Brew Log</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ημερολόγιο ζυθοποίησης</translation>
     </message>
     <message>
         <source>Brew Date</source>
-        <translation type="unfinished">Ημέρα Ζυθοποίησης</translation>
+        <translation type="unfinished">Ημέρα ζυθοποίησης</translation>
     </message>
     <message>
         <source>Batch Number</source>
@@ -11284,11 +11310,11 @@ The final volume in the primary is %1.</source>
     <name>editorClass</name>
     <message>
         <source>No</source>
-        <translation type="unfinished">Όχι</translation>
+        <translation type="obsolete">Όχι</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Ναι</translation>
+        <translation type="obsolete">Ναι</translation>
     </message>
 </context>
 <context>
@@ -11327,7 +11353,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όνομα</translation>
     </message>
     <message>
         <source>Required</source>
@@ -11419,7 +11445,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>HLT Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σημειώσεις HLT</translation>
     </message>
     <message>
         <source>Mash Tun</source>
@@ -11427,11 +11453,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Mash Tun Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος σκεύους σακχαροποίησης</translation>
     </message>
     <message>
         <source>Mash Tun Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σημειώσεις σκεύους σακχαροποίησης</translation>
     </message>
     <message>
         <source>Lauter Tun</source>
@@ -11439,15 +11465,15 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Lauter Tun Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος σκεύους διήθησης</translation>
     </message>
     <message>
         <source>Lauter Tun Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος σκεύους διήθησης</translation>
     </message>
     <message>
         <source>Lauter Tun Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σημειώσεις σκεύους διήθησης</translation>
     </message>
     <message>
         <source>Boil Kettle</source>
@@ -11475,11 +11501,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Aging Vessel Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος δοχείου ωρίμανσης</translation>
     </message>
     <message>
         <source>Packaging Vessel Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σημειώσεις δοχείου συσκευασίας</translation>
     </message>
     <message>
         <source>Packaging Vessel</source>
@@ -11487,7 +11513,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Packaging Vessel Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος δοχείου συσκευασίας</translation>
     </message>
     <message>
         <source>General</source>
@@ -11527,7 +11553,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο</translation>
     </message>
     <message>
         <source>Save</source>
@@ -11535,7 +11561,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
     <message>
         <source>ID in database</source>
@@ -11559,11 +11585,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Fermentor Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος κάδου ζύμωσης</translation>
     </message>
     <message>
         <source>Fermentor Notes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σημειώσεις κάδου ζύμωσης</translation>
     </message>
     <message>
         <source>Optional Vessel
@@ -11616,7 +11642,7 @@ Tabs</source>
     </message>
     <message>
         <source>Default Batch Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προεπιλεγμένος όγκος παρτίδας</translation>
     </message>
     <message>
         <source>Volume into the fermentor that new recipes using this equipment start with</source>
@@ -11636,7 +11662,7 @@ Tabs</source>
     </message>
     <message>
         <source>Mash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σακχαροποίηση</translation>
     </message>
     <message>
         <source>These settings apply to whichever vessel the mash happens in: the mash tun or, if you do not have a separate mash tun (eg on an all-in-one system such as the Grainfather, or for brew in a bag), the boil kettle.</source>
@@ -11879,15 +11905,15 @@ Tabs</source>
     </message>
     <message>
         <source>Producer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Παραγωγός</translation>
     </message>
     <message>
         <source>Product ID</source>
-        <translation type="unfinished">Κωδικός προιόντος</translation>
+        <translation type="unfinished">Κωδικός προϊόντος</translation>
     </message>
     <message>
         <source>Extract Yield Dry Basis Fine Grind (DBFG)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απόδοση εκχυλίσματος σε ξηρή βάση, λεπτή άλεση (DBFG)</translation>
     </message>
     <message>
         <source>Extract Yield Dry Basis Coarse Grind (DBCG)</source>
@@ -11899,7 +11925,7 @@ Tabs</source>
     </message>
     <message>
         <source>Kolbach Index</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δείκτης Kolbach</translation>
     </message>
     <message>
         <source>Percentage of malt that is &quot;glassy&quot;</source>
@@ -11923,11 +11949,11 @@ Tabs</source>
     </message>
     <message>
         <source>Friability</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ευθρυπτότητα</translation>
     </message>
     <message>
         <source>DI pH</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">pH σε απιονισμένο νερό</translation>
     </message>
     <message>
         <source>Viscosity of this malt in a &quot;congress mash&quot;</source>
@@ -11935,11 +11961,11 @@ Tabs</source>
     </message>
     <message>
         <source>Fermentability</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ζυμωσιμότητα</translation>
     </message>
     <message>
         <source>DMS precursors</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πρόδρομες ενώσεις DMS</translation>
     </message>
     <message>
         <source>Beta-glucans</source>
@@ -11963,7 +11989,7 @@ Tabs</source>
     </message>
     <message>
         <source>Free Amino Nitrogen (FAN)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ελεύθερο αμινικό άζωτο (FAN)</translation>
     </message>
     <message>
         <source>Amount Type</source>
@@ -11979,11 +12005,11 @@ Tabs</source>
     </message>
     <message>
         <source>Grain Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ομάδα σιτηρών</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο</translation>
     </message>
     <message>
         <source>Save</source>
@@ -11991,7 +12017,7 @@ Tabs</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
     <message>
         <source>Fermentable Type</source>
@@ -11999,7 +12025,7 @@ Tabs</source>
     </message>
     <message>
         <source>Total Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συνολικό απόθεμα</translation>
     </message>
     <message>
         <source>Total amount in inventory</source>
@@ -12042,11 +12068,11 @@ Tabs</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όνομα</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Περιγραφή</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -12066,7 +12092,7 @@ Tabs</source>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο</translation>
     </message>
     <message>
         <source>Save</source>
@@ -12074,7 +12100,7 @@ Tabs</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
     <message>
         <source>ID in database</source>
@@ -12105,7 +12131,7 @@ Tabs</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όνομα</translation>
     </message>
     <message>
         <source>Target temp.</source>
@@ -12169,11 +12195,11 @@ Tabs</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Περιγραφή</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο</translation>
     </message>
     <message>
         <source>Save and close</source>
@@ -12189,7 +12215,7 @@ Tabs</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
     <message>
         <source>Free rise</source>
@@ -12209,7 +12235,7 @@ Tabs</source>
     </message>
     <message>
         <source>Vessel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δοχείο</translation>
     </message>
 </context>
 <context>
@@ -12400,7 +12426,7 @@ Tabs</source>
     </message>
     <message>
         <source>Substitutes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Υποκατάστατα</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -12428,15 +12454,15 @@ Tabs</source>
     </message>
     <message>
         <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Έτος</translation>
     </message>
     <message>
         <source>Producer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Παραγωγός</translation>
     </message>
     <message>
         <source>Product ID</source>
-        <translation type="unfinished">Κωδικός προιόντος</translation>
+        <translation type="unfinished">Κωδικός προϊόντος</translation>
     </message>
     <message>
         <source>Linalool %</source>
@@ -12444,7 +12470,7 @@ Tabs</source>
     </message>
     <message>
         <source>Linalool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Linalool</translation>
     </message>
     <message>
         <source>Limonene %</source>
@@ -12452,7 +12478,7 @@ Tabs</source>
     </message>
     <message>
         <source>Limonene</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Limonene</translation>
     </message>
     <message>
         <source>Nerol %</source>
@@ -12460,7 +12486,7 @@ Tabs</source>
     </message>
     <message>
         <source>Nerol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nerol</translation>
     </message>
     <message>
         <source>Farnesene %</source>
@@ -12468,7 +12494,7 @@ Tabs</source>
     </message>
     <message>
         <source>Farnesene</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Farnesene</translation>
     </message>
     <message>
         <source>Polyphenols %</source>
@@ -12476,7 +12502,7 @@ Tabs</source>
     </message>
     <message>
         <source>Polyphenols</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πολυφαινόλες</translation>
     </message>
     <message>
         <source>Geraniol %</source>
@@ -12484,7 +12510,7 @@ Tabs</source>
     </message>
     <message>
         <source>Geraniol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Geraniol</translation>
     </message>
     <message>
         <source>Xanthohumol %</source>
@@ -12492,7 +12518,7 @@ Tabs</source>
     </message>
     <message>
         <source>Xanthohumol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Xanthohumol</translation>
     </message>
     <message>
         <source>β-pinene %</source>
@@ -12532,7 +12558,7 @@ Tabs</source>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο</translation>
     </message>
     <message>
         <source>Save</source>
@@ -12540,11 +12566,11 @@ Tabs</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
     <message>
         <source>Total Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συνολικό απόθεμα</translation>
     </message>
     <message>
         <source>Add Purchase</source>
@@ -13415,15 +13441,15 @@ Tabs</source>
     </message>
     <message>
         <source>Brew It!</source>
-        <translation type="unfinished">Ζυθοποίησε!</translation>
+        <translation type="unfinished">Ζυθοποίηση!</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βοήθεια</translation>
     </message>
     <message>
         <source>Boil</source>
-        <translation type="unfinished">Στο Βράσιμο</translation>
+        <translation type="unfinished">Βρασμός</translation>
     </message>
     <message>
         <source>Boils</source>
@@ -13431,7 +13457,7 @@ Tabs</source>
     </message>
     <message>
         <source>Fermentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ζύμωση</translation>
     </message>
     <message>
         <source>Fermentations</source>
@@ -13447,15 +13473,15 @@ Tabs</source>
     </message>
     <message>
         <source>Mash Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προφίλ σακχαροποίησης</translation>
     </message>
     <message>
         <source>Boil Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προφίλ βρασμού</translation>
     </message>
     <message>
         <source>Fermentation Profiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προφίλ ζύμωσης</translation>
     </message>
     <message>
         <source>&amp;Mash Profiles</source>
@@ -13479,7 +13505,7 @@ Tabs</source>
     </message>
     <message>
         <source>Inventory</source>
-        <translation type="unfinished">Ευρετήριο ειδών</translation>
+        <translation type="unfinished">Απόθεμα</translation>
     </message>
     <message>
         <source>Step-by-step instructions for brew day</source>
@@ -13717,7 +13743,7 @@ Tabs</source>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο</translation>
     </message>
     <message>
         <source>Save and close</source>
@@ -13733,7 +13759,7 @@ Tabs</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
     <message>
         <source>Total Mash Water</source>
@@ -13741,7 +13767,7 @@ Tabs</source>
     </message>
     <message>
         <source>Total Time</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συνολικός χρόνος</translation>
     </message>
     <message>
         <source>Legacy</source>
@@ -13932,11 +13958,11 @@ Tabs</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Περιγραφή</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο</translation>
     </message>
     <message>
         <source>Save and close</source>
@@ -13952,7 +13978,7 @@ Tabs</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
     <message>
         <source>Step Number</source>
@@ -14110,11 +14136,11 @@ Tabs</source>
     </message>
     <message>
         <source>Producer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Παραγωγός</translation>
     </message>
     <message>
         <source>Product ID</source>
-        <translation type="unfinished">Κωδικός προιόντος</translation>
+        <translation type="unfinished">Κωδικός προϊόντος</translation>
     </message>
     <message>
         <source>Amount Type</source>
@@ -14130,7 +14156,7 @@ Tabs</source>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο</translation>
     </message>
     <message>
         <source>Save</source>
@@ -14138,11 +14164,11 @@ Tabs</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
     <message>
         <source>Total Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συνολικό απόθεμα</translation>
     </message>
     <message>
         <source>Total amount in inventory</source>
@@ -14447,15 +14473,15 @@ Tabs</source>
     </message>
     <message>
         <source>Remedy: Add Water To Boil</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Λύση: Προσθήκη νερού στον βρασμό</translation>
     </message>
     <message>
         <source>Amount to Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ποσότητα για προσθήκη</translation>
     </message>
     <message>
         <source>Amount of water you need to add to hit planned OG</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ποσότητα νερού που πρέπει να προσθέσετε για να πετύχετε την προγραμματισμένη OG</translation>
     </message>
     <message>
         <source>-- OR --</source>
@@ -14670,19 +14696,19 @@ Tabs</source>
     </message>
     <message>
         <source>Schema</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σχήμα</translation>
     </message>
     <message>
         <source>Database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Βάση δεδομένων</translation>
     </message>
     <message>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όνομα χρήστη</translation>
     </message>
     <message>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κωδικός πρόσβασης</translation>
     </message>
     <message>
         <source>Save password</source>
@@ -14804,7 +14830,7 @@ Tabs</source>
     </message>
     <message>
         <source>Pre-Boil Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όγκος πριν τον βρασμό</translation>
     </message>
     <message>
         <source>Default pre-boil size to set on new recipes</source>
@@ -14919,7 +14945,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>MM/dd/yyyy</source>
-        <translation>ΜΜ/ηη/εεεε</translation>
+        <translation type="vanished">ΜΜ/ηη/εεεε</translation>
     </message>
     <message>
         <source>%</source>
@@ -14927,7 +14953,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>Ετικέτα</translation>
+        <translation type="vanished">Ετικέτα</translation>
     </message>
     <message>
         <source>Calculate Viability From Date</source>
@@ -15125,7 +15151,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>dd MMM yyyy</source>
-        <translation>μμ ΜΜ ΕΕΕΕ</translation>
+        <translation type="vanished">μμ ΜΜ ΕΕΕΕ</translation>
     </message>
     <message>
         <source>Carbonation Volumes</source>
@@ -15256,7 +15282,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>pH</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">pH</translation>
     </message>
     <message>
         <source>Water Agents</source>
@@ -15451,7 +15477,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>dd MMM yyyy</source>
-        <translation type="unfinished">μμ ΜΜ ΕΕΕΕ</translation>
+        <translation type="obsolete">μμ ΜΜ ΕΕΕΕ</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -15475,7 +15501,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Amount Type</source>
-        <translation type="unfinished">Μονάδα μέτρησης</translation>
+        <translation type="unfinished">Τύπος ποσότητας</translation>
     </message>
     <message>
         <source>Uses</source>
@@ -15483,7 +15509,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Amount Remaining</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Υπόλοιπη ποσότητα</translation>
     </message>
     <message>
         <source>Best Before</source>
@@ -15515,7 +15541,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο</translation>
     </message>
     <message>
         <source>Save and close</source>
@@ -15531,7 +15557,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
     <message>
         <source>Note</source>
@@ -15633,7 +15659,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>dd MMM yyyy</source>
-        <translation type="unfinished">μμ ΜΜ ΕΕΕΕ</translation>
+        <translation type="obsolete">μμ ΜΜ ΕΕΕΕ</translation>
     </message>
     <message>
         <source>Reason</source>
@@ -15661,7 +15687,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο</translation>
     </message>
     <message>
         <source>Save and close</source>
@@ -15677,7 +15703,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
     <message>
         <source>Comment</source>
@@ -15976,7 +16002,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Flavor</source>
-        <translation type="unfinished">Άρωματικές Ύλες</translation>
+        <translation type="unfinished">Γεύση</translation>
     </message>
     <message>
         <source>Mouthfeel</source>
@@ -16034,7 +16060,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
     <message>
         <source>Set Sound</source>
@@ -16103,7 +16129,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο</translation>
     </message>
     <message>
         <source>Save</source>
@@ -16111,7 +16137,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
     <message>
         <source>ID in database</source>
@@ -16418,7 +16444,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέο</translation>
     </message>
     <message>
         <source>Save</source>
@@ -16426,11 +16452,11 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Ακύρωση</translation>
+        <translation type="unfinished">Ακύρωση</translation>
     </message>
     <message>
         <source>Total Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συνολικό απόθεμα</translation>
     </message>
     <message>
         <source>Add Purchase</source>
