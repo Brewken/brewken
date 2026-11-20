@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tools/HydrometerTool.h is part of Brewken, and is copyright the following authors 2016-2023:
+ * tools/HydrometerTool.h is part of Brewken, and is copyright the following authors 2016-2026:
  *   • Jamie Daws <jdelectronics1@gmail.com>
  *   • Matt Young <mfsy@yahoo.com>
  *   • Ryan Hoobler <rhoob@yahoo.com>
@@ -26,7 +26,6 @@
 
 class QEvent;
 class QGroupBox;
-class QPushButton;
 class QWidget;
 
 class HydrometerTool : public QDialog {
@@ -36,7 +35,6 @@ public:
 
    //! \name Public UI Variables
    //! @{
-   QPushButton   * pushButton_convert;
    SmartLabel    * label_inputSg;
    SmartLineEdit * lineEdit_inputSg;
    SmartLabel    * label_outputSg;
