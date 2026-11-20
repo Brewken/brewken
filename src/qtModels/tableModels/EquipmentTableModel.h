@@ -30,12 +30,15 @@
 class BtStringConst;
 class Recipe;
 
-// Define the columns on this table
+// Define the columns on this table.  NB: New columns need to go at the end, so that saved column widths, order and
+// visibility (which are by column number) still apply to the existing columns.
 COLUMN_NAMES(EquipmentTableModel, Name            ,
                                   MashTunVolume   ,
                                   KettleVolume    ,
                                   FermentorVolume ,
-                                  NumRecipesUsedIn,)
+                                  NumRecipesUsedIn,
+                                  BatchSize       ,
+                                  BoilOffPerHour  ,)
 
 /*!
  * \class EquipmentTableModel

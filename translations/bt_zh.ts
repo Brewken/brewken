@@ -884,6 +884,13 @@
     </message>
 </context>
 <context>
+    <name>BtTableModel</name>
+    <message>
+        <source>Columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BtTreeModel</name>
     <message>
         <source>Name</source>
@@ -2679,6 +2686,17 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
 </context>
 <context>
+    <name>EditorBase</name>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You have made changes to %1 &quot;%2&quot; that have not been saved.  Discard them?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Equipment</name>
     <message>
         <source>Equipment</source>
@@ -4076,7 +4094,7 @@ Click &apos;OK&apos; to terminate %2 so you can upgrade to a newer version.
     </message>
     <message>
         <source>Convert</source>
-        <translation type="unfinished">转换</translation>
+        <translation type="obsolete">转换</translation>
     </message>
     <message>
         <source>Measured gravity</source>
@@ -4609,6 +4627,14 @@ If you need help, please open an issue at %1</source>
     <message>
         <source>Add %1 to recipe</source>
         <translation type="unfinished">将 %1 添加到配方</translation>
+    </message>
+    <message>
+        <source>Edit %1…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove from Recipe</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5635,6 +5661,12 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
             <numerusform>%1 被 %n 个配方使用：%2。</numerusform>
         </translation>
     </message>
+    <message numerus="yes">
+        <source>Note that this includes %n locked recipe(s): %1.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
 </context>
 <context>
     <name>NamedEntity</name>
@@ -5678,19 +5710,19 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Couldn&apos;t read input</source>
-        <translation type="unfinished">无法读取输入</translation>
+        <translation type="obsolete">无法读取输入</translation>
     </message>
     <message>
         <source>Need a valid value for Measured Gravity</source>
-        <translation type="unfinished">实测比重需要一个有效值</translation>
+        <translation type="obsolete">实测比重需要一个有效值</translation>
     </message>
     <message>
         <source>No Recipe Selected</source>
-        <translation type="unfinished">未选择配方</translation>
+        <translation type="obsolete">未选择配方</translation>
     </message>
     <message>
         <source>No Equipment on Recipe</source>
-        <translation type="unfinished">配方没有设备</translation>
+        <translation type="obsolete">配方没有设备</translation>
     </message>
     <message>
         <source>Recipe &quot;%1&quot; has no equipment.</source>
@@ -5698,7 +5730,7 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>No Boil on Recipe</source>
-        <translation type="unfinished">配方没有煮沸</translation>
+        <translation type="obsolete">配方没有煮沸</translation>
     </message>
     <message>
         <source>Recipe &quot;%1&quot; has no boil.</source>
@@ -5706,7 +5738,7 @@ Do you want to make a copy of this mash for that recipe, so that you can do this
     </message>
     <message>
         <source>Need a valid value for Wort Volume</source>
-        <translation type="unfinished">麦汁体积需要一个有效值</translation>
+        <translation type="obsolete">麦汁体积需要一个有效值</translation>
     </message>
     <message>
         <source>- On Target -</source>
@@ -8271,11 +8303,11 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Edit Taste Notes</source>
-        <translation type="unfinished">编辑品尝笔记</translation>
+        <translation type="obsolete">编辑品尝笔记</translation>
     </message>
     <message>
         <source>Edit Notes</source>
-        <translation type="unfinished">编辑备注</translation>
+        <translation type="obsolete">编辑备注</translation>
     </message>
     <message>
         <source>Change pH</source>
@@ -8574,6 +8606,17 @@ The final volume in the primary is %1.</source>
     </message>
 </context>
 <context>
+    <name>RecipeNotesWidget</name>
+    <message>
+        <source>Edit Notes</source>
+        <translation type="unfinished">编辑备注</translation>
+    </message>
+    <message>
+        <source>Edit Taste Notes</source>
+        <translation type="unfinished">编辑品尝笔记</translation>
+    </message>
+</context>
+<context>
     <name>RecipeWaterWidget</name>
     <message>
         <source>Minimum expected concentration is %1 ppm</source>
@@ -8662,7 +8705,7 @@ The final volume in the primary is %1.</source>
     <name>RefractoDialog</name>
     <message>
         <source>OG Mismatch</source>
-        <translation>OG不匹配</translation>
+        <translation type="vanished">OG不匹配</translation>
     </message>
     <message>
         <source>Based on the given original plato, the OG should be %1, but you have entered %2. Continuing with the calculated OG.</source>
@@ -9439,7 +9482,7 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Convert</source>
-        <translation type="unfinished">转换</translation>
+        <translation type="obsolete">转换</translation>
     </message>
     <message>
         <source>Amount and units to convert</source>
@@ -13092,6 +13135,14 @@ Tabs</source>
         <source>Allow for how the mash temperatures and times make the wort more or less fermentable when estimating final gravity.  Leave this off if you have set yeast attenuation to reflect your own mash.</source>
         <translation type="unfinished">估算最终比重时，考虑糖化温度和时间对麦汁可发酵性的影响。如果你已按自己的糖化情况设置了酵母发酵度，请关闭此项。</translation>
     </message>
+    <message>
+        <source>Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Notes and taste notes for the recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>mashDesigner</name>
@@ -13934,7 +13985,7 @@ Tabs</source>
     </message>
     <message>
         <source>Calculate</source>
-        <translation type="unfinished">计算Calculate</translation>
+        <translation type="obsolete">计算Calculate</translation>
     </message>
     <message>
         <source>If you overshoot or undershoot your anticipated efficiency, this tool helps you to correct the OG in the boil.</source>
@@ -14599,7 +14650,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Calculate</source>
-        <translation>计算Calculate</translation>
+        <translation type="vanished">计算Calculate</translation>
     </message>
 </context>
 <context>
@@ -14666,11 +14717,11 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Taste Notes</source>
-        <translation>味道注意事项Taste Notes</translation>
+        <translation type="vanished">味道注意事项Taste Notes</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>说明Notes</translation>
+        <translation type="vanished">说明Notes</translation>
     </message>
     <message>
         <source>Final beer pH</source>
@@ -14703,6 +14754,29 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     <message>
         <source>&lt;p&gt;How clear you expect the wort to be when it goes into the fermenter (eg depending on whether you use kettle finings or whirlpool).&lt;/p&gt;&lt;p&gt;Cloudier wort loses more bitterness during fermentation.&lt;/p&gt;&lt;p&gt;Only used by the SMPH IBU formula.&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;预计麦汁进入发酵罐时的澄清程度（例如取决于是否使用煮沸澄清剂或回旋沉淀）。&lt;/p&gt;&lt;p&gt;麦汁越浑浊，发酵过程中损失的苦度越多。&lt;/p&gt;&lt;p&gt;仅用于 SMPH IBU 公式。&lt;/p&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>recipeNotesWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>General notes about the recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Taste Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>How the finished beer tastes</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -14856,7 +14930,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Calculate</source>
-        <translation>计算Calculate</translation>
+        <translation type="vanished">计算Calculate</translation>
     </message>
     <message>
         <source>Outputs</source>
@@ -15354,7 +15428,7 @@ Only mIBU and SMPH give IBUs for hops added after flameout (eg whirlpool), using
     </message>
     <message>
         <source>Calculate</source>
-        <translation>计算Calculate</translation>
+        <translation type="vanished">计算Calculate</translation>
     </message>
     <message>
         <source>Strike Water Temperature</source>
