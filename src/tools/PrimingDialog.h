@@ -1,5 +1,5 @@
 /*======================================================================================================================
- * tools/PrimingDialog.h is part of Brewken, and is copyright the following authors 2009-2023:
+ * tools/PrimingDialog.h is part of Brewken, and is copyright the following authors 2009-2026:
  *   • Matt Young <mfsy@yahoo.com>
  *   • Philip Greggory Lee <rocketman768@gmail.com>
  *
@@ -40,6 +40,12 @@ public slots:
 
 private:
    QButtonGroup * sugarGroup;
+protected:
+   /**
+    * \brief Overrides \c QWidget::changeEvent so that, on \c QEvent::LanguageChange, we update our text to the new
+    *        language.
+    */
+   void changeEvent(QEvent * event) override;
 };
 
 #endif

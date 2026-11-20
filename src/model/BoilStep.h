@@ -88,7 +88,7 @@ public:
    /*!
     * \brief Localised names of \c BoilStep::ChillingType values suitable for displaying to the end user
     */
-   static EnumStringMapping const chillingTypeDisplayNames;
+   static EnumDisplayNameMapping const chillingTypeDisplayNames;
 
    //
    // This alias makes it easier to template a number of functions that are essentially the same for all subclasses of
