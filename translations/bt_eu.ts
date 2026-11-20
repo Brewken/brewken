@@ -3697,6 +3697,10 @@ Laguntza behar baduzu, ireki arazo-txosten bat hemen: %1</translation>
         <source>The following ingredient(s) are measured differently in the recipe and in your inventory, so the amount(s) used could not (all) be deducted from inventory.</source>
         <translation type="unfinished">Osagai hauek modu desberdinean neurtzen dira errezetan eta inbentarioan, eta ezin izan dira erabilitako kantitateak (guztiak) inbentariotik kendu.</translation>
     </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished">Gehitu %1 errezetari</translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -7591,7 +7595,7 @@ Lehen hartzidurako azken bolumena %1 da.</translation>
     <name>Undoable</name>
     <message>
         <source>Add %1 to recipe</source>
-        <translation type="unfinished">Gehitu %1 errezetari</translation>
+        <translation type="obsolete">Gehitu %1 errezetari</translation>
     </message>
 </context>
 <context>

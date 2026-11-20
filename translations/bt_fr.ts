@@ -4976,6 +4976,10 @@ Si vous avez besoin d&apos;aide, veuillez ouvrir un ticket sur %1</translation>
         <source>The following ingredient(s) are measured differently in the recipe and in your inventory, so the amount(s) used could not (all) be deducted from inventory.</source>
         <translation type="unfinished">Le ou les ingrédients suivants sont mesurés différemment dans la recette et dans votre inventaire ; les quantités utilisées n&apos;ont donc pas pu être (entièrement) déduites de l&apos;inventaire.</translation>
     </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished">Ajouter %1 à la recette</translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -10191,7 +10195,7 @@ Le volume final dans la cuve de fermentation est de %1.</translation>
     <name>Undoable</name>
     <message>
         <source>Add %1 to recipe</source>
-        <translation type="unfinished">Ajouter %1 à la recette</translation>
+        <translation type="obsolete">Ajouter %1 à la recette</translation>
     </message>
 </context>
 <context>

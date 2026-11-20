@@ -4606,6 +4606,10 @@ If you need help, please open an issue at %1</source>
         <source>The following ingredient(s) are measured differently in the recipe and in your inventory, so the amount(s) used could not (all) be deducted from inventory.</source>
         <translation type="unfinished">以下原料在配方和库存中的计量方式不同，因此用量无法（全部）从库存中扣除。</translation>
     </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished">将 %1 添加到配方</translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -9401,7 +9405,7 @@ The final volume in the primary is %1.</source>
     <name>Undoable</name>
     <message>
         <source>Add %1 to recipe</source>
-        <translation type="unfinished">将 %1 添加到配方</translation>
+        <translation type="obsolete">将 %1 添加到配方</translation>
     </message>
 </context>
 <context>

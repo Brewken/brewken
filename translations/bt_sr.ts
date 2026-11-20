@@ -4650,6 +4650,10 @@ If you need help, please open an issue at %1</source>
         <source>The following ingredient(s) are measured differently in the recipe and in your inventory, so the amount(s) used could not (all) be deducted from inventory.</source>
         <translation type="unfinished">Следећи састојци се различито мере у рецепту и у вашим залихама, па употребљене количине нису могле (све) да се одузму од залиха.</translation>
     </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished">Додај %1 у рецепт</translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -9648,7 +9652,7 @@ The final volume in the primary is %1.</source>
     <name>Undoable</name>
     <message>
         <source>Add %1 to recipe</source>
-        <translation type="unfinished">Додај %1 у рецепт</translation>
+        <translation type="obsolete">Додај %1 у рецепт</translation>
     </message>
 </context>
 <context>

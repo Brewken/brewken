@@ -4878,6 +4878,10 @@ Hvis du trenger hjelp, kan du opprette en sak på %1</translation>
         <source>The following ingredient(s) are measured differently in the recipe and in your inventory, so the amount(s) used could not (all) be deducted from inventory.</source>
         <translation type="unfinished">Følgende ingredienser måles ulikt i oppskriften og i beholdningen din, så brukte mengder kunne ikke (alle) trekkes fra beholdningen.</translation>
     </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -10053,13 +10057,6 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     <message>
         <source>BrewNote</source>
         <translation type="obsolete">Bryggenotat</translation>
-    </message>
-</context>
-<context>
-    <name>Undoable</name>
-    <message>
-        <source>Add %1 to recipe</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

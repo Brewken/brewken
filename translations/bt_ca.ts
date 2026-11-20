@@ -4976,6 +4976,10 @@ Si necessiteu ajuda, obriu una incidència a %1</translation>
         <source>The following ingredient(s) are measured differently in the recipe and in your inventory, so the amount(s) used could not (all) be deducted from inventory.</source>
         <translation type="unfinished">Els ingredients següents es mesuren de manera diferent a la recepta i a les existències, de manera que les quantitats utilitzades no s&apos;han pogut descomptar (totes) de les existències.</translation>
     </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished">Afegeix %1 a la recepta</translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -10223,7 +10227,7 @@ El volum final al primari és de %1.</translation>
     <name>Undoable</name>
     <message>
         <source>Add %1 to recipe</source>
-        <translation type="unfinished">Afegeix %1 a la recepta</translation>
+        <translation type="obsolete">Afegeix %1 a la recepta</translation>
     </message>
 </context>
 <context>

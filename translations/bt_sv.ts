@@ -4972,6 +4972,10 @@ Om du behöver hjälp, skapa ett ärende på %1</translation>
         <source>The following ingredient(s) are measured differently in the recipe and in your inventory, so the amount(s) used could not (all) be deducted from inventory.</source>
         <translation type="unfinished">Följande ingredienser mäts på olika sätt i receptet och i ditt förråd, så den använda mängden kunde inte (helt) dras av från förrådet.</translation>
     </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished">Lägg till %1 i receptet</translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -10186,7 +10190,7 @@ Primärens slutgiltiga volym är %1.</translation>
     <name>Undoable</name>
     <message>
         <source>Add %1 to recipe</source>
-        <translation type="unfinished">Lägg till %1 i receptet</translation>
+        <translation type="obsolete">Lägg till %1 i receptet</translation>
     </message>
 </context>
 <context>

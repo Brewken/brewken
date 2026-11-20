@@ -4834,6 +4834,10 @@ Pokud potřebujete pomoc, založte prosím issue na %1</translation>
         <source>The following ingredient(s) are measured differently in the recipe and in your inventory, so the amount(s) used could not (all) be deducted from inventory.</source>
         <translation type="unfinished">Následující přísady se v receptu a na skladě měří odlišně, takže použitá množství nebylo možné (všechna) odečíst ze skladu.</translation>
     </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished">Přidat %1 do receptu</translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -9986,7 +9990,7 @@ Celkový objem pro hlavní kvašení je %1.</translation>
     <name>Undoable</name>
     <message>
         <source>Add %1 to recipe</source>
-        <translation type="unfinished">Přidat %1 do receptu</translation>
+        <translation type="obsolete">Přidat %1 do receptu</translation>
     </message>
 </context>
 <context>

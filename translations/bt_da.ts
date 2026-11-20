@@ -4479,7 +4479,7 @@ Klik på &apos;OK&apos; for at afslutte %2, så du kan opgradere til en nyere ve
     </message>
     <message>
         <source>Add %1 to recipe</source>
-        <translation type="vanished">Føj %1 til opskrift</translation>
+        <translation>Føj %1 til opskrift</translation>
     </message>
     <message>
         <source>Remove %1 from recipe</source>
@@ -9991,7 +9991,7 @@ The final volume in the primary is %1.</source>
     <name>Undoable</name>
     <message>
         <source>Add %1 to recipe</source>
-        <translation type="unfinished">Føj %1 til opskrift</translation>
+        <translation type="obsolete">Føj %1 til opskrift</translation>
     </message>
 </context>
 <context>

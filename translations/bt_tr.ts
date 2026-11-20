@@ -3696,6 +3696,10 @@ Yardıma ihtiyacınız varsa lütfen şu adreste bir kayıt açın: %1</translat
         <source>The following ingredient(s) are measured differently in the recipe and in your inventory, so the amount(s) used could not (all) be deducted from inventory.</source>
         <translation type="unfinished">Aşağıdaki malzeme(ler) reçetede ve stokunuzda farklı ölçülüyor, bu nedenle kullanılan miktar(lar)ın (tamamı) stoktan düşülemedi.</translation>
     </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -7573,13 +7577,6 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Style</source>
         <translation type="obsolete">Biçem</translation>
-    </message>
-</context>
-<context>
-    <name>Undoable</name>
-    <message>
-        <source>Add %1 to recipe</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -4944,6 +4944,10 @@ Se hai bisogno di aiuto, apri una segnalazione su %1</translation>
         <source>The following ingredient(s) are measured differently in the recipe and in your inventory, so the amount(s) used could not (all) be deducted from inventory.</source>
         <translation type="unfinished">I seguenti ingredienti sono misurati in modo diverso nella ricetta e nel magazzino, quindi le quantità usate non hanno potuto essere (tutte) scalate dal magazzino.</translation>
     </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished">Aggiungi %1 alla ricetta</translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -10130,7 +10134,7 @@ Il Volume finale del primo è %1.</translation>
     <name>Undoable</name>
     <message>
         <source>Add %1 to recipe</source>
-        <translation type="unfinished">Aggiungi %1 alla ricetta</translation>
+        <translation type="obsolete">Aggiungi %1 alla ricetta</translation>
     </message>
 </context>
 <context>

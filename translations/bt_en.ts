@@ -3573,6 +3573,10 @@ If you need help, please open an issue at %1</source>
         <source>The following ingredient(s) are measured differently in the recipe and in your inventory, so the amount(s) used could not (all) be deducted from inventory.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -7343,13 +7347,6 @@ The final volume in the primary is %1.</source>
     </message>
     <message>
         <source>Audio Files (*.wav)</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>Undoable</name>
-    <message>
-        <source>Add %1 to recipe</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

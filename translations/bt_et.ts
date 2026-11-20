@@ -3696,6 +3696,10 @@ Kui vajate abi, looge palun teema aadressil %1</translation>
         <source>The following ingredient(s) are measured differently in the recipe and in your inventory, so the amount(s) used could not (all) be deducted from inventory.</source>
         <translation type="unfinished">Järgmisi koostisosi mõõdetakse retseptis ja laoseisus erinevalt, mistõttu kasutatud kogust ei saanud (täielikult) laoseisust maha arvata.</translation>
     </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -7574,13 +7578,6 @@ The final volume in the primary is %1.</source>
     <message>
         <source>Style</source>
         <translation type="obsolete">Õlletüüp</translation>
-    </message>
-</context>
-<context>
-    <name>Undoable</name>
-    <message>
-        <source>Add %1 to recipe</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -4952,6 +4952,10 @@ Ha segítségre van szükséged, nyiss egy hibajegyet itt: %1</translation>
         <source>The following ingredient(s) are measured differently in the recipe and in your inventory, so the amount(s) used could not (all) be deducted from inventory.</source>
         <translation type="unfinished">A következő összetevő(k) eltérő módon vannak mérve a receptben és a készletben, ezért a felhasznált mennyiség(ek) nem (mind) vonható(k) le a készletből.</translation>
     </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -10063,13 +10067,6 @@ Végleges mennyiség az elsődleges erjesztőben: %1</translation>
     <message>
         <source>BrewNote</source>
         <translation type="obsolete">Megjegyzés</translation>
-    </message>
-</context>
-<context>
-    <name>Undoable</name>
-    <message>
-        <source>Add %1 to recipe</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

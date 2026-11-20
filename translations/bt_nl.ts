@@ -4973,6 +4973,10 @@ Als u hulp nodig hebt, meld dan een probleem op %1</translation>
         <source>The following ingredient(s) are measured differently in the recipe and in your inventory, so the amount(s) used could not (all) be deducted from inventory.</source>
         <translation type="unfinished">De volgende ingrediënt(en) worden in het recept en in uw voorraad anders gemeten, waardoor de gebruikte hoeveelhe(i)d(en) niet (volledig) van de voorraad konden worden afgeboekt.</translation>
     </message>
+    <message>
+        <source>Add %1 to recipe</source>
+        <translation type="unfinished">%1 aan recept toevoegen</translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -10275,7 +10279,7 @@ Het uiteindelijke volume in de hoofdvergisting is %1.</translation>
     <name>Undoable</name>
     <message>
         <source>Add %1 to recipe</source>
-        <translation type="unfinished">%1 aan recept toevoegen</translation>
+        <translation type="obsolete">%1 aan recept toevoegen</translation>
     </message>
 </context>
 <context>
