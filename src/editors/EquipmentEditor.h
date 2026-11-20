@@ -32,7 +32,7 @@
 #include "editors/EditorBase.h"
 #include "model/Equipment.h"
 
-#define EquipmentEditorOptions EditorBaseOptions{ .idDisplay = true, .numRecipesUsing = true }
+#define EquipmentEditorOptions EditorBaseOptions{ .idDisplay = true, .numRecipesUsing = true, .sharingBar = true }
 /*!
  * \class EquipmentEditor
  *
@@ -47,6 +47,10 @@ class EquipmentEditor : public QDialog,
    Q_OBJECT
 
    EDITOR_COMMON_DECL(Equipment, EquipmentEditorOptions)
+
+private:
+   //! Needed by \c EditorBase because we have the \c sharingBar option
+   Recipe * currentRecipeForSharing() const;
 
 public slots:
    void hideOrShowOptionalVessels();
