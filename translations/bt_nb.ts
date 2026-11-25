@@ -4908,6 +4908,22 @@ Hvis du trenger hjelp, kan du opprette en sak på %1</translation>
         <source>Remove from Recipe</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>The mash in this recipe has %1 of water, but needs %2 to give the target pre-boil volume of %3 (allowing for grain absorption and losses in the mash tun).  So you would get less wort than the recipe expects.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The mash in this recipe has %1 of water, but only needs %2 to give the target pre-boil volume of %3 (allowing for grain absorption and losses in the mash tun).  So you would get more wort than the recipe expects.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mash water does not match recipe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can fix this with Auto-Adjust in the mash editor.  Do you want to brew this recipe anyway?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -9345,7 +9361,19 @@ Sluttvolumet i primærgjæringskaret er %1.</translation>
     </message>
     <message>
         <source>The equipment and mash have been reset due to the fact that mash temperatures do not scale easily. Please re-run the mash wizard.</source>
-        <translation>Utstyret og mesken har blitt resatt fordi mesketemperaturen ikke lar seg skalere enkelt. Vær vennlig og kjør meskeveillederen på nytt.</translation>
+        <translation type="vanished">Utstyret og mesken har blitt resatt fordi mesketemperaturen ikke lar seg skalere enkelt. Vær vennlig og kjør meskeveillederen på nytt.</translation>
+    </message>
+    <message>
+        <source>The recipe has been scaled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The mash is kept in sync with the recipe, so its water amounts and temperatures will be recalculated automatically.  Check the mash editor for any problems.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The amounts of water in the mash have not been changed, so you will probably need to use Auto-Adjust in the mash editor to work out new ones.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
