@@ -2603,6 +2603,14 @@ Egin klik &apos;Ados&apos; botoian %2 amaitzeko, bertsio berriago batera egunera
         <source>Batch Size</source>
         <translation type="unfinished">Sortaren tamaina</translation>
     </message>
+    <message>
+        <source>Hop Absorption (Leaf)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hop Absorption (Pellets)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>EquipmentEditor</name>
@@ -6402,6 +6410,11 @@ Lehen hartzidurako azken bolumena %1 da.</translation>
         <source>Expected Wort Clarity</source>
         <translation type="unfinished">Mostoaren gardentasun aurreikusia</translation>
     </message>
+    <message>
+        <source>
+You anticipate losing %1 with the hops.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -8975,6 +8988,26 @@ fitxak</translation>
     <message>
         <source>Internal diameter of the opening in the kettle through which steam can escape -- eg the same as the internal diameter if the kettle is uncovered, or smaller if it is partly covered.  Used, along with the internal diameter and the volume of wort in the kettle, to estimate how quickly the wort cools naturally after flameout, for IBU formulae that model isomerization after flameout (eg mIBU and SMPH).  If not set, 45 cm (about 18 inches) is assumed.</source>
         <translation type="unfinished">Galdararen ahoaren barne-diametroa, lurruna ihes egiteko -- adib. barne-diametroaren berdina galdara estali gabe badago, edo txikiagoa erdi estalita badago.  Barne-diametroarekin eta galdarako most-bolumenarekin batera erabiltzen da mostoa sua itzali ondoren berez zein azkar hozten den estimatzeko, sua itzali ondorengo isomerizazioa modelatzen duten IBU formuletan (adib. mIBU eta SMPH).  Ezarrita ez badago, 45 cm (18 hazbete inguru) suposatzen da.</translation>
+    </message>
+    <message>
+        <source>Hop absorption (pellets)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wort or beer you typically lose with pellet (and powder) hops, per weight of hops, including dry hops</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hop absorption (leaf)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wort or beer you typically lose with leaf (whole cone) and plug hops, per weight of hops, including dry hops</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The wort or beer you typically lose with hop material, per weight of hops, when you transfer the liquid off the hops -- in addition to the kettle&apos;s (or fermentor&apos;s) own loss, which should therefore not include an allowance for hops.  This depends on your process (eg loose hops or a hop spider, whether you squeeze or drain the hops, whirlpooling) as well as the hops, so it is best measured, eg by weighing the wet hops left behind, or from the shortfall on a hoppy brew.  If left blank, typical values of about 7 ml per gram (6.7 fl oz per oz) for pellets and 5 ml per gram (4.8 fl oz per oz) for leaf hops are used.  Wet (fresh) hops and hop extract are not counted.  For now, only hops in the kettle are allowed for: kettle hops increase the pre-boil volume a recipe needs.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

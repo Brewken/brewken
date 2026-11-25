@@ -3082,6 +3082,14 @@ Haz clic en &apos;Aceptar&apos; para cerrar %2 y poder actualizar a una versión
         <source>Batch Size</source>
         <translation type="unfinished">Tamaño del lote</translation>
     </message>
+    <message>
+        <source>Hop Absorption (Leaf)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hop Absorption (Pellets)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>EquipmentEditor</name>
@@ -8351,6 +8359,11 @@ El volumen final en el primario es %1.</translation>
         <source>Expected Wort Clarity</source>
         <translation type="unfinished">Claridad del mosto prevista</translation>
     </message>
+    <message>
+        <source>
+You anticipate losing %1 with the hops.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -11964,6 +11977,26 @@ recipientes opcionales</translation>
     <message>
         <source>Internal diameter of the opening in the kettle through which steam can escape -- eg the same as the internal diameter if the kettle is uncovered, or smaller if it is partly covered.  Used, along with the internal diameter and the volume of wort in the kettle, to estimate how quickly the wort cools naturally after flameout, for IBU formulae that model isomerization after flameout (eg mIBU and SMPH).  If not set, 45 cm (about 18 inches) is assumed.</source>
         <translation type="unfinished">Diámetro interior de la abertura de la olla por la que puede escapar el vapor -- p. ej. igual al diámetro interior si la olla está destapada, o menor si está parcialmente tapada.  Se usa, junto con el diámetro interior y el volumen de mosto en la olla, para estimar lo rápido que se enfría el mosto de forma natural tras el fin de hervido, en las fórmulas de IBU que modelan la isomerización después del fin de hervido (p. ej. mIBU y SMPH).  Si no está definido, se suponen 45 cm (unas 18 pulgadas).</translation>
+    </message>
+    <message>
+        <source>Hop absorption (pellets)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wort or beer you typically lose with pellet (and powder) hops, per weight of hops, including dry hops</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hop absorption (leaf)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wort or beer you typically lose with leaf (whole cone) and plug hops, per weight of hops, including dry hops</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The wort or beer you typically lose with hop material, per weight of hops, when you transfer the liquid off the hops -- in addition to the kettle&apos;s (or fermentor&apos;s) own loss, which should therefore not include an allowance for hops.  This depends on your process (eg loose hops or a hop spider, whether you squeeze or drain the hops, whirlpooling) as well as the hops, so it is best measured, eg by weighing the wet hops left behind, or from the shortfall on a hoppy brew.  If left blank, typical values of about 7 ml per gram (6.7 fl oz per oz) for pellets and 5 ml per gram (4.8 fl oz per oz) for leaf hops are used.  Wet (fresh) hops and hop extract are not counted.  For now, only hops in the kettle are allowed for: kettle hops increase the pre-boil volume a recipe needs.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
