@@ -8504,6 +8504,10 @@ Allowing for what will be left in the fermenter (including with any dry hops) an
         <source>Packaged Volume</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>plus %1 extra, which will stay in the hot liquor tank</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RecipeAddition</name>
@@ -12150,6 +12154,10 @@ kärl</translation>
     </message>
     <message>
         <source>Beer left behind in the packaging vessel (eg bottling bucket), if you use one.  Reduces the packaged volume.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Water left behind in the hot liquor tank, if you use one.  It is added to the water to heat in the brew day instructions.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
