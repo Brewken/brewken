@@ -4704,6 +4704,26 @@ If you need help, please open an issue at %1</source>
         <source>You can fix this with Auto-Adjust in the mash editor.  Do you want to brew this recipe anyway?</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Change Pre-Boil Size</source>
+        <translation type="unfinished">Промени запремину пре кључања</translation>
+    </message>
+    <message>
+        <source>Pre-boil size not changed to match the new batch size, because the boil is locked.  You can change it on the Boil tab.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pre-boil size not changed to match the new batch size, because the boil is shared with other recipes.  You can change it on the Boil tab.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to open manual</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not open the user manual.  You can read it online at %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Mash</name>
@@ -12817,7 +12837,7 @@ Tabs</source>
     </message>
     <message>
         <source>Calculated preboil volume - See Boil tab below</source>
-        <translation type="unfinished">Израчуната запремина пре кључања - видите картицу Кључање испод</translation>
+        <translation type="obsolete">Израчуната запремина пре кључања - видите картицу Кључање испод</translation>
     </message>
     <message>
         <source>Info about, and any problems with, this mash</source>
@@ -12853,6 +12873,10 @@ Tabs</source>
     </message>
     <message>
         <source>Beer you can expect to package (bottle or keg): the target batch size, less what is left in the fermenter (including with dry hops) and in any aging or packaging vessel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target pre-boil volume (which follows the target batch size) - See Boil tab below</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
