@@ -6416,16 +6416,16 @@ You anticipate losing %1 with the hops.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>
-Allowing for what will be left in the fermenter (including with any dry hops) and in any aging or packaging vessel, you should be able to package about %1.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Packaged Volume</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>plus %1 extra, which will stay in the hot liquor tank</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+Allow for losing about %1 between the fermenter and packaging (what is left in the fermenter, including with any dry hops, and in any aging or packaging vessel).</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9019,10 +9019,6 @@ fitxak</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The wort or beer you typically lose with hop material, per weight of hops, when you transfer the liquid off the hops -- in addition to the kettle&apos;s (or fermentor&apos;s) own loss, which should therefore not include an allowance for hops.  This depends on your process (eg loose hops or a hop spider, whether you squeeze or drain the hops, whirlpooling) as well as the hops, so it is best measured, eg by weighing the wet hops left behind, or from the shortfall on a hoppy brew.  If left blank, typical values of about 7 ml per gram (6.7 fl oz per oz) for pellets and 5 ml per gram (4.8 fl oz per oz) for leaf hops are used.  Wet (fresh) hops and hop extract are not counted.  Kettle hops increase the pre-boil volume a recipe needs; dry hops reduce the volume of beer you can package.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Beer left behind in the fermentor (yeast cake, trub, etc), not counting what dry hops hold (see Hop absorption on the General tab).  Reduces the packaged volume.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9036,6 +9032,10 @@ fitxak</translation>
     </message>
     <message>
         <source>Water left behind in the hot liquor tank, if you use one.  It is added to the water to heat in the brew day instructions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The wort or beer you typically lose with hop material, per weight of hops, when you transfer the liquid off the hops -- in addition to the kettle&apos;s (or fermentor&apos;s) own loss, which should therefore not include an allowance for hops.  This depends on your process (eg loose hops or a hop spider, whether you squeeze or drain the hops, whirlpooling) as well as the hops, so it is best measured, eg by weighing the wet hops left behind, or from the shortfall on a hoppy brew.  If left blank, typical values of about 7 ml per gram (6.7 fl oz per oz, or 3.4 qt per lb) for pellets and 5 ml per gram (4.8 fl oz per oz, or 2.4 qt per lb) for leaf hops are used.  (Right-click the field label to change the units shown.)  Wet (fresh) hops and hop extract are not counted.  Kettle hops increase the pre-boil volume a recipe needs; dry hops reduce the volume of beer you can package.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
