@@ -894,7 +894,7 @@
     </message>
     <message>
         <source>Micelleneous</source>
-        <translation type="unfinished">Ingredients extres</translation>
+        <translation type="obsolete">Ingredients extres</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -947,6 +947,10 @@
     <message>
         <source>Print</source>
         <translation type="unfinished">Imprimeix</translation>
+    </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">Ingredients extres</translation>
     </message>
 </context>
 <context>
@@ -5028,6 +5032,26 @@ Si necessiteu ajuda, obriu una incidència a %1</translation>
     </message>
     <message>
         <source>You can fix this with Auto-Adjust in the mash editor.  Do you want to brew this recipe anyway?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Pre-Boil Size</source>
+        <translation type="unfinished">Canvia el volum abans d&apos;ebullició</translation>
+    </message>
+    <message>
+        <source>Pre-boil size not changed to match the new batch size, because the boil is locked.  You can change it on the Boil tab.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pre-boil size not changed to match the new batch size, because the boil is shared with other recipes.  You can change it on the Boil tab.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to open manual</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not open the user manual.  You can read it online at %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14126,7 +14150,7 @@ recipients opcionals</translation>
     </message>
     <message>
         <source>Calculated preboil volume - See Boil tab below</source>
-        <translation type="unfinished">Volum abans d&apos;ebullició calculat - Vegeu la pestanya Ebullició de sota</translation>
+        <translation type="obsolete">Volum abans d&apos;ebullició calculat - Vegeu la pestanya Ebullició de sota</translation>
     </message>
     <message>
         <source>Info about, and any problems with, this mash</source>
@@ -14162,6 +14186,10 @@ recipients opcionals</translation>
     </message>
     <message>
         <source>Beer you can expect to package (bottle or keg): the target batch size, less what is left in the fermenter (including with dry hops) and in any aging or packaging vessel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target pre-boil volume (which follows the target batch size) - See Boil tab below</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
