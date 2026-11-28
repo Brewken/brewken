@@ -688,10 +688,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Micelleneous</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Yeast</source>
         <translation type="unfinished"></translation>
     </message>
@@ -741,6 +737,10 @@
     </message>
     <message>
         <source>Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Miscellaneous</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

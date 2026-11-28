@@ -906,7 +906,7 @@
     </message>
     <message>
         <source>Micelleneous</source>
-        <translation type="unfinished">Övrigt</translation>
+        <translation type="obsolete">Övrigt</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -959,6 +959,10 @@
     <message>
         <source>Print</source>
         <translation type="unfinished">Skriv ut</translation>
+    </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">Övrigt</translation>
     </message>
 </context>
 <context>

@@ -874,7 +874,7 @@
     </message>
     <message>
         <source>Micelleneous</source>
-        <translation type="unfinished">Sonstiges</translation>
+        <translation type="obsolete">Sonstiges</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -927,6 +927,10 @@
     <message>
         <source>Print</source>
         <translation type="unfinished">Drucken</translation>
+    </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">Sonstiges</translation>
     </message>
 </context>
 <context>

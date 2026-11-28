@@ -620,7 +620,7 @@
     </message>
     <message>
         <source>Micelleneous</source>
-        <translation type="unfinished">Diğer Malzemeler</translation>
+        <translation type="obsolete">Diğer Malzemeler</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -673,6 +673,10 @@
     <message>
         <source>Print</source>
         <translation type="unfinished">Yazdır</translation>
+    </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">Diğer Malzemeler</translation>
     </message>
 </context>
 <context>

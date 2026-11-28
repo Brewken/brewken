@@ -845,7 +845,7 @@
     </message>
     <message>
         <source>Micelleneous</source>
-        <translation type="unfinished">Διάφορα</translation>
+        <translation type="obsolete">Διάφορα</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -898,6 +898,10 @@
     <message>
         <source>Print</source>
         <translation type="unfinished">Εκτύπωση</translation>
+    </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">Διάφορα</translation>
     </message>
 </context>
 <context>

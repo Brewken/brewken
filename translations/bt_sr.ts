@@ -827,7 +827,7 @@
     </message>
     <message>
         <source>Micelleneous</source>
-        <translation type="unfinished">Разно</translation>
+        <translation type="obsolete">Разно</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -880,6 +880,10 @@
     <message>
         <source>Print</source>
         <translation type="unfinished">Штампај</translation>
+    </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">Разно</translation>
     </message>
 </context>
 <context>

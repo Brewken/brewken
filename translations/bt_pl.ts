@@ -809,7 +809,7 @@
     </message>
     <message>
         <source>Micelleneous</source>
-        <translation type="unfinished">Dodatki</translation>
+        <translation type="obsolete">Dodatki</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -862,6 +862,10 @@
     <message>
         <source>Print</source>
         <translation type="unfinished">Drukuj</translation>
+    </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">Dodatki</translation>
     </message>
 </context>
 <context>

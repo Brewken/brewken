@@ -902,7 +902,7 @@
     </message>
     <message>
         <source>Micelleneous</source>
-        <translation type="unfinished">Egyebek</translation>
+        <translation type="obsolete">Egyebek</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -955,6 +955,10 @@
     <message>
         <source>Print</source>
         <translation type="unfinished">Nyomtatás</translation>
+    </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">Egyebek</translation>
     </message>
 </context>
 <context>

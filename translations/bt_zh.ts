@@ -821,7 +821,7 @@
     </message>
     <message>
         <source>Micelleneous</source>
-        <translation type="unfinished">其他原料</translation>
+        <translation type="obsolete">其他原料</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -874,6 +874,10 @@
     <message>
         <source>Print</source>
         <translation type="unfinished">打印</translation>
+    </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

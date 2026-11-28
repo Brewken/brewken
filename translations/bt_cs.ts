@@ -839,7 +839,7 @@
     </message>
     <message>
         <source>Micelleneous</source>
-        <translation type="unfinished">Přípravky</translation>
+        <translation type="obsolete">Přípravky</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -892,6 +892,10 @@
     <message>
         <source>Print</source>
         <translation type="unfinished">Tisk</translation>
+    </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">Přípravky</translation>
     </message>
 </context>
 <context>

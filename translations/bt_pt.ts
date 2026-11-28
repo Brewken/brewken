@@ -866,7 +866,7 @@
     </message>
     <message>
         <source>Micelleneous</source>
-        <translation type="unfinished">Diversos</translation>
+        <translation type="obsolete">Diversos</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -919,6 +919,10 @@
     <message>
         <source>Print</source>
         <translation type="unfinished">Imprimir</translation>
+    </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

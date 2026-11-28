@@ -852,7 +852,7 @@
     </message>
     <message>
         <source>Micelleneous</source>
-        <translation>Diverse</translation>
+        <translation type="vanished">Diverse</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -905,6 +905,10 @@
     <message>
         <source>Print</source>
         <translation>Udskriv</translation>
+    </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">Diverse ingredienser</translation>
     </message>
 </context>
 <context>

@@ -616,7 +616,7 @@
     </message>
     <message>
         <source>Micelleneous</source>
-        <translation type="unfinished">Muud</translation>
+        <translation type="obsolete">Muud</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -669,6 +669,10 @@
     <message>
         <source>Print</source>
         <translation type="unfinished">Prindi</translation>
+    </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">Muud</translation>
     </message>
 </context>
 <context>

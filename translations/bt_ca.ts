@@ -894,7 +894,7 @@
     </message>
     <message>
         <source>Micelleneous</source>
-        <translation type="unfinished">Ingredients extres</translation>
+        <translation type="obsolete">Ingredients extres</translation>
     </message>
     <message>
         <source>Yeast</source>
@@ -947,6 +947,10 @@
     <message>
         <source>Print</source>
         <translation type="unfinished">Imprimeix</translation>
+    </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished">Ingredients extres</translation>
     </message>
 </context>
 <context>
